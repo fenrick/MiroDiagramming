@@ -6,9 +6,6 @@ export function attachMetadata(widget: any, data: unknown) {
     widget.metadata = {} as any;
   }
   widget.metadata['app.miro.structgraph'] = data;
-  // Widgets must be updated to persist metadata
-  if (miro && miro.board && miro.board.widgets && miro.board.widgets.update) {
-    return miro.board.widgets.update(widget);
-  }
+  widget.sync();
   return widget;
 }
