@@ -7,6 +7,7 @@
   "license": "MIT",
   "scripts": {
     "build": "preact build --no-sw --template src/index.html --dest ./dist",
+    "test": "jest",
     "serve:prod": "sirv build -p 3000 --cors --single",
     "serve:dev": "preact watch -p 3000 --template src/index.html",
     "start": "preact watch -p 3000 --template src/index.html",
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "@mirohq/websdk-types": "latest",
+    "jest": "^30.0.0",
     "preact-cli": "^3.0.0",
     "prettier": "^3.5.3",
     "sirv-cli": "1.0.3"
