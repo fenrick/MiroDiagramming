@@ -9755,7 +9755,7 @@ __metadata:
     "@mirohq/websdk-types": "npm:latest"
     elkjs: "npm:^0.7.1"
     jest: "npm:^30.0.0"
-    mirotone: "npm:5"
+    mirotone: "npm:^5.3.2"
     preact: "npm:^10.3.2"
     preact-cli: "npm:^3.0.0"
     preact-render-to-string: "npm:^5.1.4"
@@ -9765,7 +9765,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"mirotone@npm:5":
+"mirotone@npm:^5.3.2":
   version: 5.3.2
   resolution: "mirotone@npm:5.3.2"
   dependencies:
