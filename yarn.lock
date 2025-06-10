@@ -9760,7 +9760,7 @@ __metadata:
     preact-cli: "npm:^3.0.0"
     preact-render-to-string: "npm:^6.5.13"
     prettier: "npm:^3.5.3"
-    sirv-cli: "npm:1.0.3"
+    sirv-cli: "npm:1.0.14"
     typescript: "npm:5.8.3"
   languageName: unknown
   linkType: soft
@@ -12973,9 +12973,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sirv-cli@npm:1.0.3":
-  version: 1.0.3
-  resolution: "sirv-cli@npm:1.0.3"
+"sirv-cli@npm:1.0.14":
+  version: 1.0.14
+  resolution: "sirv-cli@npm:1.0.14"
   dependencies:
     console-clear: "npm:^1.1.0"
     get-port: "npm:^3.2.0"
@@ -12983,15 +12983,15 @@ __metadata:
     local-access: "npm:^1.0.1"
     sade: "npm:^1.6.0"
     semiver: "npm:^1.0.0"
-    sirv: "npm:^1.0.1"
+    sirv: "npm:^1.0.13"
     tinydate: "npm:^1.0.0"
   bin:
     sirv: bin.js
-  checksum: 10c0/1a5543ae812f0ef8f5feff0da90965f924f66d77a07d98f3d84261a62efaacd7b92b7ac767a63e6708f915c2f84538955de2e7e097042fc9dbd89c0fe3548ca2
+  checksum: 10c0/6d935ddf78aa70e368ee2c61be52fe6fa7f8beeb859c5497306f79d7ba20e072ffd9960aa9ed242c0f4095ee10d6492587738fc39dc9a478599fb3ce2ab96a4a
   languageName: node
   linkType: hard
 
-"sirv@npm:^1.0.1":
+"sirv@npm:^1.0.13":
   version: 1.0.19
   resolution: "sirv@npm:1.0.19"
   dependencies:
