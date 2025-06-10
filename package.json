@@ -1,0 +1,22 @@
+{
+  "name": "miro-diagraming",
+  "version": "1.0.0",
+  "description": "Miro diagraming plugin template",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "prettier": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\""
+  },
+  "dependencies": {
+    "@mirohq/websdk": "^1.0.0",
+    "elkjs": "^0.7.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "jest": "^29.6.4",
+    "prettier": "^3.0.3"
+  },
+  "packageManager": "yarn@4.6.0"
+}
