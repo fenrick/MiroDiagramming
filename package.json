@@ -12,13 +12,13 @@
     "prettier:check": "prettier '**/*.{js,jsx,ts,tsx,md,json,yml,yaml}' --check"
   },
   "dependencies": {
-    "@mirohq/websdk": "^1.0.0",
+    "@mirohq/websdk-types": "^2.16.1",
     "elkjs": "^0.7.1"
   },
   "devDependencies": {
-    "typescript": "^5.3.3",
     "jest": "^29.6.4",
-    "prettier": "^3.5.3"
+    "prettier": "^3.5.3",
+    "typescript": "^5.3.3"
   },
   "packageManager": "yarn@4.6.0"
 }
