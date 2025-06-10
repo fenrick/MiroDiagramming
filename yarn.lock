@@ -5734,10 +5734,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"elkjs@npm:^0.7.1":
-  version: 0.7.1
-  resolution: "elkjs@npm:0.7.1"
-  checksum: 10c0/f98aed1fcb3a35c9010d55cd97a21b215948af458dc9ebfd68d8753193d015eb46c7a0e7ea90f03e83d7748a5c85a38dcc5681d098491f2b1df92378ebedc464
+"elkjs@npm:^0.10.0":
+  version: 0.10.0
+  resolution: "elkjs@npm:0.10.0"
+  checksum: 10c0/f04662fe5a972ab1fb62f698cd53ba8d5806a27ec07fd056e79a2dc89c158e63210636ce7e5dac7913967670b5f2b7c2db091f23746fea11a5ca751327ee3abc
   languageName: node
   linkType: hard
 
@@ -9753,12 +9753,12 @@ __metadata:
   resolution: "miro-diagraming@workspace:."
   dependencies:
     "@mirohq/websdk-types": "npm:latest"
-    elkjs: "npm:^0.7.1"
+    elkjs: "npm:^0.10.0"
     jest: "npm:^30.0.0"
     mirotone: "npm:^5.3.2"
     preact: "npm:^10.3.2"
     preact-cli: "npm:^3.0.0"
-    preact-render-to-string: "npm:^5.1.4"
+    preact-render-to-string: "npm:^6.5.13"
     prettier: "npm:^3.5.3"
     sirv-cli: "npm:1.0.3"
     typescript: "npm:5.8.3"
@@ -11627,14 +11627,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"preact-render-to-string@npm:^5.1.4":
-  version: 5.2.6
-  resolution: "preact-render-to-string@npm:5.2.6"
-  dependencies:
-    pretty-format: "npm:^3.8.0"
+"preact-render-to-string@npm:^6.5.13":
+  version: 6.5.13
+  resolution: "preact-render-to-string@npm:6.5.13"
   peerDependencies:
     preact: ">=10"
-  checksum: 10c0/fb40f952f377900d87d3274e8ede1b59271347f7a3f41ae390aedeb088d162fe15f0a8040272404bd4477551cc2ec83b8a661e2fd3084702498b1543bb08dd11
+  checksum: 10c0/10c6c424af03066b832cb3f2c44372dd64180e9e2a6038cccb758e06337b13b3dd399bf26697afff07d7c5b253fd6bc194524d726ec36d930e36ea2defbb60f7
   languageName: node
   linkType: hard
 
@@ -11700,13 +11698,6 @@ __metadata:
     ansi-styles: "npm:^5.2.0"
     react-is: "npm:^18.3.1"
   checksum: 10c0/a57269aff3f4c4da44880f93d42b4fdf5405ef8d3b3c535969d4a6ed1914e70ac35fccb648dc980099cd3bef9e9d73a521e59ca073e6c9e704cfb8c6f49e51bb
-  languageName: node
-  linkType: hard
-
-"pretty-format@npm:^3.8.0":
-  version: 3.8.0
-  resolution: "pretty-format@npm:3.8.0"
-  checksum: 10c0/69f12937bfb7b2a537a7463b9f875a16322401f1e44d7702d643faa0d21991126c24c093217ef6da403b54c15942a834174fa1c016b72e2cb9edaae6bb3729b6
   languageName: node
   linkType: hard
 
