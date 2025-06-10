@@ -1,0 +1,12 @@
+{
+  "name": "miro-diagraming",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "prettier": "prettier '**/*.{js,jsx,ts,tsx,md,json,yml,yaml}' --write",
+    "prettier:check": "prettier '**/*.{js,jsx,ts,tsx,md,json,yml,yaml}' --check"
+  },
+  "devDependencies": {
+    "prettier": "^3.5.3"
+  }
+}
