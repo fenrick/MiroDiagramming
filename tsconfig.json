@@ -1,13 +1,28 @@
 {
   "compilerOptions": {
-    "module": "ES6",
-    "target": "ES6",
+    "module": "esnext",
+    "target": "esnext",
     "outDir": "dist",
     "rootDir": "src",
     "moduleResolution": "Node",
     "esModuleInterop": true,
-    "strict": true
+    "strict": true,
+    "lib": ["esnext", "dom"],
+    "jsx": "react-jsx",
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "noEmit": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "typeRoots": ["./node_modules/@types", "./node_modules/@mirohq"],
+    "allowJs": true,
+    "incremental": true,
+    "isolatedModules": true,
+    "jsxImportSource": "preact"
   },
-  "include": ["src/**/*"],
+  "include": ["src", "pages", "*.ts"],
   "exclude": ["node_modules"]
 }
