@@ -1,10 +1,10 @@
 # Miro Structured Graph Generator
 
-The **Miro Structured Graph Generator** plugin demonstrates how to import structured graph data in JSON format, lay it out with the [ELK](https://www.eclipse.org/elk/) layout engine, and render the result directly to a Miro board.  It is built with [Preact](https://preactjs.com/) and TypeScript and can serve as a starting point for your own Miro app development.
+The **Miro Structured Graph Generator** plugin demonstrates how to import structured graph data in JSON format, lay it out with the [ELK](https://www.eclipse.org/elk/) layout engine, and render the result directly to a Miro board. It is built with [Preact](https://preactjs.com/) and TypeScript and can serve as a starting point for your own Miro app development.
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org/) (version 16 or later is recommended)
+- [Node.js](https://nodejs.org/) (version 18 LTS is recommended)
 - [Yarn](https://yarnpkg.com/) (v4 is used in this project)
 
 ## Installation
@@ -48,4 +48,3 @@ yarn build
 ```
 
 The generated files will appear in the `dist` directory. Host these files on a static server and configure the URL in your Miro app settings to deploy the plugin.
-
