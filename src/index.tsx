@@ -1,46 +1,34 @@
 import '/assets/style.css';
+import { useEffect } from 'preact/hooks';
+import SidePanel from './ui/SidePanel';
+import { parseGraph } from './logic/inputParser';
+import { runLayout } from './logic/layoutEngine';
+import { renderNodes } from './logic/shapeRenderer';
+import { renderEdges } from './logic/edgeRenderer';
 
-import { Component } from 'preact';
+const sampleData = {
+  nodes: [
+    { id: 'n1', label: 'Node 1' },
+    { id: 'n2', label: 'Node 2' },
+  ],
+  edges: [{ id: 'e1', source: 'n1', target: 'n2', label: 'Edge 1' }],
+};
 
-async function addSticky() {
-  const stickyNote = await miro.board.createStickyNote({
-    content: 'Hello, World!',
-  });
-
-  await miro.board.viewport.zoomTo(stickyNote);
+async function main() {
+  const graph = parseGraph(sampleData);
+  const layout = await runLayout(graph);
+  const widgets = await renderNodes(layout.nodes);
+  await renderEdges(layout.edges, widgets);
 }
 
-export default class App extends Component {
-  componentDidMount() {
-    addSticky();
-  }
+export default function App() {
+  useEffect(() => {
+    main();
+  }, []);
 
-  render() {
-    return (
-      <div id="root">
-        <div className="grid container">
-          <div className="cs1 ce12">
-            <img src="/assets/congratulations.png" alt="congratulations" />
-          </div>
-          <div className="cs1 ce12">
-            <h1>Congratulations!</h1>
-            <p>You've just created your first Miro app!</p>
-            <p>
-              To explore more and build your own app, see the Miro Developer
-              Platform documentation.
-            </p>
-          </div>
-          <div className="cs1 ce12">
-            <a
-              className="button button-primary"
-              target="_blank"
-              href="https://developers.miro.com"
-            >
-              Read the documentation
-            </a>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  return (
+    <div id="root">
+      <SidePanel />
+    </div>
+  );
 }
