@@ -43,7 +43,8 @@ function handleFileInput(e: Event) {
   const input = e.target as HTMLInputElement;
   const file = input.files?.[0];
   if (!file) return;
-  file.text()
+  file
+    .text()
     .then((text) => {
       try {
         processJson(JSON.parse(text));
