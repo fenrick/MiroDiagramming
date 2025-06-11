@@ -6,7 +6,7 @@ import shapeTemplates from '../../templates/shapeTemplates.json';
 interface ShapeTemplate {
   shape: ShapeType;
   fillColor?: string;
-  textColor?: string;
+  color?: string;
   width?: number;
   height?: number;
 }
@@ -35,8 +35,8 @@ export async function renderNodes(nodes: PositionedNode[]): Promise<WidgetMap> {
       height: template.height ?? node.height,
       content: node.label || '',
       style:
-        template.fillColor || template.textColor
-          ? { fillColor: template.fillColor, textColor: template.textColor }
+        template.fillColor || template.color
+          ? { fillColor: template.fillColor, color: template.color }
           : undefined,
     });
     attachShapeMetadata(widget, { type: 'node', nodeId: node.id });
