@@ -25,6 +25,16 @@ describe('parseGraph', () => {
     expect(() => parseGraph(data)).toThrow('Edges must have source and target');
   });
 
+  test('throws when edge references unknown nodes', () => {
+    const data = {
+      nodes: [{ id: 'a' }],
+      edges: [{ id: 'e1', source: 'a', target: 'b' }],
+    };
+    expect(() => parseGraph(data)).toThrow(
+      'Edges must reference existing node ids'
+    );
+  });
+
   test('returns parsed graph for valid input', () => {
     const json = {
       nodes: [{ id: 'n1' }],

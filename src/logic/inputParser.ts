@@ -70,7 +70,8 @@ export function validateEdges(edges: unknown[]): GraphEdge[] {
  *
  * @param json - Raw data describing nodes and edges.
  * @returns Parsed graph structure.
- * @throws If the input does not contain valid `nodes` and `edges` arrays.
+ * @throws If the input does not contain valid `nodes` and `edges` arrays or if
+ * edges reference unknown node ids.
  */
 export function parseGraph(json: any): GraphInput {
   if (typeof json !== 'object' || json === null) {
@@ -82,8 +83,19 @@ export function parseGraph(json: any): GraphInput {
   if (!Array.isArray(nodes) || !Array.isArray(edges)) {
     throw new Error('Input must contain nodes[] and edges[]');
   }
+
+  const parsedNodes = validateNodes(nodes);
+  const parsedEdges = validateEdges(edges);
+
+  const idSet = new Set(parsedNodes.map((n) => n.id));
+  parsedEdges.forEach((e) => {
+    if (!idSet.has(e.source) || !idSet.has(e.target)) {
+      throw new Error('Edges must reference existing node ids');
+    }
+  });
+
   return {
-    nodes: validateNodes(nodes),
-    edges: validateEdges(edges),
+    nodes: parsedNodes,
+    edges: parsedEdges,
   };
 }
