@@ -28,6 +28,44 @@ export interface GraphInput {
 }
 
 /**
+ * Validate an array of raw nodes and return typed {@link GraphNode} objects.
+ *
+ * @param nodes - Unknown values representing nodes.
+ * @returns Validated nodes cast to {@link GraphNode[]}.
+ * @throws If any node is missing a string `id` or has an invalid `type`.
+ */
+export function validateNodes(nodes: unknown[]): GraphNode[] {
+  nodes.forEach((n) => {
+    if (typeof (n as any).id !== 'string') {
+      throw new Error('Node id must be a string');
+    }
+    if ((n as any).type !== undefined && typeof (n as any).type !== 'string') {
+      throw new Error('Node type must be a string if provided');
+    }
+  });
+  return nodes as GraphNode[];
+}
+
+/**
+ * Validate an array of raw edges and return typed {@link GraphEdge} objects.
+ *
+ * @param edges - Unknown values representing edges.
+ * @returns Validated edges cast to {@link GraphEdge[]}.
+ * @throws If any edge lacks string `source` or `target` identifiers.
+ */
+export function validateEdges(edges: unknown[]): GraphEdge[] {
+  edges.forEach((e) => {
+    if (
+      typeof (e as any).source !== 'string' ||
+      typeof (e as any).target !== 'string'
+    ) {
+      throw new Error('Edges must have source and target');
+    }
+  });
+  return edges as GraphEdge[];
+}
+
+/**
  * Validate and parse user provided JSON into a typed {@link GraphInput}.
  *
  * @param json - Raw data describing nodes and edges.
@@ -44,21 +82,8 @@ export function parseGraph(json: any): GraphInput {
   if (!Array.isArray(nodes) || !Array.isArray(edges)) {
     throw new Error('Input must contain nodes[] and edges[]');
   }
-  nodes.forEach((n) => {
-    if (typeof (n as any).id !== 'string') {
-      throw new Error('Node id must be a string');
-    }
-    if ((n as any).type !== undefined && typeof (n as any).type !== 'string') {
-      throw new Error('Node type must be a string if provided');
-    }
-  });
-  edges.forEach((e) => {
-    if (
-      typeof (e as any).source !== 'string' ||
-      typeof (e as any).target !== 'string'
-    ) {
-      throw new Error('Edges must have source and target');
-    }
-  });
-  return { nodes: nodes as GraphNode[], edges: edges as GraphEdge[] };
+  return {
+    nodes: validateNodes(nodes),
+    edges: validateEdges(edges),
+  };
 }
