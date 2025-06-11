@@ -45,7 +45,7 @@ describe('renderNodes', () => {
     await renderNodes([
       {
         id: 'n1',
-        type: 'BusinessService',
+        type: 'Business',
         x: 0,
         y: 0,
         width: 50,
@@ -55,7 +55,7 @@ describe('renderNodes', () => {
     ]);
     expect(createShape).toHaveBeenCalledWith(
       expect.objectContaining({
-        style: { fillColor: '#FFEECC', color: '#000000' }, // Verify template values
+        style: { fillColor: '#939598', color: '#000000' }, // Verify template values
       })
     );
   });
