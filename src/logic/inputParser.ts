@@ -72,7 +72,7 @@ export function validateEdges(edges: unknown[]): GraphEdge[] {
  * @returns Parsed graph structure.
  * @throws If the input does not contain valid `nodes` and `edges` arrays.
  */
-export function parseGraph(json: any): GraphInput {
+export function parseGraph(json: unknown): GraphInput {
   if (typeof json !== 'object' || json === null) {
     throw new Error('Input must be an object');
   }
@@ -83,7 +83,7 @@ export function parseGraph(json: any): GraphInput {
     throw new Error('Input must contain nodes[] and edges[]');
   }
   return {
-    nodes: validateNodes(nodes),
-    edges: validateEdges(edges),
+    nodes: validateNodes(nodes as unknown[]),
+    edges: validateEdges(edges as unknown[]),
   };
 }

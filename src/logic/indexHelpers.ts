@@ -14,7 +14,7 @@ export async function processJson(json: unknown): Promise<void> {
     if (typeof json !== 'object' || json === null) {
       throw new Error('Input must be an object');
     }
-    const graph = parseGraph(json as Record<string, unknown>);
+    const graph = parseGraph(json);
     const layout = await runLayout(graph);
     const widgets = await renderNodes(layout.nodes);
     await renderEdges(layout.edges, widgets);
