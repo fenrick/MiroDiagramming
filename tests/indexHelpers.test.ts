@@ -45,7 +45,10 @@ describe('processJson', () => {
 
 describe('handleFileInput', () => {
   test('reads file and triggers parsing', async () => {
-    const file = { text: jest.fn().mockResolvedValue('{"v":1}') };
+    const file = {
+      text: jest.fn().mockResolvedValue('{"v":1}'),
+      type: 'application/json',
+    };
     const evt = { target: { files: [file] } } as unknown as Event;
     jest.spyOn(parser, 'parseGraph').mockReturnValue({} as any);
     jest.spyOn(layout, 'runLayout').mockResolvedValue({ nodes: [], edges: [] });
@@ -64,6 +67,22 @@ describe('handleFileInput', () => {
     const parseSpy = jest.spyOn(parser, 'parseGraph');
     handleFileInput(evt);
     expect(parseSpy).not.toHaveBeenCalled();
+  });
+
+  test('errors on unsupported file type', async () => {
+    const file = {
+      text: jest.fn().mockResolvedValue('{"v":1}'),
+      type: 'text/plain',
+    };
+    const evt = { target: { files: [file] } } as unknown as Event;
+    const errorSpy = jest.spyOn(console, 'error');
+
+    await handleFileInput(evt);
+    expect(file.text).not.toHaveBeenCalled();
+    expect(errorSpy).toHaveBeenCalledWith(
+      'Unsupported file type',
+      'text/plain'
+    );
   });
 });
 
@@ -103,7 +122,10 @@ describe('setupDragAndDrop', () => {
     listeners.dragover(dragEvt);
     expect(dragEvt.preventDefault).toHaveBeenCalled();
 
-    const file = { text: jest.fn().mockResolvedValue('{"x":1}') };
+    const file = {
+      text: jest.fn().mockResolvedValue('{"x":1}'),
+      type: 'application/json',
+    };
     const dropEvt = {
       preventDefault: jest.fn(),
       dataTransfer: { files: [file] },
@@ -119,5 +141,34 @@ describe('setupDragAndDrop', () => {
       listeners.dragover
     );
     expect(removeEventListener).toHaveBeenCalledWith('drop', listeners.drop);
+  });
+
+  test('errors when dropped file has wrong type', async () => {
+    const listeners: Record<string, any> = {};
+    globalThis.window = {
+      addEventListener: jest.fn((t: string, l: any) => {
+        listeners[t] = l;
+      }),
+      removeEventListener: jest.fn(),
+    } as any;
+
+    const cleanup = setupDragAndDrop();
+
+    const errorSpy = jest.spyOn(console, 'error');
+    const file = { text: jest.fn(), type: 'text/plain' };
+    const dropEvt = {
+      preventDefault: jest.fn(),
+      dataTransfer: { files: [file] },
+    } as unknown as DragEvent;
+
+    await listeners.drop(dropEvt);
+    expect(dropEvt.preventDefault).toHaveBeenCalled();
+    expect(file.text).not.toHaveBeenCalled();
+    expect(errorSpy).toHaveBeenCalledWith(
+      'Unsupported file type',
+      'text/plain'
+    );
+
+    cleanup();
   });
 });

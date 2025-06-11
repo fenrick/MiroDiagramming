@@ -31,6 +31,10 @@ export function setupDragAndDrop() {
     e.preventDefault();
     const file = e.dataTransfer?.files?.[0];
     if (file) {
+      if (file.type !== 'application/json') {
+        console.error('Unsupported file type', file.type);
+        return;
+      }
       const text = await file.text();
       try {
         processJson(JSON.parse(text));
@@ -56,6 +60,10 @@ export function handleFileInput(e: Event) {
   const input = e.target as HTMLInputElement;
   const file = input.files?.[0];
   if (!file) return;
+  if (file.type !== 'application/json') {
+    console.error('Unsupported file type', file.type);
+    return;
+  }
   file
     .text()
     .then((text) => {
