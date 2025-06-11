@@ -38,10 +38,10 @@ export async function renderNodes(nodes: PositionedNode[]): Promise<WidgetMap> {
       width: template.width ?? node.width,
       height: template.height ?? node.height,
       content: node.label || '',
-      style:
-        template.fillColor || template.color
-          ? { fillColor: template.fillColor, color: template.color }
-          : undefined,
+      style: {
+        fillColor: template.fillColor || '#FFFFFF', // Default to white if undefined
+        color: template.color || '#000000', // Default to black if undefined
+      },
     });
     const group = await miro.board.group({ items: [widget] });
     attachShapeMetadata(widget, {
