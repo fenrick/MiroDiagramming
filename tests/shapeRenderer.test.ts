@@ -55,7 +55,7 @@ describe('renderNodes', () => {
     ]);
     expect(createShape).toHaveBeenCalledWith(
       expect.objectContaining({
-        style: { fillColor: '#FFEECC', color: '#000000' },
+        style: { fillColor: '#FFEECC', color: '#000000' }, // Verify template values
       })
     );
   });
