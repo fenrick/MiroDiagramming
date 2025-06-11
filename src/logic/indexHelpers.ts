@@ -9,7 +9,7 @@ import { renderEdges } from './edgeRenderer';
  * @param json - Raw object containing nodes and edges.
  * @returns Promise that resolves when rendering has completed.
  */
-export async function processJson(json: unknown) {
+export async function processJson(json: unknown): Promise<void> {
   try {
     if (typeof json !== 'object' || json === null) {
       throw new Error('Input must be an object');
@@ -28,7 +28,7 @@ export async function processJson(json: unknown) {
  *
  * @returns Function to remove the registered event listeners.
  */
-export function setupDragAndDrop() {
+export function setupDragAndDrop(): () => void {
   const onDrop = async (e: DragEvent) => {
     e.preventDefault();
     const file = e.dataTransfer?.files?.[0];
@@ -67,7 +67,7 @@ export function setupDragAndDrop() {
  *
  * @param e - Change event fired by the input element.
  */
-export function handleFileInput(e: Event) {
+export async function handleFileInput(e: Event): Promise<void> {
   const input = e.target as HTMLInputElement;
   const file = input.files?.[0];
   if (!file) return;
@@ -81,14 +81,14 @@ export function handleFileInput(e: Event) {
     return;
   }
 
-  file
-    .text()
-    .then((text) => {
-      try {
-        processJson(JSON.parse(text));
-      } catch (err) {
-        console.error('Invalid JSON', err);
-      }
-    })
-    .catch((err) => console.error('Unable to read file', err));
+  try {
+    const text = await file.text();
+    try {
+      await processJson(JSON.parse(text));
+    } catch (err) {
+      console.error('Invalid JSON', err);
+    }
+  } catch (err) {
+    console.error('Unable to read file', err);
+  }
 }
