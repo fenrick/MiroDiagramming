@@ -33,3 +33,4 @@ dist
 
 #!.yarn/cache
 .pnp.*
+tsconfig.tsbuildinfo
