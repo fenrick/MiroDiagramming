@@ -6,7 +6,9 @@ describe('parseGraph', () => {
   });
 
   test('throws when nodes or edges are missing', () => {
-    expect(() => parseGraph({ nodes: [] })).toThrow('Input must contain nodes[] and edges[]');
+    expect(() => parseGraph({ nodes: [] })).toThrow(
+      'Input must contain nodes[] and edges[]'
+    );
   });
 
   test('throws when node id is not string', () => {

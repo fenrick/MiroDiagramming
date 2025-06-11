@@ -8,7 +8,9 @@ describe('renderEdges', () => {
   beforeEach(() => {
     Object.assign(globalThis, { miro: { board: { createConnector } } });
     createConnector.mockReset();
-    jest.spyOn(metadata, 'attachConnectorMetadata').mockImplementation((c) => c);
+    jest
+      .spyOn(metadata, 'attachConnectorMetadata')
+      .mockImplementation((c) => c);
   });
 
   test('creates connectors between widgets', async () => {
