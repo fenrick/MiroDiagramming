@@ -4,7 +4,7 @@ export interface GraphNode {
 }
 
 export interface GraphEdge {
-  id?: string;
+  id: string;
   source: string;
   target: string;
   label?: string;
@@ -18,7 +18,7 @@ export interface GraphInput {
 /**
  * Validate and parse user provided JSON into a GraphInput structure.
  */
-export function parseGraph(json: unknown): GraphInput {
+export function parseGraph(json: any): GraphInput {
   if (typeof json !== 'object' || json === null) {
     throw new Error('Input must be an object');
   }

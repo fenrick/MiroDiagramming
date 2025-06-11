@@ -1,8 +1,9 @@
+import { Shape } from '@mirohq/websdk-types';
 import { PositionedNode } from './layoutEngine';
-import { attachMetadata } from './metadata';
+import { attachShapeMetadata } from './metadata';
 
 export interface WidgetMap {
-  [nodeId: string]: any;
+  [nodeId: string]: Shape;
 }
 
 /**
@@ -19,7 +20,7 @@ export async function renderNodes(nodes: PositionedNode[]): Promise<WidgetMap> {
       height: node.height,
       content: node.label || '',
     });
-    attachMetadata(widget, { type: 'node', nodeId: node.id });
+    attachShapeMetadata(widget, { type: 'node', nodeId: node.id });
     map[node.id] = widget;
   }
   return map;

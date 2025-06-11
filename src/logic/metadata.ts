@@ -1,11 +1,26 @@
+import { Shape, Connector, AppDataValue } from '@mirohq/websdk-types';
+
 /**
  * Attach structured graph metadata under the namespace 'app.miro.structgraph'.
  */
-export function attachMetadata(widget: any, data: unknown) {
-  if (!widget.metadata) {
-    widget.metadata = {} as any;
+export function attachShapeMetadata(shape: Shape, data: AppDataValue): Shape {
+  if (shape) {
+    shape.setMetadata('app.miro.structgraph', data);
+    shape.sync();
   }
-  widget.metadata['app.miro.structgraph'] = data;
-  widget.sync();
-  return widget;
+  return shape;
+}
+
+/**
+ * Attach structured graph metadata under the namespace 'app.miro.structgraph'.
+ */
+export function attachConnectorMetadata(
+  connector: Connector,
+  data: AppDataValue
+): Connector {
+  if (connector) {
+    connector.setMetadata('app.miro.structgraph', data);
+    connector.sync();
+  }
+  return connector;
 }

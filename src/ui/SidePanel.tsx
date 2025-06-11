@@ -7,8 +7,7 @@ export default function SidePanel() {
     async function handleSelection() {
       const selection = await miro.board.getSelection();
       if (selection.length > 0) {
-        const item = selection[0] as any;
-        setMetadata(item.metadata?.['app.miro.structgraph'] || null);
+        //setMetadata(selection[0].metadata?.['app.miro.structgraph'] || null);
       } else {
         setMetadata(null);
       }
