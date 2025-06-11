@@ -74,20 +74,22 @@ describe('handleFileInput', () => {
 
   test('errors on unsupported file type', async () => {
     const file = {
-      text: jest.fn().mockResolvedValue('{"nodes":[],"edges":[]}'),
-      type: 'application/json',
-      name: 'test.json',
-      lastModified: Date.now(),
-      size: 100,
+      text: jest.fn(),
+      type: 'text/plain',
+      name: 'test.txt',
     };
-    const evt = { target: { files: [file] } } as unknown as Event;
+    const evt = {
+      target: { files: [file] },
+    } as unknown as Event;
+
     const errorSpy = jest.spyOn(console, 'error');
 
     await handleFileInput(evt);
-    expect(file.text).not.toHaveBeenCalled();
+
+    expect(file.text).not.toHaveBeenCalled(); // Ensure text() is not called
     expect(errorSpy).toHaveBeenCalledWith(
-      'Unsupported file type',
-      'text/plain'
+      'Unsupported file type "test.txt". Supported file types: .json',
+      'test.txt'
     );
   });
 });
@@ -144,6 +146,7 @@ describe('setupDragAndDrop', () => {
     expect(file.text).toHaveBeenCalled();
     expect(parser.parseGraph).toHaveBeenCalledWith({ nodes: [], edges: [] });
 
+    cleanup();
     expect(removeEventListener).toHaveBeenCalledWith(
       'dragover',
       listeners.dragover
@@ -172,6 +175,9 @@ describe('setupDragAndDrop', () => {
     await listeners.drop(dropEvt);
     expect(dropEvt.preventDefault).toHaveBeenCalled();
     expect(file.text).not.toHaveBeenCalled();
-    expect(errorSpy).toHaveBeenCalledWith('Unsupported file type', 'test.txt');
+    expect(errorSpy).toHaveBeenCalledWith(
+      'Unsupported file type "test.txt". Supported file types: .json',
+      'test.txt'
+    );
   });
 });

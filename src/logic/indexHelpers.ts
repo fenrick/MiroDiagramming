@@ -35,10 +35,12 @@ export function setupDragAndDrop() {
     if (file) {
       const fileName = file.name.toLowerCase();
       if (!fileName.endsWith('.json')) {
-        console.error('Unsupported file type', fileName);
+        console.error(
+          `Unsupported file type "${fileName}". Supported file types: .json`,
+          fileName
+        );
         return;
       }
-
       const text = await file.text();
       try {
         processJson(JSON.parse(text));
@@ -48,8 +50,16 @@ export function setupDragAndDrop() {
     }
   };
 
-  window.addEventListener('dragover', (e) => e.preventDefault());
+  const onDragOver = (e: DragEvent) => e.preventDefault();
+
+  window.addEventListener('dragover', onDragOver);
   window.addEventListener('drop', onDrop);
+
+  // Return a cleanup function as expected by the test
+  return () => {
+    window.removeEventListener('dragover', onDragOver);
+    window.removeEventListener('drop', onDrop);
+  };
 }
 
 /**
@@ -64,7 +74,10 @@ export function handleFileInput(e: Event) {
 
   const fileName = file.name.toLowerCase();
   if (!fileName.endsWith('.json')) {
-    console.error('Unsupported file type', fileName);
+    console.error(
+      `Unsupported file type "${fileName}". Supported file types: .json`,
+      fileName
+    );
     return;
   }
 
