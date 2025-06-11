@@ -37,4 +37,26 @@ describe('renderNodes', () => {
     });
     expect(map).toEqual({ n1: shape1, n2: shape2 });
   });
+
+  test('applies template colors to style', async () => {
+    const widget = { id: 'w1' };
+    createShape.mockResolvedValueOnce(widget);
+    group.mockResolvedValueOnce({ id: 'g1' });
+    await renderNodes([
+      {
+        id: 'n1',
+        type: 'BusinessService',
+        x: 0,
+        y: 0,
+        width: 50,
+        height: 50,
+        label: 'A',
+      },
+    ]);
+    expect(createShape).toHaveBeenCalledWith(
+      expect.objectContaining({
+        style: { fillColor: '#FFEECC', color: '#000000' },
+      })
+    );
+  });
 });
