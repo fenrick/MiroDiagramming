@@ -16,7 +16,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '22'
 
       # Enable Corepack to use Yarn 4
       - run: corepack enable
