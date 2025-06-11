@@ -9,9 +9,12 @@ import { renderEdges } from './edgeRenderer';
  * @param json - Raw object containing nodes and edges.
  * @returns Promise that resolves when rendering has completed.
  */
-export async function processJson(json: any) {
+export async function processJson(json: unknown) {
   try {
-    const graph = parseGraph(json);
+    if (typeof json !== 'object' || json === null) {
+      throw new Error('Input must be an object');
+    }
+    const graph = parseGraph(json as Record<string, unknown>);
     const layout = await runLayout(graph);
     const widgets = await renderNodes(layout.nodes);
     await renderEdges(layout.edges, widgets);

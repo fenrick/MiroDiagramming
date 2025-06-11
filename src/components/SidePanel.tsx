@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'preact/hooks';
+import { StructuredGraphMetadata } from '../logic/metadata';
 
 /**
  * Small utility panel that displays metadata of the currently selected widget
@@ -6,7 +7,9 @@ import { useEffect, useState } from 'preact/hooks';
  * displayed JSON accordingly.
  */
 export default function SidePanel() {
-  const [metadata, setMetadata] = useState<any>(null);
+  const [metadata, setMetadata] = useState<StructuredGraphMetadata | null>(
+    null
+  );
 
   useEffect(() => {
     // Listen for selection updates and load structured graph metadata for the
