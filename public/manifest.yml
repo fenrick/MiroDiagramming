@@ -1,0 +1,13 @@
+appName: "Miro Structured Graph Generator"
+sdkVersion: SDK_V2
+sdkUri: http: //localhost:5173
+boardPicker:
+  allowedDomains: []
+redirectUris: []
+redirectUriForSdk: ''
+scopes:
+  - boards:read
+  - boards:write
+icons:
+  colored: ''
+  outline: ''
