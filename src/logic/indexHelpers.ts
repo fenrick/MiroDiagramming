@@ -3,6 +3,12 @@ import { runLayout } from './layoutEngine';
 import { renderNodes } from './shapeRenderer';
 import { renderEdges } from './edgeRenderer';
 
+/**
+ * Parse a JSON graph description and render it on the Miro board.
+ *
+ * @param json - Raw object containing nodes and edges.
+ * @returns Promise that resolves when rendering has completed.
+ */
 export async function processJson(json: any) {
   try {
     const graph = parseGraph(json);
@@ -14,6 +20,11 @@ export async function processJson(json: any) {
   }
 }
 
+/**
+ * Enable handling of file drops on the window.
+ *
+ * @returns Function to remove the registered event listeners.
+ */
 export function setupDragAndDrop() {
   const onDragOver = (e: DragEvent) => e.preventDefault();
   const onDrop = async (e: DragEvent) => {
@@ -36,6 +47,11 @@ export function setupDragAndDrop() {
   };
 }
 
+/**
+ * Process a file selected through an HTML file input element.
+ *
+ * @param e - Change event fired by the input element.
+ */
 export function handleFileInput(e: Event) {
   const input = e.target as HTMLInputElement;
   const file = input.files?.[0];
