@@ -48,3 +48,9 @@ yarn build
 ```
 
 The generated files will appear in the `dist` directory. Host these files on a static server and configure the URL in your Miro app settings to deploy the plugin.
+
+## Manifest
+
+The plugin manifest resides at `public/manifest.json`. Adjust the fields such as
+`name`, `permissions`, or `icon` when registering the application in your Miro
+developer dashboard.

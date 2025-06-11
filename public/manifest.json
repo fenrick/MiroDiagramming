@@ -1,0 +1,8 @@
+{
+  "name": "Miro Structured Graph Generator",
+  "description": "Import JSON graphs, lay them out with ELK and render the result on a Miro board.",
+  "icon": "../src/assets/welcome.png",
+  "permissions": ["boards:read", "boards:write"],
+  "sdkUri": "index.html",
+  "sdkVersion": "2"
+}
