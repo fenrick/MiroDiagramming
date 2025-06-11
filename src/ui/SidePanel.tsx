@@ -4,10 +4,14 @@ export default function SidePanel() {
   const [metadata, setMetadata] = useState<any>(null);
 
   useEffect(() => {
+    // Listen for selection updates and load structured graph metadata for the
+    // first selected item (if any).
     async function handleSelection() {
       const selection = await miro.board.getSelection();
       if (selection.length > 0) {
-        //setMetadata(selection[0].metadata?.['app.miro.structgraph'] || null);
+        const item = selection[0] as { metadata?: Record<string, unknown> };
+        const data = item.metadata?.['app.miro.structgraph'] ?? null;
+        setMetadata(data);
       } else {
         setMetadata(null);
       }
