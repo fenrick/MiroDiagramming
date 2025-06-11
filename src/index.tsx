@@ -6,28 +6,60 @@ import { runLayout } from './logic/layoutEngine';
 import { renderNodes } from './logic/shapeRenderer';
 import { renderEdges } from './logic/edgeRenderer';
 
-const sampleData = {
-  nodes: [
-    { id: 'n1', label: 'Node 1' },
-    { id: 'n2', label: 'Node 2' },
-  ],
-  edges: [{ id: 'e1', source: 'n1', target: 'n2', label: 'Edge 1' }],
-};
+async function processJson(json: any) {
+  try {
+    const graph = parseGraph(json);
+    const layout = await runLayout(graph);
+    const widgets = await renderNodes(layout.nodes);
+    await renderEdges(layout.edges, widgets);
+  } catch (err) {
+    console.error('Failed to process JSON', err);
+  }
+}
 
-async function main() {
-  const graph = parseGraph(sampleData);
-  const layout = await runLayout(graph);
-  const widgets = await renderNodes(layout.nodes);
-  await renderEdges(layout.edges, widgets);
+function setupDragAndDrop() {
+  const onDragOver = (e: DragEvent) => e.preventDefault();
+  const onDrop = async (e: DragEvent) => {
+    e.preventDefault();
+    const file = e.dataTransfer?.files?.[0];
+    if (file) {
+      const text = await file.text();
+      try {
+        processJson(JSON.parse(text));
+      } catch (err) {
+        console.error('Invalid JSON', err);
+      }
+    }
+  };
+  window.addEventListener('dragover', onDragOver);
+  window.addEventListener('drop', onDrop);
+  return () => {
+    window.removeEventListener('dragover', onDragOver);
+    window.removeEventListener('drop', onDrop);
+  };
+}
+
+function handleFileInput(e: Event) {
+  const input = e.target as HTMLInputElement;
+  const file = input.files?.[0];
+  if (!file) return;
+  file.text()
+    .then((text) => {
+      try {
+        processJson(JSON.parse(text));
+      } catch (err) {
+        console.error('Invalid JSON', err);
+      }
+    })
+    .catch((err) => console.error('Unable to read file', err));
 }
 
 export default function App() {
-  useEffect(() => {
-    main();
-  }, []);
+  useEffect(() => setupDragAndDrop(), []);
 
   return (
     <div id="root">
+      <input type="file" accept="application/json" onChange={handleFileInput} />
       <SidePanel />
     </div>
   );
