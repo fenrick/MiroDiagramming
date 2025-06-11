@@ -5,6 +5,10 @@ import { DeepPartial, ConnectorCaption } from '@mirohq/websdk-types';
 
 /**
  * Draw connectors between widgets using the layout information.
+ *
+ * @param edges - Routed edges returned by the layout engine.
+ * @param widgets - Mapping of node ids to widgets created on the board.
+ * @returns Array of created connector widgets.
  */
 export async function renderEdges(
   edges: RoutedEdge[],
