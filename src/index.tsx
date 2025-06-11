@@ -21,6 +21,13 @@ async function main() {
   await renderEdges(layout.edges, widgets);
 }
 
+/**
+ * Root application component. When mounted it loads a small sample graph,
+ * runs the layout engine and renders the result to the board while also
+ * displaying the side panel UI.
+ *
+ * @returns Preact element containing the plugin UI.
+ */
 export default function App() {
   useEffect(() => {
     main();

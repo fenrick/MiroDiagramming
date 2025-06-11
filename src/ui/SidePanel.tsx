@@ -1,5 +1,10 @@
 import { useEffect, useState } from 'preact/hooks';
 
+/**
+ * Small utility panel that displays metadata of the currently selected widget
+ * on the board. The panel listens for selection changes and updates the
+ * displayed JSON accordingly.
+ */
 export default function SidePanel() {
   const [metadata, setMetadata] = useState<any>(null);
 
