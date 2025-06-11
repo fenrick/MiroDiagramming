@@ -25,4 +25,27 @@ describe('renderEdges', () => {
     });
     expect(result).toEqual([conn]);
   });
+
+  test('skips connectors when widgets are missing', async () => {
+    const edges = [
+      { id: 'e1', source: 'n1', target: 'n3' },
+      { id: 'e2', source: 'n3', target: 'n1' },
+    ];
+    const result = await renderEdges(edges, widgets);
+    expect(createConnector).not.toHaveBeenCalled();
+    expect(result).toEqual([]);
+  });
+
+  test('sets caption when edge has label', async () => {
+    const conn = { id: 'c2' };
+    createConnector.mockResolvedValue(conn);
+    const edges = [{ id: 'e2', source: 'n1', target: 'n2', label: 'Hello' }];
+    const result = await renderEdges(edges, widgets);
+    expect(createConnector).toHaveBeenCalledWith({
+      start: { item: 'w1' },
+      end: { item: 'w2' },
+      captions: [{ position: 0.5, text: 'Hello' }],
+    });
+    expect(result).toEqual([conn]);
+  });
 });
