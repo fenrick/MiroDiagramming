@@ -1,6 +1,6 @@
 {
   "BusinessService": {
-    "shape": "rounded_rectangle",
+    "shape": "round_rectangle",
     "fillColor": "#FFEECC",
     "textColor": "#000000",
     "width": 150,

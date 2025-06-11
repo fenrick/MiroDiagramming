@@ -1,10 +1,10 @@
-import { Shape } from '@mirohq/websdk-types';
+import { Shape, ShapeType } from '@mirohq/websdk-types';
 import { PositionedNode } from './layoutEngine';
 import { attachShapeMetadata } from './metadata';
 import shapeTemplates from '../../templates/shapeTemplates.json';
 
 interface ShapeTemplate {
-  shape: string;
+  shape: ShapeType;
   fillColor?: string;
   textColor?: string;
   width?: number;
