@@ -1,9 +1,37 @@
 {
-  "BusinessService": {
+  "Strategy": {
     "shape": "round_rectangle",
-    "fillColor": "#FFEECC",
+    "fillColor": "#939598",
     "color": "#000000",
-    "width": 150,
-    "height": 80
+    "width": 180,
+    "height": 110
+  },
+  "Motivation": {
+    "shape": "round_rectangle",
+    "fillColor": "#939598",
+    "color": "#000000",
+    "width": 180,
+    "height": 110
+  },
+  "Business": {
+    "shape": "round_rectangle",
+    "fillColor": "#939598",
+    "color": "#000000",
+    "width": 180,
+    "height": 110
+  },
+  "Application": {
+    "shape": "round_rectangle",
+    "fillColor": "#939598",
+    "color": "#000000",
+    "width": 180,
+    "height": 110
+  },
+  "Technology": {
+    "shape": "round_rectangle",
+    "fillColor": "#939598",
+    "color": "#000000",
+    "width": 180,
+    "height": 110
   }
 }
