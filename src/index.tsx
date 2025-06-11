@@ -1,7 +1,7 @@
 import '/src/assets/style.css';
 import { useEffect } from 'preact/hooks';
 import SidePanel from './ui/SidePanel';
-import { processJson, setupDragAndDrop, handleFileInput } from './indexHelpers';
+import { setupDragAndDrop, handleFileInput } from './indexHelpers';
 
 /**
  * Root application component. When mounted it loads a small sample graph,
