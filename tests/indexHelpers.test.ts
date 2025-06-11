@@ -63,7 +63,7 @@ describe('handleFileInput', () => {
 
     expect(file.text).toHaveBeenCalled();
     expect(parser.parseGraph).toHaveBeenCalledWith({ nodes: [], edges: [] });
-    });
+  });
 
   test('ignores when no file is present', () => {
     const evt = { target: { files: [] } } as unknown as Event;
@@ -173,6 +173,5 @@ describe('setupDragAndDrop', () => {
     expect(dropEvt.preventDefault).toHaveBeenCalled();
     expect(file.text).not.toHaveBeenCalled();
     expect(errorSpy).toHaveBeenCalledWith('Unsupported file type', 'test.txt');
-    
   });
 });
