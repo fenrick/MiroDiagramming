@@ -43,7 +43,12 @@ export async function renderNodes(nodes: PositionedNode[]): Promise<WidgetMap> {
           ? { fillColor: template.fillColor, color: template.color }
           : undefined,
     });
-    attachShapeMetadata(widget, { type: 'node', nodeId: node.id });
+    const group = await miro.board.group({ items: [widget] });
+    attachShapeMetadata(widget, {
+      type: 'node',
+      nodeId: node.id,
+      groupId: group.id,
+    });
     map[node.id] = widget;
   }
   return map;
