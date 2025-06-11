@@ -4,7 +4,7 @@ The **Miro Structured Graph Generator** plugin demonstrates how to import struct
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org/) (version 18 LTS is recommended)
+- [Node.js](https://nodejs.org/) (version 22 LTS is recommended)
 - [Yarn](https://yarnpkg.com/) (v4 is used in this project)
 
 ## Installation

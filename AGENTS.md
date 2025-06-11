@@ -1,6 +1,6 @@
 # Contribution Guide
 
-This project uses **Node.js v18** and **Yarn v4**. The CI workflow enables Corepack and runs with these versions. Local development should match this setup.
+This project uses **Node.js v22** and **Yarn v4**. The CI workflow enables Corepack and runs with these versions. Local development should match this setup.
 
 ## Commands
 
