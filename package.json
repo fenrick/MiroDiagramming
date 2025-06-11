@@ -14,8 +14,8 @@
     "serve:prod": "sirv build -p 3000 --cors --single",
     "serve:dev": "vite watch -p 3000 --template src/index.html",
     "start": "vite watch -p 3000 --template src/index.html",
-    "prettier": "prettier '**/*.{js,jsx,ts,tsx,md,json,yml,yaml}' --write",
-    "prettier:check": "prettier '**/*.{js,jsx,ts,tsx,md,json,yml,yaml}' --check"
+    "prettier": "prettier '**/*.{js,jsx,ts,tsx,md,json,yml,yaml,html}' --write",
+    "prettier:check": "prettier '**/*.{js,jsx,ts,tsx,md,json,yml,yaml,html}' --check"
   },
   "dependencies": {
     "elkjs": "^0.10.0",
