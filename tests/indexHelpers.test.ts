@@ -2,7 +2,7 @@ import {
   processJson,
   handleFileInput,
   setupDragAndDrop,
-} from '../src/indexHelpers';
+} from '../src/logic/indexHelpers';
 import * as parser from '../src/logic/inputParser';
 import * as layout from '../src/logic/layoutEngine';
 import * as shapes from '../src/logic/shapeRenderer';

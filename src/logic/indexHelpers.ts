@@ -1,7 +1,7 @@
-import { parseGraph } from './logic/inputParser';
-import { runLayout } from './logic/layoutEngine';
-import { renderNodes } from './logic/shapeRenderer';
-import { renderEdges } from './logic/edgeRenderer';
+import { parseGraph } from './inputParser';
+import { runLayout } from './layoutEngine';
+import { renderNodes } from './shapeRenderer';
+import { renderEdges } from './edgeRenderer';
 
 export async function processJson(json: any) {
   try {

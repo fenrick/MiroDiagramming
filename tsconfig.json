@@ -23,6 +23,6 @@
     "isolatedModules": true,
     "jsxImportSource": "preact"
   },
-  "include": ["src", "pages", "*.ts"],
+  "include": ["src", "*.ts"],
   "exclude": ["node_modules"]
 }

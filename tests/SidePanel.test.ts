@@ -7,7 +7,7 @@ const { h } = require('preact');
 const { act } = require('preact/test-utils');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { render, screen } = require('@testing-library/preact');
-import SidePanel from '../src/ui/SidePanel';
+import SidePanel from '../src/components/SidePanel';
 
 test('updates view when selection metadata changes', async () => {
   const getSelection = jest
