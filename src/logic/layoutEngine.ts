@@ -1,23 +1,37 @@
 import ELK, { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled.js';
 import { GraphInput, GraphNode, GraphEdge } from './inputParser';
 
+/** Graph node with calculated position and size. */
 export interface PositionedNode extends GraphNode {
+  /** Horizontal coordinate of the node center. */
   x: number;
+  /** Vertical coordinate of the node center. */
   y: number;
+  /** Width assigned by the layout engine. */
   width: number;
+  /** Height assigned by the layout engine. */
   height: number;
 }
 
+/** Graph edge including optional routing instructions. */
 export interface RoutedEdge extends GraphEdge {
+  /** Sections representing connector polyline calculated by ELK. */
   sections?: {
+    /** Start coordinate of the connector section. */
     startPoint: { x: number; y: number };
+    /** End coordinate of the connector section. */
     endPoint: { x: number; y: number };
+    /** Optional intermediate bend points. */
     bendPoints?: { x: number; y: number }[];
   }[];
 }
 
 /**
- * Run ELK layout algorithm for fixed-size nodes.
+ * Run the ELK layout algorithm for fixed-size nodes and return positioned
+ * nodes and routed edges.
+ *
+ * @param graph - Parsed graph structure to be laid out.
+ * @returns Promise resolving to arrays of positioned nodes and routed edges.
  */
 export async function runLayout(graph: GraphInput): Promise<{
   nodes: PositionedNode[];
@@ -39,6 +53,7 @@ export async function runLayout(graph: GraphInput): Promise<{
     (n: ElkNode) => ({
       id: n.id,
       label: graph.nodes.find((nd) => nd.id === n.id)?.label,
+      type: graph.nodes.find((nd) => nd.id === n.id)?.type,
       x: n.x ?? 0,
       y: n.y ?? 0,
       width: n.width ?? 0,
