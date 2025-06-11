@@ -1,6 +1,7 @@
 export interface GraphNode {
   id: string;
   label?: string;
+  type?: string;
 }
 
 export interface GraphEdge {
@@ -31,6 +32,9 @@ export function parseGraph(json: any): GraphInput {
   nodes.forEach((n) => {
     if (typeof (n as any).id !== 'string') {
       throw new Error('Node id must be a string');
+    }
+    if ((n as any).type !== undefined && typeof (n as any).type !== 'string') {
+      throw new Error('Node type must be a string if provided');
     }
   });
   edges.forEach((e) => {

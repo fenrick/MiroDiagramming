@@ -1,6 +1,20 @@
-import { Shape } from '@mirohq/websdk-types';
+import { Shape, ShapeType } from '@mirohq/websdk-types';
 import { PositionedNode } from './layoutEngine';
 import { attachShapeMetadata } from './metadata';
+import shapeTemplates from '../../templates/shapeTemplates.json';
+
+interface ShapeTemplate {
+  shape: ShapeType;
+  fillColor?: string;
+  color?: string;
+  width?: number;
+  height?: number;
+}
+
+const templates: Record<string, ShapeTemplate> = shapeTemplates as Record<
+  string,
+  ShapeTemplate
+>;
 
 export interface WidgetMap {
   [nodeId: string]: Shape;
@@ -12,13 +26,18 @@ export interface WidgetMap {
 export async function renderNodes(nodes: PositionedNode[]): Promise<WidgetMap> {
   const map: WidgetMap = {};
   for (const node of nodes) {
+    const template = templates[node.type || ''] || { shape: 'rectangle' };
     const widget = await miro.board.createShape({
-      shape: 'rectangle',
+      shape: template.shape,
       x: node.x,
       y: node.y,
-      width: node.width,
-      height: node.height,
+      width: template.width ?? node.width,
+      height: template.height ?? node.height,
       content: node.label || '',
+      style:
+        template.fillColor || template.color
+          ? { fillColor: template.fillColor, color: template.color }
+          : undefined,
     });
     attachShapeMetadata(widget, { type: 'node', nodeId: node.id });
     map[node.id] = widget;
