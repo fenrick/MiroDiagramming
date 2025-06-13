@@ -1575,7 +1575,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/css-tree@npm:^3.3.3":
+"@eslint/css-tree@npm:^3.6.1":
   version: 3.6.1
   resolution: "@eslint/css-tree@npm:3.6.1"
   dependencies:
@@ -1585,14 +1585,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@eslint/css@npm:^0.8.1":
-  version: 0.8.1
-  resolution: "@eslint/css@npm:0.8.1"
+"@eslint/css@npm:^0.9.0":
+  version: 0.9.0
+  resolution: "@eslint/css@npm:0.9.0"
   dependencies:
     "@eslint/core": "npm:^0.14.0"
-    "@eslint/css-tree": "npm:^3.3.3"
+    "@eslint/css-tree": "npm:^3.6.1"
     "@eslint/plugin-kit": "npm:^0.3.1"
-  checksum: 10c0/3b3e03aefea93c5b979c305754c5079eefa9ca893ea32afb1f0d4f4c22c21a63825ecfed892391499e47f37cdd59be570aba410d296239ae27e5e679a04e5217
+  checksum: 10c0/7e21ae2da2a484e6f3b02443a2ae5be17c789055aa06336c4f0d03c8c39b2491674b15d14a90f39a4b42c3ab28e87670b11944d952cdb298864d3439c921a3f7
   languageName: node
   linkType: hard
 
@@ -6530,7 +6530,7 @@ __metadata:
     "@babel/core": "npm:^7.27.4"
     "@babel/preset-env": "npm:^7.27.2"
     "@babel/preset-typescript": "npm:^7.27.1"
-    "@eslint/css": "npm:^0.8.1"
+    "@eslint/css": "npm:^0.9.0"
     "@eslint/js": "npm:^9.28.0"
     "@eslint/json": "npm:^0.12.0"
     "@eslint/markdown": "npm:^6.5.0"
