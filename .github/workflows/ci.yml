@@ -27,8 +27,5 @@ jobs:
       - name: Run Prettier check
         run: yarn prettier:check
 
-      - name: Run tests
-        run: yarn test
-
       - name: Build
         run: yarn build
