@@ -1,37 +1,30 @@
-# Miro JSON Diagram App
+# Miro JSON Graph Diagram App
 
-This app shows how to import a graph from a JSON file and render it on a Miro board using automatic layout.
+This project demonstrates how to import a JSON description of a graph and build a diagram on a Miro board. The application uses the **Eclipse Layout Kernel (ELK)** to arrange nodes and edges automatically. Shapes are generated from templates and each element can carry metadata that controls its appearance and placement.
 
-# 👨🏻‍💻 App Demo
+## Uploading JSON Graphs
 
-![csv-to-mindmap-demo](https://github.com/miroapp/app-examples/assets/10428517/9bc2274f-11f0-4974-973d-eb97da2ddea1)
+1. Click the app icon on your Miro board.
+2. Select a `.json` file containing `nodes` and `edges`.
+3. After the file uploads the ELK layout engine positions the elements and the board is populated with the resulting shapes.
 
-# 📒 Table of Contents
+## ELK Layout
 
-- [Miro JSON Diagram App](#miro-json-diagram-app)
-- [👨🏻‍💻 App Demo](#-app-demo)
-- [📒 Table of Contents](#-table-of-contents)
-- [📹 Associated Video ](#-associated-video-)
-- [⚙️ Included Features ](#️-included-features-)
-- [🛠️ Tools and Technologies ](#️-tools-and-technologies-)
-- [✅ Prerequisites ](#-prerequisites-)
-- [📖 Associated Developer Tutorial ](#-associated-developer-tutorial-)
-- [🏃🏽‍♂️ Run the app locally ](#️-run-the-app-locally-)
-- [🗂️ Folder structure ](#️-folder-structure-)
-- [🫱🏻‍🫲🏽 Contributing ](#-contributing-)
-- [🪪 License ](#-license-)
+The layout step leverages the ELK algorithm to compute positions for all nodes. You can provide layout hints in each node's metadata to influence spacing or layering. The engine runs automatically when a graph is uploaded.
 
-# 📹 Associated Video <a name="video"></a>
+## Template‑Based Shapes
 
-Watch the video below for a demo, code walkthrough, and other ways to use use mind maps in Miro.
+Shape templates live in [`templates/shapeTemplates.json`](templates/shapeTemplates.json). Each template defines the shape type, colors, and size. When a node specifies a `template` value in its metadata the corresponding template is applied. Edit this file or add new entries to customize the available shapes.
 
-[![3 ways to use Mind Maps in Miro](https://img.youtube.com/vi/z-kGniEBgZQ/0.jpg)](https://youtu.be/z-kGniEBgZQ)
+## Metadata Usage
 
-Watch the short video (48 seconds) below to gain a quick overview of using the app and other ways to use mind maps in Miro.
+Nodes may include a `metadata` object with any additional information. Typical fields are:
 
-[![How to use Mind Maps in Miro](https://img.youtube.com/vi/thKZa4zGduc/0.jpg)](https://youtu.be/thKZa4zGduc)
+- `template`: name of the shape template to use.
+- `label`: text displayed on the shape.
+- `elk`: optional layout properties passed directly to the ELK engine.
 
-# ⚙️ Included Features <a name="features"></a>
+## Setup
 
 - [Miro Web SDK](https://developers.miro.com/docs/web-sdk-reference)
   - [miro.board.ui.openPanel()](https://developers.miro.com/docs/ui_boardui#openpanel)
@@ -61,7 +54,9 @@ See the Miro documentation for details on building diagramming apps.
 2. Run `npm start` to start developing. \
    Your URL should be similar to this example:
    ```
-   http://localhost:3000
+2. Start the development server:
+   ```bash
+   npm start
    ```
 3. Open the [app manifest editor](https://developers.miro.com/docs/manually-create-an-app#step-2-configure-your-app-in-miro) by clicking **Edit in Manifest**. \
    In the app manifest editor, configure the app as follows, and then click save:
@@ -108,4 +103,4 @@ If you want to contribute to this example, or any other Miro Open Source project
 
 # 🪪 License <a name="license"></a>
 
-[MIT License](https://github.com/miroapp/app-examples/blob/main/LICENSE).
+After starting the server open your Miro board and run the app to upload JSON graphs and automatically create diagrams.

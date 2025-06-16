@@ -1,37 +1,44 @@
 {
-  "Strategy": {
-    "shape": "round_rectangle",
-    "fillColor": "#939598",
-    "color": "#000000",
-    "width": 180,
-    "height": 110
-  },
-  "Motivation": {
-    "shape": "round_rectangle",
-    "fillColor": "#939598",
-    "color": "#000000",
-    "width": 180,
-    "height": 110
-  },
-  "Business": {
-    "shape": "round_rectangle",
-    "fillColor": "#939598",
-    "color": "#000000",
-    "width": 180,
-    "height": 110
-  },
-  "Application": {
-    "shape": "round_rectangle",
-    "fillColor": "#939598",
-    "color": "#000000",
-    "width": 180,
-    "height": 110
-  },
-  "Technology": {
-    "shape": "round_rectangle",
-    "fillColor": "#939598",
-    "color": "#000000",
-    "width": 180,
-    "height": 110
-  }
+  "elements": [
+    {
+      "name": "Strategy",
+      "shape": "round_rectangle",
+      "fillColor": "#939598",
+      "color": "#000000",
+      "width": 180,
+      "height": 110
+    },
+    {
+      "name": "Motivation",
+      "shape": "round_rectangle",
+      "fillColor": "#939598",
+      "color": "#000000",
+      "width": 180,
+      "height": 110
+    },
+    {
+      "name": "Business",
+      "shape": "round_rectangle",
+      "fillColor": "#939598",
+      "color": "#000000",
+      "width": 180,
+      "height": 110
+    },
+    {
+      "name": "Application",
+      "shape": "round_rectangle",
+      "fillColor": "#939598",
+      "color": "#000000",
+      "width": 180,
+      "height": 110
+    },
+    {
+      "name": "Technology",
+      "shape": "round_rectangle",
+      "fillColor": "#939598",
+      "color": "#000000",
+      "width": 180,
+      "height": 110
+    }
+  ]
 }
