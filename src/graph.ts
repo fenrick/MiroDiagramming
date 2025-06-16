@@ -1,4 +1,5 @@
 import { getTemplate, ShapeTemplate } from './templates';
+import { ShapeType, type Shape } from '@mirohq/websdk-types';
 
 export interface GraphNode {
   template: string;
@@ -48,53 +49,9 @@ async function renderNode(node: GraphNode, x: number, y: number) {
 export async function renderGraph(root: GraphNode, x: number, y: number) {
   const items = await renderNode(root, x, y);
   if (items.length > 1) {
-    await miro.board.createGroup({ items });
+    await miro.board.group({ items });
   }
- 
-import type { Shape } from '@mirohq/websdk-types';
-
-export async function getShapeByMetadata(
-  type: string,
-  label: string
-): Promise<Shape | undefined> {
-  const items = await miro.board.get({
-    type: 'shape',
-    metadata: { type, label },
-  });
-
-  return (items[0] as Shape) ?? undefined;
 }
-
-export interface CreateNodeOptions {
-  type: string;
-  label: string;
-  x?: number;
-  y?: number;
-  shape?: string;
-  fillColor?: string;
-  color?: string;
-  width?: number;
-  height?: number;
-}
-
-export async function createNode(options: CreateNodeOptions): Promise<Shape> {
-  const existing = await getShapeByMetadata(options.type, options.label);
-  if (existing) return existing;
-
-  const shape = await miro.board.createShape({
-    content: options.label,
-    x: options.x ?? 0,
-    y: options.y ?? 0,
-    shape: options.shape ?? 'round_rectangle',
-    fillColor: options.fillColor,
-    color: options.color,
-    width: options.width,
-    height: options.height,
-    metadata: { type: options.type, label: options.label },
-  });
-
-  return shape as Shape;
-
 export interface PositionedNode {
   id: string;
   widget: { id: string };
@@ -132,7 +89,7 @@ export async function createEdges(
     const connector = await miro.board.createConnector({
       start: { item: fromWidget.id },
       end: { item: toWidget.id },
-      style: edge.label ? { text: edge.label } : undefined,
+      captions: [{ content: edge.label }],
     });
     connector.setMetadata('app.miro.structgraph', {
       graphId: graph.id,
@@ -143,4 +100,52 @@ export async function createEdges(
     connectors.push(connector);
   }
   return connectors;
+}
+
+export async function getShapeByMetadata(
+  type: string,
+  label: string
+): Promise<Shape | undefined> {
+  const items = await miro.board.get({
+    type: 'shape',
+    metadata: { type, label },
+  });
+
+  return (items[0] as Shape) ?? undefined;
+}
+
+export interface CreateNodeOptions {
+  type: string;
+  label: string;
+  x?: number;
+  y?: number;
+  shape?: ShapeType;
+  fillColor?: string;
+  color?: string;
+  width?: number;
+  height?: number;
+}
+
+export async function createNode(options: CreateNodeOptions): Promise<Shape> {
+  const existing = await getShapeByMetadata(options.type, options.label);
+  if (existing) return existing;
+
+  const shape = await miro.board.createShape({
+    content: options.label,
+    x: options.x ?? 0,
+    y: options.y ?? 0,
+    shape: options.shape ?? ShapeType.RoundRectangle,
+    style: {
+      fillColor: options.fillColor ?? '#ffffff',
+      color: options.color ?? '#000000',
+    },
+    width: options.width,
+    height: options.height,
+  });
+
+  shape.setMetadata('nodeType', options.type);
+  shape.setMetadata('nodeLabel', options.label);
+  await shape.sync();
+
+  return shape as Shape;
 }
