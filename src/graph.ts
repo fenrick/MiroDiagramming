@@ -38,8 +38,19 @@ const readFile = (file: File): Promise<string> =>
   });
 
 export async function loadGraph(file: File): Promise<GraphData> {
+  if (!file || typeof file !== 'object' || typeof file.name !== 'string') {
+    throw new Error('Invalid file');
+  }
   const text = await readFile(file);
-  return JSON.parse(text) as GraphData;
+  const data = JSON.parse(text) as unknown;
+  if (
+    !data ||
+    !Array.isArray((data as any).nodes) ||
+    !Array.isArray((data as any).edges)
+  ) {
+    throw new Error('Invalid graph data');
+  }
+  return data as GraphData;
 }
 
 /** Search the board for an existing widget with matching metadata. */
@@ -47,6 +58,12 @@ export async function findNode(
   type: string,
   label: string
 ): Promise<Item | undefined> {
+  if (typeof type !== 'string' || typeof label !== 'string') {
+    throw new Error('Invalid search parameters');
+  }
+  if (!(globalThis as any).miro?.board) {
+    throw new Error('Miro board not initialized');
+  }
   const shapes = await miro.board.get({ type: 'shape' });
   for (const item of shapes as BaseItem[]) {
     const meta = (await item.getMetadata('app.miro.structgraph')) as unknown as
@@ -85,6 +102,12 @@ export async function createNode(
   node: NodeData,
   pos: PositionedNode
 ): Promise<BaseItem | Group> {
+  if (!node || typeof node !== 'object') {
+    throw new Error('Invalid node');
+  }
+  if (!pos || typeof pos.x !== 'number' || typeof pos.y !== 'number') {
+    throw new Error('Invalid position');
+  }
   const existing = await findNode(node.type, node.label);
   if (existing) {
     return existing as BaseItem | Group;
@@ -103,7 +126,6 @@ export async function createNode(
         type: node.type,
         label: node.label,
       });
-      await item.sync();
     }
     return widget as Group;
   }
@@ -112,7 +134,6 @@ export async function createNode(
     type: node.type,
     label: node.label,
   });
-  await (widget as BaseItem).sync();
   return widget as BaseItem;
 }
 
@@ -121,6 +142,12 @@ export async function createEdges(
   edges: EdgeData[],
   nodeMap: Record<string, BaseItem | Group>
 ): Promise<Connector[]> {
+  if (!Array.isArray(edges)) {
+    throw new Error('Invalid edges');
+  }
+  if (!nodeMap || typeof nodeMap !== 'object') {
+    throw new Error('Invalid node map');
+  }
   const connectors: Connector[] = [];
   for (const edge of edges) {
     const from = nodeMap[edge.from];
@@ -135,7 +162,6 @@ export async function createEdges(
       from: edge.from,
       to: edge.to,
     });
-    await connector.sync();
     connectors.push(connector);
   }
   return connectors;
