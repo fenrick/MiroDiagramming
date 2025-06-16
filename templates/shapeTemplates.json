@@ -1,44 +1,24 @@
 {
-  "elements": [
-    {
-      "name": "Strategy",
-      "shape": "round_rectangle",
-      "fillColor": "#939598",
-      "color": "#000000",
-      "width": 180,
-      "height": 110
-    },
-    {
-      "name": "Motivation",
-      "shape": "round_rectangle",
-      "fillColor": "#939598",
-      "color": "#000000",
-      "width": 180,
-      "height": 110
-    },
-    {
-      "name": "Business",
-      "shape": "round_rectangle",
-      "fillColor": "#939598",
-      "color": "#000000",
-      "width": 180,
-      "height": 110
-    },
-    {
-      "name": "Application",
-      "shape": "round_rectangle",
-      "fillColor": "#939598",
-      "color": "#000000",
-      "width": 180,
-      "height": 110
-    },
-    {
-      "name": "Technology",
-      "shape": "round_rectangle",
-      "fillColor": "#939598",
-      "color": "#000000",
-      "width": 180,
-      "height": 110
-    }
-  ]
+  "Role": {
+    "elements": [
+      {
+        "shape": "round_rectangle",
+        "width": 160,
+        "height": 60,
+        "fill": "#FDE9D9"
+      },
+      { "text": "{{label}}", "position": "center" }
+    ]
+  },
+  "BusinessService": {
+    "elements": [
+      {
+        "shape": "round_rectangle",
+        "width": 160,
+        "height": 60,
+        "fill": "#D9EAFD"
+      },
+      { "text": "{{label}}", "position": "center" }
+    ]
+  }
 }

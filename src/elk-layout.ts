@@ -26,8 +26,8 @@ export const layoutGraph = async (
     })),
     edges: data.edges.map((e, idx) => ({
       id: `e${idx}`,
-      sources: [e.source],
-      targets: [e.target],
+      sources: [e.from],
+      targets: [e.to],
     })),
   };
 

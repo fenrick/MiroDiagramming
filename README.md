@@ -24,11 +24,24 @@ Nodes may include a `metadata` object with any additional information. Typical f
 - `label`: text displayed on the shape.
 - `elk`: optional layout properties passed directly to the ELK engine.
 
+## Sample Graph
+
+A small example is provided in [sample-graph.json](sample-graph.json):
+
+```json
+{
+  "nodes": [
+    { "id": "n1", "label": "Customer", "type": "Role" },
+    { "id": "n2", "label": "Service", "type": "BusinessService" }
+  ],
+  "edges": [{ "from": "n1", "to": "n2", "label": "uses" }]
+}
+```
+
 ## Setup
 
 - [Miro Web SDK](https://developers.miro.com/docs/web-sdk-reference)
   - [miro.board.ui.openPanel()](https://developers.miro.com/docs/ui_boardui#openpanel)
-  - [miro.board.experimental.createMindmapNode()](https://developers.miro.com/docs/experimental_experimental#createmindmapnode)
 
 ## 🛠️ Tools and Technologies <a name="tools"></a>
 
@@ -86,6 +99,17 @@ https://github.com/miroapp/app-examples/assets/10428517/1e6862de-8617-46ef-b265-
 7. Search for your app `JSON Diagram` or whatever you chose to name it. Click on your app to use it, as shown in the video below. <b>In the video we search for a different app, but the process is the same regardless of the app.</b>
 
 https://github.com/horeaporutiu/app-examples-template/assets/10428517/b23d9c4c-e785-43f9-a72e-fa5d82c7b019
+
+## Testing
+
+To validate the codebase run:
+
+```bash
+npm run typecheck
+npm test
+```
+
+These commands perform TypeScript type checking and execute a small Vitest suite.
 
 ## 🗂️ Folder structure <a name="folder"></a>
 
