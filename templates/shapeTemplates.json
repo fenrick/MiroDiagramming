@@ -5,9 +5,9 @@
         "shape": "round_rectangle",
         "width": 160,
         "height": 60,
-        "fill": "#FDE9D9"
-      },
-      { "text": "{{label}}", "position": "center" }
+        "fill": "#FDE9D9",
+        "text": "{{label}}"
+      }
     ]
   },
   "BusinessService": {
@@ -16,9 +16,9 @@
         "shape": "round_rectangle",
         "width": 160,
         "height": 60,
-        "fill": "#D9EAFD"
-      },
-      { "text": "{{label}}", "position": "center" }
+        "fill": "#D9EAFD",
+        "text": "{{label}}"
+      }
     ]
   }
 }

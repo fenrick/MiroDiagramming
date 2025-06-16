@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { useDropzone } from 'react-dropzone';
 import { loadGraph, createNode, createEdges } from './graph';
 import { layoutGraph } from './elk-layout';
+import type { BaseItem, Group } from '@mirohq/websdk-types';
 
 // UI
 const dropzoneStyles = {
@@ -24,7 +25,7 @@ const App: React.FC = () => {
       'application/json': ['.json'],
     },
     maxFiles: 1,
-    onDrop: (droppedFiles) => {
+    onDrop: (droppedFiles: File[]) => {
       setFiles([droppedFiles[0]]);
     },
   });
@@ -35,7 +36,7 @@ const App: React.FC = () => {
         const graph = await loadGraph(file);
         const positions = await layoutGraph(graph);
 
-        const nodeMap: Record<string, any> = {};
+        const nodeMap: Record<string, BaseItem | Group> = {};
         for (const node of graph.nodes) {
           const pos = positions[node.id];
           const widget = await createNode(node, pos);

@@ -1,4 +1,5 @@
 import templatesJson from '../templates/shapeTemplates.json';
+import type { Group, GroupableItem, ShapeType } from '@mirohq/websdk-types';
 
 export interface TemplateElement {
   shape?: string;
@@ -29,21 +30,22 @@ export async function createFromTemplate(
   label: string,
   x: number,
   y: number
-): Promise<any> {
+): Promise<GroupableItem | Group> {
   const template = getTemplate(name);
   if (!template) {
     throw new Error(`Template '${name}' not found`);
   }
 
-  const created: any[] = [];
+  const created: GroupableItem[] = [];
   for (const el of template.elements) {
     if (el.shape) {
       const shape = await miro.board.createShape({
-        shape: el.shape as any,
+        shape: el.shape as ShapeType,
         x,
         y,
         width: el.width,
         height: el.height,
+        content: (el.text ?? '{{label}}').replace('{{label}}', label),
         style: { fillColor: el.fill },
       });
       created.push(shape);

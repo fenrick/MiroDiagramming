@@ -1,4 +1,5 @@
 import { createFromTemplate } from './templates';
+import type { BaseItem, Group, Connector, Item } from '@mirohq/websdk-types';
 
 export interface NodeData {
   id: string;
@@ -15,6 +16,11 @@ export interface EdgeData {
 export interface GraphData {
   nodes: NodeData[];
   edges: EdgeData[];
+}
+
+interface NodeMetadata {
+  type: string;
+  label: string;
 }
 
 const readFile = (file: File): Promise<string> =>
@@ -40,11 +46,31 @@ export async function loadGraph(file: File): Promise<GraphData> {
 export async function findNode(
   type: string,
   label: string
-): Promise<any | undefined> {
-  const items = await miro.board.get({
-    metadata: { 'app.miro.structgraph': { type, label } },
-  } as any);
-  return items[0];
+): Promise<Item | undefined> {
+  const shapes = await miro.board.get({ type: 'shape' });
+  for (const item of shapes as BaseItem[]) {
+    const meta = (await item.getMetadata('app.miro.structgraph')) as unknown as
+      | NodeMetadata
+      | undefined;
+    if (meta?.type === type && meta.label === label) {
+      return item as Item;
+    }
+  }
+
+  const groups = (await miro.board.get({ type: 'group' })) as Group[];
+  for (const group of groups) {
+    const items = await group.getItems();
+    for (const item of items) {
+      const meta = (await item.getMetadata(
+        'app.miro.structgraph'
+      )) as unknown as NodeMetadata | undefined;
+      if (meta?.type === type && meta.label === label) {
+        return group as Item;
+      }
+    }
+  }
+
+  return undefined;
 }
 
 export interface PositionedNode {
@@ -58,26 +84,44 @@ export interface PositionedNode {
 export async function createNode(
   node: NodeData,
   pos: PositionedNode
-): Promise<any> {
+): Promise<BaseItem | Group> {
   const existing = await findNode(node.type, node.label);
   if (existing) {
-    return existing;
+    return existing as BaseItem | Group;
   }
-  const widget = await createFromTemplate(node.type, node.label, pos.x, pos.y);
-  widget.setMetadata('app.miro.structgraph', {
+  const widget = (await createFromTemplate(
+    node.type,
+    node.label,
+    pos.x,
+    pos.y
+  )) as BaseItem | Group;
+
+  if ((widget as Group).type === 'group') {
+    const items = await (widget as Group).getItems();
+    for (const item of items) {
+      await item.setMetadata('app.miro.structgraph', {
+        type: node.type,
+        label: node.label,
+      });
+      await item.sync();
+    }
+    return widget as Group;
+  }
+
+  await (widget as BaseItem).setMetadata('app.miro.structgraph', {
     type: node.type,
     label: node.label,
   });
-  await widget.sync();
-  return widget;
+  await (widget as BaseItem).sync();
+  return widget as BaseItem;
 }
 
 /** Create connectors with labels and metadata. */
 export async function createEdges(
   edges: EdgeData[],
-  nodeMap: Record<string, any>
-): Promise<any[]> {
-  const connectors: any[] = [];
+  nodeMap: Record<string, BaseItem | Group>
+): Promise<Connector[]> {
+  const connectors: Connector[] = [];
   for (const edge of edges) {
     const from = nodeMap[edge.from];
     const to = nodeMap[edge.to];
