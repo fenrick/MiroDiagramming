@@ -1,9 +1,7 @@
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { useDropzone } from 'react-dropzone';
-import { loadGraph, createNode, createEdges } from './graph';
-import { layoutGraph } from './elk-layout';
-import type { BaseItem, Group } from '@mirohq/websdk-types';
+import { GraphProcessor } from './GraphProcessor';
 
 // UI
 const dropzoneStyles = {
@@ -30,25 +28,16 @@ const App: React.FC = () => {
     },
   });
 
+  const processor = React.useMemo(() => new GraphProcessor(), []);
+
   const handleCreate = async () => {
     for (const file of files) {
       try {
-        const graph = await loadGraph(file);
-        const positions = await layoutGraph(graph);
-
-        const nodeMap: Record<string, BaseItem | Group> = {};
-        for (const node of graph.nodes) {
-          const pos = positions[node.id];
-          const widget = await createNode(node, pos);
-          nodeMap[node.id] = widget;
-        }
-
-        await createEdges(graph.edges, nodeMap);
+        await processor.processFile(file);
       } catch (e) {
         console.error(e);
       }
     }
-
     setFiles([]);
   };
 

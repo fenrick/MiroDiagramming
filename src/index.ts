@@ -1,9 +1,5 @@
-async function init() {
-  miro.board.ui.on('icon:click', async () => {
-    await miro.board.ui.openPanel({ url: 'app.html' });
-  });
-}
+import { DiagramApp } from './DiagramApp';
 
-init();
+DiagramApp.getInstance().init();
 
 export {};
