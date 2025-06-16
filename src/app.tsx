@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { useDropzone } from 'react-dropzone';
-import { loadGraph } from './graph';
+import { loadGraph, createNode, createEdges } from './graph';
 import { layoutGraph } from './elk-layout';
 
 // UI
@@ -35,29 +35,14 @@ const App: React.FC = () => {
         const graph = await loadGraph(file);
         const positions = await layoutGraph(graph);
 
-        const created: Record<string, string> = {};
+        const nodeMap: Record<string, any> = {};
         for (const node of graph.nodes) {
           const pos = positions[node.id];
-          const shape = await miro.board.createShape({
-            content: node.label,
-            x: pos.x,
-            y: pos.y,
-            width: pos.width,
-            height: pos.height,
-          });
-          created[node.id] = shape.id;
+          const widget = await createNode(node, pos);
+          nodeMap[node.id] = widget;
         }
 
-        for (const edge of graph.edges) {
-          const start = created[edge.source];
-          const end = created[edge.target];
-          if (start && end) {
-            await miro.board.createConnector({
-              start: { item: start },
-              end: { item: end },
-            });
-          }
-        }
+        await createEdges(graph.edges, nodeMap);
       } catch (e) {
         console.error(e);
       }

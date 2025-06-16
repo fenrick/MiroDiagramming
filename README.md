@@ -28,7 +28,6 @@ Nodes may include a `metadata` object with any additional information. Typical f
 
 - [Miro Web SDK](https://developers.miro.com/docs/web-sdk-reference)
   - [miro.board.ui.openPanel()](https://developers.miro.com/docs/ui_boardui#openpanel)
-  - [miro.board.experimental.createMindmapNode()](https://developers.miro.com/docs/experimental_experimental#createmindmapnode)
 
 ## 🛠️ Tools and Technologies <a name="tools"></a>
 
