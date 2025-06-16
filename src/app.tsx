@@ -1,27 +1,27 @@
-import * as React from "react";
-import { createRoot } from "react-dom/client";
-import { useDropzone } from "react-dropzone";
-import { parseCsv } from "./csv-utils";
-import { createMindmap } from "./mindmap";
+import * as React from 'react';
+import { createRoot } from 'react-dom/client';
+import { useDropzone } from 'react-dropzone';
+import { parseCsv } from './csv-utils';
+import { createMindmap } from './mindmap';
 
 // UI
 const dropzoneStyles = {
-  display: "flex",
-  height: "100%",
-  flexDirection: "column",
-  justifyContent: "center",
-  textAlign: "center",
-  border: "3px dashed rgba(41, 128, 185, 0.5)",
-  color: "rgba(41, 128, 185, 1.0)",
-  fontWeight: "bold",
-  fontSize: "1.2em",
+  display: 'flex',
+  height: '100%',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  textAlign: 'center',
+  border: '3px dashed rgba(41, 128, 185, 0.5)',
+  color: 'rgba(41, 128, 185, 1.0)',
+  fontWeight: 'bold',
+  fontSize: '1.2em',
 } as const;
 
 const App: React.FC = () => {
   const [files, setFiles] = React.useState<File[]>([]);
   const dropzone = useDropzone({
     accept: {
-      "text/csv": [".csv"],
+      'text/csv': ['.csv'],
     },
     maxFiles: 1,
     onDrop: (droppedFiles) => {
@@ -45,13 +45,13 @@ const App: React.FC = () => {
   };
 
   const style = React.useMemo(() => {
-    let borderColor = "rgba(41, 128, 185, 0.5)";
+    let borderColor = 'rgba(41, 128, 185, 0.5)';
     if (dropzone.isDragAccept) {
-      borderColor = "rgba(41, 128, 185, 1.0)";
+      borderColor = 'rgba(41, 128, 185, 1.0)';
     }
 
     if (dropzone.isDragReject) {
-      borderColor = "rgba(192, 57, 43,1.0)";
+      borderColor = 'rgba(192, 57, 43,1.0)';
     }
     return {
       ...dropzoneStyles,
@@ -100,6 +100,6 @@ const App: React.FC = () => {
   );
 };
 
-const container = document.getElementById("root");
+const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(<App />);
