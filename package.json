@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "d3-dsv": "^3.0.1",
+    "elkjs": "^0.10.0",
     "mirotone": "4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

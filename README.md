@@ -1,6 +1,6 @@
-# Miro CSV to Mind Map App
+# Miro JSON Diagram App
 
-This app shows how to import data from a CSV file and create a mind map on a Miro board.
+This app shows how to import a graph from a JSON file and render it on a Miro board using automatic layout.
 
 # 👨🏻‍💻 App Demo
 
@@ -8,7 +8,7 @@ This app shows how to import data from a CSV file and create a mind map on a Mir
 
 # 📒 Table of Contents
 
-- [Miro CSV to Mind Map App](#miro-csv-to-mind-map-app)
+- [Miro JSON Diagram App](#miro-json-diagram-app)
 - [👨🏻‍💻 App Demo](#-app-demo)
 - [📒 Table of Contents](#-table-of-contents)
 - [📹 Associated Video ](#-associated-video-)
@@ -53,8 +53,7 @@ Watch the short video (48 seconds) below to gain a quick overview of using the a
 
 # 📖 Associated Developer Tutorial <a name="tutorial"></a>
 
-> To view a more in depth developer tutorial
-> of this app (including code explanations) see the [Create mind map from CSV tutorial](https://developers.miro.com/docs/create-mind-map-from-csv) on Miro's Developer documentation.
+See the Miro documentation for details on building diagramming apps.
 
 # 🏃🏽‍♂️ Run the app locally <a name="run"></a>
 
@@ -69,7 +68,7 @@ Watch the short video (48 seconds) below to gain a quick overview of using the a
 
 ```yaml
 # See https://developers.miro.com/docs/app-manifest on how to use this
-appName: CSV to Mindmap
+appName: JSON Diagram
 sdkVersion: SDK_V2
 sdkUri: http://localhost:3000
 scopes:
@@ -85,7 +84,7 @@ https://github.com/miroapp/app-examples/assets/10428517/1e6862de-8617-46ef-b265-
 
 5. Go to your developer team, and open your boards.
 6. Click on the plus icon from the bottom section of your left sidebar. If you hover over it, it will say `More apps`.
-7. Search for your app `CSV to Mind Map` or whatever you chose to name it. Click on your app to use it, as shown in the video below. <b>In the video we search for a different app, but the process is the same regardless of the app.</b>
+7. Search for your app `JSON Diagram` or whatever you chose to name it. Click on your app to use it, as shown in the video below. <b>In the video we search for a different app, but the process is the same regardless of the app.</b>
 
 https://github.com/horeaporutiu/app-examples-template/assets/10428517/b23d9c4c-e785-43f9-a72e-fa5d82c7b019
 
@@ -94,12 +93,11 @@ https://github.com/horeaporutiu/app-examples-template/assets/10428517/b23d9c4c-e
 ```
 .
 ├── src
-|  ├── example-data // Example CSV data
 │  ├── assets
 │  │  └── style.css
 │  ├── app.tsx     // The code for the app lives here
 │  ├── index.ts    // The code for the app entry point lives here
-│  └── utils.ts    // Utilities for loading CSV files
+│  └── graph.ts    // JSON graph loading helpers
 ├── app.html       // The app itself. It's loaded on the board inside the 'appContainer'
 └── index.html     // The app entry point. This is what you specify in the 'App URL' box in the Miro app settings
 ```

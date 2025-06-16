@@ -1,27 +1,27 @@
-import * as React from "react";
-import { createRoot } from "react-dom/client";
-import { useDropzone } from "react-dropzone";
-import { parseCsv } from "./csv-utils";
-import { createMindmap } from "./mindmap";
+import * as React from 'react';
+import { createRoot } from 'react-dom/client';
+import { useDropzone } from 'react-dropzone';
+import { loadGraph } from './graph';
+import { layoutGraph } from './elk-layout';
 
 // UI
 const dropzoneStyles = {
-  display: "flex",
-  height: "100%",
-  flexDirection: "column",
-  justifyContent: "center",
-  textAlign: "center",
-  border: "3px dashed rgba(41, 128, 185, 0.5)",
-  color: "rgba(41, 128, 185, 1.0)",
-  fontWeight: "bold",
-  fontSize: "1.2em",
+  display: 'flex',
+  height: '100%',
+  flexDirection: 'column',
+  justifyContent: 'center',
+  textAlign: 'center',
+  border: '3px dashed rgba(41, 128, 185, 0.5)',
+  color: 'rgba(41, 128, 185, 1.0)',
+  fontWeight: 'bold',
+  fontSize: '1.2em',
 } as const;
 
 const App: React.FC = () => {
   const [files, setFiles] = React.useState<File[]>([]);
   const dropzone = useDropzone({
     accept: {
-      "text/csv": [".csv"],
+      'application/json': ['.json'],
     },
     maxFiles: 1,
     onDrop: (droppedFiles) => {
@@ -30,13 +30,35 @@ const App: React.FC = () => {
   });
 
   const handleCreate = async () => {
-    const failed = [];
     for (const file of files) {
       try {
-        const contents = await parseCsv(file);
-        await createMindmap(contents);
+        const graph = await loadGraph(file);
+        const positions = await layoutGraph(graph);
+
+        const created: Record<string, string> = {};
+        for (const node of graph.nodes) {
+          const pos = positions[node.id];
+          const shape = await miro.board.createShape({
+            content: node.label,
+            x: pos.x,
+            y: pos.y,
+            width: pos.width,
+            height: pos.height,
+          });
+          created[node.id] = shape.id;
+        }
+
+        for (const edge of graph.edges) {
+          const start = created[edge.source];
+          const end = created[edge.target];
+          if (start && end) {
+            await miro.board.createConnector({
+              start: { item: start },
+              end: { item: end },
+            });
+          }
+        }
       } catch (e) {
-        failed.push(file);
         console.error(e);
       }
     }
@@ -45,13 +67,13 @@ const App: React.FC = () => {
   };
 
   const style = React.useMemo(() => {
-    let borderColor = "rgba(41, 128, 185, 0.5)";
+    let borderColor = 'rgba(41, 128, 185, 0.5)';
     if (dropzone.isDragAccept) {
-      borderColor = "rgba(41, 128, 185, 1.0)";
+      borderColor = 'rgba(41, 128, 185, 1.0)';
     }
 
     if (dropzone.isDragReject) {
-      borderColor = "rgba(192, 57, 43,1.0)";
+      borderColor = 'rgba(192, 57, 43,1.0)';
     }
     return {
       ...dropzoneStyles,
@@ -61,11 +83,11 @@ const App: React.FC = () => {
 
   return (
     <div className="dnd-container">
-      <p>Select the CSV file to import and create a mind map</p>
+      <p>Select the JSON file to import and create a diagram</p>
       <div {...dropzone.getRootProps({ style })}>
         <input {...dropzone.getInputProps()} />
         {dropzone.isDragAccept ? (
-          <p className="dnd-text">Drop your CSV file here</p>
+          <p className="dnd-text">Drop your JSON file here</p>
         ) : (
           <>
             <div>
@@ -73,9 +95,9 @@ const App: React.FC = () => {
                 type="button"
                 className="button button-primary button-small"
               >
-                Select CSV file
+                Select JSON file
               </button>
-              <p className="dnd-text">Or drop your CSV file here</p>
+              <p className="dnd-text">Or drop your JSON file here</p>
             </div>
           </>
         )}
@@ -92,7 +114,7 @@ const App: React.FC = () => {
             onClick={handleCreate}
             className="button button-small button-primary"
           >
-            Create Mind Map
+            Create Diagram
           </button>
         </>
       )}
@@ -100,6 +122,6 @@ const App: React.FC = () => {
   );
 };
 
-const container = document.getElementById("root");
+const container = document.getElementById('root');
 const root = createRoot(container!);
 root.render(<App />);
