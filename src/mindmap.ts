@@ -1,4 +1,4 @@
-import { DSVRowArray } from "d3-dsv";
+import { DSVRowArray } from 'd3-dsv';
 
 interface Node {
   nodeView: { content: string };
