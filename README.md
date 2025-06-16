@@ -23,6 +23,9 @@ Nodes may include a `metadata` object with any additional information. Typical f
 - `template`: name of the shape template to use.
 - `label`: text displayed on the shape.
 - `elk`: optional layout properties passed directly to the ELK engine.
+- Note: groups cannot store metadata. When a template does create a group the
+  metadata is applied to each element within the group instead. Simple templates
+  set the label directly on the shape to avoid grouping.
 
 ## Sample Graph
 
