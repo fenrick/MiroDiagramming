@@ -3,8 +3,6 @@ import { createRoot } from 'react-dom/client';
 import { useDropzone } from 'react-dropzone';
 import { loadGraph } from './graph';
 import { layoutGraph } from './elk-layout';
-import { parseCsv } from './csv-utils';
-import { createMindmap } from './mindmap';
 
 // UI
 const dropzoneStyles = {

@@ -30,13 +30,13 @@ Nodes may include a `metadata` object with any additional information. Typical f
   - [miro.board.ui.openPanel()](https://developers.miro.com/docs/ui_boardui#openpanel)
   - [miro.board.experimental.createMindmapNode()](https://developers.miro.com/docs/experimental_experimental#createmindmapnode)
 
-# 🛠️ Tools and Technologies <a name="tools"></a>
+## 🛠️ Tools and Technologies <a name="tools"></a>
 
 - [React](https://react.dev/)
 - [TypeScript](https://www.typescriptlang.org/)
 - [Vite](https://vitejs.dev/)
 
-# ✅ Prerequisites <a name="prerequisites"></a>
+## ✅ Prerequisites <a name="prerequisites"></a>
 
 - You have a [Miro account](https://miro.com/signup/).
 - You're [signed in to Miro](https://miro.com/login/).
@@ -44,21 +44,25 @@ Nodes may include a `metadata` object with any additional information. Typical f
 - Your development environment includes [Node.js 14.13](https://nodejs.org/en/download) or a later version.
 - All examples use `npm` as a package manager and `npx` as a package runner.
 
-# 📖 Associated Developer Tutorial <a name="tutorial"></a>
+## 📖 Associated Developer Tutorial <a name="tutorial"></a>
 
 See the Miro documentation for details on building diagramming apps.
 
-# 🏃🏽‍♂️ Run the app locally <a name="run"></a>
+## 🏃🏽‍♂️ Run the app locally <a name="run"></a>
 
 1. Run `npm install` to install dependencies.
 2. Run `npm start` to start developing. \
    Your URL should be similar to this example:
-   ```
-2. Start the development server:
+
+```
+ http://localhost:3000
+```
+
+3. Start the development server:
    ```bash
    npm start
    ```
-3. Open the [app manifest editor](https://developers.miro.com/docs/manually-create-an-app#step-2-configure-your-app-in-miro) by clicking **Edit in Manifest**. \
+4. Open the [app manifest editor](https://developers.miro.com/docs/manually-create-an-app#step-2-configure-your-app-in-miro) by clicking **Edit in Manifest**. \
    In the app manifest editor, configure the app as follows, and then click save:
 
 ```yaml
@@ -83,7 +87,7 @@ https://github.com/miroapp/app-examples/assets/10428517/1e6862de-8617-46ef-b265-
 
 https://github.com/horeaporutiu/app-examples-template/assets/10428517/b23d9c4c-e785-43f9-a72e-fa5d82c7b019
 
-# 🗂️ Folder structure <a name="folder"></a>
+## 🗂️ Folder structure <a name="folder"></a>
 
 ```
 .
@@ -97,10 +101,10 @@ https://github.com/horeaporutiu/app-examples-template/assets/10428517/b23d9c4c-e
 └── index.html     // The app entry point. This is what you specify in the 'App URL' box in the Miro app settings
 ```
 
-# 🫱🏻‍🫲🏽 Contributing <a name="contributing"></a>
+## 🫱🏻‍🫲🏽 Contributing <a name="contributing"></a>
 
 If you want to contribute to this example, or any other Miro Open Source project, please review [Miro's contributing guide](https://github.com/miroapp/app-examples/blob/main/CONTRIBUTING.md).
 
-# 🪪 License <a name="license"></a>
+## 🪪 License <a name="license"></a>
 
 After starting the server open your Miro board and run the app to upload JSON graphs and automatically create diagrams.
