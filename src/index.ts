@@ -5,3 +5,5 @@ async function init() {
 }
 
 init();
+
+export {};

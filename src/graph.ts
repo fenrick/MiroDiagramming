@@ -43,7 +43,7 @@ export async function findNode(
 ): Promise<any | undefined> {
   const items = await miro.board.get({
     metadata: { 'app.miro.structgraph': { type, label } },
-  });
+  } as any);
   return items[0];
 }
 
