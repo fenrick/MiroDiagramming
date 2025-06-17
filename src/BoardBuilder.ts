@@ -319,7 +319,11 @@ export class BoardBuilder {
     }
     const existing = await this.findNode(node.type, node.label);
     if (existing) {
-      return this.updateExistingNode(existing, templateDef, node);
+      return this.updateExistingNode(
+        existing as BaseItem | Group,
+        templateDef,
+        node
+      );
     }
     return this.createNewNode(node, pos);
   }
