@@ -16,7 +16,9 @@
       "strokeColor": "#000000",
       "strokeStyle": "dashed",
       "startStrokeCap": "none",
-      "endStrokeCap": "arrow"
+      "endStrokeCap": "arrow",
+      "color": "#000000",
+      "textOrientation": "horizontal"
     },
     "shape": "curved",
     "caption": { "position": 0.5, "textAlignVertical": "middle" }
@@ -26,7 +28,9 @@
       "strokeColor": "#000000",
       "strokeStyle": "normal",
       "startStrokeCap": "none",
-      "endStrokeCap": "arrow"
+      "endStrokeCap": "arrow",
+      "color": "#000000",
+      "textOrientation": "horizontal"
     },
     "shape": "curved",
     "caption": { "position": 0.5, "textAlignVertical": "middle" }
@@ -36,7 +40,9 @@
       "strokeColor": "#000000",
       "strokeStyle": "dashed",
       "startStrokeCap": "none",
-      "endStrokeCap": "arrow"
+      "endStrokeCap": "arrow",
+      "color": "#000000",
+      "textOrientation": "horizontal"
     },
     "shape": "curved",
     "caption": { "position": 0.5, "textAlignVertical": "middle" }
@@ -46,7 +52,9 @@
       "strokeColor": "#000000",
       "strokeStyle": "normal",
       "startStrokeCap": "none",
-      "endStrokeCap": "arrow"
+      "endStrokeCap": "arrow",
+      "color": "#000000",
+      "textOrientation": "horizontal"
     },
     "shape": "curved",
     "caption": { "position": 0.5, "textAlignVertical": "middle" }
@@ -56,7 +64,9 @@
       "strokeColor": "#000000",
       "strokeStyle": "dotted",
       "startStrokeCap": "none",
-      "endStrokeCap": "arrow"
+      "endStrokeCap": "arrow",
+      "color": "#000000",
+      "textOrientation": "horizontal"
     },
     "shape": "curved",
     "caption": { "position": 0.5, "textAlignVertical": "middle" }
