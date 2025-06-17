@@ -18,7 +18,8 @@ describe('loadGraph', () => {
       onload: ((e: any) => void) | null = null;
       onerror: (() => void) | null = null;
       readAsText() {
-        this.onload && this.onload({ target: { result: '{"nodes":[],"edges":[]}' } });
+        this.onload &&
+          this.onload({ target: { result: '{"nodes":[],"edges":[]}' } });
       }
     }
     (global as any).FileReader = FR;
@@ -38,19 +39,27 @@ describe('loadGraph', () => {
     // FileReader returns non-object JSON which should fail
     class FR {
       onload: ((e: any) => void) | null = null;
-      readAsText() { this.onload && this.onload({ target: { result: '[]' } }); }
+      readAsText() {
+        this.onload && this.onload({ target: { result: '[]' } });
+      }
     }
     (global as any).FileReader = FR;
-    await expect(loadGraph({ name: 'a.json' } as any)).rejects.toThrow('Invalid graph data');
+    await expect(loadGraph({ name: 'a.json' } as any)).rejects.toThrow(
+      'Invalid graph data'
+    );
   });
 
   test('rejects when FileReader has no target', async () => {
     // Simulate missing target in FileReader event
     class FR {
       onload: ((e: any) => void) | null = null;
-      readAsText() { this.onload && this.onload({ target: null }); }
+      readAsText() {
+        this.onload && this.onload({ target: null });
+      }
     }
     (global as any).FileReader = FR;
-    await expect(loadGraph({ name: 'bad.json' } as any)).rejects.toBe('Failed to load file');
+    await expect(loadGraph({ name: 'bad.json' } as any)).rejects.toBe(
+      'Failed to load file'
+    );
   });
 });

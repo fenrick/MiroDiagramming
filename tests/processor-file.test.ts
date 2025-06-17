@@ -22,7 +22,9 @@ describe('GraphProcessor.processFile', () => {
     const mockGraph = { nodes: [], edges: [] } as any;
     // Stub out loadGraph and internal processGraph
     jest.spyOn(graph, 'loadGraph').mockResolvedValue(mockGraph);
-    const processSpy = jest.spyOn(gp as any, 'processGraph').mockResolvedValue(undefined);
+    const processSpy = jest
+      .spyOn(gp as any, 'processGraph')
+      .mockResolvedValue(undefined);
     const file = { name: 'g.json' } as any;
     await gp.processFile(file);
     expect(graph.loadGraph).toHaveBeenCalledWith(file);

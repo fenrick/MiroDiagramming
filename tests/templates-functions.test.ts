@@ -1,4 +1,9 @@
-import { getTemplate, getConnectorTemplate, templates, connectorTemplates } from '../src/templates';
+import {
+  getTemplate,
+  getConnectorTemplate,
+  templates,
+  connectorTemplates,
+} from '../src/templates';
 
 // Simple tests for template helper functions
 

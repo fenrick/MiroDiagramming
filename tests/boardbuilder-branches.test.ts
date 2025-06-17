@@ -14,10 +14,16 @@ describe('BoardBuilder branch coverage', () => {
 
   test('findNode searches groups', async () => {
     // Mock a group containing an item whose metadata matches the search
-    const item = { getMetadata: jest.fn().mockResolvedValue({ type: 'Role', label: 'A' }) } as any;
+    const item = {
+      getMetadata: jest.fn().mockResolvedValue({ type: 'Role', label: 'A' }),
+    } as any;
     const group = { getItems: jest.fn().mockResolvedValue([item]) } as any;
     // `board.get` first returns no shapes then a single group
-    (global as any).miro = { board: { get: jest.fn().mockResolvedValueOnce([]).mockResolvedValueOnce([group]) } };
+    (global as any).miro = {
+      board: {
+        get: jest.fn().mockResolvedValueOnce([]).mockResolvedValueOnce([group]),
+      },
+    };
     const builder = new BoardBuilder();
     // Expect the builder to return the matching group
     const res = await builder.findNode('Role', 'A');
@@ -38,7 +44,12 @@ describe('BoardBuilder branch coverage', () => {
       (builder as any).applyShapeElement(shape, el, 'L');
       return shape;
     });
-    await builder.createNode({ id: 'n', label: 'L', type: 'fill' } as any, { x: 0, y: 0, width: 1, height: 1 });
+    await builder.createNode({ id: 'n', label: 'L', type: 'fill' } as any, {
+      x: 0,
+      y: 0,
+      width: 1,
+      height: 1,
+    });
     // The fill color from the element should be applied
     expect(shape.style.fillColor).toBe('#fff');
   });
