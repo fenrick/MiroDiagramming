@@ -60,7 +60,7 @@ A small example is provided in [sample-graph.json](sample-graph.json):
 - You have a [Miro account](https://miro.com/signup/).
 - You're [signed in to Miro](https://miro.com/login/).
 - Your Miro account has a [Developer team](https://developers.miro.com/docs/create-a-developer-team).
-- Your development environment includes [Node.js 14.13](https://nodejs.org/en/download) or a later version.
+- Your development environment includes [Node.js](https://nodejs.org/en/download) v14.13 or later.
 - All examples use `npm` as a package manager and `npx` as a package runner.
 
 ## 📖 Associated Developer Tutorial <a name="tutorial"></a>
