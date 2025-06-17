@@ -18,7 +18,17 @@ export const layoutGraph = async (
   const elk = new ELK();
   const elkGraph: any = {
     id: 'root',
-    layoutOptions: { 'elk.algorithm': 'layered' },
+    layoutOptions: {
+      'elk.hierachyHandling': 'INCLUDE_CHILDREN', 'elk.algorithm': 'mrtree',
+      'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF',
+      'elk.layered.mergeEdges': 'false',
+      'elk.direction': 'DOWN',
+      'elk.layered.spacing.nodeNodeBetweenLayers': '90',
+      'elk.spacing.nodeNode': 90,
+      'elk.layered.unnnecessaryBendpoints': 'true',
+      'elk.layered.cycleBreaking.strategy': 'GREEDY',
+      'elk.nodeSize.minimum': `${DEFAULT_WIDTH},${DEFAULT_HEIGHT}`,
+    },
     children: data.nodes.map((n) => ({
       id: n.id,
       width: DEFAULT_WIDTH,
