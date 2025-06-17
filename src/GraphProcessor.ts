@@ -166,15 +166,25 @@ export class GraphProcessor {
     }
   }
 
-  /** Ensure the graph object has the expected shape. */
+  /**
+   * Ensure the provided graph data is valid.
+   *
+   * @throws {Error} If the graph does not have the expected top level format or
+   *   if any edge references a non-existent node. The thrown error message
+   *   provides details about the specific problem.
+   */
   private validateGraph(graph: GraphData): void {
     if (!graph || !Array.isArray(graph.nodes) || !Array.isArray(graph.edges)) {
-      throw new Error('Invalid graph');
+      throw new Error('Invalid graph format');
     }
+
     const nodeIds = new Set(graph.nodes.map((n) => n.id));
     for (const edge of graph.edges) {
-      if (!nodeIds.has(edge.from) || !nodeIds.has(edge.to)) {
-        throw new Error('Invalid graph');
+      if (!nodeIds.has(edge.from)) {
+        throw new Error(`Edge references missing node: ${edge.from}`);
+      }
+      if (!nodeIds.has(edge.to)) {
+        throw new Error(`Edge references missing node: ${edge.to}`);
       }
     }
   }
