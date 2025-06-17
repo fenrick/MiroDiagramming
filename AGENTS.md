@@ -7,6 +7,7 @@ Before committing changes run:
 ```
 npm run typecheck --silent
 npm test --silent
+npm run lint --silent
 ```
 
 Exported functions and complex logic should include documentation comments to
