@@ -171,5 +171,11 @@ export class GraphProcessor {
     if (!graph || !Array.isArray(graph.nodes) || !Array.isArray(graph.edges)) {
       throw new Error('Invalid graph');
     }
+    const nodeIds = new Set(graph.nodes.map((n) => n.id));
+    for (const edge of graph.edges) {
+      if (!nodeIds.has(edge.from) || !nodeIds.has(edge.to)) {
+        throw new Error('Invalid graph');
+      }
+    }
   }
 }
