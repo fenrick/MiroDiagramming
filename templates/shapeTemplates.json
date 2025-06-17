@@ -1,37 +1,171 @@
 {
-  "Strategy": {
-    "shape": "round_rectangle",
-    "fillColor": "#939598",
-    "color": "#000000",
-    "width": 180,
-    "height": 110
+  "Role": {
+    "elements": [
+      {
+        "shape": "round_rectangle",
+        "width": 160,
+        "height": 60,
+        "rotation": 0,
+        "style": {
+          "fillColor": "#FDE9D9",
+          "fontFamily": "Arial"
+        },
+        "text": "{{label}}"
+      }
+    ]
   },
-  "Motivation": {
-    "shape": "round_rectangle",
-    "fillColor": "#939598",
-    "color": "#000000",
-    "width": 180,
-    "height": 110
+  "BusinessService": {
+    "elements": [
+      {
+        "shape": "round_rectangle",
+        "width": 160,
+        "height": 60,
+        "style": {
+          "fillColor": "#D9EAFD",
+          "fontFamily": "Arial"
+        },
+        "text": "{{label}}"
+      }
+    ]
   },
-  "Business": {
-    "shape": "round_rectangle",
-    "fillColor": "#939598",
-    "color": "#000000",
-    "width": 180,
-    "height": 110
+  "BusinessProcess": {
+    "elements": [
+      {
+        "shape": "round_rectangle",
+        "width": 160,
+        "height": 60,
+        "style": {
+          "fillColor": "#D9F0DB",
+          "fontFamily": "Arial"
+        },
+        "text": "{{label}}"
+      }
+    ]
   },
-  "Application": {
-    "shape": "round_rectangle",
-    "fillColor": "#939598",
-    "color": "#000000",
-    "width": 180,
-    "height": 110
+  "ApplicationComponent": {
+    "elements": [
+      {
+        "shape": "round_rectangle",
+        "width": 160,
+        "height": 60,
+        "style": {
+          "fillColor": "#E5D9FD",
+          "fontFamily": "Arial"
+        },
+        "text": "{{label}}"
+      }
+    ]
   },
-  "Technology": {
-    "shape": "round_rectangle",
-    "fillColor": "#939598",
-    "color": "#000000",
-    "width": 180,
-    "height": 110
+  "DataObject": {
+    "elements": [
+      {
+        "shape": "rectangle",
+        "width": 160,
+        "height": 60,
+        "style": {
+          "fillColor": "#FFF2B6",
+          "fontFamily": "Arial"
+        },
+        "text": "{{label}}"
+      }
+    ]
+  },
+  "Device": {
+    "elements": [
+      {
+        "shape": "rectangle",
+        "width": 160,
+        "height": 60,
+        "style": {
+          "fillColor": "#E0E0E0",
+          "fontFamily": "Arial"
+        },
+        "text": "{{label}}"
+      }
+    ]
+  },
+  "BusinessActor": {
+    "elements": [
+      {
+        "shape": "round_rectangle",
+        "width": 160,
+        "height": 60,
+        "style": {
+          "fillColor": "#FCE5CD",
+          "fontFamily": "Arial"
+        },
+        "text": "{{label}}"
+      }
+    ]
+  },
+  "ApplicationService": {
+    "elements": [
+      {
+        "shape": "round_rectangle",
+        "width": 160,
+        "height": 60,
+        "style": {
+          "fillColor": "#D9EAFD",
+          "fontFamily": "Arial"
+        },
+        "text": "{{label}}"
+      }
+    ]
+  },
+  "Node": {
+    "elements": [
+      {
+        "shape": "rectangle",
+        "width": 160,
+        "height": 60,
+        "style": {
+          "fillColor": "#E0E0E0",
+          "fontFamily": "Arial"
+        },
+        "text": "{{label}}"
+      }
+    ]
+  },
+  "TechnologyService": {
+    "elements": [
+      {
+        "shape": "round_rectangle",
+        "width": 160,
+        "height": 60,
+        "style": {
+          "fillColor": "#E0F2FF",
+          "fontFamily": "Arial"
+        },
+        "text": "{{label}}"
+      }
+    ]
+  },
+  "WorkPackage": {
+    "elements": [
+      {
+        "shape": "round_rectangle",
+        "width": 160,
+        "height": 60,
+        "style": {
+          "fillColor": "#F8CCE8",
+          "fontFamily": "Arial"
+        },
+        "text": "{{label}}"
+      }
+    ]
+  },
+  "Goal": {
+    "elements": [
+      {
+        "shape": "round_rectangle",
+        "width": 160,
+        "height": 60,
+        "style": {
+          "fillColor": "#F4CCCC",
+          "fontFamily": "Arial"
+        },
+        "text": "{{label}}"
+      }
+    ]
   }
 }
