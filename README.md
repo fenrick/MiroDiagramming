@@ -146,4 +146,4 @@ If you want to contribute to this example, or any other Miro Open Source project
 
 ## 🪪 License <a name="license"></a>
 
-After starting the server open your Miro board and run the app to upload JSON graphs and automatically create diagrams.
+This software is released into the public domain under [The Unlicense](LICENSE). See the LICENSE file for details.
