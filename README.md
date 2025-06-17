@@ -122,7 +122,7 @@ npm test
 npm run lint
 ```
 
-These commands perform TypeScript type checking and execute a small Vitest suite.
+These commands perform TypeScript type checking and execute a small Jest suite.
 
 ## 🗂️ Folder structure <a name="folder"></a>
 
