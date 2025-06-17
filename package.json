@@ -11,7 +11,7 @@
     "Miro Web SDK",
     "Vite"
   ],
-  "license": "MIT",
+  "license": "Unlicense",
   "engines": {
     "node": ">=14.13"
   },
