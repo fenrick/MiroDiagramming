@@ -2,6 +2,7 @@
   "name": "miro-diagraming",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "Miro diagraming plugin template",
   "keywords": [
     "Mirotone",
