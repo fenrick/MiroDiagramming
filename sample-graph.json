@@ -87,11 +87,6 @@
       }
     },
     {
-      "from": "n4",
-      "to": "n1",
-      "label": "serves"
-    },
-    {
       "from": "n3",
       "to": "n6",
       "label": "uses",
