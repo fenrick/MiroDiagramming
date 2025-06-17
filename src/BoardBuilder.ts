@@ -7,8 +7,6 @@ import type {
   BaseItem,
   Group,
   Connector,
-  Item,
-  SnapToValues,
   ConnectorStyle,
 } from '@mirohq/websdk-types';
 import type {
@@ -25,16 +23,87 @@ import type { NodeData, EdgeData, PositionedNode, EdgeHint } from './graph';
 export class BoardBuilder {
   private shapeCache: BaseItem[] | undefined;
   private connectorCache: Connector[] | undefined;
+  private frameId: string | undefined;
 
   /** Clear cached board lookups. Useful between runs or during tests. */
   public reset(): void {
     this.shapeCache = undefined;
     this.connectorCache = undefined;
+    this.frameId = undefined;
   }
 
   private ensureBoard(): void {
     if (!(globalThis as any).miro?.board) {
       throw new Error('Miro board not initialized');
+    }
+  }
+
+  /** Assign a parent frame for subsequently created items. */
+  public setFrame(id: string | undefined): void {
+    this.frameId = id;
+  }
+
+  /**
+   * Find a free area on the board that can fit the given dimensions.
+   * This uses the built-in `findEmptySpace` API starting from the
+   * current viewport center.
+   */
+  public async findSpace(
+    width: number,
+    height: number
+  ): Promise<{ x: number; y: number }> {
+    this.ensureBoard();
+    const vp = await miro.board.viewport.get();
+    const empty = await miro.board.findEmptySpace({
+      width,
+      height,
+      x: vp.x + vp.width / 2,
+      y: vp.y + vp.height / 2,
+      offset: 40,
+    });
+    return { x: empty.x, y: empty.y };
+  }
+
+  /** Create a frame at the specified location. */
+  public async createFrame(
+    width: number,
+    height: number,
+    x: number,
+    y: number,
+    title?: string
+  ): Promise<BaseItem> {
+    this.ensureBoard();
+    const frame = (await miro.board.createFrame({
+      title: title ?? '',
+      x,
+      y,
+      width,
+      height,
+    })) as BaseItem;
+    this.frameId = frame.id;
+    return frame;
+  }
+
+  /** Move the viewport to show provided bounds. */
+  public async zoomTo(bounds: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }): Promise<void> {
+    this.ensureBoard();
+    if (miro.board.viewport?.set) {
+      await miro.board.viewport.set({ viewport: bounds });
+    } else if (miro.board.viewport?.zoomTo) {
+      const temp = await miro.board.createFrame({
+        title: '',
+        x: bounds.x,
+        y: bounds.y,
+        width: bounds.width,
+        height: bounds.height,
+      });
+      await miro.board.viewport.zoomTo(temp);
+      await (temp as any).remove();
     }
   }
 
@@ -57,14 +126,13 @@ export class BoardBuilder {
   private async searchShapes(
     type: string,
     label: string
-  ): Promise<Item | undefined> {
+  ): Promise<BaseItem | Group | undefined> {
     await this.loadShapeCache();
     for (const item of this.shapeCache ?? []) {
-      const meta = (await item.getMetadata('app.miro.structgraph')) as
-        | NodeMetadata
-        | undefined;
+      const raw = await item.getMetadata('app.miro.structgraph');
+      const meta = raw as unknown as NodeMetadata | undefined;
       if (meta?.type === type && meta.label === label) {
-        return item as Item;
+        return item as BaseItem;
       }
     }
     return undefined;
@@ -73,18 +141,17 @@ export class BoardBuilder {
   private async searchGroups(
     type: string,
     label: string
-  ): Promise<Item | undefined> {
+  ): Promise<BaseItem | Group | undefined> {
     this.ensureBoard();
     const groups = (await miro.board.get({ type: 'group' })) as Group[];
     for (const group of groups) {
       const items = await group.getItems();
       if (!Array.isArray(items)) continue;
       for (const item of items) {
-        const meta = (await item.getMetadata('app.miro.structgraph')) as
-          | NodeMetadata
-          | undefined;
+        const raw = await item.getMetadata('app.miro.structgraph');
+        const meta = raw as unknown as NodeMetadata | undefined;
         if (meta?.type === type && meta.label === label) {
-          return group as Item;
+          return group as Group;
         }
       }
     }
@@ -95,7 +162,7 @@ export class BoardBuilder {
   public async findNode(
     type: string,
     label: string
-  ): Promise<Item | undefined> {
+  ): Promise<BaseItem | Group | undefined> {
     if (typeof type !== 'string' || typeof label !== 'string') {
       throw new Error('Invalid search parameters');
     }
@@ -114,9 +181,8 @@ export class BoardBuilder {
     }
     await this.loadConnectorCache();
     for (const conn of this.connectorCache ?? []) {
-      const meta = (await conn.getMetadata('app.miro.structgraph')) as
-        | EdgeMetadata
-        | undefined;
+      const raw = await conn.getMetadata('app.miro.structgraph');
+      const meta = raw as unknown as EdgeMetadata | undefined;
       if (meta?.from === from && meta.to === to) {
         return conn as Connector;
       }
@@ -137,8 +203,9 @@ export class BoardBuilder {
       '{{label}}',
       label
     );
+    const existing = (item as any).style ?? {};
     const style: Record<string, unknown> = {
-      ...(item.style as any),
+      ...existing,
       ...(el.style ?? {}),
     };
     if (el.fill && !('fillColor' in style)) {
@@ -157,7 +224,10 @@ export class BoardBuilder {
       label
     );
     if (el.style) {
-      (item as any).style = { ...(item.style as any), ...(el.style as any) };
+      (item as any).style = {
+        ...((item as any).style ?? {}),
+        ...(el.style as any),
+      };
     }
   }
 
@@ -203,14 +273,14 @@ export class BoardBuilder {
 
   private async createNewNode(
     node: NodeData,
-    pos: PositionedNode,
-    def: TemplateDefinition
+    pos: PositionedNode
   ): Promise<BaseItem | Group> {
     const widget = await createFromTemplate(
       node.type,
       node.label,
       pos.x,
-      pos.y
+      pos.y,
+      this.frameId
     );
     if ((widget as Group).type === 'group') {
       const items = await (widget as Group).getItems();
@@ -251,7 +321,7 @@ export class BoardBuilder {
     if (existing) {
       return this.updateExistingNode(existing, templateDef, node);
     }
-    return this.createNewNode(node, pos, templateDef);
+    return this.createNewNode(node, pos);
   }
 
   private updateConnector(

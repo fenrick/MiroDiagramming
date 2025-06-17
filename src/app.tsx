@@ -18,6 +18,8 @@ const dropzoneStyles = {
 
 const App: React.FC = () => {
   const [files, setFiles] = React.useState<File[]>([]);
+  const [withFrame, setWithFrame] = React.useState(false);
+  const [frameTitle, setFrameTitle] = React.useState('');
   const dropzone = useDropzone({
     accept: {
       'application/json': ['.json'],
@@ -33,7 +35,10 @@ const App: React.FC = () => {
   const handleCreate = async () => {
     for (const file of files) {
       try {
-        await processor.processFile(file);
+        await processor.processFile(file, {
+          createFrame: withFrame,
+          frameTitle: frameTitle || undefined,
+        });
       } catch (e) {
         console.error(e);
       }
@@ -77,22 +82,39 @@ const App: React.FC = () => {
           </>
         )}
       </div>
-      {files.length > 0 && (
-        <>
-          <ul className="dropped-files">
-            {files.map((file, i) => (
-              <li key={i}>{file.name}</li>
-            ))}
-          </ul>
+        {files.length > 0 && (
+          <>
+            <ul className="dropped-files">
+              {files.map((file, i) => (
+                <li key={i}>{file.name}</li>
+              ))}
+            </ul>
+            <label style={{ display: 'block', marginTop: '8px' }}>
+              <input
+                type="checkbox"
+                checked={withFrame}
+                onChange={(e) => setWithFrame(e.target.checked)}
+              />
+              Wrap diagram in frame
+            </label>
+            {withFrame && (
+              <input
+                type="text"
+                placeholder="Frame title"
+                value={frameTitle}
+                onChange={(e) => setFrameTitle(e.target.value)}
+                style={{ marginTop: '4px', width: '100%' }}
+              />
+            )}
 
-          <button
-            onClick={handleCreate}
-            className="button button-small button-primary"
-          >
-            Create Diagram
-          </button>
-        </>
-      )}
+            <button
+              onClick={handleCreate}
+              className="button button-small button-primary"
+            >
+              Create Diagram
+            </button>
+          </>
+        )}
     </div>
   );
 };

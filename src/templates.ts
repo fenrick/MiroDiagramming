@@ -69,7 +69,8 @@ export async function createFromTemplate(
   name: string,
   label: string,
   x: number,
-  y: number
+  y: number,
+  parentId?: string
 ): Promise<GroupableItem | Group> {
   const template = getTemplate(name);
   if (!template) {
@@ -92,6 +93,7 @@ export async function createFromTemplate(
         rotation: el.rotation ?? 0,
         content: (el.text ?? '{{label}}').replace('{{label}}', label),
         style: style as any,
+        parentId,
       });
       created.push(shape);
     } else if (el.text) {
@@ -104,6 +106,7 @@ export async function createFromTemplate(
         x,
         y,
         style: style as any,
+        parentId,
       });
       created.push(text);
     }
