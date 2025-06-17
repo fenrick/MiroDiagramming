@@ -16,30 +16,30 @@ describe('GraphProcessor', () => {
           setMetadata: jest.fn(),
           getMetadata: jest.fn(),
           sync: jest.fn(),
-          id: 'c1'
+          id: 'c1',
         }),
         createShape: jest.fn().mockResolvedValue({
           setMetadata: jest.fn(),
           getMetadata: jest.fn(),
           sync: jest.fn(),
           id: 's1',
-          type: 'shape'
+          type: 'shape',
         }),
         createText: jest.fn().mockResolvedValue({
           setMetadata: jest.fn(),
           getMetadata: jest.fn(),
           sync: jest.fn(),
           id: 't1',
-          type: 'text'
+          type: 'text',
         }),
         group: jest.fn().mockResolvedValue({
           type: 'group',
           getItems: jest.fn().mockResolvedValue([]),
           setMetadata: jest.fn(),
           sync: jest.fn(),
-          id: 'g1'
-        })
-      }
+          id: 'g1',
+        }),
+      },
     };
     resetBoardCache();
     jest.spyOn(templateModule, 'createFromTemplate').mockResolvedValue({
@@ -48,7 +48,7 @@ describe('GraphProcessor', () => {
       getMetadata: jest.fn(),
       getItems: jest.fn(),
       sync: jest.fn(),
-      id: 's1'
+      id: 's1',
     } as any);
   });
 
@@ -61,6 +61,8 @@ describe('GraphProcessor', () => {
     await processor.processGraph(sample as any);
   });
   it('throws on invalid graph', async () => {
-    await expect(processor.processGraph({} as any)).rejects.toThrow('Invalid graph');
+    await expect(processor.processGraph({} as any)).rejects.toThrow(
+      'Invalid graph'
+    );
   });
 });

@@ -3,5 +3,5 @@ module.exports = {
   testEnvironment: 'node',
   collectCoverage: true,
   testMatch: ['**/tests/**/*.test.ts'],
-  maxWorkers: 1
+  maxWorkers: 1,
 };

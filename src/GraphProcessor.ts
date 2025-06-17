@@ -40,7 +40,10 @@ export class GraphProcessor {
       const src = layout.nodes[graph.edges[i].from];
       const tgt = layout.nodes[graph.edges[i].to];
 
-      const orient = (node: typeof src, pt: { x: number; y: number }): SnapToValues => {
+      const orient = (
+        node: typeof src,
+        pt: { x: number; y: number }
+      ): SnapToValues => {
         const cx = node.x + node.width / 2;
         const cy = node.y + node.height / 2;
         const dx = pt.x - cx;
@@ -71,7 +74,9 @@ export class GraphProcessor {
   /**
    * Call `.sync()` on each widget if the method exists.
    */
-  private async syncAll(items: Array<BaseItem | Group | Connector>): Promise<void> {
+  private async syncAll(
+    items: Array<BaseItem | Group | Connector>
+  ): Promise<void> {
     for (const item of items) {
       if (typeof (item as any).sync === 'function') {
         await (item as any).sync();

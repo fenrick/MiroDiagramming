@@ -11,9 +11,9 @@ describe('createEdges', () => {
           setMetadata: jest.fn(),
           getMetadata: jest.fn(),
           sync: jest.fn(),
-          id: 'c1'
-        })
-      }
+          id: 'c1',
+        }),
+      },
     };
   });
 
@@ -35,7 +35,8 @@ describe('createEdges', () => {
     const connectors = await createEdges(edges as any, nodeMap);
     expect(connectors).toHaveLength(1);
     expect(global.miro.board.createConnector).toHaveBeenCalled();
-    const args = (global.miro.board.createConnector as jest.Mock).mock.calls[0][0];
+    const args = (global.miro.board.createConnector as jest.Mock).mock
+      .calls[0][0];
     expect(args.style).toBeDefined();
   });
 
@@ -44,8 +45,8 @@ describe('createEdges', () => {
       {
         getMetadata: jest.fn().mockResolvedValue({ from: 'n1', to: 'n2' }),
         sync: jest.fn(),
-        id: 'cExisting'
-      }
+        id: 'cExisting',
+      },
     ]);
     const edges = [{ from: 'n1', to: 'n2' }];
     const nodeMap = { n1: { id: 'a' }, n2: { id: 'b' } } as any;

@@ -130,12 +130,14 @@ export async function findConnector(
     throw new Error('Miro board not initialized');
   }
   if (!connectorCache) {
-    connectorCache = (await miro.board.get({ type: 'connector' })) as Connector[];
+    connectorCache = (await miro.board.get({
+      type: 'connector',
+    })) as Connector[];
   }
   for (const conn of connectorCache) {
-    const meta = (await conn.getMetadata(
-      'app.miro.structgraph'
-    )) as unknown as EdgeMetadata | undefined;
+    const meta = (await conn.getMetadata('app.miro.structgraph')) as unknown as
+      | EdgeMetadata
+      | undefined;
     if (meta?.from === from && meta.to === to) {
       return conn as Connector;
     }

@@ -7,8 +7,8 @@ describe('createNode', () => {
   beforeEach(() => {
     global.miro = {
       board: {
-        get: jest.fn().mockResolvedValue([])
-      }
+        get: jest.fn().mockResolvedValue([]),
+      },
     };
     jest.spyOn(templateModule, 'createFromTemplate').mockResolvedValue({
       type: 'shape',
@@ -16,7 +16,7 @@ describe('createNode', () => {
       getMetadata: jest.fn(),
       getItems: jest.fn().mockResolvedValue([]),
       sync: jest.fn(),
-      id: 's1'
+      id: 's1',
     } as any);
   });
 

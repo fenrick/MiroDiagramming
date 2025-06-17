@@ -38,9 +38,7 @@ export interface LayoutResult {
  * Run the ELK layout engine on the provided graph data and
  * return positioned nodes and edges.
  */
-export const layoutGraph = async (
-  data: GraphData
-): Promise<LayoutResult> => {
+export const layoutGraph = async (data: GraphData): Promise<LayoutResult> => {
   const elk = new ELK();
   const elkGraph: any = {
     id: 'root',

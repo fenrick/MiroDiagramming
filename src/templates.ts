@@ -79,7 +79,10 @@ export async function createFromTemplate(
         width: el.width,
         height: el.height,
         content: (el.text ?? '{{label}}').replace('{{label}}', label),
-        style: { ...(el.style ?? {}), fillColor: el.fill ?? (el.style as any)?.fillColor },
+        style: {
+          ...(el.style ?? {}),
+          fillColor: el.fill ?? (el.style as any)?.fillColor,
+        },
       });
       created.push(shape);
     } else if (el.text) {
