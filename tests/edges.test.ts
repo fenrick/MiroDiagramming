@@ -35,6 +35,8 @@ describe('createEdges', () => {
     const connectors = await createEdges(edges as any, nodeMap);
     expect(connectors).toHaveLength(1);
     expect(global.miro.board.createConnector).toHaveBeenCalled();
+    const args = (global.miro.board.createConnector as jest.Mock).mock.calls[0][0];
+    expect(args.style).toBeDefined();
   });
 
   test('reuses existing connectors when metadata matches', async () => {

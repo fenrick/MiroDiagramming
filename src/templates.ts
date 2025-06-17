@@ -1,6 +1,15 @@
 import templatesJson from '../templates/shapeTemplates.json';
-import type { Group, GroupableItem, ShapeType } from '@mirohq/websdk-types';
+import connectorJson from '../templates/connectorTemplates.json';
+import type {
+  Group,
+  GroupableItem,
+  ShapeType,
+  ConnectorStyle,
+} from '@mirohq/websdk-types';
 
+/**
+ * Single element of a shape template description.
+ */
 export interface TemplateElement {
   shape?: string;
   fill?: string;
@@ -8,6 +17,7 @@ export interface TemplateElement {
   height?: number;
   text?: string;
   position?: string;
+  style?: Record<string, unknown>;
 }
 
 export interface TemplateDefinition {
@@ -18,13 +28,36 @@ export interface TemplateCollection {
   [key: string]: TemplateDefinition;
 }
 
+/** Definition for connector styling templates. */
+export interface ConnectorTemplate {
+  style?: ConnectorStyle & Record<string, unknown>;
+}
+
+export interface ConnectorTemplateCollection {
+  [key: string]: ConnectorTemplate;
+}
+
 export const templates: TemplateCollection =
   templatesJson as TemplateCollection;
 
+export const connectorTemplates: ConnectorTemplateCollection =
+  connectorJson as ConnectorTemplateCollection;
+
+/** Lookup a shape template by name. */
 export function getTemplate(name: string): TemplateDefinition | undefined {
   return templates[name];
 }
 
+/** Retrieve a connector styling template by name. */
+export function getConnectorTemplate(
+  name: string
+): ConnectorTemplate | undefined {
+  return connectorTemplates[name];
+}
+
+/**
+ * Instantiate board widgets described by a template.
+ */
 export async function createFromTemplate(
   name: string,
   label: string,
@@ -46,7 +79,7 @@ export async function createFromTemplate(
         width: el.width,
         height: el.height,
         content: (el.text ?? '{{label}}').replace('{{label}}', label),
-        style: { fillColor: el.fill },
+        style: { ...(el.style ?? {}), fillColor: el.fill ?? (el.style as any)?.fillColor },
       });
       created.push(shape);
     } else if (el.text) {
@@ -54,7 +87,7 @@ export async function createFromTemplate(
         content: el.text.replace('{{label}}', label),
         x,
         y,
-        style: { textAlign: 'center' },
+        style: { textAlign: 'center', ...(el.style ?? {}) },
       });
       created.push(text);
     }

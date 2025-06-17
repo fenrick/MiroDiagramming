@@ -14,7 +14,7 @@ The layout step leverages the ELK algorithm to compute positions for all nodes. 
 
 ## Template‑Based Shapes
 
-Shape templates live in [`templates/shapeTemplates.json`](templates/shapeTemplates.json). Each template defines the shape type, colors, and size. When a node specifies a `template` value in its metadata the corresponding template is applied. Edit this file or add new entries to customize the available shapes.
+Shape templates live in [`templates/shapeTemplates.json`](templates/shapeTemplates.json). Each template defines the shape type, size and base styles. When a node specifies a `template` value in its metadata the corresponding template is applied. Edit this file or add new entries to customize the available shapes. Connector appearance is configured in [`templates/connectorTemplates.json`](templates/connectorTemplates.json) which controls line color, caps and font.
 
 ## Metadata Usage
 
@@ -23,6 +23,9 @@ Nodes may include a `metadata` object with any additional information. Typical f
 - `template`: name of the shape template to use.
 - `label`: text displayed on the shape.
 - `elk`: optional layout properties passed directly to the ELK engine.
+- `width` and `height`: optional dimensions overriding the template values.
+- `connectorTemplate`: template name for edge styling.
+- Connector endpoints snap to the sides suggested by the ELK layout.
 - Note: groups cannot store metadata. When a template does create a group the
   metadata is applied to each element within the group instead. Simple templates
   set the label directly on the shape to avoid grouping.
