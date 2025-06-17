@@ -1,4 +1,8 @@
-import type { BaseItem, Group, Connector, Item } from '@mirohq/websdk-types';
+import type {
+  BaseItem,
+  Group,
+  Connector,
+} from '@mirohq/websdk-types';
 import { BoardBuilder } from './BoardBuilder';
 
 export interface NodeData {
@@ -76,7 +80,8 @@ export function resetBoardCache(): void {
 export const findNode = (
   type: string,
   label: string
-): Promise<Item | undefined> => defaultBuilder.findNode(type, label);
+): Promise<BaseItem | Group | undefined> =>
+  defaultBuilder.findNode(type, label);
 
 /** Wrapper to search for an existing connector. */
 export const findConnector = (

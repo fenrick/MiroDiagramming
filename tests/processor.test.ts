@@ -12,6 +12,22 @@ describe('GraphProcessor', () => {
     global.miro = {
       board: {
         get: jest.fn().mockResolvedValue([]),
+        findEmptySpace: jest.fn().mockResolvedValue({
+          x: 0,
+          y: 0,
+          width: 100,
+          height: 100,
+        }),
+        viewport: {
+          get: jest.fn().mockResolvedValue({
+            x: 0,
+            y: 0,
+            width: 1000,
+            height: 1000,
+          }),
+          set: jest.fn().mockResolvedValue({}),
+          zoomTo: jest.fn(),
+        },
         createConnector: jest.fn().mockResolvedValue({
           setMetadata: jest.fn(),
           getMetadata: jest.fn(),
