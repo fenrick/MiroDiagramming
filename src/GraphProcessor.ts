@@ -71,5 +71,4 @@ export class GraphProcessor {
       throw new Error('Invalid graph');
     }
   }
-
 }

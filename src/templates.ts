@@ -95,7 +95,10 @@ export async function createFromTemplate(
       });
       created.push(shape);
     } else if (el.text) {
-      const style: Record<string, unknown> = { textAlign: 'center', ...(el.style ?? {}) };
+      const style: Record<string, unknown> = {
+        textAlign: 'center',
+        ...(el.style ?? {}),
+      };
       const text = await miro.board.createText({
         content: el.text.replace('{{label}}', label),
         x,

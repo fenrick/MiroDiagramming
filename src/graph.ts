@@ -1,4 +1,10 @@
-import type { BaseItem, Group, Connector, Item, SnapToValues } from '@mirohq/websdk-types';
+import type {
+  BaseItem,
+  Group,
+  Connector,
+  Item,
+  SnapToValues,
+} from '@mirohq/websdk-types';
 import { BoardBuilder } from './BoardBuilder';
 
 export interface NodeData {
@@ -53,7 +59,11 @@ export async function loadGraph(file: File): Promise<GraphData> {
   }
   const text = await readFile(file);
   const data = JSON.parse(text) as unknown;
-  if (!data || !Array.isArray((data as any).nodes) || !Array.isArray((data as any).edges)) {
+  if (
+    !data ||
+    !Array.isArray((data as any).nodes) ||
+    !Array.isArray((data as any).edges)
+  ) {
     throw new Error('Invalid graph data');
   }
   resetBoardCache();
@@ -69,26 +79,31 @@ export function resetBoardCache(): void {
 }
 
 /** Wrapper to search for an existing node. */
-export const findNode = (type: string, label: string): Promise<Item | undefined> =>
-  defaultBuilder.findNode(type, label);
+export const findNode = (
+  type: string,
+  label: string
+): Promise<Item | undefined> => defaultBuilder.findNode(type, label);
 
 /** Wrapper to search for an existing connector. */
-export const findConnector = (from: string, to: string): Promise<Connector | undefined> =>
-  defaultBuilder.findConnector(from, to);
+export const findConnector = (
+  from: string,
+  to: string
+): Promise<Connector | undefined> => defaultBuilder.findConnector(from, to);
 
 /** Wrapper to create or update a node widget. */
 export const createNode = (
   node: NodeData,
-  pos: PositionedNode,
+  pos: PositionedNode
 ): Promise<BaseItem | Group> => defaultBuilder.createNode(node, pos);
 
 /** Wrapper to create or update connectors. */
 export const createEdges = (
   edges: EdgeData[],
   nodeMap: Record<string, BaseItem | Group>,
-  hints?: EdgeHint[],
+  hints?: EdgeHint[]
 ): Promise<Connector[]> => defaultBuilder.createEdges(edges, nodeMap, hints);
 
 /** Proxy to sync multiple widgets. */
-export const syncAll = (items: Array<BaseItem | Group | Connector>): Promise<void> =>
-  defaultBuilder.syncAll(items);
+export const syncAll = (
+  items: Array<BaseItem | Group | Connector>
+): Promise<void> => defaultBuilder.syncAll(items);

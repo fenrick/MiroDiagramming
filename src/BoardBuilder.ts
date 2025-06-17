@@ -1,4 +1,8 @@
-import { createFromTemplate, getConnectorTemplate, getTemplate } from './templates';
+import {
+  createFromTemplate,
+  getConnectorTemplate,
+  getTemplate,
+} from './templates';
 import type {
   BaseItem,
   Group,
@@ -7,7 +11,11 @@ import type {
   SnapToValues,
   ConnectorStyle,
 } from '@mirohq/websdk-types';
-import type { TemplateElement, ConnectorTemplate, TemplateDefinition } from './templates';
+import type {
+  TemplateElement,
+  ConnectorTemplate,
+  TemplateDefinition,
+} from './templates';
 import type { NodeData, EdgeData, PositionedNode, EdgeHint } from './graph';
 
 /**
@@ -46,7 +54,10 @@ export class BoardBuilder {
     }
   }
 
-  private async searchShapes(type: string, label: string): Promise<Item | undefined> {
+  private async searchShapes(
+    type: string,
+    label: string
+  ): Promise<Item | undefined> {
     await this.loadShapeCache();
     for (const item of this.shapeCache ?? []) {
       const meta = (await item.getMetadata('app.miro.structgraph')) as
@@ -59,7 +70,10 @@ export class BoardBuilder {
     return undefined;
   }
 
-  private async searchGroups(type: string, label: string): Promise<Item | undefined> {
+  private async searchGroups(
+    type: string,
+    label: string
+  ): Promise<Item | undefined> {
     this.ensureBoard();
     const groups = (await miro.board.get({ type: 'group' })) as Group[];
     for (const group of groups) {
@@ -78,7 +92,10 @@ export class BoardBuilder {
   }
 
   /** Lookup an existing widget with matching metadata. */
-  public async findNode(type: string, label: string): Promise<Item | undefined> {
+  public async findNode(
+    type: string,
+    label: string
+  ): Promise<Item | undefined> {
     if (typeof type !== 'string' || typeof label !== 'string') {
       throw new Error('Invalid search parameters');
     }
@@ -88,7 +105,10 @@ export class BoardBuilder {
   }
 
   /** Find a connector with matching metadata if it exists on the board. */
-  public async findConnector(from: string, to: string): Promise<Connector | undefined> {
+  public async findConnector(
+    from: string,
+    to: string
+  ): Promise<Connector | undefined> {
     if (typeof from !== 'string' || typeof to !== 'string') {
       throw new Error('Invalid search parameters');
     }
@@ -104,27 +124,48 @@ export class BoardBuilder {
     return undefined;
   }
 
-  private applyShapeElement(item: BaseItem, el: TemplateElement, label: string): void {
+  private applyShapeElement(
+    item: BaseItem,
+    el: TemplateElement,
+    label: string
+  ): void {
     if (el.shape) (item as any).shape = el.shape;
     if (el.rotation !== undefined) (item as any).rotation = el.rotation;
     if (el.width) (item as any).width = el.width;
     if (el.height) (item as any).height = el.height;
-    (item as any).content = (el.text ?? '{{label}}').replace('{{label}}', label);
-    const style: Record<string, unknown> = { ...(item.style as any), ...(el.style ?? {}) };
+    (item as any).content = (el.text ?? '{{label}}').replace(
+      '{{label}}',
+      label
+    );
+    const style: Record<string, unknown> = {
+      ...(item.style as any),
+      ...(el.style ?? {}),
+    };
     if (el.fill && !('fillColor' in style)) {
       (style as any).fillColor = el.fill;
     }
     (item as any).style = style as any;
   }
 
-  private applyTextElement(item: BaseItem, el: TemplateElement, label: string): void {
-    (item as any).content = (el.text ?? '{{label}}').replace('{{label}}', label);
+  private applyTextElement(
+    item: BaseItem,
+    el: TemplateElement,
+    label: string
+  ): void {
+    (item as any).content = (el.text ?? '{{label}}').replace(
+      '{{label}}',
+      label
+    );
     if (el.style) {
       (item as any).style = { ...(item.style as any), ...(el.style as any) };
     }
   }
 
-  private applyElementToItem(item: BaseItem, el: TemplateElement, label: string): void {
+  private applyElementToItem(
+    item: BaseItem,
+    el: TemplateElement,
+    label: string
+  ): void {
     if (item.type === 'shape') {
       this.applyShapeElement(item, el, label);
     } else if (item.type === 'text') {
@@ -135,12 +176,16 @@ export class BoardBuilder {
   private async updateExistingNode(
     existing: BaseItem | Group,
     def: TemplateDefinition,
-    node: NodeData,
+    node: NodeData
   ): Promise<BaseItem | Group> {
     if ((existing as Group).type === 'group') {
       const items = await (existing as Group).getItems();
       for (let i = 0; i < items.length && i < def.elements.length; i++) {
-        this.applyElementToItem(items[i] as BaseItem, def.elements[i], node.label);
+        this.applyElementToItem(
+          items[i] as BaseItem,
+          def.elements[i],
+          node.label
+        );
         await items[i].setMetadata('app.miro.structgraph', {
           type: node.type,
           label: node.label,
@@ -159,9 +204,14 @@ export class BoardBuilder {
   private async createNewNode(
     node: NodeData,
     pos: PositionedNode,
-    def: TemplateDefinition,
+    def: TemplateDefinition
   ): Promise<BaseItem | Group> {
-    const widget = await createFromTemplate(node.type, node.label, pos.x, pos.y);
+    const widget = await createFromTemplate(
+      node.type,
+      node.label,
+      pos.x,
+      pos.y
+    );
     if ((widget as Group).type === 'group') {
       const items = await (widget as Group).getItems();
       for (const item of items) {
@@ -185,7 +235,7 @@ export class BoardBuilder {
   /** Create or update a node widget from a template. */
   public async createNode(
     node: NodeData,
-    pos: PositionedNode,
+    pos: PositionedNode
   ): Promise<BaseItem | Group> {
     if (!node || typeof node !== 'object') {
       throw new Error('Invalid node');
@@ -207,7 +257,7 @@ export class BoardBuilder {
   private updateConnector(
     connector: Connector,
     edge: EdgeData,
-    template?: ConnectorTemplate,
+    template?: ConnectorTemplate
   ): void {
     if (edge.label) {
       connector.captions = [
@@ -219,7 +269,10 @@ export class BoardBuilder {
       ];
     }
     if (template?.style) {
-      connector.style = { ...connector.style, ...template.style } as ConnectorStyle as any;
+      connector.style = {
+        ...connector.style,
+        ...template.style,
+      } as ConnectorStyle as any;
     }
     connector.shape = template?.shape ?? connector.shape;
   }
@@ -229,7 +282,7 @@ export class BoardBuilder {
     from: BaseItem | Group,
     to: BaseItem | Group,
     hint: EdgeHint | undefined,
-    template?: ConnectorTemplate,
+    template?: ConnectorTemplate
   ): Promise<Connector> {
     const connector = await miro.board.createConnector({
       start: { item: from.id, snapTo: hint?.startSnap },
@@ -260,7 +313,7 @@ export class BoardBuilder {
   public async createEdges(
     edges: EdgeData[],
     nodeMap: Record<string, BaseItem | Group>,
-    hints?: EdgeHint[],
+    hints?: EdgeHint[]
   ): Promise<Connector[]> {
     if (!Array.isArray(edges)) {
       throw new Error('Invalid edges');
@@ -274,21 +327,31 @@ export class BoardBuilder {
       const from = nodeMap[edge.from];
       const to = nodeMap[edge.to];
       if (!from || !to) continue;
-      const template = getConnectorTemplate((edge.metadata as any)?.template || 'default');
+      const template = getConnectorTemplate(
+        (edge.metadata as any)?.template || 'default'
+      );
       const existing = await this.findConnector(edge.from, edge.to);
       if (existing) {
         this.updateConnector(existing, edge, template);
         connectors.push(existing);
         continue;
       }
-      const connector = await this.createConnector(edge, from, to, hints?.[i], template);
+      const connector = await this.createConnector(
+        edge,
+        from,
+        to,
+        hints?.[i],
+        template
+      );
       connectors.push(connector);
     }
     return connectors;
   }
 
   /** Call `.sync()` on each widget if the method exists. */
-  public async syncAll(items: Array<BaseItem | Group | Connector>): Promise<void> {
+  public async syncAll(
+    items: Array<BaseItem | Group | Connector>
+  ): Promise<void> {
     for (const item of items) {
       if (typeof (item as any).sync === 'function') {
         await (item as any).sync();
