@@ -1,4 +1,5 @@
 import { GraphProcessor } from '../src/GraphProcessor';
+import { resetBoardCache } from '../src/graph';
 import * as templateModule from '../src/templates';
 import sample from '../sample-graph.json';
 
@@ -13,17 +14,20 @@ describe('GraphProcessor', () => {
         get: jest.fn().mockResolvedValue([]),
         createConnector: jest.fn().mockResolvedValue({
           setMetadata: jest.fn(),
+          getMetadata: jest.fn(),
           sync: jest.fn(),
           id: 'c1'
         }),
         createShape: jest.fn().mockResolvedValue({
           setMetadata: jest.fn(),
+          getMetadata: jest.fn(),
           sync: jest.fn(),
           id: 's1',
           type: 'shape'
         }),
         createText: jest.fn().mockResolvedValue({
           setMetadata: jest.fn(),
+          getMetadata: jest.fn(),
           sync: jest.fn(),
           id: 't1',
           type: 'text'
@@ -37,9 +41,11 @@ describe('GraphProcessor', () => {
         })
       }
     };
+    resetBoardCache();
     jest.spyOn(templateModule, 'createFromTemplate').mockResolvedValue({
       type: 'shape',
       setMetadata: jest.fn(),
+      getMetadata: jest.fn(),
       getItems: jest.fn(),
       sync: jest.fn(),
       id: 's1'
@@ -48,10 +54,11 @@ describe('GraphProcessor', () => {
 
   afterEach(() => {
     jest.restoreAllMocks();
+    resetBoardCache();
   });
 
   it('processGraph runs without throwing and syncs items', async () => {
-    await expect(processor.processGraph(sample as any)).resolves.not.toThrow();
+    await processor.processGraph(sample as any);
   });
   it('throws on invalid graph', async () => {
     await expect(processor.processGraph({} as any)).rejects.toThrow('Invalid graph');

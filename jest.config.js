@@ -2,5 +2,6 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   collectCoverage: true,
-  testMatch: ['**/tests/**/*.test.ts']
+  testMatch: ['**/tests/**/*.test.ts'],
+  maxWorkers: 1
 };

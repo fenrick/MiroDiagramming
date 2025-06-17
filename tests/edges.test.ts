@@ -1,4 +1,4 @@
-import { createEdges } from '../src/graph';
+import { createEdges, resetBoardCache } from '../src/graph';
 
 declare const global: any;
 
@@ -9,6 +9,7 @@ describe('createEdges', () => {
         get: jest.fn().mockResolvedValue([]),
         createConnector: jest.fn().mockResolvedValue({
           setMetadata: jest.fn(),
+          getMetadata: jest.fn(),
           sync: jest.fn(),
           id: 'c1'
         })
@@ -16,7 +17,10 @@ describe('createEdges', () => {
     };
   });
 
-  afterEach(() => jest.restoreAllMocks());
+  afterEach(() => {
+    jest.restoreAllMocks();
+    resetBoardCache();
+  });
 
   test('skips missing nodes', async () => {
     const edges = [{ from: 'n1', to: 'n2' }];
