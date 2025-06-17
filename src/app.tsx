@@ -82,39 +82,39 @@ const App: React.FC = () => {
           </>
         )}
       </div>
-        {files.length > 0 && (
-          <>
-            <ul className="dropped-files">
-              {files.map((file, i) => (
-                <li key={i}>{file.name}</li>
-              ))}
-            </ul>
-            <label style={{ display: 'block', marginTop: '8px' }}>
-              <input
-                type="checkbox"
-                checked={withFrame}
-                onChange={(e) => setWithFrame(e.target.checked)}
-              />
-              Wrap diagram in frame
-            </label>
-            {withFrame && (
-              <input
-                type="text"
-                placeholder="Frame title"
-                value={frameTitle}
-                onChange={(e) => setFrameTitle(e.target.value)}
-                style={{ marginTop: '4px', width: '100%' }}
-              />
-            )}
+      {files.length > 0 && (
+        <>
+          <ul className="dropped-files">
+            {files.map((file, i) => (
+              <li key={i}>{file.name}</li>
+            ))}
+          </ul>
+          <label style={{ display: 'block', marginTop: '8px' }}>
+            <input
+              type="checkbox"
+              checked={withFrame}
+              onChange={(e) => setWithFrame(e.target.checked)}
+            />
+            Wrap diagram in frame
+          </label>
+          {withFrame && (
+            <input
+              type="text"
+              placeholder="Frame title"
+              value={frameTitle}
+              onChange={(e) => setFrameTitle(e.target.value)}
+              style={{ marginTop: '4px', width: '100%' }}
+            />
+          )}
 
-            <button
-              onClick={handleCreate}
-              className="button button-small button-primary"
-            >
-              Create Diagram
-            </button>
-          </>
-        )}
+          <button
+            onClick={handleCreate}
+            className="button button-small button-primary"
+          >
+            Create Diagram
+          </button>
+        </>
+      )}
     </div>
   );
 };
