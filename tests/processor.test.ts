@@ -80,6 +80,7 @@ describe('GraphProcessor', () => {
   it('processGraph runs without throwing and syncs items', async () => {
     await processor.processGraph(sample as any);
   });
+
   it('throws on invalid graph', async () => {
     await expect(processor.processGraph({} as any)).rejects.toThrow(
       'Invalid graph'
@@ -87,7 +88,10 @@ describe('GraphProcessor', () => {
   });
 
   it('positions frame at space center', async () => {
-    const simpleGraph = { nodes: [{ id: 'n1', label: 'A', type: 'Role' }], edges: [] };
+    const simpleGraph = {
+      nodes: [{ id: 'n1', label: 'A', type: 'Role' }],
+      edges: [],
+    };
     // Mock layout with a single node to make dimensions deterministic
     jest.spyOn(require('../src/elk-layout'), 'layoutGraph').mockResolvedValue({
       nodes: { n1: { x: 0, y: 0, width: 10, height: 10 } },
@@ -96,7 +100,8 @@ describe('GraphProcessor', () => {
 
     await processor.processGraph(simpleGraph as any);
 
-    const createArgs = (global.miro.board.createFrame as jest.Mock).mock.calls[0][0];
+    const createArgs = (global.miro.board.createFrame as jest.Mock).mock
+      .calls[0][0];
     expect(createArgs.width).toBe(210);
     expect(createArgs.height).toBe(210);
     expect(createArgs.x).toBe(0);
@@ -118,7 +123,10 @@ describe('GraphProcessor', () => {
   });
 
   it('zooms to shapes when no frame created', async () => {
-    const simpleGraph = { nodes: [{ id: 'n1', label: 'A', type: 'Role' }], edges: [] };
+    const simpleGraph = {
+      nodes: [{ id: 'n1', label: 'A', type: 'Role' }],
+      edges: [],
+    };
     jest.spyOn(require('../src/elk-layout'), 'layoutGraph').mockResolvedValue({
       nodes: { n1: { x: 0, y: 0, width: 10, height: 10 } },
       edges: [],
@@ -129,6 +137,7 @@ describe('GraphProcessor', () => {
     expect(global.miro.board.viewport.zoomTo).toHaveBeenCalledWith([
       expect.objectContaining({ id: 's1' }),
     ]);
+  });
 
   it('throws when edge source is missing', async () => {
     const graph = {

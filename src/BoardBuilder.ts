@@ -91,9 +91,7 @@ export class BoardBuilder {
   }
 
   /** Move the viewport to show the provided frame or widgets. */
-  public async zoomTo(
-    target: Frame | Array<BaseItem | Group>
-  ): Promise<void> {
+  public async zoomTo(target: Frame | Array<BaseItem | Group>): Promise<void> {
     this.ensureBoard();
     await miro.board.viewport.zoomTo(target as any);
   }
