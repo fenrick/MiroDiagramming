@@ -34,8 +34,8 @@ export interface PositionedNode {
 }
 
 export interface EdgeHint {
-  startSnap?: SnapToValues;
-  endSnap?: SnapToValues;
+  startPosition?: { x: number; y: number };
+  endPosition?: { x: number; y: number };
 }
 
 const readFile = (file: File): Promise<string> =>

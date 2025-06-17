@@ -285,8 +285,8 @@ export class BoardBuilder {
     template?: ConnectorTemplate
   ): Promise<Connector> {
     const connector = await miro.board.createConnector({
-      start: { item: from.id, snapTo: hint?.startSnap },
-      end: { item: to.id, snapTo: hint?.endSnap },
+      start: { item: from.id, position: hint?.startPosition },
+      end: { item: to.id, position: hint?.endPosition },
       shape: template?.shape ?? 'curved',
       captions: edge.label
         ? [

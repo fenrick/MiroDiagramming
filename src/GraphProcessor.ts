@@ -40,20 +40,15 @@ export class GraphProcessor {
       const orient = (
         node: typeof src,
         pt: { x: number; y: number }
-      ): SnapToValues => {
-        const cx = node.x + node.width / 2;
-        const cy = node.y + node.height / 2;
-        const dx = pt.x - cx;
-        const dy = pt.y - cy;
-        if (Math.abs(dx) > Math.abs(dy)) {
-          return dx < 0 ? 'left' : 'right';
-        }
-        return dy < 0 ? 'top' : 'bottom';
+      ): { x: number; y: number } => {
+        const px = (pt.x - node.x) / node.width;
+        const py = (pt.y - node.y) / node.height;
+        return { x: px, y: py };
       };
 
       return {
-        startSnap: orient(src, e.startPoint),
-        endSnap: orient(tgt, e.endPoint),
+        startPosition: orient(src, e.startPoint),
+        endPosition: orient(tgt, e.endPoint),
       };
     });
 
