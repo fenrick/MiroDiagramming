@@ -20,5 +20,49 @@
         "text": "{{label}}"
       }
     ]
+  },
+  "BusinessProcess": {
+    "elements": [
+      {
+        "shape": "round_rectangle",
+        "width": 160,
+        "height": 60,
+        "fill": "#D9F0DB",
+        "text": "{{label}}"
+      }
+    ]
+  },
+  "ApplicationComponent": {
+    "elements": [
+      {
+        "shape": "round_rectangle",
+        "width": 160,
+        "height": 60,
+        "fill": "#E5D9FD",
+        "text": "{{label}}"
+      }
+    ]
+  },
+  "DataObject": {
+    "elements": [
+      {
+        "shape": "rectangle",
+        "width": 160,
+        "height": 60,
+        "fill": "#FFF2B6",
+        "text": "{{label}}"
+      }
+    ]
+  },
+  "Device": {
+    "elements": [
+      {
+        "shape": "rectangle",
+        "width": 160,
+        "height": 60,
+        "fill": "#E0E0E0",
+        "text": "{{label}}"
+      }
+    ]
   }
 }

@@ -1,7 +1,28 @@
 {
   "nodes": [
     { "id": "n1", "label": "Customer", "type": "Role" },
-    { "id": "n2", "label": "Service", "type": "BusinessService" }
+    { "id": "n2", "label": "Sales Process", "type": "BusinessProcess" },
+    { "id": "n3", "label": "Order Service", "type": "BusinessService" },
+    { "id": "n4", "label": "CRM Application", "type": "ApplicationComponent" },
+    { "id": "n5", "label": "Auth Service", "type": "ApplicationComponent" },
+    { "id": "n6", "label": "Order Database", "type": "DataObject" },
+    { "id": "n7", "label": "Web Server", "type": "Device" },
+    { "id": "n8", "label": "Database Server", "type": "Device" },
+    { "id": "n9", "label": "Order Entry", "type": "BusinessProcess" },
+    { "id": "n10", "label": "Customer Support", "type": "BusinessProcess" }
   ],
-  "edges": [{ "from": "n1", "to": "n2", "label": "uses" }]
+  "edges": [
+    { "from": "n1", "to": "n2", "label": "triggers" },
+    { "from": "n2", "to": "n3", "label": "requires" },
+    { "from": "n3", "to": "n4", "label": "realized by" },
+    { "from": "n4", "to": "n6", "label": "reads" },
+    { "from": "n4", "to": "n5", "label": "authenticates via" },
+    { "from": "n5", "to": "n6", "label": "writes to" },
+    { "from": "n6", "to": "n8", "label": "hosted on" },
+    { "from": "n4", "to": "n7", "label": "deployed on" },
+    { "from": "n2", "to": "n9", "label": "decomposes" },
+    { "from": "n2", "to": "n10", "label": "decomposes" },
+    { "from": "n9", "to": "n4", "label": "uses" },
+    { "from": "n10", "to": "n5", "label": "uses" }
+  ]
 }
