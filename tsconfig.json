@@ -20,6 +20,6 @@
     "incremental": true,
     "isolatedModules": true
   },
-  "include": ["src", "pages", "*.ts"],
+  "include": ["src", "*.ts"],
   "exclude": ["node_modules"]
 }

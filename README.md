@@ -108,7 +108,13 @@ https://github.com/horeaporutiu/app-examples-template/assets/10428517/b23d9c4c-e
 
 ## Testing
 
-To validate the codebase run:
+Before running the checks make sure dependencies are installed:
+
+```bash
+npm install
+```
+
+Then validate the codebase with:
 
 ```bash
 npm run typecheck
@@ -116,7 +122,9 @@ npm test
 npm run lint
 ```
 
-These commands perform TypeScript type checking and execute a small Vitest suite.
+These commands perform TypeScript type checking, execute a small Jest suite
+and run ESLint. The linter uses the `@typescript-eslint` recommended ruleset
+with a few overrides, so code should pass `npm run lint` without errors.
 
 ## 🗂️ Folder structure <a name="folder"></a>
 

@@ -129,5 +129,24 @@ describe('GraphProcessor', () => {
     expect(global.miro.board.viewport.zoomTo).toHaveBeenCalledWith([
       expect.objectContaining({ id: 's1' }),
     ]);
+
+  it('throws when edge source is missing', async () => {
+    const graph = {
+      nodes: [{ id: 'n1', label: 'A', type: 'Role' }],
+      edges: [{ from: 'n2', to: 'n1' }],
+    };
+    await expect(processor.processGraph(graph as any)).rejects.toThrow(
+      'Invalid graph'
+    );
+  });
+
+  it('throws when edge target is missing', async () => {
+    const graph = {
+      nodes: [{ id: 'n1', label: 'A', type: 'Role' }],
+      edges: [{ from: 'n1', to: 'n2' }],
+    };
+    await expect(processor.processGraph(graph as any)).rejects.toThrow(
+      'Invalid graph'
+    );
   });
 });

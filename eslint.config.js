@@ -3,16 +3,18 @@ import parser from '@typescript-eslint/parser';
 
 export default [
   {
-    files: ['src/**/*.{ts,tsx}'],
     ignores: ['node_modules/**', 'dist/**'],
+  },
+  ...tseslint.configs['flat/recommended'],
+  {
+    files: ['src/**/*.{ts,tsx}'],
     languageOptions: {
       parser,
       ecmaVersion: 'latest',
       sourceType: 'module',
     },
-    plugins: {
-      '@typescript-eslint': tseslint,
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
     },
-    rules: {},
   },
 ];
