@@ -65,5 +65,71 @@
         "text": "{{label}}"
       }
     ]
+  },
+  "BusinessActor": {
+    "elements": [
+      {
+        "shape": "ellipse",
+        "width": 160,
+        "height": 60,
+        "style": { "fillColor": "#FCE5CD" },
+        "text": "{{label}}"
+      }
+    ]
+  },
+  "ApplicationService": {
+    "elements": [
+      {
+        "shape": "round_rectangle",
+        "width": 160,
+        "height": 60,
+        "style": { "fillColor": "#D9EAFD" },
+        "text": "{{label}}"
+      }
+    ]
+  },
+  "Node": {
+    "elements": [
+      {
+        "shape": "rectangle",
+        "width": 160,
+        "height": 60,
+        "style": { "fillColor": "#E0E0E0" },
+        "text": "{{label}}"
+      }
+    ]
+  },
+  "TechnologyService": {
+    "elements": [
+      {
+        "shape": "round_rectangle",
+        "width": 160,
+        "height": 60,
+        "style": { "fillColor": "#E0F2FF" },
+        "text": "{{label}}"
+      }
+    ]
+  },
+  "WorkPackage": {
+    "elements": [
+      {
+        "shape": "round_rectangle",
+        "width": 160,
+        "height": 60,
+        "style": { "fillColor": "#F8CCE8" },
+        "text": "{{label}}"
+      }
+    ]
+  },
+  "Goal": {
+    "elements": [
+      {
+        "shape": "round_rectangle",
+        "width": 160,
+        "height": 60,
+        "style": { "fillColor": "#F4CCCC" },
+        "text": "{{label}}"
+      }
+    ]
   }
 }
