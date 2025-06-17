@@ -29,7 +29,7 @@
     "@babel/preset-env": "^7.27.2",
     "@babel/preset-typescript": "^7.27.1",
     "@eslint/css": "^0.8.1",
-    "@eslint/js": "^9.28.0",
+    "@eslint/js": "^9.29.0",
     "@eslint/json": "^0.12.0",
     "@eslint/markdown": "^6.5.0",
     "@mirohq/websdk-types": "^2.16.1",
