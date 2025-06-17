@@ -8,7 +8,6 @@ import type {
   Group,
   Connector,
   Item,
-  SnapToValues,
   ConnectorStyle,
 } from '@mirohq/websdk-types';
 import type {
@@ -60,9 +59,9 @@ export class BoardBuilder {
   ): Promise<Item | undefined> {
     await this.loadShapeCache();
     for (const item of this.shapeCache ?? []) {
-      const meta = (await item.getMetadata('app.miro.structgraph')) as
-        | NodeMetadata
-        | undefined;
+      const meta = (await item.getMetadata(
+        'app.miro.structgraph'
+      )) as unknown as NodeMetadata | undefined;
       if (meta?.type === type && meta.label === label) {
         return item as Item;
       }
@@ -80,9 +79,9 @@ export class BoardBuilder {
       const items = await group.getItems();
       if (!Array.isArray(items)) continue;
       for (const item of items) {
-        const meta = (await item.getMetadata('app.miro.structgraph')) as
-          | NodeMetadata
-          | undefined;
+        const meta = (await item.getMetadata(
+          'app.miro.structgraph'
+        )) as unknown as NodeMetadata | undefined;
         if (meta?.type === type && meta.label === label) {
           return group as Item;
         }
@@ -114,9 +113,9 @@ export class BoardBuilder {
     }
     await this.loadConnectorCache();
     for (const conn of this.connectorCache ?? []) {
-      const meta = (await conn.getMetadata('app.miro.structgraph')) as
-        | EdgeMetadata
-        | undefined;
+      const meta = (await conn.getMetadata(
+        'app.miro.structgraph'
+      )) as unknown as EdgeMetadata | undefined;
       if (meta?.from === from && meta.to === to) {
         return conn as Connector;
       }
@@ -138,7 +137,7 @@ export class BoardBuilder {
       label
     );
     const style: Record<string, unknown> = {
-      ...(item.style as any),
+      ...((item as any).style ?? {}),
       ...(el.style ?? {}),
     };
     if (el.fill && !('fillColor' in style)) {
@@ -157,7 +156,10 @@ export class BoardBuilder {
       label
     );
     if (el.style) {
-      (item as any).style = { ...(item.style as any), ...(el.style as any) };
+      (item as any).style = {
+        ...((item as any).style ?? {}),
+        ...(el.style as any),
+      };
     }
   }
 
@@ -203,8 +205,7 @@ export class BoardBuilder {
 
   private async createNewNode(
     node: NodeData,
-    pos: PositionedNode,
-    def: TemplateDefinition
+    pos: PositionedNode
   ): Promise<BaseItem | Group> {
     const widget = await createFromTemplate(
       node.type,
@@ -249,9 +250,13 @@ export class BoardBuilder {
     }
     const existing = await this.findNode(node.type, node.label);
     if (existing) {
-      return this.updateExistingNode(existing, templateDef, node);
+      return this.updateExistingNode(
+        existing as BaseItem | Group,
+        templateDef,
+        node
+      );
     }
-    return this.createNewNode(node, pos, templateDef);
+    return this.createNewNode(node, pos);
   }
 
   private updateConnector(
