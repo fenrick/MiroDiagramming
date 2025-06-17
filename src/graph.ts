@@ -1,10 +1,4 @@
-import type {
-  BaseItem,
-  Group,
-  Connector,
-  Item,
-  SnapToValues,
-} from '@mirohq/websdk-types';
+import type { BaseItem, Group, Connector, Item } from '@mirohq/websdk-types';
 import { BoardBuilder } from './BoardBuilder';
 
 export interface NodeData {

@@ -1,7 +1,7 @@
 import { loadGraph, defaultBuilder, GraphData } from './graph';
 import { BoardBuilder } from './BoardBuilder';
 import { layoutGraph } from './elk-layout';
-import type { BaseItem, Group, SnapToValues } from '@mirohq/websdk-types';
+import type { BaseItem, Group } from '@mirohq/websdk-types';
 
 /**
  * High level orchestrator that loads graph data, runs layout and
