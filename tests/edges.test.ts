@@ -75,4 +75,18 @@ describe('createEdges', () => {
     expect(existing.start.position).toEqual(hint.startPosition);
     expect(existing.end.position).toEqual(hint.endPosition);
   });
+
+  test('updateConnector sets caption when label provided', async () => {
+    const existing = {
+      getMetadata: jest.fn().mockResolvedValue({ from: 'n1', to: 'n2' }),
+      sync: jest.fn(),
+      id: 'cExisting',
+    } as any;
+    (global.miro.board.get as jest.Mock).mockResolvedValueOnce([existing]);
+    const edges = [{ from: 'n1', to: 'n2', label: 'L' }];
+    const nodeMap = { n1: { id: 'a' }, n2: { id: 'b' } } as any;
+    const connectors = await createEdges(edges as any, nodeMap);
+    expect(connectors[0]).toBe(existing);
+    expect(existing.captions[0].content).toBe('L');
+  });
 });
