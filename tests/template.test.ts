@@ -36,7 +36,12 @@ describe('createFromTemplate', () => {
   });
 
   test('creates a single shape with correct style', async () => {
-    const widget = await templateModule.createFromTemplate('Role', 'Label', 0, 0);
+    const widget = await templateModule.createFromTemplate(
+      'Role',
+      'Label',
+      0,
+      0
+    );
     expect(widget.type).toBe('shape');
     const args = (global.miro.board.createShape as jest.Mock).mock.calls[0][0];
     expect(args.shape).toBe('round_rectangle');
@@ -51,7 +56,12 @@ describe('createFromTemplate', () => {
         { text: 'test' },
       ],
     };
-    const widget = await templateModule.createFromTemplate('multi', 'Label', 0, 0);
+    const widget = await templateModule.createFromTemplate(
+      'multi',
+      'Label',
+      0,
+      0
+    );
     expect(widget.type).toBe('group');
     expect(global.miro.board.createShape).toHaveBeenCalled();
     expect(global.miro.board.createText).toHaveBeenCalled();
