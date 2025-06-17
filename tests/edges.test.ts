@@ -66,7 +66,10 @@ describe('createEdges', () => {
     (global.miro.board.get as jest.Mock).mockResolvedValueOnce([existing]);
     const edges = [{ from: 'n1', to: 'n2' }];
     const nodeMap = { n1: { id: 'a' }, n2: { id: 'b' } } as any;
-    const hint = { startPosition: { x: 0.1, y: 0.2 }, endPosition: { x: 0.9, y: 1 } };
+    const hint = {
+      startPosition: { x: 0.1, y: 0.2 },
+      endPosition: { x: 0.9, y: 1 },
+    };
     const connectors = await createEdges(edges as any, nodeMap, [hint as any]);
     expect(connectors[0]).toBe(existing);
     expect(existing.start.position).toEqual(hint.startPosition);
