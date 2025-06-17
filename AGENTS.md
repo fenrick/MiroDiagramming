@@ -2,7 +2,7 @@
 
 All source files live in `src/**` with accompanying tests in `tests/**`.
 
-Before committing changes run:
+Before committing changes run `npm install` to ensure dependencies are up to date and then:
 
 ```
 npm run typecheck --silent
