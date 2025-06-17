@@ -66,6 +66,7 @@ export async function loadGraph(file: File): Promise<GraphData> {
   ) {
     throw new Error('Invalid graph data');
   }
+  resetBoardCache();
   return data as GraphData;
 }
 
