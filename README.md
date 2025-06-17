@@ -70,18 +70,14 @@ See the Miro documentation for details on building diagramming apps.
 ## 🏃🏽‍♂️ Run the app locally <a name="run"></a>
 
 1. Run `npm install` to install dependencies.
-2. Run `npm start` to start developing. \
+2. Run `npm start` to start the development server. \
    Your URL should be similar to this example:
 
 ```
  http://localhost:3000
 ```
 
-3. Start the development server:
-   ```bash
-   npm start
-   ```
-4. Open the [app manifest editor](https://developers.miro.com/docs/manually-create-an-app#step-2-configure-your-app-in-miro) by clicking **Edit in Manifest**. \
+3. Open the [app manifest editor](https://developers.miro.com/docs/manually-create-an-app#step-2-configure-your-app-in-miro) by clicking **Edit in Manifest**. \
    In the app manifest editor, configure the app as follows, and then click save:
 
 ```yaml
