@@ -1,5 +1,11 @@
-import { createFromTemplate } from './templates';
-import type { BaseItem, Group, Connector, Item } from '@mirohq/websdk-types';
+import { createFromTemplate, getConnectorTemplate } from './templates';
+import type {
+  BaseItem,
+  Group,
+  Connector,
+  Item,
+  SnapToValues,
+} from '@mirohq/websdk-types';
 
 // Simple in-memory caches to avoid repeated board lookups while processing
 let shapeCache: BaseItem[] | undefined;
@@ -16,12 +22,14 @@ export interface NodeData {
   id: string;
   label: string;
   type: string;
+  metadata?: Record<string, unknown>;
 }
 
 export interface EdgeData {
   from: string;
   to: string;
   label?: string;
+  metadata?: Record<string, unknown>;
 }
 
 export interface GraphData {
@@ -186,10 +194,17 @@ export async function createNode(
   return widget as BaseItem;
 }
 
-/** Create connectors with labels and metadata. */
+/** Optional hints describing how a connector should attach to nodes. */
+export interface EdgeHint {
+  startSnap?: SnapToValues;
+  endSnap?: SnapToValues;
+}
+
+/** Create connectors with labels, metadata and optional snap hints. */
 export async function createEdges(
   edges: EdgeData[],
-  nodeMap: Record<string, BaseItem | Group>
+  nodeMap: Record<string, BaseItem | Group>,
+  hints?: EdgeHint[]
 ): Promise<Connector[]> {
   if (!Array.isArray(edges)) {
     throw new Error('Invalid edges');
@@ -198,7 +213,9 @@ export async function createEdges(
     throw new Error('Invalid node map');
   }
   const connectors: Connector[] = [];
-  for (const edge of edges) {
+  // Iterate edges in the same order as the ELK layout to align hints
+  for (let i = 0; i < edges.length; i++) {
+    const edge = edges[i];
     const from = nodeMap[edge.from];
     const to = nodeMap[edge.to];
     if (!from || !to) continue;
@@ -207,10 +224,17 @@ export async function createEdges(
       connectors.push(existing);
       continue;
     }
+    // Apply styling from connector templates when present
+    const style = getConnectorTemplate(
+      (edge.metadata as any)?.template || 'default'
+    )?.style;
+    // Snap connectors to the sides indicated by the ELK layout
+    const hint = hints?.[i];
     const connector = await miro.board.createConnector({
-      start: { item: from.id },
-      end: { item: to.id },
+      start: { item: from.id, snapTo: hint?.startSnap },
+      end: { item: to.id, snapTo: hint?.endSnap },
       captions: edge.label ? [{ content: edge.label }] : undefined,
+      style: style as any,
     });
     connector.setMetadata('app.miro.structgraph', {
       from: edge.from,
