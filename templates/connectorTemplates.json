@@ -7,6 +7,8 @@
       "endStrokeCap": "arrow",
       "color": "#000000",
       "textOrientation": "horizontal"
-    }
+    },
+    "shape": "curved",
+    "caption": { "position": 0.5, "textAlignVertical": "middle" }
   }
 }

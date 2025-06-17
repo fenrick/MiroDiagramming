@@ -1,17 +1,14 @@
-import { loadGraph, createNode, createEdges, GraphData } from './graph';
+import { loadGraph, defaultBuilder, GraphData } from './graph';
+import { BoardBuilder } from './BoardBuilder';
 import { layoutGraph } from './elk-layout';
-import type {
-  BaseItem,
-  Group,
-  Connector,
-  SnapToValues,
-} from '@mirohq/websdk-types';
+import type { BaseItem, Group, SnapToValues } from '@mirohq/websdk-types';
 
 /**
  * High level orchestrator that loads graph data, runs layout and
  * creates all widgets on the board.
  */
 export class GraphProcessor {
+  constructor(private builder: BoardBuilder = defaultBuilder) {}
   /**
    * Load a JSON graph file and process it.
    */
@@ -32,7 +29,7 @@ export class GraphProcessor {
     const nodeMap: Record<string, BaseItem | Group> = {};
     for (const node of graph.nodes) {
       const pos = layout.nodes[node.id];
-      const widget = await createNode(node, pos);
+      const widget = await this.builder.createNode(node, pos);
       nodeMap[node.id] = widget;
     }
     // Derive connector orientation hints from ELK edge routes
@@ -60,8 +57,12 @@ export class GraphProcessor {
       };
     });
 
-    const connectors = await createEdges(graph.edges, nodeMap, edgeHints);
-    await this.syncAll([...Object.values(nodeMap), ...connectors]);
+    const connectors = await this.builder.createEdges(
+      graph.edges,
+      nodeMap,
+      edgeHints
+    );
+    await this.builder.syncAll([...Object.values(nodeMap), ...connectors]);
   }
 
   /** Ensure the graph object has the expected shape. */
@@ -71,16 +72,4 @@ export class GraphProcessor {
     }
   }
 
-  /**
-   * Call `.sync()` on each widget if the method exists.
-   */
-  private async syncAll(
-    items: Array<BaseItem | Group | Connector>
-  ): Promise<void> {
-    for (const item of items) {
-      if (typeof (item as any).sync === 'function') {
-        await (item as any).sync();
-      }
-    }
-  }
 }
