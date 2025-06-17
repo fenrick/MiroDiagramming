@@ -12,6 +12,9 @@
     "Vite"
   ],
   "license": "MIT",
+  "engines": {
+    "node": ">=14.13"
+  },
   "scripts": {
     "start": "vite",
     "build": "vite build",
