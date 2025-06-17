@@ -67,12 +67,10 @@ describe('BoardBuilder additional cases', () => {
   test('createNode creates group and sets metadata', async () => {
     const items = [{ setMetadata: jest.fn() }, { setMetadata: jest.fn() }];
     // Mock creation of a group containing two items
-    jest
-      .spyOn(templates, 'createFromTemplate')
-      .mockResolvedValue({
-        type: 'group',
-        getItems: jest.fn().mockResolvedValue(items),
-      } as any);
+    jest.spyOn(templates, 'createFromTemplate').mockResolvedValue({
+      type: 'group',
+      getItems: jest.fn().mockResolvedValue(items),
+    } as any);
     jest
       .spyOn(templates, 'getTemplate')
       .mockReturnValue({ elements: [{ shape: 'r' }, { text: 't' }] });
