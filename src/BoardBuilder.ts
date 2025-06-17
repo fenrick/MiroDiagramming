@@ -44,6 +44,11 @@ export class BoardBuilder {
     this.frame = frame;
   }
 
+  /** Retrieve the current frame used for new items, if any. */
+  public getFrame(): Frame | undefined {
+    return this.frame;
+  }
+
   /**
    * Find a free area on the board that can fit the given dimensions.
    * This uses the built-in `findEmptySpace` API starting from the
@@ -85,27 +90,12 @@ export class BoardBuilder {
     return frame;
   }
 
-  /** Move the viewport to show provided bounds. */
-  public async zoomTo(bounds: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  }): Promise<void> {
+  /** Move the viewport to show the provided frame or widgets. */
+  public async zoomTo(
+    target: Frame | Array<BaseItem | Group>
+  ): Promise<void> {
     this.ensureBoard();
-    if (miro.board.viewport?.set) {
-      await miro.board.viewport.set({ viewport: bounds });
-    } else if (miro.board.viewport?.zoomTo) {
-      const temp = await miro.board.createFrame({
-        title: '',
-        x: bounds.x,
-        y: bounds.y,
-        width: bounds.width,
-        height: bounds.height,
-      });
-      await miro.board.viewport.zoomTo(temp);
-      await (temp as any).remove();
-    }
+    await miro.board.viewport.zoomTo(target as any);
   }
 
   private async loadShapeCache(): Promise<void> {
