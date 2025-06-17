@@ -83,7 +83,7 @@ describe('GraphProcessor', () => {
 
   it('throws on invalid graph', async () => {
     await expect(processor.processGraph({} as any)).rejects.toThrow(
-      'Invalid graph'
+      'Invalid graph format'
     );
   });
 
@@ -145,7 +145,7 @@ describe('GraphProcessor', () => {
       edges: [{ from: 'n2', to: 'n1' }],
     };
     await expect(processor.processGraph(graph as any)).rejects.toThrow(
-      'Invalid graph'
+      'Edge references missing node: n2'
     );
   });
 
@@ -155,7 +155,7 @@ describe('GraphProcessor', () => {
       edges: [{ from: 'n1', to: 'n2' }],
     };
     await expect(processor.processGraph(graph as any)).rejects.toThrow(
-      'Invalid graph'
+      'Edge references missing node: n2'
     );
   });
 });
