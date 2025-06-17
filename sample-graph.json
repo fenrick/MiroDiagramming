@@ -14,17 +14,72 @@
     { "id": "n12", "label": "Increase Sales", "type": "Goal" }
   ],
   "edges": [
-    { "from": "n1", "to": "n3", "label": "triggers", "metadata": { "template": "flow" } },
-    { "from": "n2", "to": "n3", "label": "assigned to", "metadata": { "template": "assignment" } },
-    { "from": "n3", "to": "n4", "label": "realizes", "metadata": { "template": "realization" } },
+    {
+      "from": "n1",
+      "to": "n3",
+      "label": "triggers",
+      "metadata": { "template": "flow" }
+    },
+    {
+      "from": "n2",
+      "to": "n3",
+      "label": "assigned to",
+      "metadata": { "template": "assignment" }
+    },
+    {
+      "from": "n3",
+      "to": "n4",
+      "label": "realizes",
+      "metadata": { "template": "realization" }
+    },
     { "from": "n4", "to": "n1", "label": "serves" },
-    { "from": "n3", "to": "n6", "label": "uses", "metadata": { "template": "access" } },
-    { "from": "n6", "to": "n5", "label": "realized by", "metadata": { "template": "realization" } },
-    { "from": "n5", "to": "n7", "label": "writes", "metadata": { "template": "access" } },
-    { "from": "n5", "to": "n8", "label": "deployed on", "metadata": { "template": "assignment" } },
-    { "from": "n7", "to": "n9", "label": "stored on", "metadata": { "template": "assignment" } },
-    { "from": "n9", "to": "n10", "label": "realizes", "metadata": { "template": "realization" } },
-    { "from": "n11", "to": "n5", "label": "implements", "metadata": { "template": "realization" } },
-    { "from": "n12", "to": "n11", "label": "influences", "metadata": { "template": "influence" } }
+    {
+      "from": "n3",
+      "to": "n6",
+      "label": "uses",
+      "metadata": { "template": "access" }
+    },
+    {
+      "from": "n6",
+      "to": "n5",
+      "label": "realized by",
+      "metadata": { "template": "realization" }
+    },
+    {
+      "from": "n5",
+      "to": "n7",
+      "label": "writes",
+      "metadata": { "template": "access" }
+    },
+    {
+      "from": "n5",
+      "to": "n8",
+      "label": "deployed on",
+      "metadata": { "template": "assignment" }
+    },
+    {
+      "from": "n7",
+      "to": "n9",
+      "label": "stored on",
+      "metadata": { "template": "assignment" }
+    },
+    {
+      "from": "n9",
+      "to": "n10",
+      "label": "realizes",
+      "metadata": { "template": "realization" }
+    },
+    {
+      "from": "n11",
+      "to": "n5",
+      "label": "implements",
+      "metadata": { "template": "realization" }
+    },
+    {
+      "from": "n12",
+      "to": "n11",
+      "label": "influences",
+      "metadata": { "template": "influence" }
+    }
   ]
 }
