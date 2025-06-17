@@ -122,7 +122,9 @@ npm test
 npm run lint
 ```
 
-These commands perform TypeScript type checking and execute a small Jest suite.
+These commands perform TypeScript type checking, execute a small Jest suite
+and run ESLint. The linter uses the `@typescript-eslint` recommended ruleset
+with a few overrides, so code should pass `npm run lint` without errors.
 
 ## 🗂️ Folder structure <a name="folder"></a>
 
