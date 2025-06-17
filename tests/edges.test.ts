@@ -54,4 +54,22 @@ describe('createEdges', () => {
     expect(connectors).toHaveLength(1);
     expect(global.miro.board.createConnector).not.toHaveBeenCalled();
   });
+
+  test('updates reused connectors with hint positions', async () => {
+    const existing = {
+      getMetadata: jest.fn().mockResolvedValue({ from: 'n1', to: 'n2' }),
+      sync: jest.fn(),
+      id: 'cExisting',
+      start: { item: 'a', position: { x: 0, y: 0 } },
+      end: { item: 'b', position: { x: 0, y: 0 } },
+    };
+    (global.miro.board.get as jest.Mock).mockResolvedValueOnce([existing]);
+    const edges = [{ from: 'n1', to: 'n2' }];
+    const nodeMap = { n1: { id: 'a' }, n2: { id: 'b' } } as any;
+    const hint = { startPosition: { x: 0.1, y: 0.2 }, endPosition: { x: 0.9, y: 1 } };
+    const connectors = await createEdges(edges as any, nodeMap, [hint as any]);
+    expect(connectors[0]).toBe(existing);
+    expect(existing.start.position).toEqual(hint.startPosition);
+    expect(existing.end.position).toEqual(hint.endPosition);
+  });
 });
