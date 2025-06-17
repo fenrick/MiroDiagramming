@@ -23,6 +23,11 @@ interface NodeMetadata {
   label: string;
 }
 
+interface EdgeMetadata {
+  from: string;
+  to: string;
+}
+
 const readFile = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -90,6 +95,29 @@ export async function findNode(
   return undefined;
 }
 
+/** Search the board for an existing connector with matching metadata. */
+export async function findConnector(
+  from: string,
+  to: string
+): Promise<Connector | undefined> {
+  if (typeof from !== 'string' || typeof to !== 'string') {
+    throw new Error('Invalid search parameters');
+  }
+  if (!(globalThis as any).miro?.board) {
+    throw new Error('Miro board not initialized');
+  }
+  const connectors = (await miro.board.get({ type: 'connector' })) as Connector[];
+  for (const conn of connectors) {
+    const meta = (await conn.getMetadata(
+      'app.miro.structgraph'
+    )) as unknown as EdgeMetadata | undefined;
+    if (meta?.from === from && meta.to === to) {
+      return conn as Connector;
+    }
+  }
+  return undefined;
+}
+
 export interface PositionedNode {
   x: number;
   y: number;
@@ -153,6 +181,11 @@ export async function createEdges(
     const from = nodeMap[edge.from];
     const to = nodeMap[edge.to];
     if (!from || !to) continue;
+    const existing = await findConnector(edge.from, edge.to);
+    if (existing) {
+      connectors.push(existing);
+      continue;
+    }
     const connector = await miro.board.createConnector({
       start: { item: from.id },
       end: { item: to.id },
