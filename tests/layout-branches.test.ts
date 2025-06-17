@@ -1,10 +1,17 @@
 import { layoutGraph } from '../src/elk-layout';
 import ELK from 'elkjs/lib/elk.bundled.js';
 
+/**
+ * Coverage tests for layoutGraph focusing on branch conditions
+ * around metadata and edge sections.
+ */
+
 test('layoutGraph handles metadata and missing sections', async () => {
   const layoutSpy = jest.spyOn(ELK.prototype, 'layout').mockImplementation(async (g: any) => {
+    // Validate that metadata dimensions are passed through
     expect(g.children[0].width).toBe(99);
     expect(g.children[0].height).toBe(88);
+    // Return layout with one edge lacking sections and one with sections
     return {
       children: [{ id: 'n1', x: 1, y: 2, width: 50, height: 60 }],
       edges: [
@@ -30,6 +37,7 @@ test('layoutGraph handles metadata and missing sections', async () => {
     ],
   };
   const result = await layoutGraph(graph as any);
+  // Only the edge with sections should be included
   expect(result.nodes.n1.width).toBe(50);
   expect(result.edges).toHaveLength(1);
   layoutSpy.mockRestore();
@@ -42,6 +50,7 @@ test('layoutGraph uses defaults when layout values missing', async () => {
   } as any);
   const graph = { nodes: [{ id: 'n2', label: 'B', type: 'Role' }], edges: [] };
   const res = await layoutGraph(graph as any);
+  // Defaults populate width and position
   expect(res.nodes.n2.width).toBeGreaterThan(0);
   expect(res.nodes.n2.x).toBe(0);
   layoutSpy.mockRestore();

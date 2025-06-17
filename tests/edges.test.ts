@@ -1,5 +1,7 @@
 import { createEdges, resetBoardCache } from '../src/graph';
 
+// Tests for the createEdges helper covering edge reuse and hints
+
 declare const global: any;
 
 describe('createEdges', () => {
@@ -23,6 +25,7 @@ describe('createEdges', () => {
   });
 
   test('skips missing nodes', async () => {
+    // When a node is missing, no connectors should be created
     const edges = [{ from: 'n1', to: 'n2' }];
     const nodeMap = { n1: { id: 'a' } } as any;
     const connectors = await createEdges(edges as any, nodeMap);
@@ -32,6 +35,7 @@ describe('createEdges', () => {
   test('creates connectors', async () => {
     const edges = [{ from: 'n1', to: 'n2', label: 'l' }];
     const nodeMap = { n1: { id: 'a' }, n2: { id: 'b' } } as any;
+    // A new connector should be created between the nodes
     const connectors = await createEdges(edges as any, nodeMap);
     expect(connectors).toHaveLength(1);
     expect(global.miro.board.createConnector).toHaveBeenCalled();
@@ -51,6 +55,7 @@ describe('createEdges', () => {
     const edges = [{ from: 'n1', to: 'n2' }];
     const nodeMap = { n1: { id: 'a' }, n2: { id: 'b' } } as any;
     const connectors = await createEdges(edges as any, nodeMap);
+    // Existing connector is returned instead of creating a new one
     expect(connectors).toHaveLength(1);
     expect(global.miro.board.createConnector).not.toHaveBeenCalled();
   });
@@ -70,6 +75,7 @@ describe('createEdges', () => {
       startPosition: { x: 0.1, y: 0.2 },
       endPosition: { x: 0.9, y: 1 },
     };
+    // Pass a hint to update the connector positions
     const connectors = await createEdges(edges as any, nodeMap, [hint as any]);
     expect(connectors[0]).toBe(existing);
     expect(existing.start.position).toEqual(hint.startPosition);
@@ -86,6 +92,7 @@ describe('createEdges', () => {
     const edges = [{ from: 'n1', to: 'n2', label: 'L' }];
     const nodeMap = { n1: { id: 'a' }, n2: { id: 'b' } } as any;
     const connectors = await createEdges(edges as any, nodeMap);
+    // The reused connector should receive a caption from the edge label
     expect(connectors[0]).toBe(existing);
     expect(existing.captions[0].content).toBe('L');
   });
