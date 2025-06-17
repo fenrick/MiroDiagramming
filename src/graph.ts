@@ -1,6 +1,17 @@
 import { createFromTemplate } from './templates';
 import type { BaseItem, Group, Connector, Item } from '@mirohq/websdk-types';
 
+// Simple in-memory caches to avoid repeated board lookups while processing
+let shapeCache: BaseItem[] | undefined;
+// Cache connectors to avoid repeated board searches during processing
+let connectorCache: Connector[] | undefined;
+
+/** Clear all board caches. Useful between runs or during tests. */
+export function resetBoardCache(): void {
+  shapeCache = undefined;
+  connectorCache = undefined;
+}
+
 export interface NodeData {
   id: string;
   label: string;
@@ -69,8 +80,10 @@ export async function findNode(
   if (!(globalThis as any).miro?.board) {
     throw new Error('Miro board not initialized');
   }
-  const shapes = await miro.board.get({ type: 'shape' });
-  for (const item of shapes as BaseItem[]) {
+  if (!shapeCache) {
+    shapeCache = (await miro.board.get({ type: 'shape' })) as BaseItem[];
+  }
+  for (const item of shapeCache) {
     const meta = (await item.getMetadata('app.miro.structgraph')) as unknown as
       | NodeMetadata
       | undefined;
@@ -82,6 +95,7 @@ export async function findNode(
   const groups = (await miro.board.get({ type: 'group' })) as Group[];
   for (const group of groups) {
     const items = await group.getItems();
+    if (!Array.isArray(items)) continue;
     for (const item of items) {
       const meta = (await item.getMetadata(
         'app.miro.structgraph'
@@ -106,8 +120,10 @@ export async function findConnector(
   if (!(globalThis as any).miro?.board) {
     throw new Error('Miro board not initialized');
   }
-  const connectors = (await miro.board.get({ type: 'connector' })) as Connector[];
-  for (const conn of connectors) {
+  if (!connectorCache) {
+    connectorCache = (await miro.board.get({ type: 'connector' })) as Connector[];
+  }
+  for (const conn of connectorCache) {
     const meta = (await conn.getMetadata(
       'app.miro.structgraph'
     )) as unknown as EdgeMetadata | undefined;
@@ -155,6 +171,7 @@ export async function createNode(
         label: node.label,
       });
     }
+    // Groups aren't cached to avoid stale data
     return widget as Group;
   }
 
@@ -162,6 +179,9 @@ export async function createNode(
     type: node.type,
     label: node.label,
   });
+  if (shapeCache) {
+    shapeCache.push(widget as BaseItem);
+  }
   return widget as BaseItem;
 }
 
@@ -195,6 +215,9 @@ export async function createEdges(
       from: edge.from,
       to: edge.to,
     });
+    if (connectorCache) {
+      connectorCache.push(connector);
+    }
     connectors.push(connector);
   }
   return connectors;
