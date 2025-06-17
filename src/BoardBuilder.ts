@@ -320,7 +320,8 @@ export class BoardBuilder {
   private updateConnector(
     connector: Connector,
     edge: EdgeData,
-    template?: ConnectorTemplate
+    template?: ConnectorTemplate,
+    hint?: EdgeHint
   ): void {
     if (edge.label) {
       connector.captions = [
@@ -338,6 +339,18 @@ export class BoardBuilder {
       } as ConnectorStyle as any;
     }
     connector.shape = template?.shape ?? connector.shape;
+    if (hint?.startPosition) {
+      connector.start = {
+        ...(connector.start ?? {}),
+        position: hint.startPosition,
+      } as any;
+    }
+    if (hint?.endPosition) {
+      connector.end = {
+        ...(connector.end ?? {}),
+        position: hint.endPosition,
+      } as any;
+    }
   }
 
   private async createConnector(
@@ -395,7 +408,7 @@ export class BoardBuilder {
       );
       const existing = await this.findConnector(edge.from, edge.to);
       if (existing) {
-        this.updateConnector(existing, edge, template);
+        this.updateConnector(existing, edge, template, hints?.[i]);
         connectors.push(existing);
         continue;
       }
