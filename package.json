@@ -1,9 +1,9 @@
 {
-  "name": "miro-diagraming",
+  "name": "miro-diagramming",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Miro diagraming plugin template",
+  "description": "Miro diagramming plugin template",
   "keywords": [
     "Mirotone",
     "React",
