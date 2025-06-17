@@ -8,6 +8,7 @@ import type {
   Group,
   Connector,
   ConnectorStyle,
+  Frame,
 } from '@mirohq/websdk-types';
 import type {
   TemplateElement,
@@ -23,13 +24,13 @@ import type { NodeData, EdgeData, PositionedNode, EdgeHint } from './graph';
 export class BoardBuilder {
   private shapeCache: BaseItem[] | undefined;
   private connectorCache: Connector[] | undefined;
-  private frameId: string | undefined;
+  private frame: Frame | undefined;
 
   /** Clear cached board lookups. Useful between runs or during tests. */
   public reset(): void {
     this.shapeCache = undefined;
     this.connectorCache = undefined;
-    this.frameId = undefined;
+    this.frame = undefined;
   }
 
   private ensureBoard(): void {
@@ -39,8 +40,8 @@ export class BoardBuilder {
   }
 
   /** Assign a parent frame for subsequently created items. */
-  public setFrame(id: string | undefined): void {
-    this.frameId = id;
+  public setFrame(frame: Frame | undefined): void {
+    this.frame = frame;
   }
 
   /**
@@ -71,7 +72,7 @@ export class BoardBuilder {
     x: number,
     y: number,
     title?: string
-  ): Promise<BaseItem> {
+  ): Promise<Frame> {
     this.ensureBoard();
     const frame = (await miro.board.createFrame({
       title: title ?? '',
@@ -79,8 +80,8 @@ export class BoardBuilder {
       y,
       width,
       height,
-    })) as BaseItem;
-    this.frameId = frame.id;
+    })) as Frame;
+    this.frame = frame;
     return frame;
   }
 
@@ -280,7 +281,7 @@ export class BoardBuilder {
       node.label,
       pos.x,
       pos.y,
-      this.frameId
+      this.frame
     );
     if ((widget as Group).type === 'group') {
       const items = await (widget as Group).getItems();

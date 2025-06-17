@@ -5,6 +5,7 @@ import type {
   GroupableItem,
   ShapeType,
   ConnectorStyle,
+  Frame,
 } from '@mirohq/websdk-types';
 
 /**
@@ -70,7 +71,7 @@ export async function createFromTemplate(
   label: string,
   x: number,
   y: number,
-  parentId?: string
+  frame?: Frame
 ): Promise<GroupableItem | Group> {
   const template = getTemplate(name);
   if (!template) {
@@ -93,8 +94,8 @@ export async function createFromTemplate(
         rotation: el.rotation ?? 0,
         content: (el.text ?? '{{label}}').replace('{{label}}', label),
         style: style as any,
-        parentId,
       });
+      frame?.add(shape);
       created.push(shape);
     } else if (el.text) {
       const style: Record<string, unknown> = {
@@ -106,8 +107,8 @@ export async function createFromTemplate(
         x,
         y,
         style: style as any,
-        parentId,
       });
+      frame?.add(text);
       created.push(text);
     }
   }
