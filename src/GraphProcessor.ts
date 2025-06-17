@@ -1,6 +1,6 @@
 import { loadGraph, defaultBuilder, GraphData } from './graph';
 import { BoardBuilder } from './BoardBuilder';
-import { layoutGraph } from './elk-layout';
+import { layoutGraph, LayoutResult } from './elk-layout';
 import type { BaseItem, Group } from '@mirohq/websdk-types';
 
 /**
@@ -17,6 +17,44 @@ export interface ProcessOptions {
 
 export class GraphProcessor {
   constructor(private builder: BoardBuilder = defaultBuilder) {}
+
+  /**
+   * Determine the bounding box for positioned nodes.
+   */
+  private layoutBounds(layout: LayoutResult): {
+    minX: number;
+    minY: number;
+    maxX: number;
+    maxY: number;
+  } {
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+    Object.values(layout.nodes).forEach((n) => {
+      minX = Math.min(minX, n.x);
+      minY = Math.min(minY, n.y);
+      maxX = Math.max(maxX, n.x + n.width);
+      maxY = Math.max(maxY, n.y + n.height);
+    });
+    return { minX, minY, maxX, maxY };
+  }
+
+  /**
+   * Calculate offsets for node placement within the board.
+   */
+  private calculateOffset(
+    spot: { x: number; y: number },
+    frameWidth: number,
+    frameHeight: number,
+    bounds: { minX: number; minY: number },
+    margin: number
+  ): { offsetX: number; offsetY: number } {
+    return {
+      offsetX: spot.x - frameWidth / 2 + margin - bounds.minX,
+      offsetY: spot.y - frameHeight / 2 + margin - bounds.minY,
+    };
+  }
   /**
    * Load a JSON graph file and process it.
    */
@@ -41,23 +79,14 @@ export class GraphProcessor {
     this.validateGraph(graph);
     const layout = await layoutGraph(graph);
 
-    // Calculate bounding box of the layout
-    let minX = Infinity;
-    let minY = Infinity;
-    let maxX = -Infinity;
-    let maxY = -Infinity;
-    Object.values(layout.nodes).forEach((n) => {
-      minX = Math.min(minX, n.x);
-      minY = Math.min(minY, n.y);
-      maxX = Math.max(maxX, n.x + n.width);
-      maxY = Math.max(maxY, n.y + n.height);
-    });
-    const margin = 40;
-    const frameWidth = maxX - minX + margin * 2;
-    const frameHeight = maxY - minY + margin * 2;
+    const bounds = this.layoutBounds(layout);
+    const margin = 100;
+    const frameWidth = bounds.maxX - bounds.minX + margin * 2;
+    const frameHeight = bounds.maxY - bounds.minY + margin * 2;
     const spot = await this.builder.findSpace(frameWidth, frameHeight);
 
-    if (options.createFrame) {
+    const useFrame = options.createFrame !== false;
+    if (useFrame) {
       await this.builder.createFrame(
         frameWidth,
         frameHeight,
@@ -69,8 +98,13 @@ export class GraphProcessor {
       this.builder.setFrame(undefined);
     }
 
-    const offsetX = spot.x - frameWidth / 2 + margin - minX;
-    const offsetY = spot.y - frameHeight / 2 + margin - minY;
+    const { offsetX, offsetY } = this.calculateOffset(
+      spot,
+      frameWidth,
+      frameHeight,
+      { minX: bounds.minX, minY: bounds.minY },
+      margin
+    );
 
     const nodeMap: Record<string, BaseItem | Group> = {};
     for (const node of graph.nodes) {
@@ -83,8 +117,23 @@ export class GraphProcessor {
       const widget = await this.builder.createNode(node, adjPos);
       nodeMap[node.id] = widget;
     }
+
+    const adjustedEdges = layout.edges.map((edge) => ({
+      startPoint: {
+        x: edge.startPoint.x + offsetX,
+        y: edge.startPoint.y + offsetY,
+      },
+      endPoint: {
+        x: edge.endPoint.x + offsetX,
+        y: edge.endPoint.y + offsetY,
+      },
+      bendPoints: edge.bendPoints?.map((pt) => ({
+        x: pt.x + offsetX,
+        y: pt.y + offsetY,
+      })),
+    }));
     // Derive connector orientation hints from ELK edge routes
-    const edgeHints = layout.edges.map((e, i) => {
+    const edgeHints = adjustedEdges.map((e, i) => {
       const src = layout.nodes[graph.edges[i].from];
       const tgt = layout.nodes[graph.edges[i].to];
 
@@ -92,8 +141,8 @@ export class GraphProcessor {
         node: typeof src,
         pt: { x: number; y: number }
       ): { x: number; y: number } => {
-        const px = (pt.x - node.x) / node.width;
-        const py = (pt.y - node.y) / node.height;
+        const px = (pt.x - (node.x + offsetX)) / node.width;
+        const py = (pt.y - (node.y + offsetY)) / node.height;
         return { x: px, y: py };
       };
 

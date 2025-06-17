@@ -48,6 +48,10 @@ describe('GraphProcessor', () => {
           id: 't1',
           type: 'text',
         }),
+        createFrame: jest.fn().mockResolvedValue({
+          add: jest.fn(),
+          id: 'f1',
+        }),
         group: jest.fn().mockResolvedValue({
           type: 'group',
           getItems: jest.fn().mockResolvedValue([]),
