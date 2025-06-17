@@ -1,28 +1,30 @@
 {
   "nodes": [
-    { "id": "n1", "label": "Customer", "type": "Role" },
-    { "id": "n2", "label": "Sales Process", "type": "BusinessProcess" },
-    { "id": "n3", "label": "Order Service", "type": "BusinessService" },
-    { "id": "n4", "label": "CRM Application", "type": "ApplicationComponent" },
-    { "id": "n5", "label": "Auth Service", "type": "ApplicationComponent" },
-    { "id": "n6", "label": "Order Database", "type": "DataObject" },
-    { "id": "n7", "label": "Web Server", "type": "Device" },
-    { "id": "n8", "label": "Database Server", "type": "Device" },
-    { "id": "n9", "label": "Order Entry", "type": "BusinessProcess" },
-    { "id": "n10", "label": "Customer Support", "type": "BusinessProcess" }
+    { "id": "n1", "label": "Customer", "type": "BusinessActor" },
+    { "id": "n2", "label": "Sales Rep", "type": "Role" },
+    { "id": "n3", "label": "Order Management", "type": "BusinessProcess" },
+    { "id": "n4", "label": "Order Service", "type": "BusinessService" },
+    { "id": "n5", "label": "CRM Application", "type": "ApplicationComponent" },
+    { "id": "n6", "label": "Auth Service", "type": "ApplicationService" },
+    { "id": "n7", "label": "Order Data", "type": "DataObject" },
+    { "id": "n8", "label": "Web Server", "type": "Device" },
+    { "id": "n9", "label": "Database Server", "type": "Node" },
+    { "id": "n10", "label": "Database Service", "type": "TechnologyService" },
+    { "id": "n11", "label": "Migration Project", "type": "WorkPackage" },
+    { "id": "n12", "label": "Increase Sales", "type": "Goal" }
   ],
   "edges": [
-    { "from": "n1", "to": "n2", "label": "triggers" },
-    { "from": "n2", "to": "n3", "label": "requires" },
-    { "from": "n3", "to": "n4", "label": "realized by" },
-    { "from": "n4", "to": "n6", "label": "reads" },
-    { "from": "n4", "to": "n5", "label": "authenticates via" },
-    { "from": "n5", "to": "n6", "label": "writes to" },
-    { "from": "n6", "to": "n8", "label": "hosted on" },
-    { "from": "n4", "to": "n7", "label": "deployed on" },
-    { "from": "n2", "to": "n9", "label": "decomposes" },
-    { "from": "n2", "to": "n10", "label": "decomposes" },
-    { "from": "n9", "to": "n4", "label": "uses" },
-    { "from": "n10", "to": "n5", "label": "uses" }
+    { "from": "n1", "to": "n3", "label": "triggers", "metadata": { "template": "flow" } },
+    { "from": "n2", "to": "n3", "label": "assigned to", "metadata": { "template": "assignment" } },
+    { "from": "n3", "to": "n4", "label": "realizes", "metadata": { "template": "realization" } },
+    { "from": "n4", "to": "n1", "label": "serves" },
+    { "from": "n3", "to": "n6", "label": "uses", "metadata": { "template": "access" } },
+    { "from": "n6", "to": "n5", "label": "realized by", "metadata": { "template": "realization" } },
+    { "from": "n5", "to": "n7", "label": "writes", "metadata": { "template": "access" } },
+    { "from": "n5", "to": "n8", "label": "deployed on", "metadata": { "template": "assignment" } },
+    { "from": "n7", "to": "n9", "label": "stored on", "metadata": { "template": "assignment" } },
+    { "from": "n9", "to": "n10", "label": "realizes", "metadata": { "template": "realization" } },
+    { "from": "n11", "to": "n5", "label": "implements", "metadata": { "template": "realization" } },
+    { "from": "n12", "to": "n11", "label": "influences", "metadata": { "template": "influence" } }
   ]
 }
