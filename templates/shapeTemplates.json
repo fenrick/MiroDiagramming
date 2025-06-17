@@ -5,7 +5,8 @@
         "shape": "round_rectangle",
         "width": 160,
         "height": 60,
-        "fill": "#FDE9D9",
+        "rotation": 0,
+        "style": { "fillColor": "#FDE9D9" },
         "text": "{{label}}"
       }
     ]
@@ -16,7 +17,7 @@
         "shape": "round_rectangle",
         "width": 160,
         "height": 60,
-        "fill": "#D9EAFD",
+        "style": { "fillColor": "#D9EAFD" },
         "text": "{{label}}"
       }
     ]
@@ -27,7 +28,7 @@
         "shape": "round_rectangle",
         "width": 160,
         "height": 60,
-        "fill": "#D9F0DB",
+        "style": { "fillColor": "#D9F0DB" },
         "text": "{{label}}"
       }
     ]
@@ -38,7 +39,7 @@
         "shape": "round_rectangle",
         "width": 160,
         "height": 60,
-        "fill": "#E5D9FD",
+        "style": { "fillColor": "#E5D9FD" },
         "text": "{{label}}"
       }
     ]
@@ -49,7 +50,7 @@
         "shape": "rectangle",
         "width": 160,
         "height": 60,
-        "fill": "#FFF2B6",
+        "style": { "fillColor": "#FFF2B6" },
         "text": "{{label}}"
       }
     ]
@@ -60,7 +61,7 @@
         "shape": "rectangle",
         "width": 160,
         "height": 60,
-        "fill": "#E0E0E0",
+        "style": { "fillColor": "#E0E0E0" },
         "text": "{{label}}"
       }
     ]

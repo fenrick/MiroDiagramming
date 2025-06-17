@@ -32,4 +32,19 @@ describe('createNode', () => {
     const res = await createNode(node, pos);
     expect(res).toBeDefined();
   });
+
+  test('updates existing node', async () => {
+    const existing = {
+      type: 'shape',
+      style: {},
+      setMetadata: jest.fn(),
+      getMetadata: jest.fn().mockResolvedValue({ type: 'Role', label: 'L' }),
+      sync: jest.fn(),
+      id: 'sExisting',
+    } as any;
+    (global.miro.board.get as jest.Mock).mockResolvedValueOnce([existing]);
+    const res = await createNode(node, pos);
+    expect(res).toBe(existing);
+    expect(existing.style.fillColor).toBe('#FDE9D9');
+  });
 });
