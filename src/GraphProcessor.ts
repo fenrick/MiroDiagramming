@@ -1,4 +1,4 @@
-import { loadGraph, createNode, createEdges, NodeData, EdgeData, GraphData } from './graph';
+import { loadGraph, createNode, createEdges, GraphData } from './graph';
 import { layoutGraph } from './elk-layout';
 import type { BaseItem, Group, Connector } from '@mirohq/websdk-types';
 
