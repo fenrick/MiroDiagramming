@@ -1,7 +1,7 @@
 import { loadGraph, defaultBuilder, GraphData } from './graph';
 import { BoardBuilder } from './BoardBuilder';
 import { layoutGraph, LayoutResult } from './elk-layout';
-import type { BaseItem, Group } from '@mirohq/websdk-types';
+import type { BaseItem, Group, Frame } from '@mirohq/websdk-types';
 
 /**
  * High level orchestrator that loads graph data, runs layout and
@@ -86,8 +86,9 @@ export class GraphProcessor {
     const spot = await this.builder.findSpace(frameWidth, frameHeight);
 
     const useFrame = options.createFrame !== false;
+    let frame: Frame | undefined;
     if (useFrame) {
-      await this.builder.createFrame(
+      frame = await this.builder.createFrame(
         frameWidth,
         frameHeight,
         spot.x,
@@ -158,12 +159,11 @@ export class GraphProcessor {
       edgeHints
     );
     await this.builder.syncAll([...Object.values(nodeMap), ...connectors]);
-    await this.builder.zoomTo({
-      x: spot.x,
-      y: spot.y,
-      width: frameWidth,
-      height: frameHeight,
-    });
+    if (frame) {
+      await this.builder.zoomTo(frame);
+    } else {
+      await this.builder.zoomTo(Object.values(nodeMap));
+    }
   }
 
   /** Ensure the graph object has the expected shape. */
