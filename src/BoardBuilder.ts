@@ -117,11 +117,14 @@ export class BoardBuilder {
     label: string
   ): Promise<BaseItem | Group | undefined> {
     await this.loadShapeCache();
-    for (const item of this.shapeCache ?? []) {
-      const raw = await item.getMetadata('app.miro.structgraph');
-      const meta = raw as unknown as NodeMetadata | undefined;
+    const shapes = this.shapeCache ?? [];
+    const metas = await Promise.all(
+      shapes.map((s) => s.getMetadata('app.miro.structgraph'))
+    );
+    for (let i = 0; i < shapes.length; i++) {
+      const meta = metas[i] as unknown as NodeMetadata | undefined;
       if (meta?.type === type && meta.label === label) {
-        return item as BaseItem;
+        return shapes[i] as BaseItem;
       }
     }
     return undefined;
@@ -136,9 +139,11 @@ export class BoardBuilder {
     for (const group of groups) {
       const items = await group.getItems();
       if (!Array.isArray(items)) continue;
-      for (const item of items) {
-        const raw = await item.getMetadata('app.miro.structgraph');
-        const meta = raw as unknown as NodeMetadata | undefined;
+      const metas = await Promise.all(
+        items.map((i) => i.getMetadata('app.miro.structgraph'))
+      );
+      for (let i = 0; i < items.length; i++) {
+        const meta = metas[i] as unknown as NodeMetadata | undefined;
         if (meta?.type === type && meta.label === label) {
           return group as Group;
         }
@@ -169,11 +174,14 @@ export class BoardBuilder {
       throw new Error('Invalid search parameters');
     }
     await this.loadConnectorCache();
-    for (const conn of this.connectorCache ?? []) {
-      const raw = await conn.getMetadata('app.miro.structgraph');
-      const meta = raw as unknown as EdgeMetadata | undefined;
+    const connectors = this.connectorCache ?? [];
+    const metas = await Promise.all(
+      connectors.map((c) => c.getMetadata('app.miro.structgraph'))
+    );
+    for (let i = 0; i < connectors.length; i++) {
+      const meta = metas[i] as unknown as EdgeMetadata | undefined;
       if (meta?.from === from && meta.to === to) {
-        return conn as Connector;
+        return connectors[i] as Connector;
       }
     }
     return undefined;
