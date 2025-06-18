@@ -15,7 +15,7 @@ export class DiagramApp {
 
   /** Register UI handlers with the Miro board. */
   public async init(): Promise<void> {
-    if (!(globalThis as any).miro?.board?.ui) {
+    if (typeof miro === 'undefined' || !miro?.board?.ui) {
       throw new Error('Miro SDK not available');
     }
     miro.board.ui.on('icon:click', async () => {
