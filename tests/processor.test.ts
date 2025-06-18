@@ -83,7 +83,7 @@ describe('GraphProcessor', () => {
 
   it('throws on invalid graph', async () => {
     await expect(processor.processGraph({} as any)).rejects.toThrow(
-      'Invalid graph format'
+      'Invalid graph format',
     );
   });
 
@@ -112,13 +112,13 @@ describe('GraphProcessor', () => {
       210,
       210,
       { minX: 0, minY: 0 },
-      100
+      100,
     );
     expect(offset.offsetX).toBe(-5);
     expect(offset.offsetY).toBe(-5);
 
     expect(global.miro.board.viewport.zoomTo).toHaveBeenCalledWith(
-      expect.objectContaining({ id: 'f1' })
+      expect.objectContaining({ id: 'f1' }),
     );
   });
 
@@ -145,7 +145,7 @@ describe('GraphProcessor', () => {
       edges: [{ from: 'n2', to: 'n1' }],
     };
     await expect(processor.processGraph(graph as any)).rejects.toThrow(
-      'Edge references missing node: n2'
+      'Edge references missing node: n2',
     );
   });
 
@@ -155,7 +155,7 @@ describe('GraphProcessor', () => {
       edges: [{ from: 'n1', to: 'n2' }],
     };
     await expect(processor.processGraph(graph as any)).rejects.toThrow(
-      'Edge references missing node: n2'
+      'Edge references missing node: n2',
     );
   });
 });

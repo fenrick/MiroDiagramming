@@ -50,7 +50,7 @@ const App: React.FC = () => {
           });
         }
       } catch (e) {
-        console.error(e);
+        miro.board.notifications.showError(String(e));
       }
     }
     setFiles([]);
@@ -126,7 +126,7 @@ const App: React.FC = () => {
             <input
               type="checkbox"
               checked={withFrame}
-              onChange={(e) => setWithFrame(e.target.checked)}
+              onChange={e => setWithFrame(e.target.checked)}
             />
             Wrap items in frame
           </label>
@@ -135,7 +135,7 @@ const App: React.FC = () => {
               type="text"
               placeholder="Frame title"
               value={frameTitle}
-              onChange={(e) => setFrameTitle(e.target.value)}
+              onChange={e => setFrameTitle(e.target.value)}
               style={{ marginTop: '4px', width: '100%' }}
             />
           )}

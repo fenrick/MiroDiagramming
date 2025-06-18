@@ -9,8 +9,8 @@ const graph = {
 };
 
 test('layoutGraph returns positions for all nodes', async () => {
-  const res = await layoutGraph(graph as any);
-  expect(res.nodes.n1).toBeDefined();
-  expect(res.nodes.n2).toBeDefined();
-  expect(Array.isArray(res.edges)).toBe(true);
+  const result = await layoutGraph(graph as any);
+  expect(result.nodes.n1).toBeDefined();
+  expect(result.nodes.n2).toBeDefined();
+  expect(Array.isArray(result.edges)).toBe(true);
 });

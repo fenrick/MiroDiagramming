@@ -45,7 +45,7 @@ describe('loadGraph', () => {
     }
     (global as any).FileReader = FR;
     await expect(loadGraph({ name: 'a.json' } as any)).rejects.toThrow(
-      'Invalid graph data'
+      'Invalid graph data',
     );
   });
 
@@ -59,7 +59,7 @@ describe('loadGraph', () => {
     }
     (global as any).FileReader = FR;
     await expect(loadGraph({ name: 'bad.json' } as any)).rejects.toBe(
-      'Failed to load file'
+      'Failed to load file',
     );
   });
 });

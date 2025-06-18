@@ -19,7 +19,7 @@ export class CardProcessor {
 
   private tagIds(names: string[] | undefined, tags: Tag[]): string[] {
     return (names ?? [])
-      .map((name) => tags.find((t) => t.title === name)?.id)
+      .map(name => tags.find(t => t.title === name)?.id)
       .filter((id): id is string => !!id);
   }
 
@@ -27,7 +27,7 @@ export class CardProcessor {
     def: CardData,
     x: number,
     y: number,
-    tags: Tag[]
+    tags: Tag[],
   ): Promise<Card> {
     const tagIds = this.tagIds(def.tags, tags);
     const card = (await miro.board.createCard({
@@ -45,7 +45,7 @@ export class CardProcessor {
   /** Load cards from a file and create them on the board. */
   public async processFile(
     file: File,
-    options: CardProcessOptions = {}
+    options: CardProcessOptions = {},
   ): Promise<void> {
     const cards = await loadCards(file);
     await this.processCards(cards, options);
@@ -56,7 +56,7 @@ export class CardProcessor {
    */
   public async processCards(
     cards: CardData[],
-    options: CardProcessOptions = {}
+    options: CardProcessOptions = {},
   ): Promise<void> {
     if (!Array.isArray(cards)) {
       throw new Error('Invalid cards');
@@ -77,7 +77,7 @@ export class CardProcessor {
         totalHeight,
         spot.x,
         spot.y,
-        options.frameTitle
+        options.frameTitle,
       );
     } else {
       this.builder.setFrame(undefined);
@@ -90,10 +90,10 @@ export class CardProcessor {
 
     const created = await Promise.all(
       cards.map((def, i) =>
-        this.createCardWidget(def, startX + i * cardWidth, y, boardTags)
-      )
+        this.createCardWidget(def, startX + i * cardWidth, y, boardTags),
+      ),
     );
-    created.forEach((c) => frame?.add(c));
+    created.forEach(c => frame?.add(c));
 
     await this.builder.syncAll(created);
 

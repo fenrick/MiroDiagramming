@@ -17,6 +17,8 @@ import type {
 } from './templates';
 import type { NodeData, EdgeData, PositionedNode, EdgeHint } from './graph';
 
+const META_KEY = 'app.miro.structgraph';
+
 /**
  * Helper responsible for finding, creating and updating widgets on the board.
  * A small cache avoids repeated board lookups while processing a graph.
@@ -56,7 +58,7 @@ export class BoardBuilder {
    */
   public async findSpace(
     width: number,
-    height: number
+    height: number,
   ): Promise<{ x: number; y: number }> {
     this.ensureBoard();
     const vp = await miro.board.viewport.get();
@@ -76,7 +78,7 @@ export class BoardBuilder {
     height: number,
     x: number,
     y: number,
-    title?: string
+    title?: string,
   ): Promise<Frame> {
     this.ensureBoard();
     const frame = (await miro.board.createFrame({
@@ -112,45 +114,69 @@ export class BoardBuilder {
     }
   }
 
-  private async searchShapes(
-    type: string,
-    label: string
-  ): Promise<BaseItem | Group | undefined> {
-    await this.loadShapeCache();
-    for (const item of this.shapeCache ?? []) {
-      const raw = await item.getMetadata('app.miro.structgraph');
-      const meta = raw as unknown as NodeMetadata | undefined;
-      if (meta?.type === type && meta.label === label) {
-        return item as BaseItem;
+  /**
+   * Find an item whose metadata satisfies the provided predicate.
+   * Metadata for all items is loaded concurrently for efficiency.
+   */
+  private async findByMetadata<T extends BaseItem | Group | Connector>(
+    items: T[],
+    predicate: (meta: any, item: T) => boolean,
+  ): Promise<T | undefined> {
+    const metas = await Promise.all(
+      items.map(i => (i as any).getMetadata(META_KEY)),
+    );
+    for (let i = 0; i < items.length; i++) {
+      if (predicate(metas[i], items[i])) {
+        return items[i];
       }
     }
     return undefined;
   }
 
+  /**
+   * Search cached shapes for metadata that matches the given type and label.
+   * Returns the corresponding item if found.
+   */
+  private async searchShapes(
+    type: string,
+    label: string,
+  ): Promise<BaseItem | Group | undefined> {
+    await this.loadShapeCache();
+    const shapes = this.shapeCache ?? [];
+    return this.findByMetadata(shapes, meta => {
+      const data = meta as NodeMetadata | undefined;
+      return data?.type === type && data.label === label;
+    });
+  }
+
+  /**
+   * Search all groups on the board for an item whose metadata matches
+   * the provided type and label.
+   */
   private async searchGroups(
     type: string,
-    label: string
+    label: string,
   ): Promise<BaseItem | Group | undefined> {
     this.ensureBoard();
     const groups = (await miro.board.get({ type: 'group' })) as Group[];
-    for (const group of groups) {
-      const items = await group.getItems();
-      if (!Array.isArray(items)) continue;
-      for (const item of items) {
-        const raw = await item.getMetadata('app.miro.structgraph');
-        const meta = raw as unknown as NodeMetadata | undefined;
-        if (meta?.type === type && meta.label === label) {
-          return group as Group;
-        }
-      }
-    }
-    return undefined;
+    const matches = await Promise.all(
+      groups.map(async group => {
+        const items = await group.getItems();
+        if (!Array.isArray(items)) return undefined;
+        const found = await this.findByMetadata(items as BaseItem[], meta => {
+          const data = meta as NodeMetadata | undefined;
+          return data?.type === type && data.label === label;
+        });
+        return found ? group : undefined;
+      }),
+    );
+    return matches.find(Boolean);
   }
 
   /** Lookup an existing widget with matching metadata. */
   public async findNode(
     type: string,
-    label: string
+    label: string,
   ): Promise<BaseItem | Group | undefined> {
     if (typeof type !== 'string' || typeof label !== 'string') {
       throw new Error('Invalid search parameters');
@@ -163,26 +189,23 @@ export class BoardBuilder {
   /** Find a connector with matching metadata if it exists on the board. */
   public async findConnector(
     from: string,
-    to: string
+    to: string,
   ): Promise<Connector | undefined> {
     if (typeof from !== 'string' || typeof to !== 'string') {
       throw new Error('Invalid search parameters');
     }
     await this.loadConnectorCache();
-    for (const conn of this.connectorCache ?? []) {
-      const raw = await conn.getMetadata('app.miro.structgraph');
-      const meta = raw as unknown as EdgeMetadata | undefined;
-      if (meta?.from === from && meta.to === to) {
-        return conn as Connector;
-      }
-    }
-    return undefined;
+    const connectors = this.connectorCache ?? [];
+    return this.findByMetadata(connectors, meta => {
+      const data = meta as EdgeMetadata | undefined;
+      return data?.from === from && data.to === to;
+    });
   }
 
   private applyShapeElement(
     item: BaseItem,
     el: TemplateElement,
-    label: string
+    label: string,
   ): void {
     if (el.shape) (item as any).shape = el.shape;
     if (el.rotation !== undefined) (item as any).rotation = el.rotation;
@@ -190,7 +213,7 @@ export class BoardBuilder {
     if (el.height) (item as any).height = el.height;
     (item as any).content = (el.text ?? '{{label}}').replace(
       '{{label}}',
-      label
+      label,
     );
     const existing = (item as any).style ?? {};
     const style: Record<string, unknown> = {
@@ -206,11 +229,11 @@ export class BoardBuilder {
   private applyTextElement(
     item: BaseItem,
     el: TemplateElement,
-    label: string
+    label: string,
   ): void {
     (item as any).content = (el.text ?? '{{label}}').replace(
       '{{label}}',
-      label
+      label,
     );
     if (el.style) {
       (item as any).style = {
@@ -223,7 +246,7 @@ export class BoardBuilder {
   private applyElementToItem(
     item: BaseItem,
     el: TemplateElement,
-    label: string
+    label: string,
   ): void {
     if (item.type === 'shape') {
       this.applyShapeElement(item, el, label);
@@ -235,25 +258,27 @@ export class BoardBuilder {
   private async updateExistingNode(
     existing: BaseItem | Group,
     def: TemplateDefinition,
-    node: NodeData
+    node: NodeData,
   ): Promise<BaseItem | Group> {
     if ((existing as Group).type === 'group') {
       const items = await (existing as Group).getItems();
-      for (let i = 0; i < items.length && i < def.elements.length; i++) {
-        this.applyElementToItem(
-          items[i] as BaseItem,
-          def.elements[i],
-          node.label
-        );
-        await items[i].setMetadata('app.miro.structgraph', {
-          type: node.type,
-          label: node.label,
-        });
-      }
+      await Promise.all(
+        items.slice(0, def.elements.length).map((item, i) => {
+          this.applyElementToItem(
+            item as BaseItem,
+            def.elements[i],
+            node.label,
+          );
+          return item.setMetadata(META_KEY, {
+            type: node.type,
+            label: node.label,
+          });
+        }),
+      );
       return existing as Group;
     }
     this.applyElementToItem(existing as BaseItem, def.elements[0], node.label);
-    await (existing as BaseItem).setMetadata('app.miro.structgraph', {
+    await (existing as BaseItem).setMetadata(META_KEY, {
       type: node.type,
       label: node.label,
     });
@@ -262,26 +287,25 @@ export class BoardBuilder {
 
   private async createNewNode(
     node: NodeData,
-    pos: PositionedNode
+    pos: PositionedNode,
   ): Promise<BaseItem | Group> {
     const widget = await createFromTemplate(
       node.type,
       node.label,
       pos.x,
       pos.y,
-      this.frame
+      this.frame,
     );
     if ((widget as Group).type === 'group') {
       const items = await (widget as Group).getItems();
-      for (const item of items) {
-        await item.setMetadata('app.miro.structgraph', {
-          type: node.type,
-          label: node.label,
-        });
-      }
+      await Promise.all(
+        items.map(item =>
+          item.setMetadata(META_KEY, { type: node.type, label: node.label }),
+        ),
+      );
       return widget as Group;
     }
-    await (widget as BaseItem).setMetadata('app.miro.structgraph', {
+    await (widget as BaseItem).setMetadata(META_KEY, {
       type: node.type,
       label: node.label,
     });
@@ -294,7 +318,7 @@ export class BoardBuilder {
   /** Create or update a node widget from a template. */
   public async createNode(
     node: NodeData,
-    pos: PositionedNode
+    pos: PositionedNode,
   ): Promise<BaseItem | Group> {
     if (!node || typeof node !== 'object') {
       throw new Error('Invalid node');
@@ -311,7 +335,7 @@ export class BoardBuilder {
       return this.updateExistingNode(
         existing as BaseItem | Group,
         templateDef,
-        node
+        node,
       );
     }
     return this.createNewNode(node, pos);
@@ -321,7 +345,7 @@ export class BoardBuilder {
     connector: Connector,
     edge: EdgeData,
     template?: ConnectorTemplate,
-    hint?: EdgeHint
+    hint?: EdgeHint,
   ): void {
     if (edge.label) {
       connector.captions = [
@@ -358,7 +382,7 @@ export class BoardBuilder {
     from: BaseItem | Group,
     to: BaseItem | Group,
     hint: EdgeHint | undefined,
-    template?: ConnectorTemplate
+    template?: ConnectorTemplate,
   ): Promise<Connector> {
     const connector = await miro.board.createConnector({
       start: { item: from.id, position: hint?.startPosition },
@@ -375,7 +399,7 @@ export class BoardBuilder {
         : undefined,
       style: template?.style as any,
     });
-    connector.setMetadata('app.miro.structgraph', {
+    connector.setMetadata(META_KEY, {
       from: edge.from,
       to: edge.to,
     });
@@ -389,7 +413,7 @@ export class BoardBuilder {
   public async createEdges(
     edges: EdgeData[],
     nodeMap: Record<string, BaseItem | Group>,
-    hints?: EdgeHint[]
+    hints?: EdgeHint[],
   ): Promise<Connector[]> {
     if (!Array.isArray(edges)) {
       throw new Error('Invalid edges');
@@ -397,42 +421,34 @@ export class BoardBuilder {
     if (!nodeMap || typeof nodeMap !== 'object') {
       throw new Error('Invalid node map');
     }
-    const connectors: Connector[] = [];
-    for (let i = 0; i < edges.length; i++) {
-      const edge = edges[i];
-      const from = nodeMap[edge.from];
-      const to = nodeMap[edge.to];
-      if (!from || !to) continue;
-      const template = getConnectorTemplate(
-        (edge.metadata as any)?.template || 'default'
-      );
-      const existing = await this.findConnector(edge.from, edge.to);
-      if (existing) {
-        this.updateConnector(existing, edge, template, hints?.[i]);
-        connectors.push(existing);
-        continue;
-      }
-      const connector = await this.createConnector(
-        edge,
-        from,
-        to,
-        hints?.[i],
-        template
-      );
-      connectors.push(connector);
-    }
-    return connectors;
+    const created = await Promise.all(
+      edges.map(async (edge, i) => {
+        const from = nodeMap[edge.from];
+        const to = nodeMap[edge.to];
+        if (!from || !to) return undefined;
+        const template = getConnectorTemplate(
+          (edge.metadata as any)?.template || 'default',
+        );
+        const existing = await this.findConnector(edge.from, edge.to);
+        if (existing) {
+          this.updateConnector(existing, edge, template, hints?.[i]);
+          return existing;
+        }
+        return this.createConnector(edge, from, to, hints?.[i], template);
+      }),
+    );
+    return created.filter(Boolean) as Connector[];
   }
 
   /** Call `.sync()` on each widget if the method exists. */
   public async syncAll(
-    items: Array<BaseItem | Group | Connector>
+    items: Array<BaseItem | Group | Connector>,
   ): Promise<void> {
-    for (const item of items) {
-      if (typeof (item as any).sync === 'function') {
-        await (item as any).sync();
-      }
-    }
+    await Promise.all(
+      items
+        .filter(i => typeof (i as any).sync === 'function')
+        .map(i => (i as any).sync()),
+    );
   }
 }
 

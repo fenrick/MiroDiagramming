@@ -33,7 +33,7 @@ describe('loadCards', () => {
     }
     (global as any).FileReader = FR;
     await expect(loadCards({ name: 'x.json' } as any)).rejects.toThrow(
-      'Invalid card data'
+      'Invalid card data',
     );
   });
 
@@ -47,7 +47,7 @@ describe('loadCards', () => {
     }
     (global as any).FileReader = FR;
     await expect(loadCards({ name: 'bad.json' } as any)).rejects.toBe(
-      'Failed to load file'
+      'Failed to load file',
     );
   });
 });

@@ -1,6 +1,13 @@
-import { loadGraph, defaultBuilder, GraphData } from './graph';
+import {
+  loadGraph,
+  defaultBuilder,
+  GraphData,
+  PositionedNode,
+  EdgeHint,
+} from './graph';
 import { BoardBuilder } from './BoardBuilder';
 import { layoutGraph, LayoutResult } from './elk-layout';
+import { validateFile } from './file-utils';
 import type { BaseItem, Group, Frame } from '@mirohq/websdk-types';
 
 /**
@@ -31,7 +38,7 @@ export class GraphProcessor {
     let minY = Infinity;
     let maxX = -Infinity;
     let maxY = -Infinity;
-    Object.values(layout.nodes).forEach((n) => {
+    Object.values(layout.nodes).forEach(n => {
       minX = Math.min(minX, n.x);
       minY = Math.min(minY, n.y);
       maxX = Math.max(maxX, n.x + n.width);
@@ -48,23 +55,43 @@ export class GraphProcessor {
     frameWidth: number,
     frameHeight: number,
     bounds: { minX: number; minY: number },
-    margin: number
+    margin: number,
   ): { offsetX: number; offsetY: number } {
     return {
       offsetX: spot.x - frameWidth / 2 + margin - bounds.minX,
       offsetY: spot.y - frameHeight / 2 + margin - bounds.minY,
     };
   }
+
+  /**
+   * Compute connector orientation hints from the raw layout result.
+   */
+  private computeEdgeHints(graph: GraphData, layout: LayoutResult): EdgeHint[] {
+    const orient = (
+      node: PositionedNode,
+      pt: { x: number; y: number },
+    ): { x: number; y: number } => ({
+      x: (pt.x - node.x) / node.width,
+      y: (pt.y - node.y) / node.height,
+    });
+
+    return layout.edges.map((edge, i) => {
+      const src = layout.nodes[graph.edges[i].from];
+      const tgt = layout.nodes[graph.edges[i].to];
+      return {
+        startPosition: orient(src, edge.startPoint),
+        endPosition: orient(tgt, edge.endPoint),
+      };
+    });
+  }
   /**
    * Load a JSON graph file and process it.
    */
   public async processFile(
     file: File,
-    options: ProcessOptions = {}
+    options: ProcessOptions = {},
   ): Promise<void> {
-    if (!file || typeof file !== 'object' || typeof file.name !== 'string') {
-      throw new Error('Invalid file');
-    }
+    validateFile(file);
     const graph = await loadGraph(file);
     await this.processGraph(graph, options);
   }
@@ -74,7 +101,7 @@ export class GraphProcessor {
    */
   public async processGraph(
     graph: GraphData,
-    options: ProcessOptions = {}
+    options: ProcessOptions = {},
   ): Promise<void> {
     this.validateGraph(graph);
     const layout = await layoutGraph(graph);
@@ -93,7 +120,7 @@ export class GraphProcessor {
         frameHeight,
         spot.x,
         spot.y,
-        options.frameTitle
+        options.frameTitle,
       );
     } else {
       this.builder.setFrame(undefined);
@@ -104,7 +131,7 @@ export class GraphProcessor {
       frameWidth,
       frameHeight,
       { minX: bounds.minX, minY: bounds.minY },
-      margin
+      margin,
     );
 
     const nodeMap: Record<string, BaseItem | Group> = {};
@@ -119,44 +146,12 @@ export class GraphProcessor {
       nodeMap[node.id] = widget;
     }
 
-    const adjustedEdges = layout.edges.map((edge) => ({
-      startPoint: {
-        x: edge.startPoint.x + offsetX,
-        y: edge.startPoint.y + offsetY,
-      },
-      endPoint: {
-        x: edge.endPoint.x + offsetX,
-        y: edge.endPoint.y + offsetY,
-      },
-      bendPoints: edge.bendPoints?.map((pt) => ({
-        x: pt.x + offsetX,
-        y: pt.y + offsetY,
-      })),
-    }));
-    // Derive connector orientation hints from ELK edge routes
-    const edgeHints = adjustedEdges.map((e, i) => {
-      const src = layout.nodes[graph.edges[i].from];
-      const tgt = layout.nodes[graph.edges[i].to];
-
-      const orient = (
-        node: typeof src,
-        pt: { x: number; y: number }
-      ): { x: number; y: number } => {
-        const px = (pt.x - (node.x + offsetX)) / node.width;
-        const py = (pt.y - (node.y + offsetY)) / node.height;
-        return { x: px, y: py };
-      };
-
-      return {
-        startPosition: orient(src, e.startPoint),
-        endPosition: orient(tgt, e.endPoint),
-      };
-    });
+    const edgeHints = this.computeEdgeHints(graph, layout);
 
     const connectors = await this.builder.createEdges(
       graph.edges,
       nodeMap,
-      edgeHints
+      edgeHints,
     );
     await this.builder.syncAll([...Object.values(nodeMap), ...connectors]);
     if (frame) {
@@ -178,7 +173,7 @@ export class GraphProcessor {
       throw new Error('Invalid graph format');
     }
 
-    const nodeIds = new Set(graph.nodes.map((n) => n.id));
+    const nodeIds = new Set(graph.nodes.map(n => n.id));
     for (const edge of graph.edges) {
       if (!nodeIds.has(edge.from)) {
         throw new Error(`Edge references missing node: ${edge.from}`);

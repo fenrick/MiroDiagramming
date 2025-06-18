@@ -55,9 +55,9 @@ export const layoutGraph = async (data: GraphData): Promise<LayoutResult> => {
       'elk.layered.cycleBreaking.strategy': 'GREEDY',
     },
     // Each node uses its template dimensions unless overridden by metadata
-    children: data.nodes.map((n) => {
+    children: data.nodes.map(n => {
       const tpl = getTemplate(n.type);
-      const dims = tpl?.elements.find((e) => e.width && e.height);
+      const dims = tpl?.elements.find(e => e.width && e.height);
       // istanbul ignore next: fall back to template or default dimensions
       const width = (n as any).metadata?.width ?? dims?.width ?? DEFAULT_WIDTH;
       // istanbul ignore next: fall back to template or default dimensions
