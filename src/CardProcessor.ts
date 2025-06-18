@@ -66,11 +66,13 @@ export class CardProcessor {
   /**
    * Separate card definitions into create and update lists based on board state.
    */
-  private async partitionCards(cards: CardData[]): Promise<{
+  private partitionCards(
+    cards: CardData[],
+    map: Map<string, Card>,
+  ): {
     toCreate: CardData[];
     toUpdate: Array<{ card: Card; def: CardData }>;
-  }> {
-    const map = await this.loadCardMap();
+  } {
     const toCreate: CardData[] = [];
     const toUpdate: Array<{ card: Card; def: CardData }> = [];
 
@@ -152,7 +154,7 @@ export class CardProcessor {
   /**
    * Compute layout information and placement coordinates for a set of cards.
    */
-  private async prepareArea(
+  private async calculateLayoutArea(
     count: number,
     columns = count,
   ): Promise<{
@@ -170,12 +172,12 @@ export class CardProcessor {
     const totalHeight =
       CardProcessor.CARD_HEIGHT * rows + CardProcessor.CARD_MARGIN * 2;
     const spot = await this.builder.findSpace(totalWidth, totalHeight);
-    const startX = this.startCoordinate(
+    const startX = this.computeStartCoordinate(
       spot.x,
       totalWidth,
       CardProcessor.CARD_WIDTH,
     );
-    const startY = this.startCoordinate(
+    const startY = this.computeStartCoordinate(
       spot.y,
       totalHeight,
       CardProcessor.CARD_HEIGHT,
@@ -186,7 +188,7 @@ export class CardProcessor {
   /**
    * Derive the starting coordinate for card placement.
    */
-  private startCoordinate(
+  private computeStartCoordinate(
     center: number,
     total: number,
     itemSize: number,
@@ -234,9 +236,9 @@ export class CardProcessor {
     const boardTags = await this.getBoardTags();
     const tagMap = new Map(boardTags.map(t => [t.title, t]));
 
-    await this.loadCardMap();
+    const map = await this.loadCardMap();
 
-    const { toCreate, toUpdate } = await this.partitionCards(cards);
+    const { toCreate, toUpdate } = this.partitionCards(cards, map);
 
     const updated = await Promise.all(
       toUpdate.map(item => this.updateCardWidget(item.card, item.def, tagMap)),
@@ -246,7 +248,7 @@ export class CardProcessor {
     let frame: Frame | undefined;
     if (toCreate.length > 0) {
       const { spot, startX, startY, columns, totalWidth, totalHeight } =
-        await this.prepareArea(toCreate.length, options.columns);
+        await this.calculateLayoutArea(toCreate.length, options.columns);
 
       frame = await this.maybeCreateFrame(
         options.createFrame !== false,

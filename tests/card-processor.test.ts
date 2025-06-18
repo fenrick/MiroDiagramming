@@ -161,4 +161,10 @@ describe('CardProcessor', () => {
     expect(global.miro.board.createFrame).not.toHaveBeenCalled();
     expect(global.miro.board.viewport.zoomTo).not.toHaveBeenCalled();
   });
+
+  test('loadCardMap caches board lookups', async () => {
+    await (processor as any).loadCardMap();
+    await (processor as any).loadCardMap();
+    expect(global.miro.board.get).toHaveBeenCalledTimes(1);
+  });
 });
