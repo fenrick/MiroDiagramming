@@ -1,4 +1,4 @@
-appName: 'Miro Structured Graph Generator'
+appName: 'Structured Graph Generator'
 sdkVersion: SDK_V2
 sdkUri: 'http://localhost:3000'
 boardPicker:
