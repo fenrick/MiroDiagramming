@@ -4,9 +4,10 @@ import * as cardModule from '../src/cards';
 declare const global: any;
 
 describe('CardProcessor', () => {
-  const processor = new CardProcessor();
+  let processor: CardProcessor;
 
   beforeEach(() => {
+    processor = new CardProcessor();
     global.miro = {
       board: {
         get: jest.fn().mockResolvedValue([]),
@@ -25,7 +26,11 @@ describe('CardProcessor', () => {
           }),
           zoomTo: jest.fn(),
         },
-        createCard: jest.fn().mockResolvedValue({ sync: jest.fn(), id: 'c1' }),
+        createCard: jest.fn().mockResolvedValue({
+          sync: jest.fn(),
+          id: 'c1',
+          setMetadata: jest.fn(),
+        }),
         createFrame: jest.fn().mockResolvedValue({ add: jest.fn(), id: 'f1' }),
         createTag: jest.fn().mockResolvedValue({ id: 't1' }),
       },
@@ -53,6 +58,15 @@ describe('CardProcessor', () => {
     expect(global.miro.board.viewport.zoomTo).toHaveBeenCalled();
   });
 
+  test('sets identifier metadata when creating', async () => {
+    await processor.processCards([{ id: 'x', title: 'A' }]);
+    const card = await (global.miro.board.createCard as jest.Mock).mock
+      .results[0].value;
+    expect(card.setMetadata).toHaveBeenCalledWith('app.miro.cards', {
+      id: 'x',
+    });
+  });
+
   test('maps tag names to ids', async () => {
     (global.miro.board.get as jest.Mock).mockResolvedValue([
       { id: '1', title: 'alpha' },
@@ -72,6 +86,29 @@ describe('CardProcessor', () => {
     expect(global.miro.board.createTag).toHaveBeenCalledWith({ title: 'beta' });
     const args = (global.miro.board.createCard as jest.Mock).mock.calls[0][0];
     expect(args.tagIds).toEqual(['2']);
+  });
+
+  test('updates card when id matches', async () => {
+    const existing = {
+      id: 'c2',
+      title: 'old',
+      getMetadata: jest.fn().mockResolvedValue({ id: 'match' }),
+      setMetadata: jest.fn(),
+      sync: jest.fn(),
+    } as any;
+    (global.miro.board.get as jest.Mock).mockImplementation(
+      async ({ type }) => {
+        if (type === 'tag') return [];
+        if (type === 'card') return [existing];
+        return [];
+      },
+    );
+    await processor.processCards([{ id: 'match', title: 'new' }]);
+    expect(global.miro.board.createCard).not.toHaveBeenCalled();
+    expect(existing.title).toBe('new');
+    expect(existing.setMetadata).toHaveBeenCalledWith('app.miro.cards', {
+      id: 'match',
+    });
   });
 
   test('skips frame creation when disabled', async () => {
