@@ -26,13 +26,12 @@ describe('CardProcessor', () => {
           }),
           zoomTo: jest.fn(),
         },
-        createCard: jest
-          .fn()
-          .mockResolvedValue({
-            sync: jest.fn(),
-            id: 'c1',
-            setMetadata: jest.fn(),
-          }),
+        createCard: jest.fn().mockResolvedValue({
+          sync: jest.fn(),
+          id: 'c1',
+          setMetadata: jest.fn(),
+        }),
+        createTag: jest.fn().mockResolvedValue({ id: 't1' }),
         createFrame: jest.fn().mockResolvedValue({ add: jest.fn(), id: 'f1' }),
       },
     };
@@ -69,12 +68,22 @@ describe('CardProcessor', () => {
   });
 
   test('maps tag names to ids', async () => {
-    (global.miro.board.get as jest.Mock).mockResolvedValue([
-      { id: '1', title: 'alpha' },
-    ]);
+    (global.miro.board.get as jest.Mock).mockImplementation(
+      async ({ type }) => {
+        if (type === 'tag') return [{ id: '1', title: 'alpha' }];
+        return [];
+      },
+    );
     await processor.processCards([{ title: 'A', tags: ['alpha'] }]);
     const args = (global.miro.board.createCard as jest.Mock).mock.calls[0][0];
     expect(args.tagIds).toEqual(['1']);
+  });
+
+  test('creates missing tags', async () => {
+    await processor.processCards([{ title: 'A', tags: ['beta'] }]);
+    expect(global.miro.board.createTag).toHaveBeenCalledWith({ title: 'beta' });
+    const args = (global.miro.board.createCard as jest.Mock).mock.calls[0][0];
+    expect(args.tagIds).toEqual(['t1']);
   });
 
   test('updates card when id matches', async () => {
@@ -100,10 +109,44 @@ describe('CardProcessor', () => {
     });
   });
 
+  test('loads card metadata only once', async () => {
+    const existing = {
+      id: 'c1',
+      title: 'old',
+      getMetadata: jest.fn().mockResolvedValue({ id: 'exists' }),
+      setMetadata: jest.fn(),
+      sync: jest.fn(),
+    } as any;
+    (global.miro.board.get as jest.Mock).mockImplementation(
+      async ({ type }) => {
+        if (type === 'tag') return [];
+        if (type === 'card') return [existing];
+        return [];
+      },
+    );
+    await processor.processCards([
+      { id: 'a', title: 'A' },
+      { id: 'b', title: 'B' },
+    ]);
+    expect(existing.getMetadata).toHaveBeenCalledTimes(1);
+  });
+
   test('skips frame creation when disabled', async () => {
     await processor.processCards([{ title: 'A' }], { createFrame: false });
     expect(global.miro.board.createFrame).not.toHaveBeenCalled();
     expect(global.miro.board.viewport.zoomTo).toHaveBeenCalled();
+  });
+
+  test('positions cards in rows', async () => {
+    await processor.processCards(
+      [{ title: 'A' }, { title: 'B' }, { title: 'C' }, { title: 'D' }],
+      { columns: 2 },
+    );
+    const calls = (global.miro.board.createCard as jest.Mock).mock.calls;
+    expect(calls[0][0]).toEqual(expect.objectContaining({ x: -150, y: -100 }));
+    expect(calls[1][0]).toEqual(expect.objectContaining({ x: 150, y: -100 }));
+    expect(calls[2][0]).toEqual(expect.objectContaining({ x: -150, y: 100 }));
+    expect(calls[3][0]).toEqual(expect.objectContaining({ x: 150, y: 100 }));
   });
 
   test('throws on invalid input', async () => {
