@@ -23,9 +23,9 @@ describe('graph wrapper functions', () => {
       .spyOn(defaultBuilder, 'findNode')
       .mockResolvedValue('x' as any);
     // Call wrapper and verify delegation
-    const res = await findNode('t', 'l');
+    const result = await findNode('t', 'l');
     expect(spy).toHaveBeenCalledWith('t', 'l');
-    expect(res).toBe('x');
+    expect(result).toBe('x');
   });
 
   test('findConnector delegates to default builder', async () => {
@@ -33,9 +33,9 @@ describe('graph wrapper functions', () => {
       .spyOn(defaultBuilder, 'findConnector')
       .mockResolvedValue('c' as any);
     // Wrapper should forward parameters to builder
-    const res = await findConnector('a', 'b');
+    const result = await findConnector('a', 'b');
     expect(spy).toHaveBeenCalledWith('a', 'b');
-    expect(res).toBe('c');
+    expect(result).toBe('c');
   });
 
   test('createNode delegates to default builder', async () => {
@@ -43,24 +43,24 @@ describe('graph wrapper functions', () => {
       .spyOn(defaultBuilder, 'createNode')
       .mockResolvedValue('n' as any);
     // Pass-through call should return builder result
-    const res = await createNode({} as any, {
+    const result = await createNode({} as any, {
       x: 0,
       y: 0,
       width: 1,
       height: 1,
     });
     expect(spy).toHaveBeenCalled();
-    expect(res).toBe('n');
+    expect(result).toBe('n');
   });
 
   test('createEdges delegates to default builder', async () => {
     const spy = jest
       .spyOn(defaultBuilder, 'createEdges')
       .mockResolvedValue(['e'] as any);
-    const res = await createEdges([] as any, {} as any);
+    const result = await createEdges([] as any, {} as any);
     // Should simply return value from builder
     expect(spy).toHaveBeenCalled();
-    expect(res[0]).toBe('e');
+    expect(result[0]).toBe('e');
   });
 
   test('syncAll delegates to default builder', async () => {

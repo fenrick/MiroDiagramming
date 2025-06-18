@@ -26,8 +26,8 @@ describe('BoardBuilder branch coverage', () => {
     };
     const builder = new BoardBuilder();
     // Expect the builder to return the matching group
-    const res = await builder.findNode('Role', 'A');
-    expect(res).toBe(group);
+    const result = await builder.findNode('Role', 'A');
+    expect(result).toBe(group);
   });
 
   test('createNode applies fill color when style missing', async () => {

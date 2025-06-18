@@ -18,8 +18,8 @@ describe('BoardBuilder caches and connector updates', () => {
       board: { get: jest.fn().mockResolvedValue([shape]) },
     };
     const builder = new BoardBuilder();
-    const res = await builder.findNode('Role', 'B');
-    expect(res).toBe(shape);
+    const result = await builder.findNode('Role', 'B');
+    expect(result).toBe(shape);
   });
 
   test('createEdges caches new connector', async () => {

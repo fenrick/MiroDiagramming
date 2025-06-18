@@ -15,7 +15,7 @@ describe('BoardBuilder additional cases', () => {
     const builder = new BoardBuilder();
     // Without a miro global the builder should reject
     await expect(builder.findSpace(1, 1)).rejects.toThrow(
-      'Miro board not initialized'
+      'Miro board not initialized',
     );
   });
 
@@ -31,7 +31,7 @@ describe('BoardBuilder additional cases', () => {
     const builder = new BoardBuilder();
     // Non-string type should cause a validation error
     await expect(builder.findNode(1 as any, 'a')).rejects.toThrow(
-      'Invalid search parameters'
+      'Invalid search parameters',
     );
   });
 
@@ -39,7 +39,7 @@ describe('BoardBuilder additional cases', () => {
     const builder = new BoardBuilder();
     // Null id should trigger validation error
     await expect(builder.findConnector('a', null as any)).rejects.toThrow(
-      'Invalid search parameters'
+      'Invalid search parameters',
     );
   });
 
@@ -47,10 +47,10 @@ describe('BoardBuilder additional cases', () => {
     const builder = new BoardBuilder();
     // Guard against invalid parameters
     await expect(
-      builder.createNode(null as any, { x: 0, y: 0, width: 1, height: 1 })
+      builder.createNode(null as any, { x: 0, y: 0, width: 1, height: 1 }),
     ).rejects.toThrow('Invalid node');
     await expect(builder.createNode({} as any, null as any)).rejects.toThrow(
-      'Invalid position'
+      'Invalid position',
     );
     // Unknown template results in an error
     jest.spyOn(templates, 'getTemplate').mockReturnValue(undefined);
@@ -60,7 +60,7 @@ describe('BoardBuilder additional cases', () => {
         y: 0,
         width: 1,
         height: 1,
-      })
+      }),
     ).rejects.toThrow("Template 'unknown' not found");
   });
 
@@ -79,8 +79,8 @@ describe('BoardBuilder additional cases', () => {
     jest.spyOn(builder, 'findNode').mockResolvedValue(undefined);
     const node = { id: 'n1', label: 'A', type: 'multi' } as any;
     const pos = { x: 0, y: 0, width: 1, height: 1 };
-    const res = await builder.createNode(node, pos);
-    expect(res.type).toBe('group');
+    const result = await builder.createNode(node, pos);
+    expect(result.type).toBe('group');
     // Metadata should be written to child items
     expect(items[0].setMetadata).toHaveBeenCalled();
   });
@@ -102,9 +102,9 @@ describe('BoardBuilder additional cases', () => {
       .mockReturnValue({ elements: [{ shape: 's' }, { text: 't' }] });
     const node = { id: 'n', label: 'L', type: 'Role' } as any;
     const pos = { x: 0, y: 0, width: 1, height: 1 };
-    const res = await builder.createNode(node, pos);
+    const result = await builder.createNode(node, pos);
     // The existing group is returned and updated
-    expect(res).toBe(group);
+    expect(result).toBe(group);
     expect(itemMocks[0].setMetadata).toHaveBeenCalled();
   });
 
@@ -112,11 +112,11 @@ describe('BoardBuilder additional cases', () => {
     const builder = new BoardBuilder();
     // Invalid edges array
     await expect(builder.createEdges(null as any, {} as any)).rejects.toThrow(
-      'Invalid edges'
+      'Invalid edges',
     );
     // Invalid node map
     await expect(builder.createEdges([], null as any)).rejects.toThrow(
-      'Invalid node map'
+      'Invalid node map',
     );
   });
 

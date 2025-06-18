@@ -58,10 +58,10 @@ test('layoutGraph uses defaults when layout values missing', async () => {
     edges: [],
   } as any);
   const graph = { nodes: [{ id: 'n2', label: 'B', type: 'Role' }], edges: [] };
-  const res = await layoutGraph(graph as any);
+  const result = await layoutGraph(graph as any);
   // Defaults populate width and position
-  expect(res.nodes.n2.width).toBeGreaterThan(0);
-  expect(res.nodes.n2.x).toBe(0);
+  expect(result.nodes.n2.width).toBeGreaterThan(0);
+  expect(result.nodes.n2.x).toBe(0);
   layoutSpy.mockRestore();
 });
 

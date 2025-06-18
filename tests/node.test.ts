@@ -29,8 +29,8 @@ describe('createNode', () => {
   const pos = { x: 0, y: 0, width: 10, height: 10 };
 
   test('creates new node', async () => {
-    const res = await createNode(node, pos);
-    expect(res).toBeDefined();
+    const result = await createNode(node, pos);
+    expect(result).toBeDefined();
   });
 
   test('updates existing node', async () => {
@@ -43,8 +43,8 @@ describe('createNode', () => {
       id: 'sExisting',
     } as any;
     (global.miro.board.get as jest.Mock).mockResolvedValueOnce([existing]);
-    const res = await createNode(node, pos);
-    expect(res).toBe(existing);
+    const result = await createNode(node, pos);
+    expect(result).toBe(existing);
     expect(existing.style.fillColor).toBe('#FDE9D9');
   });
 });
