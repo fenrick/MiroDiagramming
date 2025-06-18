@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { useDropzone } from 'react-dropzone';
 import { GraphProcessor } from './GraphProcessor';
 import { CardProcessor } from './CardProcessor';
+import { showError } from './notifications';
 
 // UI
 const dropzoneStyles = {
@@ -75,7 +76,7 @@ export const App: React.FC = () => {
       } catch (e) {
         const msg = String(e);
         setError(msg);
-        miro.board.notifications.showError(msg);
+        showError(msg);
       }
     }
     setFiles([]);
