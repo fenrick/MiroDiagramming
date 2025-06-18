@@ -13,8 +13,45 @@ export interface CardProcessOptions {
 export class CardProcessor {
   constructor(private builder: BoardBuilder = new BoardBuilder()) {}
 
+  /** Metadata key used to store card identifiers. */
+  private static readonly META_KEY = 'app.miro.cards';
+
+  /** Cached board cards when processing updates. */
+  private cardsCache: Card[] | undefined;
+
+  /** Default width used for card widgets. */
+  private static readonly CARD_WIDTH = 300;
+
+  /** Default height used for card widgets. */
+  private static readonly CARD_HEIGHT = 200;
+
+  /** Spacing margin applied around cards and frames. */
+  private static readonly CARD_MARGIN = 50;
+
   private async getBoardTags(): Promise<Tag[]> {
     return (await miro.board.get({ type: 'tag' })) as Tag[];
+  }
+
+  /** Retrieve all cards on the board, cached for the current run. */
+  private async getBoardCards(): Promise<Card[]> {
+    if (!this.cardsCache) {
+      this.cardsCache = (await miro.board.get({ type: 'card' })) as Card[];
+    }
+    return this.cardsCache;
+  }
+
+  /** Find an existing card by identifier if present. */
+  private async findCardById(id: string): Promise<Card | undefined> {
+    const cards = await this.getBoardCards();
+    const metas = await Promise.all(
+      cards.map(c => (c as any).getMetadata(CardProcessor.META_KEY)),
+    );
+    for (let i = 0; i < cards.length; i++) {
+      if (metas[i]?.id === id) {
+        return cards[i];
+      }
+    }
+    return undefined;
   }
 
   private tagIds(names: string[] | undefined, tags: Tag[]): string[] {
@@ -39,7 +76,70 @@ export class CardProcessor {
       x,
       y,
     })) as Card;
+    if (def.id) {
+      await (card as any).setMetadata(CardProcessor.META_KEY, { id: def.id });
+    }
     return card;
+  }
+
+  /** Update an existing card with data from the definition. */
+  private async updateCardWidget(
+    card: Card,
+    def: CardData,
+    tags: Tag[],
+  ): Promise<Card> {
+    const tagIds = this.tagIds(def.tags, tags);
+    card.title = def.title;
+    card.description = def.description;
+    (card as any).tagIds = tagIds;
+    (card as any).fields = def.fields;
+    (card as any).style = def.style as CardStyle;
+    if (def.id) {
+      await (card as any).setMetadata(CardProcessor.META_KEY, { id: def.id });
+    }
+    return card;
+  }
+
+  /**
+   * Compute layout information and placement coordinates for a set of cards.
+   */
+  private async prepareArea(count: number): Promise<{
+    spot: { x: number; y: number };
+    startX: number;
+    y: number;
+    totalWidth: number;
+    totalHeight: number;
+  }> {
+    const totalWidth =
+      CardProcessor.CARD_WIDTH * count + CardProcessor.CARD_MARGIN * 2;
+    const totalHeight =
+      CardProcessor.CARD_HEIGHT + CardProcessor.CARD_MARGIN * 2;
+    const spot = await this.builder.findSpace(totalWidth, totalHeight);
+    const startX =
+      spot.x -
+      totalWidth / 2 +
+      CardProcessor.CARD_MARGIN +
+      CardProcessor.CARD_WIDTH / 2;
+    const y =
+      spot.y -
+      totalHeight / 2 +
+      CardProcessor.CARD_MARGIN +
+      CardProcessor.CARD_HEIGHT / 2;
+    return { spot, startX, y, totalWidth, totalHeight };
+  }
+
+  /** Create a frame when requested and register it with the board builder. */
+  private async maybeCreateFrame(
+    useFrame: boolean,
+    dims: { width: number; height: number; spot: { x: number; y: number } },
+    title?: string,
+  ): Promise<Frame | undefined> {
+    if (!useFrame) {
+      this.builder.setFrame(undefined);
+      return undefined;
+    }
+    const { width, height, spot } = dims;
+    return this.builder.createFrame(width, height, spot.x, spot.y, title);
   }
 
   /** Load cards from a file and create them on the board. */
@@ -61,46 +161,60 @@ export class CardProcessor {
     if (!Array.isArray(cards)) {
       throw new Error('Invalid cards');
     }
+    const boardTags = await this.getBoardTags();
 
-    const cardWidth = 300;
-    const cardHeight = 200;
-    const totalWidth = cardWidth * cards.length + 100;
-    const totalHeight = cardHeight + 100;
+    const toCreate: CardData[] = [];
+    const toUpdate: Array<{ card: Card; def: CardData }> = [];
 
-    const spot = await this.builder.findSpace(totalWidth, totalHeight);
+    for (const def of cards) {
+      if (def.id) {
+        const existing = await this.findCardById(def.id);
+        if (existing) {
+          toUpdate.push({ card: existing, def });
+          continue;
+        }
+      }
+      toCreate.push(def);
+    }
 
-    const useFrame = options.createFrame !== false;
+    const updated = await Promise.all(
+      toUpdate.map(item =>
+        this.updateCardWidget(item.card, item.def, boardTags),
+      ),
+    );
+
+    let created: Card[] = [];
     let frame: Frame | undefined;
-    if (useFrame) {
-      frame = await this.builder.createFrame(
-        totalWidth,
-        totalHeight,
-        spot.x,
-        spot.y,
+    if (toCreate.length > 0) {
+      const { spot, startX, y, totalWidth, totalHeight } =
+        await this.prepareArea(toCreate.length);
+
+      frame = await this.maybeCreateFrame(
+        options.createFrame !== false,
+        { width: totalWidth, height: totalHeight, spot },
         options.frameTitle,
       );
+
+      created = await Promise.all(
+        toCreate.map((def, i) =>
+          this.createCardWidget(
+            def,
+            startX + i * CardProcessor.CARD_WIDTH,
+            y,
+            boardTags,
+          ),
+        ),
+      );
+      created.forEach(c => frame?.add(c));
     } else {
       this.builder.setFrame(undefined);
     }
 
-    const boardTags = await this.getBoardTags();
+    await this.builder.syncAll([...created, ...updated]);
 
-    const startX = spot.x - totalWidth / 2 + 50 + cardWidth / 2;
-    const y = spot.y - totalHeight / 2 + 50 + cardHeight / 2;
-
-    const created = await Promise.all(
-      cards.map((def, i) =>
-        this.createCardWidget(def, startX + i * cardWidth, y, boardTags),
-      ),
-    );
-    created.forEach(c => frame?.add(c));
-
-    await this.builder.syncAll(created);
-
-    if (frame) {
-      await this.builder.zoomTo(frame);
-    } else {
-      await this.builder.zoomTo(created as any);
+    const target = frame ?? ([...created, ...updated] as any);
+    if (created.length || updated.length) {
+      await this.builder.zoomTo(target);
     }
   }
 }

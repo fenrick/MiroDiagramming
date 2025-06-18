@@ -1,6 +1,7 @@
 {
   "cards": [
     {
+      "id": "card-1",
       "title": "Design Task",
       "description": "Initial UX mocks",
       "tags": ["design"],
@@ -8,6 +9,7 @@
       "fields": { "Status": "Backlog" }
     },
     {
+      "id": "card-2",
       "title": "Implement Feature",
       "description": "Add card import support",
       "tags": ["dev"],
