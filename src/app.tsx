@@ -17,7 +17,12 @@ const dropzoneStyles = {
   fontSize: '1.2em',
 } as const;
 
-const App: React.FC = () => {
+/**
+ * React entry component that renders the file selection and mode
+ * toggling user interface. Extraction as an exported constant allows
+ * the component to be reused in tests without side effects.
+ */
+export const App: React.FC = () => {
   const [files, setFiles] = React.useState<File[]>([]);
   const [withFrame, setWithFrame] = React.useState(false);
   const [frameTitle, setFrameTitle] = React.useState('');
@@ -98,7 +103,7 @@ const App: React.FC = () => {
         {mode === 'diagram' ? 'a diagram' : 'a list of cards'}
       </p>
       <div {...dropzone.getRootProps({ style })}>
-        <input {...dropzone.getInputProps()} />
+        <input data-testid="file-input" {...dropzone.getInputProps()} />
         {dropzone.isDragAccept ? (
           <p className="dnd-text">Drop your JSON file here</p>
         ) : (
@@ -153,5 +158,7 @@ const App: React.FC = () => {
 };
 
 const container = document.getElementById('root');
-const root = createRoot(container!);
-root.render(<App />);
+if (container) {
+  const root = createRoot(container);
+  root.render(<App />);
+}
