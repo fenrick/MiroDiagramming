@@ -53,12 +53,30 @@ describe('CardProcessor', () => {
   });
 
   test('maps tag names to ids', async () => {
-    (global.miro.board.get as jest.Mock).mockResolvedValue([
-      { id: '1', title: 'alpha' },
-    ]);
+    (global.miro.board.get as jest.Mock).mockImplementation(({ type }: any) => {
+      if (type === 'tag') return [{ id: '1', title: 'alpha' }];
+      return [];
+    });
     await processor.processCards([{ title: 'A', tags: ['alpha'] }]);
     const args = (global.miro.board.createCard as jest.Mock).mock.calls[0][0];
     expect(args.tagIds).toEqual(['1']);
+  });
+
+  test('builds identifier map once', async () => {
+    const boardCard = {
+      getMetadata: jest.fn().mockResolvedValue({ identifier: 'x' }),
+    } as any;
+    (global.miro.board.get as jest.Mock).mockImplementation(({ type }: any) => {
+      if (type === 'card') return [boardCard];
+      return [];
+    });
+    await processor.processCards([{ title: 'A' }, { title: 'B' }]);
+    const cardCalls = (global.miro.board.get as jest.Mock).mock.calls.filter(
+      (c: any[]) => c[0].type === 'card',
+    ).length;
+    expect(cardCalls).toBe(1);
+    expect(boardCard.getMetadata).toHaveBeenCalledTimes(1);
+    expect(processor.getCardByIdentifier('x')).toBe(boardCard);
   });
 
   test('skips frame creation when disabled', async () => {

@@ -7,11 +7,33 @@ export interface CardProcessOptions {
   frameTitle?: string;
 }
 
+const CARD_META_KEY = 'app.miro.cardimport';
+
 /**
  * Helper that places cards from a data set onto the board.
  */
 export class CardProcessor {
   constructor(private builder: BoardBuilder = new BoardBuilder()) {}
+
+  private cardMap: Record<string, Card> = {};
+
+  /** Load existing board cards and build an identifier lookup. */
+  private async loadBoardCards(): Promise<void> {
+    const cards = (await miro.board.get({ type: 'card' })) as Card[];
+    const metas = await Promise.all(
+      cards.map(c => (c as any).getMetadata(CARD_META_KEY)),
+    );
+    this.cardMap = {};
+    cards.forEach((card, i) => {
+      const id = (metas[i] as any)?.identifier;
+      if (id) this.cardMap[id] = card;
+    });
+  }
+
+  /** Retrieve a card previously loaded via its identifier. */
+  public getCardByIdentifier(id: string): Card | undefined {
+    return this.cardMap[id];
+  }
 
   private async getBoardTags(): Promise<Tag[]> {
     return (await miro.board.get({ type: 'tag' })) as Tag[];
@@ -61,6 +83,8 @@ export class CardProcessor {
     if (!Array.isArray(cards)) {
       throw new Error('Invalid cards');
     }
+
+    await this.loadBoardCards();
 
     const cardWidth = 300;
     const cardHeight = 200;
