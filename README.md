@@ -8,6 +8,13 @@ This project demonstrates how to import a JSON description of a graph and build 
 2. Select a `.json` file containing `nodes` and `edges`.
 3. After the file uploads the ELK layout engine positions the elements and the board is populated with the resulting shapes.
 
+## Importing Cards from JSON
+
+1. In the panel choose **Cards** mode.
+2. Select a `.json` file containing an object with a `cards` array.
+3. Each entry should provide the card `title` and optional `description`, `tags`, `style` and `fields` values. Matching tags are looked up on the board.
+4. See [`sample-cards.json`](sample-cards.json) for an example format.
+
 ## ELK Layout
 
 The layout step leverages the ELK algorithm to compute positions for all nodes. You can provide layout hints in each node's metadata to influence spacing or layering. The engine runs automatically when a graph is uploaded.

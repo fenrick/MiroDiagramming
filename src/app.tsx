@@ -2,6 +2,7 @@ import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { useDropzone } from 'react-dropzone';
 import { GraphProcessor } from './GraphProcessor';
+import { CardProcessor } from './CardProcessor';
 
 // UI
 const dropzoneStyles = {
@@ -20,6 +21,7 @@ const App: React.FC = () => {
   const [files, setFiles] = React.useState<File[]>([]);
   const [withFrame, setWithFrame] = React.useState(false);
   const [frameTitle, setFrameTitle] = React.useState('');
+  const [mode, setMode] = React.useState<'diagram' | 'cards'>('diagram');
   const dropzone = useDropzone({
     accept: {
       'application/json': ['.json'],
@@ -30,15 +32,23 @@ const App: React.FC = () => {
     },
   });
 
-  const processor = React.useMemo(() => new GraphProcessor(), []);
+  const graphProcessor = React.useMemo(() => new GraphProcessor(), []);
+  const cardProcessor = React.useMemo(() => new CardProcessor(), []);
 
   const handleCreate = async () => {
     for (const file of files) {
       try {
-        await processor.processFile(file, {
-          createFrame: withFrame,
-          frameTitle: frameTitle || undefined,
-        });
+        if (mode === 'diagram') {
+          await graphProcessor.processFile(file, {
+            createFrame: withFrame,
+            frameTitle: frameTitle || undefined,
+          });
+        } else {
+          await cardProcessor.processFile(file, {
+            createFrame: withFrame,
+            frameTitle: frameTitle || undefined,
+          });
+        }
       } catch (e) {
         console.error(e);
       }
@@ -63,7 +73,30 @@ const App: React.FC = () => {
 
   return (
     <div className="dnd-container">
-      <p>Select the JSON file to import and create a diagram</p>
+      <div style={{ marginBottom: '8px' }}>
+        <label>
+          <input
+            type="radio"
+            value="diagram"
+            checked={mode === 'diagram'}
+            onChange={() => setMode('diagram')}
+          />
+          Diagram
+        </label>
+        <label style={{ marginLeft: '8px' }}>
+          <input
+            type="radio"
+            value="cards"
+            checked={mode === 'cards'}
+            onChange={() => setMode('cards')}
+          />
+          Cards
+        </label>
+      </div>
+      <p>
+        Select the JSON file to import{' '}
+        {mode === 'diagram' ? 'a diagram' : 'a list of cards'}
+      </p>
       <div {...dropzone.getRootProps({ style })}>
         <input {...dropzone.getInputProps()} />
         {dropzone.isDragAccept ? (
@@ -95,7 +128,7 @@ const App: React.FC = () => {
               checked={withFrame}
               onChange={(e) => setWithFrame(e.target.checked)}
             />
-            Wrap diagram in frame
+            Wrap items in frame
           </label>
           {withFrame && (
             <input
@@ -111,7 +144,7 @@ const App: React.FC = () => {
             onClick={handleCreate}
             className="button button-small button-primary"
           >
-            Create Diagram
+            {mode === 'diagram' ? 'Create Diagram' : 'Create Cards'}
           </button>
         </>
       )}
