@@ -1,0 +1,18 @@
+{
+  "cards": [
+    {
+      "title": "Design Task",
+      "description": "Initial UX mocks",
+      "tags": ["design"],
+      "style": { "backgroundColor": "#f5cd79" },
+      "fields": { "Status": "Backlog" }
+    },
+    {
+      "title": "Implement Feature",
+      "description": "Add card import support",
+      "tags": ["dev"],
+      "style": { "backgroundColor": "#dff9fb" },
+      "fields": { "Status": "To Do" }
+    }
+  ]
+}
