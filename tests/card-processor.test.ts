@@ -52,6 +52,18 @@ describe('CardProcessor', () => {
     expect(global.miro.board.viewport.zoomTo).toHaveBeenCalled();
   });
 
+  test('positions wrap across rows', async () => {
+    await processor.processCards(
+      [{ title: 'A' }, { title: 'B' }, { title: 'C' }],
+      { columns: 2 },
+    );
+    const calls = (global.miro.board.createCard as jest.Mock).mock.calls;
+    expect(calls[0][0].x).toBe(-150);
+    expect(calls[0][0].y).toBe(-100);
+    expect(calls[2][0].x).toBe(-150);
+    expect(calls[2][0].y).toBe(100);
+  });
+
   test('maps tag names to ids', async () => {
     (global.miro.board.get as jest.Mock).mockResolvedValue([
       { id: '1', title: 'alpha' },

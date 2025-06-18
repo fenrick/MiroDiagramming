@@ -1,10 +1,15 @@
 import { BoardBuilder } from './BoardBuilder';
 import { loadCards, CardData } from './cards';
+import { prepareArea } from './card-area';
 import type { Frame, Tag, Card, CardStyle } from '@mirohq/websdk-types';
 
 export interface CardProcessOptions {
   createFrame?: boolean;
   frameTitle?: string;
+  /** Number of columns for card layout. */
+  columns?: number;
+  /** Maximum width for a row of cards. */
+  maxWidth?: number;
 }
 
 /**
@@ -64,17 +69,21 @@ export class CardProcessor {
 
     const cardWidth = 300;
     const cardHeight = 200;
-    const totalWidth = cardWidth * cards.length + 100;
-    const totalHeight = cardHeight + 100;
+    const layout = prepareArea(cards.length, {
+      columns: options.columns,
+      maxWidth: options.maxWidth,
+      cardWidth,
+      cardHeight,
+    });
 
-    const spot = await this.builder.findSpace(totalWidth, totalHeight);
+    const spot = await this.builder.findSpace(layout.width, layout.height);
 
     const useFrame = options.createFrame !== false;
     let frame: Frame | undefined;
     if (useFrame) {
       frame = await this.builder.createFrame(
-        totalWidth,
-        totalHeight,
+        layout.width,
+        layout.height,
         spot.x,
         spot.y,
         options.frameTitle,
@@ -85,13 +94,16 @@ export class CardProcessor {
 
     const boardTags = await this.getBoardTags();
 
-    const startX = spot.x - totalWidth / 2 + 50 + cardWidth / 2;
-    const y = spot.y - totalHeight / 2 + 50 + cardHeight / 2;
-
     const created = await Promise.all(
-      cards.map((def, i) =>
-        this.createCardWidget(def, startX + i * cardWidth, y, boardTags),
-      ),
+      cards.map((def, i) => {
+        const pos = layout.positions[i];
+        return this.createCardWidget(
+          def,
+          spot.x + pos.x,
+          spot.y + pos.y,
+          boardTags,
+        );
+      }),
     );
     created.forEach(c => frame?.add(c));
 
