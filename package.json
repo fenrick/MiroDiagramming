@@ -35,6 +35,8 @@
   },
   "devDependencies": {
     "@mirohq/websdk-types": "^2.16.1",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
     "@types/d3-dsv": "^3.0.1",
     "@types/jest": "^30.0.0",
     "@types/node": "^24.0.3",
@@ -46,6 +48,7 @@
     "eslint": "^9.29.0",
     "eslint-plugin-react": "^7.37.5",
     "jest": "^30.0.0",
+    "jest-environment-jsdom": "^30.0.0",
     "prettier": "^3.5.3",
     "ts-jest": "^29.1.0",
     "typescript": "5.8.3",

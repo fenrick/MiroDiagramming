@@ -27,13 +27,26 @@ export const App: React.FC = () => {
   const [withFrame, setWithFrame] = React.useState(false);
   const [frameTitle, setFrameTitle] = React.useState('');
   const [mode, setMode] = React.useState<'diagram' | 'cards'>('diagram');
+  const [preview, setPreview] = React.useState<string>('');
+  const [progress, setProgress] = React.useState<number>(0);
+  const [error, setError] = React.useState<string | null>(null);
+  const [lastProc, setLastProc] = React.useState<
+    GraphProcessor | CardProcessor | undefined
+  >(undefined);
   const dropzone = useDropzone({
     accept: {
       'application/json': ['.json'],
     },
     maxFiles: 1,
     onDrop: (droppedFiles: File[]) => {
-      setFiles([droppedFiles[0]]);
+      const file = droppedFiles[0];
+      setFiles([file]);
+      const reader = new FileReader();
+      reader.onload = e => {
+        const text = String(e.target?.result || '');
+        setPreview(text.slice(0, 200));
+      };
+      reader.readAsText(file);
     },
   });
 
@@ -41,21 +54,28 @@ export const App: React.FC = () => {
   const cardProcessor = React.useMemo(() => new CardProcessor(), []);
 
   const handleCreate = async () => {
+    setProgress(0);
+    setError(null);
     for (const file of files) {
       try {
         if (mode === 'diagram') {
+          setLastProc(graphProcessor);
           await graphProcessor.processFile(file, {
             createFrame: withFrame,
             frameTitle: frameTitle || undefined,
           });
         } else {
+          setLastProc(cardProcessor);
           await cardProcessor.processFile(file, {
             createFrame: withFrame,
             frameTitle: frameTitle || undefined,
           });
         }
+        setProgress(100);
       } catch (e) {
-        miro.board.notifications.showError(String(e));
+        const msg = String(e);
+        setError(msg);
+        miro.board.notifications.showError(msg);
       }
     }
     setFiles([]);
@@ -151,6 +171,29 @@ export const App: React.FC = () => {
           >
             {mode === 'diagram' ? 'Create Diagram' : 'Create Cards'}
           </button>
+          {progress > 0 && progress < 100 && (
+            <progress value={progress} max={100} style={{ width: '100%' }} />
+          )}
+          {preview && (
+            <pre
+              style={{ textAlign: 'left', maxHeight: 120, overflow: 'auto' }}
+            >
+              {preview}
+            </pre>
+          )}
+          {error && <p className="error">{error}</p>}
+          {lastProc && (
+            <button
+              onClick={() => {
+                lastProc.undoLast();
+                setLastProc(undefined);
+              }}
+              className="button button-small"
+              style={{ marginTop: '8px' }}
+            >
+              Undo Last Import
+            </button>
+          )}
         </>
       )}
     </div>

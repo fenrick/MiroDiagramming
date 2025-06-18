@@ -25,4 +25,10 @@ describe('DiagramApp', () => {
     expect(on).toHaveBeenCalledWith('icon:click', expect.any(Function));
     expect(openPanel).toHaveBeenCalledWith({ url: 'app.html' });
   });
+
+  test('init throws when miro is undefined', async () => {
+    await expect(DiagramApp.getInstance().init()).rejects.toThrow(
+      'Miro SDK not available',
+    );
+  });
 });
