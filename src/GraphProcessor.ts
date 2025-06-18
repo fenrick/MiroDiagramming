@@ -1,13 +1,7 @@
-import {
-  loadGraph,
-  defaultBuilder,
-  GraphData,
-  PositionedNode,
-  EdgeHint,
-} from './graph';
+import { graphService, GraphData, PositionedNode, EdgeHint } from './graph';
 import { BoardBuilder } from './BoardBuilder';
-import { layoutGraph, LayoutResult } from './elk-layout';
-import { validateFile } from './file-utils';
+import { layoutEngine, LayoutResult } from './elk-layout';
+import { fileUtils } from './file-utils';
 import type { BaseItem, Group, Frame } from '@mirohq/websdk-types';
 
 /**
@@ -23,7 +17,7 @@ export interface ProcessOptions {
 }
 
 export class GraphProcessor {
-  constructor(private builder: BoardBuilder = defaultBuilder) {}
+  constructor(private builder: BoardBuilder = graphService.getBuilder()) {}
 
   /**
    * Determine the bounding box for positioned nodes.
@@ -67,22 +61,27 @@ export class GraphProcessor {
    * Compute connector orientation hints from the raw layout result.
    */
   private computeEdgeHints(graph: GraphData, layout: LayoutResult): EdgeHint[] {
-    const orient = (
-      node: PositionedNode,
-      pt: { x: number; y: number },
-    ): { x: number; y: number } => ({
-      x: (pt.x - node.x) / node.width,
-      y: (pt.y - node.y) / node.height,
-    });
-
     return layout.edges.map((edge, i) => {
       const src = layout.nodes[graph.edges[i].from];
       const tgt = layout.nodes[graph.edges[i].to];
       return {
-        startPosition: orient(src, edge.startPoint),
-        endPosition: orient(tgt, edge.endPoint),
+        startPosition: this.relativePosition(src, edge.startPoint),
+        endPosition: this.relativePosition(tgt, edge.endPoint),
       };
     });
+  }
+
+  /**
+   * Calculate a point relative to the node bounds as expected by the Miro SDK.
+   */
+  private relativePosition(
+    node: PositionedNode,
+    pt: { x: number; y: number },
+  ): { x: number; y: number } {
+    return {
+      x: (pt.x - node.x) / node.width,
+      y: (pt.y - node.y) / node.height,
+    };
   }
   /**
    * Load a JSON graph file and process it.
@@ -91,8 +90,8 @@ export class GraphProcessor {
     file: File,
     options: ProcessOptions = {},
   ): Promise<void> {
-    validateFile(file);
-    const graph = await loadGraph(file);
+    fileUtils.validateFile(file);
+    const graph = await graphService.loadGraph(file);
     await this.processGraph(graph, options);
   }
 
@@ -104,7 +103,7 @@ export class GraphProcessor {
     options: ProcessOptions = {},
   ): Promise<void> {
     this.validateGraph(graph);
-    const layout = await layoutGraph(graph);
+    const layout = await layoutEngine.layoutGraph(graph);
 
     const bounds = this.layoutBounds(layout);
     const margin = 100;

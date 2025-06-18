@@ -1,6 +1,7 @@
 import { GraphProcessor } from '../src/GraphProcessor';
-import { resetBoardCache } from '../src/graph';
-import * as templateModule from '../src/templates';
+import { graphService } from '../src/graph';
+import { templateManager } from '../src/templates';
+import { layoutEngine } from '../src/elk-layout';
 import sample from '../sample-graph.json';
 
 declare const global: any;
@@ -61,8 +62,8 @@ describe('GraphProcessor', () => {
         }),
       },
     };
-    resetBoardCache();
-    jest.spyOn(templateModule, 'createFromTemplate').mockResolvedValue({
+    graphService.resetBoardCache();
+    jest.spyOn(templateManager, 'createFromTemplate').mockResolvedValue({
       type: 'shape',
       setMetadata: jest.fn(),
       getMetadata: jest.fn(),
@@ -74,7 +75,7 @@ describe('GraphProcessor', () => {
 
   afterEach(() => {
     jest.restoreAllMocks();
-    resetBoardCache();
+    graphService.resetBoardCache();
   });
 
   it('processGraph runs without throwing and syncs items', async () => {
@@ -93,7 +94,7 @@ describe('GraphProcessor', () => {
       edges: [],
     };
     // Mock layout with a single node to make dimensions deterministic
-    jest.spyOn(require('../src/elk-layout'), 'layoutGraph').mockResolvedValue({
+    jest.spyOn(layoutEngine, 'layoutGraph').mockResolvedValue({
       nodes: { n1: { x: 0, y: 0, width: 10, height: 10 } },
       edges: [],
     });
@@ -127,7 +128,7 @@ describe('GraphProcessor', () => {
       nodes: [{ id: 'n1', label: 'A', type: 'Role' }],
       edges: [],
     };
-    jest.spyOn(require('../src/elk-layout'), 'layoutGraph').mockResolvedValue({
+    jest.spyOn(layoutEngine, 'layoutGraph').mockResolvedValue({
       nodes: { n1: { x: 0, y: 0, width: 10, height: 10 } },
       edges: [],
     });

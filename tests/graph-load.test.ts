@@ -1,4 +1,4 @@
-import { loadGraph, defaultBuilder } from '../src/graph';
+import { graphService, defaultBuilder } from '../src/graph';
 
 /**
  * Tests for the loadGraph helper which parses an uploaded file
@@ -24,7 +24,7 @@ describe('loadGraph', () => {
     }
     (global as any).FileReader = FR;
     const file = { name: 'graph.json' } as any;
-    const data = await loadGraph(file);
+    const data = await graphService.loadGraph(file);
     // Parsed graph should be returned and builder reset
     expect(data).toEqual({ nodes: [], edges: [] });
     expect(resetSpy).toHaveBeenCalled();
@@ -32,7 +32,9 @@ describe('loadGraph', () => {
 
   test('throws on invalid file object', async () => {
     // Passing a null file should throw a validation error
-    await expect(loadGraph(null as any)).rejects.toThrow('Invalid file');
+    await expect(graphService.loadGraph(null as any)).rejects.toThrow(
+      'Invalid file',
+    );
   });
 
   test('throws on invalid graph data', async () => {
@@ -44,9 +46,9 @@ describe('loadGraph', () => {
       }
     }
     (global as any).FileReader = FR;
-    await expect(loadGraph({ name: 'a.json' } as any)).rejects.toThrow(
-      'Invalid graph data',
-    );
+    await expect(
+      graphService.loadGraph({ name: 'a.json' } as any),
+    ).rejects.toThrow('Invalid graph data');
   });
 
   test('rejects when FileReader has no target', async () => {
@@ -58,8 +60,8 @@ describe('loadGraph', () => {
       }
     }
     (global as any).FileReader = FR;
-    await expect(loadGraph({ name: 'bad.json' } as any)).rejects.toBe(
-      'Failed to load file',
-    );
+    await expect(
+      graphService.loadGraph({ name: 'bad.json' } as any),
+    ).rejects.toBe('Failed to load file');
   });
 });

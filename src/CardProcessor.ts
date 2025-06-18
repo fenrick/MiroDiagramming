@@ -1,5 +1,5 @@
 import { BoardBuilder } from './BoardBuilder';
-import { loadCards, CardData } from './cards';
+import { cardLoader, CardData } from './cards';
 import type { Frame, Tag, Card, CardStyle } from '@mirohq/websdk-types';
 
 export interface CardProcessOptions {
@@ -63,10 +63,31 @@ export class CardProcessor {
     return this.cardMap;
   }
 
-  /** Find an existing card by identifier if present. */
-  private async findCardById(id: string): Promise<Card | undefined> {
-    const map = await this.loadCardMap();
-    return map.get(id);
+  /**
+   * Separate card definitions into create and update lists based on board state.
+   */
+  private partitionCards(
+    cards: CardData[],
+    map: Map<string, Card>,
+  ): {
+    toCreate: CardData[];
+    toUpdate: Array<{ card: Card; def: CardData }>;
+  } {
+    const toCreate: CardData[] = [];
+    const toUpdate: Array<{ card: Card; def: CardData }> = [];
+
+    for (const def of cards) {
+      if (def.id) {
+        const existing = map.get(def.id);
+        if (existing) {
+          toUpdate.push({ card: existing, def });
+          continue;
+        }
+      }
+      toCreate.push(def);
+    }
+
+    return { toCreate, toUpdate };
   }
 
   /**
@@ -133,7 +154,7 @@ export class CardProcessor {
   /**
    * Compute layout information and placement coordinates for a set of cards.
    */
-  private async prepareArea(
+  private async calculateLayoutArea(
     count: number,
     columns = count,
   ): Promise<{
@@ -151,17 +172,28 @@ export class CardProcessor {
     const totalHeight =
       CardProcessor.CARD_HEIGHT * rows + CardProcessor.CARD_MARGIN * 2;
     const spot = await this.builder.findSpace(totalWidth, totalHeight);
-    const startX =
-      spot.x -
-      totalWidth / 2 +
-      CardProcessor.CARD_MARGIN +
-      CardProcessor.CARD_WIDTH / 2;
-    const startY =
-      spot.y -
-      totalHeight / 2 +
-      CardProcessor.CARD_MARGIN +
-      CardProcessor.CARD_HEIGHT / 2;
+    const startX = this.computeStartCoordinate(
+      spot.x,
+      totalWidth,
+      CardProcessor.CARD_WIDTH,
+    );
+    const startY = this.computeStartCoordinate(
+      spot.y,
+      totalHeight,
+      CardProcessor.CARD_HEIGHT,
+    );
     return { spot, startX, startY, columns: cols, totalWidth, totalHeight };
+  }
+
+  /**
+   * Derive the starting coordinate for card placement.
+   */
+  private computeStartCoordinate(
+    center: number,
+    total: number,
+    itemSize: number,
+  ): number {
+    return center - total / 2 + CardProcessor.CARD_MARGIN + itemSize / 2;
   }
 
   /** Create a frame when requested and register it with the board builder. */
@@ -183,7 +215,7 @@ export class CardProcessor {
     file: File,
     options: CardProcessOptions = {},
   ): Promise<void> {
-    const cards = await loadCards(file);
+    const cards = await cardLoader.loadCards(file);
     await this.processCards(cards, options);
   }
 
@@ -204,21 +236,9 @@ export class CardProcessor {
     const boardTags = await this.getBoardTags();
     const tagMap = new Map(boardTags.map(t => [t.title, t]));
 
-    await this.loadCardMap();
+    const map = await this.loadCardMap();
 
-    const toCreate: CardData[] = [];
-    const toUpdate: Array<{ card: Card; def: CardData }> = [];
-
-    for (const def of cards) {
-      if (def.id) {
-        const existing = await this.findCardById(def.id);
-        if (existing) {
-          toUpdate.push({ card: existing, def });
-          continue;
-        }
-      }
-      toCreate.push(def);
-    }
+    const { toCreate, toUpdate } = this.partitionCards(cards, map);
 
     const updated = await Promise.all(
       toUpdate.map(item => this.updateCardWidget(item.card, item.def, tagMap)),
@@ -228,7 +248,7 @@ export class CardProcessor {
     let frame: Frame | undefined;
     if (toCreate.length > 0) {
       const { spot, startX, startY, columns, totalWidth, totalHeight } =
-        await this.prepareArea(toCreate.length, options.columns);
+        await this.calculateLayoutArea(toCreate.length, options.columns);
 
       frame = await this.maybeCreateFrame(
         options.createFrame !== false,

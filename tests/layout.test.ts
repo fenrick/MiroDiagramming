@@ -1,4 +1,4 @@
-import { layoutGraph } from '../src/elk-layout';
+import { layoutEngine } from '../src/elk-layout';
 
 const graph = {
   nodes: [
@@ -9,7 +9,7 @@ const graph = {
 };
 
 test('layoutGraph returns positions for all nodes', async () => {
-  const result = await layoutGraph(graph as any);
+  const result = await layoutEngine.layoutGraph(graph as any);
   expect(result.nodes.n1).toBeDefined();
   expect(result.nodes.n2).toBeDefined();
   expect(Array.isArray(result.edges)).toBe(true);

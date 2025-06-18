@@ -1,5 +1,5 @@
 import { BoardBuilder } from '../src/BoardBuilder';
-import * as templates from '../src/templates';
+import { templateManager } from '../src/templates';
 
 /**
  * Unit tests targeting rarely hit branches within BoardBuilder
@@ -38,12 +38,16 @@ describe('BoardBuilder branch coverage', () => {
     // Pretend the node does not already exist
     jest.spyOn(builder, 'findNode').mockResolvedValue(undefined);
     // Template lookup returns our element
-    jest.spyOn(templates, 'getTemplate').mockReturnValue({ elements: [el] });
+    jest
+      .spyOn(templateManager, 'getTemplate')
+      .mockReturnValue({ elements: [el] });
     // createFromTemplate applies the element to the new shape
-    jest.spyOn(templates, 'createFromTemplate').mockImplementation(async () => {
-      (builder as any).applyShapeElement(shape, el, 'L');
-      return shape;
-    });
+    jest
+      .spyOn(templateManager, 'createFromTemplate')
+      .mockImplementation(async () => {
+        (builder as any).applyShapeElement(shape, el, 'L');
+        return shape;
+      });
     await builder.createNode({ id: 'n', label: 'L', type: 'fill' } as any, {
       x: 0,
       y: 0,
@@ -62,5 +66,46 @@ describe('BoardBuilder branch coverage', () => {
     (builder as any).applyTextElement(item, el, 'L');
     expect(item.style.color).toBe('red');
     expect(item.style.fontSize).toBe(10);
+  });
+
+  test('createEdges skips edges with missing nodes', async () => {
+    (global as any).miro = {
+      board: {
+        get: jest.fn().mockResolvedValue([]),
+        createConnector: jest.fn().mockResolvedValue({
+          setMetadata: jest.fn(),
+          getMetadata: jest.fn(),
+          sync: jest.fn(),
+          id: 'c1',
+        }),
+      },
+    };
+    const builder = new BoardBuilder();
+    const edges = [{ from: 'n1', to: 'n2' }];
+    const result = await builder.createEdges(edges as any, { n1: {} } as any);
+    expect(result).toEqual([]);
+  });
+
+  test('searchGroups ignores non-array item lists', async () => {
+    const group = { getItems: jest.fn().mockResolvedValue(null) } as any;
+    (global as any).miro = {
+      board: { get: jest.fn().mockResolvedValue([group]) },
+    };
+    const builder = new BoardBuilder();
+    const result = await (builder as any).searchGroups('Role', 'A');
+    expect(result).toBeUndefined();
+  });
+
+  test('updateConnector handles missing template and hints', () => {
+    const connector: any = { style: {}, shape: 'curved' };
+    const builder = new BoardBuilder();
+    (builder as any).updateConnector(
+      connector,
+      { from: 'a', to: 'b' },
+      undefined,
+      undefined,
+    );
+    expect(connector.shape).toBe('curved');
+    expect(connector.style).toEqual({});
   });
 });

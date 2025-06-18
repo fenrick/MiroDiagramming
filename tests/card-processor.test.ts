@@ -43,12 +43,14 @@ describe('CardProcessor', () => {
   });
 
   test('processFile loads and processes', async () => {
-    jest.spyOn(cardModule, 'loadCards').mockResolvedValue([{ title: 't' }]);
+    jest
+      .spyOn(cardModule.cardLoader, 'loadCards')
+      .mockResolvedValue([{ title: 't' }]);
     const spy = jest
       .spyOn(processor, 'processCards')
       .mockResolvedValue(undefined);
     await processor.processFile({ name: 'cards.json' } as any);
-    expect(cardModule.loadCards).toHaveBeenCalled();
+    expect(cardModule.cardLoader.loadCards).toHaveBeenCalled();
     expect(spy).toHaveBeenCalledWith([{ title: 't' }], {});
   });
 
@@ -153,5 +155,18 @@ describe('CardProcessor', () => {
     await expect(processor.processCards(null as any)).rejects.toThrow(
       'Invalid cards',
     );
+  });
+
+  test('no cards results in no action', async () => {
+    await processor.processCards([]);
+    expect(global.miro.board.createCard).not.toHaveBeenCalled();
+    expect(global.miro.board.createFrame).not.toHaveBeenCalled();
+    expect(global.miro.board.viewport.zoomTo).not.toHaveBeenCalled();
+  });
+
+  test('loadCardMap caches board lookups', async () => {
+    await (processor as any).loadCardMap();
+    await (processor as any).loadCardMap();
+    expect(global.miro.board.get).toHaveBeenCalledTimes(1);
   });
 });

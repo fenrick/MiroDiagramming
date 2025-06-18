@@ -1,8 +1,4 @@
-import {
-  createFromTemplate,
-  getConnectorTemplate,
-  getTemplate,
-} from './templates';
+import { templateManager } from './templates';
 import type {
   BaseItem,
   Group,
@@ -202,71 +198,87 @@ export class BoardBuilder {
     });
   }
 
+  /**
+   * Apply template values for a shape element to an existing item.
+   * This updates geometry, text content and style attributes in place.
+   */
   private applyShapeElement(
     item: BaseItem,
-    el: TemplateElement,
+    element: TemplateElement,
     label: string,
   ): void {
-    if (el.shape) (item as any).shape = el.shape;
-    if (el.rotation !== undefined) (item as any).rotation = el.rotation;
-    if (el.width) (item as any).width = el.width;
-    if (el.height) (item as any).height = el.height;
-    (item as any).content = (el.text ?? '{{label}}').replace(
+    if (element.shape) (item as any).shape = element.shape;
+    if (element.rotation !== undefined)
+      (item as any).rotation = element.rotation;
+    if (element.width) (item as any).width = element.width;
+    if (element.height) (item as any).height = element.height;
+    (item as any).content = (element.text ?? '{{label}}').replace(
       '{{label}}',
       label,
     );
     const existing = (item as any).style ?? {};
     const style: Record<string, unknown> = {
       ...existing,
-      ...(el.style ?? {}),
+      ...(element.style ?? {}),
     };
-    if (el.fill && !('fillColor' in style)) {
-      (style as any).fillColor = el.fill;
+    if (element.fill && !('fillColor' in style)) {
+      (style as any).fillColor = element.fill;
     }
     (item as any).style = style as any;
   }
 
+  /**
+   * Apply text element properties such as content and style to a widget.
+   */
   private applyTextElement(
     item: BaseItem,
-    el: TemplateElement,
+    element: TemplateElement,
     label: string,
   ): void {
-    (item as any).content = (el.text ?? '{{label}}').replace(
+    (item as any).content = (element.text ?? '{{label}}').replace(
       '{{label}}',
       label,
     );
-    if (el.style) {
+    if (element.style) {
       (item as any).style = {
         ...((item as any).style ?? {}),
-        ...(el.style as any),
+        ...(element.style as any),
       };
     }
   }
 
+  /**
+   * Route element application based on widget type.
+   * Shapes and text widgets share most properties but are handled separately.
+   */
   private applyElementToItem(
     item: BaseItem,
-    el: TemplateElement,
+    element: TemplateElement,
     label: string,
   ): void {
     if (item.type === 'shape') {
-      this.applyShapeElement(item, el, label);
+      this.applyShapeElement(item, element, label);
     } else if (item.type === 'text') {
-      this.applyTextElement(item, el, label);
+      this.applyTextElement(item, element, label);
     }
   }
 
+  /**
+   * Update an already existing widget group or shape using the provided
+   * template definition.
+   */
   private async updateExistingNode(
     existing: BaseItem | Group,
-    def: TemplateDefinition,
+    definition: TemplateDefinition,
     node: NodeData,
   ): Promise<BaseItem | Group> {
     if ((existing as Group).type === 'group') {
       const items = await (existing as Group).getItems();
       await Promise.all(
-        items.slice(0, def.elements.length).map((item, i) => {
+        items.slice(0, definition.elements.length).map((item, i) => {
           this.applyElementToItem(
             item as BaseItem,
-            def.elements[i],
+            definition.elements[i],
             node.label,
           );
           return item.setMetadata(META_KEY, {
@@ -277,7 +289,11 @@ export class BoardBuilder {
       );
       return existing as Group;
     }
-    this.applyElementToItem(existing as BaseItem, def.elements[0], node.label);
+    this.applyElementToItem(
+      existing as BaseItem,
+      definition.elements[0],
+      node.label,
+    );
     await (existing as BaseItem).setMetadata(META_KEY, {
       type: node.type,
       label: node.label,
@@ -285,11 +301,14 @@ export class BoardBuilder {
     return existing as BaseItem;
   }
 
+  /**
+   * Create a new widget (or group) for the node using template defaults.
+   */
   private async createNewNode(
     node: NodeData,
     pos: PositionedNode,
   ): Promise<BaseItem | Group> {
-    const widget = await createFromTemplate(
+    const widget = await templateManager.createFromTemplate(
       node.type,
       node.label,
       pos.x,
@@ -326,7 +345,7 @@ export class BoardBuilder {
     if (!pos || typeof pos.x !== 'number' || typeof pos.y !== 'number') {
       throw new Error('Invalid position');
     }
-    const templateDef = getTemplate(node.type);
+    const templateDef = templateManager.getTemplate(node.type);
     if (!templateDef) {
       throw new Error(`Template '${node.type}' not found`);
     }
@@ -341,6 +360,9 @@ export class BoardBuilder {
     return this.createNewNode(node, pos);
   }
 
+  /**
+   * Apply metadata and styling updates to an existing connector widget.
+   */
   private updateConnector(
     connector: Connector,
     edge: EdgeData,
@@ -377,6 +399,9 @@ export class BoardBuilder {
     }
   }
 
+  /**
+   * Create a new connector between the given widgets using template defaults.
+   */
   private async createConnector(
     edge: EdgeData,
     from: BaseItem | Group,
@@ -426,7 +451,7 @@ export class BoardBuilder {
         const from = nodeMap[edge.from];
         const to = nodeMap[edge.to];
         if (!from || !to) return undefined;
-        const template = getConnectorTemplate(
+        const template = templateManager.getConnectorTemplate(
           (edge.metadata as any)?.template || 'default',
         );
         const existing = await this.findConnector(edge.from, edge.to);

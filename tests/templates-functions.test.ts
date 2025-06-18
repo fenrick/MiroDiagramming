@@ -1,6 +1,5 @@
 import {
-  getTemplate,
-  getConnectorTemplate,
+  templateManager,
   templates,
   connectorTemplates,
 } from '../src/templates';
@@ -9,14 +8,14 @@ import {
 
 test('template helpers return values or undefined', () => {
   // Known templates return values
-  expect(getTemplate('Role')).toBeDefined();
+  expect(templateManager.getTemplate('Role')).toBeDefined();
   // Unknown template returns undefined
-  expect(getTemplate('nope')).toBeUndefined();
+  expect(templateManager.getTemplate('nope')).toBeUndefined();
   (connectorTemplates as any).extra = { shape: 'straight' };
   // Connector template lookup should return our extra entry
-  const tpl = getConnectorTemplate('extra');
+  const tpl = templateManager.getConnectorTemplate('extra');
   expect(tpl?.shape).toBe('straight');
   // Missing connectors return undefined
-  expect(getConnectorTemplate('missing')).toBeUndefined();
+  expect(templateManager.getConnectorTemplate('missing')).toBeUndefined();
   delete (connectorTemplates as any).extra;
 });

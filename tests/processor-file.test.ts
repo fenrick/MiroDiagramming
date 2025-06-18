@@ -1,5 +1,5 @@
 import { GraphProcessor } from '../src/GraphProcessor';
-import * as graph from '../src/graph';
+import { graphService } from '../src/graph';
 
 /**
  * Tests for the processFile helper method which loads a graph
@@ -21,13 +21,13 @@ describe('GraphProcessor.processFile', () => {
     const gp = new GraphProcessor();
     const mockGraph = { nodes: [], edges: [] } as any;
     // Stub out loadGraph and internal processGraph
-    jest.spyOn(graph, 'loadGraph').mockResolvedValue(mockGraph);
+    jest.spyOn(graphService, 'loadGraph').mockResolvedValue(mockGraph);
     const processSpy = jest
       .spyOn(gp as any, 'processGraph')
       .mockResolvedValue(undefined);
     const file = { name: 'g.json' } as any;
     await gp.processFile(file);
-    expect(graph.loadGraph).toHaveBeenCalledWith(file);
+    expect(graphService.loadGraph).toHaveBeenCalledWith(file);
     expect(processSpy).toHaveBeenCalledWith(mockGraph, {});
   });
 });

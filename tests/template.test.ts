@@ -1,4 +1,4 @@
-import * as templateModule from '../src/templates';
+import { templateManager } from '../src/templates';
 
 declare const global: any;
 
@@ -36,7 +36,7 @@ describe('createFromTemplate', () => {
   });
 
   test('creates a single shape with correct style', async () => {
-    const widget = await templateModule.createFromTemplate(
+    const widget = await templateManager.createFromTemplate(
       'Role',
       'Label',
       0,
@@ -50,13 +50,13 @@ describe('createFromTemplate', () => {
   });
 
   test('groups multiple elements', async () => {
-    (templateModule as any).templates.multi = {
+    (templateManager as any).templates.multi = {
       elements: [
         { shape: 'rectangle', width: 50, height: 50 },
         { text: 'test' },
       ],
     };
-    const widget = await templateModule.createFromTemplate(
+    const widget = await templateManager.createFromTemplate(
       'multi',
       'Label',
       0,
@@ -67,5 +67,22 @@ describe('createFromTemplate', () => {
     expect(global.miro.board.createText).toHaveBeenCalled();
     const items = (global.miro.board.group as jest.Mock).mock.calls[0][0].items;
     expect(items).toHaveLength(2);
+  });
+
+  test('creates text only widget', async () => {
+    (templateManager as any).templates.textOnly = { elements: [{ text: 'T' }] };
+    const widget = await templateManager.createFromTemplate(
+      'textOnly',
+      'Label',
+      0,
+      0,
+    );
+    expect(widget.type).toBe('text');
+  });
+
+  test('throws when template missing', async () => {
+    await expect(
+      templateManager.createFromTemplate('missing', 'L', 0, 0),
+    ).rejects.toThrow("Template 'missing' not found");
   });
 });
