@@ -1,4 +1,4 @@
-import { loadCards } from '../src/cards';
+import { cardLoader } from '../src/cards';
 
 describe('loadCards', () => {
   afterEach(() => {
@@ -16,12 +16,14 @@ describe('loadCards', () => {
       }
     }
     (global as any).FileReader = FR;
-    const data = await loadCards({ name: 'c.json' } as any);
+    const data = await cardLoader.loadCards({ name: 'c.json' } as any);
     expect(data).toEqual([{ title: 't' }]);
   });
 
   test('throws on invalid file object', async () => {
-    await expect(loadCards(null as any)).rejects.toThrow('Invalid file');
+    await expect(cardLoader.loadCards(null as any)).rejects.toThrow(
+      'Invalid file',
+    );
   });
 
   test('throws on invalid data', async () => {
@@ -32,9 +34,9 @@ describe('loadCards', () => {
       }
     }
     (global as any).FileReader = FR;
-    await expect(loadCards({ name: 'x.json' } as any)).rejects.toThrow(
-      'Invalid card data',
-    );
+    await expect(
+      cardLoader.loadCards({ name: 'x.json' } as any),
+    ).rejects.toThrow('Invalid card data');
   });
 
   test('rejects when file load fails', async () => {
@@ -46,8 +48,8 @@ describe('loadCards', () => {
       }
     }
     (global as any).FileReader = FR;
-    await expect(loadCards({ name: 'bad.json' } as any)).rejects.toBe(
-      'Failed to load file',
-    );
+    await expect(
+      cardLoader.loadCards({ name: 'bad.json' } as any),
+    ).rejects.toBe('Failed to load file');
   });
 });

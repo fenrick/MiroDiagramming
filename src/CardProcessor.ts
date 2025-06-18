@@ -1,5 +1,5 @@
 import { BoardBuilder } from './BoardBuilder';
-import { loadCards, CardData } from './cards';
+import { cardLoader, CardData } from './cards';
 import type { Frame, Tag, Card, CardStyle } from '@mirohq/websdk-types';
 
 export interface CardProcessOptions {
@@ -215,7 +215,7 @@ export class CardProcessor {
     file: File,
     options: CardProcessOptions = {},
   ): Promise<void> {
-    const cards = await loadCards(file);
+    const cards = await cardLoader.loadCards(file);
     await this.processCards(cards, options);
   }
 

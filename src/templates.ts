@@ -43,80 +43,93 @@ export interface ConnectorTemplateCollection {
   [key: string]: ConnectorTemplate;
 }
 
-export const templates: TemplateCollection =
-  templatesJson as TemplateCollection;
+export class TemplateManager {
+  private static instance: TemplateManager;
+  public readonly templates: TemplateCollection =
+    templatesJson as TemplateCollection;
+  public readonly connectorTemplates: ConnectorTemplateCollection =
+    connectorJson as ConnectorTemplateCollection;
 
-export const connectorTemplates: ConnectorTemplateCollection =
-  connectorJson as ConnectorTemplateCollection;
+  private constructor() {}
 
-/** Lookup a shape template by name. */
-export function getTemplate(name: string): TemplateDefinition | undefined {
-  return templates[name];
-}
-
-/** Retrieve a connector styling template by name. */
-export function getConnectorTemplate(
-  name: string,
-): ConnectorTemplate | undefined {
-  const tpl = connectorTemplates[name];
-  if (!tpl) return undefined;
-  return { shape: 'curved', ...tpl };
-}
-
-/**
- * Instantiate board widgets described by a template.
- */
-export async function createFromTemplate(
-  name: string,
-  label: string,
-  x: number,
-  y: number,
-  frame?: Frame,
-): Promise<GroupableItem | Group> {
-  const template = getTemplate(name);
-  if (!template) {
-    throw new Error(`Template '${name}' not found`);
-  }
-
-  const created: GroupableItem[] = [];
-  for (const el of template.elements) {
-    if (el.shape) {
-      const style: Record<string, unknown> = { ...(el.style ?? {}) };
-      if (el.fill && !style.fillColor) {
-        style.fillColor = el.fill;
-      }
-      const shape = await miro.board.createShape({
-        shape: el.shape as ShapeType,
-        x,
-        y,
-        width: el.width,
-        height: el.height,
-        rotation: el.rotation ?? 0,
-        content: (el.text ?? '{{label}}').replace('{{label}}', label),
-        style: style as any,
-      });
-      frame?.add(shape);
-      created.push(shape);
-    } else if (el.text) {
-      const style: Record<string, unknown> = {
-        textAlign: 'center',
-        ...(el.style ?? {}),
-      };
-      const text = await miro.board.createText({
-        content: el.text.replace('{{label}}', label),
-        x,
-        y,
-        style: style as any,
-      });
-      frame?.add(text);
-      created.push(text);
+  /** Access the singleton instance. */
+  public static getInstance(): TemplateManager {
+    if (!TemplateManager.instance) {
+      TemplateManager.instance = new TemplateManager();
     }
+    return TemplateManager.instance;
   }
 
-  if (created.length > 1) {
-    const group = await miro.board.group({ items: created });
-    return group;
+  /** Lookup a shape template by name. */
+  public getTemplate(name: string): TemplateDefinition | undefined {
+    return this.templates[name];
   }
 
-  return created[0];
+  /** Retrieve a connector styling template by name. */
+  public getConnectorTemplate(name: string): ConnectorTemplate | undefined {
+    const tpl = this.connectorTemplates[name];
+    if (!tpl) return undefined;
+    return { shape: 'curved', ...tpl };
+  }
+
+  /** Instantiate board widgets described by a template. */
+  public async createFromTemplate(
+    name: string,
+    label: string,
+    x: number,
+    y: number,
+    frame?: Frame,
+  ): Promise<GroupableItem | Group> {
+    const template = this.getTemplate(name);
+    if (!template) {
+      throw new Error(`Template '${name}' not found`);
+    }
+
+    const created: GroupableItem[] = [];
+    for (const el of template.elements) {
+      if (el.shape) {
+        const style: Record<string, unknown> = { ...(el.style ?? {}) };
+        if (el.fill && !style.fillColor) {
+          style.fillColor = el.fill;
+        }
+        const shape = await miro.board.createShape({
+          shape: el.shape as ShapeType,
+          x,
+          y,
+          width: el.width,
+          height: el.height,
+          rotation: el.rotation ?? 0,
+          content: (el.text ?? '{{label}}').replace('{{label}}', label),
+          style: style as any,
+        });
+        frame?.add(shape);
+        created.push(shape);
+      } else if (el.text) {
+        const style: Record<string, unknown> = {
+          textAlign: 'center',
+          ...(el.style ?? {}),
+        };
+        const text = await miro.board.createText({
+          content: el.text.replace('{{label}}', label),
+          x,
+          y,
+          style: style as any,
+        });
+        frame?.add(text);
+        created.push(text);
+      }
+    }
+
+    if (created.length > 1) {
+      const group = await miro.board.group({ items: created });
+      return group;
+    }
+
+    return created[0];
+  }
 }
+
+export const templates = TemplateManager.getInstance().templates;
+export const connectorTemplates =
+  TemplateManager.getInstance().connectorTemplates;
+export const templateManager = TemplateManager.getInstance();

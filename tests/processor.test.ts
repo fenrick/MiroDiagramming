@@ -1,6 +1,6 @@
 import { GraphProcessor } from '../src/GraphProcessor';
-import { resetBoardCache } from '../src/graph';
-import * as templateModule from '../src/templates';
+import { graphService } from '../src/graph';
+import { templateManager } from '../src/templates';
 import sample from '../sample-graph.json';
 
 declare const global: any;
@@ -61,8 +61,8 @@ describe('GraphProcessor', () => {
         }),
       },
     };
-    resetBoardCache();
-    jest.spyOn(templateModule, 'createFromTemplate').mockResolvedValue({
+    graphService.resetBoardCache();
+    jest.spyOn(templateManager, 'createFromTemplate').mockResolvedValue({
       type: 'shape',
       setMetadata: jest.fn(),
       getMetadata: jest.fn(),
@@ -74,7 +74,7 @@ describe('GraphProcessor', () => {
 
   afterEach(() => {
     jest.restoreAllMocks();
-    resetBoardCache();
+    graphService.resetBoardCache();
   });
 
   it('processGraph runs without throwing and syncs items', async () => {

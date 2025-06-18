@@ -1,6 +1,6 @@
 import type { BaseItem, Group, Connector } from '@mirohq/websdk-types';
 import { BoardBuilder } from './BoardBuilder';
-import { readFileAsText, validateFile } from './file-utils';
+import { fileUtils } from './file-utils';
 
 export interface NodeData {
   id: string;
@@ -33,57 +33,84 @@ export interface EdgeHint {
   endPosition?: { x: number; y: number };
 }
 
-/** Load and parse JSON graph data from a file. */
-export async function loadGraph(file: File): Promise<GraphData> {
-  validateFile(file);
-  const text = await readFileAsText(file);
-  const data = JSON.parse(text) as unknown;
-  if (
-    !data ||
-    !Array.isArray((data as any).nodes) ||
-    !Array.isArray((data as any).edges)
-  ) {
-    throw new Error('Invalid graph data');
+export class GraphService {
+  private static instance: GraphService;
+  private builder = new BoardBuilder();
+
+  private constructor() {}
+
+  /** Access the shared service instance. */
+  public static getInstance(): GraphService {
+    if (!GraphService.instance) {
+      GraphService.instance = new GraphService();
+    }
+    return GraphService.instance;
   }
-  resetBoardCache();
-  return data as GraphData;
+
+  /** Retrieve the default board builder. */
+  public getBuilder(): BoardBuilder {
+    return this.builder;
+  }
+
+  /** Load and parse JSON graph data from a file. */
+  public async loadGraph(file: File): Promise<GraphData> {
+    fileUtils.validateFile(file);
+    const text = await fileUtils.readFileAsText(file);
+    const data = JSON.parse(text) as unknown;
+    if (
+      !data ||
+      !Array.isArray((data as any).nodes) ||
+      !Array.isArray((data as any).edges)
+    ) {
+      throw new Error('Invalid graph data');
+    }
+    this.resetBoardCache();
+    return data as GraphData;
+  }
+
+  /** Clear caches for board lookups. */
+  public resetBoardCache(): void {
+    this.builder.reset();
+  }
+
+  /** Search for a node by type and label. */
+  public findNode(
+    type: string,
+    label: string,
+  ): Promise<BaseItem | Group | undefined> {
+    return this.builder.findNode(type, label);
+  }
+
+  /** Search for a connector by endpoints. */
+  public findConnector(
+    from: string,
+    to: string,
+  ): Promise<Connector | undefined> {
+    return this.builder.findConnector(from, to);
+  }
+
+  /** Create or update a node widget. */
+  public createNode(
+    node: NodeData,
+    pos: PositionedNode,
+  ): Promise<BaseItem | Group> {
+    return this.builder.createNode(node, pos);
+  }
+
+  /** Create or update connectors. */
+  public createEdges(
+    edges: EdgeData[],
+    nodeMap: Record<string, BaseItem | Group>,
+    hints?: EdgeHint[],
+  ): Promise<Connector[]> {
+    return this.builder.createEdges(edges, nodeMap, hints);
+  }
+
+  /** Proxy sync calls to widgets. */
+  public syncAll(items: Array<BaseItem | Group | Connector>): Promise<void> {
+    return this.builder.syncAll(items);
+  }
 }
 
-// Default builder instance used by wrapper helper functions
-export const defaultBuilder = new BoardBuilder();
-
-/** Clear caches for board lookups. */
-export function resetBoardCache(): void {
-  defaultBuilder.reset();
-}
-
-/** Wrapper to search for an existing node. */
-export const findNode = (
-  type: string,
-  label: string,
-): Promise<BaseItem | Group | undefined> =>
-  defaultBuilder.findNode(type, label);
-
-/** Wrapper to search for an existing connector. */
-export const findConnector = (
-  from: string,
-  to: string,
-): Promise<Connector | undefined> => defaultBuilder.findConnector(from, to);
-
-/** Wrapper to create or update a node widget. */
-export const createNode = (
-  node: NodeData,
-  pos: PositionedNode,
-): Promise<BaseItem | Group> => defaultBuilder.createNode(node, pos);
-
-/** Wrapper to create or update connectors. */
-export const createEdges = (
-  edges: EdgeData[],
-  nodeMap: Record<string, BaseItem | Group>,
-  hints?: EdgeHint[],
-): Promise<Connector[]> => defaultBuilder.createEdges(edges, nodeMap, hints);
-
-/** Proxy to sync multiple widgets. */
-export const syncAll = (
-  items: Array<BaseItem | Group | Connector>,
-): Promise<void> => defaultBuilder.syncAll(items);
+export const graphService = GraphService.getInstance();
+export const defaultBuilder = graphService.getBuilder();

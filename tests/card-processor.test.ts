@@ -43,12 +43,14 @@ describe('CardProcessor', () => {
   });
 
   test('processFile loads and processes', async () => {
-    jest.spyOn(cardModule, 'loadCards').mockResolvedValue([{ title: 't' }]);
+    jest
+      .spyOn(cardModule.cardLoader, 'loadCards')
+      .mockResolvedValue([{ title: 't' }]);
     const spy = jest
       .spyOn(processor, 'processCards')
       .mockResolvedValue(undefined);
     await processor.processFile({ name: 'cards.json' } as any);
-    expect(cardModule.loadCards).toHaveBeenCalled();
+    expect(cardModule.cardLoader.loadCards).toHaveBeenCalled();
     expect(spy).toHaveBeenCalledWith([{ title: 't' }], {});
   });
 

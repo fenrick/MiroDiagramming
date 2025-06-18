@@ -1,13 +1,7 @@
-import {
-  loadGraph,
-  defaultBuilder,
-  GraphData,
-  PositionedNode,
-  EdgeHint,
-} from './graph';
+import { graphService, GraphData, PositionedNode, EdgeHint } from './graph';
 import { BoardBuilder } from './BoardBuilder';
 import { layoutGraph, LayoutResult } from './elk-layout';
-import { validateFile } from './file-utils';
+import { fileUtils } from './file-utils';
 import type { BaseItem, Group, Frame } from '@mirohq/websdk-types';
 
 /**
@@ -23,7 +17,7 @@ export interface ProcessOptions {
 }
 
 export class GraphProcessor {
-  constructor(private builder: BoardBuilder = defaultBuilder) {}
+  constructor(private builder: BoardBuilder = graphService.getBuilder()) {}
 
   /**
    * Determine the bounding box for positioned nodes.
@@ -96,8 +90,8 @@ export class GraphProcessor {
     file: File,
     options: ProcessOptions = {},
   ): Promise<void> {
-    validateFile(file);
-    const graph = await loadGraph(file);
+    fileUtils.validateFile(file);
+    const graph = await graphService.loadGraph(file);
     await this.processGraph(graph, options);
   }
 

@@ -1,5 +1,5 @@
 import { BoardBuilder } from '../src/BoardBuilder';
-import * as templates from '../src/templates';
+import { templateManager } from '../src/templates';
 
 /**
  * Additional edge case tests for the BoardBuilder class.
@@ -53,7 +53,7 @@ describe('BoardBuilder additional cases', () => {
       'Invalid position',
     );
     // Unknown template results in an error
-    jest.spyOn(templates, 'getTemplate').mockReturnValue(undefined);
+    jest.spyOn(templateManager, 'getTemplate').mockReturnValue(undefined);
     await expect(
       builder.createNode({ id: 'x', label: 'L', type: 'unknown' } as any, {
         x: 0,
@@ -67,12 +67,12 @@ describe('BoardBuilder additional cases', () => {
   test('createNode creates group and sets metadata', async () => {
     const items = [{ setMetadata: jest.fn() }, { setMetadata: jest.fn() }];
     // Mock creation of a group containing two items
-    jest.spyOn(templates, 'createFromTemplate').mockResolvedValue({
+    jest.spyOn(templateManager, 'createFromTemplate').mockResolvedValue({
       type: 'group',
       getItems: jest.fn().mockResolvedValue(items),
     } as any);
     jest
-      .spyOn(templates, 'getTemplate')
+      .spyOn(templateManager, 'getTemplate')
       .mockReturnValue({ elements: [{ shape: 'r' }, { text: 't' }] });
     const builder = new BoardBuilder();
     // Ensure a fresh node is created rather than updated
@@ -98,7 +98,7 @@ describe('BoardBuilder additional cases', () => {
     // findNode returns an existing group for the node
     jest.spyOn(builder, 'findNode').mockResolvedValue(group);
     jest
-      .spyOn(templates, 'getTemplate')
+      .spyOn(templateManager, 'getTemplate')
       .mockReturnValue({ elements: [{ shape: 's' }, { text: 't' }] });
     const node = { id: 'n', label: 'L', type: 'Role' } as any;
     const pos = { x: 0, y: 0, width: 1, height: 1 };

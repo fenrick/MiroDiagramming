@@ -1,8 +1,4 @@
-import {
-  createFromTemplate,
-  getConnectorTemplate,
-  getTemplate,
-} from './templates';
+import { templateManager } from './templates';
 import type {
   BaseItem,
   Group,
@@ -289,7 +285,7 @@ export class BoardBuilder {
     node: NodeData,
     pos: PositionedNode,
   ): Promise<BaseItem | Group> {
-    const widget = await createFromTemplate(
+    const widget = await templateManager.createFromTemplate(
       node.type,
       node.label,
       pos.x,
@@ -326,7 +322,7 @@ export class BoardBuilder {
     if (!pos || typeof pos.x !== 'number' || typeof pos.y !== 'number') {
       throw new Error('Invalid position');
     }
-    const templateDef = getTemplate(node.type);
+    const templateDef = templateManager.getTemplate(node.type);
     if (!templateDef) {
       throw new Error(`Template '${node.type}' not found`);
     }
@@ -426,7 +422,7 @@ export class BoardBuilder {
         const from = nodeMap[edge.from];
         const to = nodeMap[edge.to];
         if (!from || !to) return undefined;
-        const template = getConnectorTemplate(
+        const template = templateManager.getConnectorTemplate(
           (edge.metadata as any)?.template || 'default',
         );
         const existing = await this.findConnector(edge.from, edge.to);

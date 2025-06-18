@@ -1,4 +1,4 @@
-import { readFileAsText, validateFile } from '../src/file-utils';
+import { fileUtils } from '../src/file-utils';
 
 describe('file utils', () => {
   afterEach(() => {
@@ -11,7 +11,7 @@ describe('file utils', () => {
       name: 'file.txt',
       text: jest.fn().mockResolvedValue('abc'),
     } as any;
-    const result = await readFileAsText(file);
+    const result = await fileUtils.readFileAsText(file);
     expect(result).toBe('abc');
     expect(file.text).toHaveBeenCalled();
   });
@@ -25,11 +25,11 @@ describe('file utils', () => {
       }
     }
     (global as any).FileReader = FR;
-    const result = await readFileAsText({ name: 'f.txt' } as any);
+    const result = await fileUtils.readFileAsText({ name: 'f.txt' } as any);
     expect(result).toBe('def');
   });
 
   test('validateFile throws on invalid object', () => {
-    expect(() => validateFile(null as any)).toThrow('Invalid file');
+    expect(() => fileUtils.validateFile(null as any)).toThrow('Invalid file');
   });
 });

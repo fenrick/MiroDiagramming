@@ -1,5 +1,5 @@
 import { BoardBuilder } from '../src/BoardBuilder';
-import * as templates from '../src/templates';
+import { templateManager } from '../src/templates';
 
 /**
  * Unit tests targeting rarely hit branches within BoardBuilder
@@ -38,12 +38,16 @@ describe('BoardBuilder branch coverage', () => {
     // Pretend the node does not already exist
     jest.spyOn(builder, 'findNode').mockResolvedValue(undefined);
     // Template lookup returns our element
-    jest.spyOn(templates, 'getTemplate').mockReturnValue({ elements: [el] });
+    jest
+      .spyOn(templateManager, 'getTemplate')
+      .mockReturnValue({ elements: [el] });
     // createFromTemplate applies the element to the new shape
-    jest.spyOn(templates, 'createFromTemplate').mockImplementation(async () => {
-      (builder as any).applyShapeElement(shape, el, 'L');
-      return shape;
-    });
+    jest
+      .spyOn(templateManager, 'createFromTemplate')
+      .mockImplementation(async () => {
+        (builder as any).applyShapeElement(shape, el, 'L');
+        return shape;
+      });
     await builder.createNode({ id: 'n', label: 'L', type: 'fill' } as any, {
       x: 0,
       y: 0,

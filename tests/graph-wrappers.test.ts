@@ -1,19 +1,10 @@
-import {
-  findNode,
-  findConnector,
-  createNode,
-  createEdges,
-  syncAll,
-  resetBoardCache,
-  defaultBuilder,
-} from '../src/graph';
+import { graphService, defaultBuilder } from '../src/graph';
 
 /**
- * Tests for the wrapper functions exported from graph.ts
- * which delegate to the default BoardBuilder instance.
+ * Verify that service methods delegate to the default BoardBuilder instance.
  */
 
-describe('graph wrapper functions', () => {
+describe('graph service methods', () => {
   afterEach(() => {
     jest.restoreAllMocks();
   });
@@ -22,8 +13,7 @@ describe('graph wrapper functions', () => {
     const spy = jest
       .spyOn(defaultBuilder, 'findNode')
       .mockResolvedValue('x' as any);
-    // Call wrapper and verify delegation
-    const result = await findNode('t', 'l');
+    const result = await graphService.findNode('t', 'l');
     expect(spy).toHaveBeenCalledWith('t', 'l');
     expect(result).toBe('x');
   });
@@ -32,8 +22,7 @@ describe('graph wrapper functions', () => {
     const spy = jest
       .spyOn(defaultBuilder, 'findConnector')
       .mockResolvedValue('c' as any);
-    // Wrapper should forward parameters to builder
-    const result = await findConnector('a', 'b');
+    const result = await graphService.findConnector('a', 'b');
     expect(spy).toHaveBeenCalledWith('a', 'b');
     expect(result).toBe('c');
   });
@@ -42,8 +31,7 @@ describe('graph wrapper functions', () => {
     const spy = jest
       .spyOn(defaultBuilder, 'createNode')
       .mockResolvedValue('n' as any);
-    // Pass-through call should return builder result
-    const result = await createNode({} as any, {
+    const result = await graphService.createNode({} as any, {
       x: 0,
       y: 0,
       width: 1,
@@ -57,7 +45,7 @@ describe('graph wrapper functions', () => {
     const spy = jest
       .spyOn(defaultBuilder, 'createEdges')
       .mockResolvedValue(['e'] as any);
-    const result = await createEdges([] as any, {} as any);
+    const result = await graphService.createEdges([] as any, {} as any);
     // Should simply return value from builder
     expect(spy).toHaveBeenCalled();
     expect(result[0]).toBe('e');
@@ -65,13 +53,13 @@ describe('graph wrapper functions', () => {
 
   test('syncAll delegates to default builder', async () => {
     const spy = jest.spyOn(defaultBuilder, 'syncAll').mockResolvedValue();
-    await syncAll([] as any);
+    await graphService.syncAll([] as any);
     expect(spy).toHaveBeenCalled();
   });
 
   test('resetBoardCache calls builder.reset', () => {
     const spy = jest.spyOn(defaultBuilder, 'reset');
-    resetBoardCache();
+    graphService.resetBoardCache();
     expect(spy).toHaveBeenCalled();
   });
 });

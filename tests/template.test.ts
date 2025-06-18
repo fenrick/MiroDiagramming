@@ -1,4 +1,4 @@
-import * as templateModule from '../src/templates';
+import { templateManager } from '../src/templates';
 
 declare const global: any;
 
@@ -36,7 +36,7 @@ describe('createFromTemplate', () => {
   });
 
   test('creates a single shape with correct style', async () => {
-    const widget = await templateModule.createFromTemplate(
+    const widget = await templateManager.createFromTemplate(
       'Role',
       'Label',
       0,
@@ -50,13 +50,13 @@ describe('createFromTemplate', () => {
   });
 
   test('groups multiple elements', async () => {
-    (templateModule as any).templates.multi = {
+    (templateManager as any).templates.multi = {
       elements: [
         { shape: 'rectangle', width: 50, height: 50 },
         { text: 'test' },
       ],
     };
-    const widget = await templateModule.createFromTemplate(
+    const widget = await templateManager.createFromTemplate(
       'multi',
       'Label',
       0,
@@ -70,8 +70,8 @@ describe('createFromTemplate', () => {
   });
 
   test('creates text only widget', async () => {
-    (templateModule as any).templates.textOnly = { elements: [{ text: 'T' }] };
-    const widget = await templateModule.createFromTemplate(
+    (templateManager as any).templates.textOnly = { elements: [{ text: 'T' }] };
+    const widget = await templateManager.createFromTemplate(
       'textOnly',
       'Label',
       0,
@@ -82,7 +82,7 @@ describe('createFromTemplate', () => {
 
   test('throws when template missing', async () => {
     await expect(
-      templateModule.createFromTemplate('missing', 'L', 0, 0),
+      templateManager.createFromTemplate('missing', 'L', 0, 0),
     ).rejects.toThrow("Template 'missing' not found");
   });
 });
