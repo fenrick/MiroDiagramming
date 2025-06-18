@@ -60,30 +60,30 @@ export function resetBoardCache(): void {
 /** Wrapper to search for an existing node. */
 export const findNode = (
   type: string,
-  label: string
+  label: string,
 ): Promise<BaseItem | Group | undefined> =>
   defaultBuilder.findNode(type, label);
 
 /** Wrapper to search for an existing connector. */
 export const findConnector = (
   from: string,
-  to: string
+  to: string,
 ): Promise<Connector | undefined> => defaultBuilder.findConnector(from, to);
 
 /** Wrapper to create or update a node widget. */
 export const createNode = (
   node: NodeData,
-  pos: PositionedNode
+  pos: PositionedNode,
 ): Promise<BaseItem | Group> => defaultBuilder.createNode(node, pos);
 
 /** Wrapper to create or update connectors. */
 export const createEdges = (
   edges: EdgeData[],
   nodeMap: Record<string, BaseItem | Group>,
-  hints?: EdgeHint[]
+  hints?: EdgeHint[],
 ): Promise<Connector[]> => defaultBuilder.createEdges(edges, nodeMap, hints);
 
 /** Proxy to sync multiple widgets. */
 export const syncAll = (
-  items: Array<BaseItem | Group | Connector>
+  items: Array<BaseItem | Group | Connector>,
 ): Promise<void> => defaultBuilder.syncAll(items);

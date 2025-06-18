@@ -40,7 +40,7 @@ describe('createFromTemplate', () => {
       'Role',
       'Label',
       0,
-      0
+      0,
     );
     expect(widget.type).toBe('shape');
     const args = (global.miro.board.createShape as jest.Mock).mock.calls[0][0];
@@ -60,7 +60,7 @@ describe('createFromTemplate', () => {
       'multi',
       'Label',
       0,
-      0
+      0,
     );
     expect(widget.type).toBe('group');
     expect(global.miro.board.createShape).toHaveBeenCalled();

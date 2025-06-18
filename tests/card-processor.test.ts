@@ -69,7 +69,7 @@ describe('CardProcessor', () => {
 
   test('throws on invalid input', async () => {
     await expect(processor.processCards(null as any)).rejects.toThrow(
-      'Invalid cards'
+      'Invalid cards',
     );
   });
 });

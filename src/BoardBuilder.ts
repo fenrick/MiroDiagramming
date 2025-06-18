@@ -58,7 +58,7 @@ export class BoardBuilder {
    */
   public async findSpace(
     width: number,
-    height: number
+    height: number,
   ): Promise<{ x: number; y: number }> {
     this.ensureBoard();
     const vp = await miro.board.viewport.get();
@@ -78,7 +78,7 @@ export class BoardBuilder {
     height: number,
     x: number,
     y: number,
-    title?: string
+    title?: string,
   ): Promise<Frame> {
     this.ensureBoard();
     const frame = (await miro.board.createFrame({
@@ -120,10 +120,10 @@ export class BoardBuilder {
    */
   private async findByMetadata<T extends BaseItem | Group | Connector>(
     items: T[],
-    predicate: (meta: any, item: T) => boolean
+    predicate: (meta: any, item: T) => boolean,
   ): Promise<T | undefined> {
     const metas = await Promise.all(
-      items.map((i) => (i as any).getMetadata(META_KEY))
+      items.map(i => (i as any).getMetadata(META_KEY)),
     );
     for (let i = 0; i < items.length; i++) {
       if (predicate(metas[i], items[i])) {
@@ -139,11 +139,11 @@ export class BoardBuilder {
    */
   private async searchShapes(
     type: string,
-    label: string
+    label: string,
   ): Promise<BaseItem | Group | undefined> {
     await this.loadShapeCache();
     const shapes = this.shapeCache ?? [];
-    return this.findByMetadata(shapes, (meta) => {
+    return this.findByMetadata(shapes, meta => {
       const data = meta as NodeMetadata | undefined;
       return data?.type === type && data.label === label;
     });
@@ -155,20 +155,20 @@ export class BoardBuilder {
    */
   private async searchGroups(
     type: string,
-    label: string
+    label: string,
   ): Promise<BaseItem | Group | undefined> {
     this.ensureBoard();
     const groups = (await miro.board.get({ type: 'group' })) as Group[];
     const matches = await Promise.all(
-      groups.map(async (group) => {
+      groups.map(async group => {
         const items = await group.getItems();
         if (!Array.isArray(items)) return undefined;
-        const found = await this.findByMetadata(items as BaseItem[], (meta) => {
+        const found = await this.findByMetadata(items as BaseItem[], meta => {
           const data = meta as NodeMetadata | undefined;
           return data?.type === type && data.label === label;
         });
         return found ? group : undefined;
-      })
+      }),
     );
     return matches.find(Boolean);
   }
@@ -176,7 +176,7 @@ export class BoardBuilder {
   /** Lookup an existing widget with matching metadata. */
   public async findNode(
     type: string,
-    label: string
+    label: string,
   ): Promise<BaseItem | Group | undefined> {
     if (typeof type !== 'string' || typeof label !== 'string') {
       throw new Error('Invalid search parameters');
@@ -189,14 +189,14 @@ export class BoardBuilder {
   /** Find a connector with matching metadata if it exists on the board. */
   public async findConnector(
     from: string,
-    to: string
+    to: string,
   ): Promise<Connector | undefined> {
     if (typeof from !== 'string' || typeof to !== 'string') {
       throw new Error('Invalid search parameters');
     }
     await this.loadConnectorCache();
     const connectors = this.connectorCache ?? [];
-    return this.findByMetadata(connectors, (meta) => {
+    return this.findByMetadata(connectors, meta => {
       const data = meta as EdgeMetadata | undefined;
       return data?.from === from && data.to === to;
     });
@@ -205,7 +205,7 @@ export class BoardBuilder {
   private applyShapeElement(
     item: BaseItem,
     el: TemplateElement,
-    label: string
+    label: string,
   ): void {
     if (el.shape) (item as any).shape = el.shape;
     if (el.rotation !== undefined) (item as any).rotation = el.rotation;
@@ -213,7 +213,7 @@ export class BoardBuilder {
     if (el.height) (item as any).height = el.height;
     (item as any).content = (el.text ?? '{{label}}').replace(
       '{{label}}',
-      label
+      label,
     );
     const existing = (item as any).style ?? {};
     const style: Record<string, unknown> = {
@@ -229,11 +229,11 @@ export class BoardBuilder {
   private applyTextElement(
     item: BaseItem,
     el: TemplateElement,
-    label: string
+    label: string,
   ): void {
     (item as any).content = (el.text ?? '{{label}}').replace(
       '{{label}}',
-      label
+      label,
     );
     if (el.style) {
       (item as any).style = {
@@ -246,7 +246,7 @@ export class BoardBuilder {
   private applyElementToItem(
     item: BaseItem,
     el: TemplateElement,
-    label: string
+    label: string,
   ): void {
     if (item.type === 'shape') {
       this.applyShapeElement(item, el, label);
@@ -258,7 +258,7 @@ export class BoardBuilder {
   private async updateExistingNode(
     existing: BaseItem | Group,
     def: TemplateDefinition,
-    node: NodeData
+    node: NodeData,
   ): Promise<BaseItem | Group> {
     if ((existing as Group).type === 'group') {
       const items = await (existing as Group).getItems();
@@ -267,13 +267,13 @@ export class BoardBuilder {
           this.applyElementToItem(
             item as BaseItem,
             def.elements[i],
-            node.label
+            node.label,
           );
           return item.setMetadata(META_KEY, {
             type: node.type,
             label: node.label,
           });
-        })
+        }),
       );
       return existing as Group;
     }
@@ -287,21 +287,21 @@ export class BoardBuilder {
 
   private async createNewNode(
     node: NodeData,
-    pos: PositionedNode
+    pos: PositionedNode,
   ): Promise<BaseItem | Group> {
     const widget = await createFromTemplate(
       node.type,
       node.label,
       pos.x,
       pos.y,
-      this.frame
+      this.frame,
     );
     if ((widget as Group).type === 'group') {
       const items = await (widget as Group).getItems();
       await Promise.all(
-        items.map((item) =>
-          item.setMetadata(META_KEY, { type: node.type, label: node.label })
-        )
+        items.map(item =>
+          item.setMetadata(META_KEY, { type: node.type, label: node.label }),
+        ),
       );
       return widget as Group;
     }
@@ -318,7 +318,7 @@ export class BoardBuilder {
   /** Create or update a node widget from a template. */
   public async createNode(
     node: NodeData,
-    pos: PositionedNode
+    pos: PositionedNode,
   ): Promise<BaseItem | Group> {
     if (!node || typeof node !== 'object') {
       throw new Error('Invalid node');
@@ -335,7 +335,7 @@ export class BoardBuilder {
       return this.updateExistingNode(
         existing as BaseItem | Group,
         templateDef,
-        node
+        node,
       );
     }
     return this.createNewNode(node, pos);
@@ -345,7 +345,7 @@ export class BoardBuilder {
     connector: Connector,
     edge: EdgeData,
     template?: ConnectorTemplate,
-    hint?: EdgeHint
+    hint?: EdgeHint,
   ): void {
     if (edge.label) {
       connector.captions = [
@@ -382,7 +382,7 @@ export class BoardBuilder {
     from: BaseItem | Group,
     to: BaseItem | Group,
     hint: EdgeHint | undefined,
-    template?: ConnectorTemplate
+    template?: ConnectorTemplate,
   ): Promise<Connector> {
     const connector = await miro.board.createConnector({
       start: { item: from.id, position: hint?.startPosition },
@@ -413,7 +413,7 @@ export class BoardBuilder {
   public async createEdges(
     edges: EdgeData[],
     nodeMap: Record<string, BaseItem | Group>,
-    hints?: EdgeHint[]
+    hints?: EdgeHint[],
   ): Promise<Connector[]> {
     if (!Array.isArray(edges)) {
       throw new Error('Invalid edges');
@@ -427,7 +427,7 @@ export class BoardBuilder {
         const to = nodeMap[edge.to];
         if (!from || !to) return undefined;
         const template = getConnectorTemplate(
-          (edge.metadata as any)?.template || 'default'
+          (edge.metadata as any)?.template || 'default',
         );
         const existing = await this.findConnector(edge.from, edge.to);
         if (existing) {
@@ -435,19 +435,19 @@ export class BoardBuilder {
           return existing;
         }
         return this.createConnector(edge, from, to, hints?.[i], template);
-      })
+      }),
     );
     return created.filter(Boolean) as Connector[];
   }
 
   /** Call `.sync()` on each widget if the method exists. */
   public async syncAll(
-    items: Array<BaseItem | Group | Connector>
+    items: Array<BaseItem | Group | Connector>,
   ): Promise<void> {
     await Promise.all(
       items
-        .filter((i) => typeof (i as any).sync === 'function')
-        .map((i) => (i as any).sync())
+        .filter(i => typeof (i as any).sync === 'function')
+        .map(i => (i as any).sync()),
     );
   }
 }

@@ -10,7 +10,7 @@ export const readFileAsText = (file: File): Promise<string> => {
   }
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = e => {
       if (!e.target) {
         reject('Failed to load file');
         return;

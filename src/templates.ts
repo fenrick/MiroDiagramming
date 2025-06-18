@@ -56,7 +56,7 @@ export function getTemplate(name: string): TemplateDefinition | undefined {
 
 /** Retrieve a connector styling template by name. */
 export function getConnectorTemplate(
-  name: string
+  name: string,
 ): ConnectorTemplate | undefined {
   const tpl = connectorTemplates[name];
   if (!tpl) return undefined;
@@ -71,7 +71,7 @@ export async function createFromTemplate(
   label: string,
   x: number,
   y: number,
-  frame?: Frame
+  frame?: Frame,
 ): Promise<GroupableItem | Group> {
   const template = getTemplate(name);
   if (!template) {
