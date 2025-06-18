@@ -5,6 +5,7 @@ declare const global: any;
 describe('showError', () => {
   beforeEach(() => {
     global.miro = { board: { notifications: { showError: jest.fn() } } };
+    jest.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -14,6 +15,7 @@ describe('showError', () => {
 
   test('passes through short messages', () => {
     showError('fail');
+    expect(console.error).toHaveBeenCalledWith('fail');
     expect(global.miro.board.notifications.showError).toHaveBeenCalledWith(
       'fail',
     );
@@ -22,6 +24,7 @@ describe('showError', () => {
   test('truncates long messages', () => {
     const long = 'a'.repeat(90);
     showError(long);
+    expect(console.error).toHaveBeenCalledWith(long);
     const arg = (global.miro.board.notifications.showError as jest.Mock).mock
       .calls[0][0];
     expect(arg.length).toBeLessThanOrEqual(80);
