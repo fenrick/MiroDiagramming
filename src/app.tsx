@@ -50,7 +50,7 @@ const App: React.FC = () => {
           });
         }
       } catch (e) {
-        console.error(e);
+        miro.board.notifications.showError(String(e));
       }
     }
     setFiles([]);
