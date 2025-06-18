@@ -32,7 +32,7 @@ export class BoardBuilder {
   }
 
   private ensureBoard(): void {
-    if (!(globalThis as any).miro?.board) {
+    if (typeof miro === 'undefined' || !miro?.board) {
       throw new Error('Miro board not initialized');
     }
   }
