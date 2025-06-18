@@ -63,10 +63,29 @@ export class CardProcessor {
     return this.cardMap;
   }
 
-  /** Find an existing card by identifier if present. */
-  private async findCardById(id: string): Promise<Card | undefined> {
+  /**
+   * Separate card definitions into create and update lists based on board state.
+   */
+  private async partitionCards(cards: CardData[]): Promise<{
+    toCreate: CardData[];
+    toUpdate: Array<{ card: Card; def: CardData }>;
+  }> {
     const map = await this.loadCardMap();
-    return map.get(id);
+    const toCreate: CardData[] = [];
+    const toUpdate: Array<{ card: Card; def: CardData }> = [];
+
+    for (const def of cards) {
+      if (def.id) {
+        const existing = map.get(def.id);
+        if (existing) {
+          toUpdate.push({ card: existing, def });
+          continue;
+        }
+      }
+      toCreate.push(def);
+    }
+
+    return { toCreate, toUpdate };
   }
 
   /**
@@ -151,17 +170,28 @@ export class CardProcessor {
     const totalHeight =
       CardProcessor.CARD_HEIGHT * rows + CardProcessor.CARD_MARGIN * 2;
     const spot = await this.builder.findSpace(totalWidth, totalHeight);
-    const startX =
-      spot.x -
-      totalWidth / 2 +
-      CardProcessor.CARD_MARGIN +
-      CardProcessor.CARD_WIDTH / 2;
-    const startY =
-      spot.y -
-      totalHeight / 2 +
-      CardProcessor.CARD_MARGIN +
-      CardProcessor.CARD_HEIGHT / 2;
+    const startX = this.startCoordinate(
+      spot.x,
+      totalWidth,
+      CardProcessor.CARD_WIDTH,
+    );
+    const startY = this.startCoordinate(
+      spot.y,
+      totalHeight,
+      CardProcessor.CARD_HEIGHT,
+    );
     return { spot, startX, startY, columns: cols, totalWidth, totalHeight };
+  }
+
+  /**
+   * Derive the starting coordinate for card placement.
+   */
+  private startCoordinate(
+    center: number,
+    total: number,
+    itemSize: number,
+  ): number {
+    return center - total / 2 + CardProcessor.CARD_MARGIN + itemSize / 2;
   }
 
   /** Create a frame when requested and register it with the board builder. */
@@ -206,19 +236,7 @@ export class CardProcessor {
 
     await this.loadCardMap();
 
-    const toCreate: CardData[] = [];
-    const toUpdate: Array<{ card: Card; def: CardData }> = [];
-
-    for (const def of cards) {
-      if (def.id) {
-        const existing = await this.findCardById(def.id);
-        if (existing) {
-          toUpdate.push({ card: existing, def });
-          continue;
-        }
-      }
-      toCreate.push(def);
-    }
+    const { toCreate, toUpdate } = await this.partitionCards(cards);
 
     const updated = await Promise.all(
       toUpdate.map(item => this.updateCardWidget(item.card, item.def, tagMap)),

@@ -67,22 +67,27 @@ export class GraphProcessor {
    * Compute connector orientation hints from the raw layout result.
    */
   private computeEdgeHints(graph: GraphData, layout: LayoutResult): EdgeHint[] {
-    const orient = (
-      node: PositionedNode,
-      pt: { x: number; y: number },
-    ): { x: number; y: number } => ({
-      x: (pt.x - node.x) / node.width,
-      y: (pt.y - node.y) / node.height,
-    });
-
     return layout.edges.map((edge, i) => {
       const src = layout.nodes[graph.edges[i].from];
       const tgt = layout.nodes[graph.edges[i].to];
       return {
-        startPosition: orient(src, edge.startPoint),
-        endPosition: orient(tgt, edge.endPoint),
+        startPosition: this.relativePosition(src, edge.startPoint),
+        endPosition: this.relativePosition(tgt, edge.endPoint),
       };
     });
+  }
+
+  /**
+   * Calculate a point relative to the node bounds as expected by the Miro SDK.
+   */
+  private relativePosition(
+    node: PositionedNode,
+    pt: { x: number; y: number },
+  ): { x: number; y: number } {
+    return {
+      x: (pt.x - node.x) / node.width,
+      y: (pt.y - node.y) / node.height,
+    };
   }
   /**
    * Load a JSON graph file and process it.
