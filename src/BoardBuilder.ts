@@ -17,6 +17,8 @@ import type {
 } from './templates';
 import type { NodeData, EdgeData, PositionedNode, EdgeHint } from './graph';
 
+const META_KEY = 'app.miro.structgraph';
+
 /**
  * Helper responsible for finding, creating and updating widgets on the board.
  * A small cache avoids repeated board lookups while processing a graph.
@@ -112,6 +114,21 @@ export class BoardBuilder {
     }
   }
 
+  private async findByMetadata<T extends BaseItem | Group | Connector>(
+    items: T[],
+    predicate: (meta: any, item: T) => boolean
+  ): Promise<T | undefined> {
+    const metas = await Promise.all(
+      items.map((i) => (i as any).getMetadata(META_KEY))
+    );
+    for (let i = 0; i < items.length; i++) {
+      if (predicate(metas[i], items[i])) {
+        return items[i];
+      }
+    }
+    return undefined;
+  }
+
   /**
    * Search cached shapes for metadata that matches the given type and label.
    * Returns the corresponding item if found.
@@ -122,16 +139,10 @@ export class BoardBuilder {
   ): Promise<BaseItem | Group | undefined> {
     await this.loadShapeCache();
     const shapes = this.shapeCache ?? [];
-    const metas = await Promise.all(
-      shapes.map((s) => s.getMetadata('app.miro.structgraph'))
-    );
-    for (let i = 0; i < shapes.length; i++) {
-      const meta = metas[i] as unknown as NodeMetadata | undefined;
-      if (meta?.type === type && meta.label === label) {
-        return shapes[i] as BaseItem;
-      }
-    }
-    return undefined;
+    return this.findByMetadata(shapes, (meta) => {
+      const data = meta as NodeMetadata | undefined;
+      return data?.type === type && data.label === label;
+    });
   }
 
   /**
@@ -147,14 +158,12 @@ export class BoardBuilder {
     for (const group of groups) {
       const items = await group.getItems();
       if (!Array.isArray(items)) continue;
-      const metas = await Promise.all(
-        items.map((i) => i.getMetadata('app.miro.structgraph'))
-      );
-      for (let i = 0; i < items.length; i++) {
-        const meta = metas[i] as unknown as NodeMetadata | undefined;
-        if (meta?.type === type && meta.label === label) {
-          return group as Group;
-        }
+      const match = await this.findByMetadata(items as BaseItem[], (meta) => {
+        const data = meta as NodeMetadata | undefined;
+        return data?.type === type && data.label === label;
+      });
+      if (match) {
+        return group as Group;
       }
     }
     return undefined;
@@ -183,16 +192,10 @@ export class BoardBuilder {
     }
     await this.loadConnectorCache();
     const connectors = this.connectorCache ?? [];
-    const metas = await Promise.all(
-      connectors.map((c) => c.getMetadata('app.miro.structgraph'))
-    );
-    for (let i = 0; i < connectors.length; i++) {
-      const meta = metas[i] as unknown as EdgeMetadata | undefined;
-      if (meta?.from === from && meta.to === to) {
-        return connectors[i] as Connector;
-      }
-    }
-    return undefined;
+    return this.findByMetadata(connectors, (meta) => {
+      const data = meta as EdgeMetadata | undefined;
+      return data?.from === from && data.to === to;
+    });
   }
 
   private applyShapeElement(
@@ -255,21 +258,23 @@ export class BoardBuilder {
   ): Promise<BaseItem | Group> {
     if ((existing as Group).type === 'group') {
       const items = await (existing as Group).getItems();
-      for (let i = 0; i < items.length && i < def.elements.length; i++) {
-        this.applyElementToItem(
-          items[i] as BaseItem,
-          def.elements[i],
-          node.label
-        );
-        await items[i].setMetadata('app.miro.structgraph', {
-          type: node.type,
-          label: node.label,
-        });
-      }
+      await Promise.all(
+        items.slice(0, def.elements.length).map((item, i) => {
+          this.applyElementToItem(
+            item as BaseItem,
+            def.elements[i],
+            node.label
+          );
+          return item.setMetadata(META_KEY, {
+            type: node.type,
+            label: node.label,
+          });
+        })
+      );
       return existing as Group;
     }
     this.applyElementToItem(existing as BaseItem, def.elements[0], node.label);
-    await (existing as BaseItem).setMetadata('app.miro.structgraph', {
+    await (existing as BaseItem).setMetadata(META_KEY, {
       type: node.type,
       label: node.label,
     });
@@ -289,15 +294,14 @@ export class BoardBuilder {
     );
     if ((widget as Group).type === 'group') {
       const items = await (widget as Group).getItems();
-      for (const item of items) {
-        await item.setMetadata('app.miro.structgraph', {
-          type: node.type,
-          label: node.label,
-        });
-      }
+      await Promise.all(
+        items.map((item) =>
+          item.setMetadata(META_KEY, { type: node.type, label: node.label })
+        )
+      );
       return widget as Group;
     }
-    await (widget as BaseItem).setMetadata('app.miro.structgraph', {
+    await (widget as BaseItem).setMetadata(META_KEY, {
       type: node.type,
       label: node.label,
     });
@@ -391,7 +395,7 @@ export class BoardBuilder {
         : undefined,
       style: template?.style as any,
     });
-    connector.setMetadata('app.miro.structgraph', {
+    connector.setMetadata(META_KEY, {
       from: edge.from,
       to: edge.to,
     });
@@ -413,31 +417,23 @@ export class BoardBuilder {
     if (!nodeMap || typeof nodeMap !== 'object') {
       throw new Error('Invalid node map');
     }
-    const connectors: Connector[] = [];
-    for (let i = 0; i < edges.length; i++) {
-      const edge = edges[i];
-      const from = nodeMap[edge.from];
-      const to = nodeMap[edge.to];
-      if (!from || !to) continue;
-      const template = getConnectorTemplate(
-        (edge.metadata as any)?.template || 'default'
-      );
-      const existing = await this.findConnector(edge.from, edge.to);
-      if (existing) {
-        this.updateConnector(existing, edge, template, hints?.[i]);
-        connectors.push(existing);
-        continue;
-      }
-      const connector = await this.createConnector(
-        edge,
-        from,
-        to,
-        hints?.[i],
-        template
-      );
-      connectors.push(connector);
-    }
-    return connectors;
+    const created = await Promise.all(
+      edges.map(async (edge, i) => {
+        const from = nodeMap[edge.from];
+        const to = nodeMap[edge.to];
+        if (!from || !to) return undefined;
+        const template = getConnectorTemplate(
+          (edge.metadata as any)?.template || 'default'
+        );
+        const existing = await this.findConnector(edge.from, edge.to);
+        if (existing) {
+          this.updateConnector(existing, edge, template, hints?.[i]);
+          return existing;
+        }
+        return this.createConnector(edge, from, to, hints?.[i], template);
+      })
+    );
+    return created.filter(Boolean) as Connector[];
   }
 
   /** Call `.sync()` on each widget if the method exists. */
