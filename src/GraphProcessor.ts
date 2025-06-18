@@ -1,6 +1,7 @@
 import { loadGraph, defaultBuilder, GraphData } from './graph';
 import { BoardBuilder } from './BoardBuilder';
 import { layoutGraph, LayoutResult } from './elk-layout';
+import { validateFile } from './file-utils';
 import type { BaseItem, Group, Frame } from '@mirohq/websdk-types';
 
 /**
@@ -62,9 +63,7 @@ export class GraphProcessor {
     file: File,
     options: ProcessOptions = {}
   ): Promise<void> {
-    if (!file || typeof file !== 'object' || typeof file.name !== 'string') {
-      throw new Error('Invalid file');
-    }
+    validateFile(file);
     const graph = await loadGraph(file);
     await this.processGraph(graph, options);
   }

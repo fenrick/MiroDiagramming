@@ -21,3 +21,10 @@ export const readFileAsText = (file: File): Promise<string> => {
     reader.readAsText(file, 'utf-8');
   });
 };
+
+/** Ensure the provided object is a valid `File`. */
+export function validateFile(file: File): void {
+  if (!file || typeof file !== 'object' || typeof file.name !== 'string') {
+    throw new Error('Invalid file');
+  }
+}

@@ -114,6 +114,10 @@ export class BoardBuilder {
     }
   }
 
+  /**
+   * Find an item whose metadata satisfies the provided predicate.
+   * Metadata for all items is loaded concurrently for efficiency.
+   */
   private async findByMetadata<T extends BaseItem | Group | Connector>(
     items: T[],
     predicate: (meta: any, item: T) => boolean
@@ -155,18 +159,18 @@ export class BoardBuilder {
   ): Promise<BaseItem | Group | undefined> {
     this.ensureBoard();
     const groups = (await miro.board.get({ type: 'group' })) as Group[];
-    for (const group of groups) {
-      const items = await group.getItems();
-      if (!Array.isArray(items)) continue;
-      const match = await this.findByMetadata(items as BaseItem[], (meta) => {
-        const data = meta as NodeMetadata | undefined;
-        return data?.type === type && data.label === label;
-      });
-      if (match) {
-        return group as Group;
-      }
-    }
-    return undefined;
+    const matches = await Promise.all(
+      groups.map(async (group) => {
+        const items = await group.getItems();
+        if (!Array.isArray(items)) return undefined;
+        const found = await this.findByMetadata(items as BaseItem[], (meta) => {
+          const data = meta as NodeMetadata | undefined;
+          return data?.type === type && data.label === label;
+        });
+        return found ? group : undefined;
+      })
+    );
+    return matches.find(Boolean);
   }
 
   /** Lookup an existing widget with matching metadata. */
@@ -440,11 +444,11 @@ export class BoardBuilder {
   public async syncAll(
     items: Array<BaseItem | Group | Connector>
   ): Promise<void> {
-    for (const item of items) {
-      if (typeof (item as any).sync === 'function') {
-        await (item as any).sync();
-      }
-    }
+    await Promise.all(
+      items
+        .filter((i) => typeof (i as any).sync === 'function')
+        .map((i) => (i as any).sync())
+    );
   }
 }
 

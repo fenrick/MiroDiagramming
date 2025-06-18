@@ -1,6 +1,6 @@
 import type { BaseItem, Group, Connector } from '@mirohq/websdk-types';
 import { BoardBuilder } from './BoardBuilder';
-import { readFileAsText } from './file-utils';
+import { readFileAsText, validateFile } from './file-utils';
 
 export interface NodeData {
   id: string;
@@ -35,9 +35,7 @@ export interface EdgeHint {
 
 /** Load and parse JSON graph data from a file. */
 export async function loadGraph(file: File): Promise<GraphData> {
-  if (!file || typeof file !== 'object' || typeof file.name !== 'string') {
-    throw new Error('Invalid file');
-  }
+  validateFile(file);
   const text = await readFileAsText(file);
   const data = JSON.parse(text) as unknown;
   if (
