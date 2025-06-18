@@ -1,6 +1,7 @@
 import { GraphProcessor } from '../src/GraphProcessor';
 import { graphService } from '../src/graph';
 import { templateManager } from '../src/templates';
+import { layoutEngine } from '../src/elk-layout';
 import sample from '../sample-graph.json';
 
 declare const global: any;
@@ -93,7 +94,7 @@ describe('GraphProcessor', () => {
       edges: [],
     };
     // Mock layout with a single node to make dimensions deterministic
-    jest.spyOn(require('../src/elk-layout'), 'layoutGraph').mockResolvedValue({
+    jest.spyOn(layoutEngine, 'layoutGraph').mockResolvedValue({
       nodes: { n1: { x: 0, y: 0, width: 10, height: 10 } },
       edges: [],
     });
@@ -127,7 +128,7 @@ describe('GraphProcessor', () => {
       nodes: [{ id: 'n1', label: 'A', type: 'Role' }],
       edges: [],
     };
-    jest.spyOn(require('../src/elk-layout'), 'layoutGraph').mockResolvedValue({
+    jest.spyOn(layoutEngine, 'layoutGraph').mockResolvedValue({
       nodes: { n1: { x: 0, y: 0, width: 10, height: 10 } },
       edges: [],
     });

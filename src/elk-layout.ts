@@ -38,66 +38,87 @@ export interface LayoutResult {
  * Run the ELK layout engine on the provided graph data and
  * return positioned nodes and edges.
  */
-export const layoutGraph = async (data: GraphData): Promise<LayoutResult> => {
-  const elk = new ELK();
-  const elkGraph: any = {
-    id: 'root',
-    layoutOptions: {
-      // Basic layered layout configuration
-      'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
-      'elk.algorithm': 'mrtree',
-      'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF',
-      'elk.layered.mergeEdges': 'false',
-      'elk.direction': 'DOWN',
-      'elk.layered.spacing.nodeNodeBetweenLayers': '90',
-      'elk.spacing.nodeNode': 90,
-      'elk.layered.unnecessaryBendpoints': 'true',
-      'elk.layered.cycleBreaking.strategy': 'GREEDY',
-    },
-    // Each node uses its template dimensions unless overridden by metadata
-    children: data.nodes.map(n => {
-      const tpl = templateManager.getTemplate(n.type);
-      const dims = tpl?.elements.find(e => e.width && e.height);
-      // istanbul ignore next: fall back to template or default dimensions
-      const width = (n as any).metadata?.width ?? dims?.width ?? DEFAULT_WIDTH;
-      // istanbul ignore next: fall back to template or default dimensions
-      const height =
-        (n as any).metadata?.height ?? dims?.height ?? DEFAULT_HEIGHT;
-      return { id: n.id, width, height };
-    }),
-    edges: data.edges.map((e, idx) => ({
-      id: `e${idx}`,
-      sources: [e.from],
-      targets: [e.to],
-    })),
-  };
+export class LayoutEngine {
+  private static instance: LayoutEngine;
+  private elk = new ELK();
 
-  const layouted: any = await elk.layout(elkGraph);
-  const nodes: Record<string, PositionedNode> = {};
-  const edges: PositionedEdge[] = [];
-  // Convert ELK child nodes to a lookup table by id
-  for (const child of layouted.children || []) {
-    nodes[child.id] = {
-      id: child.id,
-      // istanbul ignore next: defaults for missing layout positions
-      x: child.x || 0,
-      // istanbul ignore next
-      y: child.y || 0,
-      // istanbul ignore next
-      width: child.width || DEFAULT_WIDTH,
-      // istanbul ignore next
-      height: child.height || DEFAULT_HEIGHT,
+  private constructor() {}
+
+  /** Access the shared layout engine instance. */
+  public static getInstance(): LayoutEngine {
+    if (!LayoutEngine.instance) {
+      LayoutEngine.instance = new LayoutEngine();
+    }
+    return LayoutEngine.instance;
+  }
+
+  /**
+   * Run the ELK layout engine on the provided graph data and
+   * return positioned nodes and edges.
+   */
+  public async layoutGraph(data: GraphData): Promise<LayoutResult> {
+    const elkGraph: any = {
+      id: 'root',
+      layoutOptions: {
+        // Basic layered layout configuration
+        'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
+        'elk.algorithm': 'mrtree',
+        'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF',
+        'elk.layered.mergeEdges': 'false',
+        'elk.direction': 'DOWN',
+        'elk.layered.spacing.nodeNodeBetweenLayers': '90',
+        'elk.spacing.nodeNode': 90,
+        'elk.layered.unnecessaryBendpoints': 'true',
+        'elk.layered.cycleBreaking.strategy': 'GREEDY',
+      },
+      // Each node uses its template dimensions unless overridden by metadata
+      children: data.nodes.map(n => {
+        const tpl = templateManager.getTemplate(n.type);
+        const dims = tpl?.elements.find(e => e.width && e.height);
+        // istanbul ignore next: fall back to template or default dimensions
+        const width =
+          (n as any).metadata?.width ?? dims?.width ?? DEFAULT_WIDTH;
+        // istanbul ignore next: fall back to template or default dimensions
+        const height =
+          (n as any).metadata?.height ?? dims?.height ?? DEFAULT_HEIGHT;
+        return { id: n.id, width, height };
+      }),
+      edges: data.edges.map((e, idx) => ({
+        id: `e${idx}`,
+        sources: [e.from],
+        targets: [e.to],
+      })),
     };
+
+    const layouted: any = await this.elk.layout(elkGraph);
+    const nodes: Record<string, PositionedNode> = {};
+    const edges: PositionedEdge[] = [];
+    // Convert ELK child nodes to a lookup table by id
+    for (const child of layouted.children || []) {
+      nodes[child.id] = {
+        id: child.id,
+        // istanbul ignore next: defaults for missing layout positions
+        x: child.x || 0,
+        // istanbul ignore next
+        y: child.y || 0,
+        // istanbul ignore next
+        width: child.width || DEFAULT_WIDTH,
+        // istanbul ignore next
+        height: child.height || DEFAULT_HEIGHT,
+      };
+    }
+    // Capture the first section of each edge for connector placement hints
+    for (const edge of layouted.edges || []) {
+      const section = edge.sections?.[0];
+      if (!section) continue;
+      edges.push({
+        startPoint: section.startPoint,
+        endPoint: section.endPoint,
+        bendPoints: section.bendPoints,
+      });
+    }
+    return { nodes, edges };
   }
-  // Capture the first section of each edge for connector placement hints
-  for (const edge of layouted.edges || []) {
-    const section = edge.sections?.[0];
-    if (!section) continue;
-    edges.push({
-      startPoint: section.startPoint,
-      endPoint: section.endPoint,
-      bendPoints: section.bendPoints,
-    });
-  }
-  return { nodes, edges };
-};
+}
+
+export const layoutEngine = LayoutEngine.getInstance();

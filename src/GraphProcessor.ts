@@ -1,6 +1,6 @@
 import { graphService, GraphData, PositionedNode, EdgeHint } from './graph';
 import { BoardBuilder } from './BoardBuilder';
-import { layoutGraph, LayoutResult } from './elk-layout';
+import { layoutEngine, LayoutResult } from './elk-layout';
 import { fileUtils } from './file-utils';
 import type { BaseItem, Group, Frame } from '@mirohq/websdk-types';
 
@@ -103,7 +103,7 @@ export class GraphProcessor {
     options: ProcessOptions = {},
   ): Promise<void> {
     this.validateGraph(graph);
-    const layout = await layoutGraph(graph);
+    const layout = await layoutEngine.layoutGraph(graph);
 
     const bounds = this.layoutBounds(layout);
     const margin = 100;

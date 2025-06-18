@@ -1,4 +1,4 @@
-import { cardLoader } from '../src/cards';
+import { cardLoader, CardLoader } from '../src/cards';
 
 describe('loadCards', () => {
   afterEach(() => {
@@ -18,6 +18,13 @@ describe('loadCards', () => {
     (global as any).FileReader = FR;
     const data = await cardLoader.loadCards({ name: 'c.json' } as any);
     expect(data).toEqual([{ title: 't' }]);
+  });
+
+  test('getInstance creates singleton when missing', () => {
+    const original = (CardLoader as any).instance;
+    (CardLoader as any).instance = undefined;
+    expect(CardLoader.getInstance()).toBeDefined();
+    (CardLoader as any).instance = original;
   });
 
   test('throws on invalid file object', async () => {

@@ -95,4 +95,17 @@ describe('BoardBuilder branch coverage', () => {
     const result = await (builder as any).searchGroups('Role', 'A');
     expect(result).toBeUndefined();
   });
+
+  test('updateConnector handles missing template and hints', () => {
+    const connector: any = { style: {}, shape: 'curved' };
+    const builder = new BoardBuilder();
+    (builder as any).updateConnector(
+      connector,
+      { from: 'a', to: 'b' },
+      undefined,
+      undefined,
+    );
+    expect(connector.shape).toBe('curved');
+    expect(connector.style).toEqual({});
+  });
 });

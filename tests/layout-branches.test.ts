@@ -1,4 +1,4 @@
-import { layoutGraph } from '../src/elk-layout';
+import { layoutEngine } from '../src/elk-layout';
 import ELK from 'elkjs/lib/elk.bundled.js';
 
 /**
@@ -45,7 +45,7 @@ test('layoutGraph handles metadata and missing sections', async () => {
       { from: 'n1', to: 'n1' },
     ],
   };
-  const result = await layoutGraph(graph as any);
+  const result = await layoutEngine.layoutGraph(graph as any);
   // Only the edge with sections should be included
   expect(result.nodes.n1.width).toBe(50);
   expect(result.edges).toHaveLength(1);
@@ -58,7 +58,7 @@ test('layoutGraph uses defaults when layout values missing', async () => {
     edges: [],
   } as any);
   const graph = { nodes: [{ id: 'n2', label: 'B', type: 'Role' }], edges: [] };
-  const result = await layoutGraph(graph as any);
+  const result = await layoutEngine.layoutGraph(graph as any);
   // Defaults populate width and position
   expect(result.nodes.n2.width).toBeGreaterThan(0);
   expect(result.nodes.n2.x).toBe(0);
@@ -74,6 +74,17 @@ test('layoutGraph uses template dimensions when metadata absent', async () => {
       return { children: [{ id: 'n3', x: 0, y: 0 }], edges: [] } as any;
     });
   const graph = { nodes: [{ id: 'n3', label: 'C', type: 'Role' }], edges: [] };
-  await layoutGraph(graph as any);
+  await layoutEngine.layoutGraph(graph as any);
   spy.mockRestore();
+});
+
+test('layoutGraph handles missing edge sections array', async () => {
+  jest
+    .spyOn(ELK.prototype, 'layout')
+    .mockResolvedValue({ children: [], edges: undefined } as any);
+  const result = await layoutEngine.layoutGraph({
+    nodes: [],
+    edges: [],
+  } as any);
+  expect(result.edges).toEqual([]);
 });
