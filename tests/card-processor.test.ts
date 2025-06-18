@@ -27,6 +27,7 @@ describe('CardProcessor', () => {
         },
         createCard: jest.fn().mockResolvedValue({ sync: jest.fn(), id: 'c1' }),
         createFrame: jest.fn().mockResolvedValue({ add: jest.fn(), id: 'f1' }),
+        createTag: jest.fn().mockResolvedValue({ id: 't1' }),
       },
     };
   });
@@ -59,6 +60,18 @@ describe('CardProcessor', () => {
     await processor.processCards([{ title: 'A', tags: ['alpha'] }]);
     const args = (global.miro.board.createCard as jest.Mock).mock.calls[0][0];
     expect(args.tagIds).toEqual(['1']);
+  });
+
+  test('creates missing tags', async () => {
+    (global.miro.board.get as jest.Mock).mockResolvedValue([]);
+    (global.miro.board.createTag as jest.Mock).mockResolvedValue({
+      id: '2',
+      title: 'beta',
+    });
+    await processor.processCards([{ title: 'B', tags: ['beta'] }]);
+    expect(global.miro.board.createTag).toHaveBeenCalledWith({ title: 'beta' });
+    const args = (global.miro.board.createCard as jest.Mock).mock.calls[0][0];
+    expect(args.tagIds).toEqual(['2']);
   });
 
   test('skips frame creation when disabled', async () => {

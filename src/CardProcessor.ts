@@ -17,6 +17,19 @@ export class CardProcessor {
     return (await miro.board.get({ type: 'tag' })) as Tag[];
   }
 
+  /**
+   * Ensure the board contains tags for all provided names.
+   * Unknown tags are created and appended to the supplied list.
+   */
+  private async ensureTags(names: string[], tags: Tag[]): Promise<Tag[]> {
+    const missing = names.filter(n => !tags.some(t => t.title === n));
+    if (missing.length === 0) return tags;
+    const created = (await Promise.all(
+      missing.map(title => miro.board.createTag({ title })),
+    )) as Tag[];
+    return tags.concat(created);
+  }
+
   private tagIds(names: string[] | undefined, tags: Tag[]): string[] {
     return (names ?? [])
       .map(name => tags.find(t => t.title === name)?.id)
@@ -84,13 +97,15 @@ export class CardProcessor {
     }
 
     const boardTags = await this.getBoardTags();
+    const allNames = Array.from(new Set(cards.flatMap(c => c.tags ?? [])));
+    const tags = await this.ensureTags(allNames, boardTags);
 
     const startX = spot.x - totalWidth / 2 + 50 + cardWidth / 2;
     const y = spot.y - totalHeight / 2 + 50 + cardHeight / 2;
 
     const created = await Promise.all(
       cards.map((def, i) =>
-        this.createCardWidget(def, startX + i * cardWidth, y, boardTags),
+        this.createCardWidget(def, startX + i * cardWidth, y, tags),
       ),
     );
     created.forEach(c => frame?.add(c));
