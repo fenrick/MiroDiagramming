@@ -37,7 +37,7 @@
     "@mirohq/websdk-types": "^2.16.1",
     "@types/d3-dsv": "^3.0.1",
     "@types/jest": "^30.0.0",
-    "@types/node": "^22.0.0",
+    "@types/node": "^24.0.3",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@typescript-eslint/eslint-plugin": "^8.34.1",
