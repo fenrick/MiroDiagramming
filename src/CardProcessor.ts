@@ -13,6 +13,7 @@ export interface CardProcessOptions {
  * Helper that places cards from a data set onto the board.
  */
 export class CardProcessor {
+  private lastCreated: Array<Card | Frame> = [];
   constructor(private builder: BoardBuilder = new BoardBuilder()) {}
 
   /** Metadata key used to store card identifiers. */
@@ -130,6 +131,7 @@ export class CardProcessor {
     if (def.id) {
       await (card as any).setMetadata(CardProcessor.META_KEY, { id: def.id });
     }
+    this.lastCreated.push(card);
     return card;
   }
 
@@ -207,7 +209,15 @@ export class CardProcessor {
       return undefined;
     }
     const { width, height, spot } = dims;
-    return this.builder.createFrame(width, height, spot.x, spot.y, title);
+    const frame = await this.builder.createFrame(
+      width,
+      height,
+      spot.x,
+      spot.y,
+      title,
+    );
+    this.lastCreated.push(frame);
+    return frame;
   }
 
   /** Load cards from a file and create them on the board. */
@@ -229,6 +239,7 @@ export class CardProcessor {
     if (!Array.isArray(cards)) {
       throw new Error('Invalid cards');
     }
+    this.lastCreated = [];
     // Reset per-run caches to ensure fresh board state
     this.cardsCache = undefined;
     this.cardMap = undefined;
@@ -273,9 +284,20 @@ export class CardProcessor {
 
     await this.builder.syncAll([...created, ...updated]);
 
+    this.lastCreated.push(...created);
+    if (frame) this.lastCreated.push(frame);
+
     const target = frame ?? ([...created, ...updated] as any);
     if (created.length || updated.length) {
       await this.builder.zoomTo(target);
+    }
+  }
+
+  /** Remove cards created by the last `processCards` call. */
+  public async undoLast(): Promise<void> {
+    if (this.lastCreated.length) {
+      await this.builder.removeItems(this.lastCreated);
+      this.lastCreated = [];
     }
   }
 }

@@ -475,6 +475,14 @@ export class BoardBuilder {
         .map(i => (i as any).sync()),
     );
   }
+
+  /** Remove the provided widgets from the board. */
+  public async removeItems(
+    items: Array<BaseItem | Group | Connector | Frame>,
+  ): Promise<void> {
+    this.ensureBoard();
+    await Promise.all(items.map(i => miro.board.remove(i as any)));
+  }
 }
 
 interface NodeMetadata {

@@ -1,8 +1,9 @@
-import { graphService, GraphData, PositionedNode, EdgeHint } from './graph';
+import { graphService, GraphData } from './graph';
 import { BoardBuilder } from './BoardBuilder';
 import { layoutEngine, LayoutResult } from './elk-layout';
 import { fileUtils } from './file-utils';
-import type { BaseItem, Group, Frame } from '@mirohq/websdk-types';
+import { computeEdgeHints } from './layout-utils';
+import type { BaseItem, Group, Frame, Connector } from '@mirohq/websdk-types';
 
 /**
  * High level orchestrator that loads graph data, runs layout and
@@ -17,6 +18,7 @@ export interface ProcessOptions {
 }
 
 export class GraphProcessor {
+  private lastCreated: Array<BaseItem | Group | Connector | Frame> = [];
   constructor(private builder: BoardBuilder = graphService.getBuilder()) {}
 
   /**
@@ -57,32 +59,6 @@ export class GraphProcessor {
     };
   }
 
-  /**
-   * Compute connector orientation hints from the raw layout result.
-   */
-  private computeEdgeHints(graph: GraphData, layout: LayoutResult): EdgeHint[] {
-    return layout.edges.map((edge, i) => {
-      const src = layout.nodes[graph.edges[i].from];
-      const tgt = layout.nodes[graph.edges[i].to];
-      return {
-        startPosition: this.relativePosition(src, edge.startPoint),
-        endPosition: this.relativePosition(tgt, edge.endPoint),
-      };
-    });
-  }
-
-  /**
-   * Calculate a point relative to the node bounds as expected by the Miro SDK.
-   */
-  private relativePosition(
-    node: PositionedNode,
-    pt: { x: number; y: number },
-  ): { x: number; y: number } {
-    return {
-      x: (pt.x - node.x) / node.width,
-      y: (pt.y - node.y) / node.height,
-    };
-  }
   /**
    * Load a JSON graph file and process it.
    */
@@ -147,7 +123,15 @@ export class GraphProcessor {
       this.builder.setFrame(undefined);
       return undefined;
     }
-    return this.builder.createFrame(width, height, spot.x, spot.y, title);
+    const frame = await this.builder.createFrame(
+      width,
+      height,
+      spot.x,
+      spot.y,
+      title,
+    );
+    this.lastCreated.push(frame);
+    return frame;
   }
 
   /**
@@ -169,6 +153,7 @@ export class GraphProcessor {
       };
       const widget = await this.builder.createNode(node, adjPos);
       nodeMap[node.id] = widget;
+      this.lastCreated.push(widget);
     }
     return nodeMap;
   }
@@ -182,17 +167,26 @@ export class GraphProcessor {
     nodeMap: Record<string, BaseItem | Group>,
     frame?: Frame,
   ): Promise<void> {
-    const edgeHints = this.computeEdgeHints(graph, layout);
+    const edgeHints = computeEdgeHints(graph, layout);
     const connectors = await this.builder.createEdges(
       graph.edges,
       nodeMap,
       edgeHints,
     );
+    this.lastCreated.push(...connectors);
     await this.builder.syncAll([...Object.values(nodeMap), ...connectors]);
     if (frame) {
       await this.builder.zoomTo(frame);
     } else {
       await this.builder.zoomTo(Object.values(nodeMap));
+    }
+  }
+
+  /** Remove widgets created by the last `processGraph` call. */
+  public async undoLast(): Promise<void> {
+    if (this.lastCreated.length) {
+      await this.builder.removeItems(this.lastCreated);
+      this.lastCreated = [];
     }
   }
 

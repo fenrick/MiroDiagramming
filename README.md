@@ -25,6 +25,8 @@ The layout step leverages the ELK algorithm to compute positions for all nodes. 
 
 Shape templates live in [`templates/shapeTemplates.json`](templates/shapeTemplates.json). Each template defines the shape type, size and base styles. When a node specifies a `template` value in its metadata the corresponding template is applied. Edit this file or add new entries to customize the available shapes. Connector appearance is configured in [`templates/connectorTemplates.json`](templates/connectorTemplates.json) which controls line color, caps and font.
 
+To add your own templates create new entries in these JSON files and reference them by name in your graph metadata. The app reloads templates on startup so changes are picked up automatically.
+
 ## Metadata Usage
 
 Nodes may include a `metadata` object with any additional information. Typical fields are:
@@ -130,6 +132,10 @@ npm run lint
 These commands perform TypeScript type checking, execute a small Jest suite
 and run ESLint. The linter uses the `@typescript-eslint` recommended ruleset
 with a few overrides, so code should pass `npm run lint` without errors.
+
+## Building a Production Bundle
+
+Run `npm run build` to create the optimized static files in the `dist/` folder. Host these files on a web server and update the `sdkUri` in your app manifest to point to the deployed bundle.
 
 ## 🗂️ Folder structure <a name="folder"></a>
 

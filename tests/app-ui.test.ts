@@ -1,6 +1,7 @@
 /** @jest-environment jsdom */
 import React from 'react';
-import { render, fireEvent, screen } from '@testing-library/react';
+import { render, fireEvent, screen, act } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { App } from '../src/app';
 import { GraphProcessor } from '../src/GraphProcessor';
 import { CardProcessor } from '../src/CardProcessor';
@@ -29,9 +30,13 @@ describe('App UI integration', () => {
       .spyOn(GraphProcessor.prototype, 'processFile')
       .mockResolvedValue(undefined as any);
     render(React.createElement(App));
-    selectFile();
+    await act(async () => {
+      selectFile();
+    });
     const button = screen.getByRole('button', { name: /create diagram/i });
-    fireEvent.click(button);
+    await act(async () => {
+      fireEvent.click(button);
+    });
     expect(spy).toHaveBeenCalled();
   });
 
@@ -41,9 +46,13 @@ describe('App UI integration', () => {
       .mockResolvedValue(undefined as any);
     render(React.createElement(App));
     fireEvent.click(screen.getByLabelText(/cards/i));
-    selectFile();
+    await act(async () => {
+      selectFile();
+    });
     const button = screen.getByRole('button', { name: /create cards/i });
-    fireEvent.click(button);
+    await act(async () => {
+      fireEvent.click(button);
+    });
     expect(spy).toHaveBeenCalled();
   });
 
