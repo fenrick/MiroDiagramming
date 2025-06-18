@@ -82,6 +82,28 @@ describe('GraphProcessor', () => {
     await processor.processGraph(sample as any);
   });
 
+  it('delegates work to helper methods', async () => {
+    const gp = new GraphProcessor();
+    const frameSpy = jest.spyOn(gp as any, 'createFrame');
+    const nodeSpy = jest.spyOn(gp as any, 'createNodes');
+    const connectorSpy = jest.spyOn(gp as any, 'createConnectorsAndZoom');
+
+    jest.spyOn(layoutEngine, 'layoutGraph').mockResolvedValue({
+      nodes: { n1: { x: 0, y: 0, width: 10, height: 10 } },
+      edges: [],
+    });
+
+    const simpleGraph = {
+      nodes: [{ id: 'n1', label: 'A', type: 'Role' }],
+      edges: [],
+    };
+    await gp.processGraph(simpleGraph as any);
+
+    expect(frameSpy).toHaveBeenCalled();
+    expect(nodeSpy).toHaveBeenCalled();
+    expect(connectorSpy).toHaveBeenCalled();
+  });
+
   it('throws on invalid graph', async () => {
     await expect(processor.processGraph({} as any)).rejects.toThrow(
       'Invalid graph format',

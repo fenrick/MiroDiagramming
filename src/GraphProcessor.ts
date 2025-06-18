@@ -112,18 +112,13 @@ export class GraphProcessor {
     const spot = await this.builder.findSpace(frameWidth, frameHeight);
 
     const useFrame = options.createFrame !== false;
-    let frame: Frame | undefined;
-    if (useFrame) {
-      frame = await this.builder.createFrame(
-        frameWidth,
-        frameHeight,
-        spot.x,
-        spot.y,
-        options.frameTitle,
-      );
-    } else {
-      this.builder.setFrame(undefined);
-    }
+    const frame = await this.createFrame(
+      useFrame,
+      frameWidth,
+      frameHeight,
+      spot,
+      options.frameTitle,
+    );
 
     const { offsetX, offsetY } = this.calculateOffset(
       spot,
@@ -133,6 +128,37 @@ export class GraphProcessor {
       margin,
     );
 
+    const nodeMap = await this.createNodes(graph, layout, offsetX, offsetY);
+
+    await this.createConnectorsAndZoom(graph, layout, nodeMap, frame);
+  }
+
+  /**
+   * Create a frame around the diagram when requested.
+   */
+  private async createFrame(
+    useFrame: boolean,
+    width: number,
+    height: number,
+    spot: { x: number; y: number },
+    title?: string,
+  ): Promise<Frame | undefined> {
+    if (!useFrame) {
+      this.builder.setFrame(undefined);
+      return undefined;
+    }
+    return this.builder.createFrame(width, height, spot.x, spot.y, title);
+  }
+
+  /**
+   * Create nodes for the provided graph using the layout offsets.
+   */
+  private async createNodes(
+    graph: GraphData,
+    layout: LayoutResult,
+    offsetX: number,
+    offsetY: number,
+  ): Promise<Record<string, BaseItem | Group>> {
     const nodeMap: Record<string, BaseItem | Group> = {};
     for (const node of graph.nodes) {
       const pos = layout.nodes[node.id];
@@ -144,9 +170,19 @@ export class GraphProcessor {
       const widget = await this.builder.createNode(node, adjPos);
       nodeMap[node.id] = widget;
     }
+    return nodeMap;
+  }
 
+  /**
+   * Connect nodes and zoom the board to the created content.
+   */
+  private async createConnectorsAndZoom(
+    graph: GraphData,
+    layout: LayoutResult,
+    nodeMap: Record<string, BaseItem | Group>,
+    frame?: Frame,
+  ): Promise<void> {
     const edgeHints = this.computeEdgeHints(graph, layout);
-
     const connectors = await this.builder.createEdges(
       graph.edges,
       nodeMap,
