@@ -12,7 +12,9 @@ This project demonstrates how to import a JSON description of a graph and build 
 
 1. In the panel choose **Cards** mode.
 2. Select a `.json` file containing an object with a `cards` array.
-3. Each entry should provide the card `title` and optional `description`, `tags`, `style` and `fields` values. Matching tags are looked up on the board.
+3. Each entry should provide an optional `id` to update existing cards along with
+   the card `title` and optional `description`, `tags`, `style` and `fields`
+   values. Matching tags are looked up on the board.
 4. See [`sample-cards.json`](sample-cards.json) for an example format.
 
 ## ELK Layout

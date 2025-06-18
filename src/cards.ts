@@ -2,6 +2,8 @@ import type { CardField, CardStyle } from '@mirohq/websdk-types';
 import { readFileAsText, validateFile } from './file-utils';
 
 export interface CardData {
+  /** Optional unique identifier for updating existing cards. */
+  id?: string;
   title: string;
   description?: string;
   tags?: string[];
