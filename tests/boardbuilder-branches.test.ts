@@ -63,4 +63,32 @@ describe('BoardBuilder branch coverage', () => {
     expect(item.style.color).toBe('red');
     expect(item.style.fontSize).toBe(10);
   });
+
+  test('createEdges skips edges with missing nodes', async () => {
+    (global as any).miro = {
+      board: {
+        get: jest.fn().mockResolvedValue([]),
+        createConnector: jest.fn().mockResolvedValue({
+          setMetadata: jest.fn(),
+          getMetadata: jest.fn(),
+          sync: jest.fn(),
+          id: 'c1',
+        }),
+      },
+    };
+    const builder = new BoardBuilder();
+    const edges = [{ from: 'n1', to: 'n2' }];
+    const result = await builder.createEdges(edges as any, { n1: {} } as any);
+    expect(result).toEqual([]);
+  });
+
+  test('searchGroups ignores non-array item lists', async () => {
+    const group = { getItems: jest.fn().mockResolvedValue(null) } as any;
+    (global as any).miro = {
+      board: { get: jest.fn().mockResolvedValue([group]) },
+    };
+    const builder = new BoardBuilder();
+    const result = await (builder as any).searchGroups('Role', 'A');
+    expect(result).toBeUndefined();
+  });
 });

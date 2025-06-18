@@ -154,4 +154,11 @@ describe('CardProcessor', () => {
       'Invalid cards',
     );
   });
+
+  test('no cards results in no action', async () => {
+    await processor.processCards([]);
+    expect(global.miro.board.createCard).not.toHaveBeenCalled();
+    expect(global.miro.board.createFrame).not.toHaveBeenCalled();
+    expect(global.miro.board.viewport.zoomTo).not.toHaveBeenCalled();
+  });
 });

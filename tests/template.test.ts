@@ -68,4 +68,21 @@ describe('createFromTemplate', () => {
     const items = (global.miro.board.group as jest.Mock).mock.calls[0][0].items;
     expect(items).toHaveLength(2);
   });
+
+  test('creates text only widget', async () => {
+    (templateModule as any).templates.textOnly = { elements: [{ text: 'T' }] };
+    const widget = await templateModule.createFromTemplate(
+      'textOnly',
+      'Label',
+      0,
+      0,
+    );
+    expect(widget.type).toBe('text');
+  });
+
+  test('throws when template missing', async () => {
+    await expect(
+      templateModule.createFromTemplate('missing', 'L', 0, 0),
+    ).rejects.toThrow("Template 'missing' not found");
+  });
 });
