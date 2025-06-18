@@ -1,6 +1,14 @@
-/** Utility to read a file as UTF-8 text. */
-export const readFileAsText = (file: File): Promise<string> =>
-  new Promise((resolve, reject) => {
+/**
+ * Read the contents of a `File` as UTF-8 text.
+ *
+ * Uses `file.text()` when available and falls back to `FileReader`
+ * for broader compatibility.
+ */
+export const readFileAsText = (file: File): Promise<string> => {
+  if (typeof (file as any).text === 'function') {
+    return (file as any).text();
+  }
+  return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = (e) => {
       if (!e.target) {
@@ -12,3 +20,4 @@ export const readFileAsText = (file: File): Promise<string> =>
     reader.onerror = () => reject('Failed to load file');
     reader.readAsText(file, 'utf-8');
   });
+};

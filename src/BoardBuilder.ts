@@ -112,6 +112,10 @@ export class BoardBuilder {
     }
   }
 
+  /**
+   * Search cached shapes for metadata that matches the given type and label.
+   * Returns the corresponding item if found.
+   */
   private async searchShapes(
     type: string,
     label: string
@@ -130,6 +134,10 @@ export class BoardBuilder {
     return undefined;
   }
 
+  /**
+   * Search all groups on the board for an item whose metadata matches
+   * the provided type and label.
+   */
   private async searchGroups(
     type: string,
     label: string
