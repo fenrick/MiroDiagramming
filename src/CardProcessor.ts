@@ -5,6 +5,8 @@ import type { Frame, Tag, Card, CardStyle } from '@mirohq/websdk-types';
 export interface CardProcessOptions {
   createFrame?: boolean;
   frameTitle?: string;
+  /** Maximum number of cards per row when creating new cards. */
+  columns?: number;
 }
 
 /**
@@ -18,6 +20,9 @@ export class CardProcessor {
 
   /** Cached board cards when processing updates. */
   private cardsCache: Card[] | undefined;
+
+  /** Cached map from card identifier to card widget. */
+  private cardMap: Map<string, Card> | undefined;
 
   /** Default width used for card widgets. */
   private static readonly CARD_WIDTH = 300;
@@ -40,36 +45,61 @@ export class CardProcessor {
     return this.cardsCache;
   }
 
-  /** Find an existing card by identifier if present. */
-  private async findCardById(id: string): Promise<Card | undefined> {
-    const cards = await this.getBoardCards();
-    const metas = await Promise.all(
-      cards.map(c => (c as any).getMetadata(CardProcessor.META_KEY)),
-    );
-    for (let i = 0; i < cards.length; i++) {
-      if (metas[i]?.id === id) {
-        return cards[i];
+  /** Build a map from identifier to card for quick lookup. */
+  private async loadCardMap(): Promise<Map<string, Card>> {
+    if (!this.cardMap) {
+      const cards = await this.getBoardCards();
+      const metas = await Promise.all(
+        cards.map(c => (c as any).getMetadata(CardProcessor.META_KEY)),
+      );
+      this.cardMap = new Map();
+      for (let i = 0; i < cards.length; i++) {
+        const id = metas[i]?.id as string | undefined;
+        if (id) {
+          this.cardMap.set(id, cards[i]);
+        }
       }
     }
-    return undefined;
+    return this.cardMap;
   }
 
-  private tagIds(names: string[] | undefined, tags: Tag[]): string[] {
-    return (names ?? [])
-      .map(name => tags.find(t => t.title === name)?.id)
-      .filter((id): id is string => !!id);
+  /** Find an existing card by identifier if present. */
+  private async findCardById(id: string): Promise<Card | undefined> {
+    const map = await this.loadCardMap();
+    return map.get(id);
+  }
+
+  /**
+   * Resolve tag names to IDs, creating any missing tags on the board.
+   */
+  private async ensureTagIds(
+    names: string[] | undefined,
+    tagMap: Map<string, Tag>,
+  ): Promise<string[]> {
+    const ids: string[] = [];
+    for (const name of names ?? []) {
+      let tag = tagMap.get(name);
+      if (!tag) {
+        tag = (await miro.board.createTag({ title: name })) as Tag;
+        tagMap.set(name, tag);
+      }
+      if (tag.id) {
+        ids.push(tag.id);
+      }
+    }
+    return ids;
   }
 
   private async createCardWidget(
     def: CardData,
     x: number,
     y: number,
-    tags: Tag[],
+    tagMap: Map<string, Tag>,
   ): Promise<Card> {
-    const tagIds = this.tagIds(def.tags, tags);
+    const tagIds = await this.ensureTagIds(def.tags, tagMap);
     const card = (await miro.board.createCard({
       title: def.title,
-      description: def.description,
+      description: def.description ?? '',
       tagIds,
       fields: def.fields,
       style: def.style as CardStyle,
@@ -86,11 +116,11 @@ export class CardProcessor {
   private async updateCardWidget(
     card: Card,
     def: CardData,
-    tags: Tag[],
+    tagMap: Map<string, Tag>,
   ): Promise<Card> {
-    const tagIds = this.tagIds(def.tags, tags);
+    const tagIds = await this.ensureTagIds(def.tags, tagMap);
     card.title = def.title;
-    card.description = def.description;
+    card.description = def.description ?? '';
     (card as any).tagIds = tagIds;
     (card as any).fields = def.fields;
     (card as any).style = def.style as CardStyle;
@@ -103,29 +133,35 @@ export class CardProcessor {
   /**
    * Compute layout information and placement coordinates for a set of cards.
    */
-  private async prepareArea(count: number): Promise<{
+  private async prepareArea(
+    count: number,
+    columns = count,
+  ): Promise<{
     spot: { x: number; y: number };
     startX: number;
-    y: number;
+    startY: number;
+    columns: number;
     totalWidth: number;
     totalHeight: number;
   }> {
+    const cols = Math.max(1, Math.min(columns, count));
+    const rows = Math.ceil(count / cols);
     const totalWidth =
-      CardProcessor.CARD_WIDTH * count + CardProcessor.CARD_MARGIN * 2;
+      CardProcessor.CARD_WIDTH * cols + CardProcessor.CARD_MARGIN * 2;
     const totalHeight =
-      CardProcessor.CARD_HEIGHT + CardProcessor.CARD_MARGIN * 2;
+      CardProcessor.CARD_HEIGHT * rows + CardProcessor.CARD_MARGIN * 2;
     const spot = await this.builder.findSpace(totalWidth, totalHeight);
     const startX =
       spot.x -
       totalWidth / 2 +
       CardProcessor.CARD_MARGIN +
       CardProcessor.CARD_WIDTH / 2;
-    const y =
+    const startY =
       spot.y -
       totalHeight / 2 +
       CardProcessor.CARD_MARGIN +
       CardProcessor.CARD_HEIGHT / 2;
-    return { spot, startX, y, totalWidth, totalHeight };
+    return { spot, startX, startY, columns: cols, totalWidth, totalHeight };
   }
 
   /** Create a frame when requested and register it with the board builder. */
@@ -161,7 +197,14 @@ export class CardProcessor {
     if (!Array.isArray(cards)) {
       throw new Error('Invalid cards');
     }
+    // Reset per-run caches to ensure fresh board state
+    this.cardsCache = undefined;
+    this.cardMap = undefined;
+
     const boardTags = await this.getBoardTags();
+    const tagMap = new Map(boardTags.map(t => [t.title, t]));
+
+    await this.loadCardMap();
 
     const toCreate: CardData[] = [];
     const toUpdate: Array<{ card: Card; def: CardData }> = [];
@@ -178,16 +221,14 @@ export class CardProcessor {
     }
 
     const updated = await Promise.all(
-      toUpdate.map(item =>
-        this.updateCardWidget(item.card, item.def, boardTags),
-      ),
+      toUpdate.map(item => this.updateCardWidget(item.card, item.def, tagMap)),
     );
 
     let created: Card[] = [];
     let frame: Frame | undefined;
     if (toCreate.length > 0) {
-      const { spot, startX, y, totalWidth, totalHeight } =
-        await this.prepareArea(toCreate.length);
+      const { spot, startX, startY, columns, totalWidth, totalHeight } =
+        await this.prepareArea(toCreate.length, options.columns);
 
       frame = await this.maybeCreateFrame(
         options.createFrame !== false,
@@ -199,9 +240,9 @@ export class CardProcessor {
         toCreate.map((def, i) =>
           this.createCardWidget(
             def,
-            startX + i * CardProcessor.CARD_WIDTH,
-            y,
-            boardTags,
+            startX + (i % columns) * CardProcessor.CARD_WIDTH,
+            startY + Math.floor(i / columns) * CardProcessor.CARD_HEIGHT,
+            tagMap,
           ),
         ),
       );
