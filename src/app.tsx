@@ -18,6 +18,37 @@ const dropzoneStyles = {
   fontSize: '1.2em',
 } as const;
 
+/** Undo last import and reset state helper. */
+export function undoLastImport(
+  proc: GraphProcessor | CardProcessor | undefined,
+  clear: () => void,
+): void {
+  if (!proc) return;
+  proc.undoLast();
+  clear();
+}
+
+/**
+ * Compute the inline style for the dropzone element.
+ * The border colour changes based on drag-and-drop state.
+ */
+export function getDropzoneStyle(
+  accept: boolean,
+  reject: boolean,
+): React.CSSProperties {
+  let borderColor = 'rgba(41, 128, 185, 0.5)';
+  if (accept) {
+    borderColor = 'rgba(41, 128, 185, 1.0)';
+  }
+  if (reject) {
+    borderColor = 'rgba(192, 57, 43,1.0)';
+  }
+  return {
+    ...dropzoneStyles,
+    borderColor,
+  };
+}
+
 /**
  * React entry component that renders the file selection and mode
  * toggling user interface. Extraction as an exported constant allows
@@ -75,20 +106,10 @@ export const App: React.FC = () => {
     setFiles([]);
   };
 
-  const style = React.useMemo(() => {
-    let borderColor = 'rgba(41, 128, 185, 0.5)';
-    if (dropzone.isDragAccept) {
-      borderColor = 'rgba(41, 128, 185, 1.0)';
-    }
-
-    if (dropzone.isDragReject) {
-      borderColor = 'rgba(192, 57, 43,1.0)';
-    }
-    return {
-      ...dropzoneStyles,
-      borderColor,
-    };
-  }, [dropzone.isDragActive, dropzone.isDragReject]);
+  const style = React.useMemo(
+    () => getDropzoneStyle(dropzone.isDragAccept, dropzone.isDragReject),
+    [dropzone.isDragActive, dropzone.isDragReject],
+  );
 
   return (
     <div className="dnd-container">
@@ -171,10 +192,9 @@ export const App: React.FC = () => {
           {error && <p className="error">{error}</p>}
           {lastProc && (
             <button
-              onClick={() => {
-                lastProc.undoLast();
-                setLastProc(undefined);
-              }}
+              onClick={() =>
+                undoLastImport(lastProc, () => setLastProc(undefined))
+              }
               className="button button-small"
               style={{ marginTop: '8px' }}
             >
