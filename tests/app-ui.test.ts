@@ -68,6 +68,14 @@ describe('App UI integration', () => {
     ).toBeInTheDocument();
   });
 
+  test('dropzone has accessibility attributes', () => {
+    render(React.createElement(App));
+    const zone = screen.getByLabelText(/file drop area/i);
+    expect(zone).toHaveAttribute('aria-describedby', 'dropzone-instructions');
+    const input = screen.getByLabelText(/json file input/i);
+    expect(input).toBeInTheDocument();
+  });
+
   test('shows error notification', async () => {
     const error = new Error('fail');
     jest.spyOn(console, 'error').mockImplementation(() => {});
