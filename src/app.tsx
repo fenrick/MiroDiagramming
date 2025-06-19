@@ -5,9 +5,11 @@ import {
   Button,
   Checkbox,
   Input,
+  InputLabel,
   RadioButton,
   Select,
   SelectOption,
+  tokens,
 } from 'mirotone-react';
 import { GraphProcessor } from './GraphProcessor';
 import { CardProcessor } from './CardProcessor';
@@ -28,10 +30,10 @@ const dropzoneStyles = {
   flexDirection: 'column',
   justifyContent: 'center',
   textAlign: 'center',
-  border: '3px dashed rgba(41, 128, 185, 0.5)',
-  color: 'rgba(41, 128, 185, 1.0)',
-  fontWeight: 'bold',
-  fontSize: '1.2em',
+  border: `3px dashed ${tokens.color.indigoAlpha[40]}`,
+  color: tokens.color.indigo[700],
+  fontWeight: tokens.typography.fontWeight.bold,
+  fontSize: tokens.typography.fontSize.large,
 } as const;
 
 /** Undo last import and reset state helper. */
@@ -52,12 +54,12 @@ export function getDropzoneStyle(
   accept: boolean,
   reject: boolean,
 ): React.CSSProperties {
-  let borderColor = 'rgba(41, 128, 185, 0.5)';
+  let borderColor: string = tokens.color.indigoAlpha[40];
   if (accept) {
-    borderColor = 'rgba(41, 128, 185, 1.0)';
+    borderColor = tokens.color.green[700];
   }
   if (reject) {
-    borderColor = 'rgba(192, 57, 43,1.0)';
+    borderColor = tokens.color.red[700];
   }
   return {
     ...dropzoneStyles,
@@ -134,7 +136,7 @@ export const App: React.FC = () => {
   return (
     <div className='dnd-container'>
       <div
-        style={{ marginBottom: '8px' }}
+        style={{ marginBottom: tokens.space.small }}
         role='radiogroup'
         aria-label='Import mode'
       >
@@ -147,7 +149,7 @@ export const App: React.FC = () => {
           label='Cards'
           value={mode === 'cards'}
           onChange={() => setMode('cards')}
-          style={{ marginLeft: '8px' }}
+          style={{ marginLeft: tokens.space.xsmall }}
         />
       </div>
       <p>
@@ -187,7 +189,7 @@ export const App: React.FC = () => {
               <li key={i}>{file.name}</li>
             ))}
           </ul>
-          <div style={{ marginTop: '8px' }}>
+          <div style={{ marginTop: tokens.space.small }}>
             <Checkbox
               label='Wrap items in frame'
               value={withFrame}
@@ -199,11 +201,13 @@ export const App: React.FC = () => {
               placeholder='Frame title'
               value={frameTitle}
               onChange={setFrameTitle}
-              style={{ marginTop: '4px', width: '100%' }}
+              style={{ marginTop: tokens.space.xsmall }}
             />
           )}
 
-          <label style={{ display: 'block', marginTop: '8px' }}>
+          <InputLabel
+            style={{ display: 'block', marginTop: tokens.space.small }}
+          >
             Algorithm
             <Select
               value={layoutOpts.algorithm}
@@ -220,8 +224,10 @@ export const App: React.FC = () => {
                 </SelectOption>
               ))}
             </Select>
-          </label>
-          <label style={{ display: 'block', marginTop: '4px' }}>
+          </InputLabel>
+          <InputLabel
+            style={{ display: 'block', marginTop: tokens.space.xsmall }}
+          >
             Direction
             <Select
               value={layoutOpts.direction}
@@ -238,8 +244,10 @@ export const App: React.FC = () => {
                 </SelectOption>
               ))}
             </Select>
-          </label>
-          <label style={{ display: 'block', marginTop: '4px' }}>
+          </InputLabel>
+          <InputLabel
+            style={{ display: 'block', marginTop: tokens.space.xsmall }}
+          >
             Spacing
             <Input
               type='number'
@@ -250,15 +258,14 @@ export const App: React.FC = () => {
                   spacing: Number(value),
                 })
               }
-              style={{ width: '100%' }}
             />
-          </label>
+          </InputLabel>
 
           <Button onClick={handleCreate} size='small' variant='primary'>
             {mode === 'diagram' ? 'Create Diagram' : 'Create Cards'}
           </Button>
           {progress > 0 && progress < 100 && (
-            <progress value={progress} max={100} style={{ width: '100%' }} />
+            <progress value={progress} max={100} />
           )}
           {error && <p className='error'>{error}</p>}
           {lastProc && (
@@ -267,7 +274,7 @@ export const App: React.FC = () => {
                 void undoLastImport(lastProc, () => setLastProc(undefined));
               }}
               size='small'
-              style={{ marginTop: '8px' }}
+              style={{ marginTop: tokens.space.small }}
             >
               Undo Last Import
             </Button>
