@@ -59,8 +59,9 @@ export class GraphService {
     const data = JSON.parse(text) as unknown;
     if (
       !data ||
-      !Array.isArray((data as any).nodes) ||
-      !Array.isArray((data as any).edges)
+      typeof data !== 'object' ||
+      !Array.isArray((data as { nodes?: unknown; edges?: unknown }).nodes) ||
+      !Array.isArray((data as { nodes?: unknown; edges?: unknown }).edges)
     ) {
       throw new Error('Invalid graph data');
     }

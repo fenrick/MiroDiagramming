@@ -6,6 +6,8 @@ import type {
   Group,
   GroupableItem,
   ShapeType,
+  ShapeStyle,
+  TextStyle,
 } from '@mirohq/websdk-types';
 
 /**
@@ -88,7 +90,9 @@ export class TemplateManager {
     const created: GroupableItem[] = [];
     for (const el of template.elements) {
       if (el.shape) {
-        const style: Record<string, unknown> = { ...(el.style ?? {}) };
+        const style: Partial<ShapeStyle> & Record<string, unknown> = {
+          ...(el.style ?? {}),
+        };
         if (el.fill && !style.fillColor) {
           style.fillColor = el.fill;
         }
@@ -100,12 +104,12 @@ export class TemplateManager {
           height: el.height,
           rotation: el.rotation ?? 0,
           content: (el.text ?? '{{label}}').replace('{{label}}', label),
-          style: style as any,
+          style: style as Partial<ShapeStyle>,
         });
         frame?.add(shape);
         created.push(shape);
       } else if (el.text) {
-        const style: Record<string, unknown> = {
+        const style: Partial<TextStyle> & Record<string, unknown> = {
           textAlign: 'center',
           ...(el.style ?? {}),
         };
@@ -113,7 +117,7 @@ export class TemplateManager {
           content: el.text.replace('{{label}}', label),
           x,
           y,
-          style: style as any,
+          style: style as Partial<TextStyle>,
         });
         frame?.add(text);
         created.push(text);

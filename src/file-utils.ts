@@ -22,8 +22,11 @@ export class FileUtils {
    * a `FileReader` when `file.text()` is unavailable.
    */
   public async readFileAsText(file: File): Promise<string> {
-    if (typeof (file as any).text === 'function') {
-      return (file as any).text();
+    if (
+      'text' in file &&
+      typeof (file as { text: () => Promise<string> }).text === 'function'
+    ) {
+      return (file as { text: () => Promise<string> }).text();
     }
     return new Promise((resolve, reject) => {
       const reader = new FileReader();

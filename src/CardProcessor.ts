@@ -96,7 +96,7 @@ export class CardProcessor {
     this.lastCreated.push(...created);
     if (frame) this.lastCreated.push(frame);
 
-    const target = frame ?? ([...created, ...updated] as any);
+    const target: Frame | Card[] = frame ?? [...created, ...updated];
     if (created.length || updated.length) {
       await this.builder.zoomTo(target);
     }
@@ -127,11 +127,12 @@ export class CardProcessor {
     if (!this.cardMap) {
       const cards = await this.getBoardCards();
       const metas = await Promise.all(
-        cards.map(c => (c as any).getMetadata(CardProcessor.META_KEY)),
+        cards.map(c => c.getMetadata(CardProcessor.META_KEY)),
       );
       this.cardMap = new Map();
       for (let i = 0; i < cards.length; i++) {
-        const id = metas[i]?.id as string | undefined;
+        const meta = metas[i] as Record<string, unknown> | undefined;
+        const id = typeof meta?.id === 'string' ? meta.id : undefined;
         if (id) {
           this.cardMap.set(id, cards[i]);
         }
@@ -206,7 +207,7 @@ export class CardProcessor {
       y,
     })) as Card;
     if (def.id) {
-      await (card as any).setMetadata(CardProcessor.META_KEY, { id: def.id });
+      await card.setMetadata(CardProcessor.META_KEY, { id: def.id });
     }
     this.lastCreated.push(card);
     return card;
@@ -221,12 +222,12 @@ export class CardProcessor {
     const tagIds = await this.ensureTagIds(def.tags, tagMap);
     card.title = def.title;
     card.description = def.description ?? '';
-    (card as any).tagIds = tagIds;
-    (card as any).fields = def.fields;
-    (card as any).style = def.style as CardStyle;
-    if (def.taskStatus) (card as any).taskStatus = def.taskStatus;
+    card.tagIds = tagIds;
+    card.fields = def.fields;
+    card.style = def.style as CardStyle;
+    if (def.taskStatus) card.taskStatus = def.taskStatus;
     if (def.id) {
-      await (card as any).setMetadata(CardProcessor.META_KEY, { id: def.id });
+      await card.setMetadata(CardProcessor.META_KEY, { id: def.id });
     }
     return card;
   }
