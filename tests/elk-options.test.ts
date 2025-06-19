@@ -1,6 +1,6 @@
 import {
-  validateLayoutOptions,
   DEFAULT_LAYOUT_OPTIONS,
+  validateLayoutOptions,
 } from '../src/elk-options';
 
 describe('validateLayoutOptions', () => {

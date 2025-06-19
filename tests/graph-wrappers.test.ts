@@ -1,4 +1,4 @@
-import { graphService, defaultBuilder } from '../src/graph';
+import { defaultBuilder, graphService } from '../src/graph';
 
 /**
  * Verify that service methods delegate to the default BoardBuilder instance.

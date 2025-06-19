@@ -9,6 +9,7 @@ describe('CardLoader normalization', () => {
   test('converts string booleans and filters arrays', async () => {
     class FR {
       onload: ((e: any) => void) | null = null;
+
       readAsText() {
         const json = {
           cards: [
@@ -29,6 +30,7 @@ describe('CardLoader normalization', () => {
           this.onload({ target: { result: JSON.stringify(json) } });
       }
     }
+
     (global as any).FileReader = FR;
     const data = await cardLoader.loadCards({ name: 'c.json' } as any);
     expect(data[0]).toEqual({

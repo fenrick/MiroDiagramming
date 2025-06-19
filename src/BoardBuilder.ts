@@ -1,17 +1,17 @@
+import type {
+  ConnectorTemplate,
+  TemplateDefinition,
+  TemplateElement,
+} from './templates';
 import { templateManager } from './templates';
 import type {
   BaseItem,
-  Group,
   Connector,
   ConnectorStyle,
   Frame,
+  Group,
 } from '@mirohq/websdk-types';
-import type {
-  TemplateElement,
-  ConnectorTemplate,
-  TemplateDefinition,
-} from './templates';
-import type { NodeData, EdgeData, PositionedNode, EdgeHint } from './graph';
+import type { EdgeData, EdgeHint, NodeData, PositionedNode } from './graph';
 
 const META_KEY = 'app.miro.structgraph';
 
@@ -29,12 +29,6 @@ export class BoardBuilder {
     this.shapeCache = undefined;
     this.connectorCache = undefined;
     this.frame = undefined;
-  }
-
-  private ensureBoard(): void {
-    if (typeof miro === 'undefined' || !miro?.board) {
-      throw new Error('Miro board not initialized');
-    }
   }
 
   /** Assign a parent frame for subsequently created items. */
@@ -92,6 +86,117 @@ export class BoardBuilder {
   public async zoomTo(target: Frame | Array<BaseItem | Group>): Promise<void> {
     this.ensureBoard();
     await miro.board.viewport.zoomTo(target as any);
+  }
+
+  /** Lookup an existing widget with matching metadata. */
+  public async findNode(
+    type: string,
+    label: string,
+  ): Promise<BaseItem | Group | undefined> {
+    if (typeof type !== 'string' || typeof label !== 'string') {
+      throw new Error('Invalid search parameters');
+    }
+    const fromShapes = await this.searchShapes(type, label);
+    if (fromShapes) return fromShapes;
+    return this.searchGroups(type, label);
+  }
+
+  /** Find a connector with matching metadata if it exists on the board. */
+  public async findConnector(
+    from: string,
+    to: string,
+  ): Promise<Connector | undefined> {
+    if (typeof from !== 'string' || typeof to !== 'string') {
+      throw new Error('Invalid search parameters');
+    }
+    await this.loadConnectorCache();
+    const connectors = this.connectorCache ?? [];
+    return this.findByMetadata(connectors, meta => {
+      const data = meta as EdgeMetadata | undefined;
+      return data?.from === from && data.to === to;
+    });
+  }
+
+  /** Create or update a node widget from a template. */
+  public async createNode(
+    node: NodeData,
+    pos: PositionedNode,
+  ): Promise<BaseItem | Group> {
+    if (!node || typeof node !== 'object') {
+      throw new Error('Invalid node');
+    }
+    if (!pos || typeof pos.x !== 'number' || typeof pos.y !== 'number') {
+      throw new Error('Invalid position');
+    }
+    const templateDef = templateManager.getTemplate(node.type);
+    if (!templateDef) {
+      throw new Error(`Template '${node.type}' not found`);
+    }
+    const existing = await this.findNode(node.type, node.label);
+    if (existing) {
+      return this.updateExistingNode(
+        existing as BaseItem | Group,
+        templateDef,
+        node,
+      );
+    }
+    return this.createNewNode(node, pos);
+  }
+
+  /** Create connectors with labels, metadata and optional snap hints. */
+  public async createEdges(
+    edges: EdgeData[],
+    nodeMap: Record<string, BaseItem | Group>,
+    hints?: EdgeHint[],
+  ): Promise<Connector[]> {
+    if (!Array.isArray(edges)) {
+      throw new Error('Invalid edges');
+    }
+    if (!nodeMap || typeof nodeMap !== 'object') {
+      throw new Error('Invalid node map');
+    }
+    const created = await Promise.all(
+      edges.map(async (edge, i) => {
+        const from = nodeMap[edge.from];
+        const to = nodeMap[edge.to];
+        if (!from || !to) return undefined;
+        const template = templateManager.getConnectorTemplate(
+          (edge.metadata as any)?.template || 'default',
+        );
+        const existing = await this.findConnector(edge.from, edge.to);
+        if (existing) {
+          this.updateConnector(existing, edge, template, hints?.[i]);
+          return existing;
+        }
+        return this.createConnector(edge, from, to, hints?.[i], template);
+      }),
+    );
+    return created.filter(Boolean) as Connector[];
+  }
+
+  /** Call `.sync()` on each widget if the method exists. */
+  public async syncAll(
+    items: Array<BaseItem | Group | Connector>,
+  ): Promise<void> {
+    await Promise.all(
+      items
+        .filter(i => typeof (i as any).sync === 'function')
+        .map(i => (i as any).sync()),
+    );
+  }
+
+  /** Remove the provided widgets from the board. */
+  public async removeItems(
+    items: Array<BaseItem | Group | Connector | Frame>,
+  ): Promise<void> {
+    this.ensureBoard();
+    await Promise.all(items.map(i => miro.board.remove(i as any)));
+  }
+
+  private ensureBoard(): void {
+    if (typeof miro === 'undefined' || !miro?.board) {
+      throw new Error('Miro board not initialized');
+    }
   }
 
   private async loadShapeCache(): Promise<void> {
@@ -167,35 +272,6 @@ export class BoardBuilder {
       }),
     );
     return matches.find(Boolean);
-  }
-
-  /** Lookup an existing widget with matching metadata. */
-  public async findNode(
-    type: string,
-    label: string,
-  ): Promise<BaseItem | Group | undefined> {
-    if (typeof type !== 'string' || typeof label !== 'string') {
-      throw new Error('Invalid search parameters');
-    }
-    const fromShapes = await this.searchShapes(type, label);
-    if (fromShapes) return fromShapes;
-    return this.searchGroups(type, label);
-  }
-
-  /** Find a connector with matching metadata if it exists on the board. */
-  public async findConnector(
-    from: string,
-    to: string,
-  ): Promise<Connector | undefined> {
-    if (typeof from !== 'string' || typeof to !== 'string') {
-      throw new Error('Invalid search parameters');
-    }
-    await this.loadConnectorCache();
-    const connectors = this.connectorCache ?? [];
-    return this.findByMetadata(connectors, meta => {
-      const data = meta as EdgeMetadata | undefined;
-      return data?.from === from && data.to === to;
-    });
   }
 
   /**
@@ -334,32 +410,6 @@ export class BoardBuilder {
     return widget as BaseItem;
   }
 
-  /** Create or update a node widget from a template. */
-  public async createNode(
-    node: NodeData,
-    pos: PositionedNode,
-  ): Promise<BaseItem | Group> {
-    if (!node || typeof node !== 'object') {
-      throw new Error('Invalid node');
-    }
-    if (!pos || typeof pos.x !== 'number' || typeof pos.y !== 'number') {
-      throw new Error('Invalid position');
-    }
-    const templateDef = templateManager.getTemplate(node.type);
-    if (!templateDef) {
-      throw new Error(`Template '${node.type}' not found`);
-    }
-    const existing = await this.findNode(node.type, node.label);
-    if (existing) {
-      return this.updateExistingNode(
-        existing as BaseItem | Group,
-        templateDef,
-        node,
-      );
-    }
-    return this.createNewNode(node, pos);
-  }
-
   /**
    * Apply metadata and styling updates to an existing connector widget.
    */
@@ -432,56 +482,6 @@ export class BoardBuilder {
       this.connectorCache.push(connector);
     }
     return connector;
-  }
-
-  /** Create connectors with labels, metadata and optional snap hints. */
-  public async createEdges(
-    edges: EdgeData[],
-    nodeMap: Record<string, BaseItem | Group>,
-    hints?: EdgeHint[],
-  ): Promise<Connector[]> {
-    if (!Array.isArray(edges)) {
-      throw new Error('Invalid edges');
-    }
-    if (!nodeMap || typeof nodeMap !== 'object') {
-      throw new Error('Invalid node map');
-    }
-    const created = await Promise.all(
-      edges.map(async (edge, i) => {
-        const from = nodeMap[edge.from];
-        const to = nodeMap[edge.to];
-        if (!from || !to) return undefined;
-        const template = templateManager.getConnectorTemplate(
-          (edge.metadata as any)?.template || 'default',
-        );
-        const existing = await this.findConnector(edge.from, edge.to);
-        if (existing) {
-          this.updateConnector(existing, edge, template, hints?.[i]);
-          return existing;
-        }
-        return this.createConnector(edge, from, to, hints?.[i], template);
-      }),
-    );
-    return created.filter(Boolean) as Connector[];
-  }
-
-  /** Call `.sync()` on each widget if the method exists. */
-  public async syncAll(
-    items: Array<BaseItem | Group | Connector>,
-  ): Promise<void> {
-    await Promise.all(
-      items
-        .filter(i => typeof (i as any).sync === 'function')
-        .map(i => (i as any).sync()),
-    );
-  }
-
-  /** Remove the provided widgets from the board. */
-  public async removeItems(
-    items: Array<BaseItem | Group | Connector | Frame>,
-  ): Promise<void> {
-    this.ensureBoard();
-    await Promise.all(items.map(i => miro.board.remove(i as any)));
   }
 }
 

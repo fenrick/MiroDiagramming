@@ -14,8 +14,8 @@ import { CardProcessor } from './CardProcessor';
 import { showError } from './notifications';
 import {
   ALGORITHMS,
-  DIRECTIONS,
   DEFAULT_LAYOUT_OPTIONS,
+  DIRECTIONS,
   UserLayoutOptions,
 } from './elk-options';
 

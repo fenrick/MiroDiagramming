@@ -1,11 +1,11 @@
 import templatesJson from '../templates/shapeTemplates.json';
 import connectorJson from '../templates/connectorTemplates.json';
 import type {
+  ConnectorStyle,
+  Frame,
   Group,
   GroupableItem,
   ShapeType,
-  ConnectorStyle,
-  Frame,
 } from '@mirohq/websdk-types';
 
 /**

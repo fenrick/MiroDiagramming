@@ -20,10 +20,12 @@ describe('file utils', () => {
     class FR {
       onload: ((e: any) => void) | null = null;
       onerror: (() => void) | null = null;
+
       readAsText() {
         this.onload && this.onload({ target: { result: 'def' } });
       }
     }
+
     (global as any).FileReader = FR;
     const result = await fileUtils.readFileAsText({ name: 'f.txt' } as any);
     expect(result).toBe('def');

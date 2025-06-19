@@ -1,6 +1,6 @@
 /** @jest-environment jsdom */
 import React from 'react';
-import { render, fireEvent, screen, act } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { App, getDropzoneStyle, undoLastImport } from '../src/app';
 import { GraphProcessor } from '../src/GraphProcessor';

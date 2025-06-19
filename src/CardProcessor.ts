@@ -1,6 +1,6 @@
 import { BoardBuilder } from './BoardBuilder';
-import { cardLoader, CardData } from './cards';
-import type { Frame, Tag, Card, CardStyle } from '@mirohq/websdk-types';
+import { CardData, cardLoader } from './cards';
+import type { Card, CardStyle, Frame, Tag } from '@mirohq/websdk-types';
 
 export interface CardProcessOptions {
   createFrame?: boolean;
@@ -13,26 +13,102 @@ export interface CardProcessOptions {
  * Helper that places cards from a data set onto the board.
  */
 export class CardProcessor {
-  private lastCreated: Array<Card | Frame> = [];
-  constructor(private builder: BoardBuilder = new BoardBuilder()) {}
-
   /** Metadata key used to store card identifiers. */
   private static readonly META_KEY = 'app.miro.cards';
-
+  /** Default width used for card widgets. */
+  private static readonly CARD_WIDTH = 320;
+  /** Default height used for card widgets. */
+  private static readonly CARD_HEIGHT = 88;
+  /** Spacing margin applied around cards and frames. */
+  private static readonly CARD_MARGIN = 50;
+  private lastCreated: Array<Card | Frame> = [];
   /** Cached board cards when processing updates. */
   private cardsCache: Card[] | undefined;
-
   /** Cached map from card identifier to card widget. */
   private cardMap: Map<string, Card> | undefined;
 
-  /** Default width used for card widgets. */
-  private static readonly CARD_WIDTH = 320;
+  constructor(private builder: BoardBuilder = new BoardBuilder()) {}
 
-  /** Default height used for card widgets. */
-  private static readonly CARD_HEIGHT = 88;
+  /** Load cards from a file and create them on the board. */
+  public async processFile(
+    file: File,
+    options: CardProcessOptions = {},
+  ): Promise<void> {
+    const cards = await cardLoader.loadCards(file);
+    await this.processCards(cards, options);
+  }
 
-  /** Spacing margin applied around cards and frames. */
-  private static readonly CARD_MARGIN = 50;
+  /**
+   * Create cards on the board according to the provided definitions.
+   */
+  public async processCards(
+    cards: CardData[],
+    options: CardProcessOptions = {},
+  ): Promise<void> {
+    if (!Array.isArray(cards)) {
+      throw new Error('Invalid cards');
+    }
+    this.lastCreated = [];
+    // Reset per-run caches to ensure fresh board state
+    this.cardsCache = undefined;
+    this.cardMap = undefined;
+
+    const boardTags = await this.getBoardTags();
+    const tagMap = new Map(boardTags.map(t => [t.title, t]));
+
+    const map = await this.loadCardMap();
+
+    const { toCreate, toUpdate } = this.partitionCards(cards, map);
+
+    const updated = await Promise.all(
+      toUpdate.map(item => this.updateCardWidget(item.card, item.def, tagMap)),
+    );
+
+    let created: Card[] = [];
+    let frame: Frame | undefined;
+    if (toCreate.length > 0) {
+      const { spot, startX, startY, columns, totalWidth, totalHeight } =
+        await this.calculateLayoutArea(toCreate.length, options.columns);
+
+      frame = await this.maybeCreateFrame(
+        options.createFrame !== false,
+        { width: totalWidth, height: totalHeight, spot },
+        options.frameTitle,
+      );
+
+      created = await Promise.all(
+        toCreate.map((def, i) =>
+          this.createCardWidget(
+            def,
+            startX + (i % columns) * CardProcessor.CARD_WIDTH,
+            startY + Math.floor(i / columns) * CardProcessor.CARD_HEIGHT,
+            tagMap,
+          ),
+        ),
+      );
+      created.forEach(c => frame?.add(c));
+    } else {
+      this.builder.setFrame(undefined);
+    }
+
+    await this.builder.syncAll([...created, ...updated]);
+
+    this.lastCreated.push(...created);
+    if (frame) this.lastCreated.push(frame);
+
+    const target = frame ?? ([...created, ...updated] as any);
+    if (created.length || updated.length) {
+      await this.builder.zoomTo(target);
+    }
+  }
+
+  /** Remove cards created by the last `processCards` call. */
+  public async undoLast(): Promise<void> {
+    if (this.lastCreated.length) {
+      await this.builder.removeItems(this.lastCreated);
+      this.lastCreated = [];
+    }
+  }
 
   private async getBoardTags(): Promise<Tag[]> {
     return (await miro.board.get({ type: 'tag' })) as Tag[];
@@ -220,86 +296,5 @@ export class CardProcessor {
     );
     this.lastCreated.push(frame);
     return frame;
-  }
-
-  /** Load cards from a file and create them on the board. */
-  public async processFile(
-    file: File,
-    options: CardProcessOptions = {},
-  ): Promise<void> {
-    const cards = await cardLoader.loadCards(file);
-    await this.processCards(cards, options);
-  }
-
-  /**
-   * Create cards on the board according to the provided definitions.
-   */
-  public async processCards(
-    cards: CardData[],
-    options: CardProcessOptions = {},
-  ): Promise<void> {
-    if (!Array.isArray(cards)) {
-      throw new Error('Invalid cards');
-    }
-    this.lastCreated = [];
-    // Reset per-run caches to ensure fresh board state
-    this.cardsCache = undefined;
-    this.cardMap = undefined;
-
-    const boardTags = await this.getBoardTags();
-    const tagMap = new Map(boardTags.map(t => [t.title, t]));
-
-    const map = await this.loadCardMap();
-
-    const { toCreate, toUpdate } = this.partitionCards(cards, map);
-
-    const updated = await Promise.all(
-      toUpdate.map(item => this.updateCardWidget(item.card, item.def, tagMap)),
-    );
-
-    let created: Card[] = [];
-    let frame: Frame | undefined;
-    if (toCreate.length > 0) {
-      const { spot, startX, startY, columns, totalWidth, totalHeight } =
-        await this.calculateLayoutArea(toCreate.length, options.columns);
-
-      frame = await this.maybeCreateFrame(
-        options.createFrame !== false,
-        { width: totalWidth, height: totalHeight, spot },
-        options.frameTitle,
-      );
-
-      created = await Promise.all(
-        toCreate.map((def, i) =>
-          this.createCardWidget(
-            def,
-            startX + (i % columns) * CardProcessor.CARD_WIDTH,
-            startY + Math.floor(i / columns) * CardProcessor.CARD_HEIGHT,
-            tagMap,
-          ),
-        ),
-      );
-      created.forEach(c => frame?.add(c));
-    } else {
-      this.builder.setFrame(undefined);
-    }
-
-    await this.builder.syncAll([...created, ...updated]);
-
-    this.lastCreated.push(...created);
-    if (frame) this.lastCreated.push(frame);
-
-    const target = frame ?? ([...created, ...updated] as any);
-    if (created.length || updated.length) {
-      await this.builder.zoomTo(target);
-    }
-  }
-
-  /** Remove cards created by the last `processCards` call. */
-  public async undoLast(): Promise<void> {
-    if (this.lastCreated.length) {
-      await this.builder.removeItems(this.lastCreated);
-      this.lastCreated = [];
-    }
   }
 }

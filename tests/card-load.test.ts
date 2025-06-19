@@ -10,6 +10,7 @@ describe('loadCards', () => {
     class FR {
       onload: ((e: any) => void) | null = null;
       onerror: (() => void) | null = null;
+
       readAsText() {
         const json = {
           cards: [
@@ -25,6 +26,7 @@ describe('loadCards', () => {
           this.onload({ target: { result: JSON.stringify(json) } });
       }
     }
+
     (global as any).FileReader = FR;
     const data = await cardLoader.loadCards({ name: 'c.json' } as any);
     expect(data).toEqual([
@@ -53,10 +55,12 @@ describe('loadCards', () => {
   test('throws on invalid data', async () => {
     class FR {
       onload: ((e: any) => void) | null = null;
+
       readAsText() {
         this.onload && this.onload({ target: { result: '[]' } });
       }
     }
+
     (global as any).FileReader = FR;
     await expect(
       cardLoader.loadCards({ name: 'x.json' } as any),
@@ -67,10 +71,12 @@ describe('loadCards', () => {
     class FR {
       onload: ((e: any) => void) | null = null;
       onerror: (() => void) | null = null;
+
       readAsText() {
         this.onload && this.onload({});
       }
     }
+
     (global as any).FileReader = FR;
     await expect(
       cardLoader.loadCards({ name: 'bad.json' } as any),

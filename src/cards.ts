@@ -26,6 +26,25 @@ export class CardLoader {
 
   private constructor() {}
 
+  /** Access the shared loader instance. */
+  public static getInstance(): CardLoader {
+    if (!CardLoader.instance) {
+      CardLoader.instance = new CardLoader();
+    }
+    return CardLoader.instance;
+  }
+
+  /** Load and parse card data from an uploaded file. */
+  public async loadCards(file: File): Promise<CardData[]> {
+    fileUtils.validateFile(file);
+    const text = await fileUtils.readFileAsText(file);
+    const data = JSON.parse(text) as unknown;
+    if (!data || !Array.isArray((data as any).cards)) {
+      throw new Error('Invalid card data');
+    }
+    return (data as CardFile).cards.map(c => this.normalizeCard(c));
+  }
+
   /** Extract supported style fields and normalize values. */
   private normalizeCard(card: any): CardData {
     const styleRaw = card.style ?? {};
@@ -44,25 +63,6 @@ export class CardLoader {
       taskStatus: card.taskStatus,
       style: Object.keys(style).length ? style : undefined,
     };
-  }
-
-  /** Access the shared loader instance. */
-  public static getInstance(): CardLoader {
-    if (!CardLoader.instance) {
-      CardLoader.instance = new CardLoader();
-    }
-    return CardLoader.instance;
-  }
-
-  /** Load and parse card data from an uploaded file. */
-  public async loadCards(file: File): Promise<CardData[]> {
-    fileUtils.validateFile(file);
-    const text = await fileUtils.readFileAsText(file);
-    const data = JSON.parse(text) as unknown;
-    if (!data || !Array.isArray((data as any).cards)) {
-      throw new Error('Invalid card data');
-    }
-    return (data as CardFile).cards.map(c => this.normalizeCard(c));
   }
 }
 

@@ -1,10 +1,10 @@
-import { graphService, GraphData } from './graph';
+import { GraphData, graphService } from './graph';
 import { BoardBuilder } from './BoardBuilder';
 import { layoutEngine, LayoutResult } from './elk-layout';
 import { UserLayoutOptions } from './elk-options';
 import { fileUtils } from './file-utils';
 import { computeEdgeHints } from './layout-utils';
-import type { BaseItem, Group, Frame, Connector } from '@mirohq/websdk-types';
+import type { BaseItem, Connector, Frame, Group } from '@mirohq/websdk-types';
 
 /**
  * High level orchestrator that loads graph data, runs layout and
@@ -22,45 +22,8 @@ export interface ProcessOptions {
 
 export class GraphProcessor {
   private lastCreated: Array<BaseItem | Group | Connector | Frame> = [];
+
   constructor(private builder: BoardBuilder = graphService.getBuilder()) {}
-
-  /**
-   * Determine the bounding box for positioned nodes.
-   */
-  private layoutBounds(layout: LayoutResult): {
-    minX: number;
-    minY: number;
-    maxX: number;
-    maxY: number;
-  } {
-    let minX = Infinity;
-    let minY = Infinity;
-    let maxX = -Infinity;
-    let maxY = -Infinity;
-    Object.values(layout.nodes).forEach(n => {
-      minX = Math.min(minX, n.x);
-      minY = Math.min(minY, n.y);
-      maxX = Math.max(maxX, n.x + n.width);
-      maxY = Math.max(maxY, n.y + n.height);
-    });
-    return { minX, minY, maxX, maxY };
-  }
-
-  /**
-   * Calculate offsets for node placement within the board.
-   */
-  private calculateOffset(
-    spot: { x: number; y: number },
-    frameWidth: number,
-    frameHeight: number,
-    bounds: { minX: number; minY: number },
-    margin: number,
-  ): { offsetX: number; offsetY: number } {
-    return {
-      offsetX: spot.x - frameWidth / 2 + margin - bounds.minX,
-      offsetY: spot.y - frameHeight / 2 + margin - bounds.minY,
-    };
-  }
 
   /**
    * Load a JSON graph file and process it.
@@ -110,6 +73,52 @@ export class GraphProcessor {
     const nodeMap = await this.createNodes(graph, layout, offsetX, offsetY);
 
     await this.createConnectorsAndZoom(graph, layout, nodeMap, frame);
+  }
+
+  /** Remove widgets created by the last `processGraph` call. */
+  public async undoLast(): Promise<void> {
+    if (this.lastCreated.length) {
+      await this.builder.removeItems(this.lastCreated);
+      this.lastCreated = [];
+    }
+  }
+
+  /**
+   * Determine the bounding box for positioned nodes.
+   */
+  private layoutBounds(layout: LayoutResult): {
+    minX: number;
+    minY: number;
+    maxX: number;
+    maxY: number;
+  } {
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+    Object.values(layout.nodes).forEach(n => {
+      minX = Math.min(minX, n.x);
+      minY = Math.min(minY, n.y);
+      maxX = Math.max(maxX, n.x + n.width);
+      maxY = Math.max(maxY, n.y + n.height);
+    });
+    return { minX, minY, maxX, maxY };
+  }
+
+  /**
+   * Calculate offsets for node placement within the board.
+   */
+  private calculateOffset(
+    spot: { x: number; y: number },
+    frameWidth: number,
+    frameHeight: number,
+    bounds: { minX: number; minY: number },
+    margin: number,
+  ): { offsetX: number; offsetY: number } {
+    return {
+      offsetX: spot.x - frameWidth / 2 + margin - bounds.minX,
+      offsetY: spot.y - frameHeight / 2 + margin - bounds.minY,
+    };
   }
 
   /**
@@ -182,14 +191,6 @@ export class GraphProcessor {
       await this.builder.zoomTo(frame);
     } else {
       await this.builder.zoomTo(Object.values(nodeMap));
-    }
-  }
-
-  /** Remove widgets created by the last `processGraph` call. */
-  public async undoLast(): Promise<void> {
-    if (this.lastCreated.length) {
-      await this.builder.removeItems(this.lastCreated);
-      this.lastCreated = [];
     }
   }
 

@@ -1,12 +1,15 @@
 # Miro JSON Graph Diagram App
 
-This project demonstrates how to import a JSON description of a graph and build a diagram on a Miro board. The application uses the **Eclipse Layout Kernel (ELK)** to arrange nodes and edges automatically. Shapes are generated from templates and each element can carry metadata that controls its appearance and placement.
+This project demonstrates how to import a JSON description of a graph and build a diagram on a Miro board. The
+application uses the **Eclipse Layout Kernel (ELK)** to arrange nodes and edges automatically. Shapes are generated from
+templates and each element can carry metadata that controls its appearance and placement.
 
 ## Uploading JSON Graphs
 
 1. Click the app icon on your Miro board.
 2. Select a `.json` file containing `nodes` and `edges`.
-3. After the file uploads the ELK layout engine positions the elements and the board is populated with the resulting shapes.
+3. After the file uploads the ELK layout engine positions the elements and the board is populated with the resulting
+   shapes.
 
 ## Importing Cards from JSON
 
@@ -19,13 +22,18 @@ This project demonstrates how to import a JSON description of a graph and build 
 
 ## ELK Layout
 
-The layout step leverages the ELK algorithm to compute positions for all nodes. You can provide layout hints in each node's metadata to influence spacing or layering. The engine runs automatically when a graph is uploaded.
+The layout step leverages the ELK algorithm to compute positions for all nodes. You can provide layout hints in each
+node's metadata to influence spacing or layering. The engine runs automatically when a graph is uploaded.
 
 ## Template‑Based Shapes
 
-Shape templates live in [`templates/shapeTemplates.json`](templates/shapeTemplates.json). Each template defines the shape type, size and base styles. When a node specifies a `template` value in its metadata the corresponding template is applied. Edit this file or add new entries to customize the available shapes. Connector appearance is configured in [`templates/connectorTemplates.json`](templates/connectorTemplates.json) which controls line color, caps and font.
+Shape templates live in [`templates/shapeTemplates.json`](templates/shapeTemplates.json). Each template defines the
+shape type, size and base styles. When a node specifies a `template` value in its metadata the corresponding template is
+applied. Edit this file or add new entries to customize the available shapes. Connector appearance is configured in [
+`templates/connectorTemplates.json`](templates/connectorTemplates.json) which controls line color, caps and font.
 
-To add your own templates create new entries in these JSON files and reference them by name in your graph metadata. The app reloads templates on startup so changes are picked up automatically.
+To add your own templates create new entries in these JSON files and reference them by name in your graph metadata. The
+app reloads templates on startup so changes are picked up automatically.
 
 ## Metadata Usage
 
@@ -104,7 +112,9 @@ See the Miro documentation for details on building diagramming apps.
  http://localhost:3000
 ```
 
-3. Open the [app manifest editor](https://developers.miro.com/docs/manually-create-an-app#step-2-configure-your-app-in-miro) by clicking **Edit in Manifest**. \
+3. Open
+   the [app manifest editor](https://developers.miro.com/docs/manually-create-an-app#step-2-configure-your-app-in-miro)
+   by clicking **Edit in Manifest**. \
    In the app manifest editor, configure the app as follows, and then click save:
 
 ```yaml
@@ -117,15 +127,19 @@ scopes:
   - boards:write
 ```
 
-4. Go back to your app home page, and under the `Permissions` section, you will see a blue button that says `Install app and get OAuth token`. Click that button. Then click on `Add` as shown in the video below. <b>In the video we install a different app, but the process is the same regardless of the app.</b>
+4. Go back to your app home page, and under the `Permissions` section, you will see a blue button that says
+   `Install app and get OAuth token`. Click that button. Then click on `Add` as shown in the video below. <b>In the
+   video we install a different app, but the process is the same regardless of the app.</b>
 
-> ⚠️ We recommend to install your app on a [developer team](https://developers.miro.com/docs/create-a-developer-team) while you are developing or testing apps.⚠️
+> ⚠️ We recommend to install your app on a [developer team](https://developers.miro.com/docs/create-a-developer-team)
+> while you are developing or testing apps.⚠️
 
 https://github.com/miroapp/app-examples/assets/10428517/1e6862de-8617-46ef-b265-97ff1cbfe8bf
 
 5. Go to your developer team, and open your boards.
 6. Click on the plus icon from the bottom section of your left sidebar. If you hover over it, it will say `More apps`.
-7. Search for your app `JSON Diagram` or whatever you chose to name it. Click on your app to use it, as shown in the video below. <b>In the video we search for a different app, but the process is the same regardless of the app.</b>
+7. Search for your app `JSON Diagram` or whatever you chose to name it. Click on your app to use it, as shown in the
+   video below. <b>In the video we search for a different app, but the process is the same regardless of the app.</b>
 
 https://github.com/horeaporutiu/app-examples-template/assets/10428517/b23d9c4c-e785-43f9-a72e-fa5d82c7b019
 
@@ -152,7 +166,8 @@ conforms to the repository guidelines.
 
 ## Building a Production Bundle
 
-Run `npm run build` to create the optimized static files in the `dist/` folder. Host these files on a web server and update the `sdkUri` in your app manifest to point to the deployed bundle.
+Run `npm run build` to create the optimized static files in the `dist/` folder. Host these files on a web server and
+update the `sdkUri` in your app manifest to point to the deployed bundle.
 
 ## 🗂️ Folder structure <a name="folder"></a>
 
@@ -170,7 +185,8 @@ Run `npm run build` to create the optimized static files in the `dist/` folder. 
 
 ## 🫱🏻‍🫲🏽 Contributing <a name="contributing"></a>
 
-If you want to contribute to this example, or any other Miro Open Source project, please review [Miro's contributing guide](https://github.com/miroapp/app-examples/blob/main/CONTRIBUTING.md).
+If you want to contribute to this example, or any other Miro Open Source project, please
+review [Miro's contributing guide](https://github.com/miroapp/app-examples/blob/main/CONTRIBUTING.md).
 
 ## 🪪 License <a name="license"></a>
 

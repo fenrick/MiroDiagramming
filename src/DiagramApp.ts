@@ -3,6 +3,7 @@
  */
 export class DiagramApp {
   private static instance: DiagramApp;
+
   private constructor() {}
 
   /** Retrieve the shared instance of the app. */

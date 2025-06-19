@@ -9,7 +9,10 @@
       "textOrientation": "horizontal"
     },
     "shape": "curved",
-    "caption": { "position": 0.5, "textAlignVertical": "middle" }
+    "caption": {
+      "position": 0.5,
+      "textAlignVertical": "middle"
+    }
   },
   "flow": {
     "style": {
@@ -21,7 +24,10 @@
       "textOrientation": "horizontal"
     },
     "shape": "curved",
-    "caption": { "position": 0.5, "textAlignVertical": "middle" }
+    "caption": {
+      "position": 0.5,
+      "textAlignVertical": "middle"
+    }
   },
   "assignment": {
     "style": {
@@ -33,7 +39,10 @@
       "textOrientation": "horizontal"
     },
     "shape": "curved",
-    "caption": { "position": 0.5, "textAlignVertical": "middle" }
+    "caption": {
+      "position": 0.5,
+      "textAlignVertical": "middle"
+    }
   },
   "realization": {
     "style": {
@@ -45,7 +54,10 @@
       "textOrientation": "horizontal"
     },
     "shape": "curved",
-    "caption": { "position": 0.5, "textAlignVertical": "middle" }
+    "caption": {
+      "position": 0.5,
+      "textAlignVertical": "middle"
+    }
   },
   "access": {
     "style": {
@@ -57,7 +69,10 @@
       "textOrientation": "horizontal"
     },
     "shape": "curved",
-    "caption": { "position": 0.5, "textAlignVertical": "middle" }
+    "caption": {
+      "position": 0.5,
+      "textAlignVertical": "middle"
+    }
   },
   "influence": {
     "style": {
@@ -69,6 +84,9 @@
       "textOrientation": "horizontal"
     },
     "shape": "curved",
-    "caption": { "position": 0.5, "textAlignVertical": "middle" }
+    "caption": {
+      "position": 0.5,
+      "textAlignVertical": "middle"
+    }
   }
 }
