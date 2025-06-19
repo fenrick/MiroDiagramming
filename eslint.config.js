@@ -24,7 +24,6 @@ export default [
       },
     },
     rules: {
-      '@typescript-eslint/no-explicit-any': 'off',
       'no-console': 'warn',
       'react/react-in-jsx-scope': 'off',
     },
@@ -36,8 +35,6 @@ export default [
       ecmaVersion: 'latest',
       sourceType: 'module',
     },
-    rules: {
-      '@typescript-eslint/no-explicit-any': 'off',
-    },
+    rules: {},
   },
 ];
