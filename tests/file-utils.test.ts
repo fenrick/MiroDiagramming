@@ -1,16 +1,20 @@
 import { fileUtils } from '../src/file-utils';
 
+interface ReaderEvent {
+  target: { result?: string | null } | null;
+}
+
 describe('file utils', () => {
   afterEach(() => {
     jest.restoreAllMocks();
-    delete (global as any).FileReader;
+    delete (global as { FileReader?: unknown }).FileReader;
   });
 
   test('readFileAsText uses text method when available', async () => {
     const file = {
       name: 'file.txt',
       text: jest.fn().mockResolvedValue('abc'),
-    } as any;
+    } as unknown as File;
     const result = await fileUtils.readFileAsText(file);
     expect(result).toBe('abc');
     expect(file.text).toHaveBeenCalled();
@@ -18,20 +22,27 @@ describe('file utils', () => {
 
   test('readFileAsText falls back to FileReader', async () => {
     class FR {
-      onload: ((e: any) => void) | null = null;
+      onload: ((e: ReaderEvent) => void) | null = null;
       onerror: (() => void) | null = null;
 
       readAsText() {
-        this.onload && this.onload({ target: { result: 'def' } });
+        if (this.onload) {
+          const evt = { target: { result: 'def' } } as ReaderEvent;
+          this.onload(evt);
+        }
       }
     }
 
-    (global as any).FileReader = FR;
-    const result = await fileUtils.readFileAsText({ name: 'f.txt' } as any);
+    (global as { FileReader?: unknown }).FileReader = FR;
+    const result = await fileUtils.readFileAsText({
+      name: 'f.txt',
+    } as unknown as File);
     expect(result).toBe('def');
   });
 
   test('validateFile throws on invalid object', () => {
-    expect(() => fileUtils.validateFile(null as any)).toThrow('Invalid file');
+    expect(() => fileUtils.validateFile(null as unknown as File)).toThrow(
+      'Invalid file',
+    );
   });
 });
