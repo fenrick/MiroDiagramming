@@ -108,4 +108,60 @@ describe('BoardBuilder branch coverage', () => {
     expect(connector.shape).toBe('curved');
     expect(connector.style).toEqual({});
   });
+
+  test('searchShapes falls back to empty cache', async () => {
+    const builder = new BoardBuilder();
+    jest.spyOn(builder as any, 'loadShapeCache').mockResolvedValue(undefined);
+    const result = await (builder as any).searchShapes('Role', 'A');
+    expect(result).toBeUndefined();
+  });
+
+  test('applyShapeElement preserves existing fillColor', () => {
+    const builder = new BoardBuilder();
+    const item: any = { type: 'shape', style: { fillColor: '#abc' } };
+    const el = { shape: 'rect', fill: '#fff', width: 1, height: 1 };
+    (builder as any).applyShapeElement(item, el, 'L');
+    expect(item.style.fillColor).toBe('#abc');
+  });
+
+  test('applyElementToItem handles text widgets', () => {
+    const builder = new BoardBuilder();
+    const item: any = { type: 'text', style: {} };
+    const el = { text: 'Name' } as any;
+    (builder as any).applyElementToItem(item, el, 'Label');
+    expect(item.content).toBe('Name');
+  });
+
+  test('updateConnector applies hint positions', () => {
+    const builder = new BoardBuilder();
+    const connector: any = { style: {}, shape: 'curved' };
+    (builder as any).updateConnector(
+      connector,
+      { from: 'a', to: 'b', label: 'L' },
+      { shape: 'elbowed', style: { strokeStyle: 'dotted' } },
+      { startPosition: { x: 0, y: 0 }, endPosition: { x: 1, y: 1 } },
+    );
+    expect(connector.start.position).toEqual({ x: 0, y: 0 });
+    expect(connector.end.position).toEqual({ x: 1, y: 1 });
+    expect(connector.style.strokeStyle).toBe('dotted');
+  });
+
+  test('createConnector without label sets no caption', async () => {
+    const board = {
+      createConnector: jest.fn().mockResolvedValue({ setMetadata: jest.fn() }),
+    };
+    (global as any).miro = { board };
+    const builder = new BoardBuilder();
+    const edge = { from: 'n1', to: 'n2' } as any;
+    const result = await (builder as any).createConnector(
+      edge,
+      { id: 'a' } as any,
+      { id: 'b' } as any,
+      undefined,
+      undefined,
+    );
+    const args = board.createConnector.mock.calls[0][0];
+    expect(args.captions).toBeUndefined();
+    expect(result).toBeDefined();
+  });
 });
