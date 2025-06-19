@@ -1,3 +1,4 @@
+/*jshint esversion: 6 */
 import tseslint from '@typescript-eslint/eslint-plugin';
 import parser from '@typescript-eslint/parser';
 import react from 'eslint-plugin-react';
