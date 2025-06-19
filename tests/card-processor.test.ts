@@ -1,7 +1,11 @@
 import { CardProcessor } from '../src/CardProcessor';
 import * as cardModule from '../src/cards';
 
-declare const global: any;
+interface GlobalWithMiro {
+  miro?: { board?: Record<string, unknown> };
+}
+
+declare const global: GlobalWithMiro;
 
 describe('CardProcessor', () => {
   let processor: CardProcessor;
@@ -49,7 +53,7 @@ describe('CardProcessor', () => {
     const spy = jest
       .spyOn(processor, 'processCards')
       .mockResolvedValue(undefined);
-    await processor.processFile({ name: 'cards.json' } as any);
+    await processor.processFile({ name: 'cards.json' } as unknown as File);
     expect(cardModule.cardLoader.loadCards).toHaveBeenCalled();
     expect(spy).toHaveBeenCalledWith([{ title: 't' }], {});
   });
@@ -109,7 +113,7 @@ describe('CardProcessor', () => {
       getMetadata: jest.fn().mockResolvedValue({ id: 'match' }),
       setMetadata: jest.fn(),
       sync: jest.fn(),
-    } as any;
+    } as Record<string, unknown>;
     (global.miro.board.get as jest.Mock).mockImplementation(
       async ({ type }) => {
         if (type === 'tag') return [];
@@ -143,7 +147,7 @@ describe('CardProcessor', () => {
       getMetadata: jest.fn().mockResolvedValue({ id: 'exists' }),
       setMetadata: jest.fn(),
       sync: jest.fn(),
-    } as any;
+    } as Record<string, unknown>;
     (global.miro.board.get as jest.Mock).mockImplementation(
       async ({ type }) => {
         if (type === 'tag') return [];
@@ -177,9 +181,9 @@ describe('CardProcessor', () => {
   });
 
   test('throws on invalid input', async () => {
-    await expect(processor.processCards(null as any)).rejects.toThrow(
-      'Invalid cards',
-    );
+    await expect(
+      processor.processCards(null as unknown as unknown[]),
+    ).rejects.toThrow('Invalid cards');
   });
 
   test('no cards results in no action', async () => {
@@ -190,14 +194,23 @@ describe('CardProcessor', () => {
   });
 
   test('loadCardMap caches board lookups', async () => {
-    await (processor as any).loadCardMap();
-    await (processor as any).loadCardMap();
+    await (
+      processor as unknown as { loadCardMap: () => Promise<void> }
+    ).loadCardMap();
+    await (
+      processor as unknown as { loadCardMap: () => Promise<void> }
+    ).loadCardMap();
     expect(global.miro.board.get).toHaveBeenCalledTimes(1);
   });
 
   test('computeStartCoordinate derives correct origin', () => {
-    const margin = (CardProcessor as any).CARD_MARGIN;
-    const result = (processor as any).computeStartCoordinate(200, 400, 100);
+    const margin = (CardProcessor as unknown as { CARD_MARGIN: number })
+      .CARD_MARGIN;
+    const result = (
+      processor as unknown as {
+        computeStartCoordinate: (w: number, h: number, s: number) => number;
+      }
+    ).computeStartCoordinate(200, 400, 100);
     expect(result).toBe(200 - 400 / 2 + margin + 100 / 2);
   });
 
@@ -205,10 +218,18 @@ describe('CardProcessor', () => {
     const builder = {
       createFrame: jest.fn().mockResolvedValue({ id: 'f' }),
       setFrame: jest.fn(),
-    } as any;
-    const p = new CardProcessor(builder);
+    } as { createFrame: jest.Mock; setFrame: jest.Mock };
+    const p = new CardProcessor(builder as unknown as unknown);
     const dims = { width: 10, height: 20, spot: { x: 1, y: 2 } };
-    const frame = await (p as any).maybeCreateFrame(true, dims, 't');
+    const frame = await (
+      p as unknown as {
+        maybeCreateFrame: (
+          b: boolean,
+          d: unknown,
+          t?: string,
+        ) => Promise<unknown>;
+      }
+    ).maybeCreateFrame(true, dims, 't');
     expect(builder.createFrame).toHaveBeenCalledWith(10, 20, 1, 2, 't');
     expect(frame).toEqual({ id: 'f' });
   });
@@ -217,10 +238,14 @@ describe('CardProcessor', () => {
     const builder = {
       createFrame: jest.fn(),
       setFrame: jest.fn(),
-    } as any;
-    const p = new CardProcessor(builder);
+    } as { createFrame: jest.Mock; setFrame: jest.Mock };
+    const p = new CardProcessor(builder as unknown as unknown);
     const dims = { width: 5, height: 5, spot: { x: 0, y: 0 } };
-    const frame = await (p as any).maybeCreateFrame(false, dims);
+    const frame = await (
+      p as unknown as {
+        maybeCreateFrame: (b: boolean, d: unknown) => Promise<unknown>;
+      }
+    ).maybeCreateFrame(false, dims);
     expect(frame).toBeUndefined();
     expect(builder.createFrame).not.toHaveBeenCalled();
     expect(builder.setFrame).toHaveBeenCalledWith(undefined);

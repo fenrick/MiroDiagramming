@@ -133,15 +133,10 @@ export class BoardBuilder {
     if (!pos || typeof pos.x !== 'number' || typeof pos.y !== 'number') {
       throw new Error('Invalid position');
     }
-    if (
-      !node ||
-      typeof node !== 'object' ||
-      typeof (node as any).type !== 'string' ||
-      typeof (node as any).label !== 'string'
-    ) {
+    if (!BoardBuilder.isNodeData(node)) {
       throw new Error('Invalid node');
     }
-    const nodeData = node as NodeData;
+    const nodeData = node;
     const templateDef = templateManager.getTemplate(nodeData.type);
     if (!templateDef) {
       throw new Error(`Template '${nodeData.type}' not found`);
@@ -503,6 +498,18 @@ export class BoardBuilder {
       this.connectorCache.push(connector);
     }
     return connector;
+  }
+
+  /**
+   * Type guard ensuring the provided value conforms to {@link NodeData}.
+   */
+  private static isNodeData(node: unknown): node is NodeData {
+    return (
+      !!node &&
+      typeof node === 'object' &&
+      typeof (node as Record<string, unknown>).type === 'string' &&
+      typeof (node as Record<string, unknown>).label === 'string'
+    );
   }
 }
 

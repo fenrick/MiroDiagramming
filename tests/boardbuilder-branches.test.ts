@@ -1,6 +1,12 @@
 import { BoardBuilder } from '../src/BoardBuilder';
 import { templateManager } from '../src/templates';
 
+interface GlobalWithMiro {
+  miro?: { board: Record<string, unknown> };
+}
+
+declare const global: GlobalWithMiro;
+
 /**
  * Unit tests targeting rarely hit branches within BoardBuilder
  * to increase overall coverage.
@@ -9,17 +15,20 @@ import { templateManager } from '../src/templates';
 describe('BoardBuilder branch coverage', () => {
   afterEach(() => {
     jest.restoreAllMocks();
-    delete (global as any).miro;
+    delete global.miro;
   });
 
   test('findNode searches groups', async () => {
     // Mock a group containing an item whose metadata matches the search
     const item = {
       getMetadata: jest.fn().mockResolvedValue({ type: 'Role', label: 'A' }),
-    } as any;
-    const group = { getItems: jest.fn().mockResolvedValue([item]) } as any;
+    } as Record<string, unknown>;
+    const group = { getItems: jest.fn().mockResolvedValue([item]) } as Record<
+      string,
+      unknown
+    >;
     // `board.get` first returns no shapes then a single group
-    (global as any).miro = {
+    global.miro = {
       board: {
         get: jest.fn().mockResolvedValueOnce([]).mockResolvedValueOnce([group]),
       },
@@ -34,7 +43,11 @@ describe('BoardBuilder branch coverage', () => {
     const builder = new BoardBuilder();
     // Element template providing default fill style
     const el = { shape: 'rect', fill: '#fff', width: 10, height: 10 };
-    const shape = { type: 'shape', style: {}, setMetadata: jest.fn() } as any;
+    const shape = {
+      type: 'shape',
+      style: {},
+      setMetadata: jest.fn(),
+    } as Record<string, unknown>;
     // Pretend the node does not already exist
     jest.spyOn(builder, 'findNode').mockResolvedValue(undefined);
     // Template lookup returns our element
@@ -45,31 +58,51 @@ describe('BoardBuilder branch coverage', () => {
     jest
       .spyOn(templateManager, 'createFromTemplate')
       .mockImplementation(async () => {
-        (builder as any).applyShapeElement(shape, el, 'L');
+        (
+          builder as unknown as {
+            applyShapeElement: (i: unknown, e: unknown, l: string) => void;
+          }
+        ).applyShapeElement(shape, el, 'L');
         return shape;
       });
-    await builder.createNode({ id: 'n', label: 'L', type: 'fill' } as any, {
-      x: 0,
-      y: 0,
-      width: 1,
-      height: 1,
-    });
+    await builder.createNode(
+      { id: 'n', label: 'L', type: 'fill' } as unknown as Record<
+        string,
+        unknown
+      >,
+      {
+        x: 0,
+        y: 0,
+        width: 1,
+        height: 1,
+      },
+    );
     // The fill color from the element should be applied
     expect(shape.style.fillColor).toBe('#fff');
   });
 
   test('applyTextElement merges style when provided', () => {
     const builder = new BoardBuilder();
-    const item: any = { type: 'text', style: { fontSize: 10 } };
-    const el = { text: 'T', style: { color: 'red' } } as any;
+    const item: Record<string, unknown> = {
+      type: 'text',
+      style: { fontSize: 10 },
+    };
+    const el = { text: 'T', style: { color: 'red' } } as Record<
+      string,
+      unknown
+    >;
     // Applying a text element should merge the style properties
-    (builder as any).applyTextElement(item, el, 'L');
+    (
+      builder as unknown as {
+        applyTextElement: (i: unknown, e: unknown, l: string) => void;
+      }
+    ).applyTextElement(item, el, 'L');
     expect(item.style.color).toBe('red');
     expect(item.style.fontSize).toBe(10);
   });
 
   test('createEdges skips edges with missing nodes', async () => {
-    (global as any).miro = {
+    global.miro = {
       board: {
         get: jest.fn().mockResolvedValue([]),
         createConnector: jest.fn().mockResolvedValue({
@@ -82,60 +115,89 @@ describe('BoardBuilder branch coverage', () => {
     };
     const builder = new BoardBuilder();
     const edges = [{ from: 'n1', to: 'n2' }];
-    const result = await builder.createEdges(edges as any, { n1: {} } as any);
+    const result = await builder.createEdges(
+      edges as unknown as Array<{ from: string; to: string }>,
+      { n1: {} } as Record<string, unknown>,
+    );
     expect(result).toEqual([]);
   });
 
   test('searchGroups ignores non-array item lists', async () => {
-    const group = { getItems: jest.fn().mockResolvedValue(null) } as any;
-    (global as any).miro = {
+    const group = { getItems: jest.fn().mockResolvedValue(null) } as Record<
+      string,
+      unknown
+    >;
+    global.miro = {
       board: { get: jest.fn().mockResolvedValue([group]) },
     };
     const builder = new BoardBuilder();
-    const result = await (builder as any).searchGroups('Role', 'A');
+    const result = await (
+      builder as unknown as {
+        searchGroups: (t: string, l: string) => Promise<unknown>;
+      }
+    ).searchGroups('Role', 'A');
     expect(result).toBeUndefined();
   });
 
   test('updateConnector handles missing template and hints', () => {
-    const connector: any = { style: {}, shape: 'curved' };
+    const connector: Record<string, unknown> = { style: {}, shape: 'curved' };
     const builder = new BoardBuilder();
-    (builder as any).updateConnector(
-      connector,
-      { from: 'a', to: 'b' },
-      undefined,
-      undefined,
-    );
+    (
+      builder as unknown as { updateConnector: (...args: unknown[]) => void }
+    ).updateConnector(connector, { from: 'a', to: 'b' }, undefined, undefined);
     expect(connector.shape).toBe('curved');
     expect(connector.style).toEqual({});
   });
 
   test('searchShapes falls back to empty cache', async () => {
     const builder = new BoardBuilder();
-    jest.spyOn(builder as any, 'loadShapeCache').mockResolvedValue(undefined);
-    const result = await (builder as any).searchShapes('Role', 'A');
+    jest
+      .spyOn(
+        builder as unknown as { loadShapeCache: () => Promise<unknown> },
+        'loadShapeCache',
+      )
+      .mockResolvedValue(undefined);
+    const result = await (
+      builder as unknown as {
+        searchShapes: (t: string, l: string) => Promise<unknown>;
+      }
+    ).searchShapes('Role', 'A');
     expect(result).toBeUndefined();
   });
 
   test('applyShapeElement preserves existing fillColor', () => {
     const builder = new BoardBuilder();
-    const item: any = { type: 'shape', style: { fillColor: '#abc' } };
+    const item: Record<string, unknown> = {
+      type: 'shape',
+      style: { fillColor: '#abc' },
+    };
     const el = { shape: 'rect', fill: '#fff', width: 1, height: 1 };
-    (builder as any).applyShapeElement(item, el, 'L');
+    (
+      builder as unknown as {
+        applyShapeElement: (i: unknown, e: unknown, l: string) => void;
+      }
+    ).applyShapeElement(item, el, 'L');
     expect(item.style.fillColor).toBe('#abc');
   });
 
   test('applyElementToItem handles text widgets', () => {
     const builder = new BoardBuilder();
-    const item: any = { type: 'text', style: {} };
-    const el = { text: 'Name' } as any;
-    (builder as any).applyElementToItem(item, el, 'Label');
+    const item: Record<string, unknown> = { type: 'text', style: {} };
+    const el = { text: 'Name' } as Record<string, unknown>;
+    (
+      builder as unknown as {
+        applyElementToItem: (i: unknown, e: unknown, l: string) => void;
+      }
+    ).applyElementToItem(item, el, 'Label');
     expect(item.content).toBe('Name');
   });
 
   test('updateConnector applies hint positions', () => {
     const builder = new BoardBuilder();
-    const connector: any = { style: {}, shape: 'curved' };
-    (builder as any).updateConnector(
+    const connector: Record<string, unknown> = { style: {}, shape: 'curved' };
+    (
+      builder as unknown as { updateConnector: (...args: unknown[]) => void }
+    ).updateConnector(
       connector,
       { from: 'a', to: 'b', label: 'L' },
       { shape: 'elbowed', style: { strokeStyle: 'dotted' } },
@@ -150,13 +212,17 @@ describe('BoardBuilder branch coverage', () => {
     const board = {
       createConnector: jest.fn().mockResolvedValue({ setMetadata: jest.fn() }),
     };
-    (global as any).miro = { board };
+    global.miro = { board };
     const builder = new BoardBuilder();
-    const edge = { from: 'n1', to: 'n2' } as any;
-    const result = await (builder as any).createConnector(
+    const edge = { from: 'n1', to: 'n2' } as Record<string, unknown>;
+    const result = await (
+      builder as unknown as {
+        createConnector: (...args: unknown[]) => Promise<unknown>;
+      }
+    ).createConnector(
       edge,
-      { id: 'a' } as any,
-      { id: 'b' } as any,
+      { id: 'a' } as Record<string, unknown>,
+      { id: 'b' } as Record<string, unknown>,
       undefined,
       undefined,
     );

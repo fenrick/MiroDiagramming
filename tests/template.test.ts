@@ -1,6 +1,10 @@
 import { templateManager } from '../src/templates';
 
-declare const global: any;
+interface GlobalWithMiro {
+  miro?: { board?: Record<string, unknown> };
+}
+
+declare const global: GlobalWithMiro;
 
 describe('createFromTemplate', () => {
   beforeEach(() => {
@@ -50,7 +54,9 @@ describe('createFromTemplate', () => {
   });
 
   test('groups multiple elements', async () => {
-    (templateManager as any).templates.multi = {
+    (
+      templateManager as unknown as { templates: Record<string, unknown> }
+    ).templates.multi = {
       elements: [
         { shape: 'rectangle', width: 50, height: 50 },
         { text: 'test' },
@@ -70,7 +76,9 @@ describe('createFromTemplate', () => {
   });
 
   test('creates text only widget', async () => {
-    (templateManager as any).templates.textOnly = { elements: [{ text: 'T' }] };
+    (
+      templateManager as unknown as { templates: Record<string, unknown> }
+    ).templates.textOnly = { elements: [{ text: 'T' }] };
     const widget = await templateManager.createFromTemplate(
       'textOnly',
       'Label',
@@ -81,7 +89,9 @@ describe('createFromTemplate', () => {
   });
 
   test('apply fill property when style lacks fillColor', async () => {
-    (templateManager as any).templates.fillStyle = {
+    (
+      templateManager as unknown as { templates: Record<string, unknown> }
+    ).templates.fillStyle = {
       elements: [{ shape: 'rect', fill: '#fff', style: {} }],
     };
     const widget = await templateManager.createFromTemplate(

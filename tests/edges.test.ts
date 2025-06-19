@@ -2,7 +2,11 @@ import { graphService } from '../src/graph';
 
 // Tests for the createEdges helper covering edge reuse and hints
 
-declare const global: any;
+interface GlobalWithMiro {
+  miro?: { board?: Record<string, unknown> };
+}
+
+declare const global: GlobalWithMiro;
 
 describe('createEdges', () => {
   beforeEach(() => {
@@ -27,16 +31,25 @@ describe('createEdges', () => {
   test('skips missing nodes', async () => {
     // When a node is missing, no connectors should be created
     const edges = [{ from: 'n1', to: 'n2' }];
-    const nodeMap = { n1: { id: 'a' } } as any;
-    const connectors = await graphService.createEdges(edges as any, nodeMap);
+    const nodeMap = { n1: { id: 'a' } } as Record<string, unknown>;
+    const connectors = await graphService.createEdges(
+      edges as unknown as Array<{ from: string; to: string }>,
+      nodeMap,
+    );
     expect(connectors).toHaveLength(0);
   });
 
   test('creates connectors', async () => {
     const edges = [{ from: 'n1', to: 'n2', label: 'l' }];
-    const nodeMap = { n1: { id: 'a' }, n2: { id: 'b' } } as any;
+    const nodeMap = { n1: { id: 'a' }, n2: { id: 'b' } } as Record<
+      string,
+      unknown
+    >;
     // A new connector should be created between the nodes
-    const connectors = await graphService.createEdges(edges as any, nodeMap);
+    const connectors = await graphService.createEdges(
+      edges as unknown as Array<{ from: string; to: string; label?: string }>,
+      nodeMap,
+    );
     expect(connectors).toHaveLength(1);
     expect(global.miro.board.createConnector).toHaveBeenCalled();
     const args = (global.miro.board.createConnector as jest.Mock).mock
@@ -53,8 +66,14 @@ describe('createEdges', () => {
       },
     ]);
     const edges = [{ from: 'n1', to: 'n2' }];
-    const nodeMap = { n1: { id: 'a' }, n2: { id: 'b' } } as any;
-    const connectors = await graphService.createEdges(edges as any, nodeMap);
+    const nodeMap = { n1: { id: 'a' }, n2: { id: 'b' } } as Record<
+      string,
+      unknown
+    >;
+    const connectors = await graphService.createEdges(
+      edges as unknown as Array<{ from: string; to: string }>,
+      nodeMap,
+    );
     // Existing connector is returned instead of creating a new one
     expect(connectors).toHaveLength(1);
     expect(global.miro.board.createConnector).not.toHaveBeenCalled();
@@ -70,15 +89,20 @@ describe('createEdges', () => {
     };
     (global.miro.board.get as jest.Mock).mockResolvedValueOnce([existing]);
     const edges = [{ from: 'n1', to: 'n2' }];
-    const nodeMap = { n1: { id: 'a' }, n2: { id: 'b' } } as any;
+    const nodeMap = { n1: { id: 'a' }, n2: { id: 'b' } } as Record<
+      string,
+      unknown
+    >;
     const hint = {
       startPosition: { x: 0.1, y: 0.2 },
       endPosition: { x: 0.9, y: 1 },
     };
     // Pass a hint to update the connector positions
-    const connectors = await graphService.createEdges(edges as any, nodeMap, [
-      hint as any,
-    ]);
+    const connectors = await graphService.createEdges(
+      edges as unknown as Array<{ from: string; to: string }>,
+      nodeMap,
+      [hint as unknown],
+    );
     expect(connectors[0]).toBe(existing);
     expect(existing.start.position).toEqual(hint.startPosition);
     expect(existing.end.position).toEqual(hint.endPosition);
@@ -89,11 +113,17 @@ describe('createEdges', () => {
       getMetadata: jest.fn().mockResolvedValue({ from: 'n1', to: 'n2' }),
       sync: jest.fn(),
       id: 'cExisting',
-    } as any;
+    } as Record<string, unknown>;
     (global.miro.board.get as jest.Mock).mockResolvedValueOnce([existing]);
     const edges = [{ from: 'n1', to: 'n2', label: 'L' }];
-    const nodeMap = { n1: { id: 'a' }, n2: { id: 'b' } } as any;
-    const connectors = await graphService.createEdges(edges as any, nodeMap);
+    const nodeMap = { n1: { id: 'a' }, n2: { id: 'b' } } as Record<
+      string,
+      unknown
+    >;
+    const connectors = await graphService.createEdges(
+      edges as unknown as Array<{ from: string; to: string; label?: string }>,
+      nodeMap,
+    );
     // The reused connector should receive a caption from the edge label
     expect(connectors[0]).toBe(existing);
     expect(existing.captions[0].content).toBe('L');

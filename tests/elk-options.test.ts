@@ -6,7 +6,7 @@ import {
 describe('validateLayoutOptions', () => {
   test('returns defaults for invalid options', () => {
     const result = validateLayoutOptions({
-      algorithm: 'bad' as any,
+      algorithm: 'bad' as unknown as never,
       spacing: -1,
     });
     expect(result).toEqual(DEFAULT_LAYOUT_OPTIONS);

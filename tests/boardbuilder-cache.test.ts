@@ -1,5 +1,11 @@
 import { BoardBuilder } from '../src/BoardBuilder';
 
+interface GlobalWithMiro {
+  miro?: { board: Record<string, unknown> };
+}
+
+declare const global: GlobalWithMiro;
+
 /**
  * Additional tests exercising caching and connector styling logic.
  */
@@ -7,14 +13,14 @@ import { BoardBuilder } from '../src/BoardBuilder';
 describe('BoardBuilder caches and connector updates', () => {
   afterEach(() => {
     jest.restoreAllMocks();
-    delete (global as any).miro;
+    delete global.miro;
   });
 
   test('findNode retrieves shape from cache', async () => {
     const shape = {
       getMetadata: jest.fn().mockResolvedValue({ type: 'Role', label: 'B' }),
-    } as any;
-    (global as any).miro = {
+    } as Record<string, unknown>;
+    global.miro = {
       board: { get: jest.fn().mockResolvedValue([shape]) },
     };
     const builder = new BoardBuilder();
@@ -32,12 +38,18 @@ describe('BoardBuilder caches and connector updates', () => {
         id: 'c1',
       }),
     };
-    (global as any).miro = { board };
+    global.miro = { board };
     const builder = new BoardBuilder();
     const edges = [{ from: 'n1', to: 'n2' }];
-    const nodeMap = { n1: { id: 'a' }, n2: { id: 'b' } } as any;
+    const nodeMap = { n1: { id: 'a' }, n2: { id: 'b' } } as Record<
+      string,
+      unknown
+    >;
 
-    await builder.createEdges(edges as any, nodeMap);
+    await builder.createEdges(
+      edges as unknown as Array<{ from: string; to: string }>,
+      nodeMap,
+    );
     const calls = board.get.mock.calls.length;
     await builder.findConnector('n1', 'n2');
     expect(board.get.mock.calls.length).toBe(calls);
@@ -49,17 +61,27 @@ describe('BoardBuilder caches and connector updates', () => {
       sync: jest.fn(),
       id: 'cExisting',
       style: {},
-    } as any;
+    } as Record<string, unknown>;
     const board = {
       get: jest.fn().mockResolvedValueOnce([existing]),
       createConnector: jest.fn(),
     };
-    (global as any).miro = { board };
+    global.miro = { board };
     const builder = new BoardBuilder();
     const edges = [{ from: 'n1', to: 'n2', metadata: { template: 'flow' } }];
-    const nodeMap = { n1: { id: 'a' }, n2: { id: 'b' } } as any;
+    const nodeMap = { n1: { id: 'a' }, n2: { id: 'b' } } as Record<
+      string,
+      unknown
+    >;
 
-    await builder.createEdges(edges as any, nodeMap);
+    await builder.createEdges(
+      edges as unknown as Array<{
+        from: string;
+        to: string;
+        metadata: { template: string };
+      }>,
+      nodeMap,
+    );
     expect(existing.style.strokeStyle).toBe('dashed');
   });
 });

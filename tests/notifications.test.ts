@@ -1,6 +1,10 @@
 import { showError } from '../src/notifications';
 
-declare const global: any;
+interface GlobalWithMiro {
+  miro?: { board?: Record<string, unknown> };
+}
+
+declare const global: GlobalWithMiro;
 
 describe('showError', () => {
   beforeEach(() => {
