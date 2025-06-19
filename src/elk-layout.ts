@@ -1,4 +1,5 @@
 import ELK from 'elkjs/lib/elk.bundled.js';
+import type { ElkNode } from 'elkjs/lib/elk-api';
 import { GraphData } from './graph';
 import { templateManager } from './templates';
 import { UserLayoutOptions, validateLayoutOptions } from './elk-options';
@@ -65,7 +66,7 @@ export class LayoutEngine {
     opts: Partial<UserLayoutOptions> = {},
   ): Promise<LayoutResult> {
     const userOpts = validateLayoutOptions(opts);
-    const elkGraph: any = {
+    const elkGraph: ElkNode = {
       id: 'root',
       layoutOptions: {
         // Basic layered layout configuration
@@ -75,7 +76,7 @@ export class LayoutEngine {
         'elk.layered.mergeEdges': 'false',
         'elk.direction': userOpts.direction,
         'elk.layered.spacing.nodeNodeBetweenLayers': String(userOpts.spacing),
-        'elk.spacing.nodeNode': userOpts.spacing,
+        'elk.spacing.nodeNode': userOpts.spacing as unknown as string,
         'elk.layered.unnecessaryBendpoints': 'true',
         'elk.layered.cycleBreaking.strategy': 'GREEDY',
       },
@@ -85,10 +86,14 @@ export class LayoutEngine {
         const dims = tpl?.elements.find(e => e.width && e.height);
         // istanbul ignore next: fall back to template or default dimensions
         const width =
-          (n as any).metadata?.width ?? dims?.width ?? DEFAULT_WIDTH;
+          (n.metadata as { width?: number } | undefined)?.width ??
+          dims?.width ??
+          DEFAULT_WIDTH;
         // istanbul ignore next: fall back to template or default dimensions
         const height =
-          (n as any).metadata?.height ?? dims?.height ?? DEFAULT_HEIGHT;
+          (n.metadata as { height?: number } | undefined)?.height ??
+          dims?.height ??
+          DEFAULT_HEIGHT;
         return { id: n.id, width, height };
       }),
       edges: data.edges.map((e, idx) => ({
@@ -98,7 +103,7 @@ export class LayoutEngine {
       })),
     };
 
-    const layouted: any = await this.elk.layout(elkGraph);
+    const layouted = await this.elk.layout(elkGraph);
     const nodes: Record<string, PositionedNode> = {};
     const edges: PositionedEdge[] = [];
     // Convert ELK child nodes to a lookup table by id

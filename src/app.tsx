@@ -17,6 +17,8 @@ import {
   DEFAULT_LAYOUT_OPTIONS,
   DIRECTIONS,
   UserLayoutOptions,
+  ElkAlgorithm,
+  ElkDirection,
 } from './elk-options';
 
 // UI
@@ -206,7 +208,10 @@ export const App: React.FC = () => {
             <Select
               value={layoutOpts.algorithm}
               onChange={value =>
-                setLayoutOpts({ ...layoutOpts, algorithm: value as any })
+                setLayoutOpts({
+                  ...layoutOpts,
+                  algorithm: value as ElkAlgorithm,
+                })
               }
             >
               {ALGORITHMS.map(a => (
@@ -221,7 +226,10 @@ export const App: React.FC = () => {
             <Select
               value={layoutOpts.direction}
               onChange={value =>
-                setLayoutOpts({ ...layoutOpts, direction: value as any })
+                setLayoutOpts({
+                  ...layoutOpts,
+                  direction: value as ElkDirection,
+                })
               }
             >
               {DIRECTIONS.map(d => (

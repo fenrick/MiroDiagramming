@@ -10,6 +10,11 @@ import type {
   ConnectorStyle,
   Frame,
   Group,
+  Shape,
+  ShapeStyle,
+  Text,
+  TextStyle,
+  TextAlignVertical,
 } from '@mirohq/websdk-types';
 import type { EdgeData, EdgeHint, NodeData, PositionedNode } from './graph';
 
@@ -85,7 +90,10 @@ export class BoardBuilder {
   /** Move the viewport to show the provided frame or widgets. */
   public async zoomTo(target: Frame | Array<BaseItem | Group>): Promise<void> {
     this.ensureBoard();
-    await miro.board.viewport.zoomTo(target as any);
+    const items = Array.isArray(target)
+      ? (target as Array<BaseItem>)
+      : (target as BaseItem);
+    await miro.board.viewport.zoomTo(items);
   }
 
   /** Lookup an existing widget with matching metadata. */
@@ -166,9 +174,13 @@ export class BoardBuilder {
         const from = nodeMap[edge.from];
         const to = nodeMap[edge.to];
         if (!from || !to) return undefined;
-        const template = templateManager.getConnectorTemplate(
-          (edge.metadata as any)?.template || 'default',
-        );
+        const templateName =
+          edge.metadata &&
+          'template' in edge.metadata &&
+          typeof edge.metadata.template === 'string'
+            ? edge.metadata.template
+            : 'default';
+        const template = templateManager.getConnectorTemplate(templateName);
         const existing = await this.findConnector(edge.from, edge.to);
         if (existing) {
           this.updateConnector(existing, edge, template, hints?.[i]);
@@ -186,8 +198,10 @@ export class BoardBuilder {
   ): Promise<void> {
     await Promise.all(
       items
-        .filter(i => typeof (i as any).sync === 'function')
-        .map(i => (i as any).sync()),
+        .filter(
+          i => typeof (i as { sync?: () => Promise<void> }).sync === 'function',
+        )
+        .map(i => (i as { sync: () => Promise<void> }).sync()),
     );
   }
 
@@ -196,7 +210,9 @@ export class BoardBuilder {
     items: Array<BaseItem | Group | Connector | Frame>,
   ): Promise<void> {
     this.ensureBoard();
-    await Promise.all(items.map(i => miro.board.remove(i as any)));
+    await Promise.all(
+      items.map(item => miro.board.remove(item as unknown as BaseItem)),
+    );
   }
 
   private ensureBoard(): void {
@@ -225,13 +241,13 @@ export class BoardBuilder {
    * Find an item whose metadata satisfies the provided predicate.
    * Metadata for all items is loaded concurrently for efficiency.
    */
-  private async findByMetadata<T extends BaseItem | Group | Connector>(
+  private async findByMetadata<
+    T extends { getMetadata: (key: string) => Promise<unknown> },
+  >(
     items: T[],
-    predicate: (meta: any, item: T) => boolean,
+    predicate: (meta: unknown, item: T) => boolean,
   ): Promise<T | undefined> {
-    const metas = await Promise.all(
-      items.map(i => (i as any).getMetadata(META_KEY)),
-    );
+    const metas = await Promise.all(items.map(i => i.getMetadata(META_KEY)));
     for (let i = 0; i < items.length; i++) {
       if (predicate(metas[i], items[i])) {
         return items[i];
@@ -289,24 +305,23 @@ export class BoardBuilder {
     element: TemplateElement,
     label: string,
   ): void {
-    if (element.shape) (item as any).shape = element.shape;
-    if (element.rotation !== undefined)
-      (item as any).rotation = element.rotation;
-    if (element.width) (item as any).width = element.width;
-    if (element.height) (item as any).height = element.height;
-    (item as any).content = (element.text ?? '{{label}}').replace(
-      '{{label}}',
-      label,
-    );
-    const existing = (item as any).style ?? {};
-    const style: Record<string, unknown> = {
+    const shape = item as Shape;
+    if (element.shape) shape.shape = element.shape as Shape['shape'];
+    if (element.rotation !== undefined) shape.rotation = element.rotation;
+    if (element.width)
+      (shape as unknown as { width: number }).width = element.width;
+    if (element.height)
+      (shape as unknown as { height: number }).height = element.height;
+    shape.content = (element.text ?? '{{label}}').replace('{{label}}', label);
+    const existing = (shape.style ?? {}) as Partial<ShapeStyle>;
+    const style: Partial<ShapeStyle> & Record<string, unknown> = {
       ...existing,
       ...(element.style ?? {}),
     };
     if (element.fill && !('fillColor' in style)) {
-      (style as any).fillColor = element.fill;
+      style.fillColor = element.fill;
     }
-    (item as any).style = style as any;
+    shape.style = style as ShapeStyle;
   }
 
   /**
@@ -317,15 +332,13 @@ export class BoardBuilder {
     element: TemplateElement,
     label: string,
   ): void {
-    (item as any).content = (element.text ?? '{{label}}').replace(
-      '{{label}}',
-      label,
-    );
+    const text = item as Text;
+    text.content = (element.text ?? '{{label}}').replace('{{label}}', label);
     if (element.style) {
-      (item as any).style = {
-        ...((item as any).style ?? {}),
-        ...(element.style as any),
-      };
+      text.style = {
+        ...(text.style ?? ({} as Partial<TextStyle>)),
+        ...(element.style as Partial<TextStyle>),
+      } as TextStyle;
     }
   }
 
@@ -430,7 +443,8 @@ export class BoardBuilder {
         {
           content: edge.label,
           position: template?.caption?.position,
-          textAlignVertical: template?.caption?.textAlignVertical as any,
+          textAlignVertical: template?.caption
+            ?.textAlignVertical as TextAlignVertical,
         },
       ];
     }
@@ -438,20 +452,20 @@ export class BoardBuilder {
       connector.style = {
         ...connector.style,
         ...template.style,
-      } as ConnectorStyle as any;
+      } as ConnectorStyle;
     }
     connector.shape = template?.shape ?? connector.shape;
     if (hint?.startPosition) {
       connector.start = {
         ...(connector.start ?? {}),
         position: hint.startPosition,
-      } as any;
+      } as Connector['start'];
     }
     if (hint?.endPosition) {
       connector.end = {
         ...(connector.end ?? {}),
         position: hint.endPosition,
-      } as any;
+      } as Connector['end'];
     }
   }
 
@@ -474,11 +488,12 @@ export class BoardBuilder {
             {
               content: edge.label,
               position: template?.caption?.position,
-              textAlignVertical: template?.caption?.textAlignVertical as any,
+              textAlignVertical: template?.caption
+                ?.textAlignVertical as TextAlignVertical,
             },
           ]
         : undefined,
-      style: template?.style as any,
+      style: template?.style as ConnectorStyle | undefined,
     });
     await connector.setMetadata(META_KEY, {
       from: edge.from,
