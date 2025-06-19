@@ -2,7 +2,9 @@
 jest.mock('../src/DiagramApp', () => {
   return {
     DiagramApp: {
-      getInstance: jest.fn(() => ({ init: jest.fn() })),
+      getInstance: jest.fn(() => ({
+        init: jest.fn().mockResolvedValue(undefined),
+      })),
     },
   };
 });

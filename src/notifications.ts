@@ -9,12 +9,12 @@
  *
  * @param message - The text to display.
  */
-export function showError(message: string): void {
+export async function showError(message: string): Promise<void> {
   const trimmed = message.length > 80 ? `${message.slice(0, 77)}...` : message;
   // Log the original message to the browser console for troubleshooting.
   // The raw message is logged to preserve detail, while the trimmed version is
   // passed to the Miro notification API.
   // eslint-disable-next-line no-console
   console.error(message);
-  miro.board.notifications.showError(trimmed);
+  await miro.board.notifications.showError(trimmed);
 }

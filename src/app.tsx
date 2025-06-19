@@ -35,12 +35,12 @@ const dropzoneStyles = {
 } as const;
 
 /** Undo last import and reset state helper. */
-export function undoLastImport(
+export async function undoLastImport(
   proc: GraphProcessor | CardProcessor | undefined,
   clear: () => void,
-): void {
+): Promise<void> {
   if (!proc) return;
-  proc.undoLast();
+  await proc.undoLast();
   clear();
 }
 
@@ -120,7 +120,7 @@ export const App: React.FC = () => {
       } catch (e) {
         const msg = String(e);
         setError(msg);
-        showError(msg);
+        await showError(msg);
       }
     }
     setFiles([]);
@@ -263,9 +263,9 @@ export const App: React.FC = () => {
           {error && <p className="error">{error}</p>}
           {lastProc && (
             <Button
-              onClick={() =>
-                undoLastImport(lastProc, () => setLastProc(undefined))
-              }
+              onClick={() => {
+                void undoLastImport(lastProc, () => setLastProc(undefined));
+              }}
               size="small"
               style={{ marginTop: '8px' }}
             >
