@@ -214,7 +214,10 @@ describe('CardProcessor branches', function () {
           case 0:
             cp = new CardProcessor_1.CardProcessor();
             cp.ensureTagIds = jest.fn().mockResolvedValue([]);
-            card = { taskStatus: 'old', setMetadata: jest.fn() };
+            card = {
+              taskStatus: 'old',
+              setMetadata: jest.fn(),
+            };
             return [
               4 /*yield*/,
               cp.updateCardWidget(card, { id: '1', title: 't' }, new Map()),

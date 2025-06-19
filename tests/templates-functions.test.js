@@ -7,7 +7,9 @@ test('template helpers return values or undefined', function () {
   expect(templates_1.templateManager.getTemplate('Role')).toBeDefined();
   // Unknown template returns undefined
   expect(templates_1.templateManager.getTemplate('nope')).toBeUndefined();
-  templates_1.connectorTemplates.extra = { shape: 'straight' };
+  templates_1.connectorTemplates.extra = {
+    shape: 'straight',
+  };
   // Connector template lookup should return our extra entry
   var tpl = templates_1.templateManager.getConnectorTemplate('extra');
   expect(tpl === null || tpl === void 0 ? void 0 : tpl.shape).toBe('straight');
