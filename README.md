@@ -73,6 +73,15 @@ selection radios are grouped with a descriptive label.
 - [TypeScript](https://www.typescriptlang.org/)
 - [Vite](https://vitejs.dev/)
 
+## Styling with Mirotone
+
+The CSS for this project imports
+[`mirotone/dist/styles.css`](https://www.mirotone.xyz/css) in
+[`src/assets/style.css`](src/assets/style.css) to match the Miro UI. When adding
+new UI elements reuse the Mirotone utility classes such as `button`,
+`button-primary` and the grid helpers so your components align with existing
+styles.
+
 ## ✅ Prerequisites <a name="prerequisites"></a>
 
 - You have a [Miro account](https://miro.com/signup/).
@@ -131,14 +140,15 @@ npm install
 Then validate the codebase with:
 
 ```bash
-npm run typecheck
-npm test
-npm run lint
+npm run typecheck --silent
+npm test --silent
+npm run lint --silent
+npm run prettier --silent
 ```
 
-These commands perform TypeScript type checking, execute a small Jest suite
-and run ESLint. The linter uses the `@typescript-eslint` recommended ruleset
-with a few overrides, so code should pass `npm run lint` without errors.
+These commands perform TypeScript type checking, execute the Jest suite,
+run ESLint and format files with Prettier. Run them before committing so code
+conforms to the repository guidelines.
 
 ## Building a Production Bundle
 
