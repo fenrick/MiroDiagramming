@@ -125,8 +125,7 @@ export class TemplateManager {
     }
 
     if (created.length > 1) {
-      const group = await miro.board.group({ items: created });
-      return group;
+      return await miro.board.group({ items: created });
     }
 
     return created[0];
