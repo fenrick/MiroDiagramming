@@ -55,6 +55,13 @@ A small example is provided in [sample-graph.json](sample-graph.json):
 }
 ```
 
+## Accessibility
+
+The import panel is keyboard accessible. The drop area includes an ARIA label
+and hidden instructions so screen readers announce how to operate it. Focus the
+area with the Tab key and press **Enter** to open the file picker. The mode
+selection radios are grouped with a descriptive label.
+
 ## Setup
 
 - [Miro Web SDK](https://developers.miro.com/docs/web-sdk-reference)

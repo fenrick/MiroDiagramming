@@ -113,7 +113,11 @@ export const App: React.FC = () => {
 
   return (
     <div className="dnd-container">
-      <div style={{ marginBottom: '8px' }}>
+      <div
+        style={{ marginBottom: '8px' }}
+        role="radiogroup"
+        aria-label="Import mode"
+      >
         <label>
           <input
             type="radio"
@@ -137,8 +141,15 @@ export const App: React.FC = () => {
         Select the JSON file to import{' '}
         {mode === 'diagram' ? 'a diagram' : 'a list of cards'}
       </p>
-      <div {...dropzone.getRootProps({ style })}>
-        <input data-testid="file-input" {...dropzone.getInputProps()} />
+      <div
+        {...dropzone.getRootProps({ style })}
+        aria-label="File drop area"
+        aria-describedby="dropzone-instructions"
+      >
+        <input
+          data-testid="file-input"
+          {...dropzone.getInputProps({ 'aria-label': 'JSON file input' })}
+        />
         {dropzone.isDragAccept ? (
           <p className="dnd-text">Drop your JSON file here</p>
         ) : (
@@ -155,6 +166,10 @@ export const App: React.FC = () => {
           </>
         )}
       </div>
+      <p id="dropzone-instructions" className="visually-hidden">
+        Press Enter to open the file picker or drop a JSON file on the area
+        above.
+      </p>
       {files.length > 0 && (
         <>
           <ul className="dropped-files">
