@@ -4,7 +4,11 @@ declare const global: any;
 
 describe('showError', () => {
   beforeEach(() => {
-    global.miro = { board: { notifications: { showError: jest.fn() } } };
+    global.miro = {
+      board: {
+        notifications: { showError: jest.fn().mockResolvedValue(undefined) },
+      },
+    };
     jest.spyOn(console, 'error').mockImplementation(() => {});
   });
 
@@ -13,17 +17,17 @@ describe('showError', () => {
     delete global.miro;
   });
 
-  test('passes through short messages', () => {
-    showError('fail');
+  test('passes through short messages', async () => {
+    await showError('fail');
     expect(console.error).toHaveBeenCalledWith('fail');
     expect(global.miro.board.notifications.showError).toHaveBeenCalledWith(
       'fail',
     );
   });
 
-  test('truncates long messages', () => {
+  test('truncates long messages', async () => {
     const long = 'a'.repeat(90);
-    showError(long);
+    await showError(long);
     expect(console.error).toHaveBeenCalledWith(long);
     const arg = (global.miro.board.notifications.showError as jest.Mock).mock
       .calls[0][0];

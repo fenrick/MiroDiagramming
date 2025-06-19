@@ -10,7 +10,11 @@ declare const global: any;
 
 describe('App UI integration', () => {
   beforeEach(() => {
-    global.miro = { board: { notifications: { showError: jest.fn() } } };
+    global.miro = {
+      board: {
+        notifications: { showError: jest.fn().mockResolvedValue(undefined) },
+      },
+    };
   });
 
   afterEach(() => {
@@ -125,10 +129,10 @@ describe('App UI integration', () => {
     );
   });
 
-  test('undoLastImport helper calls undo and clears state', () => {
-    const proc = { undoLast: jest.fn() } as any;
+  test('undoLastImport helper calls undo and clears state', async () => {
+    const proc = { undoLast: jest.fn().mockResolvedValue(undefined) } as any;
     let cleared = false;
-    undoLastImport(proc, () => {
+    await undoLastImport(proc, () => {
       cleared = true;
     });
     expect(proc.undoLast).toHaveBeenCalled();
