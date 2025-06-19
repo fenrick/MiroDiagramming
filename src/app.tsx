@@ -28,7 +28,6 @@ export const App: React.FC = () => {
   const [withFrame, setWithFrame] = React.useState(false);
   const [frameTitle, setFrameTitle] = React.useState('');
   const [mode, setMode] = React.useState<'diagram' | 'cards'>('diagram');
-  const [preview, setPreview] = React.useState<string>('');
   const [progress, setProgress] = React.useState<number>(0);
   const [error, setError] = React.useState<string | null>(null);
   const [lastProc, setLastProc] = React.useState<
@@ -42,12 +41,6 @@ export const App: React.FC = () => {
     onDrop: (droppedFiles: File[]) => {
       const file = droppedFiles[0];
       setFiles([file]);
-      const reader = new FileReader();
-      reader.onload = e => {
-        const text = String(e.target?.result || '');
-        setPreview(text.slice(0, 200));
-      };
-      reader.readAsText(file);
     },
   });
 
@@ -174,13 +167,6 @@ export const App: React.FC = () => {
           </button>
           {progress > 0 && progress < 100 && (
             <progress value={progress} max={100} style={{ width: '100%' }} />
-          )}
-          {preview && (
-            <pre
-              style={{ textAlign: 'left', maxHeight: 120, overflow: 'auto' }}
-            >
-              {preview}
-            </pre>
           )}
           {error && <p className="error">{error}</p>}
           {lastProc && (
