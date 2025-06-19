@@ -1,4 +1,4 @@
-import type { CardField, CardStyle } from '@mirohq/websdk-types';
+import type { CardField, CardStyle, CardTaskStatus } from '@mirohq/websdk-types';
 import { fileUtils } from './file-utils';
 
 export interface CardData {
@@ -7,8 +7,9 @@ export interface CardData {
   title: string;
   description?: string;
   tags?: string[];
-  style?: CardStyle & Record<string, unknown>;
+  style?: Partial<Pick<CardStyle, 'cardTheme' | 'fillBackground'>>;
   fields?: CardField[];
+  taskStatus?: CardTaskStatus;
 }
 
 export interface CardFile {
@@ -20,6 +21,26 @@ export class CardLoader {
   private static instance: CardLoader;
 
   private constructor() {}
+
+  /** Extract supported style fields and normalize values. */
+  private normalizeCard(card: any): CardData {
+    const styleRaw = card.style ?? {};
+    const style: Partial<Pick<CardStyle, 'cardTheme' | 'fillBackground'>> = {};
+    if (styleRaw.cardTheme) style.cardTheme = styleRaw.cardTheme;
+    if (styleRaw.fillBackground !== undefined) {
+      style.fillBackground = styleRaw.fillBackground === true ||
+        styleRaw.fillBackground === 'true';
+    }
+    return {
+      id: card.id,
+      title: card.title,
+      description: card.description,
+      tags: Array.isArray(card.tags) ? card.tags : undefined,
+      fields: Array.isArray(card.fields) ? card.fields : undefined,
+      taskStatus: card.taskStatus,
+      style: Object.keys(style).length ? style : undefined,
+    };
+  }
 
   /** Access the shared loader instance. */
   public static getInstance(): CardLoader {
@@ -37,7 +58,7 @@ export class CardLoader {
     if (!data || !Array.isArray((data as any).cards)) {
       throw new Error('Invalid card data');
     }
-    return (data as CardFile).cards;
+    return (data as CardFile).cards.map(c => this.normalizeCard(c));
   }
 }
 

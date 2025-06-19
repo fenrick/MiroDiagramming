@@ -125,6 +125,7 @@ export class CardProcessor {
       tagIds,
       fields: def.fields,
       style: def.style as CardStyle,
+      taskStatus: def.taskStatus,
       x,
       y,
     })) as Card;
@@ -147,6 +148,7 @@ export class CardProcessor {
     (card as any).tagIds = tagIds;
     (card as any).fields = def.fields;
     (card as any).style = def.style as CardStyle;
+    if (def.taskStatus) (card as any).taskStatus = def.taskStatus;
     if (def.id) {
       await (card as any).setMetadata(CardProcessor.META_KEY, { id: def.id });
     }

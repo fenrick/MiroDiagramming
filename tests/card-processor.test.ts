@@ -55,8 +55,20 @@ describe('CardProcessor', () => {
   });
 
   test('processCards creates cards', async () => {
-    await processor.processCards([{ title: 'A', tags: [] }]);
+    await processor.processCards([
+      {
+        title: 'A',
+        tags: [],
+        taskStatus: 'done',
+        style: { cardTheme: '#fff', fillBackground: true },
+        fields: [{ value: 'v' }],
+      },
+    ]);
     expect(global.miro.board.createCard).toHaveBeenCalled();
+    const args = (global.miro.board.createCard as jest.Mock).mock.calls[0][0];
+    expect(args.taskStatus).toBe('done');
+    expect(args.style).toEqual({ cardTheme: '#fff', fillBackground: true });
+    expect(args.fields).toEqual([{ value: 'v' }]);
     expect(global.miro.board.viewport.zoomTo).toHaveBeenCalled();
   });
 
@@ -92,6 +104,8 @@ describe('CardProcessor', () => {
     const existing = {
       id: 'c2',
       title: 'old',
+      fields: [],
+      taskStatus: 'to-do',
       getMetadata: jest.fn().mockResolvedValue({ id: 'match' }),
       setMetadata: jest.fn(),
       sync: jest.fn(),
@@ -103,9 +117,20 @@ describe('CardProcessor', () => {
         return [];
       },
     );
-    await processor.processCards([{ id: 'match', title: 'new' }]);
+    await processor.processCards([
+      {
+        id: 'match',
+        title: 'new',
+        fields: [{ value: 'z' }],
+        style: { cardTheme: '#000', fillBackground: true },
+        taskStatus: 'in-progress',
+      },
+    ]);
     expect(global.miro.board.createCard).not.toHaveBeenCalled();
     expect(existing.title).toBe('new');
+    expect(existing.fields).toEqual([{ value: 'z' }]);
+    expect(existing.style).toEqual({ cardTheme: '#000', fillBackground: true });
+    expect(existing.taskStatus).toBe('in-progress');
     expect(existing.setMetadata).toHaveBeenCalledWith('app.miro.cards', {
       id: 'match',
     });

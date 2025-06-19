@@ -11,13 +11,29 @@ describe('loadCards', () => {
       onload: ((e: any) => void) | null = null;
       onerror: (() => void) | null = null;
       readAsText() {
-        this.onload &&
-          this.onload({ target: { result: '{"cards":[{"title":"t"}]}' } });
+        const json = {
+          cards: [
+            {
+              title: 't',
+              taskStatus: 'done',
+              style: { cardTheme: '#fff', fillBackground: 'true', extra: 1 },
+              fields: [{ value: 'x' }],
+            },
+          ],
+        };
+        this.onload && this.onload({ target: { result: JSON.stringify(json) } });
       }
     }
     (global as any).FileReader = FR;
     const data = await cardLoader.loadCards({ name: 'c.json' } as any);
-    expect(data).toEqual([{ title: 't' }]);
+    expect(data).toEqual([
+      {
+        title: 't',
+        taskStatus: 'done',
+        style: { cardTheme: '#fff', fillBackground: true },
+        fields: [{ value: 'x' }],
+      },
+    ]);
   });
 
   test('getInstance creates singleton when missing', () => {
