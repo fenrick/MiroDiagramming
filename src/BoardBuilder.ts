@@ -98,8 +98,8 @@ export class BoardBuilder {
 
   /** Lookup an existing widget with matching metadata. */
   public async findNode(
-    type: string,
-    label: string,
+    type: unknown,
+    label: unknown,
   ): Promise<BaseItem | Group | undefined> {
     if (typeof type !== 'string' || typeof label !== 'string') {
       throw new Error('Invalid search parameters');
@@ -111,8 +111,8 @@ export class BoardBuilder {
 
   /** Find a connector with matching metadata if it exists on the board. */
   public async findConnector(
-    from: string,
-    to: string,
+    from: unknown,
+    to: unknown,
   ): Promise<Connector | undefined> {
     if (typeof from !== 'string' || typeof to !== 'string') {
       throw new Error('Invalid search parameters');
@@ -127,28 +127,34 @@ export class BoardBuilder {
 
   /** Create or update a node widget from a template. */
   public async createNode(
-    node: NodeData,
+    node: unknown,
     pos: PositionedNode,
   ): Promise<BaseItem | Group> {
-    if (!node || typeof node !== 'object') {
-      throw new Error('Invalid node');
-    }
     if (!pos || typeof pos.x !== 'number' || typeof pos.y !== 'number') {
       throw new Error('Invalid position');
     }
-    const templateDef = templateManager.getTemplate(node.type);
-    if (!templateDef) {
-      throw new Error(`Template '${node.type}' not found`);
+    if (
+      !node ||
+      typeof node !== 'object' ||
+      typeof (node as any).type !== 'string' ||
+      typeof (node as any).label !== 'string'
+    ) {
+      throw new Error('Invalid node');
     }
-    const existing = await this.findNode(node.type, node.label);
+    const nodeData = node as NodeData;
+    const templateDef = templateManager.getTemplate(nodeData.type);
+    if (!templateDef) {
+      throw new Error(`Template '${nodeData.type}' not found`);
+    }
+    const existing = await this.findNode(nodeData.type, nodeData.label);
     if (existing) {
       return this.updateExistingNode(
         existing as BaseItem | Group,
         templateDef,
-        node,
+        nodeData,
       );
     }
-    return this.createNewNode(node, pos);
+    return this.createNewNode(nodeData, pos);
   }
 
   /** Create connectors with labels, metadata and optional snap hints. */

@@ -43,8 +43,8 @@ export class FileUtils {
   }
 
   /** Ensure the provided object is a valid `File`. */
-  public validateFile(file: File): void {
-    if (!file || typeof file !== 'object' || typeof file.name !== 'string') {
+  public validateFile(file: unknown): void {
+    if (!file || typeof (file as { name?: unknown }).name !== 'string') {
       throw new Error('Invalid file');
     }
   }
