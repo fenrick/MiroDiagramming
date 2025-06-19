@@ -175,14 +175,19 @@ describe('file utils', function () {
                 this.onerror = null;
               }
               FR.prototype.readAsText = function () {
-                this.onload && this.onload({ target: { result: 'def' } });
+                if (this.onload) {
+                  var evt = { target: { result: 'def' } };
+                  this.onload(evt);
+                }
               };
               return FR;
             })();
             global.FileReader = FR;
             return [
               4 /*yield*/,
-              file_utils_1.fileUtils.readFileAsText({ name: 'f.txt' }),
+              file_utils_1.fileUtils.readFileAsText({
+                name: 'f.txt',
+              }),
             ];
           case 1:
             result = _a.sent();

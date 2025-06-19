@@ -161,10 +161,12 @@ describe('loadGraph', function () {
                 this.onerror = null;
               }
               FR.prototype.readAsText = function () {
-                this.onload &&
-                  this.onload({
+                if (this.onload) {
+                  var evt = {
                     target: { result: '{"nodes":[],"edges":[]}' },
-                  });
+                  };
+                  this.onload(evt);
+                }
               };
               return FR;
             })();
@@ -213,7 +215,10 @@ describe('loadGraph', function () {
                 this.onload = null;
               }
               FR.prototype.readAsText = function () {
-                this.onload && this.onload({ target: { result: '[]' } });
+                if (this.onload) {
+                  var evt = { target: { result: '[]' } };
+                  this.onload(evt);
+                }
               };
               return FR;
             })();
@@ -243,7 +248,10 @@ describe('loadGraph', function () {
                 this.onload = null;
               }
               FR.prototype.readAsText = function () {
-                this.onload && this.onload({ target: null });
+                if (this.onload) {
+                  var evt = { target: null };
+                  this.onload(evt);
+                }
               };
               return FR;
             })();

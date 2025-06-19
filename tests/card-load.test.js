@@ -169,15 +169,21 @@ describe('loadCards', function () {
                     },
                   ],
                 };
-                this.onload &&
-                  this.onload({ target: { result: JSON.stringify(json) } });
+                if (this.onload) {
+                  var evt = {
+                    target: { result: JSON.stringify(json) },
+                  };
+                  this.onload(evt);
+                }
               };
               return FR;
             })();
             global.FileReader = FR;
             return [
               4 /*yield*/,
-              cards_1.cardLoader.loadCards({ name: 'c.json' }),
+              cards_1.cardLoader.loadCards({
+                name: 'c.json',
+              }),
             ];
           case 1:
             data = _a.sent();
@@ -229,7 +235,10 @@ describe('loadCards', function () {
                 this.onload = null;
               }
               FR.prototype.readAsText = function () {
-                this.onload && this.onload({ target: { result: '[]' } });
+                if (this.onload) {
+                  var evt = { target: { result: '[]' } };
+                  this.onload(evt);
+                }
               };
               return FR;
             })();
@@ -259,7 +268,10 @@ describe('loadCards', function () {
                 this.onerror = null;
               }
               FR.prototype.readAsText = function () {
-                this.onload && this.onload({});
+                if (this.onload) {
+                  var evt = { target: null };
+                  this.onload(evt);
+                }
               };
               return FR;
             })();

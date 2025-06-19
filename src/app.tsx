@@ -16,9 +16,9 @@ import {
   ALGORITHMS,
   DEFAULT_LAYOUT_OPTIONS,
   DIRECTIONS,
-  UserLayoutOptions,
   ElkAlgorithm,
   ElkDirection,
+  UserLayoutOptions,
 } from './elk-options';
 
 // UI
@@ -132,19 +132,19 @@ export const App: React.FC = () => {
   );
 
   return (
-    <div className="dnd-container">
+    <div className='dnd-container'>
       <div
         style={{ marginBottom: '8px' }}
-        role="radiogroup"
-        aria-label="Import mode"
+        role='radiogroup'
+        aria-label='Import mode'
       >
         <RadioButton
-          label="Diagram"
+          label='Diagram'
           value={mode === 'diagram'}
           onChange={() => setMode('diagram')}
         />
         <RadioButton
-          label="Cards"
+          label='Cards'
           value={mode === 'cards'}
           onChange={() => setMode('cards')}
           style={{ marginLeft: '8px' }}
@@ -156,47 +156,47 @@ export const App: React.FC = () => {
       </p>
       <div
         {...dropzone.getRootProps({ style })}
-        aria-label="File drop area"
-        aria-describedby="dropzone-instructions"
+        aria-label='File drop area'
+        aria-describedby='dropzone-instructions'
       >
         <input
-          data-testid="file-input"
+          data-testid='file-input'
           {...dropzone.getInputProps({ 'aria-label': 'JSON file input' })}
         />
         {dropzone.isDragAccept ? (
-          <p className="dnd-text">Drop your JSON file here</p>
+          <p className='dnd-text'>Drop your JSON file here</p>
         ) : (
           <>
             <div>
-              <Button variant="primary" size="small" type="button">
+              <Button variant='primary' size='small' type='button'>
                 Select JSON file
               </Button>
-              <p className="dnd-text">Or drop your JSON file here</p>
+              <p className='dnd-text'>Or drop your JSON file here</p>
             </div>
           </>
         )}
       </div>
-      <p id="dropzone-instructions" className="visually-hidden">
+      <p id='dropzone-instructions' className='visually-hidden'>
         Press Enter to open the file picker or drop a JSON file on the area
         above.
       </p>
       {files.length > 0 && (
         <>
-          <ul className="dropped-files">
+          <ul className='dropped-files'>
             {files.map((file, i) => (
               <li key={i}>{file.name}</li>
             ))}
           </ul>
           <div style={{ marginTop: '8px' }}>
             <Checkbox
-              label="Wrap items in frame"
+              label='Wrap items in frame'
               value={withFrame}
               onChange={setWithFrame}
             />
           </div>
           {withFrame && (
             <Input
-              placeholder="Frame title"
+              placeholder='Frame title'
               value={frameTitle}
               onChange={setFrameTitle}
               style={{ marginTop: '4px', width: '100%' }}
@@ -242,7 +242,7 @@ export const App: React.FC = () => {
           <label style={{ display: 'block', marginTop: '4px' }}>
             Spacing
             <Input
-              type="number"
+              type='number'
               value={String(layoutOpts.spacing)}
               onChange={value =>
                 setLayoutOpts({
@@ -254,19 +254,19 @@ export const App: React.FC = () => {
             />
           </label>
 
-          <Button onClick={handleCreate} size="small" variant="primary">
+          <Button onClick={handleCreate} size='small' variant='primary'>
             {mode === 'diagram' ? 'Create Diagram' : 'Create Cards'}
           </Button>
           {progress > 0 && progress < 100 && (
             <progress value={progress} max={100} style={{ width: '100%' }} />
           )}
-          {error && <p className="error">{error}</p>}
+          {error && <p className='error'>{error}</p>}
           {lastProc && (
             <Button
               onClick={() => {
                 void undoLastImport(lastProc, () => setLastProc(undefined));
               }}
-              size="small"
+              size='small'
               style={{ marginTop: '8px' }}
             >
               Undo Last Import

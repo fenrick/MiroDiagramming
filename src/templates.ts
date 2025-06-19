@@ -5,8 +5,8 @@ import type {
   Frame,
   Group,
   GroupableItem,
-  ShapeType,
   ShapeStyle,
+  ShapeType,
   TextStyle,
 } from '@mirohq/websdk-types';
 

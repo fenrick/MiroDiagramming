@@ -13,8 +13,8 @@ import type {
   Shape,
   ShapeStyle,
   Text,
-  TextStyle,
   TextAlignVertical,
+  TextStyle,
 } from '@mirohq/websdk-types';
 import type { EdgeData, EdgeHint, NodeData, PositionedNode } from './graph';
 

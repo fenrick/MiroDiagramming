@@ -169,15 +169,21 @@ describe('CardLoader normalization', function () {
                     },
                   ],
                 };
-                this.onload &&
-                  this.onload({ target: { result: JSON.stringify(json) } });
+                if (this.onload) {
+                  var evt = {
+                    target: { result: JSON.stringify(json) },
+                  };
+                  this.onload(evt);
+                }
               };
               return FR;
             })();
             global.FileReader = FR;
             return [
               4 /*yield*/,
-              cards_1.cardLoader.loadCards({ name: 'c.json' }),
+              cards_1.cardLoader.loadCards({
+                name: 'c.json',
+              }),
             ];
           case 1:
             data = _a.sent();

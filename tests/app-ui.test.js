@@ -146,7 +146,11 @@ var GraphProcessor_1 = require('../src/GraphProcessor');
 var CardProcessor_1 = require('../src/CardProcessor');
 describe('App UI integration', function () {
   beforeEach(function () {
-    global.miro = { board: { notifications: { showError: jest.fn() } } };
+    global.miro = {
+      board: {
+        notifications: { showError: jest.fn().mockResolvedValue(undefined) },
+      },
+    };
   });
   afterEach(function () {
     jest.restoreAllMocks();
@@ -384,13 +388,27 @@ describe('App UI integration', function () {
     });
   });
   test('undoLastImport helper calls undo and clears state', function () {
-    var proc = { undoLast: jest.fn() };
-    var cleared = false;
-    (0, app_1.undoLastImport)(proc, function () {
-      cleared = true;
+    return __awaiter(void 0, void 0, void 0, function () {
+      var proc, cleared;
+      return __generator(this, function (_a) {
+        switch (_a.label) {
+          case 0:
+            proc = { undoLast: jest.fn().mockResolvedValue(undefined) };
+            cleared = false;
+            return [
+              4 /*yield*/,
+              (0, app_1.undoLastImport)(proc, function () {
+                cleared = true;
+              }),
+            ];
+          case 1:
+            _a.sent();
+            expect(proc.undoLast).toHaveBeenCalled();
+            expect(cleared).toBe(true);
+            return [2 /*return*/];
+        }
+      });
     });
-    expect(proc.undoLast).toHaveBeenCalled();
-    expect(cleared).toBe(true);
   });
   test('getDropzoneStyle computes colours', function () {
     var base = (0, app_1.getDropzoneStyle)(false, false);
