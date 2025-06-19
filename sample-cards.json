@@ -17,7 +17,7 @@
           "iconShape": "round",
           "fillColor": "#E5E5E5",
           "textColor": "#000000",
-          "tooltip": "Caption text displayed in a tooltip when clicking or hovering over the preview field",
+          "tooltip": "Caption text displayed in a tooltip when clicking or hovering over the preview field"
         }
       ]
     },
@@ -38,7 +38,7 @@
           "iconShape": "round",
           "fillColor": "#E5E5E5",
           "textColor": "#000000",
-          "tooltip": "Caption text displayed in a tooltip when clicking or hovering over the preview field",
+          "tooltip": "Caption text displayed in a tooltip when clicking or hovering over the preview field"
         }
       ]
     }
