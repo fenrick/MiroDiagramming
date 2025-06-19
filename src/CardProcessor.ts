@@ -26,10 +26,10 @@ export class CardProcessor {
   private cardMap: Map<string, Card> | undefined;
 
   /** Default width used for card widgets. */
-  private static readonly CARD_WIDTH = 300;
+  private static readonly CARD_WIDTH = 320;
 
   /** Default height used for card widgets. */
-  private static readonly CARD_HEIGHT = 200;
+  private static readonly CARD_HEIGHT = 88;
 
   /** Spacing margin applied around cards and frames. */
   private static readonly CARD_MARGIN = 50;
