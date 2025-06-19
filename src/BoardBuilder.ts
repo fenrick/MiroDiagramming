@@ -474,7 +474,7 @@ export class BoardBuilder {
         : undefined,
       style: template?.style as any,
     });
-    connector.setMetadata(META_KEY, {
+    await connector.setMetadata(META_KEY, {
       from: edge.from,
       to: edge.to,
     });
