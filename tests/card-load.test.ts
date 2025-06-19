@@ -21,7 +21,8 @@ describe('loadCards', () => {
             },
           ],
         };
-        this.onload && this.onload({ target: { result: JSON.stringify(json) } });
+        this.onload &&
+          this.onload({ target: { result: JSON.stringify(json) } });
       }
     }
     (global as any).FileReader = FR;

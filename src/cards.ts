@@ -1,4 +1,8 @@
-import type { CardField, CardStyle, CardTaskStatus } from '@mirohq/websdk-types';
+import type {
+  CardField,
+  CardStyle,
+  CardTaskStatus,
+} from '@mirohq/websdk-types';
 import { fileUtils } from './file-utils';
 
 export interface CardData {
@@ -28,8 +32,8 @@ export class CardLoader {
     const style: Partial<Pick<CardStyle, 'cardTheme' | 'fillBackground'>> = {};
     if (styleRaw.cardTheme) style.cardTheme = styleRaw.cardTheme;
     if (styleRaw.fillBackground !== undefined) {
-      style.fillBackground = styleRaw.fillBackground === true ||
-        styleRaw.fillBackground === 'true';
+      style.fillBackground =
+        styleRaw.fillBackground === true || styleRaw.fillBackground === 'true';
     }
     return {
       id: card.id,
