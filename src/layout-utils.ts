@@ -1,10 +1,10 @@
 /**
- * Calculate the position of a point relative to a node rectangle.
+ * Convert an absolute point into fractional coordinates relative to a node's
+ * bounding box.
  *
- * @param node - The node rectangle with absolute coordinates and size.
+ * @param node - The target node with absolute position and dimensions.
  * @param pt - The absolute point to convert.
- * @returns Normalized coordinates where `(0,0)` is the top-left of the node and
- * `(1,1)` is the bottom-right.
+ * @returns The fractional position of the point within the node.
  */
 export function relativePosition(
   node: { x: number; y: number; width: number; height: number },
@@ -22,14 +22,12 @@ export interface EdgeHint {
 }
 
 /**
- * Derive layout hints for edges using a processed ELK layout.
+ * Calculate edge hints describing where each edge connects to its source and
+ * target nodes in relative coordinates.
  *
- * Each hint contains the relative start and end positions of the connector so
- * that links can be recreated consistently on undo.
- *
- * @param graph - Source graph describing edge connections.
- * @param layout - Absolute coordinates computed by the layout engine.
- * @returns Array of relative start/end positions per edge.
+ * @param graph - Graph data containing edge definitions.
+ * @param layout - Layout result with absolute node positions and edge points.
+ * @returns A list of edge hints mapping each edge's start and end positions.
  */
 export function computeEdgeHints(
   graph: { edges: Array<{ from: string; to: string }> },
