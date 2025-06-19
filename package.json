@@ -29,12 +29,14 @@
     "d3-dsv": "^3.0.1",
     "elkjs": "^0.10.0",
     "mirotone": "^5.3.2",
+    "mirotone-react": "^2.0.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-dropzone": "^14.2.3"
   },
   "devDependencies": {
     "@mirohq/websdk-types": "^2.16.1",
+    "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@types/d3-dsv": "^3.0.1",

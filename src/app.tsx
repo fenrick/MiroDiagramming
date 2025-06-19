@@ -1,6 +1,14 @@
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { useDropzone } from 'react-dropzone';
+import {
+  Button,
+  Checkbox,
+  Input,
+  RadioButton,
+  Select,
+  SelectOption,
+} from 'mirotone-react';
 import { GraphProcessor } from './GraphProcessor';
 import { CardProcessor } from './CardProcessor';
 import { showError } from './notifications';
@@ -128,24 +136,17 @@ export const App: React.FC = () => {
         role="radiogroup"
         aria-label="Import mode"
       >
-        <label>
-          <input
-            type="radio"
-            value="diagram"
-            checked={mode === 'diagram'}
-            onChange={() => setMode('diagram')}
-          />
-          Diagram
-        </label>
-        <label style={{ marginLeft: '8px' }}>
-          <input
-            type="radio"
-            value="cards"
-            checked={mode === 'cards'}
-            onChange={() => setMode('cards')}
-          />
-          Cards
-        </label>
+        <RadioButton
+          label="Diagram"
+          value={mode === 'diagram'}
+          onChange={() => setMode('diagram')}
+        />
+        <RadioButton
+          label="Cards"
+          value={mode === 'cards'}
+          onChange={() => setMode('cards')}
+          style={{ marginLeft: '8px' }}
+        />
       </div>
       <p>
         Select the JSON file to import{' '}
@@ -165,12 +166,9 @@ export const App: React.FC = () => {
         ) : (
           <>
             <div>
-              <button
-                type="button"
-                className="button button-primary button-small"
-              >
+              <Button variant="primary" size="small" type="button">
                 Select JSON file
-              </button>
+              </Button>
               <p className="dnd-text">Or drop your JSON file here</p>
             </div>
           </>
@@ -187,95 +185,84 @@ export const App: React.FC = () => {
               <li key={i}>{file.name}</li>
             ))}
           </ul>
-          <label style={{ display: 'block', marginTop: '8px' }}>
-            <input
-              type="checkbox"
-              checked={withFrame}
-              onChange={e => setWithFrame(e.target.checked)}
+          <div style={{ marginTop: '8px' }}>
+            <Checkbox
+              label="Wrap items in frame"
+              value={withFrame}
+              onChange={setWithFrame}
             />
-            Wrap items in frame
-          </label>
+          </div>
           {withFrame && (
-            <input
-              type="text"
+            <Input
               placeholder="Frame title"
               value={frameTitle}
-              onChange={e => setFrameTitle(e.target.value)}
+              onChange={setFrameTitle}
               style={{ marginTop: '4px', width: '100%' }}
             />
           )}
 
           <label style={{ display: 'block', marginTop: '8px' }}>
             Algorithm
-            <select
+            <Select
               value={layoutOpts.algorithm}
-              onChange={e =>
-                setLayoutOpts({
-                  ...layoutOpts,
-                  algorithm: e.target.value as any,
-                })
+              onChange={value =>
+                setLayoutOpts({ ...layoutOpts, algorithm: value as any })
               }
             >
               {ALGORITHMS.map(a => (
-                <option key={a} value={a}>
+                <SelectOption key={a} value={a}>
                   {a}
-                </option>
+                </SelectOption>
               ))}
-            </select>
+            </Select>
           </label>
           <label style={{ display: 'block', marginTop: '4px' }}>
             Direction
-            <select
+            <Select
               value={layoutOpts.direction}
-              onChange={e =>
-                setLayoutOpts({
-                  ...layoutOpts,
-                  direction: e.target.value as any,
-                })
+              onChange={value =>
+                setLayoutOpts({ ...layoutOpts, direction: value as any })
               }
             >
               {DIRECTIONS.map(d => (
-                <option key={d} value={d}>
+                <SelectOption key={d} value={d}>
                   {d}
-                </option>
+                </SelectOption>
               ))}
-            </select>
+            </Select>
           </label>
           <label style={{ display: 'block', marginTop: '4px' }}>
             Spacing
-            <input
+            <Input
               type="number"
-              value={layoutOpts.spacing}
-              onChange={e =>
+              value={String(layoutOpts.spacing)}
+              onChange={value =>
                 setLayoutOpts({
                   ...layoutOpts,
-                  spacing: Number(e.target.value),
+                  spacing: Number(value),
                 })
               }
               style={{ width: '100%' }}
             />
           </label>
 
-          <button
-            onClick={handleCreate}
-            className="button button-small button-primary"
-          >
+          <Button onClick={handleCreate} size="small" variant="primary">
             {mode === 'diagram' ? 'Create Diagram' : 'Create Cards'}
-          </button>
+          </Button>
           {progress > 0 && progress < 100 && (
             <progress value={progress} max={100} style={{ width: '100%' }} />
           )}
           {error && <p className="error">{error}</p>}
           {lastProc && (
-            <button
+            <Button
               onClick={() =>
                 undoLastImport(lastProc, () => setLastProc(undefined))
               }
-              className="button button-small"
+              size="small"
               style={{ marginTop: '8px' }}
             >
               Undo Last Import
-            </button>
+            </Button>
           )}
         </>
       )}
