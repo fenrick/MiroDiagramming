@@ -67,4 +67,46 @@ describe('App UI integration', () => {
       screen.getByText(/select the json file to import a diagram/i),
     ).toBeInTheDocument();
   });
+
+  test('shows error notification', async () => {
+    const error = new Error('fail');
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    const spy = jest
+      .spyOn(GraphProcessor.prototype, 'processFile')
+      .mockRejectedValue(error);
+    render(React.createElement(App));
+    await act(async () => {
+      selectFile();
+    });
+    const button = screen.getByRole('button', { name: /create diagram/i });
+    await act(async () => {
+      fireEvent.click(button);
+    });
+    expect(spy).toHaveBeenCalled();
+    expect(global.miro.board.notifications.showError).toHaveBeenCalledWith(
+      'Error: fail',
+    );
+  });
+
+  test('withFrame option forwards frame title', async () => {
+    const spy = jest
+      .spyOn(GraphProcessor.prototype, 'processFile')
+      .mockResolvedValue(undefined as any);
+    render(React.createElement(App));
+    await act(async () => {
+      selectFile();
+    });
+    fireEvent.click(screen.getByLabelText(/wrap items in frame/i));
+    fireEvent.change(screen.getByPlaceholderText(/frame title/i), {
+      target: { value: 'Frame A' },
+    });
+    const button = screen.getByRole('button', { name: /create diagram/i });
+    await act(async () => {
+      fireEvent.click(button);
+    });
+    expect(spy).toHaveBeenCalledWith(expect.any(File), {
+      createFrame: true,
+      frameTitle: 'Frame A',
+    });
+  });
 });
