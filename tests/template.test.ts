@@ -80,6 +80,23 @@ describe('createFromTemplate', () => {
     expect(widget.type).toBe('text');
   });
 
+  test('apply fill property when style lacks fillColor', async () => {
+    (templateManager as any).templates.fillStyle = {
+      elements: [{ shape: 'rect', fill: '#fff', style: {} }],
+    };
+    const widget = await templateManager.createFromTemplate(
+      'fillStyle',
+      'L',
+      0,
+      0,
+    );
+    const args = (
+      global.miro.board.createShape as jest.Mock
+    ).mock.calls.pop()[0];
+    expect(args.style.fillColor).toBe('#fff');
+    expect(widget.type).toBe('shape');
+  });
+
   test('throws when template missing', async () => {
     await expect(
       templateManager.createFromTemplate('missing', 'L', 0, 0),

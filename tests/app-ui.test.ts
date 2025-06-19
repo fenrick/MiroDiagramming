@@ -2,7 +2,7 @@
 import React from 'react';
 import { render, fireEvent, screen, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { App } from '../src/app';
+import { App, getDropzoneStyle, undoLastImport } from '../src/app';
 import { GraphProcessor } from '../src/GraphProcessor';
 import { CardProcessor } from '../src/CardProcessor';
 
@@ -108,5 +108,24 @@ describe('App UI integration', () => {
       createFrame: true,
       frameTitle: 'Frame A',
     });
+  });
+
+  test('undoLastImport helper calls undo and clears state', () => {
+    const proc = { undoLast: jest.fn() } as any;
+    let cleared = false;
+    undoLastImport(proc, () => {
+      cleared = true;
+    });
+    expect(proc.undoLast).toHaveBeenCalled();
+    expect(cleared).toBe(true);
+  });
+
+  test('getDropzoneStyle computes colours', () => {
+    const base = getDropzoneStyle(false, false);
+    expect(base.borderColor).toBe('rgba(41, 128, 185, 0.5)');
+    const accept = getDropzoneStyle(true, false);
+    expect(accept.borderColor).toBe('rgba(41, 128, 185, 1.0)');
+    const reject = getDropzoneStyle(false, true);
+    expect(reject.borderColor).toBe('rgba(192, 57, 43,1.0)');
   });
 });
