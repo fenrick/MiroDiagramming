@@ -8,7 +8,7 @@
       "tags": ["design"],
       "style": {
         "cardTheme": "#2d9bf0",
-        "fillBackground": "true"
+        "fillBackground": true
       },
       "fields": [
         {
@@ -29,7 +29,7 @@
       "tags": ["dev"],
       "style": {
         "cardTheme": "#2d9bf0",
-        "fillBackground": "true"
+        "fillBackground": true
       },
       "fields": [
         {
