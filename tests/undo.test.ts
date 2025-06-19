@@ -20,4 +20,22 @@ describe('undo operations', () => {
     await cp.undoLast();
     expect(remove).toHaveBeenCalledWith([1]);
   });
+
+  test('CardProcessor.undoLast handles empty list', async () => {
+    const builder = new BoardBuilder();
+    const remove = jest.spyOn(builder, 'removeItems').mockResolvedValue();
+    const cp = new CardProcessor(builder);
+    (cp as unknown as { lastCreated: unknown[] }).lastCreated = [];
+    await cp.undoLast();
+    expect(remove).not.toHaveBeenCalled();
+  });
+
+  test('GraphProcessor.undoLast handles empty list', async () => {
+    const builder = new BoardBuilder();
+    const remove = jest.spyOn(builder, 'removeItems').mockResolvedValue();
+    const gp = new GraphProcessor(builder);
+    (gp as unknown as { lastCreated: unknown[] }).lastCreated = [];
+    await gp.undoLast();
+    expect(remove).not.toHaveBeenCalled();
+  });
 });
