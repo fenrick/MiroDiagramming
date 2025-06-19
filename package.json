@@ -23,7 +23,7 @@
     "prettier:check": "prettier '**/*.{js,jsx,ts,tsx,md,json,yml,yaml,html}' --check",
     "typecheck": "tsc --noEmit",
     "test": "jest --coverage",
-    "lint": "eslint 'src/**/*.{ts,tsx}'"
+    "lint": "eslint 'src/**/*.{ts,tsx}' 'tests**/*.{ts,tsx}'"
   },
   "dependencies": {
     "d3-dsv": "^3.0.1",
