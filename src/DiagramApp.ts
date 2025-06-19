@@ -19,7 +19,7 @@ export class DiagramApp {
     if (typeof miro === 'undefined' || !miro?.board?.ui) {
       throw new Error('Miro SDK not available');
     }
-    miro.board.ui.on('icon:click', async () => {
+    await miro.board.ui.on('icon:click', async () => {
       await miro.board.ui.openPanel({ url: 'app.html' });
     });
   }
