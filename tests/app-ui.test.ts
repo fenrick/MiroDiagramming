@@ -3,6 +3,7 @@ import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { App, getDropzoneStyle, undoLastImport } from '../src/app';
+import { tokens } from 'mirotone-react';
 import { GraphProcessor } from '../src/GraphProcessor';
 import { CardProcessor } from '../src/CardProcessor';
 
@@ -147,10 +148,10 @@ describe('App UI integration', () => {
 
   test('getDropzoneStyle computes colours', () => {
     const base = getDropzoneStyle(false, false);
-    expect(base.borderColor).toBe('rgba(41, 128, 185, 0.5)');
+    expect(base.borderColor).toBe(tokens.color.indigoAlpha[40]);
     const accept = getDropzoneStyle(true, false);
-    expect(accept.borderColor).toBe('rgba(41, 128, 185, 1.0)');
+    expect(accept.borderColor).toBe(tokens.color.green[700]);
     const reject = getDropzoneStyle(false, true);
-    expect(reject.borderColor).toBe('rgba(192, 57, 43,1.0)');
+    expect(reject.borderColor).toBe(tokens.color.red[700]);
   });
 });
