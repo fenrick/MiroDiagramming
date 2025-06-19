@@ -29,4 +29,15 @@ export default [
       'react/react-in-jsx-scope': 'off',
     },
   },
+  {
+    files: ['tests/**/*.ts'],
+    languageOptions: {
+      parser,
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+    },
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+    },
+  },
 ];
