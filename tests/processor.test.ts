@@ -104,6 +104,19 @@ describe('GraphProcessor', () => {
     expect(connectorSpy).toHaveBeenCalled();
   });
 
+  it('forwards layout options', async () => {
+    const spy = jest
+      .spyOn(layoutEngine, 'layoutGraph')
+      .mockResolvedValue({ nodes: {}, edges: [] } as any);
+    const simpleGraph = { nodes: [], edges: [] };
+    await processor.processGraph(simpleGraph as any, {
+      layout: { algorithm: 'force' },
+    });
+    expect(spy).toHaveBeenCalledWith(simpleGraph as any, {
+      algorithm: 'force',
+    });
+  });
+
   it('throws on invalid graph', async () => {
     await expect(processor.processGraph({} as any)).rejects.toThrow(
       'Invalid graph format',

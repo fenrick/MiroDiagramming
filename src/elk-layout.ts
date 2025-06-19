@@ -1,6 +1,7 @@
 import ELK from 'elkjs/lib/elk.bundled.js';
 import { GraphData } from './graph';
 import { templateManager } from './templates';
+import { UserLayoutOptions, validateLayoutOptions } from './elk-options';
 
 /**
  * Node with layout coordinates returned from ELK.
@@ -55,19 +56,26 @@ export class LayoutEngine {
   /**
    * Run the ELK layout engine on the provided graph data and
    * return positioned nodes and edges.
+   *
+   * @param data - Parsed graph data.
+   * @param opts - Optional layout customisation parameters.
    */
-  public async layoutGraph(data: GraphData): Promise<LayoutResult> {
+  public async layoutGraph(
+    data: GraphData,
+    opts: Partial<UserLayoutOptions> = {},
+  ): Promise<LayoutResult> {
+    const userOpts = validateLayoutOptions(opts);
     const elkGraph: any = {
       id: 'root',
       layoutOptions: {
         // Basic layered layout configuration
         'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
-        'elk.algorithm': 'mrtree',
+        'elk.algorithm': userOpts.algorithm,
         'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF',
         'elk.layered.mergeEdges': 'false',
-        'elk.direction': 'DOWN',
-        'elk.layered.spacing.nodeNodeBetweenLayers': '90',
-        'elk.spacing.nodeNode': 90,
+        'elk.direction': userOpts.direction,
+        'elk.layered.spacing.nodeNodeBetweenLayers': String(userOpts.spacing),
+        'elk.spacing.nodeNode': userOpts.spacing,
         'elk.layered.unnecessaryBendpoints': 'true',
         'elk.layered.cycleBreaking.strategy': 'GREEDY',
       },
