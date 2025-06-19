@@ -37,7 +37,10 @@ describe('App UI integration', () => {
     await act(async () => {
       fireEvent.click(button);
     });
-    expect(spy).toHaveBeenCalled();
+    expect(spy).toHaveBeenCalledWith(
+      expect.any(File),
+      expect.objectContaining({ layout: expect.any(Object) }),
+    );
   });
 
   test('toggles to cards mode and processes', async () => {
@@ -112,10 +115,14 @@ describe('App UI integration', () => {
     await act(async () => {
       fireEvent.click(button);
     });
-    expect(spy).toHaveBeenCalledWith(expect.any(File), {
-      createFrame: true,
-      frameTitle: 'Frame A',
-    });
+    expect(spy).toHaveBeenCalledWith(
+      expect.any(File),
+      expect.objectContaining({
+        createFrame: true,
+        frameTitle: 'Frame A',
+        layout: expect.any(Object),
+      }),
+    );
   });
 
   test('undoLastImport helper calls undo and clears state', () => {

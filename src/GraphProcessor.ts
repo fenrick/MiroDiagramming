@@ -1,6 +1,7 @@
 import { graphService, GraphData } from './graph';
 import { BoardBuilder } from './BoardBuilder';
 import { layoutEngine, LayoutResult } from './elk-layout';
+import { UserLayoutOptions } from './elk-options';
 import { fileUtils } from './file-utils';
 import { computeEdgeHints } from './layout-utils';
 import type { BaseItem, Group, Frame, Connector } from '@mirohq/websdk-types';
@@ -15,6 +16,8 @@ export interface ProcessOptions {
   createFrame?: boolean;
   /** Optional title for the created frame. */
   frameTitle?: string;
+  /** Optional custom layout options. */
+  layout?: Partial<UserLayoutOptions>;
 }
 
 export class GraphProcessor {
@@ -79,7 +82,7 @@ export class GraphProcessor {
     options: ProcessOptions = {},
   ): Promise<void> {
     this.validateGraph(graph);
-    const layout = await layoutEngine.layoutGraph(graph);
+    const layout = await layoutEngine.layoutGraph(graph, options.layout);
 
     const bounds = this.layoutBounds(layout);
     const margin = 100;

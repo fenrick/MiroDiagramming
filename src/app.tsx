@@ -4,6 +4,12 @@ import { useDropzone } from 'react-dropzone';
 import { GraphProcessor } from './GraphProcessor';
 import { CardProcessor } from './CardProcessor';
 import { showError } from './notifications';
+import {
+  ALGORITHMS,
+  DIRECTIONS,
+  DEFAULT_LAYOUT_OPTIONS,
+  UserLayoutOptions,
+} from './elk-options';
 
 // UI
 const dropzoneStyles = {
@@ -61,6 +67,9 @@ export const App: React.FC = () => {
   const [mode, setMode] = React.useState<'diagram' | 'cards'>('diagram');
   const [progress, setProgress] = React.useState<number>(0);
   const [error, setError] = React.useState<string | null>(null);
+  const [layoutOpts, setLayoutOpts] = React.useState<UserLayoutOptions>(
+    DEFAULT_LAYOUT_OPTIONS,
+  );
   const [lastProc, setLastProc] = React.useState<
     GraphProcessor | CardProcessor | undefined
   >(undefined);
@@ -88,6 +97,7 @@ export const App: React.FC = () => {
           await graphProcessor.processFile(file, {
             createFrame: withFrame,
             frameTitle: frameTitle || undefined,
+            layout: layoutOpts,
           });
         } else {
           setLastProc(cardProcessor);
@@ -194,6 +204,57 @@ export const App: React.FC = () => {
               style={{ marginTop: '4px', width: '100%' }}
             />
           )}
+
+          <label style={{ display: 'block', marginTop: '8px' }}>
+            Algorithm
+            <select
+              value={layoutOpts.algorithm}
+              onChange={e =>
+                setLayoutOpts({
+                  ...layoutOpts,
+                  algorithm: e.target.value as any,
+                })
+              }
+            >
+              {ALGORITHMS.map(a => (
+                <option key={a} value={a}>
+                  {a}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label style={{ display: 'block', marginTop: '4px' }}>
+            Direction
+            <select
+              value={layoutOpts.direction}
+              onChange={e =>
+                setLayoutOpts({
+                  ...layoutOpts,
+                  direction: e.target.value as any,
+                })
+              }
+            >
+              {DIRECTIONS.map(d => (
+                <option key={d} value={d}>
+                  {d}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label style={{ display: 'block', marginTop: '4px' }}>
+            Spacing
+            <input
+              type="number"
+              value={layoutOpts.spacing}
+              onChange={e =>
+                setLayoutOpts({
+                  ...layoutOpts,
+                  spacing: Number(e.target.value),
+                })
+              }
+              style={{ width: '100%' }}
+            />
+          </label>
 
           <button
             onClick={handleCreate}
