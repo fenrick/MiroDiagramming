@@ -7,7 +7,7 @@ describe('undo operations', () => {
     const builder = new BoardBuilder();
     const remove = jest.spyOn(builder, 'removeItems').mockResolvedValue();
     const gp = new GraphProcessor(builder);
-    (gp as any).lastCreated = [1 as any];
+    (gp as unknown as { lastCreated: unknown[] }).lastCreated = [1 as unknown];
     await gp.undoLast();
     expect(remove).toHaveBeenCalledWith([1]);
   });
@@ -16,7 +16,7 @@ describe('undo operations', () => {
     const builder = new BoardBuilder();
     const remove = jest.spyOn(builder, 'removeItems').mockResolvedValue();
     const cp = new CardProcessor(builder);
-    (cp as any).lastCreated = [1 as any];
+    (cp as unknown as { lastCreated: unknown[] }).lastCreated = [1 as unknown];
     await cp.undoLast();
     expect(remove).toHaveBeenCalledWith([1]);
   });

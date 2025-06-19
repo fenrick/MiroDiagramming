@@ -1,19 +1,29 @@
 import { CardProcessor } from '../src/CardProcessor';
 
+interface GlobalWithMiro {
+  miro?: { board?: Record<string, unknown> };
+}
+
+declare const global: GlobalWithMiro;
+
 /** Additional branch coverage for CardProcessor */
 
 describe('CardProcessor branches', () => {
   afterEach(() => {
     jest.restoreAllMocks();
-    delete (global as any).miro;
+    delete global.miro;
   });
 
   test('getBoardCards caches board fetches', async () => {
     const board = { get: jest.fn().mockResolvedValue([]) };
-    (global as any).miro = { board };
+    global.miro = { board };
     const cp = new CardProcessor();
-    await (cp as any).getBoardCards();
-    await (cp as any).getBoardCards();
+    await (
+      cp as unknown as { getBoardCards: () => Promise<unknown[]> }
+    ).getBoardCards();
+    await (
+      cp as unknown as { getBoardCards: () => Promise<unknown[]> }
+    ).getBoardCards();
     expect(board.get).toHaveBeenCalledTimes(1);
   });
 
@@ -21,32 +31,49 @@ describe('CardProcessor branches', () => {
     const card = {
       getMetadata: jest.fn().mockResolvedValue({}),
       id: '1',
-    } as any;
-    (global as any).miro = {
+    } as Record<string, unknown>;
+    global.miro = {
       board: { get: jest.fn().mockResolvedValue([card]) },
     };
     const cp = new CardProcessor();
-    const map = await (cp as any).loadCardMap();
+    const map = await (
+      cp as unknown as { loadCardMap: () => Promise<Map<string, unknown>> }
+    ).loadCardMap();
     expect(map.size).toBe(0);
   });
 
   test('ensureTagIds skips tag with no id', async () => {
     const cp = new CardProcessor();
-    (global as any).miro = { board: { createTag: jest.fn() } };
-    const tagMap = new Map([['x', { title: 'x' } as any]]);
-    const ids = await (cp as any).ensureTagIds(['x'], tagMap);
+    global.miro = { board: { createTag: jest.fn() } };
+    const tagMap = new Map([['x', { title: 'x' } as Record<string, unknown>]]);
+    const ids = await (
+      cp as unknown as {
+        ensureTagIds: (
+          t: string[],
+          m: Map<string, unknown>,
+        ) => Promise<string[]>;
+      }
+    ).ensureTagIds(['x'], tagMap);
     expect(ids).toEqual([]);
   });
 
   test('updateCardWidget leaves taskStatus when undefined', async () => {
     const cp = new CardProcessor();
-    (cp as any).ensureTagIds = jest.fn().mockResolvedValue([]);
-    const card: any = { taskStatus: 'old', setMetadata: jest.fn() };
-    await (cp as any).updateCardWidget(
-      card,
-      { id: '1', title: 't' },
-      new Map(),
-    );
+    (cp as unknown as { ensureTagIds: () => Promise<string[]> }).ensureTagIds =
+      jest.fn().mockResolvedValue([]);
+    const card: Record<string, unknown> = {
+      taskStatus: 'old',
+      setMetadata: jest.fn(),
+    };
+    await (
+      cp as unknown as {
+        updateCardWidget: (
+          c: unknown,
+          d: unknown,
+          m: Map<string, unknown>,
+        ) => Promise<void>;
+      }
+    ).updateCardWidget(card, { id: '1', title: 't' }, new Map());
     expect(card.taskStatus).toBe('old');
     expect(card.setMetadata).toHaveBeenCalledWith('app.miro.cards', {
       id: '1',

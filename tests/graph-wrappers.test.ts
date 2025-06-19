@@ -12,7 +12,7 @@ describe('graph service methods', () => {
   test('findNode delegates to default builder', async () => {
     const spy = jest
       .spyOn(defaultBuilder, 'findNode')
-      .mockResolvedValue('x' as any);
+      .mockResolvedValue('x' as unknown);
     const result = await graphService.findNode('t', 'l');
     expect(spy).toHaveBeenCalledWith('t', 'l');
     expect(result).toBe('x');
@@ -21,7 +21,7 @@ describe('graph service methods', () => {
   test('findConnector delegates to default builder', async () => {
     const spy = jest
       .spyOn(defaultBuilder, 'findConnector')
-      .mockResolvedValue('c' as any);
+      .mockResolvedValue('c' as unknown);
     const result = await graphService.findConnector('a', 'b');
     expect(spy).toHaveBeenCalledWith('a', 'b');
     expect(result).toBe('c');
@@ -30,13 +30,16 @@ describe('graph service methods', () => {
   test('createNode delegates to default builder', async () => {
     const spy = jest
       .spyOn(defaultBuilder, 'createNode')
-      .mockResolvedValue('n' as any);
-    const result = await graphService.createNode({} as any, {
-      x: 0,
-      y: 0,
-      width: 1,
-      height: 1,
-    });
+      .mockResolvedValue('n' as unknown);
+    const result = await graphService.createNode(
+      {} as Record<string, unknown>,
+      {
+        x: 0,
+        y: 0,
+        width: 1,
+        height: 1,
+      },
+    );
     expect(spy).toHaveBeenCalled();
     expect(result).toBe('n');
   });
@@ -44,8 +47,11 @@ describe('graph service methods', () => {
   test('createEdges delegates to default builder', async () => {
     const spy = jest
       .spyOn(defaultBuilder, 'createEdges')
-      .mockResolvedValue(['e'] as any);
-    const result = await graphService.createEdges([] as any, {} as any);
+      .mockResolvedValue(['e'] as unknown as string[]);
+    const result = await graphService.createEdges(
+      [] as unknown as Array<unknown>,
+      {} as Record<string, unknown>,
+    );
     // Should simply return value from builder
     expect(spy).toHaveBeenCalled();
     expect(result[0]).toBe('e');
@@ -53,7 +59,7 @@ describe('graph service methods', () => {
 
   test('syncAll delegates to default builder', async () => {
     const spy = jest.spyOn(defaultBuilder, 'syncAll').mockResolvedValue();
-    await graphService.syncAll([] as any);
+    await graphService.syncAll([] as unknown as Array<unknown>);
     expect(spy).toHaveBeenCalled();
   });
 

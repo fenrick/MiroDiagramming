@@ -4,7 +4,11 @@ import { templateManager } from '../src/templates';
 import { layoutEngine } from '../src/elk-layout';
 import sample from '../sample-graph.json';
 
-declare const global: any;
+interface GlobalWithMiro {
+  miro?: { board?: Record<string, unknown> };
+}
+
+declare const global: GlobalWithMiro;
 
 describe('GraphProcessor', () => {
   const processor = new GraphProcessor();
@@ -70,7 +74,7 @@ describe('GraphProcessor', () => {
       getItems: jest.fn(),
       sync: jest.fn(),
       id: 's1',
-    } as any);
+    } as unknown);
   });
 
   afterEach(() => {
@@ -79,14 +83,14 @@ describe('GraphProcessor', () => {
   });
 
   it('processGraph runs without throwing and syncs items', async () => {
-    await processor.processGraph(sample as any);
+    await processor.processGraph(sample as unknown);
   });
 
   it('delegates work to helper methods', async () => {
     const gp = new GraphProcessor();
-    const frameSpy = jest.spyOn(gp as any, 'createFrame');
-    const nodeSpy = jest.spyOn(gp as any, 'createNodes');
-    const connectorSpy = jest.spyOn(gp as any, 'createConnectorsAndZoom');
+    const frameSpy = jest.spyOn(gp as unknown, 'createFrame');
+    const nodeSpy = jest.spyOn(gp as unknown, 'createNodes');
+    const connectorSpy = jest.spyOn(gp as unknown, 'createConnectorsAndZoom');
 
     jest.spyOn(layoutEngine, 'layoutGraph').mockResolvedValue({
       nodes: { n1: { x: 0, y: 0, width: 10, height: 10 } },
@@ -97,7 +101,7 @@ describe('GraphProcessor', () => {
       nodes: [{ id: 'n1', label: 'A', type: 'Role' }],
       edges: [],
     };
-    await gp.processGraph(simpleGraph as any);
+    await gp.processGraph(simpleGraph as unknown);
 
     expect(frameSpy).toHaveBeenCalled();
     expect(nodeSpy).toHaveBeenCalled();
@@ -107,18 +111,18 @@ describe('GraphProcessor', () => {
   it('forwards layout options', async () => {
     const spy = jest
       .spyOn(layoutEngine, 'layoutGraph')
-      .mockResolvedValue({ nodes: {}, edges: [] } as any);
+      .mockResolvedValue({ nodes: {}, edges: [] } as unknown);
     const simpleGraph = { nodes: [], edges: [] };
-    await processor.processGraph(simpleGraph as any, {
+    await processor.processGraph(simpleGraph as unknown, {
       layout: { algorithm: 'force' },
     });
-    expect(spy).toHaveBeenCalledWith(simpleGraph as any, {
+    expect(spy).toHaveBeenCalledWith(simpleGraph as unknown, {
       algorithm: 'force',
     });
   });
 
   it('throws on invalid graph', async () => {
-    await expect(processor.processGraph({} as any)).rejects.toThrow(
+    await expect(processor.processGraph({} as unknown)).rejects.toThrow(
       'Invalid graph format',
     );
   });
@@ -134,7 +138,7 @@ describe('GraphProcessor', () => {
       edges: [],
     });
 
-    await processor.processGraph(simpleGraph as any);
+    await processor.processGraph(simpleGraph as unknown);
 
     const createArgs = (global.miro.board.createFrame as jest.Mock).mock
       .calls[0][0];
@@ -143,7 +147,7 @@ describe('GraphProcessor', () => {
     expect(createArgs.x).toBe(0);
     expect(createArgs.y).toBe(0);
 
-    const offset = (processor as any).calculateOffset(
+    const offset = (processor as unknown).calculateOffset(
       { x: 0, y: 0 },
       210,
       210,
@@ -168,7 +172,9 @@ describe('GraphProcessor', () => {
       edges: [],
     });
 
-    await processor.processGraph(simpleGraph as any, { createFrame: false });
+    await processor.processGraph(simpleGraph as unknown, {
+      createFrame: false,
+    });
 
     expect(global.miro.board.viewport.zoomTo).toHaveBeenCalledWith([
       expect.objectContaining({ id: 's1' }),
@@ -180,7 +186,7 @@ describe('GraphProcessor', () => {
       nodes: [{ id: 'n1', label: 'A', type: 'Role' }],
       edges: [{ from: 'n2', to: 'n1' }],
     };
-    await expect(processor.processGraph(graph as any)).rejects.toThrow(
+    await expect(processor.processGraph(graph as unknown)).rejects.toThrow(
       'Edge references missing node: n2',
     );
   });
@@ -190,7 +196,7 @@ describe('GraphProcessor', () => {
       nodes: [{ id: 'n1', label: 'A', type: 'Role' }],
       edges: [{ from: 'n1', to: 'n2' }],
     };
-    await expect(processor.processGraph(graph as any)).rejects.toThrow(
+    await expect(processor.processGraph(graph as unknown)).rejects.toThrow(
       'Edge references missing node: n2',
     );
   });

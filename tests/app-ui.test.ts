@@ -6,7 +6,11 @@ import { App, getDropzoneStyle, undoLastImport } from '../src/app';
 import { GraphProcessor } from '../src/GraphProcessor';
 import { CardProcessor } from '../src/CardProcessor';
 
-declare const global: any;
+interface GlobalWithMiro {
+  miro?: { board?: Record<string, unknown> };
+}
+
+declare const global: GlobalWithMiro;
 
 describe('App UI integration', () => {
   beforeEach(() => {
@@ -32,7 +36,7 @@ describe('App UI integration', () => {
   test('renders and processes diagram file', async () => {
     const spy = jest
       .spyOn(GraphProcessor.prototype, 'processFile')
-      .mockResolvedValue(undefined as any);
+      .mockResolvedValue(undefined);
     render(React.createElement(App));
     await act(async () => {
       selectFile();
@@ -50,7 +54,7 @@ describe('App UI integration', () => {
   test('toggles to cards mode and processes', async () => {
     const spy = jest
       .spyOn(CardProcessor.prototype, 'processFile')
-      .mockResolvedValue(undefined as any);
+      .mockResolvedValue(undefined);
     render(React.createElement(App));
     fireEvent.click(screen.getByLabelText(/cards/i));
     await act(async () => {
@@ -106,7 +110,7 @@ describe('App UI integration', () => {
   test('withFrame option forwards frame title', async () => {
     const spy = jest
       .spyOn(GraphProcessor.prototype, 'processFile')
-      .mockResolvedValue(undefined as any);
+      .mockResolvedValue(undefined);
     render(React.createElement(App));
     await act(async () => {
       selectFile();
@@ -130,7 +134,9 @@ describe('App UI integration', () => {
   });
 
   test('undoLastImport helper calls undo and clears state', async () => {
-    const proc = { undoLast: jest.fn().mockResolvedValue(undefined) } as any;
+    const proc = { undoLast: jest.fn().mockResolvedValue(undefined) } as {
+      undoLast: jest.Mock;
+    };
     let cleared = false;
     await undoLastImport(proc, () => {
       cleared = true;

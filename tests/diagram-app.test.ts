@@ -1,6 +1,10 @@
 import { DiagramApp } from '../src/DiagramApp';
 
-declare const global: any;
+interface GlobalWithMiro {
+  miro?: { board?: Record<string, unknown> };
+}
+
+declare const global: GlobalWithMiro;
 
 /**
  * Tests for the DiagramApp singleton and initialization logic.
@@ -8,7 +12,7 @@ declare const global: any;
 describe('DiagramApp', () => {
   afterEach(() => {
     jest.restoreAllMocks();
-    delete (global as any).miro;
+    delete global.miro;
   });
 
   test('getInstance returns the same object', () => {

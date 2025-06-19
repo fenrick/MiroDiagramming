@@ -1,7 +1,11 @@
 import { graphService } from '../src/graph';
 import { templateManager } from '../src/templates';
 
-declare const global: any;
+interface GlobalWithMiro {
+  miro?: { board?: Record<string, unknown> };
+}
+
+declare const global: GlobalWithMiro;
 
 describe('createNode', () => {
   beforeEach(() => {
@@ -17,7 +21,10 @@ describe('createNode', () => {
       getItems: jest.fn().mockResolvedValue([]),
       sync: jest.fn(),
       id: 's1',
-    } as any);
+    } as unknown as { type: string; setMetadata: jest.Mock } & Record<
+      string,
+      unknown
+    >);
   });
 
   afterEach(() => {
@@ -25,7 +32,10 @@ describe('createNode', () => {
     graphService.resetBoardCache();
   });
 
-  const node = { id: 'n1', label: 'L', type: 'Role' } as any;
+  const node = { id: 'n1', label: 'L', type: 'Role' } as Record<
+    string,
+    unknown
+  >;
   const pos = { x: 0, y: 0, width: 10, height: 10 };
 
   test('creates new node', async () => {
@@ -41,7 +51,7 @@ describe('createNode', () => {
       getMetadata: jest.fn().mockResolvedValue({ type: 'Role', label: 'L' }),
       sync: jest.fn(),
       id: 'sExisting',
-    } as any;
+    } as Record<string, unknown>;
     (global.miro.board.get as jest.Mock).mockResolvedValueOnce([existing]);
     const result = await graphService.createNode(node, pos);
     expect(result).toBe(existing);
