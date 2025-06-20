@@ -41,4 +41,12 @@ describe('App layout options and undo button', () => {
       }),
     );
   });
+
+  test('hides layout options in cards mode', () => {
+    render(React.createElement(App));
+    fireEvent.click(screen.getByLabelText(/cards/i));
+    expect(screen.queryByLabelText('Algorithm')).toBeNull();
+    expect(screen.queryByLabelText('Direction')).toBeNull();
+    expect(screen.queryByLabelText('Spacing')).toBeNull();
+  });
 });

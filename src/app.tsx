@@ -205,63 +205,72 @@ export const App: React.FC = () => {
             />
           )}
 
-          <InputLabel
-            style={{ display: 'block', marginTop: tokens.space.small }}
-          >
-            Algorithm
-            <Select
-              value={layoutOpts.algorithm}
-              onChange={value =>
-                setLayoutOpts({
-                  ...layoutOpts,
-                  algorithm: value as ElkAlgorithm,
-                })
-              }
-            >
-              {ALGORITHMS.map(a => (
-                <SelectOption key={a} value={a}>
-                  {a}
-                </SelectOption>
-              ))}
-            </Select>
-          </InputLabel>
-          <InputLabel
-            style={{ display: 'block', marginTop: tokens.space.xsmall }}
-          >
-            Direction
-            <Select
-              value={layoutOpts.direction}
-              onChange={value =>
-                setLayoutOpts({
-                  ...layoutOpts,
-                  direction: value as ElkDirection,
-                })
-              }
-            >
-              {DIRECTIONS.map(d => (
-                <SelectOption key={d} value={d}>
-                  {d}
-                </SelectOption>
-              ))}
-            </Select>
-          </InputLabel>
-          <InputLabel
-            style={{ display: 'block', marginTop: tokens.space.xsmall }}
-          >
-            Spacing
-            <Input
-              type='number'
-              value={String(layoutOpts.spacing)}
-              onChange={value =>
-                setLayoutOpts({
-                  ...layoutOpts,
-                  spacing: Number(value),
-                })
-              }
-            />
-          </InputLabel>
+          {mode === 'diagram' && (
+            <>
+              <InputLabel
+                style={{ display: 'block', marginTop: tokens.space.small }}
+              >
+                Algorithm
+                <Select
+                  value={layoutOpts.algorithm}
+                  onChange={value =>
+                    setLayoutOpts({
+                      ...layoutOpts,
+                      algorithm: value as ElkAlgorithm,
+                    })
+                  }
+                >
+                  {ALGORITHMS.map(a => (
+                    <SelectOption key={a} value={a}>
+                      {a}
+                    </SelectOption>
+                  ))}
+                </Select>
+              </InputLabel>
+              <InputLabel
+                style={{ display: 'block', marginTop: tokens.space.xsmall }}
+              >
+                Direction
+                <Select
+                  value={layoutOpts.direction}
+                  onChange={value =>
+                    setLayoutOpts({
+                      ...layoutOpts,
+                      direction: value as ElkDirection,
+                    })
+                  }
+                >
+                  {DIRECTIONS.map(d => (
+                    <SelectOption key={d} value={d}>
+                      {d}
+                    </SelectOption>
+                  ))}
+                </Select>
+              </InputLabel>
+              <InputLabel
+                style={{ display: 'block', marginTop: tokens.space.xsmall }}
+              >
+                Spacing
+                <Input
+                  type='number'
+                  value={String(layoutOpts.spacing)}
+                  onChange={value =>
+                    setLayoutOpts({
+                      ...layoutOpts,
+                      spacing: Number(value),
+                    })
+                  }
+                />
+              </InputLabel>
+            </>
+          )}
 
-          <Button onClick={handleCreate} size='small' variant='primary'>
+          <Button
+            onClick={handleCreate}
+            size='small'
+            variant='primary'
+            style={{ marginTop: tokens.space.xsmall }}
+          >
             {mode === 'diagram' ? 'Create Diagram' : 'Create Cards'}
           </Button>
           {progress > 0 && progress < 100 && (
