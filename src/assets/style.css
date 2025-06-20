@@ -35,8 +35,9 @@ body {
     list-style: none;
     padding: var(--space-xxsmall) var(--space-xsmall);
     border: 3px dashed var(--indigoAlpha40);
-    max-height: 40px;
+    max-height: 80px;
     overflow-y: auto;
+    font-size: var(--font-size-large);
 }
 
 .container {
