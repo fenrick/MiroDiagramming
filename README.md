@@ -37,7 +37,8 @@ value in its metadata the corresponding template is applied. Edit this file or
 add new entries to customize the available shapes. Connector appearance is
 configured in
 [ `templates/connectorTemplates.json`](templates/connectorTemplates.json) which
-controls line color, caps and font.
+controls line color, caps and font. The templates now include a `Decision` shape
+useful for flowcharts.
 
 To add your own templates create new entries in these JSON files and reference
 them by name in your graph metadata. The app reloads templates on startup so

@@ -13,7 +13,9 @@ import {
 import { GraphProcessor } from './GraphProcessor';
 import { CardProcessor } from './CardProcessor';
 import { showError } from './notifications';
-import { ResizeTab, StyleTab, GridTab } from './tools';
+import { ResizeTab } from './tabs/ResizeTab';
+import { StyleTab } from './tabs/StyleTab';
+import { GridTab } from './tabs/GridTab';
 import {
   ALGORITHMS,
   DEFAULT_LAYOUT_OPTIONS,

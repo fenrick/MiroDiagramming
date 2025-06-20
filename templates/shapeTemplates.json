@@ -167,5 +167,19 @@
         "text": "{{label}}"
       }
     ]
+  },
+  "Decision": {
+    "elements": [
+      {
+        "shape": "diamond",
+        "width": 80,
+        "height": 80,
+        "style": {
+          "fillColor": "#FFF2CC",
+          "fontFamily": "Arial"
+        },
+        "text": "{{label}}"
+      }
+    ]
   }
 }

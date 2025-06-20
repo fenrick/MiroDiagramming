@@ -5,6 +5,10 @@ export interface GridOptions {
   cols: number;
   rows: number;
   padding: number;
+  /** Whether to group the widgets after layout. */
+  groupResult?: boolean;
+  /** Sort widgets alphabetically by their name before layout. */
+  sortByName?: boolean;
 }
 
 export interface Position {
@@ -16,6 +20,18 @@ export interface BoardLike {
   selection: {
     get(): Promise<Array<Record<string, unknown>>>;
   };
+  group?: (opts: { items: Array<Record<string, unknown>> }) => Promise<unknown>;
+}
+
+/** Extract a name field from a widget for sorting purposes. */
+function getName(item: Record<string, unknown>): string {
+  return String(
+    (item as { title?: string }).title ??
+      (item as { plainText?: string }).plainText ??
+      (item as { content?: string }).content ??
+      (item as { text?: string }).text ??
+      '',
+  );
 }
 
 /**
@@ -40,7 +56,8 @@ export function calculateGridPositions(
 
 /**
  * Arrange selected widgets into a grid starting from the first widget's
- * position.
+ * position. Widgets can optionally be sorted alphabetically and grouped
+ * together after layout so they remain fixed in relation to each other.
  */
 export async function applyGridLayout(
   opts: GridOptions,
@@ -51,7 +68,10 @@ export async function applyGridLayout(
     (globalThis as unknown as { miro?: { board?: BoardLike } }).miro?.board;
   if (!b) throw new Error('Miro board not available');
   const selection = await b.selection.get();
-  const items = selection.slice(0, opts.cols * opts.rows);
+  let items = selection.slice(0, opts.cols * opts.rows);
+  if (opts.sortByName) {
+    items = [...items].sort((a, b) => getName(a).localeCompare(getName(b)));
+  }
   if (!items.length) return;
   const first = items[0] as {
     x: number;
@@ -70,4 +90,7 @@ export async function applyGridLayout(
       }
     }),
   );
+  if (opts.groupResult && typeof b.group === 'function') {
+    await b.group({ items });
+  }
 }
