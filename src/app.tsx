@@ -6,7 +6,6 @@ import {
   Checkbox,
   Input,
   InputLabel,
-  RadioButton,
   Select,
   SelectOption,
   tokens,
@@ -14,6 +13,7 @@ import {
 import { GraphProcessor } from './GraphProcessor';
 import { CardProcessor } from './CardProcessor';
 import { showError } from './notifications';
+import { ResizeTab, StyleTab, GridTab } from './tools';
 import {
   ALGORITHMS,
   DEFAULT_LAYOUT_OPTIONS,
@@ -73,10 +73,11 @@ export function getDropzoneStyle(
  * the component to be reused in tests without side effects.
  */
 export const App: React.FC = () => {
+  type Tab = 'diagram' | 'cards' | 'resize' | 'style' | 'grid';
+  const [tab, setTab] = React.useState<Tab>('diagram');
   const [files, setFiles] = React.useState<File[]>([]);
   const [withFrame, setWithFrame] = React.useState(false);
   const [frameTitle, setFrameTitle] = React.useState('');
-  const [mode, setMode] = React.useState<'diagram' | 'cards'>('diagram');
   const [progress, setProgress] = React.useState<number>(0);
   const [error, setError] = React.useState<string | null>(null);
   const [layoutOpts, setLayoutOpts] = React.useState<UserLayoutOptions>(
@@ -104,14 +105,14 @@ export const App: React.FC = () => {
     setError(null);
     for (const file of files) {
       try {
-        if (mode === 'diagram') {
+        if (tab === 'diagram') {
           setLastProc(graphProcessor);
           await graphProcessor.processFile(file, {
             createFrame: withFrame,
             frameTitle: frameTitle || undefined,
             layout: layoutOpts,
           });
-        } else {
+        } else if (tab === 'cards') {
           setLastProc(cardProcessor);
           await cardProcessor.processFile(file, {
             createFrame: withFrame,
@@ -135,52 +136,56 @@ export const App: React.FC = () => {
 
   return (
     <div className='dnd-container'>
-      <div
-        role='radiogroup'
-        aria-label='Import mode'
-      >
-        <RadioButton
-          label='Diagram'
-          value={mode === 'diagram'}
-          onChange={() => setMode('diagram')}
-        />
-        <RadioButton
-          label='Cards'
-          value={mode === 'cards'}
-          onChange={() => setMode('cards')}
-        />
-      </div>
-      <p>
-        Select the JSON file to import{' '}
-        {mode === 'diagram' ? 'a diagram' : 'a list of cards'}
-      </p>
-      <div
-        {...dropzone.getRootProps({ style })}
-        aria-label='File drop area'
-        aria-describedby='dropzone-instructions'
-      >
-        <input
-          data-testid='file-input'
-          {...dropzone.getInputProps({ 'aria-label': 'JSON file input' })}
-        />
-        {dropzone.isDragAccept ? (
-          <p className='dnd-text'>Drop your JSON file here</p>
-        ) : (
-          <>
-            <div>
-                <Button variant='primary' type='button'>
-                Select JSON file
-              </Button>
-              <p className='dnd-text'>Or drop your JSON file here</p>
-            </div>
-          </>
-        )}
-      </div>
-      <p id='dropzone-instructions' className='visually-hidden'>
-        Press Enter to open the file picker or drop a JSON file on the area
-        above.
-      </p>
-      {files.length > 0 && (
+      <nav className='tabs' role='tablist'>
+        {(['diagram', 'cards', 'resize', 'style', 'grid'] as Tab[]).map(t => (
+          <Button
+            key={t}
+            role='tab'
+            variant={tab === t ? 'primary' : 'secondary'}
+            onClick={() => setTab(t)}
+          >
+            {t.charAt(0).toUpperCase() + t.slice(1)}
+          </Button>
+        ))}
+      </nav>
+      {tab === 'diagram' || tab === 'cards' ? (
+        <p>
+          Select the JSON file to import{' '}
+          {tab === 'diagram' ? 'a diagram' : 'a list of cards'}
+        </p>
+      ) : null}
+      {(tab === 'diagram' || tab === 'cards') && (
+        <>
+          <div
+            {...dropzone.getRootProps({ style })}
+            aria-label='File drop area'
+            aria-describedby='dropzone-instructions'
+          >
+            <input
+              data-testid='file-input'
+              {...dropzone.getInputProps({ 'aria-label': 'JSON file input' })}
+            />
+            {dropzone.isDragAccept ? (
+              <p className='dnd-text'>Drop your JSON file here</p>
+            ) : (
+              <>
+                <div>
+                  <Button variant='primary' type='button'>
+                    Select JSON file
+                  </Button>
+                  <p className='dnd-text'>Or drop your JSON file here</p>
+                </div>
+              </>
+            )}
+          </div>
+          <p id='dropzone-instructions' className='visually-hidden'>
+            Press Enter to open the file picker or drop a JSON file on the area
+            above.
+          </p>
+        </>
+      )}
+
+      {(tab === 'diagram' || tab === 'cards') && files.length > 0 && (
         <>
           <ul className='dropped-files'>
             {files.map((file, i) => (
@@ -203,10 +208,9 @@ export const App: React.FC = () => {
             />
           )}
 
-          {mode === 'diagram' && (
+          {tab === 'diagram' && (
             <>
-              <InputLabel
-              >
+              <InputLabel>
                 Algorithm
                 <Select
                   value={layoutOpts.algorithm}
@@ -224,8 +228,7 @@ export const App: React.FC = () => {
                   ))}
                 </Select>
               </InputLabel>
-              <InputLabel
-              >
+              <InputLabel>
                 Direction
                 <Select
                   value={layoutOpts.direction}
@@ -243,8 +246,7 @@ export const App: React.FC = () => {
                   ))}
                 </Select>
               </InputLabel>
-              <InputLabel
-              >
+              <InputLabel>
                 Spacing
                 <Input
                   type='number'
@@ -260,12 +262,8 @@ export const App: React.FC = () => {
             </>
           )}
 
-          <Button
-            onClick={handleCreate}
-            size='small'
-            variant='primary'
-          >
-            {mode === 'diagram' ? 'Create Diagram' : 'Create Cards'}
+          <Button onClick={handleCreate} size='small' variant='primary'>
+            {tab === 'diagram' ? 'Create Diagram' : 'Create Cards'}
           </Button>
           {progress > 0 && progress < 100 && (
             <progress value={progress} max={100} />
@@ -283,6 +281,9 @@ export const App: React.FC = () => {
           )}
         </>
       )}
+      {tab === 'resize' && <ResizeTab />}
+      {tab === 'style' && <StyleTab />}
+      {tab === 'grid' && <GridTab />}
     </div>
   );
 };
