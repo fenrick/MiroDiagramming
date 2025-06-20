@@ -136,7 +136,6 @@ export const App: React.FC = () => {
   return (
     <div className='dnd-container'>
       <div
-        style={{ marginBottom: tokens.space.small }}
         role='radiogroup'
         aria-label='Import mode'
       >
@@ -149,7 +148,6 @@ export const App: React.FC = () => {
           label='Cards'
           value={mode === 'cards'}
           onChange={() => setMode('cards')}
-          style={{ marginLeft: tokens.space.xsmall }}
         />
       </div>
       <p>
@@ -170,7 +168,7 @@ export const App: React.FC = () => {
         ) : (
           <>
             <div>
-              <Button variant='primary' size='small' type='button'>
+                <Button variant='primary' type='button'>
                 Select JSON file
               </Button>
               <p className='dnd-text'>Or drop your JSON file here</p>
@@ -208,7 +206,6 @@ export const App: React.FC = () => {
           {mode === 'diagram' && (
             <>
               <InputLabel
-                style={{ display: 'block', marginTop: tokens.space.small }}
               >
                 Algorithm
                 <Select
@@ -228,7 +225,6 @@ export const App: React.FC = () => {
                 </Select>
               </InputLabel>
               <InputLabel
-                style={{ display: 'block', marginTop: tokens.space.xsmall }}
               >
                 Direction
                 <Select
@@ -248,7 +244,6 @@ export const App: React.FC = () => {
                 </Select>
               </InputLabel>
               <InputLabel
-                style={{ display: 'block', marginTop: tokens.space.xsmall }}
               >
                 Spacing
                 <Input
@@ -269,7 +264,6 @@ export const App: React.FC = () => {
             onClick={handleCreate}
             size='small'
             variant='primary'
-            style={{ marginTop: tokens.space.xsmall }}
           >
             {mode === 'diagram' ? 'Create Diagram' : 'Create Cards'}
           </Button>
@@ -283,7 +277,6 @@ export const App: React.FC = () => {
                 void undoLastImport(lastProc, () => setLastProc(undefined));
               }}
               size='small'
-              style={{ marginTop: tokens.space.small }}
             >
               Undo Last Import
             </Button>

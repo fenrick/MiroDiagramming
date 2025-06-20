@@ -27,13 +27,6 @@ body {
         align-items: stretch;
 }
 
-.dnd-container {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    height: 100%;
-    padding: var(--space-medium);
-}
 
 .dropped-files {
     list-style: none;
@@ -44,21 +37,6 @@ body {
     font-size: var(--font-size-large);
 }
 
-.container {
-    max-width: 580px;
-    margin: 0 auto;
-    background-color: var(--indigo50);
-    padding: var(--space-xxxlarge);
-    border-radius: var(--border-radius-xlarge);
-}
-
-img {
-    max-width: 100%;
-}
-
-.button {
-    text-decoration: none;
-}
 
 .visually-hidden {
     position: absolute;
