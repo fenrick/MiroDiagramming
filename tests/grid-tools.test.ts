@@ -1,4 +1,8 @@
-import { applyGridLayout, calculateGridPositions } from '../src/grid-tools';
+import {
+  applyGridLayout,
+  calculateGridPositions,
+  BoardLike,
+} from '../src/grid-tools';
 
 describe('grid-tools', () => {
   test('calculateGridPositions computes offsets', () => {
@@ -31,5 +35,18 @@ describe('grid-tools', () => {
     expect(board.group).toHaveBeenCalledWith({ items: [items[1], items[0]] });
     expect(items[0].sync).toHaveBeenCalled();
     expect(items[1].sync).toHaveBeenCalled();
+  });
+
+  test('applyGridLayout handles groups as single items', async () => {
+    const items = [
+      { x: 0, y: 0, width: 10, height: 10, sync: jest.fn(), type: 'group' },
+      { x: 0, y: 0, width: 10, height: 10, sync: jest.fn() },
+    ];
+    const board: BoardLike = {
+      selection: { get: jest.fn().mockResolvedValue(items) },
+    };
+    await applyGridLayout({ cols: 2, rows: 1, padding: 5 }, board);
+    expect(items[1].x).toBe(15);
+    expect(items[1].y).toBe(0);
   });
 });

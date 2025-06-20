@@ -16,10 +16,16 @@ export interface Position {
   y: number;
 }
 
+/**
+ * Minimal abstraction of the board API used for selection and grouping.
+ * Allows injection of a mock implementation in tests.
+ */
 export interface BoardLike {
   selection: {
+    /** Retrieve the current selection of widgets. */
     get(): Promise<Array<Record<string, unknown>>>;
   };
+  /** Optionally group widgets into a single item. */
   group?: (opts: { items: Array<Record<string, unknown>> }) => Promise<unknown>;
 }
 
