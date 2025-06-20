@@ -57,7 +57,7 @@ describe('App UI integration', () => {
       .spyOn(CardProcessor.prototype, 'processFile')
       .mockResolvedValue(undefined);
     render(React.createElement(App));
-    fireEvent.click(screen.getByLabelText(/cards/i));
+    fireEvent.click(screen.getByRole('tab', { name: /cards/i }));
     await act(async () => {
       selectFile();
     });
@@ -70,11 +70,11 @@ describe('App UI integration', () => {
 
   test('mode radio buttons change description text', () => {
     render(React.createElement(App));
-    fireEvent.click(screen.getByLabelText(/cards/i));
+    fireEvent.click(screen.getByRole('tab', { name: /cards/i }));
     expect(
       screen.getByText(/select the json file to import a list of cards/i),
     ).toBeInTheDocument();
-    fireEvent.click(screen.getByLabelText(/diagram/i));
+    fireEvent.click(screen.getByRole('tab', { name: /diagram/i }));
     expect(
       screen.getByText(/select the json file to import a diagram/i),
     ).toBeInTheDocument();
