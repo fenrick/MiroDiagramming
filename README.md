@@ -94,6 +94,18 @@ and hidden instructions so screen readers announce how to operate it. Focus the
 area with the Tab key and press **Enter** to open the file picker. The mode
 selection radios are grouped with a descriptive label.
 
+## Additional Tools
+
+The sidebar exposes extra tabs to manipulate existing widgets:
+
+- **Resize** allows copying a widget size and applying it to others. You can
+  also type width and height manually. The tool displays conversions between
+  board units, millimetres and inches based on the ratio `96 units = 1 inch`.
+- **Style** sets common style properties like fill colour or border width on all
+  selected items.
+- **Grid** arranges widgets into a grid with options for sorting and grouping
+  the result.
+
 ## Setup
 
 - [Miro Web SDK](https://developers.miro.com/docs/web-sdk-reference)
