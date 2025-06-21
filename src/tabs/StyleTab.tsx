@@ -6,9 +6,12 @@ import {
   getFillColorFromSelection,
   tweakFillColor,
 } from '../style-tools';
+import { ensureContrast } from '../color-utils';
+import { useSelection } from '../useSelection';
 
 /** UI for the Style tab. */
 export const StyleTab: React.FC = () => {
+  const selection = useSelection();
   const [opts, setOpts] = React.useState<StyleOptions>({
     fillColor: '#ffffff',
     fontColor: '#1a1a1a',
@@ -50,7 +53,7 @@ export const StyleTab: React.FC = () => {
 
   React.useEffect(() => {
     void copyColor();
-  }, []);
+  }, [selection]);
 
   return (
     <div>
@@ -58,6 +61,10 @@ export const StyleTab: React.FC = () => {
         value={opts.fillColor}
         onChange={update('fillColor')}
         placeholder='Fill color'
+        style={{
+          backgroundColor: opts.fillColor,
+          color: ensureContrast(opts.fillColor ?? '#ffffff', '#ffffff'),
+        }}
       />
       <Input
         value={opts.fontColor}
@@ -94,7 +101,16 @@ export const StyleTab: React.FC = () => {
         </Button>
       </div>
       {currentFill && (
-        <p data-testid='current-fill'>Current fill: {currentFill}</p>
+        <p
+          data-testid='current-fill'
+          style={{
+            backgroundColor: currentFill,
+            color: ensureContrast(currentFill, '#ffffff'),
+            padding: 4,
+          }}
+        >
+          Current fill: {currentFill}
+        </p>
       )}
       <Button onClick={apply} size='small'>
         Apply Style

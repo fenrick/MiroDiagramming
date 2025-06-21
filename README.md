@@ -102,9 +102,9 @@ The sidebar exposes extra tabs to manipulate existing widgets:
   also type width and height manually. The tool displays conversions between
   board units, millimetres and inches based on the ratio `96 units = 1 inch`.
 - **Style** sets common style properties like fill colour or border width on all
-  selected items. The tab also displays the current fill colour of the selection
-  and includes a slider to lighten or darken it while keeping the text colour
-  readable.
+  selected items. The tab shows the current fill colour swatch and updates when
+  the selection changes. A slider lightens or darkens the colour while keeping
+  the text readable.
 - **Grid** arranges widgets into a grid with options for sorting and grouping
   the result.
 

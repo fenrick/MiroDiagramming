@@ -14,6 +14,22 @@ jest.mock('../src/style-tools');
 jest.mock('../src/grid-tools');
 
 describe('tab components', () => {
+  beforeEach(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (globalThis as any).miro = {
+      board: {
+        getSelection: jest.fn().mockResolvedValue([]),
+        addListener: jest.fn(),
+      },
+    };
+  });
+
+  afterEach(() => {
+    // cleanup global
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    delete (globalThis as any).miro;
+    jest.clearAllMocks();
+  });
   test('ResizeTab applies size', async () => {
     const spy = jest
       .spyOn(resizeTools, 'applySizeToSelection')

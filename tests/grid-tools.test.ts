@@ -1,8 +1,5 @@
-import {
-  applyGridLayout,
-  calculateGridPositions,
-  BoardLike,
-} from '../src/grid-tools';
+import { applyGridLayout, calculateGridPositions } from '../src/grid-tools';
+import { BoardLike } from '../src/board';
 
 describe('grid-tools', () => {
   test('calculateGridPositions computes offsets', () => {
@@ -22,9 +19,9 @@ describe('grid-tools', () => {
       { x: 0, y: 0, width: 10, height: 10, sync: jest.fn(), title: 'a' },
     ];
     const board = {
-      selection: { get: jest.fn().mockResolvedValue(items) },
+      getSelection: jest.fn().mockResolvedValue(items),
       group: jest.fn(),
-    };
+    } as BoardLike;
     await applyGridLayout(
       { cols: 1, rows: 2, padding: 5, sortByName: true, groupResult: true },
       board,
@@ -43,7 +40,7 @@ describe('grid-tools', () => {
       { x: 0, y: 0, width: 10, height: 10, sync: jest.fn() },
     ];
     const board: BoardLike = {
-      selection: { get: jest.fn().mockResolvedValue(items) },
+      getSelection: jest.fn().mockResolvedValue(items),
     };
     await applyGridLayout({ cols: 2, rows: 1, padding: 5 }, board);
     expect(items[1].x).toBe(15);
@@ -52,7 +49,7 @@ describe('grid-tools', () => {
 
   test('applyGridLayout returns early with empty selection', async () => {
     const board: BoardLike = {
-      selection: { get: jest.fn().mockResolvedValue([]) },
+      getSelection: jest.fn().mockResolvedValue([]),
       group: jest.fn(),
     };
     await applyGridLayout(
@@ -65,7 +62,7 @@ describe('grid-tools', () => {
   test('applyGridLayout skips grouping when API missing', async () => {
     const items = [{ x: 0, y: 0, width: 10, height: 10, sync: jest.fn() }];
     const board: BoardLike = {
-      selection: { get: jest.fn().mockResolvedValue(items) },
+      getSelection: jest.fn().mockResolvedValue(items),
     };
     await applyGridLayout(
       { cols: 1, rows: 1, padding: 0, groupResult: true },

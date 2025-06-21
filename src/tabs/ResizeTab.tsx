@@ -5,10 +5,12 @@ import {
   copySizeFromSelection,
   Size,
 } from '../resize-tools';
+import { useSelection } from '../useSelection';
 import { boardUnitsToMm, boardUnitsToInches } from '../unit-utils';
 
 /** UI for the Resize tab. */
 export const ResizeTab: React.FC = () => {
+  const selection = useSelection();
   const [size, setSize] = React.useState<Size>({ width: 100, height: 100 });
   const [copied, setCopied] = React.useState(false);
 
@@ -29,6 +31,20 @@ export const ResizeTab: React.FC = () => {
   const apply = async (): Promise<void> => {
     await applySizeToSelection(size);
   };
+
+  React.useEffect(() => {
+    const first = selection[0] as
+      | { width?: number; height?: number }
+      | undefined;
+    if (
+      first &&
+      typeof first.width === 'number' &&
+      typeof first.height === 'number'
+    ) {
+      setSize({ width: first.width, height: first.height });
+      setCopied(true);
+    }
+  }, [selection]);
 
   return (
     <div>

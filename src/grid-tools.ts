@@ -20,14 +20,7 @@ export interface Position {
  * Minimal abstraction of the board API used for selection and grouping.
  * Allows injection of a mock implementation in tests.
  */
-export interface BoardLike {
-  selection: {
-    /** Retrieve the current selection of widgets. */
-    get(): Promise<Array<Record<string, unknown>>>;
-  };
-  /** Optionally group widgets into a single item. */
-  group?: (opts: { items: Array<Record<string, unknown>> }) => Promise<unknown>;
-}
+import { BoardLike, getBoard } from './board';
 
 /** Extract a name field from a widget for sorting purposes. */
 function getName(item: Record<string, unknown>): string {
@@ -69,11 +62,8 @@ export async function applyGridLayout(
   opts: GridOptions,
   board?: BoardLike,
 ): Promise<void> {
-  const b =
-    board ??
-    (globalThis as unknown as { miro?: { board?: BoardLike } }).miro?.board;
-  if (!b) throw new Error('Miro board not available');
-  const selection = await b.selection.get();
+  const b = getBoard(board);
+  const selection = await b.getSelection();
   let items = selection.slice(0, opts.cols * opts.rows);
   if (opts.sortByName) {
     items = [...items].sort((a, b) => getName(a).localeCompare(getName(b)));
