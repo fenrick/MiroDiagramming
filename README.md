@@ -126,7 +126,9 @@ The CSS for this project imports
 [`src/assets/style.css`](src/assets/style.css) to match the Miro UI. When adding
 new UI elements reuse the Mirotone utility classes such as `button`,
 `button-primary` and the grid helpers so your components align with existing
-styles.
+styles. Avoid custom CSS when a utility class exists. All interactive elements
+should be built using `mirotone-react` components so the underlying markup
+follows the same structure and spacing tokens as the native Mirotone widgets.
 
 ## Form Design Guidelines
 
@@ -140,6 +142,8 @@ match the rest of the UI. These guidelines help keep layouts consistent:
   responsive.
 - Use the tokens from `mirotone-react` (`tokens.space.*`) for margins and
   padding instead of hard‑coded numbers.
+- When customisation is needed prefer extending Mirotone variables over creating
+  bespoke CSS classes.
 - Stick to the provided `Button` component and choose the `primary` variant for
   the main action. Place secondary actions on the right using the `buttons`
   wrapper as seen in the tabs.
@@ -249,6 +253,15 @@ point to the deployed bundle.
 ├── app.html       // The app itself. It's loaded on the board inside the 'appContainer'
 └── index.html     // The app entry point. This is what you specify in the 'App URL' box in the Miro app settings
 ```
+
+## 📚 Additional Design Docs
+
+- [Architecture](docs/ARCHITECTURE.md) explains how the source modules are
+  organised.
+- [Tab Overview](docs/TABS.md) describes the sidebar tabs and their purpose.
+- [Deployment Guide](docs/DEPLOYMENT.md) shows how to build and host the bundle.
+- [Styling and Formatting](docs/STYLING.md) covers Mirotone usage and coding
+  conventions.
 
 ## 🫱🏻‍🫲🏽 Contributing <a name="contributing"></a>
 
