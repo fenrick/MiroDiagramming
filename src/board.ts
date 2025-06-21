@@ -1,7 +1,15 @@
+export interface BoardUILike {
+  on(
+    event: 'selection:update',
+    handler: (ev: { items: unknown[] }) => void,
+  ): void;
+}
+
 export interface BoardLike {
   getSelection(): Promise<Array<Record<string, unknown>>>;
   group?(opts: { items: Array<Record<string, unknown>> }): Promise<unknown>;
   addListener?(event: string, cb: () => void): () => void;
+  ui?: BoardUILike;
 }
 
 export function getBoard(board?: BoardLike): BoardLike {

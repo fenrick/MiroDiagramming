@@ -19,7 +19,7 @@ describe('tab components', () => {
     (globalThis as any).miro = {
       board: {
         getSelection: jest.fn().mockResolvedValue([]),
-        addListener: jest.fn(),
+        ui: { on: jest.fn() },
       },
     };
   });
