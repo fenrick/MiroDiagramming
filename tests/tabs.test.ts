@@ -7,18 +7,18 @@ import { StyleTab } from '../src/ui/tabs/StyleTab';
 import { GridTab } from '../src/ui/tabs/GridTab';
 import { DiagramTab } from '../src/ui/tabs/DiagramTab';
 import { CardsTab } from '../src/ui/tabs/CardsTab';
-import * as resizeTools from '../src/resize-tools';
-import * as styleTools from '../src/style-tools';
-import * as gridTools from '../src/grid-tools';
+import * as resizeTools from '../src/board/resize-tools';
+import * as styleTools from '../src/board/style-tools';
+import * as gridTools from '../src/board/grid-tools';
 import { GraphProcessor } from '../src/core/GraphProcessor';
 import { CardProcessor } from '../src/board/CardProcessor';
 import { graphService } from '../src/core/graph';
-import { cardLoader } from '../src/cards';
-import type { CardData } from '../src/cards';
+import { cardLoader } from '../src/core/cards';
+import type { CardData } from '../src/core/cards';
 
-jest.mock('../src/resize-tools');
-jest.mock('../src/style-tools');
-jest.mock('../src/grid-tools');
+jest.mock('../src/board/resize-tools');
+jest.mock('../src/board/style-tools');
+jest.mock('../src/board/grid-tools');
 jest.mock('../src/core/GraphProcessor');
 jest.mock('../src/board/CardProcessor');
 

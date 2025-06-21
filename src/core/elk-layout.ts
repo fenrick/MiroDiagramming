@@ -1,8 +1,8 @@
 import ELK from 'elkjs/lib/elk.bundled.js';
 import type { ElkNode } from 'elkjs/lib/elk-api';
 import { GraphData } from './graph';
-import { templateManager } from '../templates';
-import { UserLayoutOptions, validateLayoutOptions } from '../elk-options';
+import { templateManager } from '../board/templates';
+import { UserLayoutOptions, validateLayoutOptions } from './elk-options';
 
 /**
  * Node with layout coordinates returned from ELK.

@@ -1,6 +1,6 @@
 import { GraphProcessor } from '../src/core/GraphProcessor';
 import { graphService } from '../src/core/graph';
-import { templateManager } from '../src/templates';
+import { templateManager } from '../src/board/templates';
 import { layoutEngine } from '../src/core/elk-layout';
 import sample from '../sample-graph.json';
 

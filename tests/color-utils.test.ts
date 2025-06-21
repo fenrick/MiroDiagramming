@@ -1,4 +1,8 @@
-import { adjustColor, contrastRatio, ensureContrast } from '../src/color-utils';
+import {
+  adjustColor,
+  contrastRatio,
+  ensureContrast,
+} from '../src/core/color-utils';
 
 describe('color-utils', () => {
   test('adjustColor lightens and darkens', () => {
