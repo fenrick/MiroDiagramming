@@ -137,7 +137,7 @@ var __generator =
     }
   };
 Object.defineProperty(exports, '__esModule', { value: true });
-var BoardBuilder_1 = require('../src/BoardBuilder');
+var BoardBuilder_1 = require('../src/board/BoardBuilder');
 var templates_1 = require('../src/templates');
 /**
  * Unit tests targeting rarely hit branches within BoardBuilder

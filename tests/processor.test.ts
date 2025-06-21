@@ -1,7 +1,7 @@
-import { GraphProcessor } from '../src/GraphProcessor';
-import { graphService } from '../src/graph';
+import { GraphProcessor } from '../src/core/GraphProcessor';
+import { graphService } from '../src/core/graph';
 import { templateManager } from '../src/templates';
-import { layoutEngine } from '../src/elk-layout';
+import { layoutEngine } from '../src/core/elk-layout';
 import sample from '../sample-graph.json';
 
 interface GlobalWithMiro {

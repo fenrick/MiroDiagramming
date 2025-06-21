@@ -3,38 +3,25 @@ import { useDropzone } from 'react-dropzone';
 import {
   Button,
   Checkbox,
-  Icon,
   Input,
   InputLabel,
   Paragraph,
-  Select,
-  SelectOption,
   tokens,
   Text,
+  Icon,
 } from 'mirotone-react';
-import { GraphProcessor } from '../GraphProcessor';
-import { showError } from '../notifications';
-import {
-  ALGORITHMS,
-  DEFAULT_LAYOUT_OPTIONS,
-  DIRECTIONS,
-  ElkAlgorithm,
-  ElkDirection,
-  UserLayoutOptions,
-} from '../elk-options';
-import { getDropzoneStyle, undoLastImport } from '../ui-utils';
+import { CardProcessor } from '../../board/CardProcessor';
+import { showError } from '../../notifications';
+import { getDropzoneStyle, undoLastImport } from '../../ui-utils';
 
-/** UI for the Diagram tab. */
-export const DiagramTab: React.FC = () => {
+/** UI for the Cards tab. */
+export const CardsTab: React.FC = () => {
   const [files, setFiles] = React.useState<File[]>([]);
   const [withFrame, setWithFrame] = React.useState(false);
   const [frameTitle, setFrameTitle] = React.useState('');
-  const [layoutOpts, setLayoutOpts] = React.useState<UserLayoutOptions>(
-    DEFAULT_LAYOUT_OPTIONS,
-  );
   const [progress, setProgress] = React.useState<number>(0);
   const [error, setError] = React.useState<string | null>(null);
-  const [lastProc, setLastProc] = React.useState<GraphProcessor | undefined>(
+  const [lastProc, setLastProc] = React.useState<CardProcessor | undefined>(
     undefined,
   );
 
@@ -49,18 +36,17 @@ export const DiagramTab: React.FC = () => {
     },
   });
 
-  const graphProcessor = React.useMemo(() => new GraphProcessor(), []);
+  const cardProcessor = React.useMemo(() => new CardProcessor(), []);
 
   const handleCreate = async (): Promise<void> => {
     setProgress(0);
     setError(null);
     for (const file of files) {
       try {
-        setLastProc(graphProcessor);
-        await graphProcessor.processFile(file, {
+        setLastProc(cardProcessor);
+        await cardProcessor.processFile(file, {
           createFrame: withFrame,
           frameTitle: frameTitle || undefined,
-          layout: layoutOpts,
         });
         setProgress(100);
       } catch (e) {
@@ -79,7 +65,7 @@ export const DiagramTab: React.FC = () => {
 
   return (
     <div>
-      <Paragraph>Select the JSON file to import a diagram</Paragraph>
+      <Paragraph>Select the JSON file to import a list of cards</Paragraph>
       <div
         {...dropzone.getRootProps({ style })}
         aria-label='File drop area'
@@ -139,59 +125,10 @@ export const DiagramTab: React.FC = () => {
               />
             </InputLabel>
           )}
-          <InputLabel>
-            Algorithm
-            <Select
-              value={layoutOpts.algorithm}
-              onChange={value =>
-                setLayoutOpts({
-                  ...layoutOpts,
-                  algorithm: value as ElkAlgorithm,
-                })
-              }
-            >
-              {ALGORITHMS.map(a => (
-                <SelectOption key={a} value={a}>
-                  {a}
-                </SelectOption>
-              ))}
-            </Select>
-          </InputLabel>
-          <InputLabel>
-            Direction
-            <Select
-              value={layoutOpts.direction}
-              onChange={value =>
-                setLayoutOpts({
-                  ...layoutOpts,
-                  direction: value as ElkDirection,
-                })
-              }
-            >
-              {DIRECTIONS.map(d => (
-                <SelectOption key={d} value={d}>
-                  {d}
-                </SelectOption>
-              ))}
-            </Select>
-          </InputLabel>
-          <InputLabel>
-            Spacing
-            <Input
-              type='number'
-              value={String(layoutOpts.spacing)}
-              onChange={value =>
-                setLayoutOpts({
-                  ...layoutOpts,
-                  spacing: Number(value),
-                })
-              }
-            />
-          </InputLabel>
           <Button onClick={handleCreate} size='small' variant='primary'>
             <React.Fragment key='.0'>
               <Icon name='plus' />
-              <Text>Create Diagram</Text>
+              <Text>Create Cards</Text>
             </React.Fragment>
           </Button>
           {progress > 0 && progress < 100 && (

@@ -2,8 +2,8 @@ import type {
   ConnectorTemplate,
   TemplateDefinition,
   TemplateElement,
-} from './templates';
-import { templateManager } from './templates';
+} from '../templates';
+import { templateManager } from '../templates';
 import type {
   BaseItem,
   Connector,
@@ -16,7 +16,12 @@ import type {
   TextAlignVertical,
   TextStyle,
 } from '@mirohq/websdk-types';
-import type { EdgeData, EdgeHint, NodeData, PositionedNode } from './graph';
+import type {
+  EdgeData,
+  EdgeHint,
+  NodeData,
+  PositionedNode,
+} from '../core/graph';
 
 const META_KEY = 'app.miro.structgraph';
 

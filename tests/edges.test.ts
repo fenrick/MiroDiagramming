@@ -1,4 +1,4 @@
-import { graphService } from '../src/graph';
+import { graphService } from '../src/core/graph';
 
 // Tests for the createEdges helper covering edge reuse and hints
 

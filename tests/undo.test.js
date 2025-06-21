@@ -137,9 +137,9 @@ var __generator =
     }
   };
 Object.defineProperty(exports, '__esModule', { value: true });
-var GraphProcessor_1 = require('../src/GraphProcessor');
-var CardProcessor_1 = require('../src/CardProcessor');
-var BoardBuilder_1 = require('../src/BoardBuilder');
+var GraphProcessor_1 = require('../src/core/GraphProcessor');
+var CardProcessor_1 = require('../src/board/CardProcessor');
+var BoardBuilder_1 = require('../src/board/BoardBuilder');
 describe('undo operations', function () {
   test('GraphProcessor.undoLast removes widgets', function () {
     return __awaiter(void 0, void 0, void 0, function () {

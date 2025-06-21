@@ -7,7 +7,7 @@ import {
   Icon,
   Text,
 } from 'mirotone-react';
-import { applyGridLayout, GridOptions } from '../grid-tools';
+import { applyGridLayout, GridOptions } from '../../grid-tools';
 
 /** UI for the Grid tab. */
 export const GridTab: React.FC = () => {

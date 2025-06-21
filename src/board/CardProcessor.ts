@@ -1,5 +1,5 @@
 import { BoardBuilder } from './BoardBuilder';
-import { CardData, cardLoader } from './cards';
+import { CardData, cardLoader } from '../cards';
 import type { Card, CardStyle, Frame, Tag } from '@mirohq/websdk-types';
 
 export interface CardProcessOptions {

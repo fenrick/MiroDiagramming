@@ -1,4 +1,4 @@
-import { defaultBuilder, graphService } from '../src/graph';
+import { defaultBuilder, graphService } from '../src/core/graph';
 
 interface ReaderEvent {
   target: { result?: string | null } | null;

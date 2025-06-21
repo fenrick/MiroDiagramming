@@ -20,7 +20,7 @@ export interface Position {
  * Minimal abstraction of the board API used for selection and grouping.
  * Allows injection of a mock implementation in tests.
  */
-import { BoardLike, getBoard } from './board';
+import { BoardLike, getBoard } from './board/board';
 
 /** Extract a name field from a widget for sorting purposes. */
 function getName(item: Record<string, unknown>): string {

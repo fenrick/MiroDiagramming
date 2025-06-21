@@ -142,8 +142,8 @@ var react_1 = require('react');
 var react_2 = require('@testing-library/react');
 require('@testing-library/jest-dom');
 var app_1 = require('../src/app');
-var GraphProcessor_1 = require('../src/GraphProcessor');
-var CardProcessor_1 = require('../src/CardProcessor');
+var GraphProcessor_1 = require('../src/core/GraphProcessor');
+var CardProcessor_1 = require('../src/board/CardProcessor');
 describe('App UI integration', function () {
   beforeEach(function () {
     global.miro = {

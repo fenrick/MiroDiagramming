@@ -137,7 +137,7 @@ var __generator =
     }
   };
 Object.defineProperty(exports, '__esModule', { value: true });
-var BoardBuilder_1 = require('../src/BoardBuilder');
+var BoardBuilder_1 = require('../src/board/BoardBuilder');
 describe('BoardBuilder.removeItems', function () {
   afterEach(function () {
     jest.restoreAllMocks();

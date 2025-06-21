@@ -1,9 +1,9 @@
 import { GraphData, graphService } from './graph';
-import { BoardBuilder } from './BoardBuilder';
+import { BoardBuilder } from '../board/BoardBuilder';
 import { layoutEngine, LayoutResult } from './elk-layout';
-import { UserLayoutOptions } from './elk-options';
-import { fileUtils } from './file-utils';
-import { computeEdgeHints } from './layout-utils';
+import { UserLayoutOptions } from '../elk-options';
+import { fileUtils } from '../file-utils';
+import { computeEdgeHints } from '../layout-utils';
 import type { BaseItem, Connector, Frame, Group } from '@mirohq/websdk-types';
 
 /**
