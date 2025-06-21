@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Button, Checkbox, Input, tokens } from 'mirotone-react';
+import { Button, Checkbox, Input, tokens, Text, Icon } from 'mirotone-react';
 import { CardProcessor } from '../CardProcessor';
 import { showError } from '../notifications';
 import { getDropzoneStyle, undoLastImport } from '../ui-utils';
@@ -69,11 +69,14 @@ export const CardsTab: React.FC = () => {
         {dropzone.isDragAccept ? (
           <p className='dnd-text'>Drop your JSON file here</p>
         ) : (
-          <>
-            <div>
-              <Button variant='primary' type='button'>
-                Select JSON file
-              </Button>
+            <>
+              <div style={{ padding: tokens.space.small }}>
+                <Button variant='primary'>
+                  <React.Fragment key=".0">
+                    <Icon name="upload" />
+                    <Text>Select JSON file</Text>
+                  </React.Fragment>
+                </Button>
               <p className='dnd-text'>Or drop your JSON file here</p>
             </div>
           </>

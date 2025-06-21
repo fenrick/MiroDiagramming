@@ -27,6 +27,12 @@ body {
         align-items: stretch;
 }
 
+.centered .buttons {
+    position: sticky;
+    bottom: 0;
+    padding-block: var(--space-medium);
+    background: #fff;
+}
 
 .dropped-files {
     list-style: none;

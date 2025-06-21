@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Input } from 'mirotone-react';
+import { Button, Input, FormGroup, InputLabel, Paragraph, Icon, Text, Heading, tokens } from 'mirotone-react';
 import {
   applySizeToSelection,
   copySizeFromSelection,
@@ -47,11 +47,14 @@ export const ResizeTab: React.FC = () => {
   }, [selection]);
 
   return (
-    <div>
-      <p data-testid='size-display'>
-        {copied ? `Copied ${size.width}×${size.height}` : 'Manual size'}
-      </p>
+    <div className="centered">
+      <Heading level={2}>Resize Shapes</Heading>
+      <Paragraph data-testid='size-display'>
+        {copied ? `Copied ${size.width}×${size.height}` : 'Manual size'}</Paragraph>
+      <FormGroup>
+        <InputLabel htmlFor='id-width'>Width:</InputLabel>
       <Input
+          id='id-width'
         type='number'
         value={String(size.width)}
         onChange={update('width')}
@@ -62,19 +65,25 @@ export const ResizeTab: React.FC = () => {
         value={String(size.height)}
         onChange={update('height')}
         placeholder='Height (board units)'
-      />
+        /></FormGroup>
       <p>
         {boardUnitsToMm(size.width).toFixed(1)} mm ×{' '}
         {boardUnitsToMm(size.height).toFixed(1)} mm (
         {boardUnitsToInches(size.width).toFixed(2)} ×{' '}
         {boardUnitsToInches(size.height).toFixed(2)} in)
       </p>
-      <Button onClick={copy} size='small'>
-        Copy Size
+      <div className="buttons">
+        <Button onClick={copy} variant="primary" style={{ borderRadius: tokens.borderRadius.medium, margin: tokens.space.medium }}>
+          <React.Fragment key=".0">
+            <Icon name="duplicate" />
+            <Text>Copy Size</Text>
+          </React.Fragment>
       </Button>
-      <Button onClick={apply} size='small'>
-        Apply Size
-      </Button>
+        <Button onClick={apply} style={{ borderRadius: tokens.borderRadius.medium, margin: tokens.space.medium }}>
+          <React.Fragment key=".0">
+            <Text>Apply Size</Text>
+          </React.Fragment>
+        </Button></div>
     </div>
   );
 };

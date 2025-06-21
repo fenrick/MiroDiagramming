@@ -3,11 +3,12 @@ import { useDropzone } from 'react-dropzone';
 import {
   Button,
   Checkbox,
+  Icon,
   Input,
   InputLabel,
   Select,
   SelectOption,
-  tokens,
+  tokens, Text
 } from 'mirotone-react';
 import { GraphProcessor } from '../GraphProcessor';
 import { showError } from '../notifications';
@@ -90,9 +91,12 @@ export const DiagramTab: React.FC = () => {
           <p className='dnd-text'>Drop your JSON file here</p>
         ) : (
           <>
-            <div>
-              <Button variant='primary' type='button'>
-                Select JSON file
+              <div style={{ padding: tokens.space.small }}>
+                <Button variant='primary'>
+                  <React.Fragment key=".0">
+                    <Icon name="upload" />
+                    <Text>Select JSON file</Text>
+                  </React.Fragment>
               </Button>
               <p className='dnd-text'>Or drop your JSON file here</p>
             </div>
