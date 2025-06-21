@@ -13,7 +13,9 @@ import {
 import { GraphProcessor } from './GraphProcessor';
 import { CardProcessor } from './CardProcessor';
 import { showError } from './notifications';
-import { ResizeTab, StyleTab, GridTab } from './tools';
+import { ResizeTab } from './tabs/ResizeTab';
+import { StyleTab } from './tabs/StyleTab';
+import { GridTab } from './tabs/GridTab';
 import {
   ALGORITHMS,
   DEFAULT_LAYOUT_OPTIONS,
@@ -22,6 +24,27 @@ import {
   ElkDirection,
   UserLayoutOptions,
 } from './elk-options';
+
+export type Tab = 'diagram' | 'cards' | 'resize' | 'style' | 'grid';
+
+/** Simple tab bar using Mirotone tab classes. */
+const TabBar: React.FC<{ tab: Tab; onChange: (t: Tab) => void }> = ({
+  tab,
+  onChange,
+}) => (
+  <nav className='tabs' role='tablist'>
+    {(['diagram', 'cards', 'resize', 'style', 'grid'] as Tab[]).map(t => (
+      <button
+        key={t}
+        role='tab'
+        className={`tab ${tab === t ? 'tab-active' : ''}`}
+        onClick={() => onChange(t)}
+      >
+        {t.charAt(0).toUpperCase() + t.slice(1)}
+      </button>
+    ))}
+  </nav>
+);
 
 // UI
 const dropzoneStyles = {
@@ -73,7 +96,6 @@ export function getDropzoneStyle(
  * the component to be reused in tests without side effects.
  */
 export const App: React.FC = () => {
-  type Tab = 'diagram' | 'cards' | 'resize' | 'style' | 'grid';
   const [tab, setTab] = React.useState<Tab>('diagram');
   const [files, setFiles] = React.useState<File[]>([]);
   const [withFrame, setWithFrame] = React.useState(false);
@@ -136,18 +158,7 @@ export const App: React.FC = () => {
 
   return (
     <div className='dnd-container'>
-      <nav className='tabs' role='tablist'>
-        {(['diagram', 'cards', 'resize', 'style', 'grid'] as Tab[]).map(t => (
-          <Button
-            key={t}
-            role='tab'
-            variant={tab === t ? 'primary' : 'secondary'}
-            onClick={() => setTab(t)}
-          >
-            {t.charAt(0).toUpperCase() + t.slice(1)}
-          </Button>
-        ))}
-      </nav>
+      <TabBar tab={tab} onChange={setTab} />
       {tab === 'diagram' || tab === 'cards' ? (
         <p>
           Select the JSON file to import{' '}
