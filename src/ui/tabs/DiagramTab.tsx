@@ -13,6 +13,7 @@ import {
   Text,
 } from 'mirotone-react';
 import { GraphProcessor } from '../../core/GraphProcessor';
+import { graphService } from '../../core/graph';
 import { showError } from '../../notifications';
 import {
   ALGORITHMS,
@@ -24,9 +25,94 @@ import {
 } from '../../elk-options';
 import { getDropzoneStyle, undoLastImport } from '../../ui-utils';
 
+interface PreviewRow {
+  node: string;
+  edge: string;
+  status: string;
+  valid: boolean;
+}
+
+const LAYOUTS = ['Layered', 'Tree', 'Grid'] as const;
+type LayoutChoice = (typeof LAYOUTS)[number];
+
+function PreviewTable({ rows }: { rows: PreviewRow[] }): React.JSX.Element {
+  return (
+    <table className='custom-preview-grid'>
+      <thead>
+        <tr>
+          <th>Node</th>
+          <th>Edge</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((r, i) => (
+          <tr
+            key={i}
+            style={!r.valid ? { background: tokens.color.red[600] } : {}}
+          >
+            <td>{r.node}</td>
+            <td>{r.edge}</td>
+            <td
+              title={
+                !r.valid
+                  ? `Edge refers to missing node '${r.status.replace('Missing node ', '')}'`
+                  : undefined
+              }
+            >
+              {r.status}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+function LayoutSegment({
+  value,
+  onChange,
+}: {
+  value: LayoutChoice;
+  onChange: (v: LayoutChoice) => void;
+}): React.JSX.Element {
+  return (
+    <div role='group' aria-label='Layout type' className='custom-segment'>
+      {LAYOUTS.map(l => (
+        <Button
+          key={l}
+          onClick={() => onChange(l)}
+          variant={value === l ? 'primary' : 'secondary'}
+        >
+          {l}
+        </Button>
+      ))}
+    </div>
+  );
+}
+
+async function parseGraphPreview(file: File): Promise<PreviewRow[]> {
+  const graph = await graphService.loadGraph(file);
+  const nodes = new Set(graph.nodes.map(n => n.id));
+  return graph.edges.map(e => {
+    const valid = nodes.has(e.from) && nodes.has(e.to);
+    const missing = !nodes.has(e.from) ? e.from : !nodes.has(e.to) ? e.to : '';
+    return {
+      node: e.from,
+      edge: e.to,
+      status: valid ? 'OK' : `Missing node ${missing}`,
+      valid,
+    };
+  });
+}
+
 /** UI for the Diagram tab. */
 export const DiagramTab: React.FC = () => {
-  const [files, setFiles] = React.useState<File[]>([]);
+  const [importQueue, setImportQueue] = React.useState<File[]>([]);
+  const [previewRows, setPreviewRows] = React.useState<PreviewRow[]>([]);
+  const [layoutChoice, setLayoutChoice] =
+    React.useState<LayoutChoice>('Layered');
+  const [showAdvanced, setShowAdvanced] = React.useState(false);
   const [withFrame, setWithFrame] = React.useState(false);
   const [frameTitle, setFrameTitle] = React.useState('');
   const [layoutOpts, setLayoutOpts] = React.useState<UserLayoutOptions>(
@@ -38,14 +124,32 @@ export const DiagramTab: React.FC = () => {
     undefined,
   );
 
+  React.useEffect(() => {
+    const handler = (e: KeyboardEvent): void => {
+      if ((e.metaKey || e.ctrlKey) && e.key === '/') {
+        e.preventDefault();
+        setShowAdvanced(v => !v);
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
+
   const dropzone = useDropzone({
     accept: {
       'application/json': ['.json'],
     },
     maxFiles: 1,
-    onDrop: (droppedFiles: File[]) => {
+    onDrop: async (droppedFiles: File[]) => {
       const file = droppedFiles[0];
-      setFiles([file]);
+      setImportQueue([file]);
+      try {
+        const rows = await parseGraphPreview(file);
+        setPreviewRows(rows);
+      } catch (e) {
+        setError(String(e));
+        setPreviewRows([]);
+      }
     },
   });
 
@@ -54,13 +158,18 @@ export const DiagramTab: React.FC = () => {
   const handleCreate = async (): Promise<void> => {
     setProgress(0);
     setError(null);
-    for (const file of files) {
+    for (const file of importQueue) {
       try {
         setLastProc(graphProcessor);
+        const algorithmMap: Record<LayoutChoice, ElkAlgorithm> = {
+          Layered: 'layered',
+          Tree: 'mrtree',
+          Grid: 'force',
+        };
         await graphProcessor.processFile(file, {
           createFrame: withFrame,
           frameTitle: frameTitle || undefined,
-          layout: layoutOpts,
+          layout: { ...layoutOpts, algorithm: algorithmMap[layoutChoice] },
         });
         setProgress(100);
       } catch (e) {
@@ -69,7 +178,7 @@ export const DiagramTab: React.FC = () => {
         await showError(msg);
       }
     }
-    setFiles([]);
+    setImportQueue([]);
   };
 
   const style = React.useMemo(
@@ -115,13 +224,15 @@ export const DiagramTab: React.FC = () => {
         above.
       </Paragraph>
 
-      {files.length > 0 && (
+      {importQueue.length > 0 && (
         <>
           <ul className='custom-dropped-files'>
-            {files.map((file, i) => (
+            {importQueue.map((file, i) => (
               <li key={i}>{file.name}</li>
             ))}
           </ul>
+          <PreviewTable rows={previewRows} />
+          <LayoutSegment value={layoutChoice} onChange={setLayoutChoice} />
           <div style={{ marginTop: tokens.space.small }}>
             <Checkbox
               label='Wrap items in frame'
@@ -139,56 +250,65 @@ export const DiagramTab: React.FC = () => {
               />
             </InputLabel>
           )}
-          <InputLabel>
-            Algorithm
-            <Select
-              value={layoutOpts.algorithm}
-              onChange={value =>
-                setLayoutOpts({
-                  ...layoutOpts,
-                  algorithm: value as ElkAlgorithm,
-                })
-              }
-            >
-              {ALGORITHMS.map(a => (
-                <SelectOption key={a} value={a}>
-                  {a}
-                </SelectOption>
-              ))}
-            </Select>
-          </InputLabel>
-          <InputLabel>
-            Direction
-            <Select
-              value={layoutOpts.direction}
-              onChange={value =>
-                setLayoutOpts({
-                  ...layoutOpts,
-                  direction: value as ElkDirection,
-                })
-              }
-            >
-              {DIRECTIONS.map(d => (
-                <SelectOption key={d} value={d}>
-                  {d}
-                </SelectOption>
-              ))}
-            </Select>
-          </InputLabel>
-          <InputLabel>
-            Spacing
-            <Input
-              type='number'
-              value={String(layoutOpts.spacing)}
-              onChange={value =>
-                setLayoutOpts({
-                  ...layoutOpts,
-                  spacing: Number(value),
-                })
-              }
-            />
-          </InputLabel>
-          <Button onClick={handleCreate} size='small' variant='primary'>
+          {showAdvanced && (
+            <>
+              <InputLabel>
+                Algorithm
+                <Select
+                  value={layoutOpts.algorithm}
+                  onChange={value =>
+                    setLayoutOpts({
+                      ...layoutOpts,
+                      algorithm: value as ElkAlgorithm,
+                    })
+                  }
+                >
+                  {ALGORITHMS.map(a => (
+                    <SelectOption key={a} value={a}>
+                      {a}
+                    </SelectOption>
+                  ))}
+                </Select>
+              </InputLabel>
+              <InputLabel>
+                Direction
+                <Select
+                  value={layoutOpts.direction}
+                  onChange={value =>
+                    setLayoutOpts({
+                      ...layoutOpts,
+                      direction: value as ElkDirection,
+                    })
+                  }
+                >
+                  {DIRECTIONS.map(d => (
+                    <SelectOption key={d} value={d}>
+                      {d}
+                    </SelectOption>
+                  ))}
+                </Select>
+              </InputLabel>
+              <InputLabel>
+                Spacing
+                <Input
+                  type='number'
+                  value={String(layoutOpts.spacing)}
+                  onChange={value =>
+                    setLayoutOpts({
+                      ...layoutOpts,
+                      spacing: Number(value),
+                    })
+                  }
+                />
+              </InputLabel>
+            </>
+          )}
+          <Button
+            onClick={handleCreate}
+            size='small'
+            variant='primary'
+            disabled={previewRows.some(r => !r.valid)}
+          >
             <React.Fragment key='.0'>
               <Icon name='plus' />
               <Text>Create Diagram</Text>

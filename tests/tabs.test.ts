@@ -12,6 +12,9 @@ import * as styleTools from '../src/style-tools';
 import * as gridTools from '../src/grid-tools';
 import { GraphProcessor } from '../src/core/GraphProcessor';
 import { CardProcessor } from '../src/board/CardProcessor';
+import { graphService } from '../src/core/graph';
+import { cardLoader } from '../src/cards';
+import type { CardData } from '../src/cards';
 
 jest.mock('../src/resize-tools');
 jest.mock('../src/style-tools');
@@ -92,6 +95,40 @@ describe('tab components', () => {
       fireEvent.click(screen.getByRole('button', { name: /create diagram/i }));
     });
     expect(spy).toHaveBeenCalled();
+  });
+
+  test('DiagramTab disables build on invalid preview', async () => {
+    jest
+      .spyOn(graphService, 'loadGraph')
+      .mockResolvedValue({ nodes: [], edges: [{ from: 'a', to: 'b' }] });
+    render(React.createElement(DiagramTab));
+    const input = screen.getByTestId('file-input');
+    const file = new File(['{}'], 'bad.json', { type: 'application/json' });
+    await act(async () => {
+      fireEvent.change(input, { target: { files: [file] } });
+    });
+    expect(await screen.findByText(/missing node/i)).toBeInTheDocument();
+  });
+
+  test('CardsTab filters cards', async () => {
+    jest.spyOn(cardLoader, 'loadCards').mockResolvedValue([
+      { title: 'One', tags: ['t1'] },
+      { title: 'Two', tags: ['t2'] },
+    ] as unknown as CardData[]);
+    render(React.createElement(CardsTab));
+    const input = screen.getByTestId('file-input');
+    const file = new File(['{}'], 'cards.json', { type: 'application/json' });
+    await act(async () => {
+      fireEvent.change(input, { target: { files: [file] } });
+    });
+    fireEvent.change(screen.getByPlaceholderText(/search cards/i), {
+      target: { value: 'Two' },
+    });
+    await act(async () => {
+      await new Promise(r => setTimeout(r, 350));
+    });
+    expect(screen.getByText('Two')).toBeInTheDocument();
+    expect(screen.queryByText('One')).not.toBeInTheDocument();
   });
 
   test('CardsTab processes file', async () => {
