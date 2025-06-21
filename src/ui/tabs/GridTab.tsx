@@ -6,6 +6,7 @@ import {
   InputLabel,
   Icon,
   Text,
+  tokens,
 } from 'mirotone-react';
 import { applyGridLayout, GridOptions } from '../../grid-tools';
 
@@ -18,6 +19,7 @@ export const GridTab: React.FC = () => {
     groupResult: false,
     sortByName: false,
   });
+  const [frameTitle, setFrameTitle] = React.useState('');
 
   const updateNumber =
     (key: 'cols' | 'rows' | 'padding') =>
@@ -28,6 +30,15 @@ export const GridTab: React.FC = () => {
   const toggle = (key: 'groupResult' | 'sortByName') => (): void => {
     setGrid({ ...grid, [key]: !grid[key] });
   };
+
+  const gaps = [
+    { label: 'xxs', value: tokens.space.xxsmall },
+    { label: 'xs', value: tokens.space.xsmall },
+    { label: 'sm', value: tokens.space.small },
+    { label: 'md', value: tokens.space.medium },
+    { label: 'lg', value: tokens.space.large },
+    { label: 'xl', value: tokens.space.xlarge },
+  ] as const;
 
   const apply = async (): Promise<void> => {
     await applyGridLayout(grid);
@@ -54,12 +65,24 @@ export const GridTab: React.FC = () => {
         />
       </InputLabel>
       <InputLabel>
-        Padding
-        <Input
-          type='number'
+        Gap
+        <select
           value={String(grid.padding)}
-          onChange={updateNumber('padding')}
-          placeholder='Padding'
+          onChange={e => setGrid({ ...grid, padding: Number(e.target.value) })}
+        >
+          {gaps.map(g => (
+            <option key={g.label} value={g.value as unknown as number}>
+              {g.label}
+            </option>
+          ))}
+        </select>
+      </InputLabel>
+      <InputLabel>
+        Frame Title
+        <Input
+          value={frameTitle}
+          onChange={setFrameTitle}
+          placeholder='Optional'
         />
       </InputLabel>
       <Checkbox
@@ -68,7 +91,7 @@ export const GridTab: React.FC = () => {
         onChange={toggle('sortByName')}
       />
       <Checkbox
-        label='Group result'
+        label='Group items into Frame'
         value={Boolean(grid.groupResult)}
         onChange={toggle('groupResult')}
       />

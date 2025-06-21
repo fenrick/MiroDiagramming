@@ -21,6 +21,8 @@ describe('App layout options and undo button', () => {
     await act(async () => {
       selectFile();
     });
+    fireEvent.keyDown(window, { key: '/', metaKey: true });
+    fireEvent.click(screen.getByRole('button', { name: 'Grid' }));
     fireEvent.change(screen.getByLabelText('Algorithm'), {
       target: { value: 'force' },
     });

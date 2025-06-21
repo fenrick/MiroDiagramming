@@ -21,24 +21,31 @@ import { boardUnitsToMm, boardUnitsToInches } from '../../unit-utils';
 export const ResizeTab: React.FC = () => {
   const selection = useSelection();
   const [size, setSize] = React.useState<Size>({ width: 100, height: 100 });
-  const [copied, setCopied] = React.useState(false);
+  const [copiedSize, setCopiedSize] = React.useState<Size | null>(null);
+  const [warning, setWarning] = React.useState('');
 
   const update =
     (key: keyof Size) =>
     (value: string): void => {
       setSize({ ...size, [key]: Number(value) });
+      setWarning('');
     };
 
   const copy = async (): Promise<void> => {
     const s = await copySizeFromSelection();
     if (s) {
       setSize(s);
-      setCopied(true);
+      setCopiedSize(s);
     }
   };
 
   const apply = async (): Promise<void> => {
-    await applySizeToSelection(size);
+    const target = copiedSize ?? size;
+    if (target.width > 10000 || target.height > 10000) {
+      setWarning("That's bigger than your board viewport");
+      return;
+    }
+    await applySizeToSelection(target);
   };
 
   React.useEffect(() => {
@@ -51,16 +58,32 @@ export const ResizeTab: React.FC = () => {
       typeof first.height === 'number'
     ) {
       setSize({ width: first.width, height: first.height });
-      setCopied(true);
     }
   }, [selection]);
+
+  React.useEffect(() => {
+    const handler = (e: KeyboardEvent): void => {
+      if (e.altKey && e.key.toLowerCase() === 'c') {
+        e.preventDefault();
+        void copy();
+      } else if (e.altKey && e.key.toLowerCase() === 'v') {
+        e.preventDefault();
+        void apply();
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  });
 
   return (
     <div className='custom-centered'>
       <Heading level={2}>Resize Shapes</Heading>
       <Paragraph data-testid='size-display'>
-        {copied ? `Copied ${size.width}×${size.height}` : 'Manual size'}
+        {copiedSize
+          ? `Copied: ${copiedSize.width}×${copiedSize.height}`
+          : `Selection: ${size.width}×${size.height}`}
       </Paragraph>
+      {warning && <Paragraph className='error'>{warning}</Paragraph>}
       <FormGroup>
         <InputLabel htmlFor='id-width'>Width:</InputLabel>
         <Input
@@ -79,6 +102,26 @@ export const ResizeTab: React.FC = () => {
           placeholder='Height (board units)'
         />
       </FormGroup>
+      <div>
+        {['S', 'M', 'L'].map(p => (
+          <Button
+            key={p}
+            size='small'
+            onClick={() =>
+              setSize(
+                p === 'S'
+                  ? { width: 100, height: 100 }
+                  : p === 'M'
+                    ? { width: 200, height: 150 }
+                    : { width: 400, height: 300 },
+              )
+            }
+            variant='secondary'
+          >
+            {p}
+          </Button>
+        ))}
+      </div>
       <Paragraph>
         {boardUnitsToMm(size.width).toFixed(1)} mm ×{' '}
         {boardUnitsToMm(size.height).toFixed(1)} mm (

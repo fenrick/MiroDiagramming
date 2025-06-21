@@ -28,6 +28,8 @@ export const StyleTab: React.FC = () => {
   });
   const [adjust, setAdjust] = React.useState(0);
   const [currentFill, setCurrentFill] = React.useState<string | null>(null);
+  const [styleClipboard, setStyleClipboard] =
+    React.useState<StyleOptions | null>(null);
 
   const update =
     (key: keyof StyleOptions) =>
@@ -40,7 +42,8 @@ export const StyleTab: React.FC = () => {
     };
 
   const apply = async (): Promise<void> => {
-    await applyStyleToSelection(opts);
+    const target = styleClipboard ?? opts;
+    await applyStyleToSelection(target);
     setAdjust(0);
     await copyColor();
   };
@@ -51,6 +54,10 @@ export const StyleTab: React.FC = () => {
       setCurrentFill(color);
       setOpts({ ...opts, fillColor: color });
     }
+  };
+
+  const copyStyle = (): void => {
+    setStyleClipboard({ ...opts });
   };
 
   const applyAdjust = async (): Promise<void> => {
@@ -114,6 +121,14 @@ export const StyleTab: React.FC = () => {
           max='50'
           value={adjust}
           onChange={e => setAdjust(Number(e.target.value))}
+          onKeyDown={e => {
+            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+              e.preventDefault();
+              setAdjust(a =>
+                Math.min(50, Math.max(-50, a + (e.key === 'ArrowUp' ? 1 : -1))),
+              );
+            }
+          }}
         />
       </InputLabel>
       <Button onClick={applyAdjust} variant='secondary'>
@@ -127,7 +142,13 @@ export const StyleTab: React.FC = () => {
           Current fill: {currentFill}
         </Paragraph>
       )}
-      <Button onClick={apply} variant='primary'>
+      <Button onClick={copyStyle} variant='secondary'>
+        <React.Fragment key='.0'>
+          <Icon name='duplicate' />
+          <Text>Copy Style</Text>
+        </React.Fragment>
+      </Button>
+      <Button onClick={apply} variant='primary' disabled={!styleClipboard}>
         <React.Fragment key='.0'>
           <Icon name='arrow-right' />
           <Text>Apply Style</Text>

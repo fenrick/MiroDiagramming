@@ -44,6 +44,15 @@ body {
     font-size: var(--font-size-large);
 }
 
+.custom-preview-grid th,
+.custom-preview-grid td {
+    padding: var(--space-xxsmall) var(--space-xsmall);
+}
+
+.custom-segment button + button {
+    margin-left: var(--space-xxsmall);
+}
+
 
 .custom-visually-hidden {
     position: absolute;

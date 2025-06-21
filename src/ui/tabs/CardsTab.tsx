@@ -11,12 +11,18 @@ import {
   Icon,
 } from 'mirotone-react';
 import { CardProcessor } from '../../board/CardProcessor';
+import { cardLoader, CardData } from '../../cards';
 import { showError } from '../../notifications';
 import { getDropzoneStyle, undoLastImport } from '../../ui-utils';
 
 /** UI for the Cards tab. */
 export const CardsTab: React.FC = () => {
   const [files, setFiles] = React.useState<File[]>([]);
+  const [cards, setCards] = React.useState<CardData[]>([]);
+  const [cardSearch, setCardSearch] = React.useState('');
+  const [debouncedSearch, setDebouncedSearch] = React.useState('');
+  const [cardFilters, setCardFilters] = React.useState<string[]>([]);
+  const [showUndo, setShowUndo] = React.useState(false);
   const [withFrame, setWithFrame] = React.useState(false);
   const [frameTitle, setFrameTitle] = React.useState('');
   const [progress, setProgress] = React.useState<number>(0);
@@ -25,14 +31,36 @@ export const CardsTab: React.FC = () => {
     undefined,
   );
 
+  React.useEffect(() => {
+    const handler = (e: KeyboardEvent): void => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z') {
+        e.preventDefault();
+        void undoLastImport(lastProc, () => setLastProc(undefined));
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [lastProc]);
+
+  React.useEffect(() => {
+    const t = setTimeout(() => setDebouncedSearch(cardSearch), 300);
+    return () => clearTimeout(t);
+  }, [cardSearch]);
+
   const dropzone = useDropzone({
     accept: {
       'application/json': ['.json'],
     },
     maxFiles: 1,
-    onDrop: (droppedFiles: File[]) => {
+    onDrop: async (droppedFiles: File[]) => {
       const file = droppedFiles[0];
       setFiles([file]);
+      try {
+        const data = await cardLoader.loadCards(file);
+        setCards(data);
+      } catch (e) {
+        setError(String(e));
+      }
     },
   });
 
@@ -49,6 +77,8 @@ export const CardsTab: React.FC = () => {
           frameTitle: frameTitle || undefined,
         });
         setProgress(100);
+        setShowUndo(true);
+        setTimeout(() => setShowUndo(false), 3000);
       } catch (e) {
         const msg = String(e);
         setError(msg);
@@ -61,6 +91,26 @@ export const CardsTab: React.FC = () => {
   const style = React.useMemo(
     () => getDropzoneStyle(dropzone.isDragAccept, dropzone.isDragReject),
     [dropzone.isDragAccept, dropzone.isDragReject],
+  );
+
+  const allTags = React.useMemo(() => {
+    const t = new Set<string>();
+    cards.forEach(c => c.tags?.forEach(tag => t.add(tag)));
+    return Array.from(t);
+  }, [cards]);
+
+  const filteredCards = React.useMemo(
+    () =>
+      cards.filter(c => {
+        const matchesSearch = c.title
+          .toLowerCase()
+          .includes(debouncedSearch.toLowerCase());
+        const tagMatch =
+          cardFilters.length === 0 ||
+          c.tags?.some(t => cardFilters.includes(t));
+        return matchesSearch && tagMatch;
+      }),
+    [cards, debouncedSearch, cardFilters],
   );
 
   return (
@@ -108,6 +158,30 @@ export const CardsTab: React.FC = () => {
               <li key={i}>{file.name}</li>
             ))}
           </ul>
+          <Input
+            placeholder='Search cards…'
+            value={cardSearch}
+            onChange={setCardSearch}
+          />
+          <div>
+            {allTags.map(tag => (
+              <Checkbox
+                key={tag}
+                label={tag}
+                value={cardFilters.includes(tag)}
+                onChange={() =>
+                  setCardFilters(f =>
+                    f.includes(tag) ? f.filter(t => t !== tag) : [...f, tag],
+                  )
+                }
+              />
+            ))}
+          </div>
+          <ul>
+            {filteredCards.map((c, i) => (
+              <li key={i}>{c.title}</li>
+            ))}
+          </ul>
           <div style={{ marginTop: tokens.space.small }}>
             <Checkbox
               label='Wrap items in frame'
@@ -135,6 +209,17 @@ export const CardsTab: React.FC = () => {
             <progress value={progress} max={100} />
           )}
           {error && <Paragraph className='error'>{error}</Paragraph>}
+          {showUndo && (
+            <Button
+              onClick={() =>
+                void undoLastImport(lastProc, () => setLastProc(undefined))
+              }
+              size='small'
+              variant='secondary'
+            >
+              Undo import (⌘Z)
+            </Button>
+          )}
           {lastProc && (
             <Button
               onClick={() => {
