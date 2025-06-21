@@ -6,9 +6,11 @@ import {
   Icon,
   Input,
   InputLabel,
+  Paragraph,
   Select,
   SelectOption,
-  tokens, Text
+  tokens,
+  Text,
 } from 'mirotone-react';
 import { GraphProcessor } from '../GraphProcessor';
 import { showError } from '../notifications';
@@ -77,36 +79,41 @@ export const DiagramTab: React.FC = () => {
 
   return (
     <div>
-      <p>Select the JSON file to import a diagram</p>
+      <Paragraph>Select the JSON file to import a diagram</Paragraph>
       <div
         {...dropzone.getRootProps({ style })}
         aria-label='File drop area'
         aria-describedby='dropzone-instructions'
       >
-        <input
-          data-testid='file-input'
-          {...dropzone.getInputProps({ 'aria-label': 'JSON file input' })}
-        />
+        <InputLabel>
+          JSON file
+          <input
+            data-testid='file-input'
+            {...dropzone.getInputProps({ 'aria-label': 'JSON file input' })}
+          />
+        </InputLabel>
         {dropzone.isDragAccept ? (
-          <p className='dnd-text'>Drop your JSON file here</p>
+          <Paragraph className='dnd-text'>Drop your JSON file here</Paragraph>
         ) : (
           <>
-              <div style={{ padding: tokens.space.small }}>
-                <Button variant='primary'>
-                  <React.Fragment key=".0">
-                    <Icon name="upload" />
-                    <Text>Select JSON file</Text>
-                  </React.Fragment>
+            <div style={{ padding: tokens.space.small }}>
+              <Button variant='primary'>
+                <React.Fragment key='.0'>
+                  <Icon name='upload' />
+                  <Text>Select JSON file</Text>
+                </React.Fragment>
               </Button>
-              <p className='dnd-text'>Or drop your JSON file here</p>
+              <Paragraph className='dnd-text'>
+                Or drop your JSON file here
+              </Paragraph>
             </div>
           </>
         )}
       </div>
-      <p id='dropzone-instructions' className='visually-hidden'>
+      <Paragraph id='dropzone-instructions' className='visually-hidden'>
         Press Enter to open the file picker or drop a JSON file on the area
         above.
-      </p>
+      </Paragraph>
 
       {files.length > 0 && (
         <>
@@ -123,12 +130,14 @@ export const DiagramTab: React.FC = () => {
             />
           </div>
           {withFrame && (
-            <Input
-              placeholder='Frame title'
-              value={frameTitle}
-              onChange={setFrameTitle}
-              style={{ marginTop: tokens.space.xsmall }}
-            />
+            <InputLabel>
+              Frame title
+              <Input
+                placeholder='Frame title'
+                value={frameTitle}
+                onChange={setFrameTitle}
+              />
+            </InputLabel>
           )}
           <InputLabel>
             Algorithm
@@ -180,20 +189,27 @@ export const DiagramTab: React.FC = () => {
             />
           </InputLabel>
           <Button onClick={handleCreate} size='small' variant='primary'>
-            Create Diagram
+            <React.Fragment key='.0'>
+              <Icon name='plus' />
+              <Text>Create Diagram</Text>
+            </React.Fragment>
           </Button>
           {progress > 0 && progress < 100 && (
             <progress value={progress} max={100} />
           )}
-          {error && <p className='error'>{error}</p>}
+          {error && <Paragraph className='error'>{error}</Paragraph>}
           {lastProc && (
             <Button
               onClick={() => {
                 void undoLastImport(lastProc, () => setLastProc(undefined));
               }}
               size='small'
+              variant='secondary'
             >
-              Undo Last Import
+              <React.Fragment key='.0'>
+                <Icon name='undo' />
+                <Text>Undo Last Import</Text>
+              </React.Fragment>
             </Button>
           )}
         </>

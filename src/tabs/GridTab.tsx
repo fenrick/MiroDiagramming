@@ -1,5 +1,12 @@
 import React from 'react';
-import { Button, Input, Checkbox } from 'mirotone-react';
+import {
+  Button,
+  Input,
+  Checkbox,
+  InputLabel,
+  Icon,
+  Text,
+} from 'mirotone-react';
 import { applyGridLayout, GridOptions } from '../grid-tools';
 
 /** UI for the Grid tab. */
@@ -28,24 +35,33 @@ export const GridTab: React.FC = () => {
 
   return (
     <div>
-      <Input
-        type='number'
-        value={String(grid.cols)}
-        onChange={updateNumber('cols')}
-        placeholder='Columns'
-      />
-      <Input
-        type='number'
-        value={String(grid.rows)}
-        onChange={updateNumber('rows')}
-        placeholder='Rows'
-      />
-      <Input
-        type='number'
-        value={String(grid.padding)}
-        onChange={updateNumber('padding')}
-        placeholder='Padding'
-      />
+      <InputLabel>
+        Columns
+        <Input
+          type='number'
+          value={String(grid.cols)}
+          onChange={updateNumber('cols')}
+          placeholder='Columns'
+        />
+      </InputLabel>
+      <InputLabel>
+        Rows
+        <Input
+          type='number'
+          value={String(grid.rows)}
+          onChange={updateNumber('rows')}
+          placeholder='Rows'
+        />
+      </InputLabel>
+      <InputLabel>
+        Padding
+        <Input
+          type='number'
+          value={String(grid.padding)}
+          onChange={updateNumber('padding')}
+          placeholder='Padding'
+        />
+      </InputLabel>
       <Checkbox
         label='Sort by name'
         value={Boolean(grid.sortByName)}
@@ -56,8 +72,11 @@ export const GridTab: React.FC = () => {
         value={Boolean(grid.groupResult)}
         onChange={toggle('groupResult')}
       />
-      <Button onClick={apply} size='small'>
-        Arrange Grid
+      <Button onClick={apply} size='small' variant='primary'>
+        <React.Fragment key='.0'>
+          <Icon name='grid' />
+          <Text>Arrange Grid</Text>
+        </React.Fragment>
       </Button>
     </div>
   );

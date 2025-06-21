@@ -1,5 +1,14 @@
 import React from 'react';
-import { Button, Input, FormGroup, InputLabel, Paragraph, Icon, Text, Heading, tokens } from 'mirotone-react';
+import {
+  Button,
+  Input,
+  FormGroup,
+  InputLabel,
+  Paragraph,
+  Icon,
+  Text,
+  Heading,
+} from 'mirotone-react';
 import {
   applySizeToSelection,
   copySizeFromSelection,
@@ -47,43 +56,49 @@ export const ResizeTab: React.FC = () => {
   }, [selection]);
 
   return (
-    <div className="centered">
+    <div className='centered'>
       <Heading level={2}>Resize Shapes</Heading>
       <Paragraph data-testid='size-display'>
-        {copied ? `Copied ${size.width}×${size.height}` : 'Manual size'}</Paragraph>
+        {copied ? `Copied ${size.width}×${size.height}` : 'Manual size'}
+      </Paragraph>
       <FormGroup>
         <InputLabel htmlFor='id-width'>Width:</InputLabel>
-      <Input
+        <Input
           id='id-width'
-        type='number'
-        value={String(size.width)}
-        onChange={update('width')}
-        placeholder='Width (board units)'
-      />
-      <Input
-        type='number'
-        value={String(size.height)}
-        onChange={update('height')}
-        placeholder='Height (board units)'
-        /></FormGroup>
-      <p>
+          type='number'
+          value={String(size.width)}
+          onChange={update('width')}
+          placeholder='Width (board units)'
+        />
+        <InputLabel htmlFor='id-height'>Height:</InputLabel>
+        <Input
+          id='id-height'
+          type='number'
+          value={String(size.height)}
+          onChange={update('height')}
+          placeholder='Height (board units)'
+        />
+      </FormGroup>
+      <Paragraph>
         {boardUnitsToMm(size.width).toFixed(1)} mm ×{' '}
         {boardUnitsToMm(size.height).toFixed(1)} mm (
         {boardUnitsToInches(size.width).toFixed(2)} ×{' '}
         {boardUnitsToInches(size.height).toFixed(2)} in)
-      </p>
-      <div className="buttons">
-        <Button onClick={copy} variant="primary" style={{ borderRadius: tokens.borderRadius.medium, margin: tokens.space.medium }}>
-          <React.Fragment key=".0">
-            <Icon name="duplicate" />
+      </Paragraph>
+      <div className='buttons'>
+        <Button onClick={copy} variant='secondary'>
+          <React.Fragment key='.0'>
+            <Icon name='duplicate' />
             <Text>Copy Size</Text>
           </React.Fragment>
-      </Button>
-        <Button onClick={apply} style={{ borderRadius: tokens.borderRadius.medium, margin: tokens.space.medium }}>
-          <React.Fragment key=".0">
+        </Button>
+        <Button onClick={apply} variant='primary'>
+          <React.Fragment key='.0'>
+            <Icon name='arrow-right' />
             <Text>Apply Size</Text>
           </React.Fragment>
-        </Button></div>
+        </Button>
+      </div>
     </div>
   );
 };

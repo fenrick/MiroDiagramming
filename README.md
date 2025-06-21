@@ -128,6 +128,26 @@ new UI elements reuse the Mirotone utility classes such as `button`,
 `button-primary` and the grid helpers so your components align with existing
 styles.
 
+## Form Design Guidelines
+
+When creating forms use the Mirotone React components so your inputs and buttons
+match the rest of the UI. These guidelines help keep layouts consistent:
+
+- Wrap each field in `InputLabel` to connect the label with its control.
+- Group related fields using `FormGroup` to maintain spacing and a clear
+  vertical rhythm.
+- Arrange elements with the 12‑column grid classes (`cs*`/`ce*`) so forms remain
+  responsive.
+- Use the tokens from `mirotone-react` (`tokens.space.*`) for margins and
+  padding instead of hard‑coded numbers.
+- Stick to the provided `Button` component and choose the `primary` variant for
+  the main action. Place secondary actions on the right using the `buttons`
+  wrapper as seen in the tabs.
+- Keep labels short and descriptive. When extra context is required add a
+  `Paragraph` element next to the fields.
+- For drag‑and‑drop zones include an ARIA label and hidden instructions so
+  screen readers describe the workflow.
+
 ## ✅ Prerequisites <a name="prerequisites"></a>
 
 - You have a [Miro account](https://miro.com/signup/).
