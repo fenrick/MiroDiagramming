@@ -180,7 +180,12 @@ export class TemplateManager {
   }
 }
 
+/** Convenience reference to the raw shape template definitions. */
 export const templates = TemplateManager.getInstance().templates;
+
+/** Convenience reference to the raw connector template definitions. */
 export const connectorTemplates =
   TemplateManager.getInstance().connectorTemplates;
+
+/** Singleton instance used throughout the app. */
 export const templateManager = TemplateManager.getInstance();
