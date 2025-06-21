@@ -12,6 +12,8 @@ import {
   tokens,
   Text,
 } from 'mirotone-react';
+import { DataGrid, PreviewRow } from '../DataGrid';
+import { SegmentedControl } from '../SegmentedControl';
 import { GraphProcessor } from '../../core/GraphProcessor';
 import { graphService } from '../../core/graph';
 import { showError } from '../../notifications';
@@ -25,71 +27,8 @@ import {
 } from '../../elk-options';
 import { getDropzoneStyle, undoLastImport } from '../../ui-utils';
 
-interface PreviewRow {
-  node: string;
-  edge: string;
-  status: string;
-  valid: boolean;
-}
-
 const LAYOUTS = ['Layered', 'Tree', 'Grid'] as const;
 type LayoutChoice = (typeof LAYOUTS)[number];
-
-function PreviewTable({ rows }: { rows: PreviewRow[] }): React.JSX.Element {
-  return (
-    <table className='custom-preview-grid'>
-      <thead>
-        <tr>
-          <th>Node</th>
-          <th>Edge</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map((r, i) => (
-          <tr
-            key={i}
-            style={!r.valid ? { background: tokens.color.red[600] } : {}}
-          >
-            <td>{r.node}</td>
-            <td>{r.edge}</td>
-            <td
-              title={
-                !r.valid
-                  ? `Edge refers to missing node '${r.status.replace('Missing node ', '')}'`
-                  : undefined
-              }
-            >
-              {r.status}
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  );
-}
-
-function LayoutSegment({
-  value,
-  onChange,
-}: {
-  value: LayoutChoice;
-  onChange: (v: LayoutChoice) => void;
-}): React.JSX.Element {
-  return (
-    <div role='group' aria-label='Layout type' className='custom-segment'>
-      {LAYOUTS.map(l => (
-        <Button
-          key={l}
-          onClick={() => onChange(l)}
-          variant={value === l ? 'primary' : 'secondary'}
-        >
-          {l}
-        </Button>
-      ))}
-    </div>
-  );
-}
 
 async function parseGraphPreview(file: File): Promise<PreviewRow[]> {
   const graph = await graphService.loadGraph(file);
@@ -231,8 +170,12 @@ export const DiagramTab: React.FC = () => {
               <li key={i}>{file.name}</li>
             ))}
           </ul>
-          <PreviewTable rows={previewRows} />
-          <LayoutSegment value={layoutChoice} onChange={setLayoutChoice} />
+          <DataGrid rows={previewRows} />
+          <SegmentedControl
+            value={layoutChoice}
+            onChange={v => setLayoutChoice(v as LayoutChoice)}
+            options={LAYOUTS.map(l => ({ label: l, value: l }))}
+          />
           <div style={{ marginTop: tokens.space.small }}>
             <Checkbox
               label='Wrap items in frame'

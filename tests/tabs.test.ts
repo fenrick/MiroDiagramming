@@ -91,6 +91,10 @@ describe('tab components', () => {
     await act(async () => {
       fireEvent.change(input, { target: { files: [file] } });
     });
+    expect(await screen.findByRole('table')).toBeInTheDocument();
+    expect(
+      screen.getByRole('group', { name: /layout type/i }),
+    ).toBeInTheDocument();
     await act(async () => {
       fireEvent.click(screen.getByRole('button', { name: /create diagram/i }));
     });
@@ -107,7 +111,9 @@ describe('tab components', () => {
     await act(async () => {
       fireEvent.change(input, { target: { files: [file] } });
     });
-    expect(await screen.findByText(/missing node/i)).toBeInTheDocument();
+    const cell = await screen.findByText(/missing node/i);
+    expect(cell).toBeInTheDocument();
+    expect(cell).toHaveAttribute('title', 'Edge refers to missing node ‘a’.');
   });
 
   test('CardsTab filters cards', async () => {
