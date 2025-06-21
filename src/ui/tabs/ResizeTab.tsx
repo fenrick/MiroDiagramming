@@ -56,7 +56,7 @@ export const ResizeTab: React.FC = () => {
   }, [selection]);
 
   return (
-    <div className='centered'>
+    <div className='custom-centered'>
       <Heading level={2}>Resize Shapes</Heading>
       <Paragraph data-testid='size-display'>
         {copied ? `Copied ${size.width}×${size.height}` : 'Manual size'}
@@ -85,7 +85,7 @@ export const ResizeTab: React.FC = () => {
         {boardUnitsToInches(size.width).toFixed(2)} ×{' '}
         {boardUnitsToInches(size.height).toFixed(2)} in)
       </Paragraph>
-      <div className='buttons'>
+      <div className='custom-buttons'>
         <Button onClick={copy} variant='secondary'>
           <React.Fragment key='.0'>
             <Icon name='duplicate' />
