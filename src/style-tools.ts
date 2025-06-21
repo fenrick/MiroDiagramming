@@ -54,6 +54,7 @@ export async function applyStyleToSelection(
  *
  * @param delta - Adjustment amount between -1 (darken) and 1 (lighten).
  * @param board - Optional board API overriding `miro.board` for testing.
+ * @returns Resolves once all selected widgets are synchronised.
  */
 export async function tweakFillColor(
   delta: number,
