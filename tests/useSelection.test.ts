@@ -7,7 +7,7 @@ describe('useSelection', () => {
   test('fetches initial selection', async () => {
     const board: BoardLike = {
       getSelection: jest.fn().mockResolvedValue([{ id: 1 }]),
-      ui: { on: jest.fn() },
+      ui: { on: jest.fn(), off: jest.fn() },
     };
     const { result } = renderHook(() => useSelection(board));
     await act(async () => {
@@ -27,9 +27,10 @@ describe('useSelection', () => {
         on: jest.fn().mockImplementation((_, fn) => {
           cb = fn;
         }),
+        off: jest.fn(),
       },
     };
-    const { result } = renderHook(() => useSelection(board));
+    const { result, unmount } = renderHook(() => useSelection(board));
     await act(async () => {
       await Promise.resolve();
     });
@@ -38,5 +39,7 @@ describe('useSelection', () => {
       await cb();
     });
     expect(result.current).toEqual([{ id: 2 }]);
+    unmount();
+    expect(board.ui.off).toHaveBeenCalledWith('selection:update', cb);
   });
 });

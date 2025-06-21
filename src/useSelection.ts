@@ -4,8 +4,8 @@ import { BoardLike, getBoard } from './board';
 /**
  * React hook returning the current board selection.
  *
- * It listens for board selection updates via `miro.board.ui.on` when
- * available or falls back to the legacy `SELECTION_UPDATED` listener.
+ * It listens for board selection updates via `miro.board.ui.on`
+ * when available.
  */
 export function useSelection(
   board?: BoardLike,
@@ -24,13 +24,10 @@ export function useSelection(
       if (active) setSel(s);
     };
     void update();
-    const off = b.addListener?.('SELECTION_UPDATED', update);
-    if (!off) {
-      b.ui?.on('selection:update', update);
-    }
+    b.ui?.on('selection:update', update);
     return () => {
       active = false;
-      if (typeof off === 'function') off();
+      b.ui?.off?.('selection:update', update);
     };
   }, [board]);
   return sel;
