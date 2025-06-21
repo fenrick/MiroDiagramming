@@ -3,7 +3,9 @@
  * widgets on the board. Each property is optional and merged into the widget
  * style object.
  */
-import { adjustColor, ensureContrast } from './color-utils';
+import { tokens } from 'mirotone-react';
+import { colors } from '@mirohq/design-tokens';
+import { adjustColor, ensureContrast, resolveColor } from './color-utils';
 import { BoardLike, getBoard } from './board';
 
 export interface StyleOptions {
@@ -39,7 +41,12 @@ export async function applyStyleToSelection(
   await Promise.all(
     selection.map(async (item: Record<string, unknown>) => {
       const style = (item.style ?? {}) as Record<string, unknown>;
-      Object.assign(style, opts);
+      Object.entries(opts).forEach(([k, v]) => {
+        let fallback = String(v);
+        if (v === tokens.color.white) fallback = colors.white;
+        if (v === tokens.color.primaryText) fallback = colors['gray-700'];
+        style[k] = typeof v === 'string' ? resolveColor(v, fallback) : v;
+      });
       item.style = style;
       if (typeof (item as { sync?: () => Promise<void> }).sync === 'function') {
         await (item as { sync: () => Promise<void> }).sync();
@@ -66,9 +73,13 @@ export async function tweakFillColor(
     selection.map(async (item: Record<string, unknown>) => {
       const style = (item.style ?? {}) as Record<string, unknown>;
       const fill =
-        typeof style.fillColor === 'string' ? style.fillColor : '#fff';
+        typeof style.fillColor === 'string'
+          ? style.fillColor
+          : resolveColor(tokens.color.white, colors.white);
       const font =
-        typeof style.fontColor === 'string' ? style.fontColor : '#1a1a1a';
+        typeof style.fontColor === 'string'
+          ? style.fontColor
+          : resolveColor(tokens.color.primaryText, colors['gray-700']);
       const newFill = adjustColor(fill, delta);
       style.fillColor = newFill;
       style.fontColor = ensureContrast(newFill, font);

@@ -5,6 +5,24 @@
  * contrast calculations so fill and font colours remain readable.
  */
 
+import { tokens } from 'mirotone-react';
+import { colors } from '@mirohq/design-tokens';
+
+/** Convert a token reference to its hex value. */
+export function resolveColor(token: string, fallback: string): string {
+  if (token.startsWith('var(')) {
+    if (typeof document !== 'undefined') {
+      const name = token.slice(4, -1);
+      const val = getComputedStyle(document.documentElement).getPropertyValue(
+        name,
+      );
+      return (val.trim() || fallback).toLowerCase();
+    }
+    return fallback.toLowerCase();
+  }
+  return token.toLowerCase();
+}
+
 /** RGB colour representation. */
 export interface Rgb {
   r: number;
@@ -76,7 +94,15 @@ export function contrastRatio(a: string, b: string): number {
  */
 export function ensureContrast(bg: string, fg: string): string {
   if (contrastRatio(bg, fg) >= 4.5) return fg;
-  const black = contrastRatio(bg, '#000000');
-  const white = contrastRatio(bg, '#ffffff');
-  return black >= white ? '#000000' : '#ffffff';
+  const black = contrastRatio(
+    bg,
+    resolveColor(tokens.color.black, colors.black),
+  );
+  const white = contrastRatio(
+    bg,
+    resolveColor(tokens.color.white, colors.white),
+  );
+  return black >= white
+    ? resolveColor(tokens.color.black, colors.black)
+    : resolveColor(tokens.color.white, colors.white);
 }
