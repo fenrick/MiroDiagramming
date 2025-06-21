@@ -28,9 +28,6 @@ describe('useSelection', () => {
           cb = fn;
         }),
         off: jest.fn(),
-    const { result, unmount } = renderHook(() => useSelection(board));
-    unmount();
-    expect(board.ui.off).toHaveBeenCalledWith('selection:update', cb);
       },
     };
     const { result, unmount } = renderHook(() => useSelection(board));
