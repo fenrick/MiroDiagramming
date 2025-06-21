@@ -2,7 +2,8 @@
 import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { App, getDropzoneStyle, undoLastImport } from '../src/app';
+import { App } from '../src/app';
+import { getDropzoneStyle, undoLastImport } from '../src/ui-utils';
 import { tokens } from 'mirotone-react';
 import { GraphProcessor } from '../src/GraphProcessor';
 import { CardProcessor } from '../src/CardProcessor';

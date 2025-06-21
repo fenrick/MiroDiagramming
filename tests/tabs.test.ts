@@ -5,13 +5,19 @@ import '@testing-library/jest-dom';
 import { ResizeTab } from '../src/tabs/ResizeTab';
 import { StyleTab } from '../src/tabs/StyleTab';
 import { GridTab } from '../src/tabs/GridTab';
+import { DiagramTab } from '../src/tabs/DiagramTab';
+import { CardsTab } from '../src/tabs/CardsTab';
 import * as resizeTools from '../src/resize-tools';
 import * as styleTools from '../src/style-tools';
 import * as gridTools from '../src/grid-tools';
+import { GraphProcessor } from '../src/GraphProcessor';
+import { CardProcessor } from '../src/CardProcessor';
 
 jest.mock('../src/resize-tools');
 jest.mock('../src/style-tools');
 jest.mock('../src/grid-tools');
+jest.mock('../src/GraphProcessor');
+jest.mock('../src/CardProcessor');
 
 describe('tab components', () => {
   beforeEach(() => {
@@ -68,6 +74,38 @@ describe('tab components', () => {
     render(React.createElement(GridTab));
     await act(async () => {
       fireEvent.click(screen.getByText(/arrange grid/i));
+    });
+    expect(spy).toHaveBeenCalled();
+  });
+
+  test('DiagramTab processes file', async () => {
+    const spy = jest
+      .spyOn(GraphProcessor.prototype, 'processFile')
+      .mockResolvedValue(undefined as unknown as void);
+    render(React.createElement(DiagramTab));
+    const input = screen.getByTestId('file-input');
+    const file = new File(['{}'], 'graph.json', { type: 'application/json' });
+    await act(async () => {
+      fireEvent.change(input, { target: { files: [file] } });
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /create diagram/i }));
+    });
+    expect(spy).toHaveBeenCalled();
+  });
+
+  test('CardsTab processes file', async () => {
+    const spy = jest
+      .spyOn(CardProcessor.prototype, 'processFile')
+      .mockResolvedValue(undefined as unknown as void);
+    render(React.createElement(CardsTab));
+    const input = screen.getByTestId('file-input');
+    const file = new File(['{}'], 'cards.json', { type: 'application/json' });
+    await act(async () => {
+      fireEvent.change(input, { target: { files: [file] } });
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /create cards/i }));
     });
     expect(spy).toHaveBeenCalled();
   });
