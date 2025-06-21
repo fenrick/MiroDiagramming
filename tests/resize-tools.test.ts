@@ -22,4 +22,16 @@ describe('resize-tools', () => {
     expect(item.height).toBe(20);
     expect(item.sync).toHaveBeenCalled();
   });
+
+  test('copySizeFromSelection returns null when invalid', async () => {
+    const board = { selection: { get: jest.fn().mockResolvedValue([{}]) } };
+    const size = await copySizeFromSelection(board);
+    expect(size).toBeNull();
+  });
+
+  test('applySizeToSelection throws without board', async () => {
+    await expect(applySizeToSelection({ width: 1, height: 1 })).rejects.toThrow(
+      'Miro board not available',
+    );
+  });
 });

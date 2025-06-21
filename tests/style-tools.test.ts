@@ -35,4 +35,22 @@ describe('style-tools', () => {
     expect(item.style.fontColor).toMatch(/^#(fff|000)/i);
     expect(item.sync).toHaveBeenCalled();
   });
+
+  test('getFillColorFromSelection throws without board', async () => {
+    await expect(getFillColorFromSelection()).rejects.toThrow(
+      'Miro board not available',
+    );
+  });
+
+  test('applyStyleToSelection throws without board', async () => {
+    await expect(applyStyleToSelection({ fillColor: '#fff' })).rejects.toThrow(
+      'Miro board not available',
+    );
+  });
+
+  test('tweakFillColor throws without board', async () => {
+    await expect(tweakFillColor(0.1)).rejects.toThrow(
+      'Miro board not available',
+    );
+  });
 });
