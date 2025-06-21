@@ -1,3 +1,4 @@
+/* Figma reference: https://figma.com/file/XYZ123 */
 @import 'mirotone/dist/styles.css';
 
 *,
@@ -27,14 +28,14 @@ body {
         align-items: stretch;
 }
 
-.centered .buttons {
+.custom-centered .custom-buttons {
     position: sticky;
     bottom: 0;
     padding-block: var(--space-medium);
-    background: #fff;
+    background: var(--colors-white);
 }
 
-.dropped-files {
+.custom-dropped-files {
     list-style: none;
     padding: var(--space-xxsmall) var(--space-xsmall);
     border: 3px dashed var(--indigoAlpha40);
@@ -44,7 +45,7 @@ body {
 }
 
 
-.visually-hidden {
+.custom-visually-hidden {
     position: absolute;
     width: 1px;
     height: 1px;

@@ -110,14 +110,14 @@ export const DiagramTab: React.FC = () => {
           </>
         )}
       </div>
-      <Paragraph id='dropzone-instructions' className='visually-hidden'>
+      <Paragraph id='dropzone-instructions' className='custom-visually-hidden'>
         Press Enter to open the file picker or drop a JSON file on the area
         above.
       </Paragraph>
 
       {files.length > 0 && (
         <>
-          <ul className='dropped-files'>
+          <ul className='custom-dropped-files'>
             {files.map((file, i) => (
               <li key={i}>{file.name}</li>
             ))}
