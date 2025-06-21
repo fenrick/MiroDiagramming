@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Input } from 'mirotone-react';
+import { Button, Icon, Input, Text } from 'mirotone-react';
 import {
   applyStyleToSelection,
   StyleOptions,
@@ -96,7 +96,7 @@ export const StyleTab: React.FC = () => {
           value={adjust}
           onChange={e => setAdjust(Number(e.target.value))}
         />
-        <Button onClick={applyAdjust} size='small'>
+        <Button onClick={applyAdjust}>
           Adjust
         </Button>
       </div>
@@ -112,11 +112,14 @@ export const StyleTab: React.FC = () => {
           Current fill: {currentFill}
         </p>
       )}
-      <Button onClick={apply} size='small'>
+      <Button onClick={apply}>
         Apply Style
       </Button>
-      <Button onClick={copyColor} size='small'>
-        Copy Fill
+      <Button onClick={copyColor}>
+        <React.Fragment key=".0">
+          <Icon name="duplicate" />
+          <Text>Copy Fill</Text>
+        </React.Fragment>
       </Button>
     </div>
   );
