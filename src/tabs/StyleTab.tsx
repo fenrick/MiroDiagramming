@@ -6,6 +6,7 @@ import {
   Text,
   InputLabel,
   Paragraph,
+  tokens,
 } from 'mirotone-react';
 import {
   applyStyleToSelection,
@@ -19,9 +20,9 @@ import { useSelection } from '../useSelection';
 export const StyleTab: React.FC = () => {
   const selection = useSelection();
   const [opts, setOpts] = React.useState<StyleOptions>({
-    fillColor: '#ffffff',
-    fontColor: '#1a1a1a',
-    borderColor: '#1a1a1a',
+    fillColor: tokens.color.white,
+    fontColor: tokens.color.primaryText,
+    borderColor: tokens.color.primaryText,
     borderWidth: 1,
     fontSize: 12,
   });
