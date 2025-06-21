@@ -137,7 +137,7 @@ var __generator =
     }
   };
 Object.defineProperty(exports, '__esModule', { value: true });
-var elk_layout_1 = require('../src/elk-layout');
+var elk_layout_1 = require('../src/core/elk-layout');
 var graph = {
   nodes: [
     { id: 'n1', label: 'A', type: 'Role' },

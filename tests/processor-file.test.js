@@ -137,8 +137,8 @@ var __generator =
     }
   };
 Object.defineProperty(exports, '__esModule', { value: true });
-var GraphProcessor_1 = require('../src/GraphProcessor');
-var graph_1 = require('../src/graph');
+var GraphProcessor_1 = require('../src/core/GraphProcessor');
+var graph_1 = require('../src/core/graph');
 /**
  * Tests for the processFile helper method which loads a graph
  * from a file before processing.

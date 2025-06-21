@@ -1,5 +1,5 @@
 import { applyGridLayout, calculateGridPositions } from '../src/grid-tools';
-import { BoardLike } from '../src/board';
+import { BoardLike } from '../src/board/board';
 
 describe('grid-tools', () => {
   test('calculateGridPositions computes offsets', () => {

@@ -1,5 +1,5 @@
 /** Entry index error handling */
-jest.mock('../src/DiagramApp', () => {
+jest.mock('../src/app/DiagramApp', () => {
   return {
     DiagramApp: {
       getInstance: jest.fn(() => ({

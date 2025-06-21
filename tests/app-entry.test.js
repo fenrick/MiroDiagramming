@@ -155,7 +155,7 @@ test('mounts App on existing container', function () {
           return [
             4 /*yield*/,
             Promise.resolve().then(function () {
-              return require('../src/app');
+              return require('../src/app/app');
             }),
           ];
         case 1:

@@ -1,4 +1,4 @@
-import { DiagramApp } from './DiagramApp';
+import { DiagramApp } from './app/DiagramApp';
 
 DiagramApp.getInstance()
   .init()

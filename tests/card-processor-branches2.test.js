@@ -137,7 +137,7 @@ var __generator =
     }
   };
 Object.defineProperty(exports, '__esModule', { value: true });
-var CardProcessor_1 = require('../src/CardProcessor');
+var CardProcessor_1 = require('../src/board/CardProcessor');
 /** Additional branch coverage for CardProcessor */
 describe('CardProcessor branches', function () {
   afterEach(function () {

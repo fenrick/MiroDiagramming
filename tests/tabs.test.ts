@@ -2,22 +2,22 @@
 import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { ResizeTab } from '../src/tabs/ResizeTab';
-import { StyleTab } from '../src/tabs/StyleTab';
-import { GridTab } from '../src/tabs/GridTab';
-import { DiagramTab } from '../src/tabs/DiagramTab';
-import { CardsTab } from '../src/tabs/CardsTab';
+import { ResizeTab } from '../src/ui/tabs/ResizeTab';
+import { StyleTab } from '../src/ui/tabs/StyleTab';
+import { GridTab } from '../src/ui/tabs/GridTab';
+import { DiagramTab } from '../src/ui/tabs/DiagramTab';
+import { CardsTab } from '../src/ui/tabs/CardsTab';
 import * as resizeTools from '../src/resize-tools';
 import * as styleTools from '../src/style-tools';
 import * as gridTools from '../src/grid-tools';
-import { GraphProcessor } from '../src/GraphProcessor';
-import { CardProcessor } from '../src/CardProcessor';
+import { GraphProcessor } from '../src/core/GraphProcessor';
+import { CardProcessor } from '../src/board/CardProcessor';
 
 jest.mock('../src/resize-tools');
 jest.mock('../src/style-tools');
 jest.mock('../src/grid-tools');
-jest.mock('../src/GraphProcessor');
-jest.mock('../src/CardProcessor');
+jest.mock('../src/core/GraphProcessor');
+jest.mock('../src/board/CardProcessor');
 
 describe('tab components', () => {
   beforeEach(() => {

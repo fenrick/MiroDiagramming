@@ -137,10 +137,10 @@ var __generator =
     }
   };
 Object.defineProperty(exports, '__esModule', { value: true });
-var GraphProcessor_1 = require('../src/GraphProcessor');
-var graph_1 = require('../src/graph');
+var GraphProcessor_1 = require('../src/core/GraphProcessor');
+var graph_1 = require('../src/core/graph');
 var templates_1 = require('../src/templates');
-var elk_layout_1 = require('../src/elk-layout');
+var elk_layout_1 = require('../src/core/elk-layout');
 var sample_graph_json_1 = require('../sample-graph.json');
 describe('GraphProcessor', function () {
   var processor = new GraphProcessor_1.GraphProcessor();

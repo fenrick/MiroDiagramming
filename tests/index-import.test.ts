@@ -1,5 +1,5 @@
 /** Entry index tests */
-jest.mock('../src/DiagramApp', () => {
+jest.mock('../src/app/DiagramApp', () => {
   return {
     DiagramApp: {
       getInstance: jest.fn(() => ({
@@ -12,7 +12,7 @@ jest.mock('../src/DiagramApp', () => {
 describe('index entrypoint', () => {
   test('initializes DiagramApp on import', async () => {
     await import('../src/index');
-    const { DiagramApp } = await import('../src/DiagramApp');
+    const { DiagramApp } = await import('../src/app/DiagramApp');
     expect(DiagramApp.getInstance).toHaveBeenCalled();
     const instance = (DiagramApp.getInstance as jest.Mock).mock.results[0]
       .value;

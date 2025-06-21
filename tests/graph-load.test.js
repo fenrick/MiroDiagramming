@@ -137,7 +137,7 @@ var __generator =
     }
   };
 Object.defineProperty(exports, '__esModule', { value: true });
-var graph_1 = require('../src/graph');
+var graph_1 = require('../src/core/graph');
 /**
  * Tests for the loadGraph helper which parses an uploaded file
  * and resets builder state.

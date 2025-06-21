@@ -1,6 +1,6 @@
-import { GraphProcessor } from '../src/GraphProcessor';
-import { CardProcessor } from '../src/CardProcessor';
-import { BoardBuilder } from '../src/BoardBuilder';
+import { GraphProcessor } from '../src/core/GraphProcessor';
+import { CardProcessor } from '../src/board/CardProcessor';
+import { BoardBuilder } from '../src/board/BoardBuilder';
 
 describe('undo operations', () => {
   test('GraphProcessor.undoLast removes widgets', async () => {

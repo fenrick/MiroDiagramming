@@ -137,7 +137,7 @@ var __generator =
     }
   };
 Object.defineProperty(exports, '__esModule', { value: true });
-var elk_layout_1 = require('../src/elk-layout');
+var elk_layout_1 = require('../src/core/elk-layout');
 var elk_bundled_js_1 = require('elkjs/lib/elk.bundled.js');
 /** Verify singleton behaviour and minimal layout handling. */
 describe('LayoutEngine', function () {

@@ -1,4 +1,4 @@
-import { layoutEngine } from '../src/elk-layout';
+import { layoutEngine } from '../src/core/elk-layout';
 import ELK from 'elkjs/lib/elk.bundled.js';
 
 /**

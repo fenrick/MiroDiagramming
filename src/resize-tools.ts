@@ -11,7 +11,7 @@ export interface Size {
   height: number;
 }
 
-import { BoardLike, getBoard } from './board';
+import { BoardLike, getBoard } from './board/board';
 
 /**
  * Retrieve the width and height of the first selected widget.

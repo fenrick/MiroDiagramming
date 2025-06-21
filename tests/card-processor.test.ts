@@ -1,4 +1,4 @@
-import { CardProcessor } from '../src/CardProcessor';
+import { CardProcessor } from '../src/board/CardProcessor';
 import * as cardModule from '../src/cards';
 
 interface GlobalWithMiro {

@@ -2,8 +2,8 @@
 import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { App } from '../src/app';
-import { GraphProcessor } from '../src/GraphProcessor';
+import { App } from '../src/app/app';
+import { GraphProcessor } from '../src/core/GraphProcessor';
 
 function selectFile(): File {
   const file = new File(['{}'], 'graph.json', { type: 'application/json' });

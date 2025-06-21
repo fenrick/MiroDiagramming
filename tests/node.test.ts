@@ -1,4 +1,4 @@
-import { graphService } from '../src/graph';
+import { graphService } from '../src/core/graph';
 import { templateManager } from '../src/templates';
 
 interface GlobalWithMiro {

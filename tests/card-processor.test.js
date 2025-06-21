@@ -137,7 +137,7 @@ var __generator =
     }
   };
 Object.defineProperty(exports, '__esModule', { value: true });
-var CardProcessor_1 = require('../src/CardProcessor');
+var CardProcessor_1 = require('../src/board/CardProcessor');
 var cardModule = require('../src/cards');
 describe('CardProcessor', function () {
   var processor;

@@ -1,4 +1,4 @@
-import { GraphService } from '../src/graph';
+import { GraphService } from '../src/core/graph';
 
 describe('GraphService singleton', () => {
   test('getInstance returns the same object', () => {

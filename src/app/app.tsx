@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { ResizeTab } from './tabs/ResizeTab';
-import { StyleTab } from './tabs/StyleTab';
-import { GridTab } from './tabs/GridTab';
-import { DiagramTab } from './tabs/DiagramTab';
-import { CardsTab } from './tabs/CardsTab';
+import { ResizeTab } from '../ui/tabs/ResizeTab';
+import { StyleTab } from '../ui/tabs/StyleTab';
+import { GridTab } from '../ui/tabs/GridTab';
+import { DiagramTab } from '../ui/tabs/DiagramTab';
+import { CardsTab } from '../ui/tabs/CardsTab';
 
 export type Tab = 'diagram' | 'cards' | 'resize' | 'style' | 'grid';
 

@@ -1,6 +1,6 @@
 'use strict';
 Object.defineProperty(exports, '__esModule', { value: true });
-var graph_1 = require('../src/graph');
+var graph_1 = require('../src/core/graph');
 describe('GraphService singleton', function () {
   test('getInstance returns the same object', function () {
     var original = graph_1.GraphService.instance;

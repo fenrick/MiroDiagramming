@@ -137,7 +137,7 @@ var __generator =
     }
   };
 Object.defineProperty(exports, '__esModule', { value: true });
-var DiagramApp_1 = require('../src/DiagramApp');
+var DiagramApp_1 = require('../src/app/DiagramApp');
 /**
  * Tests for the DiagramApp singleton and initialization logic.
  */
