@@ -1,12 +1,18 @@
 import React from 'react';
-import { Button, Icon, Input, Text } from 'mirotone-react';
+import {
+  Button,
+  Icon,
+  Input,
+  Text,
+  InputLabel,
+  Paragraph,
+} from 'mirotone-react';
 import {
   applyStyleToSelection,
   StyleOptions,
   getFillColorFromSelection,
   tweakFillColor,
 } from '../style-tools';
-import { ensureContrast } from '../color-utils';
 import { useSelection } from '../useSelection';
 
 /** UI for the Style tab. */
@@ -57,38 +63,50 @@ export const StyleTab: React.FC = () => {
 
   return (
     <div>
-      <Input
-        value={opts.fillColor}
-        onChange={update('fillColor')}
-        placeholder='Fill color'
-        style={{
-          backgroundColor: opts.fillColor,
-          color: ensureContrast(opts.fillColor ?? '#ffffff', '#ffffff'),
-        }}
-      />
-      <Input
-        value={opts.fontColor}
-        onChange={update('fontColor')}
-        placeholder='Font color'
-      />
-      <Input
-        value={opts.borderColor}
-        onChange={update('borderColor')}
-        placeholder='Border color'
-      />
-      <Input
-        type='number'
-        value={String(opts.borderWidth)}
-        onChange={update('borderWidth')}
-        placeholder='Border width'
-      />
-      <Input
-        type='number'
-        value={String(opts.fontSize)}
-        onChange={update('fontSize')}
-        placeholder='Font size'
-      />
-      <div style={{ marginTop: 8 }}>
+      <InputLabel>
+        Fill color
+        <Input
+          value={opts.fillColor}
+          onChange={update('fillColor')}
+          placeholder='Fill color'
+        />
+      </InputLabel>
+      <InputLabel>
+        Font color
+        <Input
+          value={opts.fontColor}
+          onChange={update('fontColor')}
+          placeholder='Font color'
+        />
+      </InputLabel>
+      <InputLabel>
+        Border color
+        <Input
+          value={opts.borderColor}
+          onChange={update('borderColor')}
+          placeholder='Border color'
+        />
+      </InputLabel>
+      <InputLabel>
+        Border width
+        <Input
+          type='number'
+          value={String(opts.borderWidth)}
+          onChange={update('borderWidth')}
+          placeholder='Border width'
+        />
+      </InputLabel>
+      <InputLabel>
+        Font size
+        <Input
+          type='number'
+          value={String(opts.fontSize)}
+          onChange={update('fontSize')}
+          placeholder='Font size'
+        />
+      </InputLabel>
+      <InputLabel>
+        Adjust fill
         <input
           type='range'
           min='-50'
@@ -96,28 +114,27 @@ export const StyleTab: React.FC = () => {
           value={adjust}
           onChange={e => setAdjust(Number(e.target.value))}
         />
-        <Button onClick={applyAdjust}>
-          Adjust
-        </Button>
-      </div>
-      {currentFill && (
-        <p
-          data-testid='current-fill'
-          style={{
-            backgroundColor: currentFill,
-            color: ensureContrast(currentFill, '#ffffff'),
-            padding: 4,
-          }}
-        >
-          Current fill: {currentFill}
-        </p>
-      )}
-      <Button onClick={apply}>
-        Apply Style
+      </InputLabel>
+      <Button onClick={applyAdjust} variant='secondary'>
+        <React.Fragment key='.0'>
+          <Icon name='parameters' />
+          <Text>Adjust</Text>
+        </React.Fragment>
       </Button>
-      <Button onClick={copyColor}>
-        <React.Fragment key=".0">
-          <Icon name="duplicate" />
+      {currentFill && (
+        <Paragraph data-testid='current-fill'>
+          Current fill: {currentFill}
+        </Paragraph>
+      )}
+      <Button onClick={apply} variant='primary'>
+        <React.Fragment key='.0'>
+          <Icon name='arrow-right' />
+          <Text>Apply Style</Text>
+        </React.Fragment>
+      </Button>
+      <Button onClick={copyColor} variant='secondary'>
+        <React.Fragment key='.0'>
+          <Icon name='duplicate' />
           <Text>Copy Fill</Text>
         </React.Fragment>
       </Button>
