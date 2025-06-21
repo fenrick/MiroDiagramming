@@ -37,7 +37,8 @@ value in its metadata the corresponding template is applied. Edit this file or
 add new entries to customize the available shapes. Connector appearance is
 configured in
 [ `templates/connectorTemplates.json`](templates/connectorTemplates.json) which
-controls line color, caps and font.
+controls line color, caps and font. The templates now include `Decision` and
+`StartEnd` shapes useful for flowcharts.
 
 To add your own templates create new entries in these JSON files and reference
 them by name in your graph metadata. The app reloads templates on startup so
@@ -92,6 +93,20 @@ The import panel is keyboard accessible. The drop area includes an ARIA label
 and hidden instructions so screen readers announce how to operate it. Focus the
 area with the Tab key and press **Enter** to open the file picker. The mode
 selection radios are grouped with a descriptive label.
+
+## Additional Tools
+
+The sidebar exposes extra tabs to manipulate existing widgets:
+
+- **Resize** allows copying a widget size and applying it to others. You can
+  also type width and height manually. The tool displays conversions between
+  board units, millimetres and inches based on the ratio `96 units = 1 inch`.
+- **Style** sets common style properties like fill colour or border width on all
+  selected items. The tab shows the current fill colour swatch and updates when
+  the selection changes. A slider lightens or darkens the colour while keeping
+  the text readable.
+- **Grid** arranges widgets into a grid with options for sorting and grouping
+  the result.
 
 ## Setup
 

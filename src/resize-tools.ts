@@ -11,11 +11,7 @@ export interface Size {
   height: number;
 }
 
-export interface BoardLike {
-  selection: {
-    get(): Promise<Array<Record<string, unknown>>>;
-  };
-}
+import { BoardLike, getBoard } from './board';
 
 /**
  * Retrieve the width and height of the first selected widget.
@@ -26,11 +22,8 @@ export interface BoardLike {
 export async function copySizeFromSelection(
   board?: BoardLike,
 ): Promise<Size | null> {
-  const b =
-    board ??
-    (globalThis as unknown as { miro?: { board?: BoardLike } }).miro?.board;
-  if (!b) throw new Error('Miro board not available');
-  const selection = await b.selection.get();
+  const b = getBoard(board);
+  const selection = await b.getSelection();
   const first = selection[0] as { width?: number; height?: number } | undefined;
   if (
     !first ||
@@ -52,11 +45,8 @@ export async function applySizeToSelection(
   size: Size,
   board?: BoardLike,
 ): Promise<void> {
-  const b =
-    board ??
-    (globalThis as unknown as { miro?: { board?: BoardLike } }).miro?.board;
-  if (!b) throw new Error('Miro board not available');
-  const selection = await b.selection.get();
+  const b = getBoard(board);
+  const selection = await b.getSelection();
   await Promise.all(
     selection.map(async (item: Record<string, unknown>) => {
       if (typeof item.width === 'number' && typeof item.height === 'number') {

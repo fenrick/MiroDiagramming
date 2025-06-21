@@ -167,5 +167,33 @@
         "text": "{{label}}"
       }
     ]
+  },
+  "Decision": {
+    "elements": [
+      {
+        "shape": "diamond",
+        "width": 80,
+        "height": 80,
+        "style": {
+          "fillColor": "#FFF2CC",
+          "fontFamily": "Arial"
+        },
+        "text": "{{label}}"
+      }
+    ]
+  },
+  "StartEnd": {
+    "elements": [
+      {
+        "shape": "ellipse",
+        "width": 100,
+        "height": 60,
+        "style": {
+          "fillColor": "#FFE2CC",
+          "fontFamily": "Arial"
+        },
+        "text": "{{label}}"
+      }
+    ]
   }
 }
