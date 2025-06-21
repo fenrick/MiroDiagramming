@@ -25,7 +25,10 @@ export function useSelection(
     };
     void update();
     b.ui?.on('selection:update', update);
+    return () => {
+      active = false;
       b.ui?.off?.('selection:update', update);
+    };
   }, [board]);
   return sel;
 }

@@ -52,9 +52,10 @@ export async function applySizeToSelection(
       if (typeof item.width === 'number' && typeof item.height === 'number') {
         item.width = size.width;
         item.height = size.height;
-        const sync = (item as { sync?: () => Promise<void> }).sync;
-        if (typeof sync === 'function') {
-          await sync();
+        if (
+          typeof (item as { sync?: () => Promise<void> }).sync === 'function'
+        ) {
+          await (item as { sync: () => Promise<void> }).sync();
         }
       }
     }),

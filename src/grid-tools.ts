@@ -80,9 +80,8 @@ export async function applyGridLayout(
     items.map(async (item: Record<string, unknown>, i: number) => {
       item.x = first.x + positions[i].x;
       item.y = first.y + positions[i].y;
-      const sync = (item as { sync?: () => Promise<void> }).sync;
-      if (typeof sync === 'function') {
-        await sync();
+      if (typeof (item as { sync?: () => Promise<void> }).sync === 'function') {
+        await (item as { sync: () => Promise<void> }).sync();
       }
     }),
   );
