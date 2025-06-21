@@ -1,11 +1,11 @@
 {
   "default": {
     "style": {
-      "strokeColor": "#000000",
+      "strokeColor": "tokens.color.black",
       "strokeStyle": "normal",
       "startStrokeCap": "none",
       "endStrokeCap": "arrow",
-      "color": "#000000",
+      "color": "tokens.color.black",
       "textOrientation": "horizontal"
     },
     "shape": "curved",
@@ -16,11 +16,11 @@
   },
   "flow": {
     "style": {
-      "strokeColor": "#000000",
+      "strokeColor": "tokens.color.black",
       "strokeStyle": "dashed",
       "startStrokeCap": "none",
       "endStrokeCap": "arrow",
-      "color": "#000000",
+      "color": "tokens.color.black",
       "textOrientation": "horizontal"
     },
     "shape": "curved",
@@ -31,11 +31,11 @@
   },
   "assignment": {
     "style": {
-      "strokeColor": "#000000",
+      "strokeColor": "tokens.color.black",
       "strokeStyle": "normal",
       "startStrokeCap": "none",
       "endStrokeCap": "arrow",
-      "color": "#000000",
+      "color": "tokens.color.black",
       "textOrientation": "horizontal"
     },
     "shape": "curved",
@@ -46,11 +46,11 @@
   },
   "realization": {
     "style": {
-      "strokeColor": "#000000",
+      "strokeColor": "tokens.color.black",
       "strokeStyle": "dashed",
       "startStrokeCap": "none",
       "endStrokeCap": "arrow",
-      "color": "#000000",
+      "color": "tokens.color.black",
       "textOrientation": "horizontal"
     },
     "shape": "curved",
@@ -61,11 +61,11 @@
   },
   "access": {
     "style": {
-      "strokeColor": "#000000",
+      "strokeColor": "tokens.color.black",
       "strokeStyle": "normal",
       "startStrokeCap": "none",
       "endStrokeCap": "arrow",
-      "color": "#000000",
+      "color": "tokens.color.black",
       "textOrientation": "horizontal"
     },
     "shape": "curved",
@@ -76,11 +76,11 @@
   },
   "influence": {
     "style": {
-      "strokeColor": "#000000",
+      "strokeColor": "tokens.color.black",
       "strokeStyle": "dotted",
       "startStrokeCap": "none",
       "endStrokeCap": "arrow",
-      "color": "#000000",
+      "color": "tokens.color.black",
       "textOrientation": "horizontal"
     },
     "shape": "curved",

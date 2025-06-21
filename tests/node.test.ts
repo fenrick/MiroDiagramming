@@ -55,6 +55,6 @@ describe('createNode', () => {
     (global.miro.board.get as jest.Mock).mockResolvedValueOnce([existing]);
     const result = await graphService.createNode(node, pos);
     expect(result).toBe(existing);
-    expect(existing.style.fillColor).toBe('#FDE9D9');
+    expect(existing.style.fillColor).toBe('#FFF7D9');
   });
 });
