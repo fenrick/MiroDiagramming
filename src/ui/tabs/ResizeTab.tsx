@@ -13,9 +13,9 @@ import {
   applySizeToSelection,
   copySizeFromSelection,
   Size,
-} from '../../resize-tools';
+} from '../../board/resize-tools';
 import { useSelection } from '../useSelection';
-import { boardUnitsToMm, boardUnitsToInches } from '../../unit-utils';
+import { boardUnitsToMm, boardUnitsToInches } from '../../core/unit-utils';
 
 /** UI for the Resize tab. */
 export const ResizeTab: React.FC = () => {

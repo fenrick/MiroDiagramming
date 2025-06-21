@@ -5,8 +5,8 @@
  */
 import { tokens } from 'mirotone-react';
 import { colors } from '@mirohq/design-tokens';
-import { adjustColor, ensureContrast, resolveColor } from './color-utils';
-import { BoardLike, getBoard } from './board/board';
+import { adjustColor, ensureContrast, resolveColor } from '../core/color-utils';
+import { BoardLike, getBoard } from './board';
 
 export interface StyleOptions {
   fontColor?: string;

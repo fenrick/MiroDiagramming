@@ -1,4 +1,7 @@
-import { applyGridLayout, calculateGridPositions } from '../src/grid-tools';
+import {
+  applyGridLayout,
+  calculateGridPositions,
+} from '../src/board/grid-tools';
 import { BoardLike } from '../src/board/board';
 
 describe('grid-tools', () => {

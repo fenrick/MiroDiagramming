@@ -2,8 +2,8 @@ import type {
   ConnectorTemplate,
   TemplateDefinition,
   TemplateElement,
-} from '../templates';
-import { templateManager } from '../templates';
+} from './templates';
+import { templateManager } from './templates';
 import type {
   BaseItem,
   Connector,

@@ -3,7 +3,7 @@ import {
   boardUnitsToInches,
   mmToBoardUnits,
   inchesToBoardUnits,
-} from '../src/unit-utils';
+} from '../src/core/unit-utils';
 
 describe('unit-utils', () => {
   test('boardUnitsToMm converts units', () => {

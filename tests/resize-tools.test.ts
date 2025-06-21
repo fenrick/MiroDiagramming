@@ -1,7 +1,7 @@
 import {
   applySizeToSelection,
   copySizeFromSelection,
-} from '../src/resize-tools';
+} from '../src/board/resize-tools';
 
 describe('resize-tools', () => {
   test('copySizeFromSelection returns size', async () => {

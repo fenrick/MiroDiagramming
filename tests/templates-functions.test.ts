@@ -1,4 +1,4 @@
-import { connectorTemplates, templateManager } from '../src/templates';
+import { connectorTemplates, templateManager } from '../src/board/templates';
 
 // Simple tests for template helper functions
 

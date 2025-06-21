@@ -13,7 +13,7 @@ import {
   StyleOptions,
   getFillColorFromSelection,
   tweakFillColor,
-} from '../../style-tools';
+} from '../../board/style-tools';
 import { useSelection } from '../useSelection';
 
 /** UI for the Style tab. */

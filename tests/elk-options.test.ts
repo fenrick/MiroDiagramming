@@ -1,7 +1,7 @@
 import {
   DEFAULT_LAYOUT_OPTIONS,
   validateLayoutOptions,
-} from '../src/elk-options';
+} from '../src/core/elk-options';
 
 describe('validateLayoutOptions', () => {
   test('returns defaults for invalid options', () => {

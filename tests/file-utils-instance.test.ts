@@ -1,4 +1,4 @@
-import { FileUtils } from '../src/file-utils';
+import { FileUtils } from '../src/core/file-utils';
 
 describe('FileUtils singleton', () => {
   test('getInstance returns same instance', () => {
