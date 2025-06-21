@@ -7,6 +7,9 @@ export interface BoardUILike {
     event: 'selection:update',
     handler: (ev: { items: unknown[] }) => void,
   ): void;
+    event: 'selection:update',
+    handler: (ev: { items: unknown[] }) => void,
+  ): void;
 }
 
 export interface BoardLike {
