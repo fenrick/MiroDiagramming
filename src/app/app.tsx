@@ -6,22 +6,9 @@ import { StyleTab } from '../ui/pages/StyleTab';
 import { GridTab } from '../ui/pages/GridTab';
 import { DiagramTab } from '../ui/pages/DiagramTab';
 import { CardsTab } from '../ui/pages/CardsTab';
-import { TemplatesTab } from '../ui/pages/TemplatesTab';
-import { ExportTab } from '../ui/pages/ExportTab';
-import { DataTab } from '../ui/pages/DataTab';
-import { CommentTab } from '../ui/pages/CommentTab';
 import { TabBar, allTabs } from '../ui/components/TabBar';
 
-export type Tab =
-  | 'diagram'
-  | 'cards'
-  | 'resize'
-  | 'style'
-  | 'grid'
-  | 'templates'
-  | 'export'
-  | 'data'
-  | 'comment';
+export type Tab = 'diagram' | 'cards' | 'resize' | 'style' | 'grid';
 
 /**
  * React entry component that renders the file selection and mode
@@ -50,10 +37,6 @@ export const App: React.FC = () => {
       {tab === 'resize' && <ResizeTab />}
       {tab === 'style' && <StyleTab />}
       {tab === 'grid' && <GridTab />}
-      {tab === 'templates' && <TemplatesTab />}
-      {tab === 'export' && <ExportTab />}
-      {tab === 'data' && <DataTab />}
-      {tab === 'comment' && <CommentTab />}
     </div>
   );
 };

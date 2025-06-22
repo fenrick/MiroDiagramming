@@ -17,15 +17,6 @@ afterEach(() => {
   delete (globalThis as { miro?: unknown }).miro;
 });
 
-test('More popover selects hidden tab', async () => {
-  render(<App />);
-  fireEvent.click(screen.getByText('More'));
-  fireEvent.click(screen.getByRole('tab', { name: /templates/i }));
-  expect(
-    screen.getByRole('heading', { name: /templates/i }),
-  ).toBeInTheDocument();
-});
-
 test('Ctrl+Alt+4 selects Style tab', async () => {
   render(<App />);
   await act(async () => {
