@@ -4,11 +4,12 @@ import { createRoot } from 'react-dom/client';
 import { ResizeTab } from '../ui/pages/ResizeTab';
 import { StyleTab } from '../ui/pages/StyleTab';
 import { GridTab } from '../ui/pages/GridTab';
+import { SpacingTab } from '../ui/pages/SpacingTab';
 import { DiagramTab } from '../ui/pages/DiagramTab';
 import { CardsTab } from '../ui/pages/CardsTab';
 import { TabBar, allTabs } from '../ui/components/TabBar';
 
-export type Tab = 'diagram' | 'cards' | 'resize' | 'style' | 'grid';
+export type Tab = 'diagram' | 'cards' | 'resize' | 'style' | 'grid' | 'spacing';
 
 /**
  * React entry component that renders the file selection and mode
@@ -37,6 +38,7 @@ export const App: React.FC = () => {
       {tab === 'resize' && <ResizeTab />}
       {tab === 'style' && <StyleTab />}
       {tab === 'grid' && <GridTab />}
+      {tab === 'spacing' && <SpacingTab />}
     </div>
   );
 };

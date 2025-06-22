@@ -1,0 +1,53 @@
+import React from 'react';
+import { Button, Input, InputLabel, Icon, Text } from 'mirotone-react';
+import { SegmentedControl } from '../components/SegmentedControl';
+import { applySpacingLayout, SpacingOptions } from '../../board/spacing-tools';
+
+/** UI for evenly spacing selected items. */
+export const SpacingTab: React.FC = () => {
+  const [opts, setOpts] = React.useState<SpacingOptions>({
+    axis: 'x',
+    spacing: 20,
+  });
+
+  const updateAxis = (axis: string): void => {
+    if (axis === 'x' || axis === 'y') setOpts({ ...opts, axis });
+  };
+  const updateSpacing = (value: string): void => {
+    setOpts({ ...opts, spacing: Number(value) });
+  };
+
+  const apply = async (): Promise<void> => {
+    await applySpacingLayout(opts);
+  };
+
+  return (
+    <div>
+      <SegmentedControl
+        value={opts.axis}
+        onChange={updateAxis}
+        options={[
+          { label: 'Horizontal', value: 'x' },
+          { label: 'Vertical', value: 'y' },
+        ]}
+      />
+      <InputLabel>
+        Spacing
+        <Input
+          type='number'
+          value={String(opts.spacing)}
+          onChange={updateSpacing}
+          placeholder='Distance'
+        />
+      </InputLabel>
+      <div className='buttons'>
+        <Button onClick={apply} variant='primary'>
+          <React.Fragment key='.0'>
+            <Icon name='arrow-right' />
+            <Text>Distribute</Text>
+          </React.Fragment>
+        </Button>
+      </div>
+    </div>
+  );
+};
