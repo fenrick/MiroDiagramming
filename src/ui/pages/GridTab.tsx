@@ -14,7 +14,6 @@ import { applyGridLayout, GridOptions } from '../../board/grid-tools';
 export const GridTab: React.FC = () => {
   const [grid, setGrid] = React.useState<GridOptions>({
     cols: 2,
-    rows: 2,
     padding: 20,
     groupResult: false,
     sortByName: false,
@@ -22,7 +21,7 @@ export const GridTab: React.FC = () => {
   const [frameTitle, setFrameTitle] = React.useState('');
 
   const updateNumber =
-    (key: 'cols' | 'rows' | 'padding') =>
+    (key: 'cols' | 'padding') =>
     (value: string): void => {
       setGrid({ ...grid, [key]: Number(value) });
     };
@@ -53,15 +52,6 @@ export const GridTab: React.FC = () => {
           value={String(grid.cols)}
           onChange={updateNumber('cols')}
           placeholder='Columns'
-        />
-      </InputLabel>
-      <InputLabel>
-        Rows
-        <Input
-          type='number'
-          value={String(grid.rows)}
-          onChange={updateNumber('rows')}
-          placeholder='Rows'
         />
       </InputLabel>
       <InputLabel>
