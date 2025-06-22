@@ -7,7 +7,8 @@ import { BoardLike } from '../src/board/board';
 describe('grid-tools', () => {
   test('calculateGridPositions computes offsets', () => {
     const positions = calculateGridPositions(
-      { cols: 2, rows: 2, padding: 5 },
+      { cols: 2, padding: 5 },
+      4,
       10,
       10,
     );
@@ -26,7 +27,7 @@ describe('grid-tools', () => {
       group: jest.fn(),
     } as BoardLike;
     await applyGridLayout(
-      { cols: 1, rows: 2, padding: 5, sortByName: true, groupResult: true },
+      { cols: 1, padding: 5, sortByName: true, groupResult: true },
       board,
     );
     // Items are sorted so 'a' is positioned first
@@ -45,7 +46,7 @@ describe('grid-tools', () => {
     const board: BoardLike = {
       getSelection: jest.fn().mockResolvedValue(items),
     };
-    await applyGridLayout({ cols: 2, rows: 1, padding: 5 }, board);
+    await applyGridLayout({ cols: 2, padding: 5 }, board);
     expect(items[1].x).toBe(15);
     expect(items[1].y).toBe(0);
   });
@@ -55,10 +56,7 @@ describe('grid-tools', () => {
       getSelection: jest.fn().mockResolvedValue([]),
       group: jest.fn(),
     };
-    await applyGridLayout(
-      { cols: 1, rows: 1, padding: 0, groupResult: true },
-      board,
-    );
+    await applyGridLayout({ cols: 1, padding: 0, groupResult: true }, board);
     expect(board.group).not.toHaveBeenCalled();
   });
 
@@ -67,16 +65,13 @@ describe('grid-tools', () => {
     const board: BoardLike = {
       getSelection: jest.fn().mockResolvedValue(items),
     };
-    await applyGridLayout(
-      { cols: 1, rows: 1, padding: 0, groupResult: true },
-      board,
-    );
+    await applyGridLayout({ cols: 1, padding: 0, groupResult: true }, board);
     expect(items[0].x).toBe(0);
   });
 
   test('applyGridLayout throws without board', async () => {
-    await expect(
-      applyGridLayout({ cols: 1, rows: 1, padding: 0 }),
-    ).rejects.toThrow('Miro board not available');
+    await expect(applyGridLayout({ cols: 1, padding: 0 })).rejects.toThrow(
+      'Miro board not available',
+    );
   });
 });
