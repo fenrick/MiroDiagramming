@@ -1,123 +1,202 @@
-# Design System Foundation  
-_Single source of truth for tokens, principles, typography, layout, theming & accessibility (June 2025)_
+# Design-System Foundation
 
 ---
 
-## 1  Purpose  
-Provide every stakeholder—designer, developer, product manager—with a **plain-language, self-contained reference** for the visual language of Miro Web-SDK add-ons. No external links required.
+## 0 Purpose
+
+* Guarantee visual parity with native Miro surfaces.
+* Supply canonical **design tokens** for colour, spacing, typography, radii, elevation and motion.
+* Document the **governance workflow** so tokens evolve in a controlled, backward-compatible way.
+
+For component usage see **COMPONENTS.md**.
+For linting, testing and CI gates see **ARCHITECTURE.md** (sections 4-6).
 
 ---
 
-## 2  Design Principles  
+## 1 Token sources & install
 
-| Principle | Description |
-|-----------|-------------|
-| **Library-first, token-native** | Build UIs exclusively with `mirotone-react` and reference tokens programmatically. |
-| **Consistency & Predictability** | One colour map, one spacing scale, one grid—no per-feature variations. |
-| **Accessibility-first** | WCAG 2.2 AA compliance (contrast, reflow, focus management). |
+| Asset                               | Package                         | Notes                                                                                     |
+| ----------------------------------- | ------------------------------- | ----------------------------------------------------------------------------------------- |
+| Raw CSS variables & utility classes | **mirotone** (`npm i mirotone`) | Adds `dist/styles.css` with all variables and helpers. ([mirotone.xyz][1])                |
+| Type-safe token map                 | **mirotone-react**              | Exposes every variable as JavaScript constants (colour, space, borderRadius, typography). |
 
----
+```ts
+import 'mirotone/dist/styles.css';
+import { tokens } from 'mirotone-react';
 
-## 3  Design Tokens  
-
-### 3.1  Spacing Scale (`tokens.space.*`)
-
-| Token  | px | Intended use                |
-|--------|----|-----------------------------|
-| `xxxs` | 2  | Icon adjustments            |
-| `xxs`  | 4  | Very tight gaps             |
-| `xs`   | 8  | Inline element gaps         |
-| `sm`   | 16 | Between related controls    |
-| `md`   | 24 | Between form rows / padding |
-| `lg`   | 32 | Dialog & section padding    |
-| `xl`   | 40 | Card gutters                |
-| `xxl`  | 48 | Page gutters                |
-| `xxxl` | 64 | Hero / empty-state spacing  |
-
-### 3.2  Border-Radius Tokens
-
-| Token      | px |
-|------------|----|
-| `small`    | 2  |
-| `medium`   | 4  |
-| `large`    | 8  |
-| `xlarge`   | 16 |
-| `xxlarge`  | 32 |
-| `circle`   | 50 % |
-
-### 3.3  Colour Palette (excerpt)
-
-| Token              | Hex        | Usage                     |
-|--------------------|-----------|---------------------------|
-| `blue[900]`        | `#0D1B52` | Header text               |
-| `blue[500]`        | `#1A64F0` | Primary buttons & links   |
-| `green[800]`       | `#0A6631` | Success states            |
-| `red[600]`         | `#D7263D` | Destructive / errors      |
-| `yellow[400]`      | `#FFDB00` | Warnings                  |
-| `blackAlpha60`     | `rgba(0,0,0,.6)` | Secondary text |
-
-> **Rule:** reference tokens in code—never inline hex values.
-
-### 3.4  Typography Scale
-
-| Semantic   | Component / Class             | Size (px) | Weight |
-|------------|------------------------------|-----------|--------|
-| **H1**     | `<Title level={1}>`          | 32 / 40   | 600    |
-| **H2**     | `<Title level={2}>`          | 24 / 32   | 600    |
-| **H3**     | `<Title level={3}>`          | 20 / 28   | 600    |
-| **H4**     | `<Title level={4}>`          | 16 / 24   | 600    |
-| Body–large | `<Text variant="large">`     | 16        | 400    |
-| Body–med   | `<Text>`                     | 14        | 400    |
-| Body–small | `<Text variant="small">`     | 12        | 400    |
-
-### 3.5  Layout Grid  
-
-| Breakpoint | Viewport (px) | Columns | Gutter |
-|------------|---------------|---------|--------|
-| **xs**     | 0-479         | 4       | 8 px   |
-| **sm**     | 480-767       | 8       | 8 px   |
-| **md**     | 768-1023      | 12      | 16 px  |
-| **lg**     | 1024-1439     | 12      | 24 px  |
-| **xl**     | ≥ 1440        | 12      | 32 px  |
-
-> Columns auto-wrap below **md**, guaranteeing no horizontal scroll at 400 % zoom.
+const primary = tokens.color.blue[500];
+```
 
 ---
 
-## 4  Theming  
+## 2 Colour system
 
-* Mirotone tokens auto-switch for light and dark modes.  
-* **Do not** hard-code colours or backgrounds.  
-* Verify UI in both themes via **Developer → Interface Theme**.
+### 2.1 Primitive palette (CSS variables)
+
+| Hue      | Variables                                              | Typical use                 |
+| -------- | ------------------------------------------------------ | --------------------------- |
+| Blue     | `--blue100` … `--blue900`                              | Primary buttons, links      |
+| Indigo   | `--indigo50` … `--indigo700`, `--indigoAlpha*`         | Illustration accents        |
+| Green    | `--green100`, `--green400`, `--green800`               | Success status              |
+| Red      | `--red50` … `--red900`                                 | Destructive actions, errors |
+| Yellow   | `--yellow100`, `--yellow400`, `--yellow700`            | Warnings                    |
+| Neutrals | `--black`, `--blackAlpha*`, `--white`, `--whiteAlpha*` | Text, surfaces              |
+
+Full list lives in the **Colors** doc on miro tone. ([mirotone.xyz][1])
+
+### 2.2 Semantic aliases
+
+Create semantic tokens that map to primitives for clarity and easier theming:
+
+| Semantic token               | Light mode      | Dark mode           |
+| ---------------------------- | --------------- | ------------------- |
+| `colour-surface-canvas`      | var(--white)    | var(--black)        |
+| `colour-surface-card`        | var(--white)    | var(--blackAlpha80) |
+| `colour-text-primary`        | var(--black)    | var(--white)        |
+| `colour-interactive-primary` | var(--blue500)  | var(--blue300)      |
+| `colour-status-success`      | var(--green700) | var(--green400)     |
+| `colour-status-danger`       | var(--red700)   | var(--red400)       |
+
+All pairings conform to **WCAG 2.2 AA** (contrast ≥ 4 . 5 : 1). *axe-core* check in CI enforces this.
 
 ---
 
-## 5  Accessibility Guidelines  
+## 3 Spacing scale
 
-1. **Contrast:** text ↔ background ≥ 4.5 : 1.  
-2. **Reflow:** No horizontal scroll up to 400 % zoom.  
-3. **Focus not obscured:** visible ring after scroll or modal open.  
-4. **Semantic roles:** `mirotone-react` components expose correct ARIA; extend only with valid `aria-*` attributes.
+The Mirotone scale is **base-8 with a 4 px starter**. ([mirotone.xyz][2])
+
+| Token            | px  | Utility class      |
+| ---------------- | --- | ------------------ |
+| `space-xxxsmall` | 2   | `m-xxxs`, `p-xxxs` |
+| `space-xxsmall`  | 4   | `m-xxs`, `p-xxs`   |
+| `space-xsmall`   | 8   | `m-xs`, `p-xs`     |
+| `space-small`    | 16  | `m-s`, `p-s`       |
+| `space-medium`   | 24  | `m-m`, `p-m`       |
+| `space-large`    | 32  | `m-l`, `p-l`       |
+| `space-xlarge`   | 40  | `m-xl`, `p-xl`     |
+| `space-xxlarge`  | 48  | `m-xxl`, `p-xxl`   |
+| `space-xxxlarge` | 62  | `m-xxxl`, `p-xxxl` |
+
+All layout primitives (**Grid, Stack, Cluster**) accept numeric props that resolve to these tokens (see **COMPONENTS.md**).
 
 ---
 
-## 6  Minimal-CSS Policy  
+## 4 Typography
 
-Custom CSS is **discouraged**. Allowed only when:
+| Class       | Token equivalent | Size / line | Purpose               |
+| ----------- | ---------------- | ----------- | --------------------- |
+| `.h1`       | font-heading-xl  | 32 / 40     | Modal or page titles  |
+| `.h2`       | font-heading-l   | 24 / 32     | Section headers       |
+| `.h3`       | font-heading-m   | 20 / 28     | Sub-section headers   |
+| `.h4`       | font-heading-s   | 16 / 24     | Widget titles         |
+| `.p-large`  | font-body-l      | 16 / 24     | Explanatory text      |
+| `.p-medium` | font-body-m      | 14 / 20     | Default body text     |
+| `.p-small`  | font-body-s      | 12 / 16     | Captions, helper text |
 
-* `mirotone-react` lacks required capability.  
-* Scoped via CSS Modules or Emotion.  
-* Class names prefixed `custom-`.  
-* A Figma/Jira link explaining the need is placed in the file header.
+Mirotone exposes header and body fonts via `--header-font` and `--body-font` variables. ([mirotone.xyz][3])
 
 ---
 
-## 7  Governance  
+## 5 Radii & elevation
 
-| Area                  | Owner                   | Review cadence |
-|-----------------------|-------------------------|----------------|
-| Tokens & principles   | Design Systems Lead     | Quarterly      |
-| Accessibility         | Accessibility Champion  | Quarterly      |
-| Theming & dark mode   | Platform Engineering    | As-needed      |
+| Token            | px   |
+| ---------------- | ---- |
+| `radius-small`   | 2    |
+| `radius-medium`  | 4    |
+| `radius-large`   | 8    |
+| `radius-xlarge`  | 16   |
+| `radius-xxlarge` | 32   |
+| `radius-circle`  | 50 % |
 
-_Always update this foundation **before** any breaking visual change ships._
+Border-radius variables ship with Mirotone and are re-exported by mirotone-react. ([mirotone.xyz][2])
+
+Elevation follows a four-level shadow ramp:
+
+| Token         | Box-shadow             |
+| ------------- | ---------------------- |
+| `elevation-0` | none                   |
+| `elevation-1` | 0 1 1 rgba(0,0,0,0.1)  |
+| `elevation-2` | 0 2 4 rgba(0,0,0,0.12) |
+| `elevation-3` | 0 4 8 rgba(0,0,0,0.14) |
+
+---
+
+## 6 Icons
+
+* Use `<span class="icon icon-name">` to embed an icon. ([mirotone.xyz][4])
+* Icon SVGs sit under `node_modules/mirotone/icons`.
+* Do not recolour icons; prefer multi-tone assets shipped with the library. If recolouring is essential, apply a CSS filter (see Mirotone icon guide). ([mirotone.xyz][4])
+
+---
+
+## 7 Motion tokens
+
+| Name                   | Variable            | Cubic-bezier   | ms  |
+| ---------------------- | ------------------- | -------------- | --- |
+| motion-ease-in-out-200 | `--ease-in-out-200` | 0.4, 0 ,0.2, 1 | 200 |
+| motion-ease-in-out-300 | `--ease-in-out-300` | 0.4, 0 ,0.2, 1 | 300 |
+| motion-ease-in-out-400 | `--ease-in-out-400` | 0.4, 0 ,0.2, 1 | 400 |
+
+Use the shortest token that achieves perceptible feedback; avoid motion on large canvases where it may distract.
+
+---
+
+## 8 Minimal-CSS policy
+
+* **Never** hard-code hex, rgb, px, em or rem outside token definitions.
+* Custom classes only to integrate third-party libs and must start with `ext-`.
+* ESLint rule `design-tokens/no-raw-values` blocks non-token values.
+* Inline `style` attributes are disallowed (rule `no-inline-style`).
+* Dark-mode styles derive automatically from Mirotone variables; no extra overrides.
+
+---
+
+## 9 Dark-mode verification workflow
+
+1. Storybook builds in Light & Dark.
+2. Chromatic snapshots both themes.
+3. `jest-image-snapshot` compares against baseline (≤ 0.1 % diff).
+4. Failures block merge; engineering owner fixes token mapping.
+
+---
+
+## 10 Token governance
+
+| Step                                                    | Actor                        | Tool                             |
+| ------------------------------------------------------- | ---------------------------- | -------------------------------- |
+| 1. Propose token (Figma style link + rationale)         | Designer / Engineer          | Pull request in `design-tokens/` |
+| 2. Auto-check (naming, duplicates, contrast, dark-mode) | CI bot                       | `npm run tokens:verify`          |
+| 3. Dual approval                                        | Design lead + Eng maintainer | GitHub review                    |
+| 4. Merge & release                                      | semantic-release             | GitHub Actions                   |
+| 5. Consume in components                                | Component owners             | Follow-up PR                     |
+
+Schema is validated by **AJV**; breaking changes require a major version bump.
+
+---
+
+## 11 Tooling quick-start
+
+```bash
+# List tokens
+npm run tokens:list
+
+# Verify contrast / naming
+npm run tokens:verify
+
+# Regenerate d.ts typings for mirotone-react
+npm run tokens:gen-types
+```
+
+---
+
+## 12 Future enhancements
+
+| Idea                           | Benefit                                  | Target      |
+| ------------------------------ | ---------------------------------------- | ----------- |
+| Motion token ramp (100-600 ms) | Consistent animation scale               | Q4-2025     |
+| Illustration colour tokens     | Align empty-state artwork                | Q1-2026     |
+| Algorithmic dark theme         | Auto-generate tokens, reduce maintenance | Exploration |
+
+---
+
+*End of file.*

@@ -1,162 +1,176 @@
-# Component & Implementation Guide  
-_Actionable usage cookbook for `mirotone-react` in Miro Web-SDK add-ons (June 2025)_
+# Miro Web-SDK Add-on – Component & Implementation Guide
 
 ---
 
-## 1  Purpose  
-Provide designers and developers with **code-level guidance**, sample patterns, and enforcement checks to ship UIs that conform to the Design System Foundation.
+## 0 Purpose
+
+Practical, step-by-step reference for junior engineers who build the add-on UI.
+Explains how to:
+
+* Consume the **Mirotone CSS** design language. ([mirotone.xyz][1])
+* Re-use the **mirotone-react** component wrappers where they already exist and fall back gracefully when they do not. ([github.com][2])
+* Meet the accessibility, performance and quality gates defined in **ARCHITECTURE.md** and **FOUNDATION.md**.
 
 ---
 
-## 2  Installation & Bootstrapping  
+## 1 Installing the design system layers
 
-```bash
-npm install mirotone mirotone-react
-````
+| Layer               | Package            | Install command        | Notes                                                                                                                |
+| ------------------- | ------------------ | ---------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Tokens & raw styles | **mirotone** (CSS) | `npm i mirotone`       | Adds the `dist/styles.css` file and all utility classes. ([mirotone.xyz][1])                                         |
+| React bindings      | **mirotone-react** | `npm i mirotone-react` | Supplies type-safe wrappers for a growing subset of components plus programmatic access to tokens. ([github.com][2]) |
 
-```ts
-// app entry
-import 'mirotone/dist/styles.css';   // Import ONCE
-```
+### 1.1 Bootstrap CSS once
 
-* Ensure no duplicate CSS imports (check bundle analysis).
-* Enforce React 18+ and TypeScript strict mode.
-
----
-
-## 3  Component Catalogue
-
-| Component  | Key props / Options             | Variants         | Default h  |       |          |
-| ---------- | ------------------------------- | ---------------- | ---------- | ----- | -------- |
-| `Button`   | \`variant="primary              | secondary        | danger"\`  | 3     | 32 px    |
-| `Input`    | \`size="medium                  | small"` `error\` | –          | 32 px |          |
-| `Checkbox` | —                               | –                | 16 px      |       |          |
-| `Modal`    | `isOpen`, `onClose`, \`size="sm | md               | lg"\`      | 3     | Adaptive |
-| `Grid`     | \`as="section                   | div"\`           | –          | Fluid |          |
-| `Stack`    | `space="xs…xl"` `align`         | –                | Vertical   |       |          |
-| `Cluster`  | `gap="xs…xl"` `wrap`            | –                | Horizontal |       |          |
-
-Focus-ring thickness: **2 px**; colour: `tokens.color.blue[500]`.
-
----
-
-## 4  Layout Components
-
-### 4.1  Grid Usage
+Include the stylesheet exactly once—ideally in `src/app/index.tsx`:
 
 ```tsx
-<Grid>
-  <Sidebar cs={1} ce={4} lgCs={1} lgCe={3} />
-  <Main    cs={4} ce={13} />
+import 'mirotone/dist/styles.css';
+```
+
+### 1.2 Tree-shaken React imports
+
+```tsx
+import { Button, Input, tokens } from 'mirotone-react';
+```
+
+`tokens` mirrors the design-token variables so you never hard-code hex values. ([github.com][2])
+
+---
+
+## 2 Component catalogue
+
+Only props that junior devs **must** supply are shown.
+*Bold names* = available as first-class mirotone-react exports.<br>
+*Italic names* = compose manually with Mirotone CSS classes until the wrapper lands.
+
+| Name           | Core props               | Variants                  | Default height (px) |
+| -------------- | ------------------------ | ------------------------- | ------------------- |
+| **Button**     | label, onClick, disabled | primary, secondary, ghost | 32                  |
+| **IconButton** | icon, ariaLabel          | square, circle            | 32                  |
+| **Input**      | value, onChange          | text, number              | 32                  |
+| **Select**     | options, value, onChange | single, multi             | 32                  |
+| **Checkbox**   | checked, onChange        | —                         | 20                  |
+| **Radio**      | checked, onChange, name  | —                         | 20                  |
+| **Textarea**   | value, onChange          | resize-auto               | 80                  |
+| **Modal**      | title, isOpen, onClose   | small, medium             | auto                |
+| *SidebarTab*   | id, icon, title          | persistent, modal         | fill                |
+| *TabBar*       | tabs, activeId, onChange | top, bottom               | 48                  |
+| **Grid**       | gap, columns             | responsive                | n/a                 |
+| **Stack**      | gap, direction           | vertical, horizontal      | n/a                 |
+| **Cluster**    | gap, align               | left, right, centre       | n/a                 |
+
+> **When a wrapper is missing**
+>
+> 1. Write semantic HTML (for example `<div class="grid grid-gap-8">`).
+> 2. Apply the documented Mirotone CSS classes.
+> 3. Encapsulate in a small local React component under `src/ui/components/legacy/` so that future upgrades swap the implementation behind a stable API.
+
+---
+
+## 3 Layout primitives (no raw flex/grid)
+
+### 3.1 Grid – repeat-auto layout
+
+```tsx
+<Grid columns="repeat(auto-fill, 240px)" gap="16">
+  {nodes.map(n => <Card node={n} key={n.id} />)}
 </Grid>
 ```
 
-* `cs` / `ce` accept **1-13** (inclusive).
-* Use `lgCs`, `mdCs`, etc. for breakpoint-specific spans.
-* No inline `grid-column` CSS.
-
-### 4.2  Stack & Cluster
+### 3.2 Stack – vertical forms
 
 ```tsx
-<Stack space="md">
-  <Input label="Name" />
-  <Button variant="primary">Submit</Button>
+<Stack gap="12" direction="vertical">
+  <Label htmlFor="title">Title</Label>
+  <Input id="title" value={title} onChange={setTitle} />
 </Stack>
+```
 
-<Cluster gap="sm" wrap="wrap" justify="start">
-  {tags.map(t => <Tag key={t}>{t}</Tag>)}
+### 3.3 Cluster – right-aligned actions
+
+```tsx
+<Cluster gap="8" align="right">
+  <Button ghost onClick={cancel}>Cancel</Button>
+  <Button primary onClick={save}>Save</Button>
 </Cluster>
 ```
 
-`space` / `gap` map directly to spacing tokens.
-
-### 4.3  Placement Helpers
-
-| Utility          | Effect                                   |
-| ---------------- | ---------------------------------------- |
-| `.centered`      | Absolute centring (flex)                 |
-| `.stretch`       | `align-self: stretch`                    |
-| `.sticky-bottom` | Stick to bottom edge of scroll container |
-
 ---
 
-## 5  Validation & Accessibility
-
-* **Labels:** always supply `label` prop on inputs.
-* **Errors:** pass a string to `error`—invalid state automates `aria-invalid`.
-* **Keyboard:** `<Tab>` order must match visual order; validate via browser devtools.
-* **ARIA Extensions:** apply only for custom composite widgets—follow WAI-ARIA Authoring Practices.
-
----
-
-## 6  Sample Pattern — Modal Form
+## 4 Sample pattern – Modal form with validation
 
 ```tsx
-import { Modal, Stack, Title, Input, Button, Cluster } from 'mirotone-react';
-
-export function RenameBoardModal({ isOpen, close }) {
-  const [name, setName] = useState('');
-  const error = !name.trim() && 'Required';
-
-  return (
-    <Modal isOpen={isOpen} onClose={close}>
-      <Stack space="md" style={{ width: 320 }}>
-        <Title level={3}>Rename board</Title>
-
-        <Input
-          label="New name"
-          value={name}
-          required
-          error={error}
-          onChange={(e) => setName(e.target.value)}
-        />
-
-        <Cluster gap="sm" justify="end">
-          <Button variant="secondary" onClick={close}>Cancel</Button>
-          <Button variant="primary" disabled={!!error}>Save</Button>
-        </Cluster>
-      </Stack>
-    </Modal>
-  );
-}
+<Modal isOpen={show} title="Create card" onClose={close}>
+  <form onSubmit={submit} noValidate>
+    <Stack gap="12" direction="vertical">
+      <Input required placeholder="Title" value={title} onChange={setTitle} />
+      <Textarea placeholder="Description" value={desc} onChange={setDesc} />
+      <Cluster gap="8" align="right">
+        <Button ghost onClick={close}>Cancel</Button>
+        <Button primary type="submit">Add</Button>
+      </Cluster>
+    </Stack>
+  </form>
+</Modal>
 ```
 
-*Zero custom CSS; responsive & WCAG-AA compliant out of the box.*
+* First interactive control auto-focuses.
+* `Esc` always triggers `onClose`.
+* Browser validation bubbles up; error text appears via the **Input** `invalid` state.
 
 ---
 
-## 7  Quality Gates
+## 5 Accessibility quick-check
 
-```bash
-npm run typecheck --silent   # TypeScript strict
-npm test --silent            # Vitest / Jest
-npm run lint --silent        # ESLint + Stylelint
-npm run prettier --silent    # Prettier
-```
+| Check                    | How to verify                                                             |
+| ------------------------ | ------------------------------------------------------------------------- |
+| Colour contrast ≥ 4.5:1  | Token palette already passes; confirm via **npm run a11y** headless test. |
+| Tab order = visual order | Keyboard-walk the UI; make sure focus rings are visible.                  |
+| Icon-only buttons        | Provide `aria-label` or `title`.                                          |
+| Dialog semantics         | `role="dialog"` and `aria-modal="true"` on Modal root.                    |
+| Labels                   | Never rely on placeholders alone – always render a `<label>` element.     |
 
-Integrate as a pre-commit hook and CI step; block merges on failure.
-
-### 7.1  ESLint Guard
-
-```js
-"rules": {
-  "no-restricted-syntax": [
-    "error",
-    {
-      "selector": "Literal[value=/grid-column/]",
-      "message": "Use Grid props (cs/ce) instead of raw grid-column."
-    }
-  ]
-}
-```
+Failing any item blocks the CI gate.
 
 ---
 
-## 8  Further Reading
+## 6 Styling rules & minimal-CSS policy
 
-* `README.md` – project setup
-* `docs/design_system_foundation.md` – this repo
-* WCAG 2.2 quick-ref – contrast & focus guidelines
-* Miro Web-SDK docs – board API & add-ons
+* Only Design-System tokens: colours, space, radii, typography (import via `tokens`).
+* **No extra CSS classes** unless integrating a third-party lib.
+* Inline `style={...}` is disallowed by ESLint rule `no-inline-style`.
+* Dark-mode colours come free from Miro themes; test visually in both themes before merging. ([mirotone.xyz][1])
 
-*Last reviewed: 22 June 2025*
+---
+
+## 7 Performance notes
+
+* Virtualise long lists with **react-window**.
+* Debounce user typing (300 ms) before heavy graph searches.
+* Wrap expensive renders in `React.memo` or split components.
+
+---
+
+## 8 Quality gates (automated in GitHub Actions)
+
+| Stage             | Tool               | Pass threshold    |
+| ----------------- | ------------------ | ----------------- |
+| Lint              | ESLint + Stylelint | 0 errors          |
+| Unit tests        | Jest               | ≥ 95 % statements |
+| Visual regression | Chromatic          | 0 diffs           |
+| Accessibility     | axe-core           | 0 critical        |
+
+---
+
+## 9 Further reading
+
+* Architecture and folder layout – **ARCHITECTURE.md**
+* Design tokens and minimal-CSS policy – **FOUNDATION.md**
+* Deployment guidance – **DEPLOYMENT.md**
+* Sidebar behaviour and validation flows – **TABS.md**
+* Storybook playground – run `npm start`, open `http://localhost:6006`
+
+---
+
+*End of file.*

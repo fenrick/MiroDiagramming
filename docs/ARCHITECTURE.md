@@ -1,175 +1,208 @@
-# Miro Web SDK Add‑on — Comprehensive Architecture & Expansion Guide  
-_Version 2025‑06_
+# Miro Web-SDK Add-on — Architecture & Expansion Guide
+
+*Version 2025-06-22*
 
 ---
 
-## 0  Purpose & Scope  
-This document is the authoritative blueprint for building, extending, and operating a **Miro Web‑SDK add‑on**.  
-It merges architecture, design‑system usage, performance tuning, quality gates, and future‑proofing guidance into one self‑contained artifact.  
-Use it alongside the **Styling, Layout & Formatting Guide** to deliver a seamless, accessible, and maintainable Miro experience.
+## 0  Purpose
+
+Authoritative blueprint for building, extending and operating the add-on.
+Maintain as living documentation; update with every breaking, security-significant or process change.
 
 ---
 
-## 1  Architectural Layering  
+## 1  Document Map
+
+| Topic                                           | Detailed source   |
+| ----------------------------------------------- | ----------------- |
+| Component APIs, props, patterns                 | **COMPONENTS.md** |
+| Design tokens, colour, spacing, typography      | **FOUNDATION.md** |
+| CI/CD, hosting, rollback, environment settings  | **DEPLOYMENT.md** |
+| Sidebar tab flows, validation, keyboard support | **TABS.md**       |
+
+---
+
+## 2  System Overview
 
 ```
-Data → Graph Normalisation → Layout Engine → Board Rendering → UI Orchestration
+Browser
+  └── UI Shell  ──► Miro Iframe
+          ▲                 │
+          │                 ▼
+     Layout Engine ──► Board Adapter
+          ▲                 │
+          │                 ▼
+        Graph Processor  ◄─ Data Sources (REST/CSV)
 ```
 
-* **Pure Core** (`src/core`) — framework‑agnostic logic; no SDK imports.  
-* **Board Adapter** (`src/board`) — translates core DTOs to Miro widgets.  
-* **UI Shell** (`src/ui`) — React components built exclusively with `mirotone-react` primitives.  
-* **Infrastructure** (`scripts`, `.github`) — build, lint, test, release.
-
-> Layer boundaries guarantee isolation, enabling deterministic tests and safe refactors.
+The add-on is **client-only**. All persistence is handled by Miro boards; no server or OAuth exchange is required.
 
 ---
 
-## 2  Repository Structure  
+## 3  Layering
+
+```
+Data        → Graph Normalisation → Layout Engine → Board Rendering → UI Orchestration
+(src/core)     (src/core)            (src/core)      (src/board)       (src/ui)
+```
+
+* **Pure Core** (src/core) – framework-agnostic logic.
+* **Board Adapter** (src/board) – converts domain objects to Miro widgets.
+* **UI Shell** (src/ui) – React views built with mirotone-react only.
+* **Infrastructure** (scripts, .github) – build, lint, test, release automation.
+
+---
+
+## 4  Repository Map
 
 ```
 src/
-  core/
-    graph/           # GraphProcessor + schema
-    layout/          # elk-layout.ts, Web Worker pool
-  board/             # BoardBuilder, CardProcessor
-  ui/
-    components/      # Pure presentation
-    hooks/           # State synchronisation, selection
-    pages/           # Sidebar tabs
-  app/               # DiagramApp entry, routing
-tests/               # Jest suites mirror src
-.storybook/          # Interactive docs (Storybook MDX)
-public/              # Icons, i18n JSON
-scripts/             # build, lint, release helpers
+  core/        graph/, layout/, utils/
+  board/       BoardBuilder, CardProcessor
+  ui/          components/, hooks/, pages/
+  app/         entry + routing
+tests/         mirrors src
+.storybook/    MDX docs & live examples
+public/        icons, i18n JSON
+scripts/       build helpers
+docs/          *.md (this file, components, foundation …)
 ```
 
 ---
 
-## 3  Core Modules  
+## 5  Core Modules & Complexity Budget
 
-| Module | Responsibility | Key APIs |
-|--------|----------------|----------|
-| **GraphProcessor** | Parse external JSON, normalise nodes/edges, attach ELK hints | `load()`, `getMetadata()` |
-| **elk-layout.ts** | Run ELK layered algorithm inside Web Worker pool | `layout(graph)` |
-| **BoardBuilder** | Create/update widgets via `miro.board.widgets.*` v2 | `sync(model)`, `remove(ids)` |
-| **CardProcessor** | Import card specs, push Command objects to ring buffer | `importCards()`, `undo()`, `redo()` |
-| **DiagramApp** | React root; routes, providers, error boundary | `<AppRouter />` |
-| **Utilities** | `ui-utils`, `style-tools`, cache helpers | stateless functions |
+| Module         | Responsibility                        | Main surface      | Budget / function        |
+| -------------- | ------------------------------------- | ----------------- | ------------------------ |
+| GraphProcessor | Parse external data, attach ELK hints | load, metadata    | ≤ 70 lines, ≤ 8 branches |
+| elk-layout.ts  | Run ELK in Web Workers                | layout            | same                     |
+| BoardBuilder   | Create / update widgets               | sync, remove      | same                     |
+| CardProcessor  | Import cards, undo/redo               | importCards, undo | same                     |
+| DiagramApp     | React root, routing, providers        | `<AppRouter>`     | same                     |
 
-_Complexity budget: ≤ 70 LOC & ≤ 8 branches per function._
-
----
-
-## 4  Extending the Add‑on  
-
-### 4.1  Adding a New Widget Type  
-
-1. **Schema** – Extend `GraphProcessor` type definition.  
-2. **Layout** – Map ports/edges; provide default ELK options.  
-3. **Rendering** – Implement `BoardBuilder.create<Widget>()`.  
-4. **Undo** – Add inverse Command in `CardProcessor`.  
-5. **Tests** – Unit (core), integration (board), e2e (Cypress).  
-6. **Docs** – Storybook story + MDX usage notes.
-
-### 4.2  Plug‑in Points for Complementary Features  
-
-| Feature | Value | Modules Touched |
-|---------|-------|-----------------|
-| **Collaborative Cursors** | Show remote users’ pointers | `ui/`, SDK `miro.board.getUsers()` |
-| **Template Library** | Reuse diagram stencils | `core/graph`, `ui/pages/Templates` |
-| **Real‑time Data Bindings** | Reflect external API changes | `core/graph`, `board/BoardBuilder` |
-| **Comments & Mentions** | Inline feedback loop | `ui/components/CommentThread` |
-| **Minimap** | Faster navigation in large diagrams | `ui/components/Minimap`, viewport sync |
-
-### 4.3  Switching Layout Engines  
-
-* Drop‑in **WebAssembly ELK** for 2× speed when the wasm build stabilises.  
-* Alternate **dagre** for light graphs (< 100 nodes).  
-* Provide `LayoutStrategy` interface so engines are hot‑swappable via DI.
+Complexity limits enforced automatically by **SonarQube** gate.
 
 ---
 
-## 5  UI/UX Best Practices  
+## 6  Quality, Testing & CI/CD
 
-* **Mirotone alignment** — Use `Stack`, `Cluster`, `Grid`; never raw flex/grid.  
-* **State Machines** — Model multi‑step wizards with XState; expose transitions via context providers.  
-* **Friction‑free Undo** — Instant preview, rollback within 5 s of import.  
-* **Progressive Disclosure** — Hide advanced settings behind accordions.  
-* **Accessibility** — WCAG 2.2 AA: contrast ≥ 4.5 : 1, reflow up to 400 % zoom, focus not obscured.  
-* **Dark‑mode parity** — Tokens auto‑flip; test in both themes.  
-* **NPS Hooks** — Trigger microsurveys after completing key flows (threshold 3 uses).
+| Stage      | Gate                        | Threshold               |
+| ---------- | --------------------------- | ----------------------- |
+| Pre-commit | ESLint, Stylelint, Prettier | zero errors             |
+| Unit       | Jest + Stryker              | 90 % line & branch      |
+| UI         | Cypress + Axe               | no critical a11y issues |
+| Metrics    | SonarQube                   | cyclomatic ≤ 8          |
 
----
+**Workflow** (GitHub Actions)
 
-## 6  Quality, Testing & CI/CD  
-
-### 6.1  Gates  
-
-| Layer | Tooling | Threshold |
-|-------|---------|-----------|
-| Core  | Jest + stryker | 90 % line + branch |
-| UI    | Cypress + Axe | No critical a11y violations |
-| Build | ESLint, Stylelint, Prettier | Zero errors |
-| Metrics | SonarQube | Complexity ≤ 8 |  
-
-### 6.2  Pipeline  
-
-1. **Pre‑commit** – lint, type‑check, unit tests.  
-2. **CI** – full test matrix (Node 18/20).  
-3. **Preview** – Deploy static Storybook docs & feature‑flagged add‑on to staging team.  
-4. **Release** – semantic‑release, changelog, Git tag, Chrome Store zip.
+1. Lint, type-check, unit tests (Node 18 & 20).
+2. Build Storybook and a feature-flagged bundle for staging.
+3. SonarQube analysis and budget checks.
+4. Semantic-release creates Git tag, changelog and Chrome-Store zip.
+5. Automatic rollback uses the previously published artefact (see **DEPLOYMENT.md** for details).
 
 ---
 
-## 7  Performance & Scalability  
+## 7  Automated Code Review & Enforcement
 
-* Web Worker pool size = `navigator.hardwareConcurrency - 1 (≤ 4)`.  
-* Cache expensive layouts in `IndexedDB` keyed by graph hash.  
-* Incremental board updates (diff‑sync) instead of full re‑render.  
-* WASM switch toggled by feature flag for gradual rollout.  
-* Telemetry via `posthog-js` to measure layout time, error rate.
-
----
-
-## 8  Security & Privacy  
-
-* OAuth scopes limited: `boards:write`, `team:read`.  
-* CSP: `script-src 'self' blob:`; disallow `eval`.  
-* Sanitise third‑party JSON before rendering.  
-* Respect Miro API rate limits (current: 60 req/min per token).  
-* No PII stored; cache keys are SHA‑256 hashes.
+* **Danger-JS** bot fails PR if complexity, coverage or lint targets fall short.
+* **Conventional Commits** enforced by commit-lint.
+* Every PR must pass all CI gates; manual reviewers are optional.
+* **CodeQL** scan adds static-analysis findings to the check suite.
 
 ---
 
-## 9  Progressive Delivery & Feature Flags  
+## 8  Security & Threat Model (summary)
 
-* **LaunchDarkly** ‑ style flags wrap high‑risk modules (WASM, new widget types).  
-* Flags auto‑expire via CLI job; technical debt prevented.  
-* Canary rollout to internal team → 10 % users → 50 % → 100 %.
+| Asset         | Threat                           | Mitigation                                          |
+| ------------- | -------------------------------- | --------------------------------------------------- |
+| Board content | Malicious SVG / script injection | Deep schema validation, CSP sandbox in iframe       |
+| Layout Worker | DOS via oversized graphs         | Node cap 5 000, timeout 5 s                         |
+| Supply-chain  | Malicious dependency             | SLSA-compliant provenance, `npm audit` blocks build |
+| User data     | Privacy breach                   | No external storage; all data stays on Miro board   |
 
----
-
-## 10  Roadmap & Future Innovations  
-
-| Idea | Pay‑off |
-|------|---------|
-| **AI‑assisted Layout** (OpenAI) | Suggest optimal node spacing for readability |
-| **Live Co‑editing** | Real‑time updates via WebSockets; mirrors Miro’s own cursors |
-| **Micro‑frontend Plugins** | Parallel teams ship isolated features under `src/plugins` |
-| **Serverless Validation** | AWS Lambda validates graph schema at import |
-| **Edge Caching** | Cloudflare Worker caches layout results |
+*No OAuth token or server credentials are required.*
 
 ---
 
-## 11  Coding Conventions (Appendix)  
+## 9  Progressive Delivery & Feature-Flag Governance
 
-* File naming: `PascalCase.tsx` for React, `kebab-case.ts` for utilities.  
-* Imports ordered: std‑lib → vendor → local, alphabetic inside groups.  
-* Tests co‑located: `Foo.ts` + `Foo.test.ts`.  
-* Commit lint (conventional‑commits) enforced at CI.  
-* ESLint custom rule bans `grid-column` in raw CSS.
+* Flags managed in **LaunchDarkly**; ownership tag **Product** or **Engineering**.
+* Expiry date mandatory; nightly CLI prunes stale flags to curb technical debt.
+* Roll-out ladder: internal → 5 % → 25 % → 100 %, with error and performance dashboards in Datadog.
 
 ---
 
-_Maintain this guide as living documentation; update with each major commit or design‑system release._  
+## 10  Extensibility
+
+### 10.1  Add a New Widget Type
+
+1. Extend **GraphProcessor** schema.
+2. Provide default ELK options.
+3. Implement **BoardBuilder.createWidget**.
+4. Register inverse command in **CardProcessor** for undo.
+5. Add tests and a Storybook example.
+6. Document API in **COMPONENTS.md** under “Widget Catalogue”.
+
+### 10.2  Plugin Hooks
+
+| Hook       | Timing                       | Typical use                         |
+| ---------- | ---------------------------- | ----------------------------------- |
+| beforeSync | just before writing to board | mutate graph, add analytics context |
+| afterSync  | after widgets are placed     | custom telemetry                    |
+| onError    | centralised error boundary   | fallback UI, Sentry capture         |
+
+---
+
+## 11  UI / UX Practices
+
+* Only **Stack**, **Cluster**, **Grid** layout primitives – no raw flex/grid.
+* State machines (XState) for multi-step flows.
+* Colour, spacing, typography tokens come directly from Miro themes; no overrides (see **FOUNDATION.md**).
+* Visual regress tests run against both Light and Dark themes provided by Miro.
+* WCAG 2.2 AA: contrast ≥ 4 . 5 : 1; reflow at 400 %.
+* Provide five-second friction-free undo after large imports.
+
+---
+
+## 12  Performance & Scalability
+
+* Worker pool size = CPU cores − 1 (max 4).
+* IndexedDB caches ELK layouts keyed by graph hash.
+* Diff-sync on board updates – never full re-render.
+* WebAssembly ELK optional behind feature flag.
+* Telemetry (posthog-js) tracks layout duration and error rate; thresholds feed Sonar dashboards.
+
+---
+
+## 13  Observability & Monitoring
+
+| Concern       | Tool         | Signal                      |
+| ------------- | ------------ | --------------------------- |
+| JS errors     | Sentry       | Error rate, stack trace     |
+| Performance   | Datadog RUM  | Layout time, FPS            |
+| Feature flags | LaunchDarkly | Error delta versus baseline |
+| Accessibility | axe-core CI  | Violations per build        |
+
+Deployment, rollback and monitoring hooks are documented in **DEPLOYMENT.md**.
+
+---
+
+## 14  Roadmap (next 6 months)
+
+| Idea                   | Value statement                              | Reference         |
+| ---------------------- | -------------------------------------------- | ----------------- |
+| AI-assisted Layout     | 30 % faster diagram creation                 | research spike Q3 |
+| Live Co-editing        | Shared cursors for workshops                 | prototype Q4      |
+| Micro-frontend Plugins | Teams deploy features independently          | RFC-002           |
+| Serverless Validation  | Cuts client bundle by 15 %                   | POC branch        |
+| Edge Caching           | First-paint layout < 200 ms for repeat users | infra epic        |
+
+---
+
+## 15  Appendix: Coding Conventions
+
+* File names: PascalCase.tsx for React, kebab-case.ts for util.
+* Import order: std → vendor → local, alphabetical within group.
+* No raw grid-column in style blocks (enforced by custom ESLint rule).
+* PR template checklist: coverage, complexity, a11y, dark-mode snapshot, CHANGELOG entry.
