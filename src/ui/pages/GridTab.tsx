@@ -95,12 +95,14 @@ export const GridTab: React.FC = () => {
         value={Boolean(grid.groupResult)}
         onChange={toggle('groupResult')}
       />
-      <Button onClick={apply} variant='primary'>
-        <React.Fragment key='.0'>
-          <Icon name='grid' />
-          <Text>Arrange Grid</Text>
-        </React.Fragment>
-      </Button>
+      <div className='buttons'>
+        <Button onClick={apply} variant='primary'>
+          <React.Fragment key='.0'>
+            <Icon name='grid' />
+            <Text>Arrange Grid</Text>
+          </React.Fragment>
+        </Button>
+      </div>
     </div>
   );
 };

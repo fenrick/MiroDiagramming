@@ -130,7 +130,7 @@ export const ResizeTab: React.FC = () => {
         {boardUnitsToInches(size.width).toFixed(2)} ×{' '}
         {boardUnitsToInches(size.height).toFixed(2)} in)
       </Paragraph>
-      <div className='custom-buttons'>
+      <div className='buttons'>
         <Button onClick={copy} variant='secondary'>
           <React.Fragment key='.0'>
             <Icon name='duplicate' />

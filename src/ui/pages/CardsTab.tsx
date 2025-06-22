@@ -199,39 +199,41 @@ export const CardsTab: React.FC = () => {
               />
             </InputLabel>
           )}
-          <Button onClick={handleCreate} variant='primary'>
-            <React.Fragment key='.0'>
-              <Icon name='plus' />
-              <Text>Create Cards</Text>
-            </React.Fragment>
-          </Button>
-          {progress > 0 && progress < 100 && (
-            <progress value={progress} max={100} />
-          )}
-          {error && <Paragraph className='error'>{error}</Paragraph>}
-          {showUndo && (
-            <Button
-              onClick={() =>
-                void undoLastImport(lastProc, () => setLastProc(undefined))
-              }
-              variant='secondary'
-            >
-              Undo import (⌘Z)
-            </Button>
-          )}
-          {lastProc && (
-            <Button
-              onClick={() => {
-                void undoLastImport(lastProc, () => setLastProc(undefined));
-              }}
-              variant='secondary'
-            >
+          <div className='buttons'>
+            <Button onClick={handleCreate} variant='primary'>
               <React.Fragment key='.0'>
-                <Icon name='undo' />
-                <Text>Undo Last Import</Text>
+                <Icon name='plus' />
+                <Text>Create Cards</Text>
               </React.Fragment>
             </Button>
-          )}
+            {progress > 0 && progress < 100 && (
+              <progress value={progress} max={100} />
+            )}
+            {error && <Paragraph className='error'>{error}</Paragraph>}
+            {showUndo && (
+              <Button
+                onClick={() =>
+                  void undoLastImport(lastProc, () => setLastProc(undefined))
+                }
+                variant='secondary'
+              >
+                Undo import (⌘Z)
+              </Button>
+            )}
+            {lastProc && (
+              <Button
+                onClick={() => {
+                  void undoLastImport(lastProc, () => setLastProc(undefined));
+                }}
+                variant='secondary'
+              >
+                <React.Fragment key='.0'>
+                  <Icon name='undo' />
+                  <Text>Undo Last Import</Text>
+                </React.Fragment>
+              </Button>
+            )}
+          </div>
         </>
       )}
     </div>

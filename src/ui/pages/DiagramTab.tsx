@@ -245,33 +245,35 @@ export const DiagramTab: React.FC = () => {
               </InputLabel>
             </>
           )}
-          <Button
-              onClick={handleCreate}
-            variant='primary'
-            disabled={previewRows.some(r => !r.valid)}
-          >
-            <React.Fragment key='.0'>
-              <Icon name='plus' />
-              <Text>Create Diagram</Text>
-            </React.Fragment>
-          </Button>
-          {progress > 0 && progress < 100 && (
-            <progress value={progress} max={100} />
-          )}
-          {error && <Paragraph className='error'>{error}</Paragraph>}
-          {lastProc && (
+          <div className='buttons'>
             <Button
-              onClick={() => {
-                void undoLastImport(lastProc, () => setLastProc(undefined));
-                }}
-              variant='secondary'
+              onClick={handleCreate}
+              variant='primary'
+              disabled={previewRows.some(r => !r.valid)}
             >
               <React.Fragment key='.0'>
-                <Icon name='undo' />
-                <Text>Undo Last Import</Text>
+                <Icon name='plus' />
+                <Text>Create Diagram</Text>
               </React.Fragment>
             </Button>
-          )}
+            {progress > 0 && progress < 100 && (
+              <progress value={progress} max={100} />
+            )}
+            {error && <Paragraph className='error'>{error}</Paragraph>}
+            {lastProc && (
+              <Button
+                onClick={() => {
+                  void undoLastImport(lastProc, () => setLastProc(undefined));
+                }}
+                variant='secondary'
+              >
+                <React.Fragment key='.0'>
+                  <Icon name='undo' />
+                  <Text>Undo Last Import</Text>
+                </React.Fragment>
+              </Button>
+            )}
+          </div>
         </>
       )}
     </div>

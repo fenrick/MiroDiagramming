@@ -142,24 +142,26 @@ export const StyleTab: React.FC = () => {
           Current fill: {currentFill}
         </Paragraph>
       )}
-      <Button onClick={copyStyle} variant='secondary'>
-        <React.Fragment key='.0'>
-          <Icon name='duplicate' />
-          <Text>Copy Style</Text>
-        </React.Fragment>
-      </Button>
-      <Button onClick={apply} variant='primary' disabled={!styleClipboard}>
-        <React.Fragment key='.0'>
-          <Icon name='arrow-right' />
-          <Text>Apply Style</Text>
-        </React.Fragment>
-      </Button>
-      <Button onClick={copyColor} variant='secondary'>
-        <React.Fragment key='.0'>
-          <Icon name='duplicate' />
-          <Text>Copy Fill</Text>
-        </React.Fragment>
-      </Button>
+      <div className='buttons'>
+        <Button onClick={copyStyle} variant='secondary'>
+          <React.Fragment key='.0'>
+            <Icon name='duplicate' />
+            <Text>Copy Style</Text>
+          </React.Fragment>
+        </Button>
+        <Button onClick={apply} variant='primary' disabled={!styleClipboard}>
+          <React.Fragment key='.0'>
+            <Icon name='arrow-right' />
+            <Text>Apply Style</Text>
+          </React.Fragment>
+        </Button>
+        <Button onClick={copyColor} variant='secondary'>
+          <React.Fragment key='.0'>
+            <Icon name='duplicate' />
+            <Text>Copy Fill</Text>
+          </React.Fragment>
+        </Button>
+      </div>
     </div>
   );
 };
