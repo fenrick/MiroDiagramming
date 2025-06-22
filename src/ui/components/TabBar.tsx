@@ -1,7 +1,14 @@
 import React from 'react';
 import type { Tab } from '../../app/app';
 
-const primaryTabs: Tab[] = ['diagram', 'cards', 'resize', 'style', 'grid'];
+const primaryTabs: Tab[] = [
+  'diagram',
+  'cards',
+  'resize',
+  'style',
+  'grid',
+  'spacing',
+];
 
 export const allTabs: Tab[] = [...primaryTabs];
 

@@ -5,11 +5,13 @@ import '@testing-library/jest-dom';
 import { ResizeTab } from '../src/ui/pages/ResizeTab';
 import { StyleTab } from '../src/ui/pages/StyleTab';
 import { GridTab } from '../src/ui/pages/GridTab';
+import { SpacingTab } from '../src/ui/pages/SpacingTab';
 import { DiagramTab } from '../src/ui/pages/DiagramTab';
 import { CardsTab } from '../src/ui/pages/CardsTab';
 import * as resizeTools from '../src/board/resize-tools';
 import * as styleTools from '../src/board/style-tools';
 import * as gridTools from '../src/board/grid-tools';
+import * as spacingTools from '../src/board/spacing-tools';
 import { GraphProcessor } from '../src/core/graph/GraphProcessor';
 import { CardProcessor } from '../src/board/CardProcessor';
 import { cardLoader } from '../src/core/utils/cards';
@@ -18,6 +20,7 @@ import type { CardData } from '../src/core/utils/cards';
 jest.mock('../src/board/resize-tools');
 jest.mock('../src/board/style-tools');
 jest.mock('../src/board/grid-tools');
+jest.mock('../src/board/spacing-tools');
 jest.mock('../src/core/graph/GraphProcessor');
 jest.mock('../src/board/CardProcessor');
 
@@ -106,6 +109,17 @@ describe('tab components', () => {
     render(React.createElement(GridTab));
     await act(async () => {
       fireEvent.click(screen.getByText(/arrange grid/i));
+    });
+    expect(spy).toHaveBeenCalled();
+  });
+
+  test('SpacingTab applies layout', async () => {
+    const spy = jest
+      .spyOn(spacingTools, 'applySpacingLayout')
+      .mockResolvedValue(undefined as unknown as void);
+    render(React.createElement(SpacingTab));
+    await act(async () => {
+      fireEvent.click(screen.getByText(/distribute/i));
     });
     expect(spy).toHaveBeenCalled();
   });

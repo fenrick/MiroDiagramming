@@ -33,7 +33,7 @@ export const StyleTab: React.FC = () => {
   const [styleClipboard, setStyleClipboard] =
     React.useState<StyleOptions | null>(null);
   const preview = React.useMemo(
-    () => adjustColor(currentFill ?? opts.fillColor, adjust / 100),
+    () => adjustColor(currentFill ?? opts.fillColor ?? '#ffffff', adjust / 100),
     [adjust, currentFill, opts.fillColor],
   );
 
@@ -159,7 +159,7 @@ export const StyleTab: React.FC = () => {
           min='-100'
           max='100'
           value={String(adjust)}
-          onChange={e => setAdjust(Number(e.target.value))}
+          onChange={v => setAdjust(Number(v))}
           placeholder='Adjust (-100–100)'
         />
       </InputLabel>
