@@ -3,6 +3,7 @@ import { Button, Input, InputLabel, Icon, Text } from 'mirotone-react';
 import { SegmentedControl } from '../components/SegmentedControl';
 import { applySpacingLayout, SpacingOptions } from '../../board/spacing-tools';
 
+import type { TabTuple } from './tab-definitions';
 /** UI for evenly spacing selected items. */
 export const SpacingTab: React.FC = () => {
   const [opts, setOpts] = React.useState<SpacingOptions>({
@@ -51,3 +52,10 @@ export const SpacingTab: React.FC = () => {
     </div>
   );
 };
+export const spacingTabDef: TabTuple = [
+  6,
+  'spacing',
+  'Spacing',
+  'Distribute items evenly',
+  SpacingTab,
+];

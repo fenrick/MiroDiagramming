@@ -8,6 +8,7 @@ import {
   Text,
 } from 'mirotone-react';
 import { applyGridLayout, GridOptions } from '../../board/grid-tools';
+import type { TabTuple } from './tab-definitions';
 
 /** UI for the Grid tab. */
 export const GridTab: React.FC = () => {
@@ -82,3 +83,10 @@ export const GridTab: React.FC = () => {
     </div>
   );
 };
+export const gridTabDef: TabTuple = [
+  5,
+  'grid',
+  'Grid',
+  'Arrange selected items into a grid',
+  GridTab,
+];

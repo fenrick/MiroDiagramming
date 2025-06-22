@@ -4,63 +4,76 @@
 *,
 *:before,
 *:after {
-    box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 html,
 body {
-    height: unset;
-    background: none;
+  height: unset;
+  background: none;
 }
 
 #root {
-    padding: var(--space-small);
-    display: flex;
-    justify-items: center;
-        flex-direction: column;
-        align-items: stretch;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  overflow: hidden;
+}
+
+.scrollable {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-small);
 }
 
 #root .buttons {
-    position: sticky;
-    bottom: 0;
-    padding-block: var(--space-medium);
-    background: #fff;
+  position: sticky;
+  bottom: 0;
+  padding-block: var(--space-medium);
+  background: #fff;
 }
 .custom-centered .custom-buttons {
-    position: sticky;
-    bottom: 0;
-    padding-block: var(--space-medium);
-    background: var(--colors-white);
+  position: sticky;
+  bottom: 0;
+  padding-block: var(--space-medium);
+  background: var(--colors-white);
 }
 
 .custom-dropped-files {
-    list-style: none;
-    padding: var(--space-xxsmall) var(--space-xsmall);
-    border: 3px dashed var(--indigoAlpha40);
-    max-height: 80px;
-    overflow-y: auto;
-    font-size: var(--font-size-large);
+  list-style: none;
+  padding: var(--space-xxsmall) var(--space-xsmall);
+  border: 3px dashed var(--indigoAlpha40);
+  max-height: 80px;
+  overflow-y: auto;
+  font-size: var(--font-size-large);
 }
 
 .custom-preview-grid th,
 .custom-preview-grid td {
-    padding: var(--space-xxsmall) var(--space-xsmall);
+  padding: var(--space-xxsmall) var(--space-xsmall);
 }
 
-.custom-segment button+button {
-    margin-left: var(--space-xxsmall);
+.custom-segment button + button {
+  margin-left: var(--space-xxsmall);
 }
-
 
 .custom-visually-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    white-space: nowrap;
-    border: 0;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.tabs-header-list {
+  flex-wrap: wrap;
+}
+
+button {
+  padding: var(--space-xxsmall) var(--space-xsmall);
 }

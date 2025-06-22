@@ -1,0 +1,17 @@
+import type React from 'react';
+
+export type TabId =
+  | 'diagram'
+  | 'cards'
+  | 'resize'
+  | 'style'
+  | 'grid'
+  | 'spacing';
+
+export type TabTuple = readonly [
+  order: number,
+  id: TabId,
+  label: string,
+  instructions: string,
+  Component: React.FC,
+];

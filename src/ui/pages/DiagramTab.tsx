@@ -14,6 +14,7 @@ import {
 } from 'mirotone-react';
 import { SegmentedControl } from '../components/SegmentedControl';
 import { GraphProcessor } from '../../core/graph/GraphProcessor';
+import type { TabTuple } from './tab-definitions';
 import { showError } from '../hooks/notifications';
 import {
   ALGORITHMS,
@@ -103,7 +104,6 @@ export const DiagramTab: React.FC = () => {
 
   return (
     <div>
-      <Paragraph>Select the JSON file to import a diagram</Paragraph>
       <div
         {...dropzone.getRootProps({ style })}
         aria-label='File drop area'
@@ -251,3 +251,10 @@ export const DiagramTab: React.FC = () => {
     </div>
   );
 };
+export const diagramTabDef: TabTuple = [
+  1,
+  'diagram',
+  'Diagram',
+  'Select the JSON file to import a diagram',
+  DiagramTab,
+];

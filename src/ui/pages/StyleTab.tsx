@@ -18,6 +18,7 @@ import {
 } from '../../board/style-tools';
 import { useSelection } from '../hooks/useSelection';
 
+import type { TabTuple } from './tab-definitions';
 /** UI for the Style tab. */
 export const StyleTab: React.FC = () => {
   const selection = useSelection();
@@ -215,3 +216,10 @@ export const StyleTab: React.FC = () => {
     </div>
   );
 };
+export const styleTabDef: TabTuple = [
+  4,
+  'style',
+  'Style',
+  'Modify color and typography of selected shapes',
+  StyleTab,
+];
