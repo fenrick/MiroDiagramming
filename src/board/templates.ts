@@ -99,7 +99,6 @@ export class TemplateManager {
     });
     return result;
   }
-
   private constructor() {}
 
   /** Access the singleton instance. */
