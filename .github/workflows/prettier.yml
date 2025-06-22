@@ -11,12 +11,15 @@ on:
 jobs:
   prettier:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18, 20]
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: ${{ matrix.node-version }}
 
       # Enable Corepack to use Yarn 4
       - run: corepack enable
