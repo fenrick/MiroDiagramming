@@ -36,7 +36,11 @@ export async function copySizeFromSelection(
 }
 
 /**
- * Resize all selected widgets to the provided size.
+ * Resize all currently selected shapes.
+ *
+ * Only widgets exposing numeric `width` and `height` properties are
+ * modified. Each widget is synchronised via its `.sync()` method when
+ * available.
  *
  * @param size - Target width and height to apply.
  * @param board - Optional board API overriding `miro.board` for testing.
