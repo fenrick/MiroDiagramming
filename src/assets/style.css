@@ -8,21 +8,18 @@
 }
 
 html {
-    height: 100%;
-    background-color: var(--indigo50);
-    font-family: var(--body-font);
+    height: unset;
+        background: none;
 }
 
 body {
-    height: 100%;
-    line-height: 1.5;
     margin: 0;
-    padding: var(--space-medium);
+    padding: 0;
 }
 
 #root {
     padding: var(--space-small);
-        display: flex;
+    display: flex;
         justify-items: center;
         flex-direction: column;
         align-items: stretch;
@@ -49,7 +46,7 @@ body {
     padding: var(--space-xxsmall) var(--space-xsmall);
 }
 
-.custom-segment button + button {
+.custom-segment button+button {
     margin-left: var(--space-xxsmall);
 }
 
