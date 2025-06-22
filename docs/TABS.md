@@ -3,10 +3,10 @@
 _Explicit UI + interaction walkthrough for every tab (June 2025)_
 
 This document narrows focus to the **nine sidebar tabs** in the
-Structured Diagramming add‑on.  
-Each tab section specifies panel layout, visible controls, states, interaction
-flows, tool‑tips, keyboard shortcuts, and validation rules—so any developer can
-translate designs into code with zero ambiguity.
+Structured Diagramming add‑on. Each tab section specifies panel layout, visible
+controls, states, interaction flows, tool‑tips, keyboard shortcuts, and
+validation rules—so any developer can translate designs into code with zero
+ambiguity.
 
 ---
 
@@ -30,8 +30,8 @@ translate designs into code with zero ambiguity.
 | 4    | `<Button variant="primary">`             | “Build diagram”                                         | Disabled until `previewRows.every(row.valid)`                     | –              |
 | 5    | `<Toast>` success                        | “Diagram created – Press ⌘Z to undo”                    | Shows 5 s then fades                                              | –              |
 
-**Tooltip for invalid row** – “Edge refers to missing node ‘%id%’.”  
-Shortcut: **⌘/** toggles Advanced Options panel.
+**Tooltip for invalid row** – “Edge refers to missing node ‘%id%’.” Shortcut:
+**⌘/** toggles Advanced Options panel.
 
 ---
 
@@ -59,8 +59,7 @@ Panel split vertically **(Stack space="lg")**
 | **Apply Copied**      | `<Button variant="primary">Apply copied size` | Disabled if `!copiedSize`                  | Iterates selection; sets dimensions           |
 
 Validation: warn if width/height > 10 000 px (“That’s bigger than your board
-viewport”).  
-Shortcut: **⌥C** copies size, **⌥V** applies.
+viewport”). Shortcut: **⌥C** copies size, **⌥V** applies.
 
 ---
 
@@ -145,8 +144,7 @@ Wizard (Stepper):
 3. **Field Mapping** – Drag API fields → node properties list.
 4. **Activation** – Toggle “Live Update”; snackbar shows success.
 
-Polling interval slider (2 – 300 s).  
-State `dataBindings[{boardId}]`.
+Polling interval slider (2 – 300 s). State `dataBindings[{boardId}]`.
 
 ---
 
