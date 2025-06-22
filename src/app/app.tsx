@@ -43,7 +43,7 @@ export const App: React.FC = () => {
     return () => window.removeEventListener('keydown', handler);
   }, []);
   return (
-    <div className='dnd-container'>
+    <div>
       <TabBar tab={tab} onChange={setTab} />
       {tab === 'diagram' && <DiagramTab />}
       {tab === 'cards' && <CardsTab />}
