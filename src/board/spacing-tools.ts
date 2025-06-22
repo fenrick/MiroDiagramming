@@ -20,7 +20,9 @@ export function calculateSpacingOffsets(
 
 /**
  * Distribute the current selection so each item is spaced evenly on the
- * chosen axis. Item order is derived from their current position.
+ * chosen axis. Spacing is measured between the outer edges of each
+ * widget so items with different dimensions maintain the same gap.
+ * Item order is derived from their current position.
  */
 export async function applySpacingLayout(
   opts: SpacingOptions,
@@ -31,19 +33,34 @@ export async function applySpacingLayout(
   if (!selection.length) return;
 
   const axis = opts.axis;
+  const sizeKey = axis === 'x' ? 'width' : 'height';
   const items = [...selection].sort(
     (a, b) =>
       ((a as Record<string, number>)[axis] ?? 0) -
       ((b as Record<string, number>)[axis] ?? 0),
   );
-  const start = (items[0] as Record<string, number>)[axis] ?? 0;
-  const offsets = calculateSpacingOffsets(items.length, opts.spacing);
-  await Promise.all(
-    items.map(async (item, i) => {
-      (item as Record<string, number>)[axis] = start + offsets[i];
-      if (typeof (item as { sync?: () => Promise<void> }).sync === 'function') {
-        await (item as { sync: () => Promise<void> }).sync();
-      }
-    }),
-  );
+
+  let pos = (items[0] as Record<string, number>)[axis] ?? 0;
+  const tasks: Array<Promise<void>> = [];
+  (items[0] as Record<string, number>)[axis] = pos;
+  const firstSync = (items[0] as { sync?: () => Promise<void> }).sync;
+  if (typeof firstSync === 'function') {
+    tasks.push(firstSync());
+  }
+
+  for (let i = 1; i < items.length; i += 1) {
+    const prev = items[i - 1] as Record<string, number>;
+    const curr = items[i] as Record<string, number>;
+    const prevSize =
+      typeof prev[sizeKey] === 'number' ? (prev[sizeKey] as number) : 0;
+    const currSize =
+      typeof curr[sizeKey] === 'number' ? (curr[sizeKey] as number) : 0;
+    pos = pos + prevSize / 2 + opts.spacing + currSize / 2;
+    curr[axis] = pos;
+    const syncFn = (curr as { sync?: () => Promise<void> }).sync;
+    if (typeof syncFn === 'function') {
+      tasks.push(syncFn());
+    }
+  }
+  await Promise.all(tasks);
 }
