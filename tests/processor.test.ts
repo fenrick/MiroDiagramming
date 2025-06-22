@@ -2,7 +2,7 @@ import { GraphProcessor } from '../src/core/GraphProcessor';
 import { graphService } from '../src/core/graph';
 import { templateManager } from '../src/board/templates';
 import { layoutEngine } from '../src/core/elk-layout';
-import sample from '../sample-graph.json';
+import sample from './fixtures/sample-graph.json';
 
 interface GlobalWithMiro {
   miro?: { board?: Record<string, unknown> };
