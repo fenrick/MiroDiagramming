@@ -14,3 +14,7 @@ npm run prettier --silent
 
 Exported functions and complex logic should include documentation comments to
 aid readability.
+
+Per [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) §6, maintain **90 % line and
+branch coverage** and keep **cyclomatic complexity ≤ 8**. New or updated
+features must include unit tests and documentation comments.
