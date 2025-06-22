@@ -14,7 +14,7 @@ import {
   getFillColorFromSelection,
   tweakFillColor,
 } from '../../board/style-tools';
-import { useSelection } from '../useSelection';
+import { useSelection } from '../hooks/useSelection';
 
 /** UI for the Style tab. */
 export const StyleTab: React.FC = () => {

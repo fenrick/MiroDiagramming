@@ -1,8 +1,12 @@
+/** @jest-environment jsdom */
 import {
   adjustColor,
   contrastRatio,
   ensureContrast,
-} from '../src/core/color-utils';
+  resolveColor,
+  hexToRgb,
+  rgbToHex,
+} from '../src/core/utils/color-utils';
 
 describe('color-utils', () => {
   test('adjustColor lightens and darkens', () => {
@@ -20,4 +24,16 @@ describe('color-utils', () => {
     expect(fg === '#000000' || fg === '#ffffff').toBe(true);
     expect(contrastRatio('#0000ff', fg)).toBeGreaterThanOrEqual(4.5);
   });
+});
+
+test('resolveColor reads CSS variable', () => {
+  const style = document.documentElement.style;
+  style.setProperty('--token', '#123456');
+  expect(resolveColor('var(--token)', '#000000')).toBe('#123456');
+  style.removeProperty('--token');
+});
+
+test('hexToRgb and rgbToHex roundtrip', () => {
+  const rgb = hexToRgb('#abcdef');
+  expect(rgbToHex(rgb)).toBe('#abcdef');
 });

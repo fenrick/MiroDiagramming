@@ -1,32 +1,27 @@
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { ResizeTab } from '../ui/tabs/ResizeTab';
-import { StyleTab } from '../ui/tabs/StyleTab';
-import { GridTab } from '../ui/tabs/GridTab';
-import { DiagramTab } from '../ui/tabs/DiagramTab';
-import { CardsTab } from '../ui/tabs/CardsTab';
+import { ResizeTab } from '../ui/pages/ResizeTab';
+import { StyleTab } from '../ui/pages/StyleTab';
+import { GridTab } from '../ui/pages/GridTab';
+import { DiagramTab } from '../ui/pages/DiagramTab';
+import { CardsTab } from '../ui/pages/CardsTab';
+import { TemplatesTab } from '../ui/pages/TemplatesTab';
+import { ExportTab } from '../ui/pages/ExportTab';
+import { DataTab } from '../ui/pages/DataTab';
+import { CommentTab } from '../ui/pages/CommentTab';
+import { TabBar, allTabs } from '../ui/components/TabBar';
 
-export type Tab = 'diagram' | 'cards' | 'resize' | 'style' | 'grid';
-
-/** Simple tab bar using Mirotone tab classes. */
-const TabBar: React.FC<{ tab: Tab; onChange: (t: Tab) => void }> = ({
-  tab,
-  onChange,
-}) => (
-  <nav className='tabs' role='tablist'>
-    {(['diagram', 'cards', 'resize', 'style', 'grid'] as Tab[]).map(t => (
-      <button
-        key={t}
-        role='tab'
-        className={`tab ${tab === t ? 'tab-active' : ''}`}
-        onClick={() => onChange(t)}
-      >
-        {t.charAt(0).toUpperCase() + t.slice(1)}
-      </button>
-    ))}
-  </nav>
-);
+export type Tab =
+  | 'diagram'
+  | 'cards'
+  | 'resize'
+  | 'style'
+  | 'grid'
+  | 'templates'
+  | 'export'
+  | 'data'
+  | 'comment';
 
 /**
  * React entry component that renders the file selection and mode
@@ -35,6 +30,18 @@ const TabBar: React.FC<{ tab: Tab; onChange: (t: Tab) => void }> = ({
  */
 export const App: React.FC = () => {
   const [tab, setTab] = React.useState<Tab>('diagram');
+  React.useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.altKey) {
+        const idx = parseInt(e.key, 10);
+        if (idx >= 1 && idx <= allTabs.length) {
+          setTab(allTabs[idx - 1]);
+        }
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
   return (
     <div className='dnd-container'>
       <TabBar tab={tab} onChange={setTab} />
@@ -43,6 +50,10 @@ export const App: React.FC = () => {
       {tab === 'resize' && <ResizeTab />}
       {tab === 'style' && <StyleTab />}
       {tab === 'grid' && <GridTab />}
+      {tab === 'templates' && <TemplatesTab />}
+      {tab === 'export' && <ExportTab />}
+      {tab === 'data' && <DataTab />}
+      {tab === 'comment' && <CommentTab />}
     </div>
   );
 };

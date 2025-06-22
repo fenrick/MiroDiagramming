@@ -12,11 +12,11 @@ import {
   tokens,
   Text,
 } from 'mirotone-react';
-import { DataGrid, PreviewRow } from '../DataGrid';
-import { SegmentedControl } from '../SegmentedControl';
-import { GraphProcessor } from '../../core/GraphProcessor';
+import { DataGrid, PreviewRow } from '../components/DataGrid';
+import { SegmentedControl } from '../components/SegmentedControl';
+import { GraphProcessor } from '../../core/graph/GraphProcessor';
 import { graphService } from '../../core/graph';
-import { showError } from '../notifications';
+import { showError } from '../hooks/notifications';
 import {
   ALGORITHMS,
   DEFAULT_LAYOUT_OPTIONS,
@@ -24,8 +24,8 @@ import {
   ElkAlgorithm,
   ElkDirection,
   UserLayoutOptions,
-} from '../../core/elk-options';
-import { getDropzoneStyle, undoLastImport } from '../ui-utils';
+} from '../../core/layout/elk-options';
+import { getDropzoneStyle, undoLastImport } from '../hooks/ui-utils';
 
 const LAYOUTS = ['Layered', 'Tree', 'Grid'] as const;
 type LayoutChoice = (typeof LAYOUTS)[number];

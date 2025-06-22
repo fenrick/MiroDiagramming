@@ -1,4 +1,4 @@
-import { GraphProcessor } from '../src/core/GraphProcessor';
+import { GraphProcessor } from '../src/core/graph/GraphProcessor';
 import { CardProcessor } from '../src/board/CardProcessor';
 import { BoardBuilder } from '../src/board/BoardBuilder';
 

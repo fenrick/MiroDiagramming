@@ -5,7 +5,11 @@
  */
 import { tokens } from 'mirotone-react';
 import { colors } from '@mirohq/design-tokens';
-import { adjustColor, ensureContrast, resolveColor } from '../core/color-utils';
+import {
+  adjustColor,
+  ensureContrast,
+  resolveColor,
+} from '../core/utils/color-utils';
 import { BoardLike, getBoard } from './board';
 
 export interface StyleOptions {

@@ -1,6 +1,6 @@
 /** @jest-environment jsdom */
 import { renderHook, act } from '@testing-library/react';
-import { useSelection } from '../src/ui/useSelection';
+import { useSelection } from '../src/ui/hooks/useSelection';
 import { BoardLike } from '../src/board/board';
 
 describe('useSelection', () => {
