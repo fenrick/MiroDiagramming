@@ -1,5 +1,5 @@
 import React from 'react';
-import { BoardLike, getBoard } from '../board/board';
+import { BoardLike, getBoard } from '../../board/board';
 
 /**
  * React hook returning the current board selection.

@@ -1,4 +1,4 @@
-import { layoutEngine } from '../src/core/elk-layout';
+import { layoutEngine } from '../src/core/layout/elk-layout';
 
 const graph = {
   nodes: [

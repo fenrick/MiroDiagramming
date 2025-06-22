@@ -1,4 +1,4 @@
-import { cardLoader, CardLoader } from '../src/core/cards';
+import { cardLoader, CardLoader } from '../src/core/utils/cards';
 
 interface ReaderEvent {
   target: { result?: string | null } | null;

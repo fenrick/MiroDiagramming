@@ -1,4 +1,7 @@
-import { computeEdgeHints, relativePosition } from '../src/core/layout-utils';
+import {
+  computeEdgeHints,
+  relativePosition,
+} from '../src/core/layout/layout-utils';
 
 describe('layout-utils', () => {
   test('relativePosition computes fractions', () => {

@@ -1,9 +1,9 @@
-import { GraphData, graphService } from './graph';
-import { BoardBuilder } from '../board/BoardBuilder';
-import { layoutEngine, LayoutResult } from './elk-layout';
-import { UserLayoutOptions } from './elk-options';
-import { fileUtils } from './file-utils';
-import { computeEdgeHints } from './layout-utils';
+import { GraphData, graphService } from './index';
+import { BoardBuilder } from '../../board/BoardBuilder';
+import { layoutEngine, LayoutResult } from '../layout/elk-layout';
+import { UserLayoutOptions } from '../layout/elk-options';
+import { fileUtils } from '../utils/file-utils';
+import { computeEdgeHints } from '../layout/layout-utils';
 import type { BaseItem, Connector, Frame, Group } from '@mirohq/websdk-types';
 
 /**

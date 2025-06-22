@@ -2,24 +2,24 @@
 import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { ResizeTab } from '../src/ui/tabs/ResizeTab';
-import { StyleTab } from '../src/ui/tabs/StyleTab';
-import { GridTab } from '../src/ui/tabs/GridTab';
-import { DiagramTab } from '../src/ui/tabs/DiagramTab';
-import { CardsTab } from '../src/ui/tabs/CardsTab';
+import { ResizeTab } from '../src/ui/pages/ResizeTab';
+import { StyleTab } from '../src/ui/pages/StyleTab';
+import { GridTab } from '../src/ui/pages/GridTab';
+import { DiagramTab } from '../src/ui/pages/DiagramTab';
+import { CardsTab } from '../src/ui/pages/CardsTab';
 import * as resizeTools from '../src/board/resize-tools';
 import * as styleTools from '../src/board/style-tools';
 import * as gridTools from '../src/board/grid-tools';
-import { GraphProcessor } from '../src/core/GraphProcessor';
+import { GraphProcessor } from '../src/core/graph/GraphProcessor';
 import { CardProcessor } from '../src/board/CardProcessor';
 import { graphService } from '../src/core/graph';
-import { cardLoader } from '../src/core/cards';
-import type { CardData } from '../src/core/cards';
+import { cardLoader } from '../src/core/utils/cards';
+import type { CardData } from '../src/core/utils/cards';
 
 jest.mock('../src/board/resize-tools');
 jest.mock('../src/board/style-tools');
 jest.mock('../src/board/grid-tools');
-jest.mock('../src/core/GraphProcessor');
+jest.mock('../src/core/graph/GraphProcessor');
 jest.mock('../src/board/CardProcessor');
 
 describe('tab components', () => {

@@ -1,4 +1,4 @@
-import { showError } from '../src/ui/notifications';
+import { showError } from '../src/ui/hooks/notifications';
 
 interface GlobalWithMiro {
   miro?: { board?: Record<string, unknown> };

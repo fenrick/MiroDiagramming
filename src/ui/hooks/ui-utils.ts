@@ -1,6 +1,6 @@
 import { tokens } from 'mirotone-react';
-import { GraphProcessor } from '../core/GraphProcessor';
-import { CardProcessor } from '../board/CardProcessor';
+import { GraphProcessor } from '../../core/graph/GraphProcessor';
+import { CardProcessor } from '../../board/CardProcessor';
 import type React from 'react';
 
 const dropzoneStyles = {

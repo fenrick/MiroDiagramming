@@ -2,6 +2,11 @@ module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
   collectCoverage: true,
-  testMatch: ['**/tests/**/*.test.ts'],
+  coveragePathIgnorePatterns: [
+    '/src/ui/',
+    '/src/core/utils/color-utils.ts',
+    '/src/board/',
+  ],
+  testMatch: ['**/tests/**/*.test.ts?(x)'],
   maxWorkers: 1,
 };

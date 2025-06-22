@@ -1,13 +1,26 @@
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { ResizeTab } from '../ui/tabs/ResizeTab';
-import { StyleTab } from '../ui/tabs/StyleTab';
-import { GridTab } from '../ui/tabs/GridTab';
-import { DiagramTab } from '../ui/tabs/DiagramTab';
-import { CardsTab } from '../ui/tabs/CardsTab';
+import { ResizeTab } from '../ui/pages/ResizeTab';
+import { StyleTab } from '../ui/pages/StyleTab';
+import { GridTab } from '../ui/pages/GridTab';
+import { DiagramTab } from '../ui/pages/DiagramTab';
+import { CardsTab } from '../ui/pages/CardsTab';
+import { TemplatesTab } from '../ui/pages/TemplatesTab';
+import { ExportTab } from '../ui/pages/ExportTab';
+import { DataTab } from '../ui/pages/DataTab';
+import { CommentTab } from '../ui/pages/CommentTab';
 
-export type Tab = 'diagram' | 'cards' | 'resize' | 'style' | 'grid';
+export type Tab =
+  | 'diagram'
+  | 'cards'
+  | 'resize'
+  | 'style'
+  | 'grid'
+  | 'templates'
+  | 'export'
+  | 'data'
+  | 'comment';
 
 /** Simple tab bar using Mirotone tab classes. */
 const TabBar: React.FC<{ tab: Tab; onChange: (t: Tab) => void }> = ({
@@ -15,7 +28,19 @@ const TabBar: React.FC<{ tab: Tab; onChange: (t: Tab) => void }> = ({
   onChange,
 }) => (
   <nav className='tabs' role='tablist'>
-    {(['diagram', 'cards', 'resize', 'style', 'grid'] as Tab[]).map(t => (
+    {(
+      [
+        'diagram',
+        'cards',
+        'resize',
+        'style',
+        'grid',
+        'templates',
+        'export',
+        'data',
+        'comment',
+      ] as Tab[]
+    ).map(t => (
       <button
         key={t}
         role='tab'
@@ -43,6 +68,10 @@ export const App: React.FC = () => {
       {tab === 'resize' && <ResizeTab />}
       {tab === 'style' && <StyleTab />}
       {tab === 'grid' && <GridTab />}
+      {tab === 'templates' && <TemplatesTab />}
+      {tab === 'export' && <ExportTab />}
+      {tab === 'data' && <DataTab />}
+      {tab === 'comment' && <CommentTab />}
     </div>
   );
 };

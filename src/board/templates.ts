@@ -2,7 +2,7 @@ import templatesJson from '../../templates/shapeTemplates.json';
 import connectorJson from '../../templates/connectorTemplates.json';
 import { tokens } from 'mirotone-react';
 import { colors } from '@mirohq/design-tokens';
-import { resolveColor } from '../core/color-utils';
+import { resolveColor } from '../core/utils/color-utils';
 import type {
   ConnectorStyle,
   Frame,
