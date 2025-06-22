@@ -13,7 +13,7 @@
   ],
   "license": "Unlicense",
   "engines": {
-    "node": ">=14.13"
+    "node": ">=18"
   },
   "scripts": {
     "start": "vite",

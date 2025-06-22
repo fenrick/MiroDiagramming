@@ -20,7 +20,8 @@ placement.
 3. Each entry should provide an optional `id` to update existing cards along
    with the card `title` and optional `description`, `tags`, `style` and
    `fields` values. Matching tags are looked up on the board.
-4. See [`sample-cards.json`](sample-cards.json) for an example format.
+4. See [`tests/fixtures/sample-cards.json`](tests/fixtures/sample-cards.json)
+   for an example format.
 
 ## ELK Layout
 
@@ -61,7 +62,8 @@ fields are:
 
 ## Sample Graph
 
-A small example is provided in [sample-graph.json](sample-graph.json):
+A small example is provided in
+[tests/fixtures/sample-graph.json](tests/fixtures/sample-graph.json):
 
 ```json
 {
@@ -159,7 +161,7 @@ match the rest of the UI. These guidelines help keep layouts consistent:
 - Your Miro account has a
   [Developer team](https://developers.miro.com/docs/create-a-developer-team).
 - Your development environment includes
-  [Node.js](https://nodejs.org/en/download) v14.13 or later.
+  [Node.js](https://nodejs.org/en/download) v18 or v20.
 - All examples use `npm` as a package manager and `npx` as a package runner.
 
 ## 📖 Associated Developer Tutorial <a name="tutorial"></a>
@@ -245,13 +247,18 @@ point to the deployed bundle.
 ```
 .
 ├── src
-│  ├── assets
-│  │  └── style.css
-│  ├── app.tsx     // The code for the app lives here
-│  ├── index.ts    // The code for the app entry point lives here
-│  └── graph.ts    // JSON graph loading helpers
-├── app.html       // The app itself. It's loaded on the board inside the 'appContainer'
-└── index.html     // The app entry point. This is what you specify in the 'App URL' box in the Miro app settings
+│   ├── core
+│   │   ├── graph
+│   │   ├── layout
+│   │   └── utils
+│   ├── ui
+│   │   ├── components
+│   │   ├── hooks
+│   │   └── pages
+│   └── app
+├── public         // icons and i18n JSON
+├── scripts        // build helpers
+└── index.html     // entry point specified as App URL
 ```
 
 ## 📚 Additional Design Docs
@@ -260,8 +267,10 @@ point to the deployed bundle.
   organised.
 - [Tab Overview](docs/TABS.md) describes the sidebar tabs and their purpose.
 - [Deployment Guide](docs/DEPLOYMENT.md) shows how to build and host the bundle.
-- [Styling and Formatting](docs/STYLING.md) covers Mirotone usage and coding
-  conventions.
+- [Components Catalogue](docs/COMPONENTS.md) documents reusable React
+  components.
+- [Design Foundation](docs/FOUNDATION.md) explains tokens and theming rules.
+- [UI Patterns](docs/PATTERNS.md) shows common layouts and best practices.
 
 ## 🫱🏻‍🫲🏽 Contributing <a name="contributing"></a>
 
