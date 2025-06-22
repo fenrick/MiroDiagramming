@@ -13,7 +13,8 @@ import {
 import { BoardLike, getBoard } from './board';
 
 export interface StyleOptions {
-  fontColor?: string;
+  /** Text color for supported widgets */
+  color?: string;
   fillColor?: string;
   borderColor?: string;
   borderWidth?: number;
@@ -61,7 +62,7 @@ export async function applyStyleToSelection(
 
 /**
  * Lighten or darken the fill colour of all selected widgets ensuring the
- * font colour maintains sufficient contrast.
+ * text colour maintains sufficient contrast.
  *
  * @param delta - Adjustment amount between -1 (darken) and 1 (lighten).
  * @param board - Optional board API overriding `miro.board` for testing.
@@ -81,12 +82,12 @@ export async function tweakFillColor(
           ? style.fillColor
           : resolveColor(tokens.color.white, colors.white);
       const font =
-        typeof style.fontColor === 'string'
-          ? style.fontColor
+        typeof style.color === 'string'
+          ? style.color
           : resolveColor(tokens.color.primaryText, colors['gray-700']);
       const newFill = adjustColor(fill, delta);
       style.fillColor = newFill;
-      style.fontColor = ensureContrast(newFill, font);
+      style.color = ensureContrast(newFill, font);
       item.style = style;
       if (typeof (item as { sync?: () => Promise<void> }).sync === 'function') {
         await (item as { sync: () => Promise<void> }).sync();

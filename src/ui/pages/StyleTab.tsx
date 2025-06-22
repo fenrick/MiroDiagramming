@@ -23,7 +23,7 @@ export const StyleTab: React.FC = () => {
   const selection = useSelection();
   const [opts, setOpts] = React.useState<StyleOptions>(() => ({
     fillColor: resolveColor(tokens.color.white, colors.white),
-    fontColor: resolveColor(tokens.color.primaryText, colors['gray-700']),
+    color: resolveColor(tokens.color.primaryText, colors['gray-700']),
     borderColor: resolveColor(tokens.color.primaryText, colors['gray-700']),
     borderWidth: 1,
     fontSize: 12,
@@ -84,12 +84,12 @@ export const StyleTab: React.FC = () => {
         />
       </InputLabel>
       <InputLabel>
-        Font color
+        Text color
         <Input
           type='color'
-          value={opts.fontColor}
-          onChange={update('fontColor')}
-          placeholder='Font color'
+          value={opts.color}
+          onChange={update('color')}
+          placeholder='Text color'
         />
       </InputLabel>
       <InputLabel>
