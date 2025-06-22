@@ -1,4 +1,5 @@
 import { LayoutEngine, layoutEngine } from '../src/core/layout/elk-layout';
+import * as layoutCore from '../src/core/layout/layout-core';
 import ELK from 'elkjs/lib/elk.bundled.js';
 
 /** Verify singleton behaviour and minimal layout handling. */
@@ -42,5 +43,17 @@ describe('LayoutEngine', () => {
       }),
     );
     spy.mockRestore();
+  });
+
+  test('layoutGraph calls performLayout directly', async () => {
+    const perfSpy = jest
+      .spyOn(layoutCore, 'performLayout')
+      .mockResolvedValue({ nodes: {}, edges: [] });
+    const graph = { nodes: [], edges: [] };
+    await layoutEngine.layoutGraph(
+      graph as Parameters<typeof layoutEngine.layoutGraph>[0],
+    );
+    expect(perfSpy).toHaveBeenCalled();
+    perfSpy.mockRestore();
   });
 });

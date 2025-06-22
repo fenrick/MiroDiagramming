@@ -77,7 +77,7 @@ docs/          *.md (this file, components, foundation …)
 | Module         | Responsibility                        | Main surface      | Budget / function        |
 | -------------- | ------------------------------------- | ----------------- | ------------------------ |
 | GraphProcessor | Parse external data, attach ELK hints | load, metadata    | ≤ 70 lines, ≤ 8 branches |
-| elk-layout.ts  | Run ELK in Web Workers                | layout            | same                     |
+| elk-layout.ts  | Run ELK layout on main thread         | layout            | same                     |
 | BoardBuilder   | Create / update widgets               | sync, remove      | same                     |
 | CardProcessor  | Import cards, undo/redo               | importCards, undo | same                     |
 | DiagramApp     | React root, routing, providers        | `<AppRouter>`     | same                     |
@@ -120,7 +120,7 @@ Complexity limits enforced automatically by **SonarQube** gate.
 | Asset         | Threat                           | Mitigation                                          |
 | ------------- | -------------------------------- | --------------------------------------------------- |
 | Board content | Malicious SVG / script injection | Deep schema validation, CSP sandbox in iframe       |
-| Layout Worker | DOS via oversized graphs         | Node cap 5 000, timeout 5 s                         |
+| Layout Engine | DOS via oversized graphs         | Node cap 5 000, timeout 5 s                         |
 | Supply-chain  | Malicious dependency             | SLSA-compliant provenance, `npm audit` blocks build |
 | User data     | Privacy breach                   | No external storage; all data stays on Miro board   |
 
@@ -169,11 +169,9 @@ _No OAuth token or server credentials are required._
 - WCAG 2.2 AA: contrast ≥ 4 . 5 : 1; reflow at 400 %.
 - Provide five-second friction-free undo after large imports.
 
----
-
 ## 12 Performance & Scalability
 
-- Worker pool size = CPU cores − 1 (max 4).
+- Layout executes on the main thread; limit graph size to 5 000 nodes.
 - IndexedDB caches ELK layouts keyed by graph hash.
 - Diff-sync on board updates – never full re-render.
 - WebAssembly ELK optional behind feature flag.

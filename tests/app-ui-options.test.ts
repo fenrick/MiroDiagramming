@@ -5,6 +5,12 @@ import '@testing-library/jest-dom';
 import { App } from '../src/app/app';
 import { GraphProcessor } from '../src/core/graph/GraphProcessor';
 
+interface GlobalWithMiro {
+  miro?: { board?: Record<string, unknown> };
+}
+
+declare const global: GlobalWithMiro;
+
 function selectFile(): File {
   const file = new File(['{}'], 'graph.json', { type: 'application/json' });
   const input = screen.getByTestId('file-input');
@@ -13,6 +19,21 @@ function selectFile(): File {
 }
 
 describe('App layout options and undo button', () => {
+  beforeEach(() => {
+    global.miro = {
+      board: {
+        notifications: {
+          showError: jest.fn().mockResolvedValue(undefined),
+          showInfo: jest.fn().mockResolvedValue(undefined),
+        },
+      },
+    };
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+    delete global.miro;
+  });
   test('updates layout options and passes them to processor', async () => {
     const procSpy = jest
       .spyOn(GraphProcessor.prototype, 'processFile')

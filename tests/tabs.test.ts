@@ -15,6 +15,7 @@ import { CardProcessor } from '../src/board/CardProcessor';
 import { graphService } from '../src/core/graph';
 import { cardLoader } from '../src/core/utils/cards';
 import type { CardData } from '../src/core/utils/cards';
+import * as notifications from '../src/ui/hooks/notifications';
 
 jest.mock('../src/board/resize-tools');
 jest.mock('../src/board/style-tools');
@@ -85,6 +86,13 @@ describe('tab components', () => {
     const spy = jest
       .spyOn(GraphProcessor.prototype, 'processFile')
       .mockResolvedValue(undefined as unknown as void);
+    jest.spyOn(graphService, 'loadGraph').mockResolvedValue({
+      nodes: [{ id: 'n1', label: 'L', type: 'Role' }],
+      edges: [],
+    });
+    const infoSpy = jest
+      .spyOn(notifications, 'showInfo')
+      .mockResolvedValue(undefined as unknown as void);
     render(React.createElement(DiagramTab));
     const input = screen.getByTestId('file-input');
     const file = new File(['{}'], 'graph.json', { type: 'application/json' });
@@ -99,12 +107,16 @@ describe('tab components', () => {
       fireEvent.click(screen.getByRole('button', { name: /create diagram/i }));
     });
     expect(spy).toHaveBeenCalled();
+    expect(infoSpy).toHaveBeenCalled();
   });
 
   test('DiagramTab disables build on invalid preview', async () => {
     jest
       .spyOn(graphService, 'loadGraph')
       .mockResolvedValue({ nodes: [], edges: [{ from: 'a', to: 'b' }] });
+    const errorSpy = jest
+      .spyOn(notifications, 'showError')
+      .mockResolvedValue(undefined as unknown as void);
     render(React.createElement(DiagramTab));
     const input = screen.getByTestId('file-input');
     const file = new File(['{}'], 'bad.json', { type: 'application/json' });
@@ -114,6 +126,10 @@ describe('tab components', () => {
     const cell = await screen.findByText(/missing node/i);
     expect(cell).toBeInTheDocument();
     expect(cell).toHaveAttribute('title', 'Edge refers to missing node ‘a’.');
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /create diagram/i }));
+    });
+    expect(errorSpy).toHaveBeenCalled();
   });
 
   test('CardsTab filters cards', async () => {

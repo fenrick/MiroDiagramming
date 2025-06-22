@@ -1,4 +1,4 @@
-import { showError } from '../src/ui/hooks/notifications';
+import { showError, showInfo } from '../src/ui/hooks/notifications';
 
 interface GlobalWithMiro {
   miro?: { board?: Record<string, unknown> };
@@ -34,6 +34,30 @@ describe('showError', () => {
     await showError(long);
     expect(console.error).toHaveBeenCalledWith(long);
     const arg = (global.miro.board.notifications.showError as jest.Mock).mock
+      .calls[0][0];
+    expect(arg.length).toBeLessThanOrEqual(80);
+    expect(arg.endsWith('...')).toBe(true);
+  });
+});
+
+describe('showInfo', () => {
+  beforeEach(() => {
+    global.miro = {
+      board: {
+        notifications: { showInfo: jest.fn().mockResolvedValue(undefined) },
+      },
+    };
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+    delete global.miro;
+  });
+
+  test('truncates and forwards message', async () => {
+    const long = 'b'.repeat(90);
+    await showInfo(long);
+    const arg = (global.miro.board.notifications.showInfo as jest.Mock).mock
       .calls[0][0];
     expect(arg.length).toBeLessThanOrEqual(80);
     expect(arg.endsWith('...')).toBe(true);

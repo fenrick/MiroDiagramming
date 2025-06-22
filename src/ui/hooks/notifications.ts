@@ -18,3 +18,14 @@ export async function showError(message: string): Promise<void> {
   console.error(message);
   await miro.board.notifications.showError(trimmed);
 }
+
+/**
+ * Display an informational message via Miro's notification system.
+ * Messages are truncated to 80 characters which satisfies SDK limits.
+ *
+ * @param message - The text to display.
+ */
+export async function showInfo(message: string): Promise<void> {
+  const trimmed = message.length > 80 ? `${message.slice(0, 77)}...` : message;
+  await miro.board.notifications.showInfo(trimmed);
+}

@@ -16,7 +16,7 @@ import { DataGrid, PreviewRow } from '../components/DataGrid';
 import { SegmentedControl } from '../components/SegmentedControl';
 import { GraphProcessor } from '../../core/graph/GraphProcessor';
 import { graphService } from '../../core/graph';
-import { showError } from '../hooks/notifications';
+import { showError, showInfo } from '../hooks/notifications';
 import {
   ALGORITHMS,
   DEFAULT_LAYOUT_OPTIONS,
@@ -95,6 +95,10 @@ export const DiagramTab: React.FC = () => {
   const graphProcessor = React.useMemo(() => new GraphProcessor(), []);
 
   const handleCreate = async (): Promise<void> => {
+    if (previewRows.some(r => !r.valid)) {
+      await showError('Cannot create diagram: preview contains invalid edges.');
+      return;
+    }
     setProgress(0);
     setError(null);
     for (const file of importQueue) {
@@ -111,6 +115,7 @@ export const DiagramTab: React.FC = () => {
           layout: { ...layoutOpts, algorithm: algorithmMap[layoutChoice] },
         });
         setProgress(100);
+        await showInfo('Diagram created successfully');
       } catch (e) {
         const msg = String(e);
         setError(msg);
@@ -118,6 +123,7 @@ export const DiagramTab: React.FC = () => {
       }
     }
     setImportQueue([]);
+    setPreviewRows([]);
   };
 
   const style = React.useMemo(
@@ -170,6 +176,7 @@ export const DiagramTab: React.FC = () => {
               <li key={i}>{file.name}</li>
             ))}
           </ul>
+          <DataGrid rows={previewRows} />
           <SegmentedControl
             value={layoutChoice}
             onChange={v => setLayoutChoice(v as LayoutChoice)}
@@ -246,11 +253,7 @@ export const DiagramTab: React.FC = () => {
             </>
           )}
           <div className='buttons'>
-            <Button
-              onClick={handleCreate}
-              variant='primary'
-              disabled={previewRows.some(r => !r.valid)}
-            >
+            <Button onClick={handleCreate} variant='primary'>
               <React.Fragment key='.0'>
                 <Icon name='plus' />
                 <Text>Create Diagram</Text>
