@@ -101,8 +101,10 @@ selection radios are grouped with a descriptive label.
 The sidebar exposes extra tabs to manipulate existing widgets:
 
 - **Resize** allows copying a widget size and applying it to others. You can
-  also type width and height manually. The tool displays conversions between
-  board units, millimetres and inches based on the ratio `96 units = 1 inch`.
+  also type width and height manually. When a size is copied the same button
+  becomes a **Reset Copy** action so you can quickly revert. The tool displays
+  conversions between board units, millimetres and inches based on the ratio
+  `96 units = 1 inch`.
 - **Style** sets common style properties like fill colour or border width on all
   selected items. The tab shows the current fill colour swatch and updates when
   the selection changes. A slider lightens or darkens the colour while keeping
