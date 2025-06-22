@@ -16,7 +16,7 @@ import { DataGrid, PreviewRow } from '../DataGrid';
 import { SegmentedControl } from '../SegmentedControl';
 import { GraphProcessor } from '../../core/GraphProcessor';
 import { graphService } from '../../core/graph';
-import { showError } from '../../notifications';
+import { showError } from '../notifications';
 import {
   ALGORITHMS,
   DEFAULT_LAYOUT_OPTIONS,
@@ -24,8 +24,8 @@ import {
   ElkAlgorithm,
   ElkDirection,
   UserLayoutOptions,
-} from '../../elk-options';
-import { getDropzoneStyle, undoLastImport } from '../../ui-utils';
+} from '../../core/elk-options';
+import { getDropzoneStyle, undoLastImport } from '../ui-utils';
 
 const LAYOUTS = ['Layered', 'Tree', 'Grid'] as const;
 type LayoutChoice = (typeof LAYOUTS)[number];

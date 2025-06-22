@@ -1,4 +1,4 @@
-import { fileUtils } from '../src/file-utils';
+import { fileUtils } from '../src/core/file-utils';
 
 interface ReaderEvent {
   target: { result?: string | null } | null;

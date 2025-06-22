@@ -1,5 +1,5 @@
 import { graphService } from '../src/core/graph';
-import { templateManager } from '../src/templates';
+import { templateManager } from '../src/board/templates';
 
 interface GlobalWithMiro {
   miro?: { board?: Record<string, unknown> };

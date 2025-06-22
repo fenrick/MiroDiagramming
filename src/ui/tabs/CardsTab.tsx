@@ -11,9 +11,9 @@ import {
   Icon,
 } from 'mirotone-react';
 import { CardProcessor } from '../../board/CardProcessor';
-import { cardLoader, CardData } from '../../cards';
-import { showError } from '../../notifications';
-import { getDropzoneStyle, undoLastImport } from '../../ui-utils';
+import { cardLoader, CardData } from '../../core/cards';
+import { showError } from '../notifications';
+import { getDropzoneStyle, undoLastImport } from '../ui-utils';
 
 /** UI for the Cards tab. */
 export const CardsTab: React.FC = () => {

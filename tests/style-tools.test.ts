@@ -2,7 +2,7 @@ import {
   applyStyleToSelection,
   getFillColorFromSelection,
   tweakFillColor,
-} from '../src/style-tools';
+} from '../src/board/style-tools';
 
 describe('style-tools', () => {
   test('applyStyleToSelection merges style', async () => {

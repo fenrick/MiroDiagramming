@@ -1,6 +1,6 @@
 import type { BaseItem, Connector, Group } from '@mirohq/websdk-types';
 import { BoardBuilder } from '../board/BoardBuilder';
-import { fileUtils } from '../file-utils';
+import { fileUtils } from './file-utils';
 
 export interface NodeData {
   id: string;
