@@ -89,7 +89,7 @@ Accessibility: show contrast ratio badge; warn < 4.5 : 1.
 | Control               | Details                          |
 | --------------------- | -------------------------------- |
 | **Columns Input**     | Numeric; min 1, max 20           |
-| **Gap**               | Dropdown (`tokens.space.xs–xl`)  |
+| **Gap**               | Numeric spacing in px            |
 | **Frame Title Input** | Optional; enables frame creation |
 | **Preview Overlay**   | CSS grid lines, `opacity: 0.3`   |
 | **Group Checkbox**    | “Group items into Frame”         |

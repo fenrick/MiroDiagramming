@@ -6,7 +6,6 @@ import {
   InputLabel,
   Icon,
   Text,
-  tokens,
 } from 'mirotone-react';
 import { applyGridLayout, GridOptions } from '../../board/grid-tools';
 
@@ -30,15 +29,6 @@ export const GridTab: React.FC = () => {
     setGrid({ ...grid, [key]: !grid[key] });
   };
 
-  const gaps = [
-    { label: 'xxs', value: tokens.space.xxsmall },
-    { label: 'xs', value: tokens.space.xsmall },
-    { label: 'sm', value: tokens.space.small },
-    { label: 'md', value: tokens.space.medium },
-    { label: 'lg', value: tokens.space.large },
-    { label: 'xl', value: tokens.space.xlarge },
-  ] as const;
-
   const apply = async (): Promise<void> => {
     await applyGridLayout(grid);
   };
@@ -56,16 +46,12 @@ export const GridTab: React.FC = () => {
       </InputLabel>
       <InputLabel>
         Gap
-        <select
+        <Input
+          type='number'
           value={String(grid.padding)}
-          onChange={e => setGrid({ ...grid, padding: Number(e.target.value) })}
-        >
-          {gaps.map(g => (
-            <option key={g.label} value={g.value as unknown as number}>
-              {g.label}
-            </option>
-          ))}
-        </select>
+          onChange={updateNumber('padding')}
+          placeholder='Gap'
+        />
       </InputLabel>
       <InputLabel>
         Frame Title
