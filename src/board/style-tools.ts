@@ -3,7 +3,7 @@
  * widgets on the board. Each property is optional and merged into the widget
  * style object.
  */
-import { tokens } from 'mirotone-react';
+import { tokens } from '../ui/tokens';
 import { colors } from '@mirohq/design-tokens';
 import {
   adjustColor,

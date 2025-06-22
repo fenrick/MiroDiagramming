@@ -9,9 +9,9 @@ import {
   Paragraph,
   Select,
   SelectOption,
-  tokens,
   Text,
-} from 'mirotone-react';
+} from '../components/legacy';
+import { tokens } from '../tokens';
 import { SegmentedControl } from '../components/SegmentedControl';
 import { GraphProcessor } from '../../core/graph/GraphProcessor';
 import type { TabTuple } from './tab-definitions';

@@ -8,8 +8,7 @@ Practical, step-by-step reference for junior engineers who build the add-on UI.
 Explains how to:
 
 - Consume the **Mirotone CSS** design language. ([mirotone.xyz][1])
-- Re-use the **mirotone-react** component wrappers where they already exist and
-  fall back gracefully when they do not. ([github.com][2])
+- Use the lightweight wrapper components in `src/ui/components/legacy`.
 - Meet the accessibility, performance and quality gates defined in
   **ARCHITECTURE.md** and **FOUNDATION.md**.
 
@@ -17,10 +16,9 @@ Explains how to:
 
 ## 1 Installing the design system layers
 
-| Layer               | Package            | Install command        | Notes                                                                                                                |
-| ------------------- | ------------------ | ---------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| Tokens & raw styles | **mirotone** (CSS) | `npm i mirotone`       | Adds the `dist/styles.css` file and all utility classes. ([mirotone.xyz][1])                                         |
-| React bindings      | **mirotone-react** | `npm i mirotone-react` | Supplies type-safe wrappers for a growing subset of components plus programmatic access to tokens. ([github.com][2]) |
+| Layer               | Package            | Install command  | Notes                                                                        |
+| ------------------- | ------------------ | ---------------- | ---------------------------------------------------------------------------- |
+| Tokens & raw styles | **mirotone** (CSS) | `npm i mirotone` | Adds the `dist/styles.css` file and all utility classes. ([mirotone.xyz][1]) |
 
 ### 1.1 Bootstrap CSS once
 
@@ -30,22 +28,12 @@ Include the stylesheet exactly once—ideally in `src/app/index.tsx`:
 import 'mirotone/dist/styles.css';
 ```
 
-### 1.2 Tree-shaken React imports
-
-```tsx
-import { Button, Input, tokens } from 'mirotone-react';
-```
-
-`tokens` mirrors the design-token variables so you never hard-code hex values.
-([github.com][2])
-
 ---
 
 ## 2 Component catalogue
 
-Only props that junior devs **must** supply are shown. _Bold names_ = available
-as first-class mirotone-react exports.<br> _Italic names_ = compose manually
-with Mirotone CSS classes until the wrapper lands.
+Only props that junior devs **must** supply are shown. Use the wrapper
+components or compose manually with Mirotone CSS.
 
 | Name           | Core props               | Variants                  | Default height (px) |
 | -------------- | ------------------------ | ------------------------- | ------------------- |

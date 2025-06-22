@@ -134,22 +134,21 @@ The CSS for this project imports
 [`src/assets/style.css`](src/assets/style.css) to match the Miro UI. When adding
 new UI elements reuse the Mirotone utility classes such as `button`,
 `button-primary` and the grid helpers so your components align with existing
-styles. Avoid custom CSS when a utility class exists. All interactive elements
-should be built using `mirotone-react` components so the underlying markup
-follows the same structure and spacing tokens as the native Mirotone widgets.
+styles. Avoid custom CSS when a utility class exists. Interactive elements
+should use the wrapper components under `src/ui/components/legacy`.
 
 ## Form Design Guidelines
 
-When creating forms use the Mirotone React components so your inputs and buttons
-match the rest of the UI. These guidelines help keep layouts consistent:
+When creating forms use the wrapper components so your inputs and buttons match
+the rest of the UI. These guidelines help keep layouts consistent:
 
 - Wrap each field in `InputLabel` to connect the label with its control.
 - Group related fields using `FormGroup` to maintain spacing and a clear
   vertical rhythm.
 - Arrange elements with the 12‑column grid classes (`cs*`/`ce*`) so forms remain
   responsive.
-- Use the tokens from `mirotone-react` (`tokens.space.*`) for margins and
-  padding instead of hard‑coded numbers.
+- Use values from `src/ui/tokens.ts` for margins and padding instead of
+  hard‑coded numbers.
 - When customisation is needed prefer extending Mirotone variables over creating
   bespoke CSS classes.
 - Stick to the provided `Button` component and choose the `primary` variant for

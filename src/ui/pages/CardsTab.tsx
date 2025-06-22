@@ -6,10 +6,10 @@ import {
   Input,
   InputLabel,
   Paragraph,
-  tokens,
   Text,
   Icon,
-} from 'mirotone-react';
+} from '../components/legacy';
+import { tokens } from '../tokens';
 import { CardProcessor } from '../../board/CardProcessor';
 import { cardLoader, CardData } from '../../core/utils/cards';
 import type { TabTuple } from './tab-definitions';

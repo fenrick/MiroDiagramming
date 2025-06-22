@@ -1,4 +1,4 @@
-import { tokens } from 'mirotone-react';
+import { tokens } from '../tokens';
 import { GraphProcessor } from '../../core/graph/GraphProcessor';
 import { CardProcessor } from '../../board/CardProcessor';
 import type React from 'react';

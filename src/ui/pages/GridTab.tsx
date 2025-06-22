@@ -6,7 +6,7 @@ import {
   InputLabel,
   Icon,
   Text,
-} from 'mirotone-react';
+} from '../components/legacy';
 import { applyGridLayout, GridOptions } from '../../board/grid-tools';
 import type { TabTuple } from './tab-definitions';
 
