@@ -10,6 +10,7 @@ import { TemplatesTab } from '../ui/pages/TemplatesTab';
 import { ExportTab } from '../ui/pages/ExportTab';
 import { DataTab } from '../ui/pages/DataTab';
 import { CommentTab } from '../ui/pages/CommentTab';
+import { TabBar, allTabs } from '../ui/components/TabBar';
 
 export type Tab =
   | 'diagram'
@@ -22,37 +23,6 @@ export type Tab =
   | 'data'
   | 'comment';
 
-/** Simple tab bar using Mirotone tab classes. */
-const TabBar: React.FC<{ tab: Tab; onChange: (t: Tab) => void }> = ({
-  tab,
-  onChange,
-}) => (
-  <nav className='tabs' role='tablist'>
-    {(
-      [
-        'diagram',
-        'cards',
-        'resize',
-        'style',
-        'grid',
-        'templates',
-        'export',
-        'data',
-        'comment',
-      ] as Tab[]
-    ).map(t => (
-      <button
-        key={t}
-        role='tab'
-        className={`tab ${tab === t ? 'tab-active' : ''}`}
-        onClick={() => onChange(t)}
-      >
-        {t.charAt(0).toUpperCase() + t.slice(1)}
-      </button>
-    ))}
-  </nav>
-);
-
 /**
  * React entry component that renders the file selection and mode
  * toggling user interface. Extraction as an exported constant allows
@@ -60,6 +30,18 @@ const TabBar: React.FC<{ tab: Tab; onChange: (t: Tab) => void }> = ({
  */
 export const App: React.FC = () => {
   const [tab, setTab] = React.useState<Tab>('diagram');
+  React.useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.altKey) {
+        const idx = parseInt(e.key, 10);
+        if (idx >= 1 && idx <= allTabs.length) {
+          setTab(allTabs[idx - 1]);
+        }
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
   return (
     <div className='dnd-container'>
       <TabBar tab={tab} onChange={setTab} />
