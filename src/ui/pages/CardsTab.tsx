@@ -199,7 +199,7 @@ export const CardsTab: React.FC = () => {
               />
             </InputLabel>
           )}
-          <Button onClick={handleCreate} size='small' variant='primary'>
+          <Button onClick={handleCreate} variant='primary'>
             <React.Fragment key='.0'>
               <Icon name='plus' />
               <Text>Create Cards</Text>
@@ -214,7 +214,6 @@ export const CardsTab: React.FC = () => {
               onClick={() =>
                 void undoLastImport(lastProc, () => setLastProc(undefined))
               }
-              size='small'
               variant='secondary'
             >
               Undo import (⌘Z)
@@ -225,7 +224,6 @@ export const CardsTab: React.FC = () => {
               onClick={() => {
                 void undoLastImport(lastProc, () => setLastProc(undefined));
               }}
-              size='small'
               variant='secondary'
             >
               <React.Fragment key='.0'>

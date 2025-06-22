@@ -109,7 +109,6 @@ export const ResizeTab: React.FC = () => {
         {['S', 'M', 'L'].map(p => (
           <Button
             key={p}
-            size='small'
             onClick={() =>
               setSize(
                 p === 'S'

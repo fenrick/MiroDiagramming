@@ -247,8 +247,7 @@ export const DiagramTab: React.FC = () => {
             </>
           )}
           <Button
-            onClick={handleCreate}
-            size='small'
+              onClick={handleCreate}
             variant='primary'
             disabled={previewRows.some(r => !r.valid)}
           >
@@ -265,8 +264,7 @@ export const DiagramTab: React.FC = () => {
             <Button
               onClick={() => {
                 void undoLastImport(lastProc, () => setLastProc(undefined));
-              }}
-              size='small'
+                }}
               variant='secondary'
             >
               <React.Fragment key='.0'>
