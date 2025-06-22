@@ -6,8 +6,8 @@ import {
   Text,
   InputLabel,
   Paragraph,
-  tokens,
-} from 'mirotone-react';
+} from '../components/legacy';
+import { tokens } from '../tokens';
 import { colors } from '@mirohq/design-tokens';
 import { adjustColor, resolveColor } from '../../core/utils/color-utils';
 import {

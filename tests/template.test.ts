@@ -49,7 +49,7 @@ describe('createFromTemplate', () => {
     expect(widget.type).toBe('shape');
     const args = (global.miro.board.createShape as jest.Mock).mock.calls[0][0];
     expect(args.shape).toBe('round_rectangle');
-    expect(args.style.fillColor).toBe('#FFF7D9');
+    expect(args.style.fillColor).toBe('#fff7d9');
     expect(global.miro.board.group).not.toHaveBeenCalled();
   });
 

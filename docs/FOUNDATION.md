@@ -17,19 +17,11 @@ For component usage see **COMPONENTS.md**. For linting, testing and CI gates see
 
 ## 1 Token sources & install
 
-| Asset                               | Package                         | Notes                                                                                     |
-| ----------------------------------- | ------------------------------- | ----------------------------------------------------------------------------------------- |
-| Raw CSS variables & utility classes | **mirotone** (`npm i mirotone`) | Adds `dist/styles.css` with all variables and helpers. ([mirotone.xyz][1])                |
-| Type-safe token map                 | **mirotone-react**              | Exposes every variable as JavaScript constants (colour, space, borderRadius, typography). |
+| Asset                               | Package                         | Notes                                                                      |
+| ----------------------------------- | ------------------------------- | -------------------------------------------------------------------------- |
+| Raw CSS variables & utility classes | **mirotone** (`npm i mirotone`) | Adds `dist/styles.css` with all variables and helpers. ([mirotone.xyz][1]) |
 
-```ts
-import 'mirotone/dist/styles.css';
-import { tokens } from 'mirotone-react';
-
-const primary = tokens.color.blue[500];
-```
-
----
+````ts
 
 ## 2 Colour system
 
@@ -114,7 +106,7 @@ variables. ([mirotone.xyz][3])
 | `radius-circle`  | 50 % |
 
 Border-radius variables ship with Mirotone and are re-exported by
-mirotone-react. ([mirotone.xyz][2])
+
 
 Elevation follows a four-level shadow ramp:
 
@@ -193,9 +185,9 @@ npm run tokens:list
 # Verify contrast / naming
 npm run tokens:verify
 
-# Regenerate d.ts typings for mirotone-react
+# Regenerate d.ts typings for local tokens
 npm run tokens:gen-types
-```
+````
 
 ---
 

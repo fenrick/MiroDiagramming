@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from 'mirotone-react';
+import { Button } from './legacy';
 
 export interface SegmentedOption {
   label: string;

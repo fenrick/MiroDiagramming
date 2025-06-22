@@ -5,7 +5,7 @@
  * contrast calculations so fill and font colours remain readable.
  */
 
-import { tokens } from 'mirotone-react';
+import { tokens } from '../../ui/tokens';
 import { colors } from '@mirohq/design-tokens';
 
 /** Convert a token reference to its hex value. */

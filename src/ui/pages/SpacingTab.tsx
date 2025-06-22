@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Input, InputLabel, Icon, Text } from 'mirotone-react';
+import { Button, Input, InputLabel, Icon, Text } from '../components/legacy';
 import { SegmentedControl } from '../components/SegmentedControl';
 import { applySpacingLayout, SpacingOptions } from '../../board/spacing-tools';
 

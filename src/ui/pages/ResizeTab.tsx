@@ -7,7 +7,7 @@ import {
   Paragraph,
   Icon,
   Text,
-} from 'mirotone-react';
+} from '../components/legacy';
 import {
   applySizeToSelection,
   copySizeFromSelection,
