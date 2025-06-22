@@ -62,4 +62,11 @@ describe('showInfo', () => {
     expect(arg.length).toBeLessThanOrEqual(80);
     expect(arg.endsWith('...')).toBe(true);
   });
+
+  test('logs message when API missing', async () => {
+    delete global.miro.board.notifications.showInfo;
+    jest.spyOn(console, 'log').mockImplementation(() => {});
+    await showInfo('notice');
+    expect(console.log).toHaveBeenCalledWith('notice');
+  });
 });

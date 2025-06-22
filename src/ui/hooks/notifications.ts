@@ -27,5 +27,10 @@ export async function showError(message: string): Promise<void> {
  */
 export async function showInfo(message: string): Promise<void> {
   const trimmed = message.length > 80 ? `${message.slice(0, 77)}...` : message;
-  await miro.board.notifications.showInfo(trimmed);
+  if (miro?.board?.notifications?.showInfo) {
+    await miro.board.notifications.showInfo(trimmed);
+  } else {
+    // eslint-disable-next-line no-console
+    console.log(trimmed);
+  }
 }

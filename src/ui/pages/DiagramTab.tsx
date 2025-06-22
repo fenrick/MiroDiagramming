@@ -95,6 +95,10 @@ export const DiagramTab: React.FC = () => {
   const graphProcessor = React.useMemo(() => new GraphProcessor(), []);
 
   const handleCreate = async (): Promise<void> => {
+    if (importQueue.length === 0) {
+      await showError('No file selected');
+      return;
+    }
     if (previewRows.some(r => !r.valid)) {
       await showError('Cannot create diagram: preview contains invalid edges.');
       return;
