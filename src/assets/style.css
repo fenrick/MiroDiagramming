@@ -7,24 +7,26 @@
     box-sizing: border-box;
 }
 
-html {
-    height: unset;
-        background: none;
-}
-
+html,
 body {
-    margin: 0;
-    padding: 0;
+    height: unset;
+    background: none;
 }
 
 #root {
     padding: var(--space-small);
     display: flex;
-        justify-items: center;
+    justify-items: center;
         flex-direction: column;
         align-items: stretch;
 }
 
+#root .buttons {
+    position: sticky;
+    bottom: 0;
+    padding-block: var(--space-medium);
+    background: #fff;
+}
 .custom-centered .custom-buttons {
     position: sticky;
     bottom: 0;
