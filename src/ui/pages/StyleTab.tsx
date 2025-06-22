@@ -8,6 +8,8 @@ import {
   Paragraph,
   tokens,
 } from 'mirotone-react';
+import { colors } from '@mirohq/design-tokens';
+import { resolveColor } from '../../core/utils/color-utils';
 import {
   applyStyleToSelection,
   StyleOptions,
@@ -19,13 +21,13 @@ import { useSelection } from '../hooks/useSelection';
 /** UI for the Style tab. */
 export const StyleTab: React.FC = () => {
   const selection = useSelection();
-  const [opts, setOpts] = React.useState<StyleOptions>({
-    fillColor: tokens.color.white,
-    fontColor: tokens.color.primaryText,
-    borderColor: tokens.color.primaryText,
+  const [opts, setOpts] = React.useState<StyleOptions>(() => ({
+    fillColor: resolveColor(tokens.color.white, colors.white),
+    fontColor: resolveColor(tokens.color.primaryText, colors['gray-700']),
+    borderColor: resolveColor(tokens.color.primaryText, colors['gray-700']),
     borderWidth: 1,
     fontSize: 12,
-  });
+  }));
   const [adjust, setAdjust] = React.useState(0);
   const [currentFill, setCurrentFill] = React.useState<string | null>(null);
   const [styleClipboard, setStyleClipboard] =
@@ -51,8 +53,9 @@ export const StyleTab: React.FC = () => {
   const copyColor = async (): Promise<void> => {
     const color = await getFillColorFromSelection();
     if (color) {
-      setCurrentFill(color);
-      setOpts({ ...opts, fillColor: color });
+      const hex = resolveColor(color, color);
+      setCurrentFill(hex);
+      setOpts({ ...opts, fillColor: hex });
     }
   };
 
@@ -74,6 +77,7 @@ export const StyleTab: React.FC = () => {
       <InputLabel>
         Fill color
         <Input
+          type='color'
           value={opts.fillColor}
           onChange={update('fillColor')}
           placeholder='Fill color'
@@ -82,6 +86,7 @@ export const StyleTab: React.FC = () => {
       <InputLabel>
         Font color
         <Input
+          type='color'
           value={opts.fontColor}
           onChange={update('fontColor')}
           placeholder='Font color'
@@ -90,6 +95,7 @@ export const StyleTab: React.FC = () => {
       <InputLabel>
         Border color
         <Input
+          type='color'
           value={opts.borderColor}
           onChange={update('borderColor')}
           placeholder='Border color'
@@ -149,7 +155,7 @@ export const StyleTab: React.FC = () => {
             <Text>Copy Style</Text>
           </React.Fragment>
         </Button>
-        <Button onClick={apply} variant='primary' disabled={!styleClipboard}>
+        <Button onClick={apply} variant='primary'>
           <React.Fragment key='.0'>
             <Icon name='arrow-right' />
             <Text>Apply Style</Text>
