@@ -7,6 +7,7 @@ module.exports = {
     '/src/core/utils/color-utils.ts',
     '/src/board/',
   ],
+  setupFilesAfterEnv: ['<rootDir>/tests/setupTests.ts'],
   testMatch: ['**/tests/**/*.test.ts?(x)'],
   maxWorkers: 1,
 };
