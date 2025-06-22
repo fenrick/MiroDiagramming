@@ -170,7 +170,6 @@ export const DiagramTab: React.FC = () => {
               <li key={i}>{file.name}</li>
             ))}
           </ul>
-          <DataGrid rows={previewRows} />
           <SegmentedControl
             value={layoutChoice}
             onChange={v => setLayoutChoice(v as LayoutChoice)}
