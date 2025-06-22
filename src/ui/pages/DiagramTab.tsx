@@ -12,10 +12,8 @@ import {
   tokens,
   Text,
 } from 'mirotone-react';
-import type { PreviewRow } from '../components/DataGrid';
 import { SegmentedControl } from '../components/SegmentedControl';
 import { GraphProcessor } from '../../core/graph/GraphProcessor';
-import { graphService } from '../../core/graph';
 import { showError } from '../hooks/notifications';
 import {
   ALGORITHMS,
@@ -30,25 +28,9 @@ import { getDropzoneStyle, undoLastImport } from '../hooks/ui-utils';
 const LAYOUTS = ['Layered', 'Tree', 'Grid'] as const;
 type LayoutChoice = (typeof LAYOUTS)[number];
 
-async function parseGraphPreview(file: File): Promise<PreviewRow[]> {
-  const graph = await graphService.loadGraph(file);
-  const nodes = new Set(graph.nodes.map(n => n.id));
-  return graph.edges.map(e => {
-    const valid = nodes.has(e.from) && nodes.has(e.to);
-    const missing = !nodes.has(e.from) ? e.from : !nodes.has(e.to) ? e.to : '';
-    return {
-      node: e.from,
-      edge: e.to,
-      status: valid ? 'OK' : `Missing node ${missing}`,
-      valid,
-    };
-  });
-}
-
 /** UI for the Diagram tab. */
 export const DiagramTab: React.FC = () => {
   const [importQueue, setImportQueue] = React.useState<File[]>([]);
-  const [previewRows, setPreviewRows] = React.useState<PreviewRow[]>([]);
   const [layoutChoice, setLayoutChoice] =
     React.useState<LayoutChoice>('Layered');
   const [showAdvanced, setShowAdvanced] = React.useState(false);
@@ -82,13 +64,7 @@ export const DiagramTab: React.FC = () => {
     onDrop: async (droppedFiles: File[]) => {
       const file = droppedFiles[0];
       setImportQueue([file]);
-      try {
-        const rows = await parseGraphPreview(file);
-        setPreviewRows(rows);
-      } catch (e) {
-        setError(String(e));
-        setPreviewRows([]);
-      }
+      setError(null);
     },
   });
 
@@ -246,11 +222,7 @@ export const DiagramTab: React.FC = () => {
             </>
           )}
           <div className='buttons'>
-            <Button
-              onClick={handleCreate}
-              variant='primary'
-              disabled={previewRows.some(r => !r.valid)}
-            >
+            <Button onClick={handleCreate} variant='primary'>
               <React.Fragment key='.0'>
                 <Icon name='plus' />
                 <Text>Create Diagram</Text>

@@ -77,7 +77,7 @@ docs/          *.md (this file, components, foundation …)
 | Module         | Responsibility                        | Main surface      | Budget / function        |
 | -------------- | ------------------------------------- | ----------------- | ------------------------ |
 | GraphProcessor | Parse external data, attach ELK hints | load, metadata    | ≤ 70 lines, ≤ 8 branches |
-| elk-layout.ts  | Run ELK in Web Workers                | layout            | same                     |
+| elk-layout.ts  | Run ELK layout inline                 | layout            | same                     |
 | BoardBuilder   | Create / update widgets               | sync, remove      | same                     |
 | CardProcessor  | Import cards, undo/redo               | importCards, undo | same                     |
 | DiagramApp     | React root, routing, providers        | `<AppRouter>`     | same                     |

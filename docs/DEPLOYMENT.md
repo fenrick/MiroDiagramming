@@ -162,7 +162,7 @@ All gates and complexity budgets are defined in **ARCHITECTURE.md** (sections
 | ------------------ | -------------------------------------------------- |
 | Blank iframe       | Console 404? PUBLIC_BASE_URL mismatch              |
 | Widgets not placed | Check `MIRO_APP_ID` ties to the board team         |
-| Layout freeze      | Graph exceeds 5 000 nodes – worker timeout         |
+| Layout freeze      | Graph exceeds 5 000 nodes – layout timeout         |
 | Dark-mode glitch   | Token override? Confirm colours from Design System |
 
 ---
