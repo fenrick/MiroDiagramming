@@ -7,7 +7,6 @@ import {
   Paragraph,
   Icon,
   Text,
-  Heading,
 } from 'mirotone-react';
 import {
   applySizeToSelection,
@@ -15,6 +14,7 @@ import {
   Size,
 } from '../../board/resize-tools';
 import { useSelection } from '../hooks/useSelection';
+import type { TabTuple } from './tab-definitions';
 import {
   boardUnitsToMm,
   boardUnitsToInches,
@@ -84,7 +84,6 @@ export const ResizeTab: React.FC = () => {
 
   return (
     <div className='custom-centered'>
-      <Heading level={2}>Resize Shapes</Heading>
       <Paragraph data-testid='size-display'>
         {copiedSize
           ? `Copied: ${copiedSize.width}×${copiedSize.height}`
@@ -151,3 +150,10 @@ export const ResizeTab: React.FC = () => {
     </div>
   );
 };
+export const resizeTabDef: TabTuple = [
+  3,
+  'resize',
+  'Resize',
+  'Adjust size manually or copy from selection',
+  ResizeTab,
+];

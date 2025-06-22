@@ -1,34 +1,22 @@
 import React from 'react';
-import type { Tab } from '../../app/app';
-
-const primaryTabs: Tab[] = [
-  'diagram',
-  'cards',
-  'resize',
-  'style',
-  'grid',
-  'spacing',
-];
-
-export const allTabs: Tab[] = [...primaryTabs];
+import type { Tab, TabTuple } from '../pages/tabs';
 
 /** Tab bar with an overflow menu for additional tabs. */
-export const TabBar: React.FC<{ tab: Tab; onChange: (t: Tab) => void }> = ({
-  tab,
-  onChange,
-}) => (
+export const TabBar: React.FC<{
+  tabs: TabTuple[];
+  tab: Tab;
+  onChange: (t: Tab) => void;
+}> = ({ tabs, tab, onChange }) => (
   <div className='tabs'>
     <div className='tabs-header-list'>
-      {primaryTabs.map(t => (
+      {tabs.map(([, id, label]) => (
         <div
-          key={t}
+          key={id}
           role='tab'
-          className={`tab ${tab === t ? 'tab-active' : ''}`}
-          onClick={() => onChange(t)}
+          className={`tab ${tab === id ? 'tab-active' : ''}`}
+          onClick={() => onChange(id)}
         >
-          <div className='tab-text'>
-            {t.charAt(0).toUpperCase() + t.slice(1)}
-          </div>
+          <div className='tab-text'>{label}</div>
         </div>
       ))}
     </div>
