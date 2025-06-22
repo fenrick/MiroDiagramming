@@ -84,6 +84,21 @@ describe('tab components', () => {
     expect(spy).toHaveBeenCalled();
   });
 
+  test('StyleTab updates preview on adjustment', async () => {
+    render(React.createElement(StyleTab));
+    const slider = screen.getByTestId('adjust-slider');
+    await act(async () => {
+      fireEvent.change(slider, { target: { value: '20' } });
+    });
+    const input = screen.getByTestId('adjust-input') as HTMLInputElement;
+    expect(input.value).toBe('20');
+    const preview = screen.getByTestId('fill-preview');
+    expect(preview).toHaveStyle({ backgroundColor: '#ffffff' });
+    expect(screen.getByTestId('preview-text')).toHaveTextContent(
+      'Preview: #ffffff',
+    );
+  });
+
   test('GridTab applies layout', async () => {
     const spy = jest
       .spyOn(gridTools, 'applyGridLayout')

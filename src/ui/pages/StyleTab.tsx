@@ -9,7 +9,7 @@ import {
   tokens,
 } from 'mirotone-react';
 import { colors } from '@mirohq/design-tokens';
-import { resolveColor } from '../../core/utils/color-utils';
+import { adjustColor, resolveColor } from '../../core/utils/color-utils';
 import {
   applyStyleToSelection,
   StyleOptions,
@@ -32,6 +32,10 @@ export const StyleTab: React.FC = () => {
   const [currentFill, setCurrentFill] = React.useState<string | null>(null);
   const [styleClipboard, setStyleClipboard] =
     React.useState<StyleOptions | null>(null);
+  const preview = React.useMemo(
+    () => adjustColor(currentFill ?? opts.fillColor, adjust / 100),
+    [adjust, currentFill, opts.fillColor],
+  );
 
   const update =
     (key: keyof StyleOptions) =>
@@ -122,19 +126,41 @@ export const StyleTab: React.FC = () => {
       <InputLabel>
         Adjust fill
         <input
+          data-testid='adjust-slider'
           type='range'
-          min='-50'
-          max='50'
+          min='-100'
+          max='100'
+          list='adjust-marks'
           value={adjust}
           onChange={e => setAdjust(Number(e.target.value))}
           onKeyDown={e => {
             if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
               e.preventDefault();
               setAdjust(a =>
-                Math.min(50, Math.max(-50, a + (e.key === 'ArrowUp' ? 1 : -1))),
+                Math.min(
+                  100,
+                  Math.max(-100, a + (e.key === 'ArrowUp' ? 1 : -1)),
+                ),
               );
             }
           }}
+        />
+        <datalist id='adjust-marks'>
+          {[-100, -50, 0, 50, 100].map(n => (
+            <option key={n} value={n} />
+          ))}
+        </datalist>
+      </InputLabel>
+      <InputLabel>
+        Adjust value
+        <Input
+          data-testid='adjust-input'
+          type='number'
+          min='-100'
+          max='100'
+          value={String(adjust)}
+          onChange={e => setAdjust(Number(e.target.value))}
+          placeholder='Adjust (-100–100)'
         />
       </InputLabel>
       <Button onClick={applyAdjust} variant='secondary'>
@@ -143,11 +169,23 @@ export const StyleTab: React.FC = () => {
           <Text>Adjust</Text>
         </React.Fragment>
       </Button>
-      {currentFill && (
+      <React.Fragment>
         <Paragraph data-testid='current-fill'>
-          Current fill: {currentFill}
+          Current fill: {currentFill ?? opts.fillColor}
         </Paragraph>
-      )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <Paragraph data-testid='preview-text'>Preview: {preview}</Paragraph>
+          <div
+            data-testid='fill-preview'
+            style={{
+              width: '24px',
+              height: '24px',
+              border: '1px solid #000',
+              backgroundColor: preview,
+            }}
+          />
+        </div>
+      </React.Fragment>
       <div className='buttons'>
         <Button onClick={copyStyle} variant='secondary'>
           <React.Fragment key='.0'>
