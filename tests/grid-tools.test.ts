@@ -69,6 +69,37 @@ describe('grid-tools', () => {
     expect(items[0].x).toBe(0);
   });
 
+  test('applyGridLayout sorts by nested text fields', async () => {
+    const items = [
+      {
+        x: 0,
+        y: 0,
+        width: 10,
+        height: 10,
+        sync: jest.fn(),
+        text: { plainText: 'b' },
+      },
+      {
+        x: 0,
+        y: 0,
+        width: 10,
+        height: 10,
+        sync: jest.fn(),
+        text: { plainText: 'a' },
+      },
+    ];
+    const board: BoardLike = {
+      getSelection: jest.fn().mockResolvedValue(items),
+      group: jest.fn(),
+    };
+    await applyGridLayout(
+      { cols: 1, padding: 0, sortByName: true, groupResult: false },
+      board,
+    );
+    expect(items[0].y).toBe(10); // second item should move down
+    expect(items[1].y).toBe(0); // first item sorted up
+  });
+
   test('applyGridLayout throws without board', async () => {
     await expect(applyGridLayout({ cols: 1, padding: 0 })).rejects.toThrow(
       'Miro board not available',
