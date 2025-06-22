@@ -2,8 +2,9 @@
  * Calculate grid positions and apply a grid layout to the current selection.
  */
 export interface GridOptions {
+  /** Number of columns in the grid */
   cols: number;
-  rows: number;
+  /** Gap between cells in pixels */
   padding: number;
   /** Whether to group the widgets after layout. */
   groupResult?: boolean;
@@ -38,17 +39,18 @@ function getName(item: Record<string, unknown>): string {
  */
 export function calculateGridPositions(
   opts: GridOptions,
+  count: number,
   cellWidth: number,
   cellHeight: number,
 ): Position[] {
   const positions: Position[] = [];
-  for (let r = 0; r < opts.rows; r += 1) {
-    for (let c = 0; c < opts.cols; c += 1) {
-      positions.push({
-        x: c * (cellWidth + opts.padding),
-        y: r * (cellHeight + opts.padding),
-      });
-    }
+  for (let i = 0; i < count; i += 1) {
+    const c = i % opts.cols;
+    const r = Math.floor(i / opts.cols);
+    positions.push({
+      x: c * (cellWidth + opts.padding),
+      y: r * (cellHeight + opts.padding),
+    });
   }
   return positions;
 }
@@ -64,7 +66,7 @@ export async function applyGridLayout(
 ): Promise<void> {
   const b = getBoard(board);
   const selection = await b.getSelection();
-  let items = selection.slice(0, opts.cols * opts.rows);
+  let items = selection;
   if (opts.sortByName) {
     items = [...items].sort((a, b) => getName(a).localeCompare(getName(b)));
   }
@@ -75,7 +77,12 @@ export async function applyGridLayout(
     width: number;
     height: number;
   };
-  const positions = calculateGridPositions(opts, first.width, first.height);
+  const positions = calculateGridPositions(
+    opts,
+    items.length,
+    first.width,
+    first.height,
+  );
   await Promise.all(
     items.map(async (item: Record<string, unknown>, i: number) => {
       item.x = first.x + positions[i].x;

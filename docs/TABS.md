@@ -86,13 +86,13 @@ Accessibility: show contrast ratio badge; warn < 4.5 : 1.
 
 ## 5  Grid Tab
 
-| Control                   | Details                          |
-| ------------------------- | -------------------------------- |
-| **Rows / Columns Inputs** | Numeric; min 1, max 20           |
-| **Gap**                   | Dropdown (`tokens.space.xs–xl`)  |
-| **Frame Title Input**     | Optional; enables frame creation |
-| **Preview Overlay**       | CSS grid lines, `opacity: 0.3`   |
-| **Group Checkbox**        | “Group items into Frame”         |
+| Control               | Details                          |
+| --------------------- | -------------------------------- |
+| **Columns Input**     | Numeric; min 1, max 20           |
+| **Gap**               | Dropdown (`tokens.space.xs–xl`)  |
+| **Frame Title Input** | Optional; enables frame creation |
+| **Preview Overlay**   | CSS grid lines, `opacity: 0.3`   |
+| **Group Checkbox**    | “Group items into Frame”         |
 
 Flow: Change value → overlay updates real‑time. Press **Arrange** creates frame
 if enabled.
