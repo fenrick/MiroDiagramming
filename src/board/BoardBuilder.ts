@@ -316,10 +316,12 @@ export class BoardBuilder {
     const existing = (shape.style ?? {}) as Partial<ShapeStyle>;
     const style: Partial<ShapeStyle> & Record<string, unknown> = {
       ...existing,
-      ...(element.style ?? {}),
+      ...templateManager.resolveStyle(element.style ?? {}),
     };
     if (element.fill && !('fillColor' in style)) {
-      style.fillColor = element.fill;
+      style.fillColor = templateManager.resolveStyle({
+        fillColor: element.fill,
+      }).fillColor as string;
     }
     shape.style = style as ShapeStyle;
   }
@@ -337,7 +339,7 @@ export class BoardBuilder {
     if (element.style) {
       text.style = {
         ...(text.style ?? ({} as Partial<TextStyle>)),
-        ...(element.style as Partial<TextStyle>),
+        ...(templateManager.resolveStyle(element.style) as Partial<TextStyle>),
       } as TextStyle;
     }
   }
