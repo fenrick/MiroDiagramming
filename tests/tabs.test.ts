@@ -12,7 +12,6 @@ import * as styleTools from '../src/board/style-tools';
 import * as gridTools from '../src/board/grid-tools';
 import { GraphProcessor } from '../src/core/graph/GraphProcessor';
 import { CardProcessor } from '../src/board/CardProcessor';
-import { graphService } from '../src/core/graph';
 import { cardLoader } from '../src/core/utils/cards';
 import type { CardData } from '../src/core/utils/cards';
 
@@ -91,7 +90,6 @@ describe('tab components', () => {
     await act(async () => {
       fireEvent.change(input, { target: { files: [file] } });
     });
-    expect(await screen.findByRole('table')).toBeInTheDocument();
     expect(
       screen.getByRole('group', { name: /layout type/i }),
     ).toBeInTheDocument();
@@ -99,21 +97,6 @@ describe('tab components', () => {
       fireEvent.click(screen.getByRole('button', { name: /create diagram/i }));
     });
     expect(spy).toHaveBeenCalled();
-  });
-
-  test('DiagramTab disables build on invalid preview', async () => {
-    jest
-      .spyOn(graphService, 'loadGraph')
-      .mockResolvedValue({ nodes: [], edges: [{ from: 'a', to: 'b' }] });
-    render(React.createElement(DiagramTab));
-    const input = screen.getByTestId('file-input');
-    const file = new File(['{}'], 'bad.json', { type: 'application/json' });
-    await act(async () => {
-      fireEvent.change(input, { target: { files: [file] } });
-    });
-    const cell = await screen.findByText(/missing node/i);
-    expect(cell).toBeInTheDocument();
-    expect(cell).toHaveAttribute('title', 'Edge refers to missing node ‘a’.');
   });
 
   test('CardsTab filters cards', async () => {

@@ -12,7 +12,7 @@ import {
   tokens,
   Text,
 } from 'mirotone-react';
-import { DataGrid, PreviewRow } from '../components/DataGrid';
+import type { PreviewRow } from '../components/DataGrid';
 import { SegmentedControl } from '../components/SegmentedControl';
 import { GraphProcessor } from '../../core/graph/GraphProcessor';
 import { graphService } from '../../core/graph';
