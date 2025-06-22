@@ -1,34 +1,19 @@
 import { jest } from '@jest/globals';
+import { LayoutEngine } from '../src/core/layout/elk-layout';
+import * as layoutCore from '../src/core/layout/layout-core';
 
-/** Verify that LayoutEngine uses a Web Worker when available. */
-test('layoutGraph uses Web Worker when supported', async () => {
-  const originalWorker = (global as { Worker?: typeof Worker }).Worker;
-  const originalWindow = (global as { window?: unknown }).window;
-  (global as { window: { location: { href: string } } }).window = {
-    location: { href: 'http://localhost/' },
-  };
-
-  let posted: unknown;
-  class MockWorker {
-    onmessage: ((e: { data: unknown }) => void) | null = null;
-    constructor() {}
-    postMessage(data: { id: number; data: unknown; opts: unknown }) {
-      posted = data;
-      this.onmessage?.({
-        data: { id: data.id, result: { nodes: {}, edges: [] } },
-      });
-    }
-  }
-  (global as { Worker: typeof Worker }).Worker =
-    MockWorker as unknown as typeof Worker;
-  jest.resetModules();
-  const { LayoutEngine } = await import('../src/core/layout/elk-layout');
-  (LayoutEngine as { instance?: unknown }).instance = undefined;
+/** Ensure layout runs inline even when Web Worker exists. */
+test('layoutGraph runs without Web Worker', async () => {
+  const origWorker = (global as { Worker?: typeof Worker }).Worker;
+  (global as { Worker: typeof Worker }).Worker = class {} as typeof Worker;
+  const spy = jest.spyOn(layoutCore, 'performLayout').mockResolvedValue({
+    nodes: {},
+    edges: [],
+  });
   const engine = LayoutEngine.getInstance();
   const result = await engine.layoutGraph({ nodes: [], edges: [] });
   expect(result).toEqual({ nodes: {}, edges: [] });
-  expect(posted).toEqual({ id: 1, data: { nodes: [], edges: [] }, opts: {} });
-
-  (global as { Worker?: typeof Worker }).Worker = originalWorker;
-  (global as { window?: unknown }).window = originalWindow;
+  expect(spy).toHaveBeenCalled();
+  (global as { Worker?: typeof Worker }).Worker = origWorker;
+  spy.mockRestore();
 });

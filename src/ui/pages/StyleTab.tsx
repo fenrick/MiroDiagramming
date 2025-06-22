@@ -22,9 +22,15 @@ import { useSelection } from '../hooks/useSelection';
 export const StyleTab: React.FC = () => {
   const selection = useSelection();
   const [opts, setOpts] = React.useState<StyleOptions>(() => ({
-    fillColor: resolveColor(tokens.color.white, colors.white),
-    color: resolveColor(tokens.color.primaryText, colors['gray-700']),
-    borderColor: resolveColor(tokens.color.primaryText, colors['gray-700']),
+    fillColor: resolveColor(tokens.color.white, colors.white ?? '#ffffff'),
+    color: resolveColor(
+      tokens.color.primaryText,
+      colors['gray-700'] ?? '#595959',
+    ),
+    borderColor: resolveColor(
+      tokens.color.primaryText,
+      colors['gray-700'] ?? '#595959',
+    ),
     borderWidth: 1,
     fontSize: 12,
   }));
@@ -159,7 +165,7 @@ export const StyleTab: React.FC = () => {
           min='-100'
           max='100'
           value={String(adjust)}
-          onChange={v => setAdjust(Number(v))}
+          onChange={value => setAdjust(Number(value))}
           placeholder='Adjust (-100–100)'
         />
       </InputLabel>
