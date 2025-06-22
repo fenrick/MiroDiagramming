@@ -42,6 +42,10 @@ export const ResizeTab: React.FC = () => {
     }
   };
 
+  const resetCopy = (): void => {
+    setCopiedSize(null);
+  };
+
   const apply = async (): Promise<void> => {
     const target = copiedSize ?? size;
     if (target.width > 10000 || target.height > 10000) {
@@ -131,10 +135,10 @@ export const ResizeTab: React.FC = () => {
         {boardUnitsToInches(size.height).toFixed(2)} in)
       </Paragraph>
       <div className='buttons'>
-        <Button onClick={copy} variant='secondary'>
+        <Button onClick={copiedSize ? resetCopy : copy} variant='secondary'>
           <React.Fragment key='.0'>
-            <Icon name='duplicate' />
-            <Text>Copy Size</Text>
+            <Icon name={copiedSize ? 'undo' : 'duplicate'} />
+            <Text>{copiedSize ? 'Reset Copy' : 'Copy Size'}</Text>
           </React.Fragment>
         </Button>
         <Button onClick={apply} variant='primary'>

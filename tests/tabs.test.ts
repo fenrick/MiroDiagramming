@@ -55,6 +55,21 @@ describe('tab components', () => {
     expect(spy).toHaveBeenCalledWith({ width: 50, height: 40 });
   });
 
+  test('ResizeTab toggles copy and reset', async () => {
+    jest
+      .spyOn(resizeTools, 'copySizeFromSelection')
+      .mockResolvedValue({ width: 20, height: 30 });
+    render(React.createElement(ResizeTab));
+    await act(async () => {
+      fireEvent.click(screen.getByText(/copy size/i));
+    });
+    expect(screen.getByText(/reset copy/i)).toBeInTheDocument();
+    await act(async () => {
+      fireEvent.click(screen.getByText(/reset copy/i));
+    });
+    expect(screen.getByText(/copy size/i)).toBeInTheDocument();
+  });
+
   test('StyleTab applies style', async () => {
     const spy = jest
       .spyOn(styleTools, 'applyStyleToSelection')
