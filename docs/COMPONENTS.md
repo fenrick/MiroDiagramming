@@ -7,9 +7,11 @@
 Practical, step-by-step reference for junior engineers who build the add-on UI.
 Explains how to:
 
-* Consume the **Mirotone CSS** design language. ([mirotone.xyz][1])
-* Re-use the **mirotone-react** component wrappers where they already exist and fall back gracefully when they do not. ([github.com][2])
-* Meet the accessibility, performance and quality gates defined in **ARCHITECTURE.md** and **FOUNDATION.md**.
+- Consume the **Mirotone CSS** design language. ([mirotone.xyz][1])
+- Re-use the **mirotone-react** component wrappers where they already exist and
+  fall back gracefully when they do not. ([github.com][2])
+- Meet the accessibility, performance and quality gates defined in
+  **ARCHITECTURE.md** and **FOUNDATION.md**.
 
 ---
 
@@ -34,15 +36,16 @@ import 'mirotone/dist/styles.css';
 import { Button, Input, tokens } from 'mirotone-react';
 ```
 
-`tokens` mirrors the design-token variables so you never hard-code hex values. ([github.com][2])
+`tokens` mirrors the design-token variables so you never hard-code hex values.
+([github.com][2])
 
 ---
 
 ## 2 Component catalogue
 
-Only props that junior devs **must** supply are shown.
-*Bold names* = available as first-class mirotone-react exports.<br>
-*Italic names* = compose manually with Mirotone CSS classes until the wrapper lands.
+Only props that junior devs **must** supply are shown. _Bold names_ = available
+as first-class mirotone-react exports.<br> _Italic names_ = compose manually
+with Mirotone CSS classes until the wrapper lands.
 
 | Name           | Core props               | Variants                  | Default height (px) |
 | -------------- | ------------------------ | ------------------------- | ------------------- |
@@ -54,8 +57,8 @@ Only props that junior devs **must** supply are shown.
 | **Radio**      | checked, onChange, name  | —                         | 20                  |
 | **Textarea**   | value, onChange          | resize-auto               | 80                  |
 | **Modal**      | title, isOpen, onClose   | small, medium             | auto                |
-| *SidebarTab*   | id, icon, title          | persistent, modal         | fill                |
-| *TabBar*       | tabs, activeId, onChange | top, bottom               | 48                  |
+| _SidebarTab_   | id, icon, title          | persistent, modal         | fill                |
+| _TabBar_       | tabs, activeId, onChange | top, bottom               | 48                  |
 | **Grid**       | gap, columns             | responsive                | n/a                 |
 | **Stack**      | gap, direction           | vertical, horizontal      | n/a                 |
 | **Cluster**    | gap, align               | left, right, centre       | n/a                 |
@@ -64,7 +67,9 @@ Only props that junior devs **must** supply are shown.
 >
 > 1. Write semantic HTML (for example `<div class="grid grid-gap-8">`).
 > 2. Apply the documented Mirotone CSS classes.
-> 3. Encapsulate in a small local React component under `src/ui/components/legacy/` so that future upgrades swap the implementation behind a stable API.
+> 3. Encapsulate in a small local React component under
+>    `src/ui/components/legacy/` so that future upgrades swap the implementation
+>    behind a stable API.
 
 ---
 
@@ -73,26 +78,32 @@ Only props that junior devs **must** supply are shown.
 ### 3.1 Grid – repeat-auto layout
 
 ```tsx
-<Grid columns="repeat(auto-fill, 240px)" gap="16">
-  {nodes.map(n => <Card node={n} key={n.id} />)}
+<Grid columns='repeat(auto-fill, 240px)' gap='16'>
+  {nodes.map(n => (
+    <Card node={n} key={n.id} />
+  ))}
 </Grid>
 ```
 
 ### 3.2 Stack – vertical forms
 
 ```tsx
-<Stack gap="12" direction="vertical">
-  <Label htmlFor="title">Title</Label>
-  <Input id="title" value={title} onChange={setTitle} />
+<Stack gap='12' direction='vertical'>
+  <Label htmlFor='title'>Title</Label>
+  <Input id='title' value={title} onChange={setTitle} />
 </Stack>
 ```
 
 ### 3.3 Cluster – right-aligned actions
 
 ```tsx
-<Cluster gap="8" align="right">
-  <Button ghost onClick={cancel}>Cancel</Button>
-  <Button primary onClick={save}>Save</Button>
+<Cluster gap='8' align='right'>
+  <Button ghost onClick={cancel}>
+    Cancel
+  </Button>
+  <Button primary onClick={save}>
+    Save
+  </Button>
 </Cluster>
 ```
 
@@ -101,23 +112,28 @@ Only props that junior devs **must** supply are shown.
 ## 4 Sample pattern – Modal form with validation
 
 ```tsx
-<Modal isOpen={show} title="Create card" onClose={close}>
+<Modal isOpen={show} title='Create card' onClose={close}>
   <form onSubmit={submit} noValidate>
-    <Stack gap="12" direction="vertical">
-      <Input required placeholder="Title" value={title} onChange={setTitle} />
-      <Textarea placeholder="Description" value={desc} onChange={setDesc} />
-      <Cluster gap="8" align="right">
-        <Button ghost onClick={close}>Cancel</Button>
-        <Button primary type="submit">Add</Button>
+    <Stack gap='12' direction='vertical'>
+      <Input required placeholder='Title' value={title} onChange={setTitle} />
+      <Textarea placeholder='Description' value={desc} onChange={setDesc} />
+      <Cluster gap='8' align='right'>
+        <Button ghost onClick={close}>
+          Cancel
+        </Button>
+        <Button primary type='submit'>
+          Add
+        </Button>
       </Cluster>
     </Stack>
   </form>
 </Modal>
 ```
 
-* First interactive control auto-focuses.
-* `Esc` always triggers `onClose`.
-* Browser validation bubbles up; error text appears via the **Input** `invalid` state.
+- First interactive control auto-focuses.
+- `Esc` always triggers `onClose`.
+- Browser validation bubbles up; error text appears via the **Input** `invalid`
+  state.
 
 ---
 
@@ -137,18 +153,20 @@ Failing any item blocks the CI gate.
 
 ## 6 Styling rules & minimal-CSS policy
 
-* Only Design-System tokens: colours, space, radii, typography (import via `tokens`).
-* **No extra CSS classes** unless integrating a third-party lib.
-* Inline `style={...}` is disallowed by ESLint rule `no-inline-style`.
-* Dark-mode colours come free from Miro themes; test visually in both themes before merging. ([mirotone.xyz][1])
+- Only Design-System tokens: colours, space, radii, typography (import via
+  `tokens`).
+- **No extra CSS classes** unless integrating a third-party lib.
+- Inline `style={...}` is disallowed by ESLint rule `no-inline-style`.
+- Dark-mode colours come free from Miro themes; test visually in both themes
+  before merging. ([mirotone.xyz][1])
 
 ---
 
 ## 7 Performance notes
 
-* Virtualise long lists with **react-window**.
-* Debounce user typing (300 ms) before heavy graph searches.
-* Wrap expensive renders in `React.memo` or split components.
+- Virtualise long lists with **react-window**.
+- Debounce user typing (300 ms) before heavy graph searches.
+- Wrap expensive renders in `React.memo` or split components.
 
 ---
 
@@ -165,12 +183,12 @@ Failing any item blocks the CI gate.
 
 ## 9 Further reading
 
-* Architecture and folder layout – **ARCHITECTURE.md**
-* Design tokens and minimal-CSS policy – **FOUNDATION.md**
-* Deployment guidance – **DEPLOYMENT.md**
-* Sidebar behaviour and validation flows – **TABS.md**
-* Storybook playground – run `npm start`, open `http://localhost:6006`
+- Architecture and folder layout – **ARCHITECTURE.md**
+- Design tokens and minimal-CSS policy – **FOUNDATION.md**
+- Deployment guidance – **DEPLOYMENT.md**
+- Sidebar behaviour and validation flows – **TABS.md**
+- Storybook playground – run `npm start`, open `http://localhost:6006`
 
 ---
 
-*End of file.*
+_End of file._

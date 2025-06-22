@@ -4,12 +4,14 @@
 
 ## 0 Purpose
 
-* Guarantee visual parity with native Miro surfaces.
-* Supply canonical **design tokens** for colour, spacing, typography, radii, elevation and motion.
-* Document the **governance workflow** so tokens evolve in a controlled, backward-compatible way.
+- Guarantee visual parity with native Miro surfaces.
+- Supply canonical **design tokens** for colour, spacing, typography, radii,
+  elevation and motion.
+- Document the **governance workflow** so tokens evolve in a controlled,
+  backward-compatible way.
 
-For component usage see **COMPONENTS.md**.
-For linting, testing and CI gates see **ARCHITECTURE.md** (sections 4-6).
+For component usage see **COMPONENTS.md**. For linting, testing and CI gates see
+**ARCHITECTURE.md** (sections 4-6).
 
 ---
 
@@ -57,7 +59,8 @@ Create semantic tokens that map to primitives for clarity and easier theming:
 | `colour-status-success`      | var(--green700) | var(--green400)     |
 | `colour-status-danger`       | var(--red700)   | var(--red400)       |
 
-All pairings conform to **WCAG 2.2 AA** (contrast ≥ 4 . 5 : 1). *axe-core* check in CI enforces this.
+All pairings conform to **WCAG 2.2 AA** (contrast ≥ 4 . 5 : 1). _axe-core_ check
+in CI enforces this.
 
 ---
 
@@ -77,7 +80,8 @@ The Mirotone scale is **base-8 with a 4 px starter**. ([mirotone.xyz][2])
 | `space-xxlarge`  | 48  | `m-xxl`, `p-xxl`   |
 | `space-xxxlarge` | 62  | `m-xxxl`, `p-xxxl` |
 
-All layout primitives (**Grid, Stack, Cluster**) accept numeric props that resolve to these tokens (see **COMPONENTS.md**).
+All layout primitives (**Grid, Stack, Cluster**) accept numeric props that
+resolve to these tokens (see **COMPONENTS.md**).
 
 ---
 
@@ -93,7 +97,8 @@ All layout primitives (**Grid, Stack, Cluster**) accept numeric props that resol
 | `.p-medium` | font-body-m      | 14 / 20     | Default body text     |
 | `.p-small`  | font-body-s      | 12 / 16     | Captions, helper text |
 
-Mirotone exposes header and body fonts via `--header-font` and `--body-font` variables. ([mirotone.xyz][3])
+Mirotone exposes header and body fonts via `--header-font` and `--body-font`
+variables. ([mirotone.xyz][3])
 
 ---
 
@@ -108,7 +113,8 @@ Mirotone exposes header and body fonts via `--header-font` and `--body-font` var
 | `radius-xxlarge` | 32   |
 | `radius-circle`  | 50 % |
 
-Border-radius variables ship with Mirotone and are re-exported by mirotone-react. ([mirotone.xyz][2])
+Border-radius variables ship with Mirotone and are re-exported by
+mirotone-react. ([mirotone.xyz][2])
 
 Elevation follows a four-level shadow ramp:
 
@@ -123,9 +129,11 @@ Elevation follows a four-level shadow ramp:
 
 ## 6 Icons
 
-* Use `<span class="icon icon-name">` to embed an icon. ([mirotone.xyz][4])
-* Icon SVGs sit under `node_modules/mirotone/icons`.
-* Do not recolour icons; prefer multi-tone assets shipped with the library. If recolouring is essential, apply a CSS filter (see Mirotone icon guide). ([mirotone.xyz][4])
+- Use `<span class="icon icon-name">` to embed an icon. ([mirotone.xyz][4])
+- Icon SVGs sit under `node_modules/mirotone/icons`.
+- Do not recolour icons; prefer multi-tone assets shipped with the library. If
+  recolouring is essential, apply a CSS filter (see Mirotone icon guide).
+  ([mirotone.xyz][4])
 
 ---
 
@@ -137,17 +145,19 @@ Elevation follows a four-level shadow ramp:
 | motion-ease-in-out-300 | `--ease-in-out-300` | 0.4, 0 ,0.2, 1 | 300 |
 | motion-ease-in-out-400 | `--ease-in-out-400` | 0.4, 0 ,0.2, 1 | 400 |
 
-Use the shortest token that achieves perceptible feedback; avoid motion on large canvases where it may distract.
+Use the shortest token that achieves perceptible feedback; avoid motion on large
+canvases where it may distract.
 
 ---
 
 ## 8 Minimal-CSS policy
 
-* **Never** hard-code hex, rgb, px, em or rem outside token definitions.
-* Custom classes only to integrate third-party libs and must start with `ext-`.
-* ESLint rule `design-tokens/no-raw-values` blocks non-token values.
-* Inline `style` attributes are disallowed (rule `no-inline-style`).
-* Dark-mode styles derive automatically from Mirotone variables; no extra overrides.
+- **Never** hard-code hex, rgb, px, em or rem outside token definitions.
+- Custom classes only to integrate third-party libs and must start with `ext-`.
+- ESLint rule `design-tokens/no-raw-values` blocks non-token values.
+- Inline `style` attributes are disallowed (rule `no-inline-style`).
+- Dark-mode styles derive automatically from Mirotone variables; no extra
+  overrides.
 
 ---
 
@@ -199,4 +209,4 @@ npm run tokens:gen-types
 
 ---
 
-*End of file.*
+_End of file._

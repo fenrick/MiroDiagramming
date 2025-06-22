@@ -33,19 +33,24 @@ Never mix disabled and read-only; read-only fields must still get focus.
 | **Async**    | After passing sync rules, start async call. | Inline **Spinner** 16 × 16 on right; keep outline-primary-300.            | ‘Validating…’.               |
 | **Success**  | Async success.                              | Outline-success-500 for 1 s then revert to neutral.                       | ‘Valid’.                     |
 
-Invalid state must set aria-invalid true and point to error text via aria-describedby. ([developer.mozilla.org][2])
+Invalid state must set aria-invalid true and point to error text via
+aria-describedby. ([developer.mozilla.org][2])
 
 ### 1.4 Progressive disclosure & dynamic fields
 
-* Hide rarely-used settings inside an **Accordion** labelled ‘Advanced’.
-* If a later question depends on an earlier answer, use **react-hook-form** watch to conditionally render the field; never disable a visible control because hidden fields are skipped by assistive tech.
+- Hide rarely-used settings inside an **Accordion** labelled ‘Advanced’.
+- If a later question depends on an earlier answer, use **react-hook-form**
+  watch to conditionally render the field; never disable a visible control
+  because hidden fields are skipped by assistive tech.
 
 ### 1.5 Keyboard and focus contract
 
 1. First interactive element receives programmatic focus.
 2. Tab order always matches DOM order.
-3. Enter inside any input triggers the primary action if no validation errors exist.
-4. Escape closes the current **Modal** or **SidebarTab** unless a blocking destructive-confirm is shown.
+3. Enter inside any input triggers the primary action if no validation errors
+   exist.
+4. Escape closes the current **Modal** or **SidebarTab** unless a blocking
+   destructive-confirm is shown.
 
 ---
 
@@ -64,12 +69,12 @@ Invalid state must set aria-invalid true and point to error text via aria-descri
 
 ### 2.2 Sidebar tabs (primary navigation)
 
-See **TABS.md** for full blueprint.
-Additional rules:
+See **TABS.md** for full blueprint. Additional rules:
 
-* Never nest more than one tabset per view.
-* Keep persistent tabs count ≤ 5; overflow icons collapse into **More** popover.
-* Provide keyboard shortcuts Control Alt 1–9 to jump between tabs (documented in on-boarding).
+- Never nest more than one tabset per view.
+- Keep persistent tabs count ≤ 5; overflow icons collapse into **More** popover.
+- Provide keyboard shortcuts Control Alt 1–9 to jump between tabs (documented in
+  on-boarding).
 
 ---
 
@@ -84,16 +89,17 @@ Additional rules:
 | Duration    | 4 s                             | Sticky until user dismisses |
 | Stack limit | 3; new pushes oldest off-screen | 1                           |
 
-Toast container has aria-live polite; error toasts switch to assertive for immediate read-out.
+Toast container has aria-live polite; error toasts switch to assertive for
+immediate read-out.
 
 ### 3.2 Inline Alert
 
 Colour and icon follow semantic tokens:
 
-* Success – colour-status-success + icon-check-circle-20.
-* Info – colour-interactive-primary + icon-info-20.
-* Warning – colour-status-warning + icon-warning-20.
-* Danger – colour-status-danger + icon-alert-20.
+- Success – colour-status-success + icon-check-circle-20.
+- Info – colour-interactive-primary + icon-info-20.
+- Warning – colour-status-warning + icon-warning-20.
+- Danger – colour-status-danger + icon-alert-20.
 
 Alert header uses font-heading-s; body uses font-body-s with max 160 characters.
 
@@ -113,18 +119,20 @@ Alert header uses font-heading-s; body uses font-body-s with max 160 characters.
 
 1. State what is missing — 1 short clause.
 2. Explain why — if not obvious.
-3. Provide single primary action — imperative verb.
-   Total ≤ 2 sentences (max 140 characters).
+3. Provide single primary action — imperative verb. Total ≤ 2 sentences (max 140
+   characters).
 
 ### 4.2 Illustration guidelines
 
-* Use multitone SVGs from Miro style set; palette restricted to Indigo 50–700, Blue 50–500 and Neutral 200–600.
-* Light mode: illustration opacity 100 %. Dark mode: reduce white fills to 80 % opacity.
-* Size tiers:
+- Use multitone SVGs from Miro style set; palette restricted to Indigo 50–700,
+  Blue 50–500 and Neutral 200–600.
+- Light mode: illustration opacity 100 %. Dark mode: reduce white fills to 80 %
+  opacity.
+- Size tiers:
 
-  * Sidebar small — 48 × 48 px, centred.
-  * Modal medium — 120 × 120 px, top-centre.
-  * Full-panel large — 240 × 160 px, centred.
+  - Sidebar small — 48 × 48 px, centred.
+  - Modal medium — 120 × 120 px, top-centre.
+  - Full-panel large — 240 × 160 px, centred.
 
 ---
 
@@ -136,10 +144,10 @@ Alert header uses font-heading-s; body uses font-body-s with max 160 characters.
 | Medium | 480 px | space-large  | Forms up to 6 fields            |
 | Large  | 640 px | space-large  | Rare – wizard step, file import |
 
-* Overlay colour-blackAlpha-600 at 50 % opacity; fade-in 150 ms motion-ease-200.
-* Focus trap loops within modal.
-* Background scroll locked by adding overflow hidden to body.
-* Escape closes modal except when **confirm dangerous action**.
+- Overlay colour-blackAlpha-600 at 50 % opacity; fade-in 150 ms motion-ease-200.
+- Focus trap loops within modal.
+- Background scroll locked by adding overflow hidden to body.
+- Escape closes modal except when **confirm dangerous action**.
 
 ---
 
@@ -154,7 +162,8 @@ Alert header uses font-heading-s; body uses font-body-s with max 160 characters.
 | Error text linked          | aria-describedby points to inline error id.              | WebAIM                                             |
 | Live region for toasts     | aria-live polite (assertive for danger).                 | W3C ARIA                                           |
 
-All points are enforced by automated axe-core tests in CI (see **ARCHITECTURE.md**).
+All points are enforced by automated axe-core tests in CI (see
+**ARCHITECTURE.md**).
 
 ---
 
@@ -181,4 +190,4 @@ Detailed specs will be added as these patterns stabilise.
 
 ---
 
-*End of file.*
+_End of file._

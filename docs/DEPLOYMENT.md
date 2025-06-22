@@ -4,8 +4,8 @@
 
 ## 0 Purpose
 
-Step-by-step instructions for packaging, hosting and operating the client-only add-on.
-Aimed at junior engineers; every step is explicit.
+Step-by-step instructions for packaging, hosting and operating the client-only
+add-on. Aimed at junior engineers; every step is explicit.
 
 ---
 
@@ -37,9 +37,10 @@ Aimed at junior engineers; every step is explicit.
 | **Netlify**                       | Drag-and-drop deploy; automatic rollbacks                      | netlify.com                           |
 | **AWS Amplify / S3 + CloudFront** | Enterprise control; edge caching                               | AWS docs                              |
 | **Nginx**                         | On-prem or self-managed VM; full control                       | nginx.org                             |
-| **GitHub Pages**                  | *Not supported* for Web-SDK apps (service-worker restrictions) | Miro docs ﻿([developers.miro.com][1]) |
+| **GitHub Pages**                  | _Not supported_ for Web-SDK apps (service-worker restrictions) | Miro docs ﻿([developers.miro.com][1]) |
 
-Choose one host per environment (staging, production). All examples below use **Vercel** CLI, but commands translate easily.
+Choose one host per environment (staging, production). All examples below use
+**Vercel** CLI, but commands translate easily.
 
 ---
 
@@ -47,15 +48,16 @@ Choose one host per environment (staging, production). All examples below use **
 
 Define variables in the host’s dashboard (or `vercel env`).
 
-| Variable                    | Purpose                                            |
-| --------------------------- | -------------------------------------------------- |
-| **MIRO\_APP\_ID**           | App identifier from Miro App Settings              |
-| **PUBLIC\_BASE\_URL**       | Fully-qualified root URL of the deployed bundle    |
-| **FEATURE\_FLAG\_SDK\_KEY** | LaunchDarkly SDK key (client-side)                 |
-| **SENTRY\_DSN**             | Error-reporting endpoint                           |
-| **NODE\_ENV**               | build-time optimisation flag (production, staging) |
+| Variable                 | Purpose                                            |
+| ------------------------ | -------------------------------------------------- |
+| **MIRO_APP_ID**          | App identifier from Miro App Settings              |
+| **PUBLIC_BASE_URL**      | Fully-qualified root URL of the deployed bundle    |
+| **FEATURE_FLAG_SDK_KEY** | LaunchDarkly SDK key (client-side)                 |
+| **SENTRY_DSN**           | Error-reporting endpoint                           |
+| **NODE_ENV**             | build-time optimisation flag (production, staging) |
 
-Variables are injected at build time—no runtime secrets are required because the add-on is client-only.
+Variables are injected at build time—no runtime secrets are required because the
+add-on is client-only.
 
 ---
 
@@ -79,7 +81,8 @@ vercel env add SENTRY_DSN
 vercel --prod                # deploys and returns the live URL
 ```
 
-Copy the returned URL into **Miro > App Settings > Redirect URL** and **Public base URL**.
+Copy the returned URL into **Miro > App Settings > Redirect URL** and **Public
+base URL**.
 
 ### 5.3 Subsequent deploys (CI)
 
@@ -88,7 +91,8 @@ npm run build
 vercel deploy --prod --confirm
 ```
 
-The GitHub Actions workflow in **.github/workflows/ci.yml** performs the same steps automatically on merge to `main`.
+The GitHub Actions workflow in **.github/workflows/ci.yml** performs the same
+steps automatically on merge to `main`.
 
 ---
 
@@ -96,8 +100,10 @@ The GitHub Actions workflow in **.github/workflows/ci.yml** performs the same st
 
 1. Open Vercel dashboard, select **Deployments**.
 2. Locate the previous green build for the production environment.
-3. Press **Promote** – Vercel instantly updates the alias to point to that build.
-4. In Miro, reload the board; confirm the add-on hash has changed (DevTools › Network › app.js).
+3. Press **Promote** – Vercel instantly updates the alias to point to that
+   build.
+4. In Miro, reload the board; confirm the add-on hash has changed (DevTools ›
+   Network › app.js).
 
 Rollback takes < 30 seconds and never breaks active boards.
 
@@ -112,9 +118,9 @@ Rollback takes < 30 seconds and never breaks active boards.
 | Feature-flag impact       | LaunchDarkly Insights | Error delta ≤ 0             |
 | Bundle size               | CI budget check       | ≤ 300 KB gzipped            |
 
-Alerts route to the **#miro-addon-alerts** Slack channel.
-Instrumentation is wired in `src/infrastructure/telemetry.ts`.
-Details on metrics collection sit in **ARCHITECTURE.md** (section 13).
+Alerts route to the **#miro-addon-alerts** Slack channel. Instrumentation is
+wired in `src/infrastructure/telemetry.ts`. Details on metrics collection sit in
+**ARCHITECTURE.md** (section 13).
 
 ---
 
@@ -145,7 +151,8 @@ Push → GitHub Action
         └─ Deploy to Vercel --prod (manual approval)
 ```
 
-All gates and complexity budgets are defined in **ARCHITECTURE.md** (sections 4–6).
+All gates and complexity budgets are defined in **ARCHITECTURE.md** (sections
+4–6).
 
 ---
 
@@ -153,11 +160,11 @@ All gates and complexity budgets are defined in **ARCHITECTURE.md** (sections 4�
 
 | Symptom            | First checks                                       |
 | ------------------ | -------------------------------------------------- |
-| Blank iframe       | Console 404? PUBLIC\_BASE\_URL mismatch            |
+| Blank iframe       | Console 404? PUBLIC_BASE_URL mismatch              |
 | Widgets not placed | Check `MIRO_APP_ID` ties to the board team         |
 | Layout freeze      | Graph exceeds 5 000 nodes – worker timeout         |
 | Dark-mode glitch   | Token override? Confirm colours from Design System |
 
 ---
 
-*End of file.*
+_End of file._

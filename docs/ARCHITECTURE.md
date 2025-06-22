@@ -1,17 +1,18 @@
 # Miro Web-SDK Add-on — Architecture & Expansion Guide
 
-*Version 2025-06-22*
+_Version 2025-06-22_
 
 ---
 
-## 0  Purpose
+## 0 Purpose
 
 Authoritative blueprint for building, extending and operating the add-on.
-Maintain as living documentation; update with every breaking, security-significant or process change.
+Maintain as living documentation; update with every breaking,
+security-significant or process change.
 
 ---
 
-## 1  Document Map
+## 1 Document Map
 
 | Topic                                           | Detailed source   |
 | ----------------------------------------------- | ----------------- |
@@ -22,7 +23,7 @@ Maintain as living documentation; update with every breaking, security-significa
 
 ---
 
-## 2  System Overview
+## 2 System Overview
 
 ```
 Browser
@@ -35,25 +36,26 @@ Browser
         Graph Processor  ◄─ Data Sources (REST/CSV)
 ```
 
-The add-on is **client-only**. All persistence is handled by Miro boards; no server or OAuth exchange is required.
+The add-on is **client-only**. All persistence is handled by Miro boards; no
+server or OAuth exchange is required.
 
 ---
 
-## 3  Layering
+## 3 Layering
 
 ```
 Data        → Graph Normalisation → Layout Engine → Board Rendering → UI Orchestration
 (src/core)     (src/core)            (src/core)      (src/board)       (src/ui)
 ```
 
-* **Pure Core** (src/core) – framework-agnostic logic.
-* **Board Adapter** (src/board) – converts domain objects to Miro widgets.
-* **UI Shell** (src/ui) – React views built with mirotone-react only.
-* **Infrastructure** (scripts, .github) – build, lint, test, release automation.
+- **Pure Core** (src/core) – framework-agnostic logic.
+- **Board Adapter** (src/board) – converts domain objects to Miro widgets.
+- **UI Shell** (src/ui) – React views built with mirotone-react only.
+- **Infrastructure** (scripts, .github) – build, lint, test, release automation.
 
 ---
 
-## 4  Repository Map
+## 4 Repository Map
 
 ```
 src/
@@ -70,7 +72,7 @@ docs/          *.md (this file, components, foundation …)
 
 ---
 
-## 5  Core Modules & Complexity Budget
+## 5 Core Modules & Complexity Budget
 
 | Module         | Responsibility                        | Main surface      | Budget / function        |
 | -------------- | ------------------------------------- | ----------------- | ------------------------ |
@@ -84,7 +86,7 @@ Complexity limits enforced automatically by **SonarQube** gate.
 
 ---
 
-## 6  Quality, Testing & CI/CD
+## 6 Quality, Testing & CI/CD
 
 | Stage      | Gate                        | Threshold               |
 | ---------- | --------------------------- | ----------------------- |
@@ -99,20 +101,21 @@ Complexity limits enforced automatically by **SonarQube** gate.
 2. Build Storybook and a feature-flagged bundle for staging.
 3. SonarQube analysis and budget checks.
 4. Semantic-release creates Git tag, changelog and Chrome-Store zip.
-5. Automatic rollback uses the previously published artefact (see **DEPLOYMENT.md** for details).
+5. Automatic rollback uses the previously published artefact (see
+   **DEPLOYMENT.md** for details).
 
 ---
 
-## 7  Automated Code Review & Enforcement
+## 7 Automated Code Review & Enforcement
 
-* **Danger-JS** bot fails PR if complexity, coverage or lint targets fall short.
-* **Conventional Commits** enforced by commit-lint.
-* Every PR must pass all CI gates; manual reviewers are optional.
-* **CodeQL** scan adds static-analysis findings to the check suite.
+- **Danger-JS** bot fails PR if complexity, coverage or lint targets fall short.
+- **Conventional Commits** enforced by commit-lint.
+- Every PR must pass all CI gates; manual reviewers are optional.
+- **CodeQL** scan adds static-analysis findings to the check suite.
 
 ---
 
-## 8  Security & Threat Model (summary)
+## 8 Security & Threat Model (summary)
 
 | Asset         | Threat                           | Mitigation                                          |
 | ------------- | -------------------------------- | --------------------------------------------------- |
@@ -121,21 +124,23 @@ Complexity limits enforced automatically by **SonarQube** gate.
 | Supply-chain  | Malicious dependency             | SLSA-compliant provenance, `npm audit` blocks build |
 | User data     | Privacy breach                   | No external storage; all data stays on Miro board   |
 
-*No OAuth token or server credentials are required.*
+_No OAuth token or server credentials are required._
 
 ---
 
-## 9  Progressive Delivery & Feature-Flag Governance
+## 9 Progressive Delivery & Feature-Flag Governance
 
-* Flags managed in **LaunchDarkly**; ownership tag **Product** or **Engineering**.
-* Expiry date mandatory; nightly CLI prunes stale flags to curb technical debt.
-* Roll-out ladder: internal → 5 % → 25 % → 100 %, with error and performance dashboards in Datadog.
+- Flags managed in **LaunchDarkly**; ownership tag **Product** or
+  **Engineering**.
+- Expiry date mandatory; nightly CLI prunes stale flags to curb technical debt.
+- Roll-out ladder: internal → 5 % → 25 % → 100 %, with error and performance
+  dashboards in Datadog.
 
 ---
 
-## 10  Extensibility
+## 10 Extensibility
 
-### 10.1  Add a New Widget Type
+### 10.1 Add a New Widget Type
 
 1. Extend **GraphProcessor** schema.
 2. Provide default ELK options.
@@ -144,7 +149,7 @@ Complexity limits enforced automatically by **SonarQube** gate.
 5. Add tests and a Storybook example.
 6. Document API in **COMPONENTS.md** under “Widget Catalogue”.
 
-### 10.2  Plugin Hooks
+### 10.2 Plugin Hooks
 
 | Hook       | Timing                       | Typical use                         |
 | ---------- | ---------------------------- | ----------------------------------- |
@@ -154,28 +159,30 @@ Complexity limits enforced automatically by **SonarQube** gate.
 
 ---
 
-## 11  UI / UX Practices
+## 11 UI / UX Practices
 
-* Only **Stack**, **Cluster**, **Grid** layout primitives – no raw flex/grid.
-* State machines (XState) for multi-step flows.
-* Colour, spacing, typography tokens come directly from Miro themes; no overrides (see **FOUNDATION.md**).
-* Visual regress tests run against both Light and Dark themes provided by Miro.
-* WCAG 2.2 AA: contrast ≥ 4 . 5 : 1; reflow at 400 %.
-* Provide five-second friction-free undo after large imports.
-
----
-
-## 12  Performance & Scalability
-
-* Worker pool size = CPU cores − 1 (max 4).
-* IndexedDB caches ELK layouts keyed by graph hash.
-* Diff-sync on board updates – never full re-render.
-* WebAssembly ELK optional behind feature flag.
-* Telemetry (posthog-js) tracks layout duration and error rate; thresholds feed Sonar dashboards.
+- Only **Stack**, **Cluster**, **Grid** layout primitives – no raw flex/grid.
+- State machines (XState) for multi-step flows.
+- Colour, spacing, typography tokens come directly from Miro themes; no
+  overrides (see **FOUNDATION.md**).
+- Visual regress tests run against both Light and Dark themes provided by Miro.
+- WCAG 2.2 AA: contrast ≥ 4 . 5 : 1; reflow at 400 %.
+- Provide five-second friction-free undo after large imports.
 
 ---
 
-## 13  Observability & Monitoring
+## 12 Performance & Scalability
+
+- Worker pool size = CPU cores − 1 (max 4).
+- IndexedDB caches ELK layouts keyed by graph hash.
+- Diff-sync on board updates – never full re-render.
+- WebAssembly ELK optional behind feature flag.
+- Telemetry (posthog-js) tracks layout duration and error rate; thresholds feed
+  Sonar dashboards.
+
+---
+
+## 13 Observability & Monitoring
 
 | Concern       | Tool         | Signal                      |
 | ------------- | ------------ | --------------------------- |
@@ -188,7 +195,7 @@ Deployment, rollback and monitoring hooks are documented in **DEPLOYMENT.md**.
 
 ---
 
-## 14  Roadmap (next 6 months)
+## 14 Roadmap (next 6 months)
 
 | Idea                   | Value statement                              | Reference         |
 | ---------------------- | -------------------------------------------- | ----------------- |
@@ -200,9 +207,10 @@ Deployment, rollback and monitoring hooks are documented in **DEPLOYMENT.md**.
 
 ---
 
-## 15  Appendix: Coding Conventions
+## 15 Appendix: Coding Conventions
 
-* File names: PascalCase.tsx for React, kebab-case.ts for util.
-* Import order: std → vendor → local, alphabetical within group.
-* No raw grid-column in style blocks (enforced by custom ESLint rule).
-* PR template checklist: coverage, complexity, a11y, dark-mode snapshot, CHANGELOG entry.
+- File names: PascalCase.tsx for React, kebab-case.ts for util.
+- Import order: std → vendor → local, alphabetical within group.
+- No raw grid-column in style blocks (enforced by custom ESLint rule).
+- PR template checklist: coverage, complexity, a11y, dark-mode snapshot,
+  CHANGELOG entry.
