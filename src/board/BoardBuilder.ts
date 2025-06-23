@@ -216,7 +216,7 @@ export class BoardBuilder {
   ): Promise<BaseItem | Group | undefined> {
     this.ensureBoard();
     const shapes = (await miro.board.get({ type: 'shape' })) as BaseItem[];
-    return this.findByMetadata(shapes, meta => {
+    return this.findByMetadata(shapes, (meta) => {
       const data = meta as NodeMetadata | undefined;
       return data?.type === type && data.label === label;
     });
@@ -409,10 +409,7 @@ export class BoardBuilder {
         : undefined,
       style: template?.style as ConnectorStyle | undefined,
     });
-    await connector.setMetadata(META_KEY, {
-      from: edge.from,
-      to: edge.to,
-    });
+    await connector.setMetadata(META_KEY, { from: edge.from, to: edge.to });
     return connector;
   }
 

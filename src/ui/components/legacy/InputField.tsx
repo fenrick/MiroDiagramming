@@ -62,7 +62,9 @@ export function InputField({
 
   return (
     <div className='form-group-small'>
-      <label htmlFor={inputId} className={wrapperClassName}>
+      <label
+        htmlFor={inputId}
+        className={wrapperClassName}>
         {label}
       </label>
       {control}

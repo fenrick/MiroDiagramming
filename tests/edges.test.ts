@@ -13,14 +13,16 @@ describe('createEdges', () => {
     global.miro = {
       board: {
         get: jest.fn().mockResolvedValue([]),
-        createConnector: jest.fn().mockResolvedValue({
-          setMetadata: jest.fn(),
-          getMetadata: jest.fn(),
-          sync: jest.fn(),
-          id: 'c1',
-          start: {},
-          end: {},
-        }),
+        createConnector: jest
+          .fn()
+          .mockResolvedValue({
+            setMetadata: jest.fn(),
+            getMetadata: jest.fn(),
+            sync: jest.fn(),
+            id: 'c1',
+            start: {},
+            end: {},
+          }),
       },
     };
   });

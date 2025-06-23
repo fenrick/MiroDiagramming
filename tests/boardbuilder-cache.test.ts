@@ -30,12 +30,14 @@ describe('BoardBuilder lookup and connector updates', () => {
   test('createEdges skips connector lookup', async () => {
     const board = {
       get: jest.fn(),
-      createConnector: jest.fn().mockResolvedValue({
-        setMetadata: jest.fn(),
-        getMetadata: jest.fn(),
-        sync: jest.fn(),
-        id: 'c1',
-      }),
+      createConnector: jest
+        .fn()
+        .mockResolvedValue({
+          setMetadata: jest.fn(),
+          getMetadata: jest.fn(),
+          sync: jest.fn(),
+          id: 'c1',
+        }),
     };
     global.miro = { board };
     const builder = new BoardBuilder();
@@ -53,9 +55,7 @@ describe('BoardBuilder lookup and connector updates', () => {
   });
 
   test('updateConnector merges style from template', () => {
-    const existing = {
-      style: {},
-    } as Record<string, unknown>;
+    const existing = { style: {} } as Record<string, unknown>;
     const builder = new BoardBuilder();
     builder.updateConnector(
       existing as unknown as Connector,

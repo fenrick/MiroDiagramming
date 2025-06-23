@@ -110,16 +110,16 @@ describe('BoardBuilder additional cases', () => {
     } as Record<string, unknown>;
     const builder = new BoardBuilder();
     jest.spyOn(builder, 'findNode').mockResolvedValue(group);
-    global.miro = {
-      board: { createShape: jest.fn(), createText: jest.fn() },
-    };
+    global.miro = { board: { createShape: jest.fn(), createText: jest.fn() } };
     jest
       .spyOn(templateManager, 'getTemplate')
       .mockReturnValue({ elements: [{ shape: 's' }, { text: 't' }] });
-    jest.spyOn(templateManager, 'createFromTemplate').mockResolvedValue({
-      type: 'group',
-      getItems: jest.fn().mockResolvedValue(itemMocks),
-    } as unknown as { type: string; getItems: () => Promise<unknown[]> });
+    jest
+      .spyOn(templateManager, 'createFromTemplate')
+      .mockResolvedValue({
+        type: 'group',
+        getItems: jest.fn().mockResolvedValue(itemMocks),
+      } as unknown as { type: string; getItems: () => Promise<unknown[]> });
     const node = { id: 'n', label: 'L', type: 'Role' } as Record<
       string,
       unknown
