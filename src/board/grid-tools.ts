@@ -82,10 +82,16 @@ export async function applyGridLayout(
 ): Promise<void> {
   const b = getBoard(board);
   const selection = await b.getSelection();
-  let items = selection;
-  if (opts.sortByName) {
-    items = [...items].sort((a, b) => getName(a).localeCompare(getName(b)));
-  }
+  let items = opts.sortByName
+    ? [...selection].sort((a, b) => getName(a).localeCompare(getName(b)))
+    : selection;
+  items = items.filter(
+    (i) =>
+      typeof (i as { width?: number }).width === 'number' &&
+      typeof (i as { height?: number }).height === 'number' &&
+      typeof (i as { x?: number }).x === 'number' &&
+      typeof (i as { y?: number }).y === 'number',
+  );
   if (!items.length) return;
   const first = items[0] as {
     x: number;

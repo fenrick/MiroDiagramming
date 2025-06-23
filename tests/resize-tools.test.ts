@@ -21,6 +21,22 @@ describe('resize-tools', () => {
     expect(item.sync).toHaveBeenCalled();
   });
 
+  test('applySizeToSelection updates frames', async () => {
+    const item = { width: 30, height: 40, sync: jest.fn(), type: 'frame' };
+    const board = { getSelection: jest.fn().mockResolvedValue([item]) };
+    await applySizeToSelection({ width: 50, height: 60 }, board);
+    expect(item.width).toBe(50);
+    expect(item.height).toBe(60);
+  });
+
+  test('applySizeToSelection skips unsupported items', async () => {
+    const items = [{ width: 1, height: 1, sync: jest.fn() }, { foo: 'bar' }];
+    const board = { getSelection: jest.fn().mockResolvedValue(items) };
+    await applySizeToSelection({ width: 5, height: 5 }, board);
+    expect(items[0].width).toBe(5);
+    expect(items[1]).toEqual({ foo: 'bar' });
+  });
+
   test('copySizeFromSelection returns null when invalid', async () => {
     const board = { getSelection: jest.fn().mockResolvedValue([{}]) };
     const size = await copySizeFromSelection(board);

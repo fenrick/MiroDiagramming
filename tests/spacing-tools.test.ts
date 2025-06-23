@@ -50,6 +50,28 @@ describe('spacing-tools', () => {
     expect(items.map((i) => i.y)).toEqual([5, 30]);
   });
 
+  test('applySpacingLayout handles frames', async () => {
+    const items = [
+      { x: 0, y: 0, width: 30, sync: jest.fn(), type: 'frame' },
+      { x: 40, y: 0, width: 10, sync: jest.fn(), type: 'shape' },
+    ];
+    const board: BoardLike = {
+      getSelection: jest.fn().mockResolvedValue(items),
+    };
+    await applySpacingLayout({ axis: 'x', spacing: 5 }, board);
+    expect(items.map((i) => i.x)).toEqual([0, 25]);
+  });
+
+  test('applySpacingLayout skips unsupported items', async () => {
+    const items = [{ x: 0, y: 0, width: 10, sync: jest.fn() }, { foo: 'bar' }];
+    const board: BoardLike = {
+      getSelection: jest.fn().mockResolvedValue(items),
+    };
+    await applySpacingLayout({ axis: 'x', spacing: 5 }, board);
+    expect(items[0].x).toBe(0);
+    expect(items[0].sync).toHaveBeenCalled();
+  });
+
   test('applySpacingLayout spaces widgets vertically by edges', async () => {
     const items = [
       { x: 0, y: 0, height: 10, sync: jest.fn() },

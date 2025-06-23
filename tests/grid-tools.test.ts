@@ -121,6 +121,32 @@ describe('grid-tools', () => {
     expect(byTitle.c.x).toBe(15);
   });
 
+  test('applyGridLayout handles frames', async () => {
+    const items = [
+      { x: 0, y: 0, width: 30, height: 20, sync: jest.fn(), type: 'frame' },
+      { x: 0, y: 0, width: 10, height: 10, sync: jest.fn(), type: 'shape' },
+    ];
+    const board: BoardLike = {
+      getSelection: jest.fn().mockResolvedValue(items),
+    };
+    await applyGridLayout({ cols: 2, padding: 5 }, board);
+    expect(items[1].x).toBe(35);
+    expect(items[1].y).toBe(0);
+  });
+
+  test('applyGridLayout ignores unsupported items', async () => {
+    const items = [
+      { x: 0, y: 0, width: 10, height: 10, sync: jest.fn() },
+      { foo: 'bar' },
+    ];
+    const board: BoardLike = {
+      getSelection: jest.fn().mockResolvedValue(items),
+    };
+    await applyGridLayout({ cols: 1, padding: 5 }, board);
+    expect(items[0].x).toBe(0);
+    expect(items[0].y).toBe(0);
+  });
+
   test('applyGridLayout throws without board', async () => {
     await expect(applyGridLayout({ cols: 1, padding: 0 })).rejects.toThrow(
       'Miro board not available',
