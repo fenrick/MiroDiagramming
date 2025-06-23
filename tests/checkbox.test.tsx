@@ -12,6 +12,8 @@ test('Checkbox renders span for Mirotone styling', () => {
   render(<Checkbox label='Option' value={false} onChange={() => {}} />);
   const input = screen.getByRole('checkbox', { name: 'Option' });
   expect(input.nextSibling).toBeInstanceOf(HTMLElement);
+  const label = screen.getByText('Option').closest('label');
+  expect(label).toHaveAttribute('for', input.getAttribute('id'));
 });
 
 test('triggers onChange when toggled on', () => {
