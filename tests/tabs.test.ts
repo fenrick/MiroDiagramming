@@ -214,11 +214,19 @@ describe('tab components', () => {
 });
 
 describe('tab auto-registration', () => {
-  test('includes DummyTab in development', async () => {
+  test('includes DummyTab in test environment', async () => {
+    const prev = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'test';
+    const { TAB_DATA } = await import('../src/ui/pages/tabs?test');
+    expect(TAB_DATA.some((t) => t[1] === 'dummy')).toBe(true);
+    process.env.NODE_ENV = prev;
+  });
+
+  test('excludes DummyTab in development', async () => {
     const prev = process.env.NODE_ENV;
     process.env.NODE_ENV = 'development';
-    const { TAB_DATA } = await import('../src/ui/pages/tabs');
-    expect(TAB_DATA.some((t) => t[1] === 'dummy')).toBe(true);
+    const { TAB_DATA } = await import('../src/ui/pages/tabs?dev');
+    expect(TAB_DATA.some((t) => t[1] === 'dummy')).toBe(false);
     process.env.NODE_ENV = prev;
   });
 
