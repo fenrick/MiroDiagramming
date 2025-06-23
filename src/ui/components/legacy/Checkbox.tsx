@@ -10,7 +10,13 @@ export interface CheckboxProps
   onChange?: (value: boolean) => void;
 }
 
-/** Checkbox with label styled using Mirotone classes. */
+/**
+ * Mirotone-styled checkbox component.
+ *
+ * Mirotone renders the checked state via a sibling `<span>` element. The span
+ * also holds the visible label text so that the checkbox remains accessible
+ * without additional attributes.
+ */
 export function Checkbox({
   label,
   value,
