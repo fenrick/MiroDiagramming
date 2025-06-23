@@ -20,13 +20,15 @@ export function Select({
     onChange?.(e.target.value);
   };
   return (
-    <select
-      className={`select ${className}`.trim()}
-      onChange={handleChange}
-      {...props}
-    >
-      {children}
-    </select>
+    <div className='form-group-small'>
+      <select
+        className={`select ${className}`.trim()}
+        onChange={handleChange}
+        {...props}
+      >
+        {children}
+      </select>
+    </div>
   );
 }
 
