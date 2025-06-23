@@ -23,11 +23,7 @@ describe('CardLoader normalization', () => {
               fields: 'no',
               style: { fillBackground: 'false', cardTheme: 'blue' },
             },
-            {
-              title: 'B',
-              tags: ['x'],
-              style: {},
-            },
+            { title: 'B', tags: ['x'], style: {} },
           ],
         };
         if (this.onload) {

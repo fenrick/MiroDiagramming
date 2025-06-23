@@ -12,5 +12,10 @@ export function Button({
   ...props
 }: ButtonProps): React.JSX.Element {
   const classes = `button button-${variant} ${className}`.trim();
-  return <button className={classes} {...props} />;
+  return (
+    <button
+      className={classes}
+      {...props}
+    />
+  );
 }

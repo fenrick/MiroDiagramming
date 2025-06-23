@@ -38,8 +38,7 @@ export const SpacingTab: React.FC = () => {
         <Select
           value={opts.axis}
           onChange={updateAxis}
-          className='select-small'
-        >
+          className='select-small'>
           <SelectOption value='x'>Horizontal</SelectOption>
           <SelectOption value='y'>Vertical</SelectOption>
         </Select>
@@ -48,8 +47,7 @@ export const SpacingTab: React.FC = () => {
         <Select
           value={opts.mode ?? 'move'}
           onChange={updateMode}
-          className='select-small'
-        >
+          className='select-small'>
           <SelectOption value='move'>Move</SelectOption>
           <SelectOption value='grow'>Expand</SelectOption>
         </Select>
@@ -59,12 +57,14 @@ export const SpacingTab: React.FC = () => {
           className='input input-small'
           type='number'
           value={String(opts.spacing)}
-          onChange={e => updateSpacing(e.target.value)}
+          onChange={(e) => updateSpacing(e.target.value)}
           placeholder='Distance'
         />
       </InputField>
       <div className='buttons'>
-        <Button onClick={apply} variant='primary'>
+        <Button
+          onClick={apply}
+          variant='primary'>
           <React.Fragment key='.0'>
             <Icon name='arrow-right' />
             <Text>Distribute</Text>

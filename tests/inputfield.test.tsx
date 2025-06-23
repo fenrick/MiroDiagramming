@@ -5,7 +5,13 @@ import '@testing-library/jest-dom';
 import { InputField } from '../src/ui/components/legacy/InputField';
 
 test('renders label and input', () => {
-  render(<InputField label='Name' value='x' onChange={() => {}} />);
+  render(
+    <InputField
+      label='Name'
+      value='x'
+      onChange={() => {}}
+    />,
+  );
   const input = screen.getByLabelText('Name');
   expect(input).toBeInTheDocument();
   const label = screen.getByText('Name');
@@ -14,7 +20,12 @@ test('renders label and input', () => {
 
 test('calls onChange with value', () => {
   const handler = jest.fn();
-  render(<InputField label='Age' onChange={handler} />);
+  render(
+    <InputField
+      label='Age'
+      onChange={handler}
+    />,
+  );
   const input = screen.getByLabelText('Age');
   fireEvent.change(input, { target: { value: '42' } });
   expect(handler).toHaveBeenCalledWith('42');
@@ -23,7 +34,10 @@ test('calls onChange with value', () => {
 test('supports custom child element', () => {
   render(
     <InputField label='File'>
-      <input data-testid='custom' type='file' />
+      <input
+        data-testid='custom'
+        type='file'
+      />
     </InputField>,
   );
   const input = screen.getByTestId('custom');

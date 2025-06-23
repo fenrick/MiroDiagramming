@@ -32,9 +32,7 @@ describe('CardProcessor branches', () => {
       getMetadata: jest.fn().mockResolvedValue({}),
       id: '1',
     } as Record<string, unknown>;
-    global.miro = {
-      board: { get: jest.fn().mockResolvedValue([card]) },
-    };
+    global.miro = { board: { get: jest.fn().mockResolvedValue([card]) } };
     const cp = new CardProcessor();
     const map = await (
       cp as unknown as { loadCardMap: () => Promise<Map<string, unknown>> }

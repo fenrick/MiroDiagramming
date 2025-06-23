@@ -10,5 +10,10 @@ export function Icon({
   className = '',
   ...props
 }: IconProps): React.JSX.Element {
-  return <span className={`icon-${name} ${className}`.trim()} {...props} />;
+  return (
+    <span
+      className={`icon-${name} ${className}`.trim()}
+      {...props}
+    />
+  );
 }

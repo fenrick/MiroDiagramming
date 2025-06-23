@@ -124,7 +124,7 @@ export class BoardBuilder {
     }
     await this.loadConnectorCache();
     const connectors = this.connectorCache ?? [];
-    return this.findByMetadata(connectors, meta => {
+    return this.findByMetadata(connectors, (meta) => {
       const data = meta as EdgeMetadata | undefined;
       return data?.from === from && data.to === to;
     });
@@ -199,9 +199,10 @@ export class BoardBuilder {
     await Promise.all(
       items
         .filter(
-          i => typeof (i as { sync?: () => Promise<void> }).sync === 'function',
+          (i) =>
+            typeof (i as { sync?: () => Promise<void> }).sync === 'function',
         )
-        .map(i => (i as { sync: () => Promise<void> }).sync()),
+        .map((i) => (i as { sync: () => Promise<void> }).sync()),
     );
   }
 
@@ -211,7 +212,7 @@ export class BoardBuilder {
   ): Promise<void> {
     this.ensureBoard();
     await Promise.all(
-      items.map(item => miro.board.remove(item as unknown as BaseItem)),
+      items.map((item) => miro.board.remove(item as unknown as BaseItem)),
     );
   }
 
@@ -247,7 +248,7 @@ export class BoardBuilder {
     items: T[],
     predicate: (meta: unknown, item: T) => boolean,
   ): Promise<T | undefined> {
-    const metas = await Promise.all(items.map(i => i.getMetadata(META_KEY)));
+    const metas = await Promise.all(items.map((i) => i.getMetadata(META_KEY)));
     for (let i = 0; i < items.length; i++) {
       if (predicate(metas[i], items[i])) {
         return items[i];
@@ -266,7 +267,7 @@ export class BoardBuilder {
   ): Promise<BaseItem | Group | undefined> {
     await this.loadShapeCache();
     const shapes = this.shapeCache ?? [];
-    return this.findByMetadata(shapes, meta => {
+    return this.findByMetadata(shapes, (meta) => {
       const data = meta as NodeMetadata | undefined;
       return data?.type === type && data.label === label;
     });
@@ -283,10 +284,10 @@ export class BoardBuilder {
     this.ensureBoard();
     const groups = (await miro.board.get({ type: 'group' })) as Group[];
     const matches = await Promise.all(
-      groups.map(async group => {
+      groups.map(async (group) => {
         const items = await group.getItems();
         if (!Array.isArray(items)) return undefined;
-        const found = await this.findByMetadata(items as BaseItem[], meta => {
+        const found = await this.findByMetadata(items as BaseItem[], (meta) => {
           const data = meta as NodeMetadata | undefined;
           return data?.type === type && data.label === label;
         });
@@ -415,7 +416,7 @@ export class BoardBuilder {
     if ((widget as Group).type === 'group') {
       const items = await (widget as Group).getItems();
       await Promise.all(
-        items.map(item =>
+        items.map((item) =>
           item.setMetadata(META_KEY, { type: node.type, label: node.label }),
         ),
       );
@@ -497,10 +498,7 @@ export class BoardBuilder {
         : undefined,
       style: template?.style as ConnectorStyle | undefined,
     });
-    await connector.setMetadata(META_KEY, {
-      from: edge.from,
-      to: edge.to,
-    });
+    await connector.setMetadata(META_KEY, { from: edge.from, to: edge.to });
     if (this.connectorCache) {
       this.connectorCache.push(connector);
     }

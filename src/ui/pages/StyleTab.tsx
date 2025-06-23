@@ -33,11 +33,14 @@ export const StyleTab: React.FC = () => {
           max='100'
           list='adjust-marks'
           value={adjust}
-          onChange={e => setAdjust(Number(e.target.value))}
+          onChange={(e) => setAdjust(Number(e.target.value))}
         />
         <datalist id='adjust-marks'>
-          {[-100, -50, 0, 50, 100].map(n => (
-            <option key={n} value={n} />
+          {[-100, -50, 0, 50, 100].map((n) => (
+            <option
+              key={n}
+              value={n}
+            />
           ))}
         </datalist>
         <span
@@ -53,8 +56,7 @@ export const StyleTab: React.FC = () => {
         />
         <code
           data-testid='color-hex'
-          style={{ marginLeft: tokens.space.xxsmall }}
-        >
+          style={{ marginLeft: tokens.space.xxsmall }}>
           {preview}
         </code>
       </InputField>
@@ -66,12 +68,14 @@ export const StyleTab: React.FC = () => {
           min='-100'
           max='100'
           value={String(adjust)}
-          onChange={e => setAdjust(Number(e.target.value))}
+          onChange={(e) => setAdjust(Number(e.target.value))}
           placeholder='Adjust (-100–100)'
         />
       </InputField>
       <div className='buttons'>
-        <Button onClick={apply} variant='primary'>
+        <Button
+          onClick={apply}
+          variant='primary'>
           <React.Fragment>
             <Icon name='parameters' />
             <Text>Apply</Text>

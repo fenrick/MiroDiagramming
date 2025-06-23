@@ -38,9 +38,7 @@ export const CardsTab: React.FC = () => {
   }, [lastProc]);
 
   const dropzone = useDropzone({
-    accept: {
-      'application/json': ['.json'],
-    },
+    accept: { 'application/json': ['.json'] },
     maxFiles: 1,
     onDrop: async (droppedFiles: File[]) => {
       const file = droppedFiles[0];
@@ -82,8 +80,7 @@ export const CardsTab: React.FC = () => {
       <div
         {...dropzone.getRootProps({ style })}
         aria-label='File drop area'
-        aria-describedby='dropzone-instructions'
-      >
+        aria-describedby='dropzone-instructions'>
         <InputField label='JSON file'>
           <input
             data-testid='file-input'
@@ -108,7 +105,9 @@ export const CardsTab: React.FC = () => {
           </>
         )}
       </div>
-      <Paragraph id='dropzone-instructions' className='custom-visually-hidden'>
+      <Paragraph
+        id='dropzone-instructions'
+        className='custom-visually-hidden'>
         Press Enter to open the file picker or drop a JSON file on the area
         above.
       </Paragraph>
@@ -133,19 +132,24 @@ export const CardsTab: React.FC = () => {
                 className='input'
                 placeholder='Frame title'
                 value={frameTitle}
-                onChange={e => setFrameTitle(e.target.value)}
+                onChange={(e) => setFrameTitle(e.target.value)}
               />
             </InputField>
           )}
           <div className='buttons'>
-            <Button onClick={handleCreate} variant='primary'>
+            <Button
+              onClick={handleCreate}
+              variant='primary'>
               <React.Fragment key='.0'>
                 <Icon name='plus' />
                 <Text>Create Cards</Text>
               </React.Fragment>
             </Button>
             {progress > 0 && progress < 100 && (
-              <progress value={progress} max={100} />
+              <progress
+                value={progress}
+                max={100}
+              />
             )}
             {error && <Paragraph className='error'>{error}</Paragraph>}
             {showUndo && (
@@ -153,8 +157,7 @@ export const CardsTab: React.FC = () => {
                 onClick={() =>
                   void undoLastImport(lastProc, () => setLastProc(undefined))
                 }
-                variant='secondary'
-              >
+                variant='secondary'>
                 Undo import (⌘Z)
               </Button>
             )}
@@ -163,8 +166,7 @@ export const CardsTab: React.FC = () => {
                 onClick={() => {
                   void undoLastImport(lastProc, () => setLastProc(undefined));
                 }}
-                variant='secondary'
-              >
+                variant='secondary'>
                 <React.Fragment key='.0'>
                   <Icon name='undo' />
                   <Text>Undo Last Import</Text>

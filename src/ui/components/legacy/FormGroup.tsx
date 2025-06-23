@@ -7,5 +7,10 @@ export function FormGroup({
   className = '',
   ...props
 }: FormGroupProps): React.JSX.Element {
-  return <div className={`form-group ${className}`.trim()} {...props} />;
+  return (
+    <div
+      className={`form-group ${className}`.trim()}
+      {...props}
+    />
+  );
 }

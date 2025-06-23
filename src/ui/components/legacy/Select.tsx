@@ -24,8 +24,7 @@ export function Select({
       <select
         className={`select ${className}`.trim()}
         onChange={handleChange}
-        {...props}
-      >
+        {...props}>
         {children}
       </select>
     </div>

@@ -95,7 +95,7 @@ export const ResizeTab: React.FC = () => {
             className='input input-small'
             type='number'
             value={String(size.width)}
-            onChange={e => update('width')(e.target.value)}
+            onChange={(e) => update('width')(e.target.value)}
             placeholder='Width (board units)'
           />
         </InputField>
@@ -104,13 +104,13 @@ export const ResizeTab: React.FC = () => {
             className='input input-small'
             type='number'
             value={String(size.height)}
-            onChange={e => update('height')(e.target.value)}
+            onChange={(e) => update('height')(e.target.value)}
             placeholder='Height (board units)'
           />
         </InputField>
       </FormGroup>
       <div>
-        {['S', 'M', 'L'].map(p => (
+        {['S', 'M', 'L'].map((p) => (
           <Button
             key={p}
             onClick={() =>
@@ -122,8 +122,7 @@ export const ResizeTab: React.FC = () => {
                     : { width: 400, height: 300 },
               )
             }
-            variant='secondary'
-          >
+            variant='secondary'>
             {p}
           </Button>
         ))}
@@ -135,13 +134,17 @@ export const ResizeTab: React.FC = () => {
         {boardUnitsToInches(size.height).toFixed(2)} in)
       </Paragraph>
       <div className='buttons'>
-        <Button onClick={copiedSize ? resetCopy : copy} variant='secondary'>
+        <Button
+          onClick={copiedSize ? resetCopy : copy}
+          variant='secondary'>
           <React.Fragment key='.0'>
             <Icon name={copiedSize ? 'undo' : 'duplicate'} />
             <Text>{copiedSize ? 'Reset Copy' : 'Copy Size'}</Text>
           </React.Fragment>
         </Button>
-        <Button onClick={apply} variant='primary'>
+        <Button
+          onClick={apply}
+          variant='primary'>
           <React.Fragment key='.0'>
             <Icon name='arrow-right' />
             <Text>Apply Size</Text>

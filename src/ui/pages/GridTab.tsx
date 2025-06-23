@@ -47,7 +47,7 @@ export const GridTab: React.FC = () => {
           className='input input-small'
           type='number'
           value={String(grid.cols)}
-          onChange={e => updateNumber('cols')(e.target.value)}
+          onChange={(e) => updateNumber('cols')(e.target.value)}
           placeholder='Columns'
         />
       </InputField>
@@ -56,7 +56,7 @@ export const GridTab: React.FC = () => {
           className='input input-small'
           type='number'
           value={String(grid.padding)}
-          onChange={e => updateNumber('padding')(e.target.value)}
+          onChange={(e) => updateNumber('padding')(e.target.value)}
           placeholder='Gap'
         />
       </InputField>
@@ -70,8 +70,7 @@ export const GridTab: React.FC = () => {
           <Select
             value={grid.sortOrientation}
             onChange={setOrientation}
-            className='select-small'
-          >
+            className='select-small'>
             <SelectOption value='horizontal'>Horizontally</SelectOption>
             <SelectOption value='vertical'>Vertically</SelectOption>
           </Select>
@@ -87,13 +86,15 @@ export const GridTab: React.FC = () => {
           <input
             className='input input-small'
             value={frameTitle}
-            onChange={e => setFrameTitle(e.target.value)}
+            onChange={(e) => setFrameTitle(e.target.value)}
             placeholder='Optional'
           />
         </InputField>
       )}
       <div className='buttons'>
-        <Button onClick={apply} variant='primary'>
+        <Button
+          onClick={apply}
+          variant='primary'>
           <React.Fragment key='.0'>
             <Icon name='grid' />
             <Text>Arrange Grid</Text>

@@ -20,9 +20,7 @@ describe('BoardBuilder caches and connector updates', () => {
     const shape = {
       getMetadata: jest.fn().mockResolvedValue({ type: 'Role', label: 'B' }),
     } as Record<string, unknown>;
-    global.miro = {
-      board: { get: jest.fn().mockResolvedValue([shape]) },
-    };
+    global.miro = { board: { get: jest.fn().mockResolvedValue([shape]) } };
     const builder = new BoardBuilder();
     const result = await builder.findNode('Role', 'B');
     expect(result).toBe(shape);
@@ -31,12 +29,14 @@ describe('BoardBuilder caches and connector updates', () => {
   test('createEdges caches new connector', async () => {
     const board = {
       get: jest.fn().mockResolvedValue([]),
-      createConnector: jest.fn().mockResolvedValue({
-        setMetadata: jest.fn(),
-        getMetadata: jest.fn(),
-        sync: jest.fn(),
-        id: 'c1',
-      }),
+      createConnector: jest
+        .fn()
+        .mockResolvedValue({
+          setMetadata: jest.fn(),
+          getMetadata: jest.fn(),
+          sync: jest.fn(),
+          id: 'c1',
+        }),
     };
     global.miro = { board };
     const builder = new BoardBuilder();

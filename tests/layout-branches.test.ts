@@ -55,10 +55,9 @@ test('layoutGraph handles metadata and missing sections', async () => {
 });
 
 test('layoutGraph uses defaults when layout values missing', async () => {
-  const layoutSpy = jest.spyOn(ELK.prototype, 'layout').mockResolvedValue({
-    children: [{ id: 'n2' }],
-    edges: [],
-  } as unknown);
+  const layoutSpy = jest
+    .spyOn(ELK.prototype, 'layout')
+    .mockResolvedValue({ children: [{ id: 'n2' }], edges: [] } as unknown);
   const graph = { nodes: [{ id: 'n2', label: 'B', type: 'Role' }], edges: [] };
   const result = await layoutEngine.layoutGraph(
     graph as unknown as Parameters<typeof layoutEngine.layoutGraph>[0],

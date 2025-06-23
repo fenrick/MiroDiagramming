@@ -6,10 +6,9 @@ import * as layoutCore from '../src/core/layout/layout-core';
 test('layoutGraph runs without Web Worker', async () => {
   const origWorker = (global as { Worker?: typeof Worker }).Worker;
   (global as { Worker: typeof Worker }).Worker = class {} as typeof Worker;
-  const spy = vi.spyOn(layoutCore, 'performLayout').mockResolvedValue({
-    nodes: {},
-    edges: [],
-  });
+  const spy = vi
+    .spyOn(layoutCore, 'performLayout')
+    .mockResolvedValue({ nodes: {}, edges: [] });
   const engine = LayoutEngine.getInstance();
   const result = await engine.layoutGraph({ nodes: [], edges: [] });
   expect(result).toEqual({ nodes: {}, edges: [] });

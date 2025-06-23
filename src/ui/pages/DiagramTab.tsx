@@ -48,7 +48,7 @@ export const DiagramTab: React.FC = () => {
     const handler = (e: KeyboardEvent): void => {
       if ((e.metaKey || e.ctrlKey) && e.key === '/') {
         e.preventDefault();
-        setShowAdvanced(v => !v);
+        setShowAdvanced((v) => !v);
       }
     };
     window.addEventListener('keydown', handler);
@@ -56,9 +56,7 @@ export const DiagramTab: React.FC = () => {
   }, []);
 
   const dropzone = useDropzone({
-    accept: {
-      'application/json': ['.json'],
-    },
+    accept: { 'application/json': ['.json'] },
     maxFiles: 1,
     onDrop: async (droppedFiles: File[]) => {
       const file = droppedFiles[0];
@@ -105,8 +103,7 @@ export const DiagramTab: React.FC = () => {
       <div
         {...dropzone.getRootProps({ style })}
         aria-label='File drop area'
-        aria-describedby='dropzone-instructions'
-      >
+        aria-describedby='dropzone-instructions'>
         <InputField label='JSON file'>
           <input
             data-testid='file-input'
@@ -131,7 +128,9 @@ export const DiagramTab: React.FC = () => {
           </>
         )}
       </div>
-      <Paragraph id='dropzone-instructions' className='custom-visually-hidden'>
+      <Paragraph
+        id='dropzone-instructions'
+        className='custom-visually-hidden'>
         Press Enter to open the file picker or drop a JSON file on the area
         above.
       </Paragraph>
@@ -145,8 +144,8 @@ export const DiagramTab: React.FC = () => {
           </ul>
           <SegmentedControl
             value={layoutChoice}
-            onChange={v => setLayoutChoice(v as LayoutChoice)}
-            options={LAYOUTS.map(l => ({ label: l, value: l }))}
+            onChange={(v) => setLayoutChoice(v as LayoutChoice)}
+            options={LAYOUTS.map((l) => ({ label: l, value: l }))}
           />
           <div style={{ marginTop: tokens.space.small }}>
             <Checkbox
@@ -161,7 +160,7 @@ export const DiagramTab: React.FC = () => {
                 className='input'
                 placeholder='Frame title'
                 value={frameTitle}
-                onChange={e => setFrameTitle(e.target.value)}
+                onChange={(e) => setFrameTitle(e.target.value)}
               />
             </InputField>
           )}
@@ -170,15 +169,16 @@ export const DiagramTab: React.FC = () => {
               <InputField label='Algorithm'>
                 <Select
                   value={layoutOpts.algorithm}
-                  onChange={value =>
+                  onChange={(value) =>
                     setLayoutOpts({
                       ...layoutOpts,
                       algorithm: value as ElkAlgorithm,
                     })
-                  }
-                >
-                  {ALGORITHMS.map(a => (
-                    <SelectOption key={a} value={a}>
+                  }>
+                  {ALGORITHMS.map((a) => (
+                    <SelectOption
+                      key={a}
+                      value={a}>
                       {a}
                     </SelectOption>
                   ))}
@@ -187,15 +187,16 @@ export const DiagramTab: React.FC = () => {
               <InputField label='Direction'>
                 <Select
                   value={layoutOpts.direction}
-                  onChange={value =>
+                  onChange={(value) =>
                     setLayoutOpts({
                       ...layoutOpts,
                       direction: value as ElkDirection,
                     })
-                  }
-                >
-                  {DIRECTIONS.map(d => (
-                    <SelectOption key={d} value={d}>
+                  }>
+                  {DIRECTIONS.map((d) => (
+                    <SelectOption
+                      key={d}
+                      value={d}>
                       {d}
                     </SelectOption>
                   ))}
@@ -206,7 +207,7 @@ export const DiagramTab: React.FC = () => {
                   className='input'
                   type='number'
                   value={String(layoutOpts.spacing)}
-                  onChange={e =>
+                  onChange={(e) =>
                     setLayoutOpts({
                       ...layoutOpts,
                       spacing: Number(e.target.value),
@@ -217,14 +218,19 @@ export const DiagramTab: React.FC = () => {
             </>
           )}
           <div className='buttons'>
-            <Button onClick={handleCreate} variant='primary'>
+            <Button
+              onClick={handleCreate}
+              variant='primary'>
               <React.Fragment key='.0'>
                 <Icon name='plus' />
                 <Text>Create Diagram</Text>
               </React.Fragment>
             </Button>
             {progress > 0 && progress < 100 && (
-              <progress value={progress} max={100} />
+              <progress
+                value={progress}
+                max={100}
+              />
             )}
             {error && <Paragraph className='error'>{error}</Paragraph>}
             {lastProc && (
@@ -232,8 +238,7 @@ export const DiagramTab: React.FC = () => {
                 onClick={() => {
                   void undoLastImport(lastProc, () => setLastProc(undefined));
                 }}
-                variant='secondary'
-              >
+                variant='secondary'>
                 <React.Fragment key='.0'>
                   <Icon name='undo' />
                   <Text>Undo Last Import</Text>

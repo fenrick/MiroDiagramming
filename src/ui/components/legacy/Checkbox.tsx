@@ -32,7 +32,9 @@ export function Checkbox({
 
   return (
     <div className='form-group-small'>
-      <label htmlFor={inputId} className={`toggle ${className}`.trim()}>
+      <label
+        htmlFor={inputId}
+        className={`toggle ${className}`.trim()}>
         <input
           id={inputId}
           type='checkbox'

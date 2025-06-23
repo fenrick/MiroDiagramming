@@ -10,10 +10,7 @@ export function relativePosition(
   node: { x: number; y: number; width: number; height: number },
   pt: { x: number; y: number },
 ): { x: number; y: number } {
-  return {
-    x: (pt.x - node.x) / node.width,
-    y: (pt.y - node.y) / node.height,
-  };
+  return { x: (pt.x - node.x) / node.width, y: (pt.y - node.y) / node.height };
 }
 
 export interface EdgeHint {

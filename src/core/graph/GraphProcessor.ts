@@ -96,7 +96,7 @@ export class GraphProcessor {
     let minY = Infinity;
     let maxX = -Infinity;
     let maxY = -Infinity;
-    Object.values(layout.nodes).forEach(n => {
+    Object.values(layout.nodes).forEach((n) => {
       minX = Math.min(minX, n.x);
       minY = Math.min(minY, n.y);
       maxX = Math.max(maxX, n.x + n.width);
@@ -158,11 +158,7 @@ export class GraphProcessor {
     const nodeMap: Record<string, BaseItem | Group> = {};
     for (const node of graph.nodes) {
       const pos = layout.nodes[node.id];
-      const adjPos = {
-        ...pos,
-        x: pos.x + offsetX,
-        y: pos.y + offsetY,
-      };
+      const adjPos = { ...pos, x: pos.x + offsetX, y: pos.y + offsetY };
       const widget = await this.builder.createNode(node, adjPos);
       nodeMap[node.id] = widget;
       this.lastCreated.push(widget);
@@ -206,7 +202,7 @@ export class GraphProcessor {
       throw new Error('Invalid graph format');
     }
 
-    const nodeIds = new Set(graph.nodes.map(n => n.id));
+    const nodeIds = new Set(graph.nodes.map((n) => n.id));
     for (const edge of graph.edges) {
       if (!nodeIds.has(edge.from)) {
         throw new Error(`Edge references missing node: ${edge.from}`);
