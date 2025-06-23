@@ -1,4 +1,8 @@
-import { tweakFillColor } from '../src/board/style-tools';
+import {
+  tweakFillColor,
+  copyFillFromSelection,
+  extractFillColor,
+} from '../src/board/style-tools';
 
 describe('style-tools', () => {
   test('tweakFillColor adjusts fill and font', async () => {
@@ -17,5 +21,27 @@ describe('style-tools', () => {
     await expect(tweakFillColor(0.1)).rejects.toThrow(
       'Miro board not available',
     );
+  });
+
+  test('copyFillFromSelection returns colour', async () => {
+    const board = {
+      getSelection: jest
+        .fn()
+        .mockResolvedValue([{ style: { fillColor: '#abcdef' } }]),
+    };
+    const colour = await copyFillFromSelection(board);
+    expect(colour).toBe('#abcdef');
+  });
+
+  test('copyFillFromSelection returns null when missing', async () => {
+    const board = { getSelection: jest.fn().mockResolvedValue([{}]) };
+    const colour = await copyFillFromSelection(board);
+    expect(colour).toBeNull();
+  });
+
+  test('extractFillColor resolves colour', () => {
+    const item = { style: { fillColor: '#123456' } };
+    expect(extractFillColor(item)).toBe('#123456');
+    expect(extractFillColor(undefined)).toBeNull();
   });
 });

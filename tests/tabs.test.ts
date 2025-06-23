@@ -18,7 +18,10 @@ import { cardLoader } from '../src/core/utils/cards';
 import type { CardData } from '../src/core/utils/cards';
 
 vi.mock('../src/board/resize-tools');
-vi.mock('../src/board/style-tools');
+vi.mock('../src/board/style-tools', () => {
+  const actual = jest.requireActual('../src/board/style-tools');
+  return { ...actual, tweakFillColor: jest.fn() };
+});
 vi.mock('../src/board/grid-tools');
 vi.mock('../src/board/spacing-tools');
 vi.mock('../src/core/graph/GraphProcessor');
@@ -105,6 +108,19 @@ describe('tab components', () => {
       fireEvent.change(slider, { target: { value: '50' } });
     });
     expect(preview).toHaveStyle({ backgroundColor: '#c0c0c0' });
+  });
+
+  test('StyleTab displays selection colour', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (globalThis as any).miro.board.getSelection.mockResolvedValueOnce([
+      { style: { fillColor: '#123456' } },
+    ]);
+    render(React.createElement(StyleTab));
+    await act(async () => {
+      await new Promise(r => setTimeout(r, 0));
+    });
+    const preview = screen.getByTestId('adjust-preview');
+    expect(preview.style.backgroundColor).toBe('rgb(18, 52, 86)');
   });
 
   test('GridTab applies layout', async () => {

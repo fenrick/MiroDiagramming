@@ -1,17 +1,24 @@
 import React from 'react';
 import { Button, Icon, Input, Text, InputLabel } from '../components/legacy';
-import { tweakFillColor } from '../../board/style-tools';
+import { tweakFillColor, extractFillColor } from '../../board/style-tools';
 import { adjustColor } from '../../core/utils/color-utils';
+import { useSelection } from '../hooks/useSelection';
 import { tokens } from '../tokens';
 import type { TabTuple } from './tab-definitions';
 
 /** Adjusts the fill colour of selected widgets. */
 export const StyleTab: React.FC = () => {
   const [adjust, setAdjust] = React.useState(0);
+  const selection = useSelection();
+  const [baseColor, setBaseColor] = React.useState('#808080');
+  // Update base colour when the selection changes
+  React.useEffect(() => {
+    setBaseColor(extractFillColor(selection[0]) ?? '#808080');
+  }, [selection]);
   // Preview colour updated live as the user tweaks the slider
   const preview = React.useMemo(
-    () => adjustColor('#808080', adjust / 100),
-    [adjust],
+    () => adjustColor(baseColor, adjust / 100),
+    [baseColor, adjust],
   );
   const apply = async (): Promise<void> => {
     await tweakFillColor(adjust / 100);
