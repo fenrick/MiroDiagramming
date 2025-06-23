@@ -21,6 +21,8 @@ export class CardProcessor {
   private static readonly CARD_HEIGHT = 88;
   /** Spacing margin applied around cards and frames. */
   private static readonly CARD_MARGIN = 50;
+  /** Gap between cards when arranged in a grid. */
+  private static readonly CARD_GAP = 24;
   private lastCreated: Array<Card | Frame> = [];
   /** Cached board cards when processing updates. */
   private cardsCache: Card[] | undefined;
@@ -82,8 +84,12 @@ export class CardProcessor {
         toCreate.map((def, i) =>
           this.createCardWidget(
             def,
-            startX + (i % columns) * CardProcessor.CARD_WIDTH,
-            startY + Math.floor(i / columns) * CardProcessor.CARD_HEIGHT,
+            startX +
+              (i % columns) *
+                (CardProcessor.CARD_WIDTH + CardProcessor.CARD_GAP),
+            startY +
+              Math.floor(i / columns) *
+                (CardProcessor.CARD_HEIGHT + CardProcessor.CARD_GAP),
             tagMap,
           ),
         ),
@@ -248,9 +254,13 @@ export class CardProcessor {
     const cols = Math.max(1, Math.min(columns, count));
     const rows = Math.ceil(count / cols);
     const totalWidth =
-      CardProcessor.CARD_WIDTH * cols + CardProcessor.CARD_MARGIN * 2;
+      CardProcessor.CARD_WIDTH * cols +
+      CardProcessor.CARD_GAP * (cols - 1) +
+      CardProcessor.CARD_MARGIN * 2;
     const totalHeight =
-      CardProcessor.CARD_HEIGHT * rows + CardProcessor.CARD_MARGIN * 2;
+      CardProcessor.CARD_HEIGHT * rows +
+      CardProcessor.CARD_GAP * (rows - 1) +
+      CardProcessor.CARD_MARGIN * 2;
     const spot = await this.builder.findSpace(totalWidth, totalHeight);
     const startX = this.computeStartCoordinate(
       spot.x,

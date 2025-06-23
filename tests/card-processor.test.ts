@@ -170,10 +170,10 @@ describe('CardProcessor', () => {
       { columns: 2 },
     );
     const calls = (global.miro.board.createCard as jest.Mock).mock.calls;
-    expect(calls[0][0]).toEqual(expect.objectContaining({ x: -160, y: -44 }));
-    expect(calls[1][0]).toEqual(expect.objectContaining({ x: 160, y: -44 }));
-    expect(calls[2][0]).toEqual(expect.objectContaining({ x: -160, y: 44 }));
-    expect(calls[3][0]).toEqual(expect.objectContaining({ x: 160, y: 44 }));
+    expect(calls[0][0]).toEqual(expect.objectContaining({ x: -172, y: -56 }));
+    expect(calls[1][0]).toEqual(expect.objectContaining({ x: 172, y: -56 }));
+    expect(calls[2][0]).toEqual(expect.objectContaining({ x: -172, y: 56 }));
+    expect(calls[3][0]).toEqual(expect.objectContaining({ x: 172, y: 56 }));
   });
 
   test('throws on invalid input', async () => {
