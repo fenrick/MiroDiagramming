@@ -17,10 +17,10 @@ afterEach(() => {
   delete (globalThis as { miro?: unknown }).miro;
 });
 
-test('Ctrl+Alt+4 selects Style tab', async () => {
+test('Ctrl+Alt+3 selects Style tab', async () => {
   render(<App />);
   await act(async () => {
-    fireEvent.keyDown(window, { key: '4', ctrlKey: true, altKey: true });
+    fireEvent.keyDown(window, { key: '3', ctrlKey: true, altKey: true });
   });
   expect(screen.getByRole('button', { name: /apply/i })).toBeInTheDocument();
 });

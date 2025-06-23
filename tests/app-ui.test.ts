@@ -58,7 +58,9 @@ describe('App UI integration', () => {
       .spyOn(CardProcessor.prototype, 'processFile')
       .mockResolvedValue(undefined);
     render(React.createElement(App));
-    fireEvent.click(screen.getByRole('tab', { name: /cards/i }));
+    fireEvent.change(screen.getByRole('combobox'), {
+      target: { value: 'cards' },
+    });
     await act(async () => {
       selectFile();
     });
@@ -69,16 +71,11 @@ describe('App UI integration', () => {
     expect(spy).toHaveBeenCalled();
   });
 
-  test('mode radio buttons change description text', () => {
+  test('mode dropdown switches value', () => {
     render(React.createElement(App));
-    fireEvent.click(screen.getByRole('tab', { name: /cards/i }));
-    expect(
-      screen.getByText(/select the json file to import a list of cards/i),
-    ).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('tab', { name: /diagram/i }));
-    expect(
-      screen.getByText(/select the json file to import a diagram/i),
-    ).toBeInTheDocument();
+    const combo = screen.getByRole('combobox');
+    fireEvent.change(combo, { target: { value: 'cards' } });
+    expect(combo).toHaveValue('cards');
   });
 
   test('dropzone has accessibility attributes', () => {

@@ -151,7 +151,7 @@ export const ResizeTab: React.FC = () => {
   );
 };
 export const resizeTabDef: TabTuple = [
-  3,
+  2,
   'resize',
   'Resize',
   'Adjust size manually or copy from selection',

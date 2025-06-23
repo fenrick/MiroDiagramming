@@ -84,7 +84,7 @@ export const GridTab: React.FC = () => {
   );
 };
 export const gridTabDef: TabTuple = [
-  5,
+  4,
   'grid',
   'Grid',
   'Arrange selected items into a grid',

@@ -12,7 +12,6 @@ import {
 import { tokens } from '../tokens';
 import { CardProcessor } from '../../board/CardProcessor';
 import { cardLoader, CardData } from '../../core/utils/cards';
-import type { TabTuple } from './tab-definitions';
 import { showError } from '../hooks/notifications';
 import { getDropzoneStyle, undoLastImport } from '../hooks/ui-utils';
 
@@ -239,10 +238,3 @@ export const CardsTab: React.FC = () => {
     </div>
   );
 };
-export const cardsTabDef: TabTuple = [
-  2,
-  'cards',
-  'Cards',
-  'Select the JSON file to import a list of cards',
-  CardsTab,
-];
