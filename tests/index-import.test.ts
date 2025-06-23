@@ -1,9 +1,9 @@
 /** Entry index tests */
-jest.mock('../src/app/DiagramApp', () => {
+vi.mock('../src/app/DiagramApp', () => {
   return {
     DiagramApp: {
-      getInstance: jest.fn(() => ({
-        init: jest.fn().mockResolvedValue(undefined),
+      getInstance: vi.fn(() => ({
+        init: vi.fn().mockResolvedValue(undefined),
       })),
     },
   };

@@ -1,6 +1,12 @@
 import type React from 'react';
 
-export type TabId = 'create' | 'resize' | 'style' | 'grid' | 'spacing';
+export type TabId =
+  | 'create'
+  | 'resize'
+  | 'style'
+  | 'grid'
+  | 'spacing'
+  | 'dummy';
 
 export type TabTuple = readonly [
   order: number,
