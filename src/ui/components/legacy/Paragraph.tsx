@@ -7,5 +7,5 @@ export function Paragraph({
   className = '',
   ...props
 }: ParagraphProps): React.JSX.Element {
-  return <p className='p-medium ${className}' {...props} />;
+  return <p className={`p-medium ${className}`.trim()} {...props} />;
 }
