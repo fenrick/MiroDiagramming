@@ -1,14 +1,12 @@
 import type { TabTuple, TabId } from './tab-definitions';
-import { diagramTabDef } from './DiagramTab';
-import { cardsTabDef } from './CardsTab';
+import { createTabDef } from './CreateTab';
 import { resizeTabDef } from './ResizeTab';
 import { styleTabDef } from './StyleTab';
 import { gridTabDef } from './GridTab';
 import { spacingTabDef } from './SpacingTab';
 
 export const TAB_DATA: TabTuple[] = [
-  diagramTabDef,
-  cardsTabDef,
+  createTabDef,
   resizeTabDef,
   styleTabDef,
   gridTabDef,

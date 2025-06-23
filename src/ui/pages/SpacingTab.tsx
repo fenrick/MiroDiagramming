@@ -53,7 +53,7 @@ export const SpacingTab: React.FC = () => {
   );
 };
 export const spacingTabDef: TabTuple = [
-  6,
+  5,
   'spacing',
   'Spacing',
   'Distribute items evenly',

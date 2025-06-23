@@ -46,7 +46,9 @@ describe('App layout options and undo button', () => {
 
   test('hides layout options in cards mode', () => {
     render(React.createElement(App));
-    fireEvent.click(screen.getByRole('tab', { name: /cards/i }));
+    fireEvent.change(screen.getByRole('combobox'), {
+      target: { value: 'cards' },
+    });
     expect(screen.queryByLabelText('Algorithm')).toBeNull();
     expect(screen.queryByLabelText('Direction')).toBeNull();
     expect(screen.queryByLabelText('Spacing')).toBeNull();

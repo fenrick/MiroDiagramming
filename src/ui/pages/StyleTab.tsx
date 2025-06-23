@@ -53,7 +53,7 @@ export const StyleTab: React.FC = () => {
 };
 
 export const styleTabDef: TabTuple = [
-  4,
+  3,
   'style',
   'Colour Adjust',
   'Lighten or darken the fill colour of selected shapes',

@@ -6,22 +6,15 @@ a diagram on a Miro board. The application uses the **Eclipse Layout Kernel
 templates and each element can carry metadata that controls its appearance and
 placement.
 
-## Uploading JSON Graphs
+## Uploading JSON Content
 
 1. Click the app icon on your Miro board.
-2. Select a `.json` file containing `nodes` and `edges`.
-3. After the file uploads the ELK layout engine positions the elements and the
-   board is populated with the resulting shapes.
-
-## Importing Cards from JSON
-
-1. In the panel choose **Cards** mode.
-2. Select a `.json` file containing an object with a `cards` array.
-3. Each entry should provide an optional `id` to update existing cards along
-   with the card `title` and optional `description`, `tags`, `style` and
-   `fields` values. Matching tags are looked up on the board.
-4. See [`tests/fixtures/sample-cards.json`](tests/fixtures/sample-cards.json)
-   for an example format.
+2. In the **Create** tab choose whether to import a diagram or cards.
+3. Select a `.json` file. Diagrams require `nodes` and `edges` while the cards
+   option expects an object with a `cards` array.
+4. Once processed, widgets are placed on the board using the selected mode.
+5. See [`tests/fixtures/sample-cards.json`](tests/fixtures/sample-cards.json)
+   for a cards format example.
 
 ## ELK Layout
 

@@ -20,29 +20,17 @@ ambiguity.
 
 ---
 
-## 1  Diagram Tab
+## 1  Create Tab
 
-| Step | UI Element                               | Copy (EN‑AU)                                            | Interaction Flow                                                  | State Store    |
-| ---- | ---------------------------------------- | ------------------------------------------------------- | ----------------------------------------------------------------- | -------------- |
-| 1    | `<DropZone>` area (Stack `space="md"`)   | “Drag a .json / .csv / .mmd file or paste Mermaid code” | Drag file → highlight border; on drop validate                    | `importQueue`  |
-| 2    | `<Table>` preview (`DataGrid`)           | Column headers: **Node**, **Edge**, **Status**          | Rows auto‑populate; invalid rows coloured `tokens.color.red[600]` | `previewRows`  |
-| 3    | `<SegmentedControl>` (Layered/Tree/Grid) | –                                                       | Select layout type; updates helper description                    | `layoutChoice` |
-| 4    | `<Button variant="primary">`             | “Build diagram”                                         | Disabled until `previewRows.every(row.valid)`                     | –              |
-| 5    | `<Toast>` success                        | “Diagram created – Press ⌘Z to undo”                    | Shows 5 s then fades                                              | –              |
+| Step | UI Element               | Copy (EN‑AU)           | Interaction Flow                               | State Store   |
+| ---- | ------------------------ | ---------------------- | ---------------------------------------------- | ------------- |
+| 1    | `<Select>` mode dropdown | –                      | Choose **Diagram** or **Cards** mode           | `createMode`  |
+| 2    | `<DropZone>` area        | "Drag a .json file"    | Drag file → highlight border; on drop validate | `importQueue` |
+| 3    | Diagram mode options     | as per old Diagram tab | Layout settings + build button                 | –             |
+| 4    | Cards mode options       | as per old Cards tab   | Search, tag filter and create button           | –             |
 
-**Tooltip for invalid row** – “Edge refers to missing node ‘%id%’.” Shortcut:
-**⌘/** toggles Advanced Options panel.
-
----
-
-## 2  Cards Tab
-
-| UI Element                                  | Copy                                 | Interaction Flow                                         | State Store   |
-| ------------------------------------------- | ------------------------------------ | -------------------------------------------------------- | ------------- |
-| `<SearchInput placeholder="Search cards…">` | –                                    | Type → debounced 300 ms filter                           | `cardSearch`  |
-| `<TagChips>` filter row (virtual scroll)    | Tag names                            | Click chip toggles filter; multi‑select allowed          | `cardFilters` |
-| `<VirtualisedList>` of CardTiles            | Each tile shows 64×64 preview + name | Drag tile → board; on drop call `BoardBuilder.placeCard` | –             |
-| **Undo chip** (floating)                    | “Undo import (⌘Z)”                   | Appears for 3s after drop                                | –             |
+**Tooltip for invalid row** – "Edge refers to missing node '‘%id%’.'" Shortcut:
+**⌘/** toggles Advanced Options panel when in Diagram mode.
 
 ---
 
