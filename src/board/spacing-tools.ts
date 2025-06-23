@@ -40,19 +40,35 @@ export async function applySpacingLayout(
       ((b as Record<string, number>)[axis] ?? 0),
   );
 
-  let pos = (items[0] as Record<string, number>)[axis] ?? 0;
-  (items[0] as Record<string, number>)[axis] = pos;
-  await (items[0] as { sync?: () => Promise<void> }).sync?.();
+  let position = (items[0] as Record<string, number>)[axis] ?? 0;
+  await moveWidget(
+    items[0] as Record<string, number> & { sync?: () => Promise<void> },
+    axis,
+    position,
+  );
 
   for (let i = 1; i < items.length; i += 1) {
     const prev = items[i - 1] as Record<string, number>;
-    const curr = items[i] as Record<string, number>;
-    const prevSize =
-      typeof prev[sizeKey] === 'number' ? (prev[sizeKey] as number) : 0;
-    const currSize =
-      typeof curr[sizeKey] === 'number' ? (curr[sizeKey] as number) : 0;
-    pos = pos + prevSize / 2 + opts.spacing + currSize / 2;
-    curr[axis] = pos;
-    await (curr as { sync?: () => Promise<void> }).sync?.();
+    const curr = items[i] as Record<string, number> & {
+      sync?: () => Promise<void>;
+    };
+    const prevSize = getDimension(prev, sizeKey);
+    const currSize = getDimension(curr, sizeKey);
+    position += prevSize / 2 + opts.spacing + currSize / 2;
+    await moveWidget(curr, axis, position);
   }
+}
+
+function getDimension(item: Record<string, number>, key: string): number {
+  const val = item[key];
+  return typeof val === 'number' ? val : 0;
+}
+
+async function moveWidget(
+  item: Record<string, number> & { sync?: () => Promise<void> },
+  axis: 'x' | 'y',
+  position: number,
+): Promise<void> {
+  item[axis] = position;
+  await item.sync?.();
 }
