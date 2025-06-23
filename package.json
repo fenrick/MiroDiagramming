@@ -22,7 +22,7 @@
     "prettier": "prettier '**/*.{js,jsx,ts,tsx,md,json,yml,yaml,html}' --write",
     "prettier:check": "prettier '**/*.{js,jsx,ts,tsx,md,json,yml,yaml,html}' --check",
     "typecheck": "tsc --noEmit",
-    "test": "jest --coverage",
+    "test": "vitest run --coverage",
     "lint": "eslint 'src/**/*.{ts,tsx}' 'tests**/*.{ts,tsx}'"
   },
   "dependencies": {
@@ -46,13 +46,13 @@
     "@typescript-eslint/eslint-plugin": "latest",
     "@typescript-eslint/parser": "latest",
     "@vitejs/plugin-react": "latest",
+    "@vitest/coverage-v8": "^3.2.4",
     "eslint": "latest",
     "eslint-plugin-react": "latest",
-    "jest": "latest",
-    "jest-environment-jsdom": "latest",
+    "jsdom": "latest",
     "prettier": "latest",
-    "ts-jest": "latest",
     "typescript": "5",
-    "vite": "6"
+    "vite": "6",
+    "vitest": "latest"
   }
 }

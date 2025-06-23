@@ -1,4 +1,4 @@
-import { jest } from '@jest/globals';
+import { vi } from 'vitest';
 import { LayoutEngine } from '../src/core/layout/elk-layout';
 import * as layoutCore from '../src/core/layout/layout-core';
 
@@ -6,7 +6,7 @@ import * as layoutCore from '../src/core/layout/layout-core';
 test('layoutGraph runs without Web Worker', async () => {
   const origWorker = (global as { Worker?: typeof Worker }).Worker;
   (global as { Worker: typeof Worker }).Worker = class {} as typeof Worker;
-  const spy = jest.spyOn(layoutCore, 'performLayout').mockResolvedValue({
+  const spy = vi.spyOn(layoutCore, 'performLayout').mockResolvedValue({
     nodes: {},
     edges: [],
   });

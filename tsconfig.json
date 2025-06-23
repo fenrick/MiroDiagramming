@@ -16,10 +16,11 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "typeRoots": ["./node_modules/@types", "./node_modules/@mirohq"],
+    "types": ["vite/client"],
     "allowJs": true,
     "incremental": true,
     "isolatedModules": true
   },
-  "include": ["src", "*.ts"],
+  "include": ["src", "*.ts", "vite-env.d.ts"],
   "exclude": ["node_modules"]
 }

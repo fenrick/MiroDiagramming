@@ -1,4 +1,4 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -6,13 +6,13 @@ import { CreateTab } from '../src/ui/pages/CreateTab';
 import { GraphProcessor } from '../src/core/graph/GraphProcessor';
 import { CardProcessor } from '../src/board/CardProcessor';
 
-jest.mock('../src/core/graph/GraphProcessor');
-jest.mock('../src/board/CardProcessor');
+vi.mock('../src/core/graph/GraphProcessor');
+vi.mock('../src/board/CardProcessor');
 
 describe('CreateTab', () => {
   beforeEach(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (globalThis as any).miro = { board: { ui: { on: jest.fn() } } };
+    (globalThis as any).miro = { board: { ui: { on: vi.fn() } } };
   });
 
   afterEach(() => {

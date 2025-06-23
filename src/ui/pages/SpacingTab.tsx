@@ -64,7 +64,7 @@ export const SpacingTab: React.FC = () => {
     </div>
   );
 };
-export const spacingTabDef: TabTuple = [
+export const tabDef: TabTuple = [
   5,
   'spacing',
   'Spacing',
