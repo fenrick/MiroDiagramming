@@ -1,9 +1,8 @@
 import React from 'react';
 import {
   Button,
-  Input,
   Checkbox,
-  InputLabel,
+  InputField,
   Icon,
   Text,
   Select,
@@ -43,45 +42,44 @@ export const GridTab: React.FC = () => {
 
   return (
     <div>
-      <InputLabel>
-        Columns
-        <Input
+      <InputField label='Columns'>
+        <input
+          className='input'
           type='number'
           value={String(grid.cols)}
-          onChange={updateNumber('cols')}
+          onChange={e => updateNumber('cols')(e.target.value)}
           placeholder='Columns'
         />
-      </InputLabel>
-      <InputLabel>
-        Gap
-        <Input
+      </InputField>
+      <InputField label='Gap'>
+        <input
+          className='input'
           type='number'
           value={String(grid.padding)}
-          onChange={updateNumber('padding')}
+          onChange={e => updateNumber('padding')(e.target.value)}
           placeholder='Gap'
         />
-      </InputLabel>
-      <InputLabel>
-        Frame Title
-        <Input
+      </InputField>
+      <InputField label='Frame Title'>
+        <input
+          className='input'
           value={frameTitle}
-          onChange={setFrameTitle}
+          onChange={e => setFrameTitle(e.target.value)}
           placeholder='Optional'
         />
-      </InputLabel>
+      </InputField>
       <Checkbox
         label='Sort by name'
         value={Boolean(grid.sortByName)}
         onChange={toggle('sortByName')}
       />
       {grid.sortByName && (
-        <InputLabel>
-          Order
+        <InputField label='Order'>
           <Select value={grid.sortOrientation} onChange={setOrientation}>
             <SelectOption value='horizontal'>Horizontally</SelectOption>
             <SelectOption value='vertical'>Vertically</SelectOption>
           </Select>
-        </InputLabel>
+        </InputField>
       )}
       <Checkbox
         label='Group items into Frame'

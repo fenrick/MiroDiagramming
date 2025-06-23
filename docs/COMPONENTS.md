@@ -39,7 +39,7 @@ components or compose manually with Mirotone CSS.
 | -------------- | ------------------------ | ------------------------- | ------------------- |
 | **Button**     | label, onClick, disabled | primary, secondary, ghost | 32                  |
 | **IconButton** | icon, ariaLabel          | square, circle            | 32                  |
-| **Input**      | value, onChange          | text, number              | 32                  |
+| **InputField** | value, onChange          | text, number              | 32                  |
 | **Select**     | options, value, onChange | single, multi             | 32                  |
 | **Checkbox**   | checked, onChange        | —                         | 20                  |
 | **Radio**      | checked, onChange, name  | —                         | 20                  |
@@ -77,8 +77,7 @@ components or compose manually with Mirotone CSS.
 
 ```tsx
 <Stack gap='12' direction='vertical'>
-  <Label htmlFor='title'>Title</Label>
-  <Input id='title' value={title} onChange={setTitle} />
+  <InputField label='Title' value={title} onChange={setTitle} />
 </Stack>
 ```
 
@@ -103,7 +102,13 @@ components or compose manually with Mirotone CSS.
 <Modal isOpen={show} title='Create card' onClose={close}>
   <form onSubmit={submit} noValidate>
     <Stack gap='12' direction='vertical'>
-      <Input required placeholder='Title' value={title} onChange={setTitle} />
+      <InputField
+        label='Title'
+        required
+        placeholder='Title'
+        value={title}
+        onChange={setTitle}
+      />
       <Textarea placeholder='Description' value={desc} onChange={setDesc} />
       <Cluster gap='8' align='right'>
         <Button ghost onClick={close}>
@@ -120,8 +125,8 @@ components or compose manually with Mirotone CSS.
 
 - First interactive control auto-focuses.
 - `Esc` always triggers `onClose`.
-- Browser validation bubbles up; error text appears via the **Input** `invalid`
-  state.
+- Browser validation bubbles up; error text appears via the **InputField**
+  `invalid` state.
 
 ---
 

@@ -18,8 +18,9 @@ import { cardLoader } from '../src/core/utils/cards';
 import type { CardData } from '../src/core/utils/cards';
 
 vi.mock('../src/board/resize-tools');
-vi.mock('../src/board/style-tools', () => {
-  const actual = jest.requireActual('../src/board/style-tools');
+vi.mock('../src/board/style-tools', async () => {
+  const actual: typeof import('../src/board/style-tools') =
+    await vi.importActual('../src/board/style-tools');
   return { ...actual, tweakFillColor: jest.fn() };
 });
 vi.mock('../src/board/grid-tools');

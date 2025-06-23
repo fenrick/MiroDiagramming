@@ -3,8 +3,7 @@ import { useDropzone } from 'react-dropzone';
 import {
   Button,
   Checkbox,
-  Input,
-  InputLabel,
+  InputField,
   Paragraph,
   Text,
   Icon,
@@ -120,13 +119,12 @@ export const CardsTab: React.FC = () => {
         aria-label='File drop area'
         aria-describedby='dropzone-instructions'
       >
-        <InputLabel>
-          JSON file
+        <InputField label='JSON file'>
           <input
             data-testid='file-input'
             {...dropzone.getInputProps({ 'aria-label': 'JSON file input' })}
           />
-        </InputLabel>
+        </InputField>
         {dropzone.isDragAccept ? (
           <Paragraph className='dnd-text'>Drop your JSON file here</Paragraph>
         ) : (
@@ -157,10 +155,11 @@ export const CardsTab: React.FC = () => {
               <li key={i}>{file.name}</li>
             ))}
           </ul>
-          <Input
+          <input
+            className='input'
             placeholder='Search cards…'
             value={cardSearch}
-            onChange={setCardSearch}
+            onChange={e => setCardSearch(e.target.value)}
           />
           <div>
             {allTags.map(tag => (
@@ -189,14 +188,14 @@ export const CardsTab: React.FC = () => {
             />
           </div>
           {withFrame && (
-            <InputLabel>
-              Frame title
-              <Input
+            <InputField label='Frame title'>
+              <input
+                className='input'
                 placeholder='Frame title'
                 value={frameTitle}
-                onChange={setFrameTitle}
+                onChange={e => setFrameTitle(e.target.value)}
               />
-            </InputLabel>
+            </InputField>
           )}
           <div className='buttons'>
             <Button onClick={handleCreate} variant='primary'>

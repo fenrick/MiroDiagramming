@@ -1,9 +1,8 @@
 import React from 'react';
 import {
   Button,
-  Input,
   FormGroup,
-  InputLabel,
+  InputField,
   Paragraph,
   Icon,
   Text,
@@ -91,22 +90,24 @@ export const ResizeTab: React.FC = () => {
       </Paragraph>
       {warning && <Paragraph className='error'>{warning}</Paragraph>}
       <FormGroup>
-        <InputLabel htmlFor='id-width'>Width:</InputLabel>
-        <Input
-          id='id-width'
-          type='number'
-          value={String(size.width)}
-          onChange={update('width')}
-          placeholder='Width (board units)'
-        />
-        <InputLabel htmlFor='id-height'>Height:</InputLabel>
-        <Input
-          id='id-height'
-          type='number'
-          value={String(size.height)}
-          onChange={update('height')}
-          placeholder='Height (board units)'
-        />
+        <InputField label='Width:'>
+          <input
+            className='input'
+            type='number'
+            value={String(size.width)}
+            onChange={e => update('width')(e.target.value)}
+            placeholder='Width (board units)'
+          />
+        </InputField>
+        <InputField label='Height:'>
+          <input
+            className='input'
+            type='number'
+            value={String(size.height)}
+            onChange={e => update('height')(e.target.value)}
+            placeholder='Height (board units)'
+          />
+        </InputField>
       </FormGroup>
       <div>
         {['S', 'M', 'L'].map(p => (
