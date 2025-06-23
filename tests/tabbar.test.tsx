@@ -22,7 +22,5 @@ test('Ctrl+Alt+4 selects Style tab', async () => {
   await act(async () => {
     fireEvent.keyDown(window, { key: '4', ctrlKey: true, altKey: true });
   });
-  expect(
-    screen.getByRole('button', { name: /apply style/i }),
-  ).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /apply/i })).toBeInTheDocument();
 });

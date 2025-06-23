@@ -73,33 +73,28 @@ describe('tab components', () => {
     expect(screen.getByText(/copy size/i)).toBeInTheDocument();
   });
 
-  test('StyleTab applies style', async () => {
+  test('StyleTab tweaks fill colour', async () => {
     const spy = jest
-      .spyOn(styleTools, 'applyStyleToSelection')
+      .spyOn(styleTools, 'tweakFillColor')
       .mockResolvedValue(undefined as unknown as void);
     render(React.createElement(StyleTab));
-    fireEvent.change(screen.getByPlaceholderText(/fill color/i), {
-      target: { value: '#f00' },
+    fireEvent.change(screen.getByTestId('adjust-input'), {
+      target: { value: '20' },
     });
     await act(async () => {
-      fireEvent.click(screen.getByText(/apply style/i));
+      fireEvent.click(screen.getByRole('button', { name: /apply/i }));
     });
-    expect(spy).toHaveBeenCalled();
+    expect(spy).toHaveBeenCalledWith(0.2);
   });
 
-  test('StyleTab updates preview on adjustment', async () => {
+  test('StyleTab syncs slider and input', async () => {
     render(React.createElement(StyleTab));
     const slider = screen.getByTestId('adjust-slider');
     await act(async () => {
-      fireEvent.change(slider, { target: { value: '20' } });
+      fireEvent.change(slider, { target: { value: '30' } });
     });
     const input = screen.getByTestId('adjust-input') as HTMLInputElement;
-    expect(input.value).toBe('20');
-    const preview = screen.getByTestId('fill-preview');
-    expect(preview).toHaveStyle({ backgroundColor: '#ffffff' });
-    expect(screen.getByTestId('preview-text')).toHaveTextContent(
-      'Preview: #ffffff',
-    );
+    expect(input.value).toBe('30');
   });
 
   test('GridTab applies layout', async () => {

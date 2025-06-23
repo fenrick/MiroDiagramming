@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18, 20]
+        node-version: [24]
 
     steps:
       - uses: actions/checkout@v4
@@ -25,13 +25,13 @@ jobs:
       - run: corepack enable
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile || yarn install
+        run: npm install --frozen-lockfile || npm install
 
       - name: Run Prettier check
-        run: yarn prettier:check
+        run: npm run prettier:check
 
       - name: Run ESLint
-        run: yarn lint
+        run: npm run lint
 
       - name: Build
-        run: yarn build
+        run: npm run build
