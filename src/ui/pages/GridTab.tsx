@@ -6,6 +6,8 @@ import {
   InputLabel,
   Icon,
   Text,
+  Select,
+  SelectOption,
 } from '../components/legacy';
 import { applyGridLayout, GridOptions } from '../../board/grid-tools';
 import type { TabTuple } from './tab-definitions';
@@ -17,6 +19,7 @@ export const GridTab: React.FC = () => {
     padding: 20,
     groupResult: false,
     sortByName: false,
+    sortOrientation: 'horizontal',
   });
   const [frameTitle, setFrameTitle] = React.useState('');
 
@@ -28,6 +31,10 @@ export const GridTab: React.FC = () => {
 
   const toggle = (key: 'groupResult' | 'sortByName') => (): void => {
     setGrid({ ...grid, [key]: !grid[key] });
+  };
+
+  const setOrientation = (value: string): void => {
+    setGrid({ ...grid, sortOrientation: value as 'horizontal' | 'vertical' });
   };
 
   const apply = async (): Promise<void> => {
@@ -67,6 +74,15 @@ export const GridTab: React.FC = () => {
         value={Boolean(grid.sortByName)}
         onChange={toggle('sortByName')}
       />
+      {grid.sortByName && (
+        <InputLabel>
+          Order
+          <Select value={grid.sortOrientation} onChange={setOrientation}>
+            <SelectOption value='horizontal'>Horizontally</SelectOption>
+            <SelectOption value='vertical'>Vertically</SelectOption>
+          </Select>
+        </InputLabel>
+      )}
       <Checkbox
         label='Group items into Frame'
         value={Boolean(grid.groupResult)}
@@ -83,7 +99,7 @@ export const GridTab: React.FC = () => {
     </div>
   );
 };
-export const gridTabDef: TabTuple = [
+export const tabDef: TabTuple = [
   4,
   'grid',
   'Grid',
