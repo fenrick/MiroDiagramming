@@ -1,6 +1,6 @@
 import { tokens } from '../tokens';
-import { GraphProcessor } from '../../core/graph/GraphProcessor';
-import { CardProcessor } from '../../board/CardProcessor';
+import { GraphProcessor } from '../../core/graph/graph-processor';
+import { CardProcessor } from '../../board/card-processor';
 import type React from 'react';
 
 const dropzoneStyles = {

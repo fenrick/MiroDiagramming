@@ -1,5 +1,5 @@
 import { GraphData, graphService } from './index';
-import { BoardBuilder } from '../../board/BoardBuilder';
+import { BoardBuilder } from '../../board/board-builder';
 import { layoutEngine, LayoutResult } from '../layout/elk-layout';
 import { UserLayoutOptions } from '../layout/elk-options';
 import { fileUtils } from '../utils/file-utils';

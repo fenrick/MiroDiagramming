@@ -1,5 +1,5 @@
 /** Entry index error handling */
-vi.mock('../src/app/DiagramApp', () => {
+vi.mock('../src/app/diagram-app', () => {
   return {
     DiagramApp: {
       getInstance: vi.fn(() => ({

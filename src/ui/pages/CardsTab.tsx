@@ -9,7 +9,7 @@ import {
   Icon,
 } from '../components/legacy';
 import { tokens } from '../tokens';
-import { CardProcessor } from '../../board/CardProcessor';
+import { CardProcessor } from '../../board/card-processor';
 
 import { showError } from '../hooks/notifications';
 import { getDropzoneStyle, undoLastImport } from '../hooks/ui-utils';

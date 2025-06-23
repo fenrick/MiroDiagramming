@@ -1,4 +1,4 @@
-import { GraphProcessor } from '../src/core/graph/GraphProcessor';
+import { GraphProcessor } from '../src/core/graph/graph-processor';
 import { graphService } from '../src/core/graph';
 import { templateManager } from '../src/board/templates';
 import { layoutEngine } from '../src/core/layout/elk-layout';

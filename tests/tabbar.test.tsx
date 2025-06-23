@@ -2,7 +2,7 @@
 import React from 'react';
 import { fireEvent, render, screen, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { App } from '../src/app/app';
+import { App } from '../src/app/App';
 
 beforeEach(() => {
   (globalThis as { miro?: { board?: unknown } }).miro = {

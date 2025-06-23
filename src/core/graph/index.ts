@@ -1,5 +1,5 @@
 import type { BaseItem, Group, Connector } from '@mirohq/websdk-types';
-import { BoardBuilder } from '../../board/BoardBuilder';
+import { BoardBuilder } from '../../board/board-builder';
 import { fileUtils } from '../utils/file-utils';
 
 export interface NodeData {

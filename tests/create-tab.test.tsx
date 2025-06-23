@@ -3,11 +3,11 @@ import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { CreateTab } from '../src/ui/pages/CreateTab';
-import { GraphProcessor } from '../src/core/graph/GraphProcessor';
-import { CardProcessor } from '../src/board/CardProcessor';
+import { GraphProcessor } from '../src/core/graph/graph-processor';
+import { CardProcessor } from '../src/board/card-processor';
 
-vi.mock('../src/core/graph/GraphProcessor');
-vi.mock('../src/board/CardProcessor');
+vi.mock('../src/core/graph/graph-processor');
+vi.mock('../src/board/card-processor');
 
 describe('CreateTab', () => {
   beforeEach(() => {

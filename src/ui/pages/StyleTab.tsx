@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Icon, InputField, Text } from '../components/legacy';
 import { tweakFillColor, extractFillColor } from '../../board/style-tools';
 import { adjustColor } from '../../core/utils/color-utils';
-import { useSelection } from '../hooks/useSelection';
+import { useSelection } from '../hooks/use-selection';
 import { tokens } from '../tokens';
 import type { TabTuple } from './tab-definitions';
 

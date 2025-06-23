@@ -12,8 +12,8 @@ import * as resizeTools from '../src/board/resize-tools';
 import * as styleTools from '../src/board/style-tools';
 import * as gridTools from '../src/board/grid-tools';
 import * as spacingTools from '../src/board/spacing-tools';
-import { GraphProcessor } from '../src/core/graph/GraphProcessor';
-import { CardProcessor } from '../src/board/CardProcessor';
+import { GraphProcessor } from '../src/core/graph/graph-processor';
+import { CardProcessor } from '../src/board/card-processor';
 
 vi.mock('../src/board/resize-tools');
 vi.mock('../src/board/style-tools', async () => {
@@ -23,8 +23,8 @@ vi.mock('../src/board/style-tools', async () => {
 });
 vi.mock('../src/board/grid-tools');
 vi.mock('../src/board/spacing-tools');
-vi.mock('../src/core/graph/GraphProcessor');
-vi.mock('../src/board/CardProcessor');
+vi.mock('../src/core/graph/graph-processor');
+vi.mock('../src/board/card-processor');
 
 describe('tab components', () => {
   beforeEach(() => {

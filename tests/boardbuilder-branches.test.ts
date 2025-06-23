@@ -1,4 +1,4 @@
-import { BoardBuilder } from '../src/board/BoardBuilder';
+import { BoardBuilder } from '../src/board/board-builder';
 import { templateManager } from '../src/board/templates';
 
 interface GlobalWithMiro {
