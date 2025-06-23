@@ -70,7 +70,7 @@ export const StyleTab: React.FC = () => {
   );
 };
 
-export const styleTabDef: TabTuple = [
+export const tabDef: TabTuple = [
   3,
   'style',
   'Colour Adjust',

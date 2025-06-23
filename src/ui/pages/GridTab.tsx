@@ -83,7 +83,7 @@ export const GridTab: React.FC = () => {
     </div>
   );
 };
-export const gridTabDef: TabTuple = [
+export const tabDef: TabTuple = [
   4,
   'grid',
   'Grid',

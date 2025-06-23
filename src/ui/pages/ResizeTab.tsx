@@ -150,7 +150,7 @@ export const ResizeTab: React.FC = () => {
     </div>
   );
 };
-export const resizeTabDef: TabTuple = [
+export const tabDef: TabTuple = [
   2,
   'resize',
   'Resize',
