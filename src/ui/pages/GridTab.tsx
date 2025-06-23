@@ -60,14 +60,6 @@ export const GridTab: React.FC = () => {
           placeholder='Gap'
         />
       </InputField>
-      <InputField label='Frame Title'>
-        <input
-          className='input input-small'
-          value={frameTitle}
-          onChange={e => setFrameTitle(e.target.value)}
-          placeholder='Optional'
-        />
-      </InputField>
       <Checkbox
         label='Sort by name'
         value={Boolean(grid.sortByName)}
@@ -86,6 +78,16 @@ export const GridTab: React.FC = () => {
         value={Boolean(grid.groupResult)}
         onChange={toggle('groupResult')}
       />
+      {grid.groupResult && (
+        <InputField label='Frame Title'>
+          <input
+            className='input input-small'
+            value={frameTitle}
+            onChange={e => setFrameTitle(e.target.value)}
+            placeholder='Optional'
+          />
+        </InputField>
+      )}
       <div className='buttons'>
         <Button onClick={apply} variant='primary'>
           <React.Fragment key='.0'>

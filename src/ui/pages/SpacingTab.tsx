@@ -1,6 +1,12 @@
 import React from 'react';
-import { Button, InputField, Icon, Text } from '../components/legacy';
-import { SegmentedControl } from '../components/SegmentedControl';
+import {
+  Button,
+  InputField,
+  Icon,
+  Text,
+  Select,
+  SelectOption,
+} from '../components/legacy';
 import { applySpacingLayout, SpacingOptions } from '../../board/spacing-tools';
 
 import type { TabTuple } from './tab-definitions';
@@ -28,22 +34,18 @@ export const SpacingTab: React.FC = () => {
 
   return (
     <div>
-      <SegmentedControl
-        value={opts.axis}
-        onChange={updateAxis}
-        options={[
-          { label: 'Horizontal', value: 'x' },
-          { label: 'Vertical', value: 'y' },
-        ]}
-      />
-      <SegmentedControl
-        value={opts.mode ?? 'move'}
-        onChange={updateMode}
-        options={[
-          { label: 'Move', value: 'move' },
-          { label: 'Expand', value: 'grow' },
-        ]}
-      />
+      <InputField label='Axis'>
+        <Select value={opts.axis} onChange={updateAxis}>
+          <SelectOption value='x'>Horizontal</SelectOption>
+          <SelectOption value='y'>Vertical</SelectOption>
+        </Select>
+      </InputField>
+      <InputField label='Mode'>
+        <Select value={opts.mode ?? 'move'} onChange={updateMode}>
+          <SelectOption value='move'>Move</SelectOption>
+          <SelectOption value='grow'>Expand</SelectOption>
+        </Select>
+      </InputField>
       <InputField label='Spacing'>
         <input
           className='input input-small'

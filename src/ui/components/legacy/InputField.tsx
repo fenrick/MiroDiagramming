@@ -19,21 +19,52 @@ export function InputField({
   wrapperClassName = '',
   className = '',
   onChange,
+  id,
   ...props
 }: InputFieldProps): React.JSX.Element {
+  const generatedId = React.useId();
+  const inputId = id ?? generatedId;
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     onChange?.(e.target.value);
   };
+  let control: React.ReactNode;
+  if (
+    children &&
+    React.isValidElement(children) &&
+    children.type !== React.Fragment
+  ) {
+    control = React.cloneElement(
+      children as React.ReactElement,
+      {
+        id: inputId,
+        onChange: (e: React.ChangeEvent<HTMLInputElement>): void => {
+          (
+            (children as React.ReactElement).props as {
+              onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+            }
+          ).onChange?.(e);
+          handleChange(e);
+        },
+      } as Partial<React.ComponentProps<'input'>>,
+    );
+  } else if (children) {
+    control = children;
+  } else {
+    control = (
+      <input
+        id={inputId}
+        className={`input ${className}`.trim()}
+        onChange={handleChange}
+        {...props}
+      />
+    );
+  }
   return (
     <div className='form-group'>
-      <label className={wrapperClassName}>{label}</label>
-      {children ?? (
-        <input
-          className={`input ${className}`.trim()}
-          onChange={handleChange}
-          {...props}
-        />
-      )}
+      <label htmlFor={inputId} className={wrapperClassName}>
+        {label}
+      </label>
+      {control}
     </div>
   );
 }

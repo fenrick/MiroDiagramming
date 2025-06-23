@@ -10,17 +10,13 @@ import {
 } from '../components/legacy';
 import { tokens } from '../tokens';
 import { CardProcessor } from '../../board/CardProcessor';
-import { cardLoader, CardData } from '../../core/utils/cards';
+
 import { showError } from '../hooks/notifications';
 import { getDropzoneStyle, undoLastImport } from '../hooks/ui-utils';
 
 /** UI for the Cards tab. */
 export const CardsTab: React.FC = () => {
   const [files, setFiles] = React.useState<File[]>([]);
-  const [cards, setCards] = React.useState<CardData[]>([]);
-  const [cardSearch, setCardSearch] = React.useState('');
-  const [debouncedSearch, setDebouncedSearch] = React.useState('');
-  const [cardFilters, setCardFilters] = React.useState<string[]>([]);
   const [showUndo, setShowUndo] = React.useState(false);
   const [withFrame, setWithFrame] = React.useState(false);
   const [frameTitle, setFrameTitle] = React.useState('');
@@ -41,11 +37,6 @@ export const CardsTab: React.FC = () => {
     return () => window.removeEventListener('keydown', handler);
   }, [lastProc]);
 
-  React.useEffect(() => {
-    const t = setTimeout(() => setDebouncedSearch(cardSearch), 300);
-    return () => clearTimeout(t);
-  }, [cardSearch]);
-
   const dropzone = useDropzone({
     accept: {
       'application/json': ['.json'],
@@ -54,12 +45,6 @@ export const CardsTab: React.FC = () => {
     onDrop: async (droppedFiles: File[]) => {
       const file = droppedFiles[0];
       setFiles([file]);
-      try {
-        const data = await cardLoader.loadCards(file);
-        setCards(data);
-      } catch (e) {
-        setError(String(e));
-      }
     },
   });
 
@@ -90,26 +75,6 @@ export const CardsTab: React.FC = () => {
   const style = React.useMemo(
     () => getDropzoneStyle(dropzone.isDragAccept, dropzone.isDragReject),
     [dropzone.isDragAccept, dropzone.isDragReject],
-  );
-
-  const allTags = React.useMemo(() => {
-    const t = new Set<string>();
-    cards.forEach(c => c.tags?.forEach(tag => t.add(tag)));
-    return Array.from(t);
-  }, [cards]);
-
-  const filteredCards = React.useMemo(
-    () =>
-      cards.filter(c => {
-        const matchesSearch = c.title
-          .toLowerCase()
-          .includes(debouncedSearch.toLowerCase());
-        const tagMatch =
-          cardFilters.length === 0 ||
-          c.tags?.some(t => cardFilters.includes(t));
-        return matchesSearch && tagMatch;
-      }),
-    [cards, debouncedSearch, cardFilters],
   );
 
   return (
@@ -153,31 +118,6 @@ export const CardsTab: React.FC = () => {
           <ul className='custom-dropped-files'>
             {files.map((file, i) => (
               <li key={i}>{file.name}</li>
-            ))}
-          </ul>
-          <input
-            className='input'
-            placeholder='Search cards…'
-            value={cardSearch}
-            onChange={e => setCardSearch(e.target.value)}
-          />
-          <div>
-            {allTags.map(tag => (
-              <Checkbox
-                key={tag}
-                label={tag}
-                value={cardFilters.includes(tag)}
-                onChange={() =>
-                  setCardFilters(f =>
-                    f.includes(tag) ? f.filter(t => t !== tag) : [...f, tag],
-                  )
-                }
-              />
-            ))}
-          </div>
-          <ul>
-            {filteredCards.map((c, i) => (
-              <li key={i}>{c.title}</li>
             ))}
           </ul>
           <div style={{ marginTop: tokens.space.small }}>
