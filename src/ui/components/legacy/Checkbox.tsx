@@ -28,7 +28,7 @@ export function Checkbox({
     onChange?.(e.target.checked);
   };
   return (
-    <label className={`checkbox ${className}`.trim()}>
+    <label className={`toggle ${className}`.trim()}>
       <input
         type='checkbox'
         checked={value}
