@@ -45,3 +45,32 @@ export async function tweakFillColor(
     }),
   );
 }
+
+/**
+ * Extract the fill colour from a widget style.
+ *
+ * @param item - Widget record possibly containing a style object.
+ * @returns Hex colour string or `null` when unavailable.
+ */
+export function extractFillColor(
+  item: Record<string, unknown> | undefined,
+): string | null {
+  if (!item) return null;
+  const style = (item.style ?? {}) as Record<string, unknown>;
+  const fill = style.fillColor;
+  return typeof fill === 'string' ? resolveColor(fill, colors.white) : null;
+}
+
+/**
+ * Retrieve the fill colour of the first selected widget.
+ *
+ * @param board - Optional board API overriding `miro.board` for testing.
+ * @returns Hex colour string or `null` when unavailable.
+ */
+export async function copyFillFromSelection(
+  board?: BoardLike,
+): Promise<string | null> {
+  const b = getBoard(board);
+  const selection = await b.getSelection();
+  return extractFillColor(selection[0]);
+}

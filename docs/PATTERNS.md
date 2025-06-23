@@ -129,7 +129,6 @@ Alert header uses font-heading-s; body uses font-body-s with max 160 characters.
 - Light mode: illustration opacity 100 %. Dark mode: reduce white fills to 80 %
   opacity.
 - Size tiers:
-
   - Sidebar small — 48 × 48 px, centred.
   - Modal medium — 120 × 120 px, top-centre.
   - Full-panel large — 240 × 160 px, centred.

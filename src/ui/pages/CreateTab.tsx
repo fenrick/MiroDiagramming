@@ -23,7 +23,7 @@ export const CreateTab: React.FC = () => {
   );
 };
 
-export const createTabDef: TabTuple = [
+export const tabDef: TabTuple = [
   1,
   'create',
   'Create',

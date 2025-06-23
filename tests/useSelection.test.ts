@@ -1,4 +1,4 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import { renderHook, act } from '@testing-library/react';
 import { useSelection } from '../src/ui/hooks/useSelection';
 import { BoardLike } from '../src/board/board';

@@ -1,4 +1,4 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -17,12 +17,15 @@ import { CardProcessor } from '../src/board/CardProcessor';
 import { cardLoader } from '../src/core/utils/cards';
 import type { CardData } from '../src/core/utils/cards';
 
-jest.mock('../src/board/resize-tools');
-jest.mock('../src/board/style-tools');
-jest.mock('../src/board/grid-tools');
-jest.mock('../src/board/spacing-tools');
-jest.mock('../src/core/graph/GraphProcessor');
-jest.mock('../src/board/CardProcessor');
+vi.mock('../src/board/resize-tools');
+vi.mock('../src/board/style-tools', () => {
+  const actual = jest.requireActual('../src/board/style-tools');
+  return { ...actual, tweakFillColor: jest.fn() };
+});
+vi.mock('../src/board/grid-tools');
+vi.mock('../src/board/spacing-tools');
+vi.mock('../src/core/graph/GraphProcessor');
+vi.mock('../src/board/CardProcessor');
 
 describe('tab components', () => {
   beforeEach(() => {
@@ -107,6 +110,19 @@ describe('tab components', () => {
     expect(preview).toHaveStyle({ backgroundColor: '#c0c0c0' });
   });
 
+  test('StyleTab displays selection colour', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (globalThis as any).miro.board.getSelection.mockResolvedValueOnce([
+      { style: { fillColor: '#123456' } },
+    ]);
+    render(React.createElement(StyleTab));
+    await act(async () => {
+      await new Promise(r => setTimeout(r, 0));
+    });
+    const preview = screen.getByTestId('adjust-preview');
+    expect(preview.style.backgroundColor).toBe('rgb(18, 52, 86)');
+  });
+
   test('GridTab applies layout', async () => {
     const spy = jest
       .spyOn(gridTools, 'applyGridLayout')
@@ -186,5 +202,12 @@ describe('tab components', () => {
       fireEvent.click(screen.getByRole('button', { name: /create cards/i }));
     });
     expect(spy).toHaveBeenCalled();
+  });
+});
+
+describe('tab auto-registration', () => {
+  test('includes DummyTab from filesystem', async () => {
+    const { TAB_DATA } = await import('../src/ui/pages/tabs');
+    expect(TAB_DATA.some(t => t[1] === 'dummy')).toBe(true);
   });
 });

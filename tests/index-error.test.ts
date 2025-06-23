@@ -1,9 +1,9 @@
 /** Entry index error handling */
-jest.mock('../src/app/DiagramApp', () => {
+vi.mock('../src/app/DiagramApp', () => {
   return {
     DiagramApp: {
-      getInstance: jest.fn(() => ({
-        init: jest.fn().mockRejectedValue(new Error('fail')),
+      getInstance: vi.fn(() => ({
+        init: vi.fn().mockRejectedValue(new Error('fail')),
       })),
     },
   };

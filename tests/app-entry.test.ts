@@ -1,8 +1,8 @@
-/** @jest-environment jsdom */
+/** @vitest-environment jsdom */
 import { createRoot } from 'react-dom/client';
 
-jest.mock('react-dom/client', () => ({
-  createRoot: jest.fn(() => ({ render: jest.fn() })),
+vi.mock('react-dom/client', () => ({
+  createRoot: vi.fn(() => ({ render: vi.fn() })),
 }));
 
 test('mounts App on existing container', async () => {
