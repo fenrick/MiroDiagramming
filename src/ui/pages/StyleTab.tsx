@@ -51,6 +51,12 @@ export const StyleTab: React.FC = () => {
             backgroundColor: preview,
           }}
         />
+        <code
+          data-testid='color-hex'
+          style={{ marginLeft: tokens.space.xxsmall }}
+        >
+          {preview}
+        </code>
       </InputField>
       <InputField label='Adjust value'>
         <input

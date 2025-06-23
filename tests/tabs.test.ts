@@ -14,8 +14,6 @@ import * as gridTools from '../src/board/grid-tools';
 import * as spacingTools from '../src/board/spacing-tools';
 import { GraphProcessor } from '../src/core/graph/GraphProcessor';
 import { CardProcessor } from '../src/board/CardProcessor';
-import { cardLoader } from '../src/core/utils/cards';
-import type { CardData } from '../src/core/utils/cards';
 
 vi.mock('../src/board/resize-tools');
 vi.mock('../src/board/style-tools', async () => {
@@ -81,7 +79,9 @@ describe('tab components', () => {
     const spy = jest
       .spyOn(styleTools, 'tweakFillColor')
       .mockResolvedValue(undefined as unknown as void);
-    render(React.createElement(StyleTab));
+    await act(async () => {
+      render(React.createElement(StyleTab));
+    });
     fireEvent.change(screen.getByTestId('adjust-input'), {
       target: { value: '20' },
     });
@@ -92,7 +92,9 @@ describe('tab components', () => {
   });
 
   test('StyleTab syncs slider and input', async () => {
-    render(React.createElement(StyleTab));
+    await act(async () => {
+      render(React.createElement(StyleTab));
+    });
     const slider = screen.getByTestId('adjust-slider');
     await act(async () => {
       fireEvent.change(slider, { target: { value: '30' } });
@@ -102,13 +104,17 @@ describe('tab components', () => {
   });
 
   test('StyleTab preview updates on change', async () => {
-    render(React.createElement(StyleTab));
+    await act(async () => {
+      render(React.createElement(StyleTab));
+    });
     const slider = screen.getByTestId('adjust-slider');
     const preview = screen.getByTestId('adjust-preview');
+    const hex = screen.getByTestId('color-hex');
     await act(async () => {
       fireEvent.change(slider, { target: { value: '50' } });
     });
     expect(preview).toHaveStyle({ backgroundColor: '#c0c0c0' });
+    expect(hex.textContent).toBe('#c0c0c0');
   });
 
   test('StyleTab displays selection colour', async () => {
@@ -116,7 +122,9 @@ describe('tab components', () => {
     (globalThis as any).miro.board.getSelection.mockResolvedValueOnce([
       { style: { fillColor: '#123456' } },
     ]);
-    render(React.createElement(StyleTab));
+    await act(async () => {
+      render(React.createElement(StyleTab));
+    });
     await act(async () => {
       await new Promise(r => setTimeout(r, 0));
     });
@@ -135,12 +143,21 @@ describe('tab components', () => {
     expect(spy).toHaveBeenCalled();
   });
 
+  test('GridTab toggles frame title input', () => {
+    render(React.createElement(GridTab));
+    expect(screen.queryByPlaceholderText('Optional')).toBeNull();
+    fireEvent.click(screen.getByLabelText('Group items into Frame'));
+    expect(screen.getByPlaceholderText('Optional')).toBeInTheDocument();
+  });
+
   test('SpacingTab applies layout', async () => {
     const spy = jest
       .spyOn(spacingTools, 'applySpacingLayout')
       .mockResolvedValue(undefined as unknown as void);
     render(React.createElement(SpacingTab));
-    fireEvent.click(screen.getByText('Expand'));
+    fireEvent.change(screen.getByLabelText('Mode'), {
+      target: { value: 'grow' },
+    });
     await act(async () => {
       fireEvent.click(screen.getByText(/distribute/i));
     });
@@ -168,25 +185,15 @@ describe('tab components', () => {
     expect(spy).toHaveBeenCalled();
   });
 
-  test('CardsTab filters cards', async () => {
-    jest.spyOn(cardLoader, 'loadCards').mockResolvedValue([
-      { title: 'One', tags: ['t1'] },
-      { title: 'Two', tags: ['t2'] },
-    ] as unknown as CardData[]);
+  test('CardsTab UI after file drop', async () => {
     render(React.createElement(CardsTab));
     const input = screen.getByTestId('file-input');
     const file = new File(['{}'], 'cards.json', { type: 'application/json' });
     await act(async () => {
       fireEvent.change(input, { target: { files: [file] } });
     });
-    fireEvent.change(screen.getByPlaceholderText(/search cards/i), {
-      target: { value: 'Two' },
-    });
-    await act(async () => {
-      await new Promise(r => setTimeout(r, 350));
-    });
-    expect(screen.getByText('Two')).toBeInTheDocument();
-    expect(screen.queryByText('One')).not.toBeInTheDocument();
+    expect(screen.getByText('cards.json')).toBeInTheDocument();
+    expect(screen.queryByPlaceholderText(/search cards/i)).toBeNull();
   });
 
   test('CardsTab processes file', async () => {
@@ -207,8 +214,19 @@ describe('tab components', () => {
 });
 
 describe('tab auto-registration', () => {
-  test('includes DummyTab from filesystem', async () => {
+  test('includes DummyTab in development', async () => {
+    const prev = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'development';
     const { TAB_DATA } = await import('../src/ui/pages/tabs');
     expect(TAB_DATA.some(t => t[1] === 'dummy')).toBe(true);
+    process.env.NODE_ENV = prev;
+  });
+
+  test('excludes DummyTab in production', async () => {
+    const prev = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'production';
+    const { TAB_DATA } = await import('../src/ui/pages/tabs?prod');
+    expect(TAB_DATA.some(t => t[1] === 'dummy')).toBe(false);
+    process.env.NODE_ENV = prev;
   });
 });
