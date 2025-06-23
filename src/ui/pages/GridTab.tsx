@@ -67,7 +67,11 @@ export const GridTab: React.FC = () => {
       />
       {grid.sortByName && (
         <InputField label='Order'>
-          <Select value={grid.sortOrientation} onChange={setOrientation}>
+          <Select
+            value={grid.sortOrientation}
+            onChange={setOrientation}
+            className='select-small'
+          >
             <SelectOption value='horizontal'>Horizontally</SelectOption>
             <SelectOption value='vertical'>Vertically</SelectOption>
           </Select>
