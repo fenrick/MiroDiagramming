@@ -22,7 +22,9 @@ export function calculateSpacingOffsets(
  * Distribute the current selection so each item is spaced evenly on the
  * chosen axis. Spacing is measured between the outer edges of each
  * widget so items with different dimensions maintain the same gap.
- * Item order is derived from their current position.
+ * Item order is derived from their current position. Every widget is
+ * synchronised immediately after its coordinates are updated so the
+ * board reflects the new layout.
  */
 export async function applySpacingLayout(
   opts: SpacingOptions,
@@ -40,27 +42,49 @@ export async function applySpacingLayout(
       ((b as Record<string, number>)[axis] ?? 0),
   );
 
-  let pos = (items[0] as Record<string, number>)[axis] ?? 0;
-  const tasks: Array<Promise<void>> = [];
-  (items[0] as Record<string, number>)[axis] = pos;
-  const firstSync = (items[0] as { sync?: () => Promise<void> }).sync;
-  if (typeof firstSync === 'function') {
-    tasks.push(firstSync());
-  }
+  let position = (items[0] as Record<string, number>)[axis] ?? 0;
+  await moveWidget(
+    items[0] as Record<string, number> & { sync?: () => Promise<void> },
+    axis,
+    position,
+  );
 
   for (let i = 1; i < items.length; i += 1) {
     const prev = items[i - 1] as Record<string, number>;
-    const curr = items[i] as Record<string, number>;
-    const prevSize =
-      typeof prev[sizeKey] === 'number' ? (prev[sizeKey] as number) : 0;
-    const currSize =
-      typeof curr[sizeKey] === 'number' ? (curr[sizeKey] as number) : 0;
-    pos = pos + prevSize / 2 + opts.spacing + currSize / 2;
-    curr[axis] = pos;
-    const syncFn = (curr as { sync?: () => Promise<void> }).sync;
-    if (typeof syncFn === 'function') {
-      tasks.push(syncFn());
-    }
+    const curr = items[i] as Record<string, number> & {
+      sync?: () => Promise<void>;
+    };
+    const prevSize = getDimension(prev, sizeKey);
+    const currSize = getDimension(curr, sizeKey);
+    position += prevSize / 2 + opts.spacing + currSize / 2;
+    await moveWidget(curr, axis, position);
   }
-  await Promise.all(tasks);
+}
+
+/**
+ * Safely retrieve a numeric dimension from a widget.
+ *
+ * @param item - Widget instance.
+ * @param key - Dimension property name ('width' or 'height').
+ * @returns The numeric value or `0` when unavailable.
+ */
+function getDimension(item: Record<string, number>, key: string): number {
+  const val = item[key];
+  return typeof val === 'number' ? val : 0;
+}
+
+/**
+ * Move a widget along one axis and sync it with the board.
+ *
+ * @param item - The widget to update.
+ * @param axis - Axis to modify ('x' or 'y').
+ * @param position - New coordinate value.
+ */
+async function moveWidget(
+  item: Record<string, number> & { sync?: () => Promise<void> },
+  axis: 'x' | 'y',
+  position: number,
+): Promise<void> {
+  item[axis] = position;
+  await item.sync?.();
 }
