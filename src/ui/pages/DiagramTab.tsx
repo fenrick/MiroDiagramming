@@ -101,7 +101,7 @@ export const DiagramTab: React.FC = () => {
   );
 
   return (
-    <div>
+    <div style={{ marginTop: tokens.space.small }}>
       <div
         {...dropzone.getRootProps({ style })}
         aria-label='File drop area'
