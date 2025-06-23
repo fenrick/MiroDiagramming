@@ -25,7 +25,7 @@ export function InputField({
     onChange?.(e.target.value);
   };
   return (
-    <div className='form-group'>
+    <div className='form-group-small'>
       <label className={wrapperClassName}>{label}</label>
       {children ?? (
         <input
