@@ -70,12 +70,7 @@ describe('BoardBuilder branch coverage', () => {
         string,
         unknown
       >,
-      {
-        x: 0,
-        y: 0,
-        width: 1,
-        height: 1,
-      },
+      { x: 0, y: 0, width: 1, height: 1 },
     );
     // The fill color from the element should be applied
     expect(shape.style.fillColor).toBe('#fff');
@@ -105,12 +100,14 @@ describe('BoardBuilder branch coverage', () => {
     global.miro = {
       board: {
         get: jest.fn().mockResolvedValue([]),
-        createConnector: jest.fn().mockResolvedValue({
-          setMetadata: jest.fn(),
-          getMetadata: jest.fn(),
-          sync: jest.fn(),
-          id: 'c1',
-        }),
+        createConnector: jest
+          .fn()
+          .mockResolvedValue({
+            setMetadata: jest.fn(),
+            getMetadata: jest.fn(),
+            sync: jest.fn(),
+            id: 'c1',
+          }),
       },
     };
     const builder = new BoardBuilder();
@@ -127,9 +124,7 @@ describe('BoardBuilder branch coverage', () => {
       string,
       unknown
     >;
-    global.miro = {
-      board: { get: jest.fn().mockResolvedValue([group]) },
-    };
+    global.miro = { board: { get: jest.fn().mockResolvedValue([group]) } };
     const builder = new BoardBuilder();
     const result = await (
       builder as unknown as {

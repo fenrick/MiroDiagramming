@@ -126,7 +126,7 @@ describe('tab components', () => {
       render(React.createElement(StyleTab));
     });
     await act(async () => {
-      await new Promise(r => setTimeout(r, 0));
+      await new Promise((r) => setTimeout(r, 0));
     });
     const preview = screen.getByTestId('adjust-preview');
     expect(preview.style.backgroundColor).toBe('rgb(18, 52, 86)');
@@ -218,7 +218,7 @@ describe('tab auto-registration', () => {
     const prev = process.env.NODE_ENV;
     process.env.NODE_ENV = 'development';
     const { TAB_DATA } = await import('../src/ui/pages/tabs');
-    expect(TAB_DATA.some(t => t[1] === 'dummy')).toBe(true);
+    expect(TAB_DATA.some((t) => t[1] === 'dummy')).toBe(true);
     process.env.NODE_ENV = prev;
   });
 
@@ -226,7 +226,7 @@ describe('tab auto-registration', () => {
     const prev = process.env.NODE_ENV;
     process.env.NODE_ENV = 'production';
     const { TAB_DATA } = await import('../src/ui/pages/tabs?prod');
-    expect(TAB_DATA.some(t => t[1] === 'dummy')).toBe(false);
+    expect(TAB_DATA.some((t) => t[1] === 'dummy')).toBe(false);
     process.env.NODE_ENV = prev;
   });
 });

@@ -4,9 +4,7 @@ import parser from '@typescript-eslint/parser';
 import react from 'eslint-plugin-react';
 
 export default [
-  {
-    ignores: ['node_modules/**', 'dist/**'],
-  },
+  { ignores: ['node_modules/**', 'dist/**'] },
   ...tseslint.configs['flat/recommended'],
   react.configs.flat.recommended,
   {
@@ -15,27 +13,14 @@ export default [
       parser,
       ecmaVersion: 'latest',
       sourceType: 'module',
-      parserOptions: {
-        project: './tsconfig.json',
-      },
+      parserOptions: { project: './tsconfig.json' },
     },
-    settings: {
-      react: {
-        version: 'detect',
-      },
-    },
-    rules: {
-      'no-console': 'warn',
-      'react/react-in-jsx-scope': 'off',
-    },
+    settings: { react: { version: 'detect' } },
+    rules: { 'no-console': 'warn', 'react/react-in-jsx-scope': 'off' },
   },
   {
     files: ['tests/**/*.ts'],
-    languageOptions: {
-      parser,
-      ecmaVersion: 'latest',
-      sourceType: 'module',
-    },
+    languageOptions: { parser, ecmaVersion: 'latest', sourceType: 'module' },
     rules: {},
   },
 ];

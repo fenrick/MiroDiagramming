@@ -20,9 +20,7 @@ describe('BoardBuilder lookup and connector updates', () => {
     const shape = {
       getMetadata: jest.fn().mockResolvedValue({ type: 'Role', label: 'B' }),
     } as Record<string, unknown>;
-    global.miro = {
-      board: { get: jest.fn().mockResolvedValue([shape]) },
-    };
+    global.miro = { board: { get: jest.fn().mockResolvedValue([shape]) } };
     const builder = new BoardBuilder();
     await builder.findNode('Role', 'B');
     await builder.findNode('Role', 'B');

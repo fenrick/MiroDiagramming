@@ -27,10 +27,16 @@ export function Checkbox({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     onChange?.(e.target.checked);
   };
+  const generatedId = React.useId();
+  const inputId = props.id ?? generatedId;
+
   return (
     <div className='form-group-small'>
-      <label className={`toggle ${className}`.trim()}>
+      <label
+        htmlFor={inputId}
+        className={`toggle ${className}`.trim()}>
         <input
+          id={inputId}
           type='checkbox'
           checked={value}
           onChange={handleChange}

@@ -7,5 +7,10 @@ export function Text({
   className = '',
   ...props
 }: TextProps): React.JSX.Element {
-  return <span className={className} {...props} />;
+  return (
+    <span
+      className={className}
+      {...props}
+    />
+  );
 }

@@ -15,26 +15,22 @@ describe('CardProcessor', () => {
     global.miro = {
       board: {
         get: jest.fn().mockResolvedValue([]),
-        findEmptySpace: jest.fn().mockResolvedValue({
-          x: 0,
-          y: 0,
-          width: 100,
-          height: 100,
-        }),
+        findEmptySpace: jest
+          .fn()
+          .mockResolvedValue({ x: 0, y: 0, width: 100, height: 100 }),
         viewport: {
-          get: jest.fn().mockResolvedValue({
-            x: 0,
-            y: 0,
-            width: 1000,
-            height: 1000,
-          }),
+          get: jest
+            .fn()
+            .mockResolvedValue({ x: 0, y: 0, width: 1000, height: 1000 }),
           zoomTo: jest.fn(),
         },
-        createCard: jest.fn().mockResolvedValue({
-          sync: jest.fn(),
-          id: 'c1',
-          setMetadata: jest.fn(),
-        }),
+        createCard: jest
+          .fn()
+          .mockResolvedValue({
+            sync: jest.fn(),
+            id: 'c1',
+            setMetadata: jest.fn(),
+          }),
         createTag: jest.fn().mockResolvedValue({ id: 't1' }),
         createFrame: jest.fn().mockResolvedValue({ add: jest.fn(), id: 'f1' }),
       },
@@ -235,10 +231,10 @@ describe('CardProcessor', () => {
   });
 
   test('maybeCreateFrame skips frame when disabled', async () => {
-    const builder = {
-      createFrame: jest.fn(),
-      setFrame: jest.fn(),
-    } as { createFrame: jest.Mock; setFrame: jest.Mock };
+    const builder = { createFrame: jest.fn(), setFrame: jest.fn() } as {
+      createFrame: jest.Mock;
+      setFrame: jest.Mock;
+    };
     const p = new CardProcessor(builder as unknown as unknown);
     const dims = { width: 5, height: 5, spot: { x: 0, y: 0 } };
     const frame = await (

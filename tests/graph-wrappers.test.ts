@@ -24,12 +24,7 @@ describe('graph service methods', () => {
       .mockResolvedValue('n' as unknown);
     const result = await graphService.createNode(
       {} as Record<string, unknown>,
-      {
-        x: 0,
-        y: 0,
-        width: 1,
-        height: 1,
-      },
+      { x: 0, y: 0, width: 1, height: 1 },
     );
     expect(spy).toHaveBeenCalled();
     expect(result).toBe('n');

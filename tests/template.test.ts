@@ -10,27 +10,33 @@ describe('createFromTemplate', () => {
   beforeEach(() => {
     global.miro = {
       board: {
-        createShape: jest.fn().mockResolvedValue({
-          type: 'shape',
-          setMetadata: jest.fn(),
-          getMetadata: jest.fn(),
-          sync: jest.fn(),
-          id: 's1',
-        }),
-        createText: jest.fn().mockResolvedValue({
-          type: 'text',
-          setMetadata: jest.fn(),
-          getMetadata: jest.fn(),
-          sync: jest.fn(),
-          id: 't1',
-        }),
-        group: jest.fn().mockResolvedValue({
-          type: 'group',
-          getItems: jest.fn().mockResolvedValue([]),
-          setMetadata: jest.fn(),
-          sync: jest.fn(),
-          id: 'g1',
-        }),
+        createShape: jest
+          .fn()
+          .mockResolvedValue({
+            type: 'shape',
+            setMetadata: jest.fn(),
+            getMetadata: jest.fn(),
+            sync: jest.fn(),
+            id: 's1',
+          }),
+        createText: jest
+          .fn()
+          .mockResolvedValue({
+            type: 'text',
+            setMetadata: jest.fn(),
+            getMetadata: jest.fn(),
+            sync: jest.fn(),
+            id: 't1',
+          }),
+        group: jest
+          .fn()
+          .mockResolvedValue({
+            type: 'group',
+            getItems: jest.fn().mockResolvedValue([]),
+            setMetadata: jest.fn(),
+            sync: jest.fn(),
+            id: 'g1',
+          }),
       },
     };
   });

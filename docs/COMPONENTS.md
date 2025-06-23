@@ -66,9 +66,14 @@ components or compose manually with Mirotone CSS.
 ### 3.1 Grid – repeat-auto layout
 
 ```tsx
-<Grid columns='repeat(auto-fill, 240px)' gap='16'>
-  {nodes.map(n => (
-    <Card node={n} key={n.id} />
+<Grid
+  columns='repeat(auto-fill, 240px)'
+  gap='16'>
+  {nodes.map((n) => (
+    <Card
+      node={n}
+      key={n.id}
+    />
   ))}
 </Grid>
 ```
@@ -76,19 +81,31 @@ components or compose manually with Mirotone CSS.
 ### 3.2 Stack – vertical forms
 
 ```tsx
-<Stack gap='12' direction='vertical'>
-  <InputField label='Title' value={title} onChange={setTitle} />
+<Stack
+  gap='12'
+  direction='vertical'>
+  <InputField
+    label='Title'
+    value={title}
+    onChange={setTitle}
+  />
 </Stack>
 ```
 
 ### 3.3 Cluster – right-aligned actions
 
 ```tsx
-<Cluster gap='8' align='right'>
-  <Button ghost onClick={cancel}>
+<Cluster
+  gap='8'
+  align='right'>
+  <Button
+    ghost
+    onClick={cancel}>
     Cancel
   </Button>
-  <Button primary onClick={save}>
+  <Button
+    primary
+    onClick={save}>
     Save
   </Button>
 </Cluster>
@@ -99,9 +116,16 @@ components or compose manually with Mirotone CSS.
 ## 4 Sample pattern – Modal form with validation
 
 ```tsx
-<Modal isOpen={show} title='Create card' onClose={close}>
-  <form onSubmit={submit} noValidate>
-    <Stack gap='12' direction='vertical'>
+<Modal
+  isOpen={show}
+  title='Create card'
+  onClose={close}>
+  <form
+    onSubmit={submit}
+    noValidate>
+    <Stack
+      gap='12'
+      direction='vertical'>
       <InputField
         label='Title'
         required
@@ -109,12 +133,22 @@ components or compose manually with Mirotone CSS.
         value={title}
         onChange={setTitle}
       />
-      <Textarea placeholder='Description' value={desc} onChange={setDesc} />
-      <Cluster gap='8' align='right'>
-        <Button ghost onClick={close}>
+      <Textarea
+        placeholder='Description'
+        value={desc}
+        onChange={setDesc}
+      />
+      <Cluster
+        gap='8'
+        align='right'>
+        <Button
+          ghost
+          onClick={close}>
           Cancel
         </Button>
-        <Button primary type='submit'>
+        <Button
+          primary
+          type='submit'>
           Add
         </Button>
       </Cluster>

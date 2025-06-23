@@ -12,7 +12,7 @@ import { Paragraph } from '../ui/components/legacy/Paragraph';
  */
 export const App: React.FC = () => {
   const [tab, setTab] = React.useState<Tab>(TAB_DATA[0][1]);
-  const tabIds = React.useMemo(() => TAB_DATA.map(t => t[1]), []);
+  const tabIds = React.useMemo(() => TAB_DATA.map((t) => t[1]), []);
   React.useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.ctrlKey && e.altKey) {
@@ -25,11 +25,15 @@ export const App: React.FC = () => {
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, [tabIds]);
-  const current = TAB_DATA.find(t => t[1] === tab)!;
+  const current = TAB_DATA.find((t) => t[1] === tab)!;
   const CurrentComp = current[4];
   return (
     <div id='root'>
-      <TabBar tabs={TAB_DATA} tab={tab} onChange={setTab} />
+      <TabBar
+        tabs={TAB_DATA}
+        tab={tab}
+        onChange={setTab}
+      />
       <div className='scrollable'>
         <h2>{current[2]}</h2>
         <Paragraph>{current[3]}</Paragraph>

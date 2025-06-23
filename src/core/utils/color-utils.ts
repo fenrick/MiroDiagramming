@@ -34,11 +34,7 @@ export interface Rgb {
 export function hexToRgb(hex: string): Rgb {
   const n = hex.replace('#', '');
   const int = parseInt(n, 16);
-  return {
-    r: (int >> 16) & 255,
-    g: (int >> 8) & 255,
-    b: int & 255,
-  };
+  return { r: (int >> 16) & 255, g: (int >> 8) & 255, b: int & 255 };
 }
 
 /** Convert RGB colour components to a hex string. */

@@ -17,64 +17,65 @@ describe('GraphProcessor', () => {
     global.miro = {
       board: {
         get: jest.fn().mockResolvedValue([]),
-        findEmptySpace: jest.fn().mockResolvedValue({
-          x: 0,
-          y: 0,
-          width: 100,
-          height: 100,
-        }),
+        findEmptySpace: jest
+          .fn()
+          .mockResolvedValue({ x: 0, y: 0, width: 100, height: 100 }),
         viewport: {
-          get: jest.fn().mockResolvedValue({
-            x: 0,
-            y: 0,
-            width: 1000,
-            height: 1000,
-          }),
+          get: jest
+            .fn()
+            .mockResolvedValue({ x: 0, y: 0, width: 1000, height: 1000 }),
           set: jest.fn().mockResolvedValue({}),
           zoomTo: jest.fn(),
         },
-        createConnector: jest.fn().mockResolvedValue({
-          setMetadata: jest.fn(),
-          getMetadata: jest.fn(),
-          sync: jest.fn(),
-          id: 'c1',
-        }),
-        createShape: jest.fn().mockResolvedValue({
-          setMetadata: jest.fn(),
-          getMetadata: jest.fn(),
-          sync: jest.fn(),
-          id: 's1',
-          type: 'shape',
-        }),
-        createText: jest.fn().mockResolvedValue({
-          setMetadata: jest.fn(),
-          getMetadata: jest.fn(),
-          sync: jest.fn(),
-          id: 't1',
-          type: 'text',
-        }),
-        createFrame: jest.fn().mockResolvedValue({
-          add: jest.fn(),
-          id: 'f1',
-        }),
-        group: jest.fn().mockResolvedValue({
-          type: 'group',
-          getItems: jest.fn().mockResolvedValue([]),
-          setMetadata: jest.fn(),
-          sync: jest.fn(),
-          id: 'g1',
-        }),
+        createConnector: jest
+          .fn()
+          .mockResolvedValue({
+            setMetadata: jest.fn(),
+            getMetadata: jest.fn(),
+            sync: jest.fn(),
+            id: 'c1',
+          }),
+        createShape: jest
+          .fn()
+          .mockResolvedValue({
+            setMetadata: jest.fn(),
+            getMetadata: jest.fn(),
+            sync: jest.fn(),
+            id: 's1',
+            type: 'shape',
+          }),
+        createText: jest
+          .fn()
+          .mockResolvedValue({
+            setMetadata: jest.fn(),
+            getMetadata: jest.fn(),
+            sync: jest.fn(),
+            id: 't1',
+            type: 'text',
+          }),
+        createFrame: jest.fn().mockResolvedValue({ add: jest.fn(), id: 'f1' }),
+        group: jest
+          .fn()
+          .mockResolvedValue({
+            type: 'group',
+            getItems: jest.fn().mockResolvedValue([]),
+            setMetadata: jest.fn(),
+            sync: jest.fn(),
+            id: 'g1',
+          }),
       },
     };
     graphService.resetBoardCache();
-    jest.spyOn(templateManager, 'createFromTemplate').mockResolvedValue({
-      type: 'shape',
-      setMetadata: jest.fn(),
-      getMetadata: jest.fn(),
-      getItems: jest.fn(),
-      sync: jest.fn(),
-      id: 's1',
-    } as unknown);
+    jest
+      .spyOn(templateManager, 'createFromTemplate')
+      .mockResolvedValue({
+        type: 'shape',
+        setMetadata: jest.fn(),
+        getMetadata: jest.fn(),
+        getItems: jest.fn(),
+        sync: jest.fn(),
+        id: 's1',
+      } as unknown);
   });
 
   afterEach(() => {
@@ -92,10 +93,12 @@ describe('GraphProcessor', () => {
     const nodeSpy = jest.spyOn(gp as unknown, 'createNodes');
     const connectorSpy = jest.spyOn(gp as unknown, 'createConnectorsAndZoom');
 
-    jest.spyOn(layoutEngine, 'layoutGraph').mockResolvedValue({
-      nodes: { n1: { x: 0, y: 0, width: 10, height: 10 } },
-      edges: [],
-    });
+    jest
+      .spyOn(layoutEngine, 'layoutGraph')
+      .mockResolvedValue({
+        nodes: { n1: { x: 0, y: 0, width: 10, height: 10 } },
+        edges: [],
+      });
 
     const simpleGraph = {
       nodes: [{ id: 'n1', label: 'A', type: 'Role' }],
@@ -133,10 +136,12 @@ describe('GraphProcessor', () => {
       edges: [],
     };
     // Mock layout with a single node to make dimensions deterministic
-    jest.spyOn(layoutEngine, 'layoutGraph').mockResolvedValue({
-      nodes: { n1: { x: 0, y: 0, width: 10, height: 10 } },
-      edges: [],
-    });
+    jest
+      .spyOn(layoutEngine, 'layoutGraph')
+      .mockResolvedValue({
+        nodes: { n1: { x: 0, y: 0, width: 10, height: 10 } },
+        edges: [],
+      });
 
     await processor.processGraph(simpleGraph as unknown);
 
@@ -167,10 +172,12 @@ describe('GraphProcessor', () => {
       nodes: [{ id: 'n1', label: 'A', type: 'Role' }],
       edges: [],
     };
-    jest.spyOn(layoutEngine, 'layoutGraph').mockResolvedValue({
-      nodes: { n1: { x: 0, y: 0, width: 10, height: 10 } },
-      edges: [],
-    });
+    jest
+      .spyOn(layoutEngine, 'layoutGraph')
+      .mockResolvedValue({
+        nodes: { n1: { x: 0, y: 0, width: 10, height: 10 } },
+        edges: [],
+      });
 
     await processor.processGraph(simpleGraph as unknown, {
       createFrame: false,

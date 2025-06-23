@@ -61,24 +61,10 @@ A small example is provided in
 ```json
 {
   "nodes": [
-    {
-      "id": "n1",
-      "label": "Customer",
-      "type": "Role"
-    },
-    {
-      "id": "n2",
-      "label": "Service",
-      "type": "BusinessService"
-    }
+    { "id": "n1", "label": "Customer", "type": "Role" },
+    { "id": "n2", "label": "Service", "type": "BusinessService" }
   ],
-  "edges": [
-    {
-      "from": "n1",
-      "to": "n2",
-      "label": "uses"
-    }
-  ]
+  "edges": [{ "from": "n1", "to": "n2", "label": "uses" }]
 }
 ```
 

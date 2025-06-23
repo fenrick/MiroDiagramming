@@ -10,8 +10,31 @@ export function Heading({
   className = '',
   ...props
 }: HeadingProps): React.JSX.Element {
-  if (level === 2) return <h2 className={className} {...props} />;
-  if (level === 3) return <h3 className={className} {...props} />;
-  if (level === 4) return <h4 className={className} {...props} />;
-  return <h1 className={className} {...props} />;
+  if (level === 2)
+    return (
+      <h2
+        className={className}
+        {...props}
+      />
+    );
+  if (level === 3)
+    return (
+      <h3
+        className={className}
+        {...props}
+      />
+    );
+  if (level === 4)
+    return (
+      <h4
+        className={className}
+        {...props}
+      />
+    );
+  return (
+    <h1
+      className={className}
+      {...props}
+    />
+  );
 }

@@ -8,15 +8,16 @@ export const TabBar: React.FC<{
   tab: Tab;
   onChange: (t: Tab) => void;
 }> = ({ tabs, tab, onChange }) => (
-  <div className='tabs' style={{ margin: tokens.space.xxsmall }}>
+  <div
+    className='tabs'
+    style={{ margin: tokens.space.xxsmall }}>
     <div className='tabs-header-list'>
       {tabs.map(([, id, label]) => (
         <div
           key={id}
           role='tab'
           className={`tab ${tab === id ? 'tab-active' : ''}`}
-          onClick={() => onChange(id)}
-        >
+          onClick={() => onChange(id)}>
           <div className='tab-text'>{label}</div>
         </div>
       ))}

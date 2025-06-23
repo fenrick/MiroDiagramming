@@ -26,11 +26,7 @@ describe('LayoutEngine', () => {
     const graph = { nodes: [], edges: [] };
     await layoutEngine.layoutGraph(
       graph as Parameters<typeof layoutEngine.layoutGraph>[0],
-      {
-        algorithm: 'force',
-        direction: 'LEFT',
-        spacing: 50,
-      },
+      { algorithm: 'force', direction: 'LEFT', spacing: 50 },
     );
     expect(spy).toHaveBeenCalledWith(
       expect.objectContaining({

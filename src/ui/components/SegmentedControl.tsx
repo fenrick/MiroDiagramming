@@ -21,13 +21,15 @@ export function SegmentedControl({
   options,
 }: SegmentedControlProps): React.JSX.Element {
   return (
-    <div role='group' aria-label='Layout type' className='segmented-control'>
-      {options.map(opt => (
+    <div
+      role='group'
+      aria-label='Layout type'
+      className='segmented-control'>
+      {options.map((opt) => (
         <Button
           key={opt.value}
           onClick={() => onChange(opt.value)}
-          variant={value === opt.value ? 'primary' : 'secondary'}
-        >
+          variant={value === opt.value ? 'primary' : 'secondary'}>
           {opt.label}
         </Button>
       ))}

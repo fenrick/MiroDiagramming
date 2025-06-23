@@ -40,8 +40,5 @@ export function getDropzoneStyle(
   if (reject) {
     borderColor = tokens.color.red[700];
   }
-  return {
-    ...dropzoneStyles,
-    borderColor,
-  };
+  return { ...dropzoneStyles, borderColor };
 }

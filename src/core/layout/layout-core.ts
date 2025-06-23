@@ -48,9 +48,9 @@ export async function performLayout(
       'elk.layered.unnecessaryBendpoints': 'true',
       'elk.layered.cycleBreaking.strategy': 'GREEDY',
     },
-    children: data.nodes.map(n => {
+    children: data.nodes.map((n) => {
       const tpl = templateManager.getTemplate(n.type);
-      const dims = tpl?.elements.find(e => e.width && e.height);
+      const dims = tpl?.elements.find((e) => e.width && e.height);
       const width =
         (n.metadata as { width?: number } | undefined)?.width ??
         dims?.width ??

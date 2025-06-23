@@ -54,14 +54,16 @@ export class CardProcessor {
     this.cardMap = undefined;
 
     const boardTags = await this.getBoardTags();
-    const tagMap = new Map(boardTags.map(t => [t.title, t]));
+    const tagMap = new Map(boardTags.map((t) => [t.title, t]));
 
     const map = await this.loadCardMap();
 
     const { toCreate, toUpdate } = this.partitionCards(cards, map);
 
     const updated = await Promise.all(
-      toUpdate.map(item => this.updateCardWidget(item.card, item.def, tagMap)),
+      toUpdate.map((item) =>
+        this.updateCardWidget(item.card, item.def, tagMap),
+      ),
     );
 
     let created: Card[] = [];
@@ -86,7 +88,7 @@ export class CardProcessor {
           ),
         ),
       );
-      created.forEach(c => frame?.add(c));
+      created.forEach((c) => frame?.add(c));
     } else {
       this.builder.setFrame(undefined);
     }
@@ -127,7 +129,7 @@ export class CardProcessor {
     if (!this.cardMap) {
       const cards = await this.getBoardCards();
       const metas = await Promise.all(
-        cards.map(c => c.getMetadata(CardProcessor.META_KEY)),
+        cards.map((c) => c.getMetadata(CardProcessor.META_KEY)),
       );
       this.cardMap = new Map();
       for (let i = 0; i < cards.length; i++) {
@@ -147,10 +149,7 @@ export class CardProcessor {
   private partitionCards(
     cards: CardData[],
     map: Map<string, Card>,
-  ): {
-    toCreate: CardData[];
-    toUpdate: Array<{ card: Card; def: CardData }>;
-  } {
+  ): { toCreate: CardData[]; toUpdate: Array<{ card: Card; def: CardData }> } {
     const toCreate: CardData[] = [];
     const toUpdate: Array<{ card: Card; def: CardData }> = [];
 

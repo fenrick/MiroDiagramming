@@ -68,12 +68,7 @@ describe('BoardBuilder additional cases', () => {
     await expect(
       builder.createNode(
         { id: 'x', label: 'L', type: 'unknown' } as Record<string, unknown>,
-        {
-          x: 0,
-          y: 0,
-          width: 1,
-          height: 1,
-        },
+        { x: 0, y: 0, width: 1, height: 1 },
       ),
     ).rejects.toThrow("Template 'unknown' not found");
   });
@@ -81,10 +76,12 @@ describe('BoardBuilder additional cases', () => {
   test('createNode creates group and sets metadata', async () => {
     const items = [{ setMetadata: jest.fn() }, { setMetadata: jest.fn() }];
     // Mock creation of a group containing two items
-    jest.spyOn(templateManager, 'createFromTemplate').mockResolvedValue({
-      type: 'group',
-      getItems: jest.fn().mockResolvedValue(items),
-    } as unknown as { type: string; getItems: () => Promise<unknown[]> });
+    jest
+      .spyOn(templateManager, 'createFromTemplate')
+      .mockResolvedValue({
+        type: 'group',
+        getItems: jest.fn().mockResolvedValue(items),
+      } as unknown as { type: string; getItems: () => Promise<unknown[]> });
     jest
       .spyOn(templateManager, 'getTemplate')
       .mockReturnValue({ elements: [{ shape: 'r' }, { text: 't' }] });
