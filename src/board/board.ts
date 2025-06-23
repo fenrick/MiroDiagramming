@@ -22,3 +22,21 @@ export function getBoard(board?: BoardLike): BoardLike {
   if (!b) throw new Error('Miro board not available');
   return b;
 }
+
+/**
+ * Invoke a callback for every selected widget.
+ *
+ * Abstracts the common pattern of fetching the current selection and applying
+ * asynchronous updates to each item.
+ *
+ * @param cb - Function invoked with each selected widget.
+ * @param board - Optional board API overriding `miro.board` for testing.
+ */
+export async function forEachSelection(
+  cb: (item: Record<string, unknown>) => Promise<void> | void,
+  board?: BoardLike,
+): Promise<void> {
+  const b = getBoard(board);
+  const selection = await b.getSelection();
+  await Promise.all(selection.map((item) => cb(item)));
+}

@@ -1,4 +1,4 @@
-import { GraphData, graphService } from './index';
+import { GraphData, graphService } from './graph-service';
 import { BoardBuilder } from '../../board/board-builder';
 import { layoutEngine, LayoutResult } from '../layout/elk-layout';
 import { UserLayoutOptions } from '../layout/elk-options';
