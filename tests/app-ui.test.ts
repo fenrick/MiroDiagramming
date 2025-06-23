@@ -2,11 +2,11 @@
 import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { App } from '../src/app/app';
+import { App } from '../src/app/App';
 import { getDropzoneStyle, undoLastImport } from '../src/ui/hooks/ui-utils';
 import { tokens } from '../src/ui/tokens';
-import { GraphProcessor } from '../src/core/graph/GraphProcessor';
-import { CardProcessor } from '../src/board/CardProcessor';
+import { GraphProcessor } from '../src/core/graph/graph-processor';
+import { CardProcessor } from '../src/board/card-processor';
 
 interface GlobalWithMiro {
   miro?: { board?: Record<string, unknown> };

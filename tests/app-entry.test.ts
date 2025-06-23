@@ -7,6 +7,6 @@ vi.mock('react-dom/client', () => ({
 
 test('mounts App on existing container', async () => {
   document.body.innerHTML = '<div id="root"></div>';
-  await import('../src/app/app');
+  await import('../src/app/App');
   expect(createRoot).toHaveBeenCalled();
 });

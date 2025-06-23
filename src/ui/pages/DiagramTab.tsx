@@ -12,7 +12,7 @@ import {
 } from '../components/legacy';
 import { tokens } from '../tokens';
 import { SegmentedControl } from '../components/SegmentedControl';
-import { GraphProcessor } from '../../core/graph/GraphProcessor';
+import { GraphProcessor } from '../../core/graph/graph-processor';
 import { showError } from '../hooks/notifications';
 import {
   ALGORITHMS,

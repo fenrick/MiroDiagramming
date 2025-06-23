@@ -1,4 +1,4 @@
-import { DiagramApp } from '../src/app/DiagramApp';
+import { DiagramApp } from '../src/app/diagram-app';
 
 interface GlobalWithMiro {
   miro?: { board?: Record<string, unknown> };

@@ -1,4 +1,4 @@
-import { BoardBuilder } from './BoardBuilder';
+import { BoardBuilder } from './board-builder';
 import { CardData, cardLoader } from '../core/utils/cards';
 import type { Card, CardStyle, Frame, Tag } from '@mirohq/websdk-types';
 

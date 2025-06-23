@@ -1,4 +1,4 @@
-import { BoardBuilder } from '../src/board/BoardBuilder';
+import { BoardBuilder } from '../src/board/board-builder';
 
 interface GlobalWithMiro {
   miro?: { board?: Record<string, unknown> };

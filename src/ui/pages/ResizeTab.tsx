@@ -12,7 +12,7 @@ import {
   copySizeFromSelection,
   Size,
 } from '../../board/resize-tools';
-import { useSelection } from '../hooks/useSelection';
+import { useSelection } from '../hooks/use-selection';
 import type { TabTuple } from './tab-definitions';
 import {
   boardUnitsToMm,
