@@ -1,135 +1,16 @@
 import React from 'react';
-import {
-  Button,
-  Icon,
-  Input,
-  Text,
-  InputLabel,
-  Paragraph,
-} from '../components/legacy';
-import { tokens } from '../tokens';
-import { colors } from '@mirohq/design-tokens';
-import { adjustColor, resolveColor } from '../../core/utils/color-utils';
-import {
-  applyStyleToSelection,
-  StyleOptions,
-  getFillColorFromSelection,
-  tweakFillColor,
-} from '../../board/style-tools';
-import { useSelection } from '../hooks/useSelection';
-
+import { Button, Icon, Input, Text, InputLabel } from '../components/legacy';
+import { tweakFillColor } from '../../board/style-tools';
 import type { TabTuple } from './tab-definitions';
-/** UI for the Style tab. */
+
+/** Adjusts the fill colour of selected widgets. */
 export const StyleTab: React.FC = () => {
-  const selection = useSelection();
-  const [opts, setOpts] = React.useState<StyleOptions>(() => ({
-    fillColor: resolveColor(tokens.color.white, colors.white ?? '#ffffff'),
-    color: resolveColor(
-      tokens.color.primaryText,
-      colors['gray-700'] ?? '#595959',
-    ),
-    borderColor: resolveColor(
-      tokens.color.primaryText,
-      colors['gray-700'] ?? '#595959',
-    ),
-    borderWidth: 1,
-    fontSize: 12,
-  }));
   const [adjust, setAdjust] = React.useState(0);
-  const [currentFill, setCurrentFill] = React.useState<string | null>(null);
-  const [styleClipboard, setStyleClipboard] =
-    React.useState<StyleOptions | null>(null);
-  const preview = React.useMemo(
-    () => adjustColor(currentFill ?? opts.fillColor ?? '#ffffff', adjust / 100),
-    [adjust, currentFill, opts.fillColor],
-  );
-
-  const update =
-    (key: keyof StyleOptions) =>
-    (value: string): void => {
-      setOpts({
-        ...opts,
-        [key]:
-          key === 'borderWidth' || key === 'fontSize' ? Number(value) : value,
-      });
-    };
-
   const apply = async (): Promise<void> => {
-    const target = styleClipboard ?? opts;
-    await applyStyleToSelection(target);
-    setAdjust(0);
-    await copyColor();
-  };
-
-  const copyColor = async (): Promise<void> => {
-    const color = await getFillColorFromSelection();
-    if (color) {
-      const hex = resolveColor(color, color);
-      setCurrentFill(hex);
-      setOpts({ ...opts, fillColor: hex });
-    }
-  };
-
-  const copyStyle = (): void => {
-    setStyleClipboard({ ...opts });
-  };
-
-  const applyAdjust = async (): Promise<void> => {
     await tweakFillColor(adjust / 100);
-    await copyColor();
   };
-
-  React.useEffect(() => {
-    void copyColor();
-  }, [selection]);
-
   return (
     <div>
-      <InputLabel>
-        Fill color
-        <Input
-          type='color'
-          value={opts.fillColor}
-          onChange={update('fillColor')}
-          placeholder='Fill color'
-        />
-      </InputLabel>
-      <InputLabel>
-        Text color
-        <Input
-          type='color'
-          value={opts.color}
-          onChange={update('color')}
-          placeholder='Text color'
-        />
-      </InputLabel>
-      <InputLabel>
-        Border color
-        <Input
-          type='color'
-          value={opts.borderColor}
-          onChange={update('borderColor')}
-          placeholder='Border color'
-        />
-      </InputLabel>
-      <InputLabel>
-        Border width
-        <Input
-          type='number'
-          value={String(opts.borderWidth)}
-          onChange={update('borderWidth')}
-          placeholder='Border width'
-        />
-      </InputLabel>
-      <InputLabel>
-        Font size
-        <Input
-          type='number'
-          value={String(opts.fontSize)}
-          onChange={update('fontSize')}
-          placeholder='Font size'
-        />
-      </InputLabel>
       <InputLabel>
         Adjust fill
         <input
@@ -140,17 +21,6 @@ export const StyleTab: React.FC = () => {
           list='adjust-marks'
           value={adjust}
           onChange={e => setAdjust(Number(e.target.value))}
-          onKeyDown={e => {
-            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-              e.preventDefault();
-              setAdjust(a =>
-                Math.min(
-                  100,
-                  Math.max(-100, a + (e.key === 'ArrowUp' ? 1 : -1)),
-                ),
-              );
-            }
-          }}
         />
         <datalist id='adjust-marks'>
           {[-100, -50, 0, 50, 100].map(n => (
@@ -170,56 +40,22 @@ export const StyleTab: React.FC = () => {
           placeholder='Adjust (-100–100)'
         />
       </InputLabel>
-      <Button onClick={applyAdjust} variant='secondary'>
-        <React.Fragment key='.0'>
-          <Icon name='parameters' />
-          <Text>Adjust</Text>
-        </React.Fragment>
-      </Button>
-      <React.Fragment>
-        <Paragraph data-testid='current-fill'>
-          Current fill: {currentFill ?? opts.fillColor}
-        </Paragraph>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <Paragraph data-testid='preview-text'>Preview: {preview}</Paragraph>
-          <div
-            data-testid='fill-preview'
-            style={{
-              width: '24px',
-              height: '24px',
-              border: '1px solid #000',
-              backgroundColor: preview,
-            }}
-          />
-        </div>
-      </React.Fragment>
       <div className='buttons'>
-        <Button onClick={copyStyle} variant='secondary'>
-          <React.Fragment key='.0'>
-            <Icon name='duplicate' />
-            <Text>Copy Style</Text>
-          </React.Fragment>
-        </Button>
         <Button onClick={apply} variant='primary'>
-          <React.Fragment key='.0'>
-            <Icon name='arrow-right' />
-            <Text>Apply Style</Text>
-          </React.Fragment>
-        </Button>
-        <Button onClick={copyColor} variant='secondary'>
-          <React.Fragment key='.0'>
-            <Icon name='duplicate' />
-            <Text>Copy Fill</Text>
+          <React.Fragment>
+            <Icon name='parameters' />
+            <Text>Apply</Text>
           </React.Fragment>
         </Button>
       </div>
     </div>
   );
 };
+
 export const styleTabDef: TabTuple = [
   4,
   'style',
-  'Style',
-  'Modify color and typography of selected shapes',
+  'Colour Adjust',
+  'Lighten or darken the fill colour of selected shapes',
   StyleTab,
 ];

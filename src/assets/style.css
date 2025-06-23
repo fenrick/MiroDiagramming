@@ -9,7 +9,7 @@
 
 html,
 body {
-  height: unset;
+  height: 100%;
   background: none;
 }
 
@@ -71,7 +71,12 @@ body {
 }
 
 .tabs-header-list {
+  display: flex;
   flex-wrap: wrap;
+}
+
+.tabs-header-list .tab {
+  flex: 0 0 auto;
 }
 
 button {

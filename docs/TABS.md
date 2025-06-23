@@ -65,22 +65,14 @@ viewport”). Shortcut: **⌥C** copies size, **⌥V** applies.
 
 ## 4  Style Tab
 
-Layout: two‑column Grid (`cs1 ce7` colour, `cs7 ce13` border/text).
+Layout: single column Stack.
 
-### 4.1  Colour Panel
+- **Brightness Slider** (−100 %–100 %) – down/up arrow changes by 1 %.
+- Numeric input mirrors slider value.
+- **Apply** button calls `tweakFillColor` with the selected adjustment.
 
-- **Current Fill Swatch** (live)
-- **Brightness Slider** (0 %–150 %) – down/up arrow changes by 1 %.
-- **Copy Style** button → stores `styleClipboard`.
-- **Apply Style** button (disabled if clipboard empty).
-
-### 4.2  Border & Text Panel
-
-- Dropdown Border Style: None, Solid 1‑4 px, Dashed.
-- Border Colour picker (token palette).
-- Text Size dropdown: 10 – 48 pt.
-
-Accessibility: show contrast ratio badge; warn < 4.5 : 1.
+This tab no longer exposes border or text options; use native Miro style tools
+instead.
 
 ---
 
