@@ -148,10 +148,6 @@ the rest of the UI. These guidelines help keep layouts consistent:
   [Node.js](https://nodejs.org/en/download) v18 or v20.
 - All examples use `npm` as a package manager and `npx` as a package runner.
 
-## 📖 Associated Developer Tutorial <a name="tutorial"></a>
-
-See the Miro documentation for details on building diagramming apps.
-
 ## 🏃🏽‍♂️ Run the app locally <a name="run"></a>
 
 1. Run `npm install` to install dependencies.
@@ -220,12 +216,6 @@ These commands perform TypeScript type checking, execute the Jest suite, run
 ESLint and format files with Prettier. Run them before committing so code
 conforms to the repository guidelines.
 
-## Building a Production Bundle
-
-Run `npm run build` to create the optimized static files in the `dist/` folder.
-Host these files on a web server and update the `sdkUri` in your app manifest to
-point to the deployed bundle.
-
 ## 🗂️ Folder structure <a name="folder"></a>
 
 ```
@@ -250,17 +240,18 @@ point to the deployed bundle.
 - [Architecture](docs/ARCHITECTURE.md) explains how the source modules are
   organised.
 - [Tab Overview](docs/TABS.md) describes the sidebar tabs and their purpose.
-- [Deployment Guide](docs/DEPLOYMENT.md) shows how to build and host the bundle.
+- [Deployment & Build Guide](docs/DEPLOYMENT.md) explains how to build and host
+  the bundle.
 - [Components Catalogue](docs/COMPONENTS.md) documents reusable React
   components.
 - [Design Foundation](docs/FOUNDATION.md) explains tokens and theming rules.
+- [Code Style](docs/CODE_STYLE.md) outlines formatting and naming rules.
 - [UI Patterns](docs/PATTERNS.md) shows common layouts and best practices.
 
 ## 🫱🏻‍🫲🏽 Contributing <a name="contributing"></a>
 
-If you want to contribute to this example, or any other Miro Open Source
-project, please review
-[Miro's contributing guide](https://github.com/miroapp/app-examples/blob/main/CONTRIBUTING.md).
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines and
+the development workflow.
 
 ## 🪪 License <a name="license"></a>
 

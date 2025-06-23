@@ -209,6 +209,8 @@ Deployment, rollback and monitoring hooks are documented in **DEPLOYMENT.md**.
 
 ## 15 Appendix: Coding Conventions
 
+See [CODE_STYLE.md](CODE_STYLE.md) for detailed style rules.
+
 - File names: PascalCase.tsx for React, kebab-case.ts for util.
 - Import order: std → vendor → local, alphabetical within group.
 - No raw grid-column in style blocks (enforced by custom ESLint rule).
