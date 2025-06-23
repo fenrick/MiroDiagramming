@@ -25,8 +25,8 @@ export function InputField({
     onChange?.(e.target.value);
   };
   return (
-    <label className={wrapperClassName}>
-      {label}
+    <div className='form-group'>
+      <label className={wrapperClassName}>{label}</label>
       {children ?? (
         <input
           className={`input ${className}`.trim()}
@@ -34,6 +34,6 @@ export function InputField({
           {...props}
         />
       )}
-    </label>
+    </div>
   );
 }
