@@ -29,7 +29,8 @@ export function Checkbox({
         onChange={handleChange}
         {...props}
       />
-      {label}
+      {/* span enables Mirotone checkbox styling */}
+      <span>{label}</span>
     </label>
   );
 }
