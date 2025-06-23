@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Tab, TabTuple } from '../pages/tabs';
+import { tokens } from '../tokens';
 
 /** Tab bar with an overflow menu for additional tabs. */
 export const TabBar: React.FC<{
@@ -7,7 +8,7 @@ export const TabBar: React.FC<{
   tab: Tab;
   onChange: (t: Tab) => void;
 }> = ({ tabs, tab, onChange }) => (
-  <div className='tabs'>
+  <div className='tabs' style={{ margin: tokens.space.xxsmall }}>
     <div className='tabs-header-list'>
       {tabs.map(([, id, label]) => (
         <div
