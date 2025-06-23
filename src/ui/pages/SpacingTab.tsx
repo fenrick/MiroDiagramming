@@ -46,7 +46,7 @@ export const SpacingTab: React.FC = () => {
       />
       <InputField label='Spacing'>
         <input
-          className='input'
+          className='input input-small'
           type='number'
           value={String(opts.spacing)}
           onChange={e => updateSpacing(e.target.value)}

@@ -54,7 +54,7 @@ export const StyleTab: React.FC = () => {
       </InputField>
       <InputField label='Adjust value'>
         <input
-          className='input'
+          className='input input-small'
           data-testid='adjust-input'
           type='number'
           min='-100'

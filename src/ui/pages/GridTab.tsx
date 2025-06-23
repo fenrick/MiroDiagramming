@@ -44,7 +44,7 @@ export const GridTab: React.FC = () => {
     <div>
       <InputField label='Columns'>
         <input
-          className='input'
+          className='input input-small'
           type='number'
           value={String(grid.cols)}
           onChange={e => updateNumber('cols')(e.target.value)}
@@ -53,7 +53,7 @@ export const GridTab: React.FC = () => {
       </InputField>
       <InputField label='Gap'>
         <input
-          className='input'
+          className='input input-small'
           type='number'
           value={String(grid.padding)}
           onChange={e => updateNumber('padding')(e.target.value)}
@@ -62,7 +62,7 @@ export const GridTab: React.FC = () => {
       </InputField>
       <InputField label='Frame Title'>
         <input
-          className='input'
+          className='input input-small'
           value={frameTitle}
           onChange={e => setFrameTitle(e.target.value)}
           placeholder='Optional'

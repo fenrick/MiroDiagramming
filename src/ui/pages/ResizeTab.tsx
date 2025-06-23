@@ -92,7 +92,7 @@ export const ResizeTab: React.FC = () => {
       <FormGroup>
         <InputField label='Width:'>
           <input
-            className='input'
+            className='input input-small'
             type='number'
             value={String(size.width)}
             onChange={e => update('width')(e.target.value)}
@@ -101,7 +101,7 @@ export const ResizeTab: React.FC = () => {
         </InputField>
         <InputField label='Height:'>
           <input
-            className='input'
+            className='input input-small'
             type='number'
             value={String(size.height)}
             onChange={e => update('height')(e.target.value)}
