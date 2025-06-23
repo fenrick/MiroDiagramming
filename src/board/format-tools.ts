@@ -1,5 +1,5 @@
 import { resolveColor } from '../core/utils/color-utils';
-import { BoardLike, getBoard } from './board';
+import { BoardLike, forEachSelection } from './board';
 import type { StylePreset } from '../ui/style-presets';
 
 /** Resolved preset style attributes. */
@@ -32,20 +32,16 @@ export async function applyStylePreset(
   preset: StylePreset,
   board?: BoardLike,
 ): Promise<void> {
-  const b = getBoard(board);
-  const selection = await b.getSelection();
-  await Promise.all(
-    selection.map(async (item: Record<string, unknown>) => {
-      const style = { ...(item.style ?? {}) } as Record<string, unknown>;
-      const resolved = presetStyle(preset);
-      style.color = resolved.color;
-      style.borderColor = resolved.borderColor;
-      style.borderWidth = resolved.borderWidth;
-      style.fillColor = resolved.fillColor;
-      item.style = style;
-      if (typeof (item as { sync?: () => Promise<void> }).sync === 'function') {
-        await (item as { sync: () => Promise<void> }).sync();
-      }
-    }),
-  );
+  await forEachSelection(async (item: Record<string, unknown>) => {
+    const style = { ...(item.style ?? {}) } as Record<string, unknown>;
+    const resolved = presetStyle(preset);
+    style.color = resolved.color;
+    style.borderColor = resolved.borderColor;
+    style.borderWidth = resolved.borderWidth;
+    style.fillColor = resolved.fillColor;
+    item.style = style;
+    if (typeof (item as { sync?: () => Promise<void> }).sync === 'function') {
+      await (item as { sync: () => Promise<void> }).sync();
+    }
+  }, board);
 }

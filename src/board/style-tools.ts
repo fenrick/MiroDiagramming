@@ -8,7 +8,7 @@ import {
   ensureContrast,
   resolveColor,
 } from '../core/utils/color-utils';
-import { BoardLike, getBoard } from './board';
+import { BoardLike, forEachSelection, getBoard } from './board';
 
 /** Retrieve the property name used for widget fill colour. */
 function getFillKey(
@@ -59,33 +59,29 @@ export async function tweakFillColor(
   delta: number,
   board?: BoardLike,
 ): Promise<void> {
-  const b = getBoard(board);
-  const selection = await b.getSelection();
-  await Promise.all(
-    selection.map(async (item: Record<string, unknown>) => {
-      const style = (item.style ?? {}) as Record<string, unknown>;
-      const fillKey = getFillKey(style);
-      if (!fillKey) return;
-      const fontKey = getFontKey(style);
-      const fill =
-        typeof style[fillKey] === 'string'
-          ? (style[fillKey] as string)
-          : resolveColor(tokens.color.white, colors.white);
-      const font =
-        fontKey && typeof style[fontKey] === 'string'
-          ? (style[fontKey] as string)
-          : resolveColor(tokens.color.primaryText, colors['gray-700']);
-      const newFill = adjustColor(fill, delta);
-      style[fillKey] = newFill;
-      if (fontKey) {
-        style[fontKey] = ensureContrast(newFill, font);
-      }
-      item.style = style;
-      if (typeof (item as { sync?: () => Promise<void> }).sync === 'function') {
-        await (item as { sync: () => Promise<void> }).sync();
-      }
-    }),
-  );
+  await forEachSelection(async (item: Record<string, unknown>) => {
+    const style = (item.style ?? {}) as Record<string, unknown>;
+    const fillKey = getFillKey(style);
+    if (!fillKey) return;
+    const fontKey = getFontKey(style);
+    const fill =
+      typeof style[fillKey] === 'string'
+        ? (style[fillKey] as string)
+        : resolveColor(tokens.color.white, colors.white);
+    const font =
+      fontKey && typeof style[fontKey] === 'string'
+        ? (style[fontKey] as string)
+        : resolveColor(tokens.color.primaryText, colors['gray-700']);
+    const newFill = adjustColor(fill, delta);
+    style[fillKey] = newFill;
+    if (fontKey) {
+      style[fontKey] = ensureContrast(newFill, font);
+    }
+    item.style = style;
+    if (typeof (item as { sync?: () => Promise<void> }).sync === 'function') {
+      await (item as { sync: () => Promise<void> }).sync();
+    }
+  }, board);
 }
 
 /**
@@ -132,24 +128,20 @@ export async function tweakOpacity(
   delta: number,
   board?: BoardLike,
 ): Promise<void> {
-  const b = getBoard(board);
-  const selection = await b.getSelection();
-  await Promise.all(
-    selection.map(async (item: Record<string, unknown>) => {
-      const style = (item.style ?? {}) as Record<string, unknown>;
-      const key = getOpacityKey(style);
-      if (!key) return;
-      const current = style[key];
-      if (typeof current !== 'number') return;
-      let next = current + delta;
-      next = Math.max(0, Math.min(1, next));
-      style[key] = next;
-      item.style = style;
-      if (typeof (item as { sync?: () => Promise<void> }).sync === 'function') {
-        await (item as { sync: () => Promise<void> }).sync();
-      }
-    }),
-  );
+  await forEachSelection(async (item: Record<string, unknown>) => {
+    const style = (item.style ?? {}) as Record<string, unknown>;
+    const key = getOpacityKey(style);
+    if (!key) return;
+    const current = style[key];
+    if (typeof current !== 'number') return;
+    let next = current + delta;
+    next = Math.max(0, Math.min(1, next));
+    style[key] = next;
+    item.style = style;
+    if (typeof (item as { sync?: () => Promise<void> }).sync === 'function') {
+      await (item as { sync: () => Promise<void> }).sync();
+    }
+  }, board);
 }
 
 /**
@@ -165,21 +157,17 @@ export async function tweakBorderWidth(
   delta: number,
   board?: BoardLike,
 ): Promise<void> {
-  const b = getBoard(board);
-  const selection = await b.getSelection();
-  await Promise.all(
-    selection.map(async (item: Record<string, unknown>) => {
-      const style = (item.style ?? {}) as Record<string, unknown>;
-      const key = getBorderWidthKey(style);
-      if (!key) return;
-      const current = style[key];
-      if (typeof current !== 'number') return;
-      const next = Math.max(0, current + delta);
-      style[key] = next;
-      item.style = style;
-      if (typeof (item as { sync?: () => Promise<void> }).sync === 'function') {
-        await (item as { sync: () => Promise<void> }).sync();
-      }
-    }),
-  );
+  await forEachSelection(async (item: Record<string, unknown>) => {
+    const style = (item.style ?? {}) as Record<string, unknown>;
+    const key = getBorderWidthKey(style);
+    if (!key) return;
+    const current = style[key];
+    if (typeof current !== 'number') return;
+    const next = Math.max(0, current + delta);
+    style[key] = next;
+    item.style = style;
+    if (typeof (item as { sync?: () => Promise<void> }).sync === 'function') {
+      await (item as { sync: () => Promise<void> }).sync();
+    }
+  }, board);
 }
