@@ -9,6 +9,7 @@ export const SpacingTab: React.FC = () => {
   const [opts, setOpts] = React.useState<SpacingOptions>({
     axis: 'x',
     spacing: 20,
+    mode: 'move',
   });
 
   const updateAxis = (axis: string): void => {
@@ -16,6 +17,9 @@ export const SpacingTab: React.FC = () => {
   };
   const updateSpacing = (value: string): void => {
     setOpts({ ...opts, spacing: Number(value) });
+  };
+  const updateMode = (mode: string): void => {
+    if (mode === 'move' || mode === 'grow') setOpts({ ...opts, mode });
   };
 
   const apply = async (): Promise<void> => {
@@ -30,6 +34,14 @@ export const SpacingTab: React.FC = () => {
         options={[
           { label: 'Horizontal', value: 'x' },
           { label: 'Vertical', value: 'y' },
+        ]}
+      />
+      <SegmentedControl
+        value={opts.mode ?? 'move'}
+        onChange={updateMode}
+        options={[
+          { label: 'Move', value: 'move' },
+          { label: 'Expand', value: 'grow' },
         ]}
       />
       <InputLabel>

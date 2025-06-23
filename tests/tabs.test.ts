@@ -123,10 +123,13 @@ describe('tab components', () => {
       .spyOn(spacingTools, 'applySpacingLayout')
       .mockResolvedValue(undefined as unknown as void);
     render(React.createElement(SpacingTab));
+    fireEvent.click(screen.getByText('Expand'));
     await act(async () => {
       fireEvent.click(screen.getByText(/distribute/i));
     });
-    expect(spy).toHaveBeenCalled();
+    expect(spy).toHaveBeenCalledWith(
+      expect.objectContaining({ axis: 'x', spacing: 20, mode: 'grow' }),
+    );
   });
 
   test('DiagramTab processes file', async () => {

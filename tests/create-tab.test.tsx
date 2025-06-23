@@ -11,10 +11,12 @@ jest.mock('../src/board/CardProcessor');
 
 describe('CreateTab', () => {
   beforeEach(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (globalThis as any).miro = { board: { ui: { on: jest.fn() } } };
   });
 
   afterEach(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     delete (globalThis as any).miro;
     jest.clearAllMocks();
   });
