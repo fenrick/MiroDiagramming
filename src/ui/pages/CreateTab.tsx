@@ -12,7 +12,11 @@ export const CreateTab: React.FC = () => {
   return (
     <div>
       <InputField label='Create mode'>
-        <Select value={mode} onChange={v => setMode(v as 'diagram' | 'cards')}>
+        <Select
+          value={mode}
+          onChange={v => setMode(v as 'diagram' | 'cards')}
+          className='select-small'
+        >
           <SelectOption value='diagram'>Diagram</SelectOption>
           <SelectOption value='cards'>Cards</SelectOption>
         </Select>
