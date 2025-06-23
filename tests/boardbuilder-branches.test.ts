@@ -144,14 +144,9 @@ describe('BoardBuilder branch coverage', () => {
     expect(connector.style).toEqual({});
   });
 
-  test('searchShapes falls back to empty cache', async () => {
+  test('searchShapes returns undefined when no shapes match', async () => {
     const builder = new BoardBuilder();
-    jest
-      .spyOn(
-        builder as unknown as { loadShapeCache: () => Promise<unknown> },
-        'loadShapeCache',
-      )
-      .mockResolvedValue(undefined);
+    global.miro = { board: { get: jest.fn().mockResolvedValue([]) } };
     const result = await (
       builder as unknown as {
         searchShapes: (t: string, l: string) => Promise<unknown>;

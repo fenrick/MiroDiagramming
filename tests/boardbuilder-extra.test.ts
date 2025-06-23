@@ -41,14 +41,6 @@ describe('BoardBuilder additional cases', () => {
     );
   });
 
-  test('findConnector validates parameters', async () => {
-    const builder = new BoardBuilder();
-    // Null id should trigger validation error
-    await expect(
-      builder.findConnector('a', null as unknown as string),
-    ).rejects.toThrow('Invalid search parameters');
-  });
-
   test('createNode throws on invalid arguments and missing template', async () => {
     const builder = new BoardBuilder();
     // Guard against invalid parameters
@@ -94,8 +86,7 @@ describe('BoardBuilder additional cases', () => {
       .spyOn(templateManager, 'getTemplate')
       .mockReturnValue({ elements: [{ shape: 'r' }, { text: 't' }] });
     const builder = new BoardBuilder();
-    // Ensure a fresh node is created rather than updated
-    jest.spyOn(builder, 'findNode').mockResolvedValue(undefined);
+    const spy = jest.spyOn(builder, 'findNode');
     const node = { id: 'n1', label: 'A', type: 'multi' } as Record<
       string,
       unknown
@@ -105,9 +96,10 @@ describe('BoardBuilder additional cases', () => {
     expect(result.type).toBe('group');
     // Metadata should be written to child items
     expect(items[0].setMetadata).toHaveBeenCalled();
+    expect(spy).not.toHaveBeenCalled();
   });
 
-  test('updateExistingNode for group', async () => {
+  test('createNode ignores existing group', async () => {
     const itemMocks = [
       { setMetadata: jest.fn(), type: 'shape' },
       { setMetadata: jest.fn(), type: 'text' },
@@ -117,20 +109,25 @@ describe('BoardBuilder additional cases', () => {
       getItems: jest.fn().mockResolvedValue(itemMocks),
     } as Record<string, unknown>;
     const builder = new BoardBuilder();
-    // findNode returns an existing group for the node
     jest.spyOn(builder, 'findNode').mockResolvedValue(group);
+    global.miro = {
+      board: { createShape: jest.fn(), createText: jest.fn() },
+    };
     jest
       .spyOn(templateManager, 'getTemplate')
       .mockReturnValue({ elements: [{ shape: 's' }, { text: 't' }] });
+    jest.spyOn(templateManager, 'createFromTemplate').mockResolvedValue({
+      type: 'group',
+      getItems: jest.fn().mockResolvedValue(itemMocks),
+    } as unknown as { type: string; getItems: () => Promise<unknown[]> });
     const node = { id: 'n', label: 'L', type: 'Role' } as Record<
       string,
       unknown
     >;
     const pos = { x: 0, y: 0, width: 1, height: 1 };
     const result = await builder.createNode(node, pos);
-    // The existing group is returned and updated
-    expect(result).toBe(group);
-    expect(itemMocks[0].setMetadata).toHaveBeenCalled();
+    // The builder should create a new group instead of updating
+    expect(result).not.toBe(group);
   });
 
   test('createEdges validates inputs and syncs', async () => {

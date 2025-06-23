@@ -1,4 +1,4 @@
-import type { BaseItem, Connector, Group } from '@mirohq/websdk-types';
+import type { BaseItem, Group, Connector } from '@mirohq/websdk-types';
 import { BoardBuilder } from '../../board/BoardBuilder';
 import { fileUtils } from '../utils/file-utils';
 
@@ -80,14 +80,6 @@ export class GraphService {
     label: string,
   ): Promise<BaseItem | Group | undefined> {
     return this.builder.findNode(type, label);
-  }
-
-  /** Search for a connector by endpoints. */
-  public findConnector(
-    from: string,
-    to: string,
-  ): Promise<Connector | undefined> {
-    return this.builder.findConnector(from, to);
   }
 
   /** Create or update a node widget. */

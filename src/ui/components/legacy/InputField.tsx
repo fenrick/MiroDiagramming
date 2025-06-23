@@ -39,7 +39,7 @@ export function InputField({
         id: inputId,
         onChange: (e: React.ChangeEvent<HTMLInputElement>): void => {
           (
-            (children as React.ReactElement).props as {
+            children.props as {
               onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
             }
           ).onChange?.(e);
@@ -62,9 +62,7 @@ export function InputField({
 
   return (
     <div className='form-group-small'>
-      <label
-        htmlFor={inputId}
-        className={wrapperClassName}>
+      <label htmlFor={inputId} className={wrapperClassName}>
         {label}
       </label>
       {control}
