@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 
 import { TabBar } from '../ui/components/TabBar';
 import { TAB_DATA, Tab } from '../ui/pages/tabs';
+import { Paragraph } from '../ui/components/legacy/Paragraph';
 
 /**
  * React entry component that renders the file selection and mode
@@ -31,7 +32,7 @@ export const App: React.FC = () => {
       <TabBar tabs={TAB_DATA} tab={tab} onChange={setTab} />
       <div className='scrollable'>
         <h2>{current[2]}</h2>
-        <p>{current[3]}</p>
+        <Paragraph>{current[3]}</Paragraph>
         <CurrentComp />
       </div>
     </div>
