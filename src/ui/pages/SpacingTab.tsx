@@ -35,13 +35,21 @@ export const SpacingTab: React.FC = () => {
   return (
     <div>
       <InputField label='Axis'>
-        <Select value={opts.axis} onChange={updateAxis}>
+        <Select
+          value={opts.axis}
+          onChange={updateAxis}
+          className='select-small'
+        >
           <SelectOption value='x'>Horizontal</SelectOption>
           <SelectOption value='y'>Vertical</SelectOption>
         </Select>
       </InputField>
       <InputField label='Mode'>
-        <Select value={opts.mode ?? 'move'} onChange={updateMode}>
+        <Select
+          value={opts.mode ?? 'move'}
+          onChange={updateMode}
+          className='select-small'
+        >
           <SelectOption value='move'>Move</SelectOption>
           <SelectOption value='grow'>Expand</SelectOption>
         </Select>
