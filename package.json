@@ -13,7 +13,7 @@
   ],
   "license": "Unlicense",
   "engines": {
-    "node": "^18 || ^20 || ^24"
+    "node": "^24"
   },
   "scripts": {
     "start": "vite",
@@ -26,33 +26,33 @@
     "lint": "eslint 'src/**/*.{ts,tsx}' 'tests**/*.{ts,tsx}'"
   },
   "dependencies": {
-    "d3-dsv": "^3.0.1",
-    "elkjs": "^0.10.0",
-    "mirotone": "^5.3.2",
-    "react": "^19.1.0",
-    "react-dom": "^18.2.0",
-    "react-dropzone": "^14.2.3"
+    "d3-dsv": "latest",
+    "elkjs": "latest",
+    "mirotone": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-dropzone": "latest"
   },
   "devDependencies": {
-    "@mirohq/websdk-types": "^2.16.1",
-    "@testing-library/dom": "^10.4.0",
-    "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.3.0",
-    "@types/d3-dsv": "^3.0.1",
-    "@types/jest": "^30.0.0",
-    "@types/node": "^24.0.3",
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
-    "@typescript-eslint/eslint-plugin": "^8.34.1",
-    "@typescript-eslint/parser": "^8.34.1",
-    "@vitejs/plugin-react": "^4.5.2",
-    "eslint": "^9.29.0",
-    "eslint-plugin-react": "^7.37.5",
-    "jest": "^30.0.0",
-    "jest-environment-jsdom": "^30.0.0",
-    "prettier": "^3.5.3",
-    "ts-jest": "^29.1.0",
-    "typescript": "5.8.3",
-    "vite": "6.3.5"
+    "@mirohq/websdk-types": "latest",
+    "@testing-library/dom": "latest",
+    "@testing-library/jest-dom": "latest",
+    "@testing-library/react": "latest",
+    "@types/d3-dsv": "latest",
+    "@types/jest": "latest",
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "@typescript-eslint/eslint-plugin": "latest",
+    "@typescript-eslint/parser": "latest",
+    "@vitejs/plugin-react": "latest",
+    "eslint": "latest",
+    "eslint-plugin-react": "latest",
+    "jest": "latest",
+    "jest-environment-jsdom": "latest",
+    "prettier": "latest",
+    "ts-jest": "latest",
+    "typescript": "5",
+    "vite": "6"
   }
 }
