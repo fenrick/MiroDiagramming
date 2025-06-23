@@ -42,7 +42,7 @@ Panel split vertically **(Stack space="lg")**
 | --------------------- | --------------------------------------------- | ------------------------------------------ | --------------------------------------------- | --------------- |
 | **Current Selection** | `<Text>` size readout (W × H px)              | “Selection: 180 × 120 px”                  | Updates on `selection:update`                 | `selectionSize` |
 | **Copied Size**       | `<Text>` (grey if none)                       | “Copied: (none)” OR “Copied: 280 × 160 px” | Shows last copied dimensions                  | `copiedSize`    |
-| **Presets**           | Buttons S/M/L, `<Input>` Width + Height       | “Apply”                                    | Click preset or enter numbers → preview ghost | –               |
+| **Presets**           | Buttons S/M/L, `<InputField>` Width + Height  | “Apply”                                    | Click preset or enter numbers → preview ghost | –               |
 | **Copy Size**         | `<Button variant="secondary">Copy size`       | Copies `selectionSize` → `copiedSize`      | –                                             |
 | **Apply Copied**      | `<Button variant="primary">Apply copied size` | Disabled if `!copiedSize`                  | Iterates selection; sets dimensions           |
 

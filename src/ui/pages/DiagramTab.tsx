@@ -4,8 +4,7 @@ import {
   Button,
   Checkbox,
   Icon,
-  Input,
-  InputLabel,
+  InputField,
   Paragraph,
   Select,
   SelectOption,
@@ -108,13 +107,12 @@ export const DiagramTab: React.FC = () => {
         aria-label='File drop area'
         aria-describedby='dropzone-instructions'
       >
-        <InputLabel>
-          JSON file
+        <InputField label='JSON file'>
           <input
             data-testid='file-input'
             {...dropzone.getInputProps({ 'aria-label': 'JSON file input' })}
           />
-        </InputLabel>
+        </InputField>
         {dropzone.isDragAccept ? (
           <Paragraph className='dnd-text'>Drop your JSON file here</Paragraph>
         ) : (
@@ -158,19 +156,18 @@ export const DiagramTab: React.FC = () => {
             />
           </div>
           {withFrame && (
-            <InputLabel>
-              Frame title
-              <Input
+            <InputField label='Frame title'>
+              <input
+                className='input'
                 placeholder='Frame title'
                 value={frameTitle}
-                onChange={setFrameTitle}
+                onChange={e => setFrameTitle(e.target.value)}
               />
-            </InputLabel>
+            </InputField>
           )}
           {showAdvanced && (
             <>
-              <InputLabel>
-                Algorithm
+              <InputField label='Algorithm'>
                 <Select
                   value={layoutOpts.algorithm}
                   onChange={value =>
@@ -186,9 +183,8 @@ export const DiagramTab: React.FC = () => {
                     </SelectOption>
                   ))}
                 </Select>
-              </InputLabel>
-              <InputLabel>
-                Direction
+              </InputField>
+              <InputField label='Direction'>
                 <Select
                   value={layoutOpts.direction}
                   onChange={value =>
@@ -204,20 +200,20 @@ export const DiagramTab: React.FC = () => {
                     </SelectOption>
                   ))}
                 </Select>
-              </InputLabel>
-              <InputLabel>
-                Spacing
-                <Input
+              </InputField>
+              <InputField label='Spacing'>
+                <input
+                  className='input'
                   type='number'
                   value={String(layoutOpts.spacing)}
-                  onChange={value =>
+                  onChange={e =>
                     setLayoutOpts({
                       ...layoutOpts,
-                      spacing: Number(value),
+                      spacing: Number(e.target.value),
                     })
                   }
                 />
-              </InputLabel>
+              </InputField>
             </>
           )}
           <div className='buttons'>

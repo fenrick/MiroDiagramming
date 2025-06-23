@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Icon, Input, Text, InputLabel } from '../components/legacy';
+import { Button, Icon, InputField, Text } from '../components/legacy';
 import { tweakFillColor, extractFillColor } from '../../board/style-tools';
 import { adjustColor } from '../../core/utils/color-utils';
 import { useSelection } from '../hooks/useSelection';
@@ -25,8 +25,7 @@ export const StyleTab: React.FC = () => {
   };
   return (
     <div>
-      <InputLabel>
-        Adjust fill
+      <InputField label='Adjust fill'>
         <input
           data-testid='adjust-slider'
           type='range'
@@ -52,19 +51,19 @@ export const StyleTab: React.FC = () => {
             backgroundColor: preview,
           }}
         />
-      </InputLabel>
-      <InputLabel>
-        Adjust value
-        <Input
+      </InputField>
+      <InputField label='Adjust value'>
+        <input
+          className='input'
           data-testid='adjust-input'
           type='number'
           min='-100'
           max='100'
           value={String(adjust)}
-          onChange={value => setAdjust(Number(value))}
+          onChange={e => setAdjust(Number(e.target.value))}
           placeholder='Adjust (-100–100)'
         />
-      </InputLabel>
+      </InputField>
       <div className='buttons'>
         <Button onClick={apply} variant='primary'>
           <React.Fragment>

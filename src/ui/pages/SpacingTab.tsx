@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Input, InputLabel, Icon, Text } from '../components/legacy';
+import { Button, InputField, Icon, Text } from '../components/legacy';
 import { SegmentedControl } from '../components/SegmentedControl';
 import { applySpacingLayout, SpacingOptions } from '../../board/spacing-tools';
 
@@ -44,15 +44,15 @@ export const SpacingTab: React.FC = () => {
           { label: 'Expand', value: 'grow' },
         ]}
       />
-      <InputLabel>
-        Spacing
-        <Input
+      <InputField label='Spacing'>
+        <input
+          className='input'
           type='number'
           value={String(opts.spacing)}
-          onChange={updateSpacing}
+          onChange={e => updateSpacing(e.target.value)}
           placeholder='Distance'
         />
-      </InputLabel>
+      </InputField>
       <div className='buttons'>
         <Button onClick={apply} variant='primary'>
           <React.Fragment key='.0'>

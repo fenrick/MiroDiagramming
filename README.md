@@ -135,7 +135,7 @@ should use the wrapper components under `src/ui/components/legacy`.
 When creating forms use the wrapper components so your inputs and buttons match
 the rest of the UI. These guidelines help keep layouts consistent:
 
-- Wrap each field in `InputLabel` to connect the label with its control.
+- Use `InputField` to pair labels with their controls.
 - Group related fields using `FormGroup` to maintain spacing and a clear
   vertical rhythm.
 - Arrange elements with the 12‑column grid classes (`cs*`/`ce*`) so forms remain
