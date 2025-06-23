@@ -100,6 +100,32 @@ describe('grid-tools', () => {
     expect(items[1].y).toBe(0); // first item sorted up
   });
 
+  test('applyGridLayout sorts vertically when requested', async () => {
+    const items = [
+      { x: 0, y: 0, width: 10, height: 10, sync: jest.fn(), title: 'b' },
+      { x: 0, y: 0, width: 10, height: 10, sync: jest.fn(), title: 'a' },
+      { x: 0, y: 0, width: 10, height: 10, sync: jest.fn(), title: 'd' },
+      { x: 0, y: 0, width: 10, height: 10, sync: jest.fn(), title: 'c' },
+    ];
+    const board: BoardLike = {
+      getSelection: jest.fn().mockResolvedValue(items),
+      group: jest.fn(),
+    };
+    await applyGridLayout(
+      {
+        cols: 2,
+        padding: 5,
+        sortByName: true,
+        sortOrientation: 'vertical',
+      },
+      board,
+    );
+    const byTitle = Object.fromEntries(items.map(i => [i.title, i]));
+    expect(byTitle.a.x).toBe(0);
+    expect(byTitle.b.y).toBe(15);
+    expect(byTitle.c.x).toBe(15);
+  });
+
   test('applyGridLayout throws without board', async () => {
     await expect(applyGridLayout({ cols: 1, padding: 0 })).rejects.toThrow(
       'Miro board not available',

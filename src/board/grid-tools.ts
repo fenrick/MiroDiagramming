@@ -10,6 +10,8 @@ export interface GridOptions {
   groupResult?: boolean;
   /** Sort widgets alphabetically by their name before layout. */
   sortByName?: boolean;
+  /** Direction for placing sorted items, defaults to horizontal */
+  sortOrientation?: 'horizontal' | 'vertical';
 }
 
 export interface Position {
@@ -56,9 +58,11 @@ export function calculateGridPositions(
   cellHeight: number,
 ): Position[] {
   const positions: Position[] = [];
+  const vertical = opts.sortOrientation === 'vertical';
+  const rows = Math.ceil(count / opts.cols);
   for (let i = 0; i < count; i += 1) {
-    const c = i % opts.cols;
-    const r = Math.floor(i / opts.cols);
+    const c = vertical ? Math.floor(i / rows) : i % opts.cols;
+    const r = vertical ? i % rows : Math.floor(i / opts.cols);
     positions.push({
       x: c * (cellWidth + opts.padding),
       y: r * (cellHeight + opts.padding),
