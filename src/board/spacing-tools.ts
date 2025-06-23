@@ -41,12 +41,8 @@ export async function applySpacingLayout(
   );
 
   let pos = (items[0] as Record<string, number>)[axis] ?? 0;
-  const tasks: Array<Promise<void>> = [];
   (items[0] as Record<string, number>)[axis] = pos;
-  const firstSync = (items[0] as { sync?: () => Promise<void> }).sync;
-  if (typeof firstSync === 'function') {
-    tasks.push(firstSync());
-  }
+  await (items[0] as { sync?: () => Promise<void> }).sync?.();
 
   for (let i = 1; i < items.length; i += 1) {
     const prev = items[i - 1] as Record<string, number>;
@@ -57,10 +53,6 @@ export async function applySpacingLayout(
       typeof curr[sizeKey] === 'number' ? (curr[sizeKey] as number) : 0;
     pos = pos + prevSize / 2 + opts.spacing + currSize / 2;
     curr[axis] = pos;
-    const syncFn = (curr as { sync?: () => Promise<void> }).sync;
-    if (typeof syncFn === 'function') {
-      tasks.push(syncFn());
-    }
+    await (curr as { sync?: () => Promise<void> }).sync?.();
   }
-  await Promise.all(tasks);
 }
