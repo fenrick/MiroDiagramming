@@ -28,15 +28,17 @@ export function Checkbox({
     onChange?.(e.target.checked);
   };
   return (
-    <label className={`toggle ${className}`.trim()}>
-      <input
-        type='checkbox'
-        checked={value}
-        onChange={handleChange}
-        {...props}
-      />
-      {/* span enables Mirotone checkbox styling */}
-      <span>{label}</span>
-    </label>
+    <div className='form-group-small'>
+      <label className={`toggle ${className}`.trim()}>
+        <input
+          type='checkbox'
+          checked={value}
+          onChange={handleChange}
+          {...props}
+        />
+        {/* span enables Mirotone checkbox styling */}
+        <span>{label}</span>
+      </label>
+    </div>
   );
 }
