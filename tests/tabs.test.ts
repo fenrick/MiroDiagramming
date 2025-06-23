@@ -81,6 +81,19 @@ describe('tab components', () => {
     expect(screen.getByText(/copy size/i)).toBeInTheDocument();
   });
 
+  test('ResizeTab aspect ratio adjusts height', async () => {
+    render(React.createElement(ResizeTab));
+    const widthInput = screen.getByPlaceholderText(/width/i);
+    fireEvent.change(widthInput, { target: { value: '160' } });
+    fireEvent.change(screen.getByTestId('ratio-select'), {
+      target: { value: '16:9' },
+    });
+    const heightInput = screen.getByPlaceholderText(
+      /height/i,
+    ) as HTMLInputElement;
+    expect(heightInput.value).toBe('90');
+  });
+
   test('StyleTab tweaks fill colour', async () => {
     const spy = jest
       .spyOn(styleTools, 'tweakFillColor')

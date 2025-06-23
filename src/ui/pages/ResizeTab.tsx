@@ -3,6 +3,8 @@ import {
   Button,
   FormGroup,
   InputField,
+  Select,
+  SelectOption,
   Paragraph,
   Icon,
   Text,
@@ -18,6 +20,12 @@ import {
   boardUnitsToMm,
   boardUnitsToInches,
 } from '../../core/utils/unit-utils';
+import {
+  ASPECT_RATIOS,
+  aspectRatioValue,
+  ratioHeight,
+  AspectRatioId,
+} from '../../core/utils/aspect-ratio';
 
 /** UI for the Resize tab. */
 export const ResizeTab: React.FC = () => {
@@ -25,6 +33,7 @@ export const ResizeTab: React.FC = () => {
   const [size, setSize] = React.useState<Size>({ width: 100, height: 100 });
   const [copiedSize, setCopiedSize] = React.useState<Size | null>(null);
   const [warning, setWarning] = React.useState('');
+  const [ratio, setRatio] = React.useState<AspectRatioId | 'none'>('none');
 
   const update =
     (key: keyof Size) =>
@@ -68,6 +77,14 @@ export const ResizeTab: React.FC = () => {
   }, [selection]);
 
   React.useEffect(() => {
+    if (ratio === 'none') return;
+    setSize((prev) => {
+      const h = ratioHeight(prev.width, aspectRatioValue(ratio));
+      return prev.height === h ? prev : { ...prev, height: h };
+    });
+  }, [ratio, size.width]);
+
+  React.useEffect(() => {
     const handler = (e: KeyboardEvent): void => {
       if (e.altKey && e.key.toLowerCase() === 'c') {
         e.preventDefault();
@@ -109,6 +126,22 @@ export const ResizeTab: React.FC = () => {
           />
         </InputField>
       </FormGroup>
+      <InputField label='Aspect Ratio'>
+        <Select
+          data-testid='ratio-select'
+          className='select-small'
+          value={ratio}
+          onChange={(v) => setRatio(v as AspectRatioId | 'none')}>
+          <SelectOption value='none'>Free</SelectOption>
+          {ASPECT_RATIOS.map((r) => (
+            <SelectOption
+              key={r.id}
+              value={r.id}>
+              {r.label}
+            </SelectOption>
+          ))}
+        </Select>
+      </InputField>
       <div>
         {['S', 'M', 'L'].map((p) => (
           <Button
