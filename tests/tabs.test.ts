@@ -22,7 +22,11 @@ vi.mock('../src/board/style-tools', async () => {
     await vi.importActual('../src/board/style-tools');
   return { ...actual, tweakFillColor: jest.fn() };
 });
-vi.mock('../src/board/format-tools');
+vi.mock('../src/board/format-tools', async () => {
+  const actual: typeof import('../src/board/format-tools') =
+    await vi.importActual('../src/board/format-tools');
+  return { ...actual, applyStylePreset: jest.fn() };
+});
 vi.mock('../src/board/grid-tools');
 vi.mock('../src/board/spacing-tools');
 vi.mock('../src/core/graph/graph-processor');
@@ -145,6 +149,25 @@ describe('tab components', () => {
       fireEvent.click(screen.getByRole('button', { name: /primary/i }));
     });
     expect(spy).toHaveBeenCalled();
+  });
+
+  test('Style preset button displays colours', async () => {
+    const style = document.documentElement.style;
+    style.setProperty('--colors-blue-150', '#111111');
+    style.setProperty('--colors-blue-200', '#222222');
+    style.setProperty('--white', '#ffffff');
+    await act(async () => {
+      render(React.createElement(StyleTab));
+    });
+    const btn = screen.getByRole('button', { name: /primary/i });
+    expect(btn).toHaveStyle({
+      backgroundColor: '#111111',
+      borderColor: '#222222',
+      color: '#ffffff',
+    });
+    style.removeProperty('--colors-blue-150');
+    style.removeProperty('--colors-blue-200');
+    style.removeProperty('--white');
   });
 
   test('GridTab applies layout', async () => {

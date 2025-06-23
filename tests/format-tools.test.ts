@@ -1,4 +1,4 @@
-import { applyStylePreset } from '../src/board/format-tools';
+import { applyStylePreset, presetStyle } from '../src/board/format-tools';
 import type { StylePreset } from '../src/ui/style-presets';
 
 describe('format-tools', () => {
@@ -28,5 +28,29 @@ describe('format-tools', () => {
     await expect(applyStylePreset(preset)).rejects.toThrow(
       'Miro board not available',
     );
+  });
+
+  test('presetStyle resolves colours', () => {
+    const style = document.documentElement.style;
+    style.setProperty('--test-font', '#111111');
+    style.setProperty('--test-border', '#222222');
+    style.setProperty('--test-fill', '#333333');
+    const presetToken: StylePreset = {
+      id: 'tok',
+      label: 'Token',
+      fontColor: 'var(--test-font)',
+      borderWidth: 3,
+      borderColor: 'var(--test-border)',
+      fillColor: 'var(--test-fill)',
+    };
+    expect(presetStyle(presetToken)).toEqual({
+      color: '#111111',
+      borderColor: '#222222',
+      borderWidth: 3,
+      fillColor: '#333333',
+    });
+    style.removeProperty('--test-font');
+    style.removeProperty('--test-border');
+    style.removeProperty('--test-fill');
   });
 });

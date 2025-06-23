@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Icon, InputField, Text } from '../components/legacy';
 import { tweakFillColor, extractFillColor } from '../../board/style-tools';
-import { applyStylePreset } from '../../board/format-tools';
+import { applyStylePreset, presetStyle } from '../../board/format-tools';
 import { STYLE_PRESETS } from '../style-presets';
 import { adjustColor } from '../../core/utils/color-utils';
 import { useSelection } from '../hooks/use-selection';
@@ -85,14 +85,24 @@ export const StyleTab: React.FC = () => {
         </Button>
       </div>
       <div className='buttons'>
-        {STYLE_PRESETS.map((p) => (
-          <Button
-            key={p.id}
-            onClick={() => applyStylePreset(p)}
-            variant='secondary'>
-            {p.label}
-          </Button>
-        ))}
+        {STYLE_PRESETS.map((p) => {
+          const style = presetStyle(p);
+          return (
+            <Button
+              key={p.id}
+              onClick={() => applyStylePreset(p)}
+              variant='secondary'
+              style={{
+                color: style.color,
+                backgroundColor: style.fillColor,
+                borderColor: style.borderColor,
+                borderWidth: style.borderWidth,
+                borderStyle: 'solid',
+              }}>
+              {p.label}
+            </Button>
+          );
+        })}
       </div>
     </div>
   );
