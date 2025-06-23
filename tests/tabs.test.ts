@@ -10,6 +10,7 @@ import { DiagramTab } from '../src/ui/pages/DiagramTab';
 import { CardsTab } from '../src/ui/pages/CardsTab';
 import * as resizeTools from '../src/board/resize-tools';
 import * as styleTools from '../src/board/style-tools';
+import * as formatTools from '../src/board/format-tools';
 import * as gridTools from '../src/board/grid-tools';
 import * as spacingTools from '../src/board/spacing-tools';
 import { GraphProcessor } from '../src/core/graph/graph-processor';
@@ -21,6 +22,7 @@ vi.mock('../src/board/style-tools', async () => {
     await vi.importActual('../src/board/style-tools');
   return { ...actual, tweakFillColor: jest.fn() };
 });
+vi.mock('../src/board/format-tools');
 vi.mock('../src/board/grid-tools');
 vi.mock('../src/board/spacing-tools');
 vi.mock('../src/core/graph/graph-processor');
@@ -130,6 +132,19 @@ describe('tab components', () => {
     });
     const preview = screen.getByTestId('adjust-preview');
     expect(preview.style.backgroundColor).toBe('rgb(18, 52, 86)');
+  });
+
+  test('StyleTab applies preset style', async () => {
+    const spy = jest
+      .spyOn(formatTools, 'applyStylePreset')
+      .mockResolvedValue(undefined as unknown as void);
+    await act(async () => {
+      render(React.createElement(StyleTab));
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /primary/i }));
+    });
+    expect(spy).toHaveBeenCalled();
   });
 
   test('GridTab applies layout', async () => {
