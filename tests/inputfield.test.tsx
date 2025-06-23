@@ -6,7 +6,10 @@ import { InputField } from '../src/ui/components/legacy/InputField';
 
 test('renders label and input', () => {
   render(<InputField label='Name' value='x' onChange={() => {}} />);
-  expect(screen.getByLabelText('Name')).toBeInTheDocument();
+  const input = screen.getByLabelText('Name');
+  expect(input).toBeInTheDocument();
+  const label = screen.getByText('Name');
+  expect(label).toHaveAttribute('for', input.getAttribute('id'));
 });
 
 test('calls onChange with value', () => {
@@ -23,5 +26,8 @@ test('supports custom child element', () => {
       <input data-testid='custom' type='file' />
     </InputField>,
   );
-  expect(screen.getByTestId('custom')).toBeInTheDocument();
+  const input = screen.getByTestId('custom');
+  const label = screen.getByText('File');
+  expect(label).toHaveAttribute('for', input.getAttribute('id'));
+  expect(input).toBeInTheDocument();
 });

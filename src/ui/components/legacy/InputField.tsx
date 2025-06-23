@@ -59,16 +59,13 @@ export function InputField({
       />
     );
   }
+
   return (
     <div className='form-group-small'>
-      <label className={wrapperClassName}>{label}</label>
-      {children ?? (
-        <input
-          className={`input ${className}`.trim()}
-          onChange={handleChange}
-          {...props}
-        />
-      )}
+      <label htmlFor={inputId} className={wrapperClassName}>
+        {label}
+      </label>
+      {control}
     </div>
   );
 }
