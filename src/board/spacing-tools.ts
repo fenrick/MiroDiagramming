@@ -22,7 +22,9 @@ export function calculateSpacingOffsets(
  * Distribute the current selection so each item is spaced evenly on the
  * chosen axis. Spacing is measured between the outer edges of each
  * widget so items with different dimensions maintain the same gap.
- * Item order is derived from their current position.
+ * Item order is derived from their current position. Every widget is
+ * synchronised immediately after its coordinates are updated so the
+ * board reflects the new layout.
  */
 export async function applySpacingLayout(
   opts: SpacingOptions,
@@ -59,11 +61,25 @@ export async function applySpacingLayout(
   }
 }
 
+/**
+ * Safely retrieve a numeric dimension from a widget.
+ *
+ * @param item - Widget instance.
+ * @param key - Dimension property name ('width' or 'height').
+ * @returns The numeric value or `0` when unavailable.
+ */
 function getDimension(item: Record<string, number>, key: string): number {
   const val = item[key];
   return typeof val === 'number' ? val : 0;
 }
 
+/**
+ * Move a widget along one axis and sync it with the board.
+ *
+ * @param item - The widget to update.
+ * @param axis - Axis to modify ('x' or 'y').
+ * @param position - New coordinate value.
+ */
 async function moveWidget(
   item: Record<string, number> & { sync?: () => Promise<void> },
   axis: 'x' | 'y',
