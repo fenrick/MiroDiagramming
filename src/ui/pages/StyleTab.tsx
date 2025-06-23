@@ -1,11 +1,18 @@
 import React from 'react';
 import { Button, Icon, Input, Text, InputLabel } from '../components/legacy';
 import { tweakFillColor } from '../../board/style-tools';
+import { adjustColor } from '../../core/utils/color-utils';
+import { tokens } from '../tokens';
 import type { TabTuple } from './tab-definitions';
 
 /** Adjusts the fill colour of selected widgets. */
 export const StyleTab: React.FC = () => {
   const [adjust, setAdjust] = React.useState(0);
+  // Preview colour updated live as the user tweaks the slider
+  const preview = React.useMemo(
+    () => adjustColor('#808080', adjust / 100),
+    [adjust],
+  );
   const apply = async (): Promise<void> => {
     await tweakFillColor(adjust / 100);
   };
@@ -27,6 +34,17 @@ export const StyleTab: React.FC = () => {
             <option key={n} value={n} />
           ))}
         </datalist>
+        <span
+          data-testid='adjust-preview'
+          style={{
+            display: 'inline-block',
+            width: '24px',
+            height: '24px',
+            marginLeft: tokens.space.small,
+            border: `1px solid ${tokens.color.gray[200]}`,
+            backgroundColor: preview,
+          }}
+        />
       </InputLabel>
       <InputLabel>
         Adjust value
