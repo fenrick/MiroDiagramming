@@ -39,7 +39,7 @@ export function InputField({
         id: inputId,
         onChange: (e: React.ChangeEvent<HTMLInputElement>): void => {
           (
-            (children as React.ReactElement).props as {
+            children.props as {
               onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
             }
           ).onChange?.(e);
@@ -61,14 +61,10 @@ export function InputField({
   }
   return (
     <div className='form-group-small'>
-      <label className={wrapperClassName}>{label}</label>
-      {children ?? (
-        <input
-          className={`input ${className}`.trim()}
-          onChange={handleChange}
-          {...props}
-        />
-      )}
+      <label htmlFor={inputId} className={wrapperClassName}>
+        {label}
+      </label>
+      {control}
     </div>
   );
 }

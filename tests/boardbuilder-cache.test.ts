@@ -7,16 +7,16 @@ interface GlobalWithMiro {
 declare const global: GlobalWithMiro;
 
 /**
- * Additional tests exercising caching and connector styling logic.
+ * Additional tests exercising lookup and connector styling logic.
  */
 
-describe('BoardBuilder caches and connector updates', () => {
+describe('BoardBuilder lookup and connector updates', () => {
   afterEach(() => {
     jest.restoreAllMocks();
     delete global.miro;
   });
 
-  test('findNode retrieves shape from cache', async () => {
+  test('findNode queries board each time', async () => {
     const shape = {
       getMetadata: jest.fn().mockResolvedValue({ type: 'Role', label: 'B' }),
     } as Record<string, unknown>;
@@ -24,13 +24,14 @@ describe('BoardBuilder caches and connector updates', () => {
       board: { get: jest.fn().mockResolvedValue([shape]) },
     };
     const builder = new BoardBuilder();
-    const result = await builder.findNode('Role', 'B');
-    expect(result).toBe(shape);
+    await builder.findNode('Role', 'B');
+    await builder.findNode('Role', 'B');
+    expect((global.miro.board.get as jest.Mock).mock.calls.length).toBe(2);
   });
 
-  test('createEdges caches new connector', async () => {
+  test('createEdges skips connector lookup', async () => {
     const board = {
-      get: jest.fn().mockResolvedValue([]),
+      get: jest.fn(),
       createConnector: jest.fn().mockResolvedValue({
         setMetadata: jest.fn(),
         getMetadata: jest.fn(),
@@ -50,37 +51,19 @@ describe('BoardBuilder caches and connector updates', () => {
       edges as unknown as Array<{ from: string; to: string }>,
       nodeMap,
     );
-    const calls = board.get.mock.calls.length;
-    await builder.findConnector('n1', 'n2');
-    expect(board.get.mock.calls.length).toBe(calls);
+    expect(board.get).not.toHaveBeenCalled();
   });
 
-  test('updateConnector merges style from template', async () => {
+  test('updateConnector merges style from template', () => {
     const existing = {
-      getMetadata: jest.fn().mockResolvedValue({ from: 'n1', to: 'n2' }),
-      sync: jest.fn(),
-      id: 'cExisting',
       style: {},
     } as Record<string, unknown>;
-    const board = {
-      get: jest.fn().mockResolvedValueOnce([existing]),
-      createConnector: jest.fn(),
-    };
-    global.miro = { board };
     const builder = new BoardBuilder();
-    const edges = [{ from: 'n1', to: 'n2', metadata: { template: 'flow' } }];
-    const nodeMap = { n1: { id: 'a' }, n2: { id: 'b' } } as Record<
-      string,
-      unknown
-    >;
-
-    await builder.createEdges(
-      edges as unknown as Array<{
-        from: string;
-        to: string;
-        metadata: { template: string };
-      }>,
-      nodeMap,
+    builder.updateConnector(
+      existing as unknown as Connector,
+      { from: 'n1', to: 'n2' },
+      { shape: 'curved', style: { strokeStyle: 'dashed' } },
+      undefined,
     );
     expect(existing.style.strokeStyle).toBe('dashed');
   });

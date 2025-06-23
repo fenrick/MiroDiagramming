@@ -18,15 +18,6 @@ describe('graph service methods', () => {
     expect(result).toBe('x');
   });
 
-  test('findConnector delegates to default builder', async () => {
-    const spy = jest
-      .spyOn(defaultBuilder, 'findConnector')
-      .mockResolvedValue('c' as unknown);
-    const result = await graphService.findConnector('a', 'b');
-    expect(spy).toHaveBeenCalledWith('a', 'b');
-    expect(result).toBe('c');
-  });
-
   test('createNode delegates to default builder', async () => {
     const spy = jest
       .spyOn(defaultBuilder, 'createNode')

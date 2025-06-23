@@ -43,7 +43,7 @@ describe('createNode', () => {
     expect(result).toBeDefined();
   });
 
-  test('updates existing node', async () => {
+  test('ignores existing node', async () => {
     const existing = {
       type: 'shape',
       style: {},
@@ -54,7 +54,6 @@ describe('createNode', () => {
     } as Record<string, unknown>;
     (global.miro.board.get as jest.Mock).mockResolvedValueOnce([existing]);
     const result = await graphService.createNode(node, pos);
-    expect(result).toBe(existing);
-    expect(existing.style.fillColor).toBe('#fff7d9');
+    expect(result).not.toBe(existing);
   });
 });

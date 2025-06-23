@@ -1,8 +1,4 @@
-import type {
-  ConnectorTemplate,
-  TemplateDefinition,
-  TemplateElement,
-} from './templates';
+import type { ConnectorTemplate, TemplateElement } from './templates';
 import { templateManager } from './templates';
 import type {
   BaseItem,
@@ -27,17 +23,12 @@ const META_KEY = 'app.miro.structgraph';
 
 /**
  * Helper responsible for finding, creating and updating widgets on the board.
- * A small cache avoids repeated board lookups while processing a graph.
  */
 export class BoardBuilder {
-  private shapeCache: BaseItem[] | undefined;
-  private connectorCache: Connector[] | undefined;
   private frame: Frame | undefined;
 
-  /** Clear cached board lookups. Useful between runs or during tests. */
+  /** Reset any builder state between runs. */
   public reset(): void {
-    this.shapeCache = undefined;
-    this.connectorCache = undefined;
     this.frame = undefined;
   }
 
@@ -114,22 +105,6 @@ export class BoardBuilder {
     return this.searchGroups(type, label);
   }
 
-  /** Find a connector with matching metadata if it exists on the board. */
-  public async findConnector(
-    from: unknown,
-    to: unknown,
-  ): Promise<Connector | undefined> {
-    if (typeof from !== 'string' || typeof to !== 'string') {
-      throw new Error('Invalid search parameters');
-    }
-    await this.loadConnectorCache();
-    const connectors = this.connectorCache ?? [];
-    return this.findByMetadata(connectors, meta => {
-      const data = meta as EdgeMetadata | undefined;
-      return data?.from === from && data.to === to;
-    });
-  }
-
   /** Create or update a node widget from a template. */
   public async createNode(
     node: unknown,
@@ -146,18 +121,13 @@ export class BoardBuilder {
     if (!templateDef) {
       throw new Error(`Template '${nodeData.type}' not found`);
     }
-    const existing = await this.findNode(nodeData.type, nodeData.label);
-    if (existing) {
-      return this.updateExistingNode(
-        existing as BaseItem | Group,
-        templateDef,
-        nodeData,
-      );
-    }
     return this.createNewNode(nodeData, pos);
   }
 
-  /** Create connectors with labels, metadata and optional snap hints. */
+  /**
+   * Create new connectors between nodes.
+   * Existing connectors are ignored; a fresh widget is created for each edge.
+   */
   public async createEdges(
     edges: EdgeData[],
     nodeMap: Record<string, BaseItem | Group>,
@@ -181,11 +151,6 @@ export class BoardBuilder {
             ? edge.metadata.template
             : 'default';
         const template = templateManager.getConnectorTemplate(templateName);
-        const existing = await this.findConnector(edge.from, edge.to);
-        if (existing) {
-          this.updateConnector(existing, edge, template, hints?.[i]);
-          return existing;
-        }
         return this.createConnector(edge, from, to, hints?.[i], template);
       }),
     );
@@ -221,22 +186,6 @@ export class BoardBuilder {
     }
   }
 
-  private async loadShapeCache(): Promise<void> {
-    this.ensureBoard();
-    if (!this.shapeCache) {
-      this.shapeCache = (await miro.board.get({ type: 'shape' })) as BaseItem[];
-    }
-  }
-
-  private async loadConnectorCache(): Promise<void> {
-    this.ensureBoard();
-    if (!this.connectorCache) {
-      this.connectorCache = (await miro.board.get({
-        type: 'connector',
-      })) as Connector[];
-    }
-  }
-
   /**
    * Find an item whose metadata satisfies the provided predicate.
    * Metadata for all items is loaded concurrently for efficiency.
@@ -257,15 +206,15 @@ export class BoardBuilder {
   }
 
   /**
-   * Search cached shapes for metadata that matches the given type and label.
+   * Search board shapes for metadata that matches the given type and label.
    * Returns the corresponding item if found.
    */
   private async searchShapes(
     type: string,
     label: string,
   ): Promise<BaseItem | Group | undefined> {
-    await this.loadShapeCache();
-    const shapes = this.shapeCache ?? [];
+    this.ensureBoard();
+    const shapes = (await miro.board.get({ type: 'shape' })) as BaseItem[];
     return this.findByMetadata(shapes, meta => {
       const data = meta as NodeMetadata | undefined;
       return data?.type === type && data.label === label;
@@ -300,7 +249,7 @@ export class BoardBuilder {
    * Apply template values for a shape element to an existing item.
    * This updates geometry, text content and style attributes in place.
    */
-  private applyShapeElement(
+  public applyShapeElement(
     item: BaseItem,
     element: TemplateElement,
     label: string,
@@ -329,7 +278,7 @@ export class BoardBuilder {
   /**
    * Apply text element properties such as content and style to a widget.
    */
-  private applyTextElement(
+  public applyTextElement(
     item: BaseItem,
     element: TemplateElement,
     label: string,
@@ -348,7 +297,7 @@ export class BoardBuilder {
    * Route element application based on widget type.
    * Shapes and text widgets share most properties but are handled separately.
    */
-  private applyElementToItem(
+  public applyElementToItem(
     item: BaseItem,
     element: TemplateElement,
     label: string,
@@ -358,44 +307,6 @@ export class BoardBuilder {
     } else if (item.type === 'text') {
       this.applyTextElement(item, element, label);
     }
-  }
-
-  /**
-   * Update an already existing widget group or shape using the provided
-   * template definition.
-   */
-  private async updateExistingNode(
-    existing: BaseItem | Group,
-    definition: TemplateDefinition,
-    node: NodeData,
-  ): Promise<BaseItem | Group> {
-    if ((existing as Group).type === 'group') {
-      const items = await (existing as Group).getItems();
-      await Promise.all(
-        items.slice(0, definition.elements.length).map((item, i) => {
-          this.applyElementToItem(
-            item as BaseItem,
-            definition.elements[i],
-            node.label,
-          );
-          return item.setMetadata(META_KEY, {
-            type: node.type,
-            label: node.label,
-          });
-        }),
-      );
-      return existing as Group;
-    }
-    this.applyElementToItem(
-      existing as BaseItem,
-      definition.elements[0],
-      node.label,
-    );
-    await (existing as BaseItem).setMetadata(META_KEY, {
-      type: node.type,
-      label: node.label,
-    });
-    return existing as BaseItem;
   }
 
   /**
@@ -425,16 +336,16 @@ export class BoardBuilder {
       type: node.type,
       label: node.label,
     });
-    if (this.shapeCache) {
-      this.shapeCache.push(widget as BaseItem);
-    }
     return widget as BaseItem;
   }
 
   /**
    * Apply metadata and styling updates to an existing connector widget.
    */
-  private updateConnector(
+  /**
+   * Update an existing connector with style, label and hint data.
+   */
+  public updateConnector(
     connector: Connector,
     edge: EdgeData,
     template?: ConnectorTemplate,
@@ -501,9 +412,6 @@ export class BoardBuilder {
       from: edge.from,
       to: edge.to,
     });
-    if (this.connectorCache) {
-      this.connectorCache.push(connector);
-    }
     return connector;
   }
 
@@ -523,9 +431,4 @@ export class BoardBuilder {
 interface NodeMetadata {
   type: string;
   label: string;
-}
-
-interface EdgeMetadata {
-  from: string;
-  to: string;
 }
