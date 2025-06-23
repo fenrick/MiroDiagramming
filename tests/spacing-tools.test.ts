@@ -23,6 +23,33 @@ describe('spacing-tools', () => {
     expect(items[0].sync).toHaveBeenCalled();
   });
 
+  test('applySpacingLayout grows widgets horizontally', async () => {
+    const items = [
+      { x: 0, y: 0, width: 10, sync: jest.fn() },
+      { x: 30, y: 0, width: 20, sync: jest.fn() },
+      { x: 60, y: 0, width: 10, sync: jest.fn() },
+    ];
+    const board: BoardLike = {
+      getSelection: jest.fn().mockResolvedValue(items),
+    };
+    await applySpacingLayout({ axis: 'x', spacing: 5, mode: 'grow' }, board);
+    expect(items.map(i => i.width)).toEqual([20, 20, 20]);
+    expect(items.map(i => i.x)).toEqual([5, 30, 55]);
+  });
+
+  test('applySpacingLayout grows widgets vertically', async () => {
+    const items = [
+      { x: 0, y: 0, height: 10, sync: jest.fn() },
+      { x: 0, y: 30, height: 20, sync: jest.fn() },
+    ];
+    const board: BoardLike = {
+      getSelection: jest.fn().mockResolvedValue(items),
+    };
+    await applySpacingLayout({ axis: 'y', spacing: 5, mode: 'grow' }, board);
+    expect(items.map(i => i.height)).toEqual([20, 20]);
+    expect(items.map(i => i.y)).toEqual([5, 30]);
+  });
+
   test('applySpacingLayout spaces widgets vertically by edges', async () => {
     const items = [
       { x: 0, y: 0, height: 10, sync: jest.fn() },
