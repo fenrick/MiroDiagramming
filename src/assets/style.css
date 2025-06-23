@@ -70,14 +70,6 @@ body {
   border: 0;
 }
 
-.tabs-header-list {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.tabs-header-list .tab {
-  flex: 0 0 auto;
-}
 
 button {
   padding: var(--space-xxsmall) var(--space-xsmall);
