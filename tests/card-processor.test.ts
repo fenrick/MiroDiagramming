@@ -204,6 +204,20 @@ describe('CardProcessor', () => {
     expect(calls[3][0]).toEqual(expect.objectContaining({ x: 172, y: 56 }));
   });
 
+  test('defaults to a square grid layout', async () => {
+    await processor.processCards([
+      { title: 'A' },
+      { title: 'B' },
+      { title: 'C' },
+      { title: 'D' },
+    ]);
+    const calls = (global.miro.board.createCard as jest.Mock).mock.calls;
+    expect(calls[0][0]).toEqual(expect.objectContaining({ x: -172, y: -56 }));
+    expect(calls[1][0]).toEqual(expect.objectContaining({ x: 172, y: -56 }));
+    expect(calls[2][0]).toEqual(expect.objectContaining({ x: -172, y: 56 }));
+    expect(calls[3][0]).toEqual(expect.objectContaining({ x: 172, y: 56 }));
+  });
+
   test('throws on invalid input', async () => {
     await expect(
       processor.processCards(null as unknown as unknown[]),

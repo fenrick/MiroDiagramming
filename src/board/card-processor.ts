@@ -5,7 +5,10 @@ import type { Card, CardStyle, Frame, Tag } from '@mirohq/websdk-types';
 export interface CardProcessOptions {
   createFrame?: boolean;
   frameTitle?: string;
-  /** Maximum number of cards per row when creating new cards. */
+  /**
+   * Desired number of cards per row. When omitted a square-like grid is
+   * computed automatically.
+   */
   columns?: number;
 }
 
@@ -243,7 +246,7 @@ export class CardProcessor {
    */
   private async calculateLayoutArea(
     count: number,
-    columns = count,
+    columns?: number,
   ): Promise<{
     spot: { x: number; y: number };
     startX: number;
@@ -252,7 +255,8 @@ export class CardProcessor {
     totalWidth: number;
     totalHeight: number;
   }> {
-    const cols = Math.max(1, Math.min(columns, count));
+    const autoCols = columns ?? Math.ceil(Math.sqrt(count));
+    const cols = Math.max(1, Math.min(autoCols, count));
     const rows = Math.ceil(count / cols);
     const totalWidth =
       CardProcessor.CARD_WIDTH * cols +
