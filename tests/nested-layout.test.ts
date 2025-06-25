@@ -65,4 +65,32 @@ describe('layoutHierarchy', () => {
     expect(result.nodes['r1c1g1'].width).toBe(120);
     expect(result.nodes['r1c1g1'].height).toBe(30);
   });
+
+  test('computes absolute positions for deep nodes', async () => {
+    const data: TestNode[] = [
+      {
+        id: 'root',
+        label: 'Root',
+        type: 'Role',
+        children: [
+          {
+            id: 'child',
+            label: 'Child',
+            type: 'Role',
+            children: [
+              { id: 'g1', label: 'G1', type: 'Role' },
+              { id: 'g2', label: 'G2', type: 'Role' },
+            ],
+          },
+        ],
+      },
+    ];
+    const result = await layoutHierarchy(data);
+    const g1 = result.nodes.g1;
+    const g2 = result.nodes.g2;
+    const child = result.nodes.child;
+    expect(g1.x === g2.x && g1.y === g2.y).toBe(false);
+    expect(g1.x).toBeGreaterThan(child.x);
+    expect(g2.x).toBeGreaterThan(child.x);
+  });
 });
