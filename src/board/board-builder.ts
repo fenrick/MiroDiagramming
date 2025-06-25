@@ -121,7 +121,9 @@ export class BoardBuilder {
     if (!templateDef) {
       throw new Error(`Template '${nodeData.type}' not found`);
     }
-    return this.createNewNode(nodeData, pos);
+    const widget = await this.createNewNode(nodeData, pos);
+    await this.resizeItem(widget, pos.width, pos.height);
+    return widget;
   }
 
   /**
@@ -338,6 +340,25 @@ export class BoardBuilder {
       label: node.label,
     });
     return widget as BaseItem;
+  }
+
+  /**
+   * Resize an item if width and height properties are available.
+   * The widget is synchronised when a sync method exists.
+   */
+  public async resizeItem(
+    item: BaseItem | Group,
+    width: number,
+    height: number,
+  ): Promise<void> {
+    const target = item as {
+      width?: number;
+      height?: number;
+      sync?: () => Promise<void>;
+    };
+    if (typeof target.width === 'number') target.width = width;
+    if (typeof target.height === 'number') target.height = height;
+    if (typeof target.sync === 'function') await target.sync();
   }
 
   /**

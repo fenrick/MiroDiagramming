@@ -22,9 +22,10 @@ import {
   ElkDirection,
   UserLayoutOptions,
 } from '../../core/layout/elk-options';
+import { HierarchyProcessor } from '../../core/graph/hierarchy-processor';
 import { getDropzoneStyle, undoLastImport } from '../hooks/ui-utils';
 
-const LAYOUTS = ['Layered', 'Tree', 'Grid'] as const;
+const LAYOUTS = ['Layered', 'Tree', 'Grid', 'Nested'] as const;
 type LayoutChoice = (typeof LAYOUTS)[number];
 
 /** UI for the Diagram tab. */
@@ -40,9 +41,9 @@ export const DiagramTab: React.FC = () => {
   );
   const [progress, setProgress] = React.useState<number>(0);
   const [error, setError] = React.useState<string | null>(null);
-  const [lastProc, setLastProc] = React.useState<GraphProcessor | undefined>(
-    undefined,
-  );
+  const [lastProc, setLastProc] = React.useState<
+    GraphProcessor | HierarchyProcessor | undefined
+  >(undefined);
 
   React.useEffect(() => {
     const handler = (e: KeyboardEvent): void => {
@@ -66,23 +67,33 @@ export const DiagramTab: React.FC = () => {
   });
 
   const graphProcessor = React.useMemo(() => new GraphProcessor(), []);
+  const hierarchyProcessor = React.useMemo(() => new HierarchyProcessor(), []);
 
   const handleCreate = async (): Promise<void> => {
     setProgress(0);
     setError(null);
     for (const file of importQueue) {
       try {
-        setLastProc(graphProcessor);
-        const algorithmMap: Record<LayoutChoice, ElkAlgorithm> = {
-          Layered: 'layered',
-          Tree: 'mrtree',
-          Grid: 'force',
-        };
-        await graphProcessor.processFile(file, {
-          createFrame: withFrame,
-          frameTitle: frameTitle || undefined,
-          layout: { ...layoutOpts, algorithm: algorithmMap[layoutChoice] },
-        });
+        if (layoutChoice === 'Nested') {
+          setLastProc(hierarchyProcessor);
+          await hierarchyProcessor.processFile(file, {
+            createFrame: withFrame,
+            frameTitle: frameTitle || undefined,
+          });
+        } else {
+          setLastProc(graphProcessor);
+          const algorithmMap: Record<LayoutChoice, ElkAlgorithm> = {
+            Layered: 'layered',
+            Tree: 'mrtree',
+            Grid: 'force',
+            Nested: 'layered',
+          };
+          await graphProcessor.processFile(file, {
+            createFrame: withFrame,
+            frameTitle: frameTitle || undefined,
+            layout: { ...layoutOpts, algorithm: algorithmMap[layoutChoice] },
+          });
+        }
         setProgress(100);
       } catch (e) {
         const msg = String(e);

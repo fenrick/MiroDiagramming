@@ -71,6 +71,14 @@ A small example is provided in
 }
 ```
 
+## Nested Layouts
+
+Hierarchical data where children are contained within parent shapes can be
+visualised using the **Nested** layout option in the Diagram tab. Nodes are
+sorted alphabetically by default or via a custom metadata key. A three‑level
+sample dataset is available at
+[tests/fixtures/sample-hier.json](tests/fixtures/sample-hier.json).
+
 ## Accessibility
 
 The import panel is keyboard accessible. The drop area includes an ARIA label

@@ -49,7 +49,8 @@ A three-level hierarchical dataset can be found in
 [`tests/fixtures/sample-hier.json`](../tests/fixtures/sample-hier.json). It
 contains four top-level groups, each with four subgroups and four items per
 subgroup. This is useful when experimenting with the nested layout algorithm.
-Import the JSON in the **Create** tab and choose the diagram mode.
+Import the JSON in the **Create** tab and choose the **Nested** diagram layout
+to see child nodes arranged inside their parents.
 
 ---
 
