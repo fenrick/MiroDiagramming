@@ -8,11 +8,13 @@ import { GridTab } from '../src/ui/pages/GridTab';
 import { SpacingTab } from '../src/ui/pages/SpacingTab';
 import { DiagramTab } from '../src/ui/pages/DiagramTab';
 import { CardsTab } from '../src/ui/pages/CardsTab';
+import { FramesTab } from '../src/ui/pages/FramesTab';
 import * as resizeTools from '../src/board/resize-tools';
 import * as styleTools from '../src/board/style-tools';
 import * as formatTools from '../src/board/format-tools';
 import * as gridTools from '../src/board/grid-tools';
 import * as spacingTools from '../src/board/spacing-tools';
+import * as frameTools from '../src/board/frame-tools';
 import { GraphProcessor } from '../src/core/graph/graph-processor';
 import { CardProcessor } from '../src/board/card-processor';
 
@@ -29,6 +31,7 @@ vi.mock('../src/board/format-tools', async () => {
 });
 vi.mock('../src/board/grid-tools');
 vi.mock('../src/board/spacing-tools');
+vi.mock('../src/board/frame-tools');
 vi.mock('../src/core/graph/graph-processor');
 vi.mock('../src/board/card-processor');
 
@@ -215,6 +218,20 @@ describe('tab components', () => {
     expect(spy).toHaveBeenCalledWith(
       expect.objectContaining({ axis: 'x', spacing: 20, mode: 'grow' }),
     );
+  });
+
+  test('FramesTab renames frames', async () => {
+    const spy = jest
+      .spyOn(frameTools, 'renameSelectedFrames')
+      .mockResolvedValue(undefined as unknown as void);
+    render(React.createElement(FramesTab));
+    fireEvent.change(screen.getByLabelText('Prefix'), {
+      target: { value: 'A-' },
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByText(/rename frames/i));
+    });
+    expect(spy).toHaveBeenCalledWith({ prefix: 'A-' });
   });
 
   test('DiagramTab processes file', async () => {

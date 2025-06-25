@@ -34,6 +34,18 @@ ambiguity.
 
 ---
 
+## 2\u00a0 Frames Tab
+
+| Control           | Details                                         |
+| ----------------- | ----------------------------------------------- |
+| **Prefix Input**  | Text prefix used for renaming                   |
+| **Rename Button** | Applies prefix in left\u2011to\u2011right order |
+
+Flow: select frames, type prefix, press **Rename Frames** → titles become
+`<prefix>0`, `<prefix>1`, ...
+
+---
+
 ## 3  Resize Tab
 
 Panel split vertically **(Stack space="lg")**

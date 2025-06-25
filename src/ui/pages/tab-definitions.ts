@@ -5,6 +5,7 @@ export type TabId =
   | 'resize'
   | 'style'
   | 'grid'
+  | 'frames'
   | 'spacing'
   | 'dummy';
 
