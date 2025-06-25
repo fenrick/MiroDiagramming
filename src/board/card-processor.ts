@@ -31,6 +31,8 @@ export class CardProcessor {
   private cardsCache: Card[] | undefined;
   /** Cached map from card identifier to card widget. */
   private cardMap: Map<string, Card> | undefined;
+  /** Cached board tags when processing updates. */
+  private tagsCache: Tag[] | undefined;
 
   constructor(private builder: BoardBuilder = new BoardBuilder()) {}
 
@@ -57,6 +59,7 @@ export class CardProcessor {
     // Reset per-run caches to ensure fresh board state
     this.cardsCache = undefined;
     this.cardMap = undefined;
+    this.tagsCache = undefined;
 
     const boardTags = await this.getBoardTags();
     const tagMap = new Map(boardTags.map((t) => [t.title, t]));
@@ -121,8 +124,12 @@ export class CardProcessor {
     }
   }
 
+  /** Retrieve all tags on the board, cached for the current run. */
   private async getBoardTags(): Promise<Tag[]> {
-    return (await miro.board.get({ type: 'tag' })) as Tag[];
+    if (!this.tagsCache) {
+      this.tagsCache = (await miro.board.get({ type: 'tag' })) as Tag[];
+    }
+    return this.tagsCache;
   }
 
   /** Retrieve all cards on the board, cached for the current run. */

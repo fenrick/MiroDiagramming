@@ -27,6 +27,19 @@ describe('CardProcessor branches', () => {
     expect(board.get).toHaveBeenCalledTimes(1);
   });
 
+  test('getBoardTags caches board fetches', async () => {
+    const board = { get: jest.fn().mockResolvedValue([]) };
+    global.miro = { board };
+    const cp = new CardProcessor();
+    await (
+      cp as unknown as { getBoardTags: () => Promise<unknown[]> }
+    ).getBoardTags();
+    await (
+      cp as unknown as { getBoardTags: () => Promise<unknown[]> }
+    ).getBoardTags();
+    expect(board.get).toHaveBeenCalledTimes(1);
+  });
+
   test('loadCardMap ignores cards without id metadata', async () => {
     const card = {
       getMetadata: jest.fn().mockResolvedValue({}),
