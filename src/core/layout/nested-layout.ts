@@ -1,5 +1,3 @@
-import { templateManager } from '../../board/templates';
-
 export interface HierNode {
   id: string;
   label: string;
@@ -26,7 +24,9 @@ export interface NestedLayoutResult {
 }
 
 const GOLDEN_RATIO = 1.618;
-const DEFAULT_SIZE = 160;
+const LEAF_WIDTH = 120;
+const LEAF_HEIGHT = 30;
+const PADDING = 20;
 
 /**
  * Helper class that positions hierarchical nodes using an intrinsic grid
@@ -34,15 +34,15 @@ const DEFAULT_SIZE = 160;
  * specific metadata key is provided.
  */
 export class NestedLayouter {
-  /**
-   * Determine a node's width and height from its template or use fallbacks.
-   */
-  private templateSize(type: string): { width: number; height: number } {
-    const tpl = templateManager.getTemplate(type);
-    const element = tpl?.elements.find((e) => e.width && e.height);
-    const width = element?.width ?? DEFAULT_SIZE;
-    const height = element?.height ?? width / GOLDEN_RATIO;
-    return { width, height };
+  /** Cache of measured node sizes. */
+  private sizes: Record<string, { width: number; height: number }> = {};
+
+  /** Sorted child order for each node. */
+  private order: Record<string, HierNode[]> = {};
+
+  /** Determine a leaf node's size. */
+  private leafSize(): { width: number; height: number } {
+    return { width: LEAF_WIDTH, height: LEAF_HEIGHT };
   }
 
   /** Retrieve the sort value for a node. */
@@ -54,42 +54,61 @@ export class NestedLayouter {
   }
 
   /**
-   * Recursively position a node and its children.
+   * Measure a node and its children, recording sizes in {@link sizes}.
    */
-  private layoutChildren(
+  private measure(
     node: HierNode,
-    centerX: number,
-    centerY: number,
-    width: number,
-    height: number,
-    map: Record<string, PositionedNode>,
     opts: NestedLayoutOptions,
-  ): void {
-    map[node.id] = { id: node.id, x: centerX, y: centerY, width, height };
+  ): { width: number; height: number } {
     const children = node.children;
-    if (!children?.length) return;
+    if (!children?.length) {
+      const size = this.leafSize();
+      this.sizes[node.id] = size;
+      return size;
+    }
+
     const sorted = [...children].sort((a, b) =>
       this.sortValue(a, opts.sortKey).localeCompare(
         this.sortValue(b, opts.sortKey),
       ),
     );
-    const marginX = width * 0.1;
-    const marginY = height * 0.2;
-    const innerW = width - marginX * 2;
-    const innerH = height - marginY * 2;
+    this.order[node.id] = sorted;
+    const childSizes = sorted.map((child) => this.measure(child, opts));
+    const maxW = Math.max(...childSizes.map((s) => s.width));
+    const maxH = Math.max(...childSizes.map((s) => s.height));
     const cols = Math.ceil(Math.sqrt(sorted.length * GOLDEN_RATIO));
     const rows = Math.ceil(sorted.length / cols);
-    const cellW = innerW / cols;
-    const cellH = innerH / rows;
-    sorted.forEach((child, i) => {
+    const width = cols * maxW + PADDING * 2;
+    const height = rows * maxH + PADDING * 2;
+    this.sizes[node.id] = { width, height };
+    return { width, height };
+  }
+
+  /**
+   * Recursively position a node and its children.
+   */
+  private place(
+    node: HierNode,
+    centerX: number,
+    centerY: number,
+    map: Record<string, PositionedNode>,
+  ): void {
+    const { width, height } = this.sizes[node.id];
+    map[node.id] = { id: node.id, x: centerX, y: centerY, width, height };
+    const children = this.order[node.id];
+    if (!children?.length) return;
+    const cols = Math.ceil(Math.sqrt(children.length * GOLDEN_RATIO));
+    const childSizes = children.map((c) => this.sizes[c.id]);
+    const maxW = Math.max(...childSizes.map((s) => s.width));
+    const maxH = Math.max(...childSizes.map((s) => s.height));
+    const x0 = centerX - width / 2 + PADDING + maxW / 2;
+    const y0 = centerY - height / 2 + PADDING + maxH / 2;
+    children.forEach((child, i) => {
       const col = i % cols;
       const row = Math.floor(i / cols);
-      const cx = centerX - width / 2 + marginX + col * cellW + cellW / 2;
-      const cy = centerY - height / 2 + marginY + row * cellH + cellH / 2;
-      const dims = this.templateSize(child.type);
-      const cw = Math.min(dims.width, cellW);
-      const ch = Math.min(dims.height, cellH);
-      this.layoutChildren(child, cx, cy, cw, ch, map, opts);
+      const cx = x0 + col * maxW;
+      const cy = y0 + row * maxH;
+      this.place(child, cx, cy, map);
     });
   }
 
@@ -101,21 +120,16 @@ export class NestedLayouter {
     roots: HierNode[],
     opts: NestedLayoutOptions = {},
   ): NestedLayoutResult {
+    this.sizes = {};
+    this.order = {};
     const nodes: Record<string, PositionedNode> = {};
+    roots.forEach((root) => this.measure(root, opts));
     let offsetY = 0;
     const gap = 40;
     roots.forEach((root) => {
-      const size = this.templateSize(root.type);
+      const size = this.sizes[root.id];
       const y = offsetY + size.height / 2;
-      this.layoutChildren(
-        root,
-        size.width / 2,
-        y,
-        size.width,
-        size.height,
-        nodes,
-        opts,
-      );
+      this.place(root, size.width / 2, y, nodes);
       offsetY += size.height + gap;
     });
     return { nodes };

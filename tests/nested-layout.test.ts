@@ -1,5 +1,4 @@
 import { layoutHierarchy } from '../src/core/layout/nested-layout';
-import { templateManager } from '../src/board/templates';
 import sampleHier from './fixtures/sample-hier.json';
 
 interface TestNode {
@@ -16,9 +15,6 @@ describe('layoutHierarchy', () => {
   });
 
   test('creates positions for nested nodes', () => {
-    vi.spyOn(templateManager, 'getTemplate').mockReturnValue({
-      elements: [{ width: 100, height: 60 }],
-    });
     const data: TestNode[] = [
       {
         id: 'p',
@@ -36,13 +32,10 @@ describe('layoutHierarchy', () => {
     const childA = result.nodes.a;
     const childB = result.nodes.b;
     expect(childA.x).toBeLessThan(childB.x);
-    expect(parent.width).toBe(100);
+    expect(parent.width).toBeGreaterThan(childA.width);
   });
 
   test('sorts children by custom key', () => {
-    vi.spyOn(templateManager, 'getTemplate').mockReturnValue({
-      elements: [{ width: 100, height: 60 }],
-    });
     const data: TestNode[] = [
       {
         id: 'p',
@@ -59,21 +52,17 @@ describe('layoutHierarchy', () => {
     expect(first).toBe('b');
   });
 
-  test('falls back to golden ratio height', () => {
-    vi.spyOn(templateManager, 'getTemplate').mockReturnValue(
-      undefined as never,
-    );
+  test('assigns fixed leaf size', () => {
     const data: TestNode[] = [{ id: 'n', label: 'N', type: 'Role' }];
     const result = layoutHierarchy(data);
-    expect(result.nodes.n.height).toBeCloseTo(160 / 1.618, 5);
+    expect(result.nodes.n.width).toBe(120);
+    expect(result.nodes.n.height).toBe(30);
   });
 
   test('positions example dataset', () => {
-    vi.spyOn(templateManager, 'getTemplate').mockReturnValue({
-      elements: [{ width: 120, height: 80 }],
-    });
     const result = layoutHierarchy(sampleHier as TestNode[]);
-    expect(Object.keys(result.nodes)).toHaveLength(5);
-    expect(result.nodes.c1.x).toBeLessThan(result.nodes.c2.x);
+    expect(Object.keys(result.nodes)).toHaveLength(84);
+    expect(result.nodes['r1c1g1'].width).toBe(120);
+    expect(result.nodes['r1c1g1'].height).toBe(30);
   });
 });
