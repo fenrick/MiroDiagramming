@@ -23,7 +23,8 @@ placement.
 Each card entry must specify a `title`. All other properties are optional:
 
 - `description`: Markdown or plain text body
-- `tags`: array of tag names to assign
+- `tags`: array of tag names to assign. These are mapped to the widget's
+  `tagIds` field when cards are created or updated
 - `style`: card appearance (theme and background)
 - `fields`: custom preview fields shown on the card
 - `taskStatus`: Kanban status such as `to-do`
