@@ -5,7 +5,12 @@ import {
   layoutHierarchy,
   NestedLayoutResult,
 } from '../layout/nested-layout';
-import type { BaseItem, Group, Frame } from '@mirohq/websdk-types';
+import type {
+  BaseItem,
+  Group,
+  Frame,
+  GroupableItem,
+} from '@mirohq/websdk-types';
 
 export interface HierarchyProcessOptions {
   createFrame?: boolean;
@@ -118,7 +123,7 @@ export class HierarchyProcessor {
       return widget;
     }
 
-    const childWidgets: Array<BaseItem | Group> = [];
+    const childWidgets: GroupableItem[] = [];
     for (const child of node.children) {
       const childWidget = await this.createNodeTree(
         child,
@@ -126,14 +131,17 @@ export class HierarchyProcessor {
         offsetX,
         offsetY,
       );
-      childWidgets.push(childWidget);
+      childWidgets.push(childWidget as unknown as GroupableItem);
     }
 
     // Remove children from undo list; they will be represented by the group.
     this.lastCreated = this.lastCreated.filter(
-      (i) => !childWidgets.includes(i),
+      (i) => !childWidgets.includes(i as unknown as GroupableItem),
     );
-    const group = await this.builder.groupItems([widget, ...childWidgets]);
+    const group = await this.builder.groupItems([
+      widget as unknown as GroupableItem,
+      ...childWidgets,
+    ]);
     this.lastCreated.push(group);
     return group;
   }

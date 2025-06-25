@@ -6,6 +6,7 @@ import type {
   ConnectorStyle,
   Frame,
   Group,
+  GroupableItem,
   Shape,
   ShapeStyle,
   Text,
@@ -184,7 +185,7 @@ export class BoardBuilder {
   }
 
   /** Group multiple widgets together on the board. */
-  public async groupItems(items: Array<BaseItem | Group>): Promise<Group> {
+  public async groupItems(items: GroupableItem[]): Promise<Group> {
     this.ensureBoard();
     return (await miro.board.group({ items })) as Group;
   }

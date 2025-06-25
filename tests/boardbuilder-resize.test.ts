@@ -1,6 +1,6 @@
 import { BoardBuilder } from '../src/board/board-builder';
 import { templateManager } from '../src/board/templates';
-import type { BaseItem } from '@mirohq/websdk-types';
+import type { BaseItem, GroupableItem } from '@mirohq/websdk-types';
 
 interface GlobalWithMiro {
   miro?: { board?: Record<string, unknown> };
@@ -59,7 +59,10 @@ describe('BoardBuilder resizeItem', () => {
     } as unknown as GlobalWithMiro;
     const a = { id: 'a' } as unknown as BaseItem;
     const b = { id: 'b' } as unknown as BaseItem;
-    const group = await builder.groupItems([a, b]);
+    const group = await builder.groupItems([
+      a as unknown as GroupableItem,
+      b as unknown as GroupableItem,
+    ]);
     expect((global.miro.board.group as jest.Mock).mock.calls[0][0]).toEqual({
       items: [a, b],
     });
