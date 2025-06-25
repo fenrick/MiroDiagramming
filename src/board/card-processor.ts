@@ -201,16 +201,17 @@ export class CardProcessor {
     tagMap: Map<string, Tag>,
   ): Promise<Card> {
     const tagIds = await this.ensureTagIds(def.tags, tagMap);
-    const card = (await miro.board.createCard({
+    const createOpts: Record<string, unknown> = {
       title: def.title,
       description: def.description ?? '',
       tagIds,
-      fields: def.fields,
       style: def.style as CardStyle,
       taskStatus: def.taskStatus,
       x,
       y,
-    })) as Card;
+    };
+    if (def.fields) createOpts.fields = def.fields;
+    const card = (await miro.board.createCard(createOpts)) as Card;
     if (def.id) {
       await card.setMetadata(CardProcessor.META_KEY, { id: def.id });
     }
@@ -228,7 +229,7 @@ export class CardProcessor {
     card.title = def.title;
     card.description = def.description ?? '';
     card.tagIds = tagIds;
-    card.fields = def.fields;
+    if (def.fields) card.fields = def.fields;
     card.style = def.style as CardStyle;
     if (def.taskStatus) card.taskStatus = def.taskStatus;
     if (def.id) {
