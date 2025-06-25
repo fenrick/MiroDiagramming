@@ -18,11 +18,22 @@ export interface HierarchyProcessOptions {
   sortKey?: string;
 }
 
+/**
+ * Processor responsible for creating nested diagrams where child widgets are
+ * contained inside their parent shapes. Widgets are created using
+ * {@link BoardBuilder} and arranged via {@link layoutHierarchy}.
+ */
 export class HierarchyProcessor {
+  /** List of widgets created in the last run for easy undo. */
   private lastCreated: Array<BaseItem | Group | Frame> = [];
 
   constructor(private builder: BoardBuilder = new BoardBuilder()) {}
 
+  /**
+   * Load a hierarchical JSON file and create the corresponding diagram.
+   * @param file File containing the hierarchy array.
+   * @param opts Optional behaviour flags such as frame creation.
+   */
   public async processFile(
     file: File,
     opts: HierarchyProcessOptions = {},
@@ -33,6 +44,11 @@ export class HierarchyProcessor {
     await this.processHierarchy(data, opts);
   }
 
+  /**
+   * Process a hierarchy data structure and create the widgets on the board.
+   * @param roots Root nodes of the hierarchy.
+   * @param opts Additional options such as custom sort key.
+   */
   public async processHierarchy(
     roots: HierNode[],
     opts: HierarchyProcessOptions = {},
@@ -62,6 +78,9 @@ export class HierarchyProcessor {
     await this.builder.zoomTo(target);
   }
 
+  /**
+   * Determine the overall bounding box of a layout result.
+   */
   private computeBounds(result: NestedLayoutResult) {
     let minX = Infinity,
       minY = Infinity,
@@ -76,6 +95,9 @@ export class HierarchyProcessor {
     return { minX, minY, maxX, maxY };
   }
 
+  /**
+   * Optionally create a frame around the entire hierarchy.
+   */
   private async createFrame(
     useFrame: boolean,
     width: number,
@@ -98,6 +120,9 @@ export class HierarchyProcessor {
     return frame;
   }
 
+  /**
+   * Recursively create widgets for a node and its children.
+   */
   private async createNodeTree(
     node: HierNode,
     posMap: Record<
@@ -146,6 +171,9 @@ export class HierarchyProcessor {
     return group;
   }
 
+  /**
+   * Iterate root nodes and delegate to {@link createNodeTree}.
+   */
   private async createWidgets(
     nodes: HierNode[],
     posMap: Record<
@@ -160,6 +188,9 @@ export class HierarchyProcessor {
     }
   }
 
+  /**
+   * Remove widgets created in the last run from the board.
+   */
   public async undoLast(): Promise<void> {
     if (this.lastCreated.length) {
       await this.builder.removeItems(this.lastCreated);
@@ -168,4 +199,7 @@ export class HierarchyProcessor {
   }
 }
 
+/**
+ * Shared singleton instance used by the UI layer.
+ */
 export const hierarchyProcessor = new HierarchyProcessor();
