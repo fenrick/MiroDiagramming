@@ -23,29 +23,17 @@ export interface NestedLayoutResult {
   nodes: Record<string, PositionedNode>;
 }
 
-const GOLDEN_RATIO = 1.618;
 const LEAF_WIDTH = 120;
 const LEAF_HEIGHT = 30;
 const PADDING = 20;
 
+import { performLayout } from './layout-core';
+import type { GraphData } from '../graph';
+
 /**
- * Helper class that positions hierarchical nodes using an intrinsic grid
- * computed from the golden ratio. Children are sorted alphabetically unless a
- * specific metadata key is provided.
+ * Layout hierarchical data using the ELK engine and compute container sizes.
  */
 export class NestedLayouter {
-  /** Cache of measured node sizes. */
-  private sizes: Record<string, { width: number; height: number }> = {};
-
-  /** Sorted child order for each node. */
-  private order: Record<string, HierNode[]> = {};
-
-  /** Determine a leaf node's size. */
-  private leafSize(): { width: number; height: number } {
-    return { width: LEAF_WIDTH, height: LEAF_HEIGHT };
-  }
-
-  /** Retrieve the sort value for a node. */
   private sortValue(node: HierNode, key?: string): string {
     if (key && node.metadata && key in node.metadata) {
       return String(node.metadata[key]);
@@ -53,85 +41,87 @@ export class NestedLayouter {
     return node.label ?? node.id;
   }
 
-  /**
-   * Measure a node and its children, recording sizes in {@link sizes}.
-   */
-  private measure(
-    node: HierNode,
-    opts: NestedLayoutOptions,
-  ): { width: number; height: number } {
-    const children = node.children;
-    if (!children?.length) {
-      const size = this.leafSize();
-      this.sizes[node.id] = size;
-      return size;
-    }
+  private buildGraph(roots: HierNode[], sortKey?: string): GraphData {
+    const nodes: GraphData['nodes'] = [];
+    const edges: GraphData['edges'] = [];
 
-    const sorted = [...children].sort((a, b) =>
-      this.sortValue(a, opts.sortKey).localeCompare(
-        this.sortValue(b, opts.sortKey),
-      ),
-    );
-    this.order[node.id] = sorted;
-    const childSizes = sorted.map((child) => this.measure(child, opts));
-    const maxW = Math.max(...childSizes.map((s) => s.width));
-    const maxH = Math.max(...childSizes.map((s) => s.height));
-    const cols = Math.ceil(Math.sqrt(sorted.length * GOLDEN_RATIO));
-    const rows = Math.ceil(sorted.length / cols);
-    const width = cols * maxW + PADDING * 2;
-    const height = rows * maxH + PADDING * 2;
-    this.sizes[node.id] = { width, height };
-    return { width, height };
+    const visit = (node: HierNode, parent?: HierNode): void => {
+      nodes.push({
+        id: node.id,
+        label: node.label,
+        type: node.type,
+        metadata: { width: LEAF_WIDTH, height: LEAF_HEIGHT },
+      });
+      if (parent) edges.push({ from: parent.id, to: node.id });
+      const children = node.children;
+      if (!children?.length) return;
+      const sorted = [...children].sort((a, b) =>
+        this.sortValue(a, sortKey).localeCompare(this.sortValue(b, sortKey)),
+      );
+      for (const child of sorted) visit(child, node);
+    };
+
+    roots.forEach((r) => visit(r));
+    return { nodes, edges };
   }
 
-  /**
-   * Recursively position a node and its children.
-   */
-  private place(
+  private computeContainers(
     node: HierNode,
-    centerX: number,
-    centerY: number,
     map: Record<string, PositionedNode>,
-  ): void {
-    const { width, height } = this.sizes[node.id];
-    map[node.id] = { id: node.id, x: centerX, y: centerY, width, height };
-    const children = this.order[node.id];
-    if (!children?.length) return;
-    const cols = Math.ceil(Math.sqrt(children.length * GOLDEN_RATIO));
-    const childSizes = children.map((c) => this.sizes[c.id]);
-    const maxW = Math.max(...childSizes.map((s) => s.width));
-    const maxH = Math.max(...childSizes.map((s) => s.height));
-    const x0 = centerX - width / 2 + PADDING + maxW / 2;
-    const y0 = centerY - height / 2 + PADDING + maxH / 2;
-    children.forEach((child, i) => {
-      const col = i % cols;
-      const row = Math.floor(i / cols);
-      const cx = x0 + col * maxW;
-      const cy = y0 + row * maxH;
-      this.place(child, cx, cy, map);
-    });
+  ): { minX: number; minY: number; maxX: number; maxY: number } {
+    const pos = map[node.id];
+    if (!node.children?.length) {
+      return {
+        minX: pos.x - pos.width / 2,
+        minY: pos.y - pos.height / 2,
+        maxX: pos.x + pos.width / 2,
+        maxY: pos.y + pos.height / 2,
+      };
+    }
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+    for (const child of node.children) {
+      const b = this.computeContainers(child, map);
+      minX = Math.min(minX, b.minX);
+      minY = Math.min(minY, b.minY);
+      maxX = Math.max(maxX, b.maxX);
+      maxY = Math.max(maxY, b.maxY);
+    }
+    const width = maxX - minX + PADDING * 2;
+    const height = maxY - minY + PADDING * 2;
+    const cx = (minX + maxX) / 2;
+    const cy = (minY + maxY) / 2;
+    map[node.id] = { id: node.id, x: cx, y: cy, width, height };
+    return {
+      minX: cx - width / 2,
+      minY: cy - height / 2,
+      maxX: cx + width / 2,
+      maxY: cy + height / 2,
+    };
   }
 
   /**
-   * Compute a nested layout where child nodes are contained within their
-   * parent.
+   * Compute a nested layout using ELK for positioning.
    */
-  public layoutHierarchy(
+  public async layoutHierarchy(
     roots: HierNode[],
     opts: NestedLayoutOptions = {},
-  ): NestedLayoutResult {
-    this.sizes = {};
-    this.order = {};
+  ): Promise<NestedLayoutResult> {
+    const graph = this.buildGraph(roots, opts.sortKey);
+    const layout = await performLayout(graph);
     const nodes: Record<string, PositionedNode> = {};
-    roots.forEach((root) => this.measure(root, opts));
-    let offsetY = 0;
-    const gap = 40;
-    roots.forEach((root) => {
-      const size = this.sizes[root.id];
-      const y = offsetY + size.height / 2;
-      this.place(root, size.width / 2, y, nodes);
-      offsetY += size.height + gap;
+    Object.entries(layout.nodes).forEach(([id, n]) => {
+      nodes[id] = {
+        id,
+        x: n.x + n.width / 2,
+        y: n.y + n.height / 2,
+        width: n.width,
+        height: n.height,
+      };
     });
+    roots.forEach((r) => this.computeContainers(r, nodes));
     return { nodes };
   }
 }
@@ -145,6 +135,6 @@ export const nestedLayouter = new NestedLayouter();
 export function layoutHierarchy(
   roots: HierNode[],
   opts: NestedLayoutOptions = {},
-): NestedLayoutResult {
+): Promise<NestedLayoutResult> {
   return nestedLayouter.layoutHierarchy(roots, opts);
 }

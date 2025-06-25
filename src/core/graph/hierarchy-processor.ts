@@ -55,7 +55,7 @@ export class HierarchyProcessor {
   ): Promise<void> {
     if (!Array.isArray(roots)) throw new Error('Invalid hierarchy');
     this.lastCreated = [];
-    const result = layoutHierarchy(roots, { sortKey: opts.sortKey });
+    const result = await layoutHierarchy(roots, { sortKey: opts.sortKey });
     const bounds = this.computeBounds(result);
     const margin = 40;
     const width = bounds.maxX - bounds.minX + margin * 2;
