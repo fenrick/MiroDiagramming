@@ -87,10 +87,12 @@ export class HierarchyProcessor {
       maxX = -Infinity,
       maxY = -Infinity;
     Object.values(result.nodes).forEach(({ x, y, width, height }) => {
-      minX = Math.min(minX, x);
-      minY = Math.min(minY, y);
-      maxX = Math.max(maxX, x + width);
-      maxY = Math.max(maxY, y + height);
+      const halfW = width / 2;
+      const halfH = height / 2;
+      minX = Math.min(minX, x - halfW);
+      minY = Math.min(minY, y - halfH);
+      maxX = Math.max(maxX, x + halfW);
+      maxY = Math.max(maxY, y + halfH);
     });
     return { minX, minY, maxX, maxY };
   }
