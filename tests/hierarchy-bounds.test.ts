@@ -9,12 +9,12 @@ interface Node {
 }
 
 describe('HierarchyProcessor computeBounds', () => {
-  test('uses center coordinates when calculating bounds', () => {
+  test('uses center coordinates when calculating bounds', async () => {
     const roots: Node[] = [
       { id: 'r', label: 'Root', type: 'Role' },
       { id: 's', label: 'Second', type: 'Role' },
     ];
-    const layout = layoutHierarchy(roots);
+    const layout = await layoutHierarchy(roots);
     const proc = new HierarchyProcessor();
     const bounds = (
       proc as unknown as {

@@ -14,7 +14,7 @@ describe('layoutHierarchy', () => {
     vi.restoreAllMocks();
   });
 
-  test('creates positions for nested nodes', () => {
+  test('creates positions for nested nodes', async () => {
     const data: TestNode[] = [
       {
         id: 'p',
@@ -26,7 +26,7 @@ describe('layoutHierarchy', () => {
         ],
       },
     ];
-    const result = layoutHierarchy(data);
+    const result = await layoutHierarchy(data);
     expect(Object.keys(result.nodes)).toHaveLength(3);
     const parent = result.nodes.p;
     const childA = result.nodes.a;
@@ -35,7 +35,7 @@ describe('layoutHierarchy', () => {
     expect(parent.width).toBeGreaterThan(childA.width);
   });
 
-  test('sorts children by custom key', () => {
+  test('sorts children by custom key', async () => {
     const data: TestNode[] = [
       {
         id: 'p',
@@ -47,20 +47,20 @@ describe('layoutHierarchy', () => {
         ],
       },
     ];
-    const result = layoutHierarchy(data, { sortKey: 'id' });
+    const result = await layoutHierarchy(data, { sortKey: 'id' });
     const first = result.nodes.a.x < result.nodes.b.x ? 'a' : 'b';
     expect(first).toBe('b');
   });
 
-  test('assigns fixed leaf size', () => {
+  test('assigns fixed leaf size', async () => {
     const data: TestNode[] = [{ id: 'n', label: 'N', type: 'Role' }];
-    const result = layoutHierarchy(data);
+    const result = await layoutHierarchy(data);
     expect(result.nodes.n.width).toBe(120);
     expect(result.nodes.n.height).toBe(30);
   });
 
-  test('positions example dataset', () => {
-    const result = layoutHierarchy(sampleHier as TestNode[]);
+  test('positions example dataset', async () => {
+    const result = await layoutHierarchy(sampleHier as TestNode[]);
     expect(Object.keys(result.nodes)).toHaveLength(84);
     expect(result.nodes['r1c1g1'].width).toBe(120);
     expect(result.nodes['r1c1g1'].height).toBe(30);
