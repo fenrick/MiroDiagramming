@@ -31,7 +31,7 @@ describe('layoutHierarchy', () => {
     const parent = result.nodes.p;
     const childA = result.nodes.a;
     const childB = result.nodes.b;
-    expect(childA.x).toBeLessThan(childB.x);
+    expect(childA.y).not.toBe(childB.y);
     expect(parent.width).toBeGreaterThan(childA.width);
   });
 

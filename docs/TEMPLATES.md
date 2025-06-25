@@ -50,7 +50,8 @@ A three-level hierarchical dataset can be found in
 contains four top-level groups, each with four subgroups and four items per
 subgroup. This is useful when experimenting with the ELK-based nested layout
 algorithm. Import the JSON in the **Create** tab and choose the **Nested**
-diagram layout to see child nodes arranged inside their parents.
+diagram layout to see child nodes arranged inside their parents with containers
+sized automatically by the ELK engine.
 
 ---
 

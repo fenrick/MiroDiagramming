@@ -86,10 +86,10 @@ A small example is provided in
 ## Nested Layouts
 
 Hierarchical data where children are contained within parent shapes can be
-visualised using the **Nested** layout option in the Diagram tab. The positions
-are computed by the ELK engine for consistent spacing. Nodes are sorted
-alphabetically by default or via a custom metadata key. A three‑level sample
-dataset is available at
+visualised using the **Nested** layout option in the Diagram tab. Positions and
+container sizes are computed entirely by the ELK engine for consistent spacing.
+Nodes are sorted alphabetically by default or via a custom metadata key. A
+three‑level sample dataset is available at
 [tests/fixtures/sample-hier.json](tests/fixtures/sample-hier.json). Simply
 select **Nested** and import this file to see parent widgets sized to fit their
 children. If a standard flat graph is supplied instead, the importer will raise

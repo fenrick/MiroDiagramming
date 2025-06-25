@@ -27,8 +27,8 @@ const LEAF_WIDTH = 120;
 const LEAF_HEIGHT = 30;
 const PADDING = 20;
 
-import { performLayout } from './layout-core';
-import type { GraphData } from '../graph';
+import ELK from 'elkjs/lib/elk.bundled.js';
+import type { ElkNode } from 'elkjs/lib/elk-api';
 
 /**
  * Layout hierarchical data using the ELK engine and compute container sizes.
@@ -41,65 +41,48 @@ export class NestedLayouter {
     return node.label ?? node.id;
   }
 
-  private buildGraph(roots: HierNode[], sortKey?: string): GraphData {
-    const nodes: GraphData['nodes'] = [];
-    const edges: GraphData['edges'] = [];
-
-    const visit = (node: HierNode, parent?: HierNode): void => {
-      nodes.push({
-        id: node.id,
-        label: node.label,
-        type: node.type,
-        metadata: { width: LEAF_WIDTH, height: LEAF_HEIGHT },
-      });
-      if (parent) edges.push({ from: parent.id, to: node.id });
-      const children = node.children;
-      if (!children?.length) return;
-      const sorted = [...children].sort((a, b) =>
-        this.sortValue(a, sortKey).localeCompare(this.sortValue(b, sortKey)),
-      );
-      for (const child of sorted) visit(child, node);
+  private buildElkNode(node: HierNode, sortKey?: string): ElkNode {
+    const elk: ElkNode = { id: node.id };
+    const children = node.children;
+    if (!children?.length) {
+      elk.width = LEAF_WIDTH;
+      elk.height = LEAF_HEIGHT;
+      return elk;
+    }
+    const sorted = [...children].sort((a, b) =>
+      this.sortValue(a, sortKey).localeCompare(this.sortValue(b, sortKey)),
+    );
+    elk.children = sorted.map((c) => this.buildElkNode(c, sortKey));
+    elk.layoutOptions = {
+      'elk.algorithm': 'org.eclipse.elk.rectpacking',
+      'elk.spacing.nodeNode': String(PADDING),
+      'elk.direction': 'RIGHT',
     };
-
-    roots.forEach((r) => visit(r));
-    return { nodes, edges };
+    return elk;
   }
 
-  private computeContainers(
-    node: HierNode,
+  private collectPositions(
+    node: ElkNode,
     map: Record<string, PositionedNode>,
-  ): { minX: number; minY: number; maxX: number; maxY: number } {
-    const pos = map[node.id];
-    if (!node.children?.length) {
-      return {
-        minX: pos.x - pos.width / 2,
-        minY: pos.y - pos.height / 2,
-        maxX: pos.x + pos.width / 2,
-        maxY: pos.y + pos.height / 2,
+  ): void {
+    if (
+      node.id !== 'root' &&
+      typeof node.x === 'number' &&
+      typeof node.y === 'number' &&
+      typeof node.width === 'number' &&
+      typeof node.height === 'number'
+    ) {
+      map[node.id] = {
+        id: node.id,
+        x: node.x,
+        y: node.y,
+        width: node.width,
+        height: node.height,
       };
     }
-    let minX = Infinity;
-    let minY = Infinity;
-    let maxX = -Infinity;
-    let maxY = -Infinity;
-    for (const child of node.children) {
-      const b = this.computeContainers(child, map);
-      minX = Math.min(minX, b.minX);
-      minY = Math.min(minY, b.minY);
-      maxX = Math.max(maxX, b.maxX);
-      maxY = Math.max(maxY, b.maxY);
+    for (const child of node.children || []) {
+      this.collectPositions(child, map);
     }
-    const width = maxX - minX + PADDING * 2;
-    const height = maxY - minY + PADDING * 2;
-    const cx = (minX + maxX) / 2;
-    const cy = (minY + maxY) / 2;
-    map[node.id] = { id: node.id, x: cx, y: cy, width, height };
-    return {
-      minX: cx - width / 2,
-      minY: cy - height / 2,
-      maxX: cx + width / 2,
-      maxY: cy + height / 2,
-    };
   }
 
   /**
@@ -109,19 +92,20 @@ export class NestedLayouter {
     roots: HierNode[],
     opts: NestedLayoutOptions = {},
   ): Promise<NestedLayoutResult> {
-    const graph = this.buildGraph(roots, opts.sortKey);
-    const layout = await performLayout(graph);
+    const elkRoot: ElkNode = {
+      id: 'root',
+      layoutOptions: {
+        'elk.algorithm': 'org.eclipse.elk.rectpacking',
+        'elk.spacing.nodeNode': String(PADDING),
+      },
+      children: roots.map((r) => this.buildElkNode(r, opts.sortKey)),
+    };
+    const elk = new ELK();
+    const result = await elk.layout(elkRoot);
     const nodes: Record<string, PositionedNode> = {};
-    Object.entries(layout.nodes).forEach(([id, n]) => {
-      nodes[id] = {
-        id,
-        x: n.x + n.width / 2,
-        y: n.y + n.height / 2,
-        width: n.width,
-        height: n.height,
-      };
-    });
-    roots.forEach((r) => this.computeContainers(r, nodes));
+    for (const child of result.children || []) {
+      this.collectPositions(child, nodes);
+    }
     return { nodes };
   }
 }
