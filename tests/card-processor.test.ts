@@ -80,6 +80,15 @@ describe('CardProcessor', () => {
     expect(args.fields).toBeUndefined();
   });
 
+  test('allows duplicate card titles', async () => {
+    await processor.processCards([{ title: 'Dup' }, { title: 'Dup' }]);
+    expect(global.miro.board.createCard).toHaveBeenCalledTimes(2);
+    const titles = (global.miro.board.createCard as jest.Mock).mock.calls.map(
+      (c) => c[0].title,
+    );
+    expect(titles).toEqual(['Dup', 'Dup']);
+  });
+
   test('sets identifier metadata when creating', async () => {
     await processor.processCards([{ id: 'x', title: 'A' }]);
     const card = await (global.miro.board.createCard as jest.Mock).mock
@@ -104,6 +113,31 @@ describe('CardProcessor', () => {
   test('creates missing tags', async () => {
     await processor.processCards([{ title: 'A', tags: ['beta'] }]);
     expect(global.miro.board.createTag).toHaveBeenCalledWith({ title: 'beta' });
+    const args = (global.miro.board.createCard as jest.Mock).mock.calls[0][0];
+    expect(args.tagIds).toEqual(['t1']);
+  });
+
+  test('reuses existing tag for multiple cards', async () => {
+    (global.miro.board.get as jest.Mock).mockImplementation(
+      async ({ type }) => {
+        if (type === 'tag') return [{ id: '1', title: 'alpha' }];
+        return [];
+      },
+    );
+    await processor.processCards([
+      { title: 'A', tags: ['alpha'] },
+      { title: 'B', tags: ['alpha'] },
+    ]);
+    expect(global.miro.board.createTag).not.toHaveBeenCalled();
+    const calls = (global.miro.board.createCard as jest.Mock).mock.calls;
+    expect(calls[0][0].tagIds).toEqual(['1']);
+    expect(calls[1][0].tagIds).toEqual(['1']);
+  });
+
+  test('deduplicates tag names within a card', async () => {
+    await processor.processCards([{ title: 'A', tags: ['x', 'x'] }]);
+    const calls = (global.miro.board.createTag as jest.Mock).mock.calls;
+    expect(calls).toHaveLength(1);
     const args = (global.miro.board.createCard as jest.Mock).mock.calls[0][0];
     expect(args.tagIds).toEqual(['t1']);
   });
