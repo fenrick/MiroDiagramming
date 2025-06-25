@@ -38,6 +38,9 @@ To add your own templates create new entries in these JSON files and reference
 them by name in your graph metadata. The app reloads templates on startup so
 changes are picked up automatically.
 
+Additional details and a sample dataset are provided in
+[`docs/TEMPLATES.md`](docs/TEMPLATES.md).
+
 ## Metadata Usage
 
 Nodes may include a `metadata` object with any additional information. Typical

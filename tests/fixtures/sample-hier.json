@@ -1,0 +1,19 @@
+[
+  {
+    "id": "r1",
+    "label": "Root",
+    "type": "Role",
+    "children": [
+      {
+        "id": "c1",
+        "label": "Group",
+        "type": "Role",
+        "children": [
+          { "id": "g1", "label": "A", "type": "Role" },
+          { "id": "g2", "label": "B", "type": "Role" }
+        ]
+      },
+      { "id": "c2", "label": "Single", "type": "Role" }
+    ]
+  }
+]

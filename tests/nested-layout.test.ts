@@ -1,5 +1,6 @@
 import { layoutHierarchy } from '../src/core/layout/nested-layout';
 import { templateManager } from '../src/board/templates';
+import sampleHier from './fixtures/sample-hier.json';
 
 interface TestNode {
   id: string;
@@ -65,5 +66,14 @@ describe('layoutHierarchy', () => {
     const data: TestNode[] = [{ id: 'n', label: 'N', type: 'Role' }];
     const result = layoutHierarchy(data);
     expect(result.nodes.n.height).toBeCloseTo(160 / 1.618, 5);
+  });
+
+  test('positions example dataset', () => {
+    vi.spyOn(templateManager, 'getTemplate').mockReturnValue({
+      elements: [{ width: 120, height: 80 }],
+    });
+    const result = layoutHierarchy(sampleHier as TestNode[]);
+    expect(Object.keys(result.nodes)).toHaveLength(5);
+    expect(result.nodes.c1.x).toBeLessThan(result.nodes.c2.x);
   });
 });
