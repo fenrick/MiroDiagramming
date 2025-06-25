@@ -16,6 +16,18 @@ placement.
 5. See [`tests/fixtures/sample-cards.json`](tests/fixtures/sample-cards.json)
    for a cards format example.
 
+### Card JSON Format
+
+Each card entry must specify a `title`. All other properties are optional:
+
+- `description`: Markdown or plain text body
+- `tags`: array of tag names to assign
+- `style`: card appearance (theme and background)
+- `fields`: custom preview fields shown on the card
+- `taskStatus`: Kanban status such as `to-do`
+
+Omitting the `fields` property leaves the card without preview items.
+
 ## ELK Layout
 
 The layout step leverages the ELK algorithm to compute positions for all nodes.

@@ -72,6 +72,14 @@ describe('CardProcessor', () => {
     expect(global.miro.board.viewport.zoomTo).toHaveBeenCalled();
   });
 
+  test('processCards creates card without fields when omitted', async () => {
+    await processor.processCards([{ title: 'B' }]);
+    const args = (
+      global.miro.board.createCard as jest.Mock
+    ).mock.calls.pop()[0];
+    expect(args.fields).toBeUndefined();
+  });
+
   test('sets identifier metadata when creating', async () => {
     await processor.processCards([{ id: 'x', title: 'A' }]);
     const card = await (global.miro.board.createCard as jest.Mock).mock
@@ -134,6 +142,26 @@ describe('CardProcessor', () => {
     expect(existing.setMetadata).toHaveBeenCalledWith('app.miro.cards', {
       id: 'match',
     });
+  });
+
+  test('updates card without altering fields when omitted', async () => {
+    const existing = {
+      id: 'c3',
+      title: 'old',
+      fields: [{ value: 'old' }],
+      getMetadata: jest.fn().mockResolvedValue({ id: 'no-update' }),
+      setMetadata: jest.fn(),
+      sync: jest.fn(),
+    } as Record<string, unknown>;
+    (global.miro.board.get as jest.Mock).mockImplementation(
+      async ({ type }) => {
+        if (type === 'tag') return [];
+        if (type === 'card') return [existing];
+        return [];
+      },
+    );
+    await processor.processCards([{ id: 'no-update', title: 'new' }]);
+    expect(existing.fields).toEqual([{ value: 'old' }]);
   });
 
   test('loads card metadata only once', async () => {
