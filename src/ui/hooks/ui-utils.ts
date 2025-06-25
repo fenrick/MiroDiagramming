@@ -1,5 +1,6 @@
 import { tokens } from '../tokens';
 import { GraphProcessor } from '../../core/graph/graph-processor';
+import { HierarchyProcessor } from '../../core/graph/hierarchy-processor';
 import { CardProcessor } from '../../board/card-processor';
 import type React from 'react';
 
@@ -17,7 +18,7 @@ const dropzoneStyles = {
 
 /** Undo last import and reset state helper. */
 export async function undoLastImport(
-  proc: GraphProcessor | CardProcessor | undefined,
+  proc: GraphProcessor | HierarchyProcessor | CardProcessor | undefined,
   clear: () => void,
 ): Promise<void> {
   if (!proc) return;

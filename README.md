@@ -38,6 +38,9 @@ To add your own templates create new entries in these JSON files and reference
 them by name in your graph metadata. The app reloads templates on startup so
 changes are picked up automatically.
 
+Additional details and a sample dataset are provided in
+[`docs/TEMPLATES.md`](docs/TEMPLATES.md).
+
 ## Metadata Usage
 
 Nodes may include a `metadata` object with any additional information. Typical
@@ -67,6 +70,17 @@ A small example is provided in
   "edges": [{ "from": "n1", "to": "n2", "label": "uses" }]
 }
 ```
+
+## Nested Layouts
+
+Hierarchical data where children are contained within parent shapes can be
+visualised using the **Nested** layout option in the Diagram tab. Nodes are
+sorted alphabetically by default or via a custom metadata key. A three‑level
+sample dataset is available at
+[tests/fixtures/sample-hier.json](tests/fixtures/sample-hier.json). Simply
+select **Nested** and import this file to see parent widgets sized to fit their
+children. If a standard flat graph is supplied instead, the importer will raise
+an error indicating an invalid hierarchy.
 
 ## Accessibility
 
