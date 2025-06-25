@@ -183,6 +183,12 @@ export class BoardBuilder {
     );
   }
 
+  /** Group multiple widgets together on the board. */
+  public async groupItems(items: Array<BaseItem | Group>): Promise<Group> {
+    this.ensureBoard();
+    return (await miro.board.group({ items })) as Group;
+  }
+
   private ensureBoard(): void {
     if (typeof miro === 'undefined' || !miro?.board) {
       throw new Error('Miro board not initialized');

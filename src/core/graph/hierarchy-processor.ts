@@ -93,6 +93,51 @@ export class HierarchyProcessor {
     return frame;
   }
 
+  private async createNodeTree(
+    node: HierNode,
+    posMap: Record<
+      string,
+      { x: number; y: number; width: number; height: number }
+    >,
+    offsetX: number,
+    offsetY: number,
+  ): Promise<BaseItem | Group> {
+    const pos = posMap[node.id];
+    const centerX = pos.x + offsetX + pos.width / 2;
+    const centerY = pos.y + offsetY + pos.height / 2;
+    const widget = await this.builder.createNode(node, {
+      x: centerX,
+      y: centerY,
+      width: pos.width,
+      height: pos.height,
+    });
+    await this.builder.resizeItem(widget, pos.width, pos.height);
+
+    if (!node.children?.length) {
+      this.lastCreated.push(widget);
+      return widget;
+    }
+
+    const childWidgets: Array<BaseItem | Group> = [];
+    for (const child of node.children) {
+      const childWidget = await this.createNodeTree(
+        child,
+        posMap,
+        offsetX,
+        offsetY,
+      );
+      childWidgets.push(childWidget);
+    }
+
+    // Remove children from undo list; they will be represented by the group.
+    this.lastCreated = this.lastCreated.filter(
+      (i) => !childWidgets.includes(i),
+    );
+    const group = await this.builder.groupItems([widget, ...childWidgets]);
+    this.lastCreated.push(group);
+    return group;
+  }
+
   private async createWidgets(
     nodes: HierNode[],
     posMap: Record<
@@ -103,20 +148,7 @@ export class HierarchyProcessor {
     offsetY: number,
   ): Promise<void> {
     for (const node of nodes) {
-      const pos = posMap[node.id];
-      const centerX = pos.x + offsetX + pos.width / 2;
-      const centerY = pos.y + offsetY + pos.height / 2;
-      const widget = await this.builder.createNode(node, {
-        x: centerX,
-        y: centerY,
-        width: pos.width,
-        height: pos.height,
-      });
-      await this.builder.resizeItem(widget, pos.width, pos.height);
-      this.lastCreated.push(widget);
-      if (node.children?.length) {
-        await this.createWidgets(node.children, posMap, offsetX, offsetY);
-      }
+      await this.createNodeTree(node, posMap, offsetX, offsetY);
     }
   }
 
