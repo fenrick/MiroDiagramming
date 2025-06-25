@@ -177,14 +177,16 @@ export class CardProcessor {
   }
 
   /**
-   * Resolve tag names to IDs, creating any missing tags on the board.
+   * Resolve tag names to IDs. Existing tags are reused and duplicate
+   * names are collapsed to avoid creating multiple identical tags.
    */
   private async ensureTagIds(
     names: string[] | undefined,
     tagMap: Map<string, Tag>,
   ): Promise<string[]> {
     const ids: string[] = [];
-    for (const name of names ?? []) {
+    const uniqueNames = new Set(names ?? []);
+    for (const name of uniqueNames) {
       let tag = tagMap.get(name);
       if (!tag) {
         tag = (await miro.board.createTag({ title: name })) as Tag;
