@@ -16,6 +16,25 @@ describe('frame-tools', () => {
     expect(frames[0].sync).toHaveBeenCalled();
   });
 
+  test('renameSelectedFrames preserves this context for sync', async () => {
+    const contexts: unknown[] = [];
+    const frame = {
+      x: 0,
+      y: 0,
+      title: 'a',
+      type: 'frame',
+      sync() {
+        contexts.push(this);
+      },
+    };
+    const board: BoardLike = {
+      getSelection: jest.fn().mockResolvedValue([frame]),
+    };
+    await renameSelectedFrames({ prefix: 'Z-' }, board);
+    expect(contexts[0]).toBe(frame);
+    expect(frame.title).toBe('Z-0');
+  });
+
   test('renameSelectedFrames ignores non-frames', async () => {
     const items = [
       { x: 0, title: 'A', sync: jest.fn(), type: 'shape' },

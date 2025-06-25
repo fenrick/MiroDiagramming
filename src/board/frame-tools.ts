@@ -41,8 +41,8 @@ export async function renameSelectedFrames(
   await Promise.all(
     frames.map(async (frame, i) => {
       frame.title = `${opts.prefix}${i}`;
-      const sync = (frame as { sync?: () => Promise<void> }).sync;
-      if (typeof sync === 'function') await sync();
+      await ((frame as { sync?: () => Promise<void> }).sync?.call(frame) ??
+        Promise.resolve());
     }),
   );
 }
