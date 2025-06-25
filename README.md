@@ -13,6 +13,8 @@ placement.
 3. Select a `.json` file. Diagrams require `nodes` and `edges` while the cards
    option expects an object with a `cards` array.
 4. Once processed, widgets are placed on the board using the selected mode.
+   Cards are automatically arranged in a grid with a calculated number of
+   columns. Pass `columns` when invoking the importer to override this value.
 5. See [`tests/fixtures/sample-cards.json`](tests/fixtures/sample-cards.json)
    for a cards format example.
 
