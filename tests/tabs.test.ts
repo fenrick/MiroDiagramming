@@ -243,8 +243,20 @@ describe('tab components', () => {
     expect(
       screen.getByRole('combobox', { name: /layout type/i }),
     ).toBeInTheDocument();
+    for (const option of [
+      'Layered',
+      'Tree',
+      'Grid',
+      'Nested',
+      'Radial',
+      'Box',
+      'Rect Packing',
+    ]) {
+      expect(screen.getByRole('option', { name: option })).toBeInTheDocument();
+    }
+    expect(screen.getByText(/layout options/i)).toBeInTheDocument();
     expect(
-      screen.getByRole('link', { name: /layout algorithm guide/i }),
+      screen.getByText(/circular layout around a hub/i),
     ).toBeInTheDocument();
     await act(async () => {
       fireEvent.click(screen.getByRole('button', { name: /create diagram/i }));
