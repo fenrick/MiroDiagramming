@@ -91,13 +91,13 @@ Complexity limits enforced automatically by **SonarQube** gate.
 | Stage      | Gate                        | Threshold               |
 | ---------- | --------------------------- | ----------------------- |
 | Pre-commit | ESLint, Stylelint, Prettier | zero errors             |
-| Unit       | Jest + Stryker              | 90 % line & branch      |
+| Unit       | Vitest (coverage v8)        | 90 % line & branch      |
 | UI         | Cypress + Axe               | no critical a11y issues |
 | Metrics    | SonarQube                   | cyclomatic ≤ 8          |
 
 **Workflow** (GitHub Actions)
 
-1. Lint, type-check, unit tests (Node 18 & 20).
+1. Lint, type-check, unit tests (Node 24).
 2. Build Storybook and a feature-flagged bundle for staging.
 3. SonarQube analysis and budget checks.
 4. Semantic-release creates Git tag, changelog and Chrome-Store zip.
