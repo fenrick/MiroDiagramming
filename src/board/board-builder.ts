@@ -335,11 +335,13 @@ export class BoardBuilder {
     );
     if ((widget as Group).type === 'group') {
       const items = await (widget as Group).getItems();
-      await Promise.all(
-        items.map((item) =>
-          item.setMetadata(META_KEY, { type: node.type, label: node.label }),
-        ),
-      );
+      const meta = { type: node.type, label: node.label };
+      const master = templateManager.getTemplate(node.type)?.masterElement;
+      if (master !== undefined && items[master]) {
+        await items[master].setMetadata(META_KEY, meta);
+      } else {
+        await Promise.all(items.map((i) => i.setMetadata(META_KEY, meta)));
+      }
       return widget as Group;
     }
     await (widget as BaseItem).setMetadata(META_KEY, {

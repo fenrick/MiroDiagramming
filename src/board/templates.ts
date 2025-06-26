@@ -31,6 +31,11 @@ export interface TemplateElement {
 
 export interface TemplateDefinition {
   elements: TemplateElement[];
+  /**
+   * Optional index of the element that stores metadata when grouped.
+   * If omitted, metadata is applied to every element.
+   */
+  masterElement?: number;
 }
 
 export interface TemplateCollection {

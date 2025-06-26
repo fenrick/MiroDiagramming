@@ -84,7 +84,10 @@ describe('BoardBuilder additional cases', () => {
       } as unknown as { type: string; getItems: () => Promise<unknown[]> });
     jest
       .spyOn(templateManager, 'getTemplate')
-      .mockReturnValue({ elements: [{ shape: 'r' }, { text: 't' }] });
+      .mockReturnValue({
+        elements: [{ shape: 'r' }, { text: 't' }],
+        masterElement: 1,
+      });
     const builder = new BoardBuilder();
     const spy = jest.spyOn(builder, 'findNode');
     const node = { id: 'n1', label: 'A', type: 'multi' } as Record<
@@ -94,8 +97,9 @@ describe('BoardBuilder additional cases', () => {
     const pos = { x: 0, y: 0, width: 1, height: 1 };
     const result = await builder.createNode(node, pos);
     expect(result.type).toBe('group');
-    // Metadata should be written to child items
-    expect(items[0].setMetadata).toHaveBeenCalled();
+    // Metadata should be written only to the master element
+    expect(items[0].setMetadata).not.toHaveBeenCalled();
+    expect(items[1].setMetadata).toHaveBeenCalled();
     expect(spy).not.toHaveBeenCalled();
   });
 
