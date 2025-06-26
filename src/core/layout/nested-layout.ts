@@ -27,7 +27,7 @@ const LEAF_WIDTH = 120;
 const LEAF_HEIGHT = 30;
 const PADDING = 20;
 
-import ELK from 'elkjs/lib/elk.bundled.js';
+import { loadElk } from './elk-loader';
 import type { ElkNode } from 'elkjs/lib/elk-api';
 
 /**
@@ -104,7 +104,8 @@ export class NestedLayouter {
       },
       children: roots.map((r) => this.buildElkNode(r, opts.sortKey)),
     };
-    const elk = new ELK();
+    const Elk = await loadElk();
+    const elk = new Elk();
     const result = await elk.layout(elkRoot);
     const nodes: Record<string, PositionedNode> = {};
     for (const child of result.children || []) {
