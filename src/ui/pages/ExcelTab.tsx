@@ -15,6 +15,7 @@ import { excelLoader, ExcelRow } from '../../core/utils/excel-loader';
 import { mapRowsToNodes, ColumnMapping } from '../../core/data-mapper';
 import { templateManager } from '../../board/templates';
 import { GraphProcessor } from '../../core/graph/graph-processor';
+import { addMiroIds, downloadWorkbook } from '../../core/utils/workbook-writer';
 import { showError } from '../hooks/notifications';
 import { getDropzoneStyle } from '../hooks/ui-utils';
 import type { TabTuple } from './tab-definitions';
@@ -84,12 +85,23 @@ export const ExcelTab: React.FC = () => {
         labelColumn: labelColumn || undefined,
         templateColumn: templateColumn || undefined,
       };
+      const indices = [...selected];
       const chosen = rows.filter((_, i) => selected.has(i));
       const nodes = mapRowsToNodes(chosen, mapping).map((n) => ({
         ...n,
         type: templateColumn ? n.type : template,
       }));
       await graphProcessor.processGraph({ nodes, edges: [] });
+      const idMap = graphProcessor.getNodeIdMap();
+      const updated = addMiroIds(chosen, mapping.idColumn ?? '', idMap);
+      const merged = rows.map((r, i) => {
+        const idx = indices.indexOf(i);
+        return idx >= 0 ? updated[idx] : r;
+      });
+      setRows(merged);
+      if (file) {
+        downloadWorkbook(merged, `updated-${file.name}`);
+      }
     } catch (e) {
       await showError(String(e));
     }

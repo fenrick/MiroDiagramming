@@ -103,6 +103,34 @@ describe('BoardBuilder additional cases', () => {
     expect(spy).not.toHaveBeenCalled();
   });
 
+  test('createNode stores rowId in metadata', async () => {
+    const shape = { setMetadata: jest.fn(), type: 'shape' } as Record<
+      string,
+      unknown
+    >;
+    jest
+      .spyOn(templateManager, 'getTemplate')
+      .mockReturnValue({ elements: [{ shape: 'rect' }] });
+    jest
+      .spyOn(templateManager, 'createFromTemplate')
+      .mockResolvedValue(shape as unknown);
+    const builder = new BoardBuilder();
+    await builder.createNode(
+      {
+        id: 'n1',
+        label: 'A',
+        type: 'Role',
+        metadata: { rowId: '42' },
+      } as Record<string, unknown>,
+      { x: 0, y: 0, width: 1, height: 1 },
+    );
+    expect(shape.setMetadata).toHaveBeenCalledWith('app.miro.structgraph', {
+      type: 'Role',
+      label: 'A',
+      rowId: '42',
+    });
+  });
+
   test('createNode ignores existing group', async () => {
     const itemMocks = [
       { setMetadata: jest.fn(), type: 'shape' },

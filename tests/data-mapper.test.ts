@@ -17,7 +17,7 @@ describe('data mapper', () => {
         id: '1',
         label: 'A',
         type: 'Role',
-        metadata: { text: 'n', extra: 'x' },
+        metadata: { text: 'n', extra: 'x', rowId: '1' },
       },
     ]);
   });

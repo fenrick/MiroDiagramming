@@ -5,9 +5,11 @@ import '@testing-library/jest-dom';
 import { ExcelTab } from '../src/ui/pages/ExcelTab';
 import { excelLoader } from '../src/core/utils/excel-loader';
 import { GraphProcessor } from '../src/core/graph/graph-processor';
+import * as writer from '../src/core/utils/workbook-writer';
 
 vi.mock('../src/core/utils/excel-loader');
 vi.mock('../src/core/graph/graph-processor');
+vi.mock('../src/core/utils/workbook-writer');
 
 describe('ExcelTab', () => {
   beforeEach(() => {
@@ -23,6 +25,11 @@ describe('ExcelTab', () => {
       'Table1',
     ]);
     (excelLoader.loadSheet as unknown as jest.Mock).mockReturnValue([{ A: 1 }]);
+    (writer.addMiroIds as jest.Mock).mockImplementation((r) => r);
+    (writer.downloadWorkbook as jest.Mock).mockImplementation(() => {});
+    (
+      GraphProcessor.prototype.getNodeIdMap as unknown as jest.Mock
+    ).mockReturnValue({ n1: 'w1' });
   });
 
   afterEach(() => {
