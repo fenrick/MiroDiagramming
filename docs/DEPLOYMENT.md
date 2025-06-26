@@ -165,6 +165,17 @@ All gates and complexity budgets are defined in **ARCHITECTURE.md** (sections
 | Layout freeze      | Graph exceeds 5 000 nodes – layout timeout         |
 | Dark-mode glitch   | Token override? Confirm colours from Design System |
 
+## 11 Docker container
+
+For self-hosting the static bundle as a container image:
+
+```bash
+docker build -t miro-diagramming ..
+docker run --rm -p 8080:80 miro-diagramming
+```
+
+Tagged releases on GitHub automatically push the built image to GHCR.
+
 ---
 
 _End of file._

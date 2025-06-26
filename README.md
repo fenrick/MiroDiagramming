@@ -278,6 +278,17 @@ committing so code conforms to the repository guidelines.
 - [Code Style](docs/CODE_STYLE.md) outlines formatting and naming rules.
 - [UI Patterns](docs/PATTERNS.md) shows common layouts and best practices.
 
+## Docker Image
+
+The project can be packaged as a container image. Build and run using:
+
+```bash
+docker build -t miro-diagramming .
+docker run --rm -p 8080:80 miro-diagramming
+```
+
+Tagged releases push the image to the GitHub Container Registry automatically.
+
 ## 🫱🏻‍🫲🏽 Contributing <a name="contributing"></a>
 
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines and
