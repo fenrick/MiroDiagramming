@@ -1,5 +1,6 @@
 /** @vitest-environment jsdom */
 import * as XLSX from 'xlsx';
+import { readFileSync } from 'fs';
 import { ExcelLoader } from '../src/core/utils/excel-loader';
 
 function createFile(): File {
@@ -24,6 +25,16 @@ function createFile(): File {
     name: 'test.xlsx',
     async arrayBuffer() {
       return buf;
+    },
+  } as unknown as File;
+}
+
+function readFixtureFile(): File {
+  const buf = readFileSync('tests/fixtures/sample.xlsx');
+  return {
+    name: 'sample.xlsx',
+    async arrayBuffer() {
+      return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
     },
   } as unknown as File;
 }
@@ -78,5 +89,14 @@ describe('excel loader', () => {
       },
     } as unknown as File;
     await expect(loader.loadWorkbook(invalid)).rejects.toThrow('Invalid file');
+  });
+
+  test('loads workbook from fixture file', async () => {
+    const loader = new ExcelLoader();
+    const fixture = readFixtureFile();
+    await loader.loadWorkbook(fixture);
+    expect(loader.listSheets()).toEqual(['Sheet1', 'Sheet2']);
+    const rows = loader.loadNamedTable('Table1');
+    expect(rows).toEqual([{ X: 5, Y: 6 }]);
   });
 });
