@@ -165,6 +165,16 @@ export const DiagramTab: React.FC = () => {
               ))}
             </Select>
           </InputField>
+          <Paragraph className='field-help'>
+            See{' '}
+            <a
+              href='docs/LAYOUT_OPTIONS.md'
+              target='_blank'
+              rel='noopener noreferrer'>
+              layout algorithm guide
+            </a>
+            .
+          </Paragraph>
           <div style={{ marginTop: tokens.space.small }}>
             <Checkbox
               label='Wrap items in frame'

@@ -143,7 +143,7 @@ _No OAuth token or server credentials are required._
 ### 10.1 Add a New Widget Type
 
 1. Extend **GraphProcessor** schema.
-2. Provide default ELK options.
+2. Provide default ELK options (see [LAYOUT_OPTIONS.md](LAYOUT_OPTIONS.md)).
 3. Implement **BoardBuilder.createWidget**.
 4. Register inverse command in **CardProcessor** for undo.
 5. Add tests and a Storybook example.
