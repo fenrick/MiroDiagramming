@@ -31,6 +31,11 @@ export class ExcelLoader {
     return this.workbook ? [...this.workbook.SheetNames] : [];
   }
 
+  /** List named table ranges from the current workbook. */
+  public listNamedTables(): string[] {
+    return this.workbook?.Workbook?.Names?.map((n) => n.Name) ?? [];
+  }
+
   /**
    * Load rows from a specific worksheet.
    *

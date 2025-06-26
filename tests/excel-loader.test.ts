@@ -50,6 +50,7 @@ describe('excel loader', () => {
     const loader = new ExcelLoader();
     await loader.loadWorkbook(file);
     expect(loader.listSheets()).toEqual(['Sheet1', 'Sheet2']);
+    expect(loader.listNamedTables()).toEqual(['Table1']);
   });
 
   test('loads rows from a sheet', async () => {
