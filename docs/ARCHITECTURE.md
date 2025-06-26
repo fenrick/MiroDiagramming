@@ -108,7 +108,8 @@ Complexity limits enforced automatically by **SonarQube** gate.
 
 ## 7 Automated Code Review & Enforcement
 
-- **Danger-JS** bot fails PR if complexity, coverage or lint targets fall short.
+- CI checks fail pull requests if complexity, coverage or lint targets fall
+  short.
 - **Conventional Commits** enforced by commit-lint.
 - Every PR must pass all CI gates; manual reviewers are optional.
 - **CodeQL** scan adds static-analysis findings to the check suite.
