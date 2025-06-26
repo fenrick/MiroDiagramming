@@ -41,7 +41,6 @@ overview of available layout algorithms see
 [docs/LAYOUT_OPTIONS.md](docs/LAYOUT_OPTIONS.md). The ELK engine is dynamically
 imported from the jsDelivr CDN so it is excluded from the application bundle.
 
-
 ## Template‑Based Shapes
 
 Shape templates live in
