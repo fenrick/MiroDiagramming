@@ -17,8 +17,14 @@ import {
   ALGORITHMS,
   DEFAULT_LAYOUT_OPTIONS,
   DIRECTIONS,
+  EDGE_ROUTINGS,
+  EDGE_ROUTING_MODES,
+  OPTIMIZATION_GOALS,
   ElkAlgorithm,
   ElkDirection,
+  ElkEdgeRouting,
+  ElkEdgeRoutingMode,
+  ElkOptimizationGoal,
   UserLayoutOptions,
 } from '../../core/layout/elk-options';
 import { HierarchyProcessor } from '../../core/graph/hierarchy-processor';
@@ -34,6 +40,24 @@ const LAYOUTS = [
   'Rect Packing',
 ] as const;
 type LayoutChoice = (typeof LAYOUTS)[number];
+
+const OPTION_VISIBILITY: Record<
+  ElkAlgorithm,
+  {
+    aspectRatio: boolean;
+    edgeRouting?: boolean;
+    edgeRoutingMode?: boolean;
+    optimizationGoal?: boolean;
+  }
+> = {
+  layered: { aspectRatio: true, edgeRouting: true },
+  mrtree: { aspectRatio: true, edgeRoutingMode: true },
+  force: { aspectRatio: true },
+  rectpacking: { aspectRatio: true, optimizationGoal: true },
+  rectstacking: { aspectRatio: true },
+  box: { aspectRatio: true },
+  radial: { aspectRatio: true },
+};
 
 /** Descriptions for layout choices shown inline when importing graphs. */
 const LAYOUT_DESCRIPTIONS: Record<LayoutChoice, string> = {
@@ -109,10 +133,13 @@ export const DiagramTab: React.FC = () => {
             'Box': 'box',
             'Rect Packing': 'rectpacking',
           };
+          const selectedAlg = showAdvanced
+            ? layoutOpts.algorithm
+            : algorithmMap[layoutChoice];
           await graphProcessor.processFile(file, {
             createFrame: withFrame,
             frameTitle: frameTitle || undefined,
-            layout: { ...layoutOpts, algorithm: algorithmMap[layoutChoice] },
+            layout: { ...layoutOpts, algorithm: selectedAlg },
           });
         }
         setProgress(100);
@@ -210,59 +237,139 @@ export const DiagramTab: React.FC = () => {
               />
             </InputField>
           )}
-          {showAdvanced && (
-            <>
-              <InputField label='Algorithm'>
-                <Select
-                  value={layoutOpts.algorithm}
-                  onChange={(value) =>
-                    setLayoutOpts({
-                      ...layoutOpts,
-                      algorithm: value as ElkAlgorithm,
-                    })
-                  }>
-                  {ALGORITHMS.map((a) => (
-                    <SelectOption
-                      key={a}
-                      value={a}>
-                      {a}
-                    </SelectOption>
-                  ))}
-                </Select>
-              </InputField>
-              <InputField label='Direction'>
-                <Select
-                  value={layoutOpts.direction}
-                  onChange={(value) =>
-                    setLayoutOpts({
-                      ...layoutOpts,
-                      direction: value as ElkDirection,
-                    })
-                  }>
-                  {DIRECTIONS.map((d) => (
-                    <SelectOption
-                      key={d}
-                      value={d}>
-                      {d}
-                    </SelectOption>
-                  ))}
-                </Select>
-              </InputField>
-              <InputField label='Spacing'>
+          <details
+            open={showAdvanced}
+            aria-label='Advanced options'
+            onToggle={(e) =>
+              setShowAdvanced((e.target as HTMLDetailsElement).open)
+            }>
+            <summary>Advanced options</summary>
+            <InputField label='Algorithm'>
+              <Select
+                value={layoutOpts.algorithm}
+                onChange={(value) =>
+                  setLayoutOpts({
+                    ...layoutOpts,
+                    algorithm: value as ElkAlgorithm,
+                  })
+                }>
+                {ALGORITHMS.map((a) => (
+                  <SelectOption
+                    key={a}
+                    value={a}>
+                    {a}
+                  </SelectOption>
+                ))}
+              </Select>
+            </InputField>
+            <InputField label='Direction'>
+              <Select
+                value={layoutOpts.direction}
+                onChange={(value) =>
+                  setLayoutOpts({
+                    ...layoutOpts,
+                    direction: value as ElkDirection,
+                  })
+                }>
+                {DIRECTIONS.map((d) => (
+                  <SelectOption
+                    key={d}
+                    value={d}>
+                    {d}
+                  </SelectOption>
+                ))}
+              </Select>
+            </InputField>
+            <InputField label='Spacing'>
+              <input
+                className='input'
+                type='number'
+                value={String(layoutOpts.spacing)}
+                onChange={(e) =>
+                  setLayoutOpts({
+                    ...layoutOpts,
+                    spacing: Number(e.target.value),
+                  })
+                }
+              />
+            </InputField>
+            {OPTION_VISIBILITY[layoutOpts.algorithm].aspectRatio && (
+              <InputField label='Aspect ratio'>
                 <input
                   className='input'
                   type='number'
-                  value={String(layoutOpts.spacing)}
+                  step='0.1'
+                  value={String(layoutOpts.aspectRatio)}
                   onChange={(e) =>
                     setLayoutOpts({
                       ...layoutOpts,
-                      spacing: Number(e.target.value),
+                      aspectRatio: Number(e.target.value),
                     })
                   }
                 />
               </InputField>
-            </>
-          )}
+            )}
+            {OPTION_VISIBILITY[layoutOpts.algorithm].edgeRouting && (
+              <InputField label='Edge routing'>
+                <Select
+                  value={layoutOpts.edgeRouting as ElkEdgeRouting}
+                  onChange={(value) =>
+                    setLayoutOpts({
+                      ...layoutOpts,
+                      edgeRouting: value as ElkEdgeRouting,
+                    })
+                  }>
+                  {EDGE_ROUTINGS.map((e) => (
+                    <SelectOption
+                      key={e}
+                      value={e}>
+                      {e}
+                    </SelectOption>
+                  ))}
+                </Select>
+              </InputField>
+            )}
+            {OPTION_VISIBILITY[layoutOpts.algorithm].edgeRoutingMode && (
+              <InputField label='Routing mode'>
+                <Select
+                  value={layoutOpts.edgeRoutingMode as ElkEdgeRoutingMode}
+                  onChange={(value) =>
+                    setLayoutOpts({
+                      ...layoutOpts,
+                      edgeRoutingMode: value as ElkEdgeRoutingMode,
+                    })
+                  }>
+                  {EDGE_ROUTING_MODES.map((m) => (
+                    <SelectOption
+                      key={m}
+                      value={m}>
+                      {m}
+                    </SelectOption>
+                  ))}
+                </Select>
+              </InputField>
+            )}
+            {OPTION_VISIBILITY[layoutOpts.algorithm].optimizationGoal && (
+              <InputField label='Optimisation goal'>
+                <Select
+                  value={layoutOpts.optimizationGoal as ElkOptimizationGoal}
+                  onChange={(value) =>
+                    setLayoutOpts({
+                      ...layoutOpts,
+                      optimizationGoal: value as ElkOptimizationGoal,
+                    })
+                  }>
+                  {OPTIMIZATION_GOALS.map((o) => (
+                    <SelectOption
+                      key={o}
+                      value={o}>
+                      {o}
+                    </SelectOption>
+                  ))}
+                </Select>
+              </InputField>
+            )}
+          </details>
           <div className='buttons'>
             <Button
               onClick={handleCreate}
