@@ -51,8 +51,8 @@ Create semantic tokens that map to primitives for clarity and easier theming:
 | `colour-status-success`      | var(--green700) | var(--green400)     |
 | `colour-status-danger`       | var(--red700)   | var(--red400)       |
 
-All pairings conform to **WCAG 2.2 AA** (contrast ≥ 4 . 5 : 1). _axe-core_ check
-in CI enforces this.
+All pairings conform to **WCAG 2.2 AA** (contrast ≥ 4.5:1), verified by the
+design-token verification script.
 
 ---
 
@@ -156,9 +156,8 @@ canvases where it may distract.
 ## 9 Dark-mode verification workflow
 
 1. Storybook builds in Light & Dark.
-2. Chromatic snapshots both themes.
-3. `jest-image-snapshot` compares against baseline (≤ 0.1 % diff).
-4. Failures block merge; engineering owner fixes token mapping.
+2. `jest-image-snapshot` compares screenshots from both themes (≤ 0.1 % diff).
+3. Failures block merge; engineering owner fixes token mapping.
 
 ---
 

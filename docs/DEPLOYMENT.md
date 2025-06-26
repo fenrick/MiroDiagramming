@@ -23,7 +23,7 @@ add-on. Aimed at junior engineers; every step is explicit.
 
 | Requirement               | Why                                           |
 | ------------------------- | --------------------------------------------- |
-| Node 18 or 20             | Matches CI matrix                             |
+| Node 24                   | Matches CI matrix                             |
 | Miro developer team       | Needed to install staging and prod app copies |
 | Static host (see options) | Serves HTML, JS, CSS with correct MIME types  |
 
@@ -142,7 +142,7 @@ If any step fails, do not promote to production.
 
 ```
 Push → GitHub Action
-        ├─ Lint, unit, axe, Sonar
+        ├─ Lint, unit, Sonar
         ├─ Build Storybook
         ├─ Build add-on bundle
         ├─ Upload artefact
