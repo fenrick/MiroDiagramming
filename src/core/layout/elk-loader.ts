@@ -14,17 +14,20 @@ let elkPromise: Promise<typeof ELK> | null = null;
  */
 export async function loadElk(): Promise<typeof ELK> {
   if (elkPromise) return elkPromise;
+
   const isNode =
     typeof process !== 'undefined' && process.release?.name === 'node';
+
+  const dynamic = (p: string) => import(/* @vite-ignore */ p);
+
   elkPromise = isNode
-    ? import('elkjs/lib/elk.bundled.js').then((m) => m.default)
+    ? dynamic('elkjs/lib/elk.bundled.js').then((m) => m.default)
     : (async () => {
         const url =
           'https://cdn.jsdelivr.net/npm/elkjs@0.10.0/lib/elk.bundled.js';
-        const mod = (await import(/* @vite-ignore */ url)) as {
-          default?: typeof ELK;
-        };
+        const mod = (await dynamic(url)) as { default?: typeof ELK };
         return mod.default ?? (window as unknown as { ELK: typeof ELK }).ELK;
       })();
+
   return elkPromise;
 }

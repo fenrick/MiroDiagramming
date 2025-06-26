@@ -19,7 +19,12 @@ const allHtmlEntries = fs
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  build: { rollupOptions: { input: allHtmlEntries } },
+  build: {
+    rollupOptions: {
+      input: allHtmlEntries,
+      external: ['elkjs/lib/elk.bundled.js'],
+    },
+  },
   plugins: [react()],
   server: { port: 3000 },
 });
