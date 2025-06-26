@@ -241,7 +241,7 @@ describe('tab components', () => {
       fireEvent.change(input, { target: { files: [file] } });
     });
     expect(
-      screen.getByRole('group', { name: /layout type/i }),
+      screen.getByRole('combobox', { name: /layout type/i }),
     ).toBeInTheDocument();
     await act(async () => {
       fireEvent.click(screen.getByRole('button', { name: /create diagram/i }));

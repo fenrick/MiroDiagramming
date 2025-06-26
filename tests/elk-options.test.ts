@@ -24,4 +24,11 @@ describe('validateLayoutOptions', () => {
       spacing: 50,
     });
   });
+
+  for (const alg of ['rectpacking', 'box', 'radial'] as const) {
+    test(`supports ${alg} algorithm`, () => {
+      const result = validateLayoutOptions({ algorithm: alg });
+      expect(result.algorithm).toBe(alg);
+    });
+  }
 });

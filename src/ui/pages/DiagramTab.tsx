@@ -11,7 +11,6 @@ import {
   Text,
 } from '../components/legacy';
 import { tokens } from '../tokens';
-import { SegmentedControl } from '../components/SegmentedControl';
 import { GraphProcessor } from '../../core/graph/graph-processor';
 import { showError } from '../hooks/notifications';
 import {
@@ -153,11 +152,19 @@ export const DiagramTab: React.FC = () => {
               <li key={i}>{file.name}</li>
             ))}
           </ul>
-          <SegmentedControl
-            value={layoutChoice}
-            onChange={(v) => setLayoutChoice(v as LayoutChoice)}
-            options={LAYOUTS.map((l) => ({ label: l, value: l }))}
-          />
+          <InputField label='Layout type'>
+            <Select
+              value={layoutChoice}
+              onChange={(value) => setLayoutChoice(value as LayoutChoice)}>
+              {LAYOUTS.map((l) => (
+                <SelectOption
+                  key={l}
+                  value={l}>
+                  {l}
+                </SelectOption>
+              ))}
+            </Select>
+          </InputField>
           <div style={{ marginTop: tokens.space.small }}>
             <Checkbox
               label='Wrap items in frame'
