@@ -199,12 +199,12 @@ Failing any item blocks the CI gate.
 
 ## 8 Quality gates (automated in GitHub Actions)
 
-| Stage             | Tool               | Pass threshold          |
-| ----------------- | ------------------ | ----------------------- |
-| Lint              | ESLint + Stylelint | 0 errors                |
-| Unit tests        | Vitest             | ≥ 90 % lines & branches |
-| Visual regression | Chromatic          | 0 diffs                 |
-| Accessibility     | axe-core           | 0 critical              |
+| Stage             | Tool                     | Pass threshold          |
+| ----------------- | ------------------------ | ----------------------- |
+| Lint              | ESLint + Stylelint       | 0 errors                |
+| Unit tests        | Vitest                   | ≥ 90 % lines & branches |
+| Visual regression | manual screenshot review | no visual diffs         |
+| Accessibility     | manual a11y review       | 0 critical              |
 
 ---
 

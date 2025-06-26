@@ -142,7 +142,7 @@ If any step fails, do not promote to production.
 
 ```
 Push → GitHub Action
-        ├─ Lint, unit, axe, Sonar
+        ├─ Lint, unit, Sonar
         ├─ Build Storybook
         ├─ Build add-on bundle
         ├─ Upload artefact

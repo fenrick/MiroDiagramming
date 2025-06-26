@@ -88,12 +88,12 @@ Complexity limits enforced automatically by **SonarQube** gate.
 
 ## 6 Quality, Testing & CI/CD
 
-| Stage      | Gate                        | Threshold               |
-| ---------- | --------------------------- | ----------------------- |
-| Pre-commit | ESLint, Stylelint, Prettier | zero errors             |
-| Unit       | Vitest (coverage v8)        | 90 % line & branch      |
-| UI         | Cypress + Axe               | no critical a11y issues |
-| Metrics    | SonarQube                   | cyclomatic ≤ 8          |
+| Stage      | Gate                        | Threshold          |
+| ---------- | --------------------------- | ------------------ |
+| Pre-commit | ESLint, Stylelint, Prettier | zero errors        |
+| Unit       | Vitest (coverage v8)        | 90 % line & branch |
+| UI         | manual visual & a11y review | no critical issues |
+| Metrics    | SonarQube                   | cyclomatic ≤ 8     |
 
 **Workflow** (GitHub Actions)
 
@@ -190,7 +190,7 @@ _No OAuth token or server credentials are required._
 | JS errors     | Sentry       | Error rate, stack trace     |
 | Performance   | Datadog RUM  | Layout time, FPS            |
 | Feature flags | LaunchDarkly | Error delta versus baseline |
-| Accessibility | axe-core CI  | Violations per build        |
+| Accessibility | manual QA    | Issues logged per build     |
 
 Deployment, rollback and monitoring hooks are documented in **DEPLOYMENT.md**.
 
