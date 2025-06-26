@@ -7,6 +7,7 @@ export const ALGORITHMS = [
   'layered',
   'force',
   'rectpacking',
+  'rectstacking',
   'box',
   'radial',
 ] as const;

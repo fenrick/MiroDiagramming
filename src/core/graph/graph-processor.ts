@@ -1,4 +1,8 @@
 import { GraphData, graphService } from './graph-service';
+import { edgesToHierarchy, hierarchyToEdges } from './convert';
+import { isNestedAlgorithm } from './layout-modes';
+import { HierarchyProcessor } from './hierarchy-processor';
+import type { HierNode } from '../layout/nested-layout';
 import { BoardBuilder } from '../../board/board-builder';
 import { layoutEngine, LayoutResult } from '../layout/elk-layout';
 import { UserLayoutOptions } from '../layout/elk-options';
@@ -41,11 +45,23 @@ export class GraphProcessor {
    * Given parsed graph data, create all nodes and connectors on the board.
    */
   public async processGraph(
-    graph: GraphData,
+    graph: GraphData | HierNode[],
     options: ProcessOptions = {},
   ): Promise<void> {
-    this.validateGraph(graph);
-    const layout = await layoutEngine.layoutGraph(graph, options.layout);
+    const alg = options.layout?.algorithm ?? 'mrtree';
+    if (isNestedAlgorithm(alg)) {
+      const hp = new HierarchyProcessor(this.builder);
+      const hierarchy = Array.isArray(graph) ? graph : edgesToHierarchy(graph);
+      await hp.processHierarchy(hierarchy, {
+        createFrame: options.createFrame,
+        frameTitle: options.frameTitle,
+      });
+      this.lastCreated = hp.getLastCreated();
+      return;
+    }
+    const data = Array.isArray(graph) ? hierarchyToEdges(graph) : graph;
+    this.validateGraph(data);
+    const layout = await layoutEngine.layoutGraph(data, options.layout);
 
     const bounds = this.layoutBounds(layout);
     const margin = 100;
@@ -70,9 +86,9 @@ export class GraphProcessor {
       margin,
     );
 
-    const nodeMap = await this.createNodes(graph, layout, offsetX, offsetY);
+    const nodeMap = await this.createNodes(data, layout, offsetX, offsetY);
 
-    await this.createConnectorsAndZoom(graph, layout, nodeMap, frame);
+    await this.createConnectorsAndZoom(data, layout, nodeMap, frame);
   }
 
   /** Remove widgets created by the last `processGraph` call. */

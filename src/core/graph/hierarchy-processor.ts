@@ -5,6 +5,8 @@ import {
   layoutHierarchy,
   NestedLayoutResult,
 } from '../layout/nested-layout';
+import { edgesToHierarchy } from './convert';
+import type { GraphData } from './graph-service';
 import type {
   BaseItem,
   Group,
@@ -27,6 +29,13 @@ export class HierarchyProcessor {
   /** List of widgets created in the last run for easy undo. */
   private lastCreated: Array<BaseItem | Group | Frame> = [];
 
+  /**
+   * Access widgets created during the last processing run.
+   */
+  public getLastCreated(): Array<BaseItem | Group | Frame> {
+    return this.lastCreated;
+  }
+
   constructor(private builder: BoardBuilder = new BoardBuilder()) {}
 
   /**
@@ -40,8 +49,12 @@ export class HierarchyProcessor {
   ): Promise<void> {
     fileUtils.validateFile(file);
     const text = await fileUtils.readFileAsText(file);
-    const data = JSON.parse(text) as HierNode[];
-    await this.processHierarchy(data, opts);
+    const parsed = JSON.parse(text) as unknown;
+    if (Array.isArray(parsed)) {
+      await this.processHierarchy(parsed as HierNode[], opts);
+    } else {
+      await this.processHierarchy(parsed as GraphData, opts);
+    }
   }
 
   /**
@@ -50,12 +63,13 @@ export class HierarchyProcessor {
    * @param opts Additional options such as custom sort key.
    */
   public async processHierarchy(
-    roots: HierNode[],
+    roots: HierNode[] | GraphData,
     opts: HierarchyProcessOptions = {},
   ): Promise<void> {
-    if (!Array.isArray(roots)) throw new Error('Invalid hierarchy');
+    const data = Array.isArray(roots) ? roots : edgesToHierarchy(roots);
+    if (!Array.isArray(data)) throw new Error('Invalid hierarchy');
     this.lastCreated = [];
-    const result = await layoutHierarchy(roots, { sortKey: opts.sortKey });
+    const result = await layoutHierarchy(data, { sortKey: opts.sortKey });
     const bounds = this.computeBounds(result);
     const margin = 40;
     const width = bounds.maxX - bounds.minX + margin * 2;
@@ -70,7 +84,7 @@ export class HierarchyProcessor {
       spot,
       opts.frameTitle,
     );
-    await this.createWidgets(roots, result.nodes, offsetX, offsetY);
+    await this.createWidgets(data, result.nodes, offsetX, offsetY);
     await this.builder.syncAll(this.lastCreated.filter((i) => i !== frame));
     const target = frame
       ? frame
