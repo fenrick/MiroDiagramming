@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Icon, InputField, Text } from '../components/legacy';
 import { tweakFillColor, extractFillColor } from '../../board/style-tools';
 import { applyStylePreset, presetStyle } from '../../board/format-tools';
-import { STYLE_PRESETS } from '../style-presets';
+import { STYLE_PRESET_NAMES, stylePresets } from '../style-presets';
 import { adjustColor } from '../../core/utils/color-utils';
 import { useSelection } from '../hooks/use-selection';
 import { tokens } from '../tokens';
@@ -85,12 +85,13 @@ export const StyleTab: React.FC = () => {
         </Button>
       </div>
       <div className='buttons'>
-        {STYLE_PRESETS.map((p) => {
-          const style = presetStyle(p);
+        {STYLE_PRESET_NAMES.map((name) => {
+          const preset = stylePresets[name];
+          const style = presetStyle(preset);
           return (
             <Button
-              key={p.id}
-              onClick={() => applyStylePreset(p)}
+              key={name}
+              onClick={() => applyStylePreset(preset)}
               variant='secondary'
               style={{
                 color: style.color,
@@ -99,7 +100,7 @@ export const StyleTab: React.FC = () => {
                 borderWidth: style.borderWidth,
                 borderStyle: 'solid',
               }}>
-              {p.label}
+              {preset.label}
             </Button>
           );
         })}

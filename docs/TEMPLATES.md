@@ -13,8 +13,10 @@ touching the code.
 ## 1 Shape Templates
 
 Shape templates live in
-[`templates/shapeTemplates.json`](../templates/shapeTemplates.json). Each entry
-describes one or more elements that make up a widget. The minimal form is:
+[`templates/shapeTemplates.json`](../templates/shapeTemplates.json). The same
+dataset drives the Style tab so each template can be applied as a style preset.
+Each entry describes one or more elements that make up a widget. The minimal
+form is:
 
 ```json
 "Role": {

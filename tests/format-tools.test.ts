@@ -3,7 +3,6 @@ import type { StylePreset } from '../src/ui/style-presets';
 
 describe('format-tools', () => {
   const preset: StylePreset = {
-    id: 't',
     label: 'Test',
     fontColor: '#ffffff',
     borderWidth: 1,
@@ -36,7 +35,6 @@ describe('format-tools', () => {
     style.setProperty('--test-border', '#222222');
     style.setProperty('--test-fill', '#333333');
     const presetToken: StylePreset = {
-      id: 'tok',
       label: 'Token',
       fontColor: 'var(--test-font)',
       borderWidth: 3,
