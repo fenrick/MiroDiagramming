@@ -243,6 +243,9 @@ describe('tab components', () => {
     expect(
       screen.getByRole('combobox', { name: /layout type/i }),
     ).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: /layout algorithm guide/i }),
+    ).toBeInTheDocument();
     await act(async () => {
       fireEvent.click(screen.getByRole('button', { name: /create diagram/i }));
     });

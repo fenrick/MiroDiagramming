@@ -1,6 +1,7 @@
 # Miro JSON Graph Diagram App
 
 This project demonstrates how to import a JSON description of a graph and build
+
 a diagram on a Miro board. The application uses the **Eclipse Layout Kernel
 (ELK)** to arrange nodes and edges automatically. Shapes are generated from
 templates and each element can carry metadata that controls its appearance and
@@ -35,7 +36,9 @@ Omitting the `fields` property leaves the card without preview items.
 
 The layout step leverages the ELK algorithm to compute positions for all nodes.
 You can provide layout hints in each node's metadata to influence spacing or
-layering. The engine runs automatically when a graph is uploaded.
+layering. The engine runs automatically when a graph is uploaded. For an
+overview of available layout algorithms see
+[docs/LAYOUT_OPTIONS.md](docs/LAYOUT_OPTIONS.md).
 
 ## Template‑Based Shapes
 
@@ -48,12 +51,9 @@ this file or add new entries to customise the available shapes. Connector
 appearance is configured in
 [ `templates/connectorTemplates.json`](templates/connectorTemplates.json) which
 controls line colour, caps and font. The templates now include `Decision` and
-`StartEnd` shapes useful for flowcharts.
-
-To add your own templates create new entries in these JSON files and reference
-them by name in your graph metadata. The app reloads templates on startup so
-changes are picked up automatically.
-
+`StartEnd` shapes useful for flowcharts. To add your own templates create new
+entries in these JSON files and reference them by name in your graph metadata.
+The app reloads templates on startup so changes are picked up automatically.
 Additional details and a sample dataset are provided in
 [`docs/TEMPLATES.md`](docs/TEMPLATES.md).
 
@@ -210,21 +210,17 @@ scopes:
    button. Then click on `Add` as shown in the video below. <b>In the video we
    install a different app, but the process is the same regardless of the
    app.</b>
-
-> ⚠️ We recommend to install your app on a
-> [developer team](https://developers.miro.com/docs/create-a-developer-team)
-> while you are developing or testing apps.⚠️
-
-https://github.com/miroapp/app-examples/assets/10428517/1e6862de-8617-46ef-b265-97ff1cbfe8bf
-
+   > ⚠️ We recommend to install your app on a
+   > [developer team](https://developers.miro.com/docs/create-a-developer-team)
+   > while you are developing or testing apps.⚠️
+   > https://github.com/miroapp/app-examples/assets/10428517/1e6862de-8617-46ef-b265-97ff1cbfe8bf
 5. Go to your developer team, and open your boards.
 6. Click on the plus icon from the bottom section of your left sidebar. If you
    hover over it, it will say `More apps`.
 7. Search for your app `JSON Diagram` or whatever you chose to name it. Click on
    your app to use it, as shown in the video below. <b>In the video we search
    for a different app, but the process is the same regardless of the app.</b>
-
-https://github.com/horeaporutiu/app-examples-template/assets/10428517/b23d9c4c-e785-43f9-a72e-fa5d82c7b019
+   https://github.com/horeaporutiu/app-examples-template/assets/10428517/b23d9c4c-e785-43f9-a72e-fa5d82c7b019
 
 ## Testing
 
