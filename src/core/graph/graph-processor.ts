@@ -26,8 +26,14 @@ export interface ProcessOptions {
 
 export class GraphProcessor {
   private lastCreated: Array<BaseItem | Group | Connector | Frame> = [];
+  private nodeIdMap: Record<string, string> = {};
 
   constructor(private builder: BoardBuilder = graphService.getBuilder()) {}
+
+  /** Mapping from node ID to created widget ID for the last run. */
+  public getNodeIdMap(): Record<string, string> {
+    return { ...this.nodeIdMap };
+  }
 
   /**
    * Load a JSON graph file and process it.
@@ -48,6 +54,7 @@ export class GraphProcessor {
     graph: GraphData | HierNode[],
     options: ProcessOptions = {},
   ): Promise<void> {
+    this.nodeIdMap = {};
     const alg = options.layout?.algorithm ?? 'mrtree';
     if (isNestedAlgorithm(alg)) {
       const hp = new HierarchyProcessor(this.builder);
@@ -177,6 +184,9 @@ export class GraphProcessor {
       const adjPos = { ...pos, x: pos.x + offsetX, y: pos.y + offsetY };
       const widget = await this.builder.createNode(node, adjPos);
       nodeMap[node.id] = widget;
+      if (widget.id) {
+        this.nodeIdMap[node.id] = widget.id;
+      }
       this.lastCreated.push(widget);
     }
     return nodeMap;

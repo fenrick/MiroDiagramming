@@ -50,6 +50,7 @@ export function mapRowsToNodes(
       if (value != null) metadata[key] = value;
     });
     const idVal = mapping.idColumn ? row[mapping.idColumn] : undefined;
+    metadata.rowId = idVal != null ? String(idVal) : String(index);
     const typeVal = mapping.templateColumn
       ? row[mapping.templateColumn]
       : undefined;
