@@ -22,3 +22,17 @@ The quick choices in the Diagram tab map to these algorithms:
 - **Nested** – uses `rectpacking` with automatic container sizing.
 
 See [TEMPLATES.md](TEMPLATES.md#3-sample-data) for a nested layout example.
+
+## Common options
+
+- **Direction** – `DOWN`, `UP`, `LEFT` or `RIGHT`.
+- **Spacing** – pixel distance between nodes.
+- **Aspect ratio** – preferred width/height ratio.
+
+### Algorithm specific options
+
+| Algorithm     | Options                                                                       |
+| ------------- | ----------------------------------------------------------------------------- |
+| `layered`     | `edgeRouting` – `ORTHOGONAL`, `POLYLINE`, `SPLINES`                           |
+| `mrtree`      | `edgeRoutingMode` – `NONE`, `MIDDLE_TO_MIDDLE`, `AVOID_OVERLAP`               |
+| `rectpacking` | `optimizationGoal` – `MAX_SCALE_DRIVEN`, `ASPECT_RATIO_DRIVEN`, `AREA_DRIVEN` |

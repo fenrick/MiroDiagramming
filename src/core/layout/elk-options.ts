@@ -17,6 +17,26 @@ export type ElkAlgorithm = (typeof ALGORITHMS)[number];
 export const DIRECTIONS = ['DOWN', 'UP', 'LEFT', 'RIGHT'] as const;
 export type ElkDirection = (typeof DIRECTIONS)[number];
 
+/** Supported edge routing styles for the layered algorithm. */
+export const EDGE_ROUTINGS = ['ORTHOGONAL', 'POLYLINE', 'SPLINES'] as const;
+export type ElkEdgeRouting = (typeof EDGE_ROUTINGS)[number];
+
+/** Routing modes used by MrTree. */
+export const EDGE_ROUTING_MODES = [
+  'NONE',
+  'MIDDLE_TO_MIDDLE',
+  'AVOID_OVERLAP',
+] as const;
+export type ElkEdgeRoutingMode = (typeof EDGE_ROUTING_MODES)[number];
+
+/** Optimisation goals supported by RectPacking. */
+export const OPTIMIZATION_GOALS = [
+  'ASPECT_RATIO_DRIVEN',
+  'MAX_SCALE_DRIVEN',
+  'AREA_DRIVEN',
+] as const;
+export type ElkOptimizationGoal = (typeof OPTIMIZATION_GOALS)[number];
+
 /**
  * User configurable layout options with constrained values.
  */
@@ -27,13 +47,48 @@ export interface UserLayoutOptions {
   direction: ElkDirection;
   /** Spacing in pixels between nodes and layers. */
   spacing: number;
+  /** Preferred aspect ratio of the drawing. */
+  aspectRatio: number;
+  /** Style of edge routing for layered layouts. */
+  edgeRouting?: ElkEdgeRouting;
+  /** Routing mode used by MrTree. */
+  edgeRoutingMode?: ElkEdgeRoutingMode;
+  /** Optimisation goal for rect packing. */
+  optimizationGoal?: ElkOptimizationGoal;
 }
 
 /** Default layout options applied when none are provided. */
+export const ALGORITHM_DEFAULTS: Record<
+  ElkAlgorithm,
+  Omit<UserLayoutOptions, 'algorithm'>
+> = {
+  mrtree: {
+    direction: 'DOWN',
+    spacing: 20,
+    aspectRatio: 1.6,
+    edgeRoutingMode: 'AVOID_OVERLAP',
+  },
+  layered: {
+    direction: 'DOWN',
+    spacing: 20,
+    aspectRatio: 1.6,
+    edgeRouting: 'ORTHOGONAL',
+  },
+  force: { direction: 'DOWN', spacing: 80, aspectRatio: 1.6 },
+  rectpacking: {
+    direction: 'DOWN',
+    spacing: 15,
+    aspectRatio: 1.3,
+    optimizationGoal: 'MAX_SCALE_DRIVEN',
+  },
+  rectstacking: { direction: 'DOWN', spacing: 15, aspectRatio: 1.6 },
+  box: { direction: 'DOWN', spacing: 15, aspectRatio: 1.6 },
+  radial: { direction: 'RIGHT', spacing: 30, aspectRatio: 1.6 },
+};
+
 export const DEFAULT_LAYOUT_OPTIONS: UserLayoutOptions = {
   algorithm: 'mrtree',
-  direction: 'DOWN',
-  spacing: 90,
+  ...ALGORITHM_DEFAULTS.mrtree,
 };
 
 /**
@@ -42,18 +97,63 @@ export const DEFAULT_LAYOUT_OPTIONS: UserLayoutOptions = {
  * @param opts - Partial options provided by the user.
  * @returns Complete options with invalid values replaced by defaults.
  */
+function validateEnum<T>(
+  value: unknown,
+  allowed: readonly T[],
+  fallback: T,
+): T {
+  return allowed.includes(value as T) ? (value as T) : fallback;
+}
+
 export function validateLayoutOptions(
   opts: Partial<UserLayoutOptions>,
 ): UserLayoutOptions {
-  const algorithm = ALGORITHMS.includes(opts.algorithm as ElkAlgorithm)
-    ? (opts.algorithm as ElkAlgorithm)
-    : DEFAULT_LAYOUT_OPTIONS.algorithm;
-  const direction = DIRECTIONS.includes(opts.direction as ElkDirection)
-    ? (opts.direction as ElkDirection)
-    : DEFAULT_LAYOUT_OPTIONS.direction;
+  const algorithm = validateEnum(
+    opts.algorithm,
+    ALGORITHMS,
+    DEFAULT_LAYOUT_OPTIONS.algorithm,
+  );
+  const defaults = ALGORITHM_DEFAULTS[algorithm];
+
+  const direction = validateEnum(
+    opts.direction,
+    DIRECTIONS,
+    defaults.direction,
+  );
   const spacing =
     typeof opts.spacing === 'number' && opts.spacing > 0
       ? opts.spacing
-      : DEFAULT_LAYOUT_OPTIONS.spacing;
-  return { algorithm, direction, spacing };
+      : defaults.spacing;
+  const aspectRatio =
+    typeof opts.aspectRatio === 'number' && opts.aspectRatio > 0
+      ? opts.aspectRatio
+      : defaults.aspectRatio;
+
+  const edgeRouting = defaults.edgeRouting
+    ? validateEnum(opts.edgeRouting, EDGE_ROUTINGS, defaults.edgeRouting)
+    : undefined;
+  const edgeRoutingMode = defaults.edgeRoutingMode
+    ? validateEnum(
+        opts.edgeRoutingMode,
+        EDGE_ROUTING_MODES,
+        defaults.edgeRoutingMode,
+      )
+    : undefined;
+  const optimizationGoal = defaults.optimizationGoal
+    ? validateEnum(
+        opts.optimizationGoal,
+        OPTIMIZATION_GOALS,
+        defaults.optimizationGoal,
+      )
+    : undefined;
+
+  return {
+    algorithm,
+    direction,
+    spacing,
+    aspectRatio,
+    edgeRouting,
+    edgeRoutingMode,
+    optimizationGoal,
+  };
 }

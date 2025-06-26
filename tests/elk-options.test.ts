@@ -22,6 +22,10 @@ describe('validateLayoutOptions', () => {
       algorithm: 'force',
       direction: 'LEFT',
       spacing: 50,
+      aspectRatio: 1.6,
+      edgeRouting: undefined,
+      edgeRoutingMode: undefined,
+      optimizationGoal: undefined,
     });
   });
 
