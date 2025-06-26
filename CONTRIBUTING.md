@@ -10,3 +10,6 @@ See the
 [Miro developer documentation](https://developers.miro.com/docs/overview) for a
 step-by-step tutorial on building diagramming apps. When contributing code,
 please follow the formatting rules in [docs/CODE_STYLE.md](docs/CODE_STYLE.md).
+Aim for at least **90 % line and branch test coverage** and keep cyclomatic
+complexity below eight as described in
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).

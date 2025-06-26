@@ -88,16 +88,16 @@ Complexity limits enforced automatically by **SonarQube** gate.
 
 ## 6 Quality, Testing & CI/CD
 
-| Stage      | Gate                        | Threshold               |
-| ---------- | --------------------------- | ----------------------- |
-| Pre-commit | ESLint, Stylelint, Prettier | zero errors             |
-| Unit       | Jest + Stryker              | 90 % line & branch      |
-| UI         | Cypress + Axe               | no critical a11y issues |
-| Metrics    | SonarQube                   | cyclomatic ≤ 8          |
+| Stage      | Gate                        | Threshold          |
+| ---------- | --------------------------- | ------------------ |
+| Pre-commit | ESLint, Stylelint, Prettier | zero errors        |
+| Unit       | Vitest (coverage v8)        | 90 % line & branch |
+| UI         | manual visual & a11y review | no critical issues |
+| Metrics    | SonarQube                   | cyclomatic ≤ 8     |
 
 **Workflow** (GitHub Actions)
 
-1. Lint, type-check, unit tests (Node 18 & 20).
+1. Lint, type-check, unit tests (Node 24).
 2. Build Storybook and a feature-flagged bundle for staging.
 3. SonarQube analysis and budget checks.
 4. Semantic-release creates Git tag, changelog and Chrome-Store zip.
@@ -108,7 +108,8 @@ Complexity limits enforced automatically by **SonarQube** gate.
 
 ## 7 Automated Code Review & Enforcement
 
-- **Danger-JS** bot fails PR if complexity, coverage or lint targets fall short.
+- CI checks fail pull requests if complexity, coverage or lint targets fall
+  short.
 - **Conventional Commits** enforced by commit-lint.
 - Every PR must pass all CI gates; manual reviewers are optional.
 - **CodeQL** scan adds static-analysis findings to the check suite.
@@ -189,7 +190,7 @@ _No OAuth token or server credentials are required._
 | JS errors     | Sentry       | Error rate, stack trace     |
 | Performance   | Datadog RUM  | Layout time, FPS            |
 | Feature flags | LaunchDarkly | Error delta versus baseline |
-| Accessibility | axe-core CI  | Violations per build        |
+| Accessibility | manual QA    | Issues logged per build     |
 
 Deployment, rollback and monitoring hooks are documented in **DEPLOYMENT.md**.
 

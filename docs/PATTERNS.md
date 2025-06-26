@@ -162,8 +162,7 @@ Alert header uses font-heading-s; body uses font-body-s with max 160 characters.
 | Error text linked          | aria-describedby points to inline error id.              | WebAIM                                             |
 | Live region for toasts     | aria-live polite (assertive for danger).                 | W3C ARIA                                           |
 
-All points are enforced by automated axe-core tests in CI (see
-**ARCHITECTURE.md**).
+Review these points manually during pull requests (see **ARCHITECTURE.md**).
 
 ---
 

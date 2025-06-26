@@ -38,7 +38,8 @@ The layout step leverages the ELK algorithm to compute positions for all nodes.
 You can provide layout hints in each node's metadata to influence spacing or
 layering. The engine runs automatically when a graph is uploaded. For an
 overview of available layout algorithms see
-[docs/LAYOUT_OPTIONS.md](docs/LAYOUT_OPTIONS.md).
+[docs/LAYOUT_OPTIONS.md](docs/LAYOUT_OPTIONS.md). The ELK engine is dynamically
+imported from the jsDelivr CDN so it is excluded from the application bundle.
 
 ## Template‑Based Shapes
 
@@ -176,7 +177,7 @@ the rest of the UI. These guidelines help keep layouts consistent:
 - Your Miro account has a
   [Developer team](https://developers.miro.com/docs/create-a-developer-team).
 - Your development environment includes
-  [Node.js](https://nodejs.org/en/download) v18 or v20.
+  [Node.js](https://nodejs.org/en/download) v24 or later.
 - All examples use `npm` as a package manager and `npx` as a package runner.
 
 ## 🏃🏽‍♂️ Run the app locally <a name="run"></a>
@@ -239,9 +240,11 @@ npm run lint --silent
 npm run prettier --silent
 ```
 
-These commands perform TypeScript type checking, execute the Jest suite, run
-ESLint and format files with Prettier. Run them before committing so code
-conforms to the repository guidelines.
+These commands perform TypeScript type checking, execute the **Vitest** suite
+with coverage enabled, run ESLint and format files with Prettier. Aim for at
+least 90 % line and branch coverage and keep cyclomatic complexity under eight
+(see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)). Run these checks before
+committing so code conforms to the repository guidelines.
 
 ## 🗂️ Folder structure <a name="folder"></a>
 

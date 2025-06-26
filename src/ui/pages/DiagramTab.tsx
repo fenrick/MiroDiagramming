@@ -30,7 +30,15 @@ import {
 import { HierarchyProcessor } from '../../core/graph/hierarchy-processor';
 import { getDropzoneStyle, undoLastImport } from '../hooks/ui-utils';
 
-const LAYOUTS = ['Layered', 'Tree', 'Grid', 'Nested'] as const;
+const LAYOUTS = [
+  'Layered',
+  'Tree',
+  'Grid',
+  'Nested',
+  'Radial',
+  'Box',
+  'Rect Packing',
+] as const;
 type LayoutChoice = (typeof LAYOUTS)[number];
 
 const OPTION_VISIBILITY: Record<
@@ -49,6 +57,17 @@ const OPTION_VISIBILITY: Record<
   rectstacking: { aspectRatio: true },
   box: { aspectRatio: true },
   radial: { aspectRatio: true },
+};
+
+/** Descriptions for layout choices shown inline when importing graphs. */
+const LAYOUT_DESCRIPTIONS: Record<LayoutChoice, string> = {
+  'Layered': 'Flow diagrams with layers',
+  'Tree': 'Compact hierarchical tree',
+  'Grid': 'Organic force-directed grid',
+  'Nested': 'Containers sized to fit children',
+  'Radial': 'Circular layout around a hub',
+  'Box': 'Uniform box grid',
+  'Rect Packing': 'Fits rectangles within parents',
 };
 
 /** UI for the Diagram tab. */
@@ -106,10 +125,13 @@ export const DiagramTab: React.FC = () => {
         } else {
           setLastProc(graphProcessor);
           const algorithmMap: Record<LayoutChoice, ElkAlgorithm> = {
-            Layered: 'layered',
-            Tree: 'mrtree',
-            Grid: 'force',
-            Nested: 'layered',
+            'Layered': 'layered',
+            'Tree': 'mrtree',
+            'Grid': 'force',
+            'Nested': 'rectpacking',
+            'Radial': 'radial',
+            'Box': 'box',
+            'Rect Packing': 'rectpacking',
           };
           const selectedAlg = showAdvanced
             ? layoutOpts.algorithm
@@ -192,16 +214,12 @@ export const DiagramTab: React.FC = () => {
               ))}
             </Select>
           </InputField>
-          <Paragraph className='field-help'>
-            See{' '}
-            <a
-              href='docs/LAYOUT_OPTIONS.md'
-              target='_blank'
-              rel='noopener noreferrer'>
-              layout algorithm guide
-            </a>
-            .
-          </Paragraph>
+          <Paragraph className='field-help'>Layout options:</Paragraph>
+          <ul className='field-help'>
+            {LAYOUTS.map((l) => (
+              <li key={`desc-${l}`}>{LAYOUT_DESCRIPTIONS[l]}</li>
+            ))}
+          </ul>
           <div style={{ marginTop: tokens.space.small }}>
             <Checkbox
               label='Wrap items in frame'

@@ -1,4 +1,4 @@
-import ELK from 'elkjs/lib/elk.bundled.js';
+import { loadElk } from './elk-loader';
 import type { ElkNode } from 'elkjs/lib/elk-api';
 import { GraphData } from '../graph';
 import { templateManager } from '../../board/templates';
@@ -33,7 +33,8 @@ export async function performLayout(
   data: GraphData,
   opts: Partial<UserLayoutOptions> = {},
 ): Promise<LayoutResult> {
-  const elk = new ELK();
+  const Elk = await loadElk();
+  const elk = new Elk();
   const userOpts = validateLayoutOptions(opts);
   const elkGraph: ElkNode = {
     id: 'root',
