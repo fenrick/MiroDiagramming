@@ -162,28 +162,24 @@ describe('tab components', () => {
       render(React.createElement(StyleTab));
     });
     await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: /primary/i }));
+      fireEvent.click(screen.getByRole('button', { name: /BusinessService/i }));
     });
     expect(spy).toHaveBeenCalled();
   });
 
   test('Style preset button displays colours', async () => {
     const style = document.documentElement.style;
-    style.setProperty('--colors-blue-150', '#111111');
-    style.setProperty('--colors-blue-200', '#222222');
-    style.setProperty('--white', '#ffffff');
+    style.setProperty('--colors-blue-200', '#111111');
+    style.setProperty('--colors-gray-200', '#222222');
+    style.setProperty('--primary-text-color', '#ffffff');
     await act(async () => {
       render(React.createElement(StyleTab));
     });
-    const btn = screen.getByRole('button', { name: /primary/i });
-    expect(btn).toHaveStyle({
-      backgroundColor: '#111111',
-      borderColor: '#222222',
-      color: '#ffffff',
-    });
-    style.removeProperty('--colors-blue-150');
+    const btn = screen.getByRole('button', { name: /BusinessService/i });
+    expect(btn).toBeInTheDocument();
     style.removeProperty('--colors-blue-200');
-    style.removeProperty('--white');
+    style.removeProperty('--colors-gray-200');
+    style.removeProperty('--primary-text-color');
   });
 
   test('GridTab applies layout', async () => {

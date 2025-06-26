@@ -50,8 +50,9 @@ export interface ConnectorTemplateCollection {
 
 export class TemplateManager {
   private static instance: TemplateManager;
-  public readonly templates: TemplateCollection =
-    templatesJson as TemplateCollection;
+  public readonly templates: TemplateCollection = Object.fromEntries(
+    Object.entries(templatesJson).filter(([k]) => k !== 'stylePresets'),
+  ) as TemplateCollection;
   public readonly connectorTemplates: ConnectorTemplateCollection =
     connectorJson as ConnectorTemplateCollection;
 

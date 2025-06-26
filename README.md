@@ -41,12 +41,13 @@ layering. The engine runs automatically when a graph is uploaded.
 
 Shape templates live in
 [`templates/shapeTemplates.json`](templates/shapeTemplates.json). Each template
-defines the shape type, size and base styles. When a node specifies a `template`
-value in its metadata the corresponding template is applied. Edit this file or
-add new entries to customize the available shapes. Connector appearance is
-configured in
+defines the shape type, size and base styles. These templates also act as style
+presets, exposing the buttons on the Style tab. When a node specifies a
+`template` value in its metadata the corresponding template is applied. Edit
+this file or add new entries to customise the available shapes. Connector
+appearance is configured in
 [ `templates/connectorTemplates.json`](templates/connectorTemplates.json) which
-controls line color, caps and font. The templates now include `Decision` and
+controls line colour, caps and font. The templates now include `Decision` and
 `StartEnd` shapes useful for flowcharts.
 
 To add your own templates create new entries in these JSON files and reference
