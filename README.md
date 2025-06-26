@@ -38,7 +38,9 @@ The layout step leverages the ELK algorithm to compute positions for all nodes.
 You can provide layout hints in each node's metadata to influence spacing or
 layering. The engine runs automatically when a graph is uploaded. For an
 overview of available layout algorithms see
-[docs/LAYOUT_OPTIONS.md](docs/LAYOUT_OPTIONS.md).
+[docs/LAYOUT_OPTIONS.md](docs/LAYOUT_OPTIONS.md). The ELK engine is dynamically
+imported from the jsDelivr CDN so it is excluded from the application bundle.
+
 
 ## Template‑Based Shapes
 
