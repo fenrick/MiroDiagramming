@@ -7,6 +7,7 @@ export type TabId =
   | 'grid'
   | 'frames'
   | 'spacing'
+  | 'help'
   | 'dummy';
 
 export type TabTuple = readonly [
