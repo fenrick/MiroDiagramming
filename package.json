@@ -31,7 +31,8 @@
     "mirotone": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "react-dropzone": "latest"
+    "react-dropzone": "latest",
+    "xlsx": "latest"
   },
   "devDependencies": {
     "@mirohq/websdk-types": "latest",
