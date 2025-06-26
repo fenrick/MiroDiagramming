@@ -1,6 +1,18 @@
-export const ALGORITHMS = ['mrtree', 'layered', 'force'] as const;
+/**
+ * Supported ELK layout algorithms. Extend when enabling additional
+ * algorithms in the layout engine.
+ */
+export const ALGORITHMS = [
+  'mrtree',
+  'layered',
+  'force',
+  'rectpacking',
+  'box',
+  'radial',
+] as const;
 export type ElkAlgorithm = (typeof ALGORITHMS)[number];
 
+/** Allowed primary layout directions used by ELK. */
 export const DIRECTIONS = ['DOWN', 'UP', 'LEFT', 'RIGHT'] as const;
 export type ElkDirection = (typeof DIRECTIONS)[number];
 
