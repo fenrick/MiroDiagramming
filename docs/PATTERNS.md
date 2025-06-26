@@ -38,7 +38,8 @@ aria-describedby. ([developer.mozilla.org][2])
 
 ### 1.4 Progressive disclosure & dynamic fields
 
-- Hide rarely-used settings inside an **Accordion** labelled ‘Advanced’.
+- Hide rarely-used settings inside an **Accordion** labelled ‘Advanced’. The
+  Diagram tab exposes layout configuration in this way.
 - If a later question depends on an earlier answer, use **react-hook-form**
   watch to conditionally render the field; never disable a visible control
   because hidden fields are skipped by assistive tech.

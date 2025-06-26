@@ -47,6 +47,17 @@ export async function performLayout(
       'elk.spacing.nodeNode': userOpts.spacing as unknown as string,
       'elk.layered.unnecessaryBendpoints': 'true',
       'elk.layered.cycleBreaking.strategy': 'GREEDY',
+      ...(userOpts.aspectRatio && {
+        'elk.aspectRatio': String(userOpts.aspectRatio),
+      }),
+      ...(userOpts.edgeRouting && { 'elk.edgeRouting': userOpts.edgeRouting }),
+      ...(userOpts.edgeRoutingMode && {
+        'elk.mrtree.edgeRoutingMode': userOpts.edgeRoutingMode,
+      }),
+      ...(userOpts.optimizationGoal && {
+        'elk.rectpacking.widthApproximation.optimizationGoal':
+          userOpts.optimizationGoal,
+      }),
     },
     children: data.nodes.map((n) => {
       const tpl = templateManager.getTemplate(n.type);

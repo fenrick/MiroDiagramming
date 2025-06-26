@@ -30,7 +30,7 @@ ambiguity.
 | 4    | Cards mode options       | as per old Cards tab   | Search, tag filter and create button           | –             |
 
 **Tooltip for invalid row** – "Edge refers to missing node '‘%id%’.'" Shortcut:
-**⌘/** toggles Advanced Options panel when in Diagram mode.
+**⌘/** toggles the **Advanced options** accordion on the Diagram tab.
 
 ---
 
