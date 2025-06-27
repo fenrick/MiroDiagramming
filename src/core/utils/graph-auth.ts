@@ -36,7 +36,9 @@ export class GraphAuth {
       redirect_uri: redirectUri,
       scope: scopes.join(' '),
     });
-    window.location.href = `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?${params.toString()}`;
+    window.location.assign(
+      `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?${params.toString()}`,
+    );
   }
 
   /**

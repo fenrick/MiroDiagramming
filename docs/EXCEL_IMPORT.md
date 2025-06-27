@@ -28,15 +28,18 @@ const rows = excelLoader.loadSheet('Sheet1');
 
 ### Connecting to OneDrive/SharePoint
 
-When files reside in OneDrive or SharePoint, use `GraphExcelLoader`. First
-authenticate with Azure AD to acquire a Microsoft Graph token, then provide a
-share link or drive item ID:
+When files reside in OneDrive or SharePoint, use `GraphExcelLoader`. Begin by
+redirecting to Azure AD to acquire a Microsoft Graph token, then provide a share
+link or drive item ID:
 
 ```ts
 import { graphExcelLoader } from '../core/utils/excel-loader';
 import { graphAuth } from '../core/utils/graph-auth';
 
-graphAuth.setToken('<access token>');
+graphAuth.handleRedirect();
+if (!graphAuth.getToken()) {
+  graphAuth.login('<client id>', ['Files.Read'], window.location.href);
+}
 await graphExcelLoader.loadWorkbookFromGraph(
   'https://contoso.sharepoint.com/:x:/r/site/doc.xlsx',
 );
