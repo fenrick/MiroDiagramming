@@ -35,34 +35,49 @@ export function Modal({
     focusable?.focus();
   }, [isOpen]);
 
+  const getFocusables = React.useCallback((): HTMLElement[] => {
+    if (!ref.current) return [];
+    return Array.from(
+      ref.current.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      ),
+    );
+  }, []);
+
+  const trapTab = React.useCallback(
+    (e: KeyboardEvent): boolean => {
+      if (e.key !== 'Tab') return false;
+      const nodes = getFocusables();
+      if (nodes.length === 0) return false;
+      const first = nodes[0];
+      const last = nodes[nodes.length - 1];
+      const active = document.activeElement as HTMLElement;
+      if (e.shiftKey && active === first) {
+        last.focus();
+        return true;
+      }
+      if (!e.shiftKey && active === last) {
+        first.focus();
+        return true;
+      }
+      return false;
+    },
+    [getFocusables],
+  );
+
   React.useEffect(() => {
     if (!isOpen) return;
     const handleKey = (e: KeyboardEvent): void => {
       if (e.key === 'Escape') {
         e.preventDefault();
         onClose();
-      } else if (e.key === 'Tab' && ref.current) {
-        const nodes = Array.from(
-          ref.current.querySelectorAll<HTMLElement>(
-            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
-          ),
-        );
-        if (nodes.length === 0) return;
-        const first = nodes[0];
-        const last = nodes[nodes.length - 1];
-        const active = document.activeElement as HTMLElement;
-        if (e.shiftKey && active === first) {
-          e.preventDefault();
-          last.focus();
-        } else if (!e.shiftKey && active === last) {
-          e.preventDefault();
-          first.focus();
-        }
+      } else if (trapTab(e)) {
+        e.preventDefault();
       }
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, trapTab]);
 
   if (!isOpen) return null;
   return (
