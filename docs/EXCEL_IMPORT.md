@@ -36,8 +36,10 @@ link or drive item ID:
 import { graphExcelLoader } from '../core/utils/excel-loader';
 import { graphAuth } from '../core/utils/graph-auth';
 
+// handleRedirect() validates the stored OAuth state
 graphAuth.handleRedirect();
 if (!graphAuth.getToken()) {
+  // login() generates an OAuth state value for security
   graphAuth.login('<client id>', ['Files.Read'], window.location.href);
 }
 await graphExcelLoader.loadWorkbookFromGraph(
