@@ -1,4 +1,7 @@
-import { renameSelectedFrames } from '../src/board/frame-tools';
+import {
+  renameSelectedFrames,
+  lockSelectedFrames,
+} from '../src/board/frame-tools';
 import { BoardLike } from '../src/board/board';
 
 describe('frame-tools', () => {
@@ -52,5 +55,41 @@ describe('frame-tools', () => {
     await expect(renameSelectedFrames({ prefix: 'P' })).rejects.toThrow(
       'Miro board not available',
     );
+  });
+
+  describe('lockSelectedFrames', () => {
+    test('locks frames and children', async () => {
+      const child = { locked: false, sync: jest.fn() };
+      const frame = {
+        type: 'frame',
+        locked: false,
+        sync: jest.fn(),
+        getChildren: jest.fn().mockResolvedValue([child]),
+      };
+      const board: BoardLike = {
+        getSelection: jest.fn().mockResolvedValue([frame]),
+      };
+      await lockSelectedFrames(board);
+      expect(frame.locked).toBe(true);
+      expect(child.locked).toBe(true);
+      expect(frame.sync).toHaveBeenCalled();
+      expect(child.sync).toHaveBeenCalled();
+    });
+
+    test('ignores non-frame widgets', async () => {
+      const item = { type: 'shape', locked: false, sync: jest.fn() };
+      const board: BoardLike = {
+        getSelection: jest.fn().mockResolvedValue([item]),
+      };
+      await lockSelectedFrames(board);
+      expect(item.locked).toBe(false);
+      expect(item.sync).not.toHaveBeenCalled();
+    });
+
+    test('throws without board', async () => {
+      await expect(lockSelectedFrames()).rejects.toThrow(
+        'Miro board not available',
+      );
+    });
   });
 });

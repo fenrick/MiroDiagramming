@@ -46,3 +46,40 @@ export async function renameSelectedFrames(
     }),
   );
 }
+
+interface LockableItem extends Record<string, unknown> {
+  locked?: boolean;
+  sync?: () => Promise<void>;
+}
+
+interface FrameLike extends LockableItem {
+  type?: string;
+  getChildren?: () => Promise<LockableItem[]>;
+}
+
+function isFrame(item: Record<string, unknown>): item is FrameLike {
+  return (item as { type?: string }).type === 'frame';
+}
+
+async function lockItem(item: LockableItem): Promise<void> {
+  item.locked = true;
+  await item.sync?.();
+}
+
+async function lockFrame(frame: FrameLike): Promise<void> {
+  await lockItem(frame);
+  const children = (await frame.getChildren?.()) ?? [];
+  await Promise.all(children.map((child) => lockItem(child)));
+}
+
+/**
+ * Lock all selected frames and their contents.
+ *
+ * @param board - Optional board API override for testing.
+ */
+export async function lockSelectedFrames(board?: BoardLike): Promise<void> {
+  const b = getBoard(board);
+  const selection = await b.getSelection();
+  const frames = selection.filter(isFrame);
+  await Promise.all(frames.map((frame) => lockFrame(frame)));
+}
