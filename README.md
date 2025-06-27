@@ -246,6 +246,10 @@ least 90 % line and branch coverage and keep cyclomatic complexity under eight
 (see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)). Run these checks before
 committing so code conforms to the repository guidelines.
 
+With `package-lock.json` checked in you can run `npm audit` to scan installed
+packages for security issues. Include the lock file in commits so everyone uses
+the exact dependency versions when installing.
+
 ## 🗂️ Folder structure <a name="folder"></a>
 
 ```
