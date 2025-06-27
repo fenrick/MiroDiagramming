@@ -182,7 +182,8 @@ the rest of the UI. These guidelines help keep layouts consistent:
 
 ## 🏃🏽‍♂️ Run the app locally <a name="run"></a>
 
-1. Run `npm install` to install dependencies.
+1. Run `npm install` to install dependencies. The project includes a
+   `package-lock.json` file so everyone installs the same versions.
 2. Run `npm start` to start the development server. \
    Your URL should be similar to this example:
 
@@ -246,9 +247,9 @@ least 90 % line and branch coverage and keep cyclomatic complexity under eight
 (see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)). Run these checks before
 committing so code conforms to the repository guidelines.
 
-With `package-lock.json` checked in you can run `npm audit` to scan installed
-packages for security issues. Include the lock file in commits so everyone uses
-the exact dependency versions when installing.
+With `package-lock.json` checked in you can run `npm audit` after each install
+to scan dependencies for vulnerabilities. Include the lock file in commits so
+everyone uses the exact dependency versions when installing.
 
 ## 🗂️ Folder structure <a name="folder"></a>
 
