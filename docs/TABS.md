@@ -160,6 +160,9 @@ Shortcut: **Shift +C** opens comment editor on current selection.
 | --------------------------- | ----------------------------------- |
 | **Find Input**              | Text to locate on the board         |
 | **Replace Input**           | Replacement text applied in bulk    |
+| **Case Sensitive Checkbox** | Match exact letter case             |
+| **Whole Word Checkbox**     | Skip partial-word matches           |
+| **Regex Checkbox**          | Treat query as regular expression   |
 | **Widget Type Checkboxes**  | Filter results by widget type       |
 | **Tag IDs Input**           | Comma separated tags to match       |
 | **Background Colour Input** | Exact fill colour filter            |
