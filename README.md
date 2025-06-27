@@ -58,6 +58,10 @@ The app reloads templates on startup so changes are picked up automatically.
 Additional details and a sample dataset are provided in
 [`docs/TEMPLATES.md`](docs/TEMPLATES.md).
 
+When **Use existing widgets** is enabled the importer caches all basic shapes on
+the board and matches them by their text content. The cache prevents duplicates
+during placement and is cleared once processing finishes.
+
 ## Metadata Usage
 
 Nodes may include a `metadata` object with any additional information. Typical
@@ -123,6 +127,7 @@ The sidebar exposes extra tabs to manipulate existing widgets:
 - **Grid** arranges widgets into a grid with options for sorting and grouping
   the result.
 - **Templates** inserts prebuilt diagrams from the templates catalog.
+- **Frames** renames or locks selected frames via helper utilities.
 - **Export** allows saving the board to PNG, SVG, BPMN or Markdown.
 - **Data** configures live data bindings to external sources.
 - **Comment** lists discussion threads and lets you reply inline.
