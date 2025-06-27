@@ -48,6 +48,21 @@ describe('Edit Metadata command', () => {
     expect(svc.updateShapesFromExcel).toHaveBeenCalled();
   });
 
+  test('query parameter opens EditMetadataModal on load', () => {
+    const original = window.location;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    delete (window as any).location;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).location = {
+      ...original,
+      search: '?command=edit-metadata',
+    } as Location;
+    render(<App />);
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).location = original;
+  });
+
   test('EditMetadataModal returns null without context', () => {
     render(
       <EditMetadataModal

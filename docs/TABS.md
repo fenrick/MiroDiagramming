@@ -166,6 +166,14 @@ Shortcut: **Shift +C** opens comment editor on current selection.
 
 ---
 
+## Board Actions
+
+| Action        | Location                    | Result                                                |
+| ------------- | --------------------------- | ----------------------------------------------------- |
+| Edit Metadata | Context menu or app command | Opens the Edit Metadata modal for the selected widget |
+
+---
+
 ## Validation & Error Summary
 
 1. **File type** – Only .json/.csv/.mmd accepted; else toast “Unsupported file
