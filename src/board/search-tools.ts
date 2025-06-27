@@ -144,7 +144,16 @@ function applyFilters(
 }
 
 /**
- * Search widgets on the board matching the provided options.
+ * Search widgets on the board for text matching a pattern.
+ *
+ * @param opts - Criteria controlling the search behaviour and filters. When
+ *   `opts.regex` is `true`, {@link SearchOptions.query} is interpreted as a
+ *   regular expression.
+ * @param board - Optional board API override primarily used for testing.
+ * @returns Array of matches where each element contains the widget and the
+ *   field that matched.
+ * @throws If {@link SearchOptions.query} is an invalid regular expression when
+ *   `opts.regex` is enabled.
  */
 export async function searchBoardContent(
   opts: SearchOptions,
@@ -171,12 +180,18 @@ export async function searchBoardContent(
 }
 
 /**
- * Replace matching board content preserving formatting.
+ * Replace text in widgets matched by {@link searchBoardContent}.
  *
- * @returns Number of replacements performed.
- * @param onMatch - Optional callback invoked with each matched widget before
- * applying the replacement. Useful for focusing the board on the updated
- * item.
+ * @param opts - Options describing the search and replacement text. If
+ *   `opts.regex` is enabled and {@link SearchOptions.query} is not a valid
+ *   regular expression an exception will be thrown.
+ * @param board - Optional board API override used mainly for testing.
+ * @param onMatch - Callback invoked for each matched widget before the
+ *   replacement is applied. This can be used to focus the board on the item or
+ *   perform additional side effects.
+ * @returns The number of replacements that were made.
+ * @throws If {@link SearchOptions.query} is an invalid regular expression when
+ *   `opts.regex` is set.
  */
 export async function replaceBoardContent(
   opts: ReplaceOptions,
