@@ -14,7 +14,12 @@ vi.mock('../src/core/utils/workbook-writer');
 describe('ExcelTab', () => {
   beforeEach(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (globalThis as any).miro = { board: { ui: { on: vi.fn() } } };
+    (globalThis as any).miro = {
+      board: {
+        ui: { on: vi.fn() },
+        getSelection: vi.fn().mockResolvedValue([]),
+      },
+    };
     (excelLoader.loadWorkbook as unknown as jest.Mock).mockResolvedValue(
       undefined,
     );
