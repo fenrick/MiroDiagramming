@@ -40,9 +40,11 @@ ambiguity.
 | ----------------- | ----------------------------------------------- |
 | **Prefix Input**  | Text prefix used for renaming                   |
 | **Rename Button** | Applies prefix in left\u2011to\u2011right order |
+| **Lock Button**   | Locks selected frames and their contents        |
 
 Flow: select frames, type prefix, press **Rename Frames** → titles become
-`<prefix>0`, `<prefix>1`, ...
+`<prefix>0`, `<prefix>1`, ... Press **Lock Selected** to prevent modifications.
+Widgets receive the undocumented `locked` flag used by the Web‑SDK.
 
 ---
 

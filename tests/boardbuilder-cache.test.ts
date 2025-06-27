@@ -16,15 +16,34 @@ describe('BoardBuilder lookup and connector updates', () => {
     delete global.miro;
   });
 
-  test('findNode queries board each time', async () => {
-    const shape = {
-      getMetadata: jest.fn().mockResolvedValue({ type: 'Role', label: 'B' }),
-    } as Record<string, unknown>;
+  test('findNode caches shapes by text', async () => {
+    const shape = { content: 'B' } as Record<string, unknown>;
     global.miro = { board: { get: jest.fn().mockResolvedValue([shape]) } };
     const builder = new BoardBuilder();
     await builder.findNode('Role', 'B');
     await builder.findNode('Role', 'B');
+    expect((global.miro.board.get as jest.Mock).mock.calls.length).toBe(1);
+  });
+
+  test('reset clears the shape cache', async () => {
+    const shape = { content: 'B' } as Record<string, unknown>;
+    global.miro = { board: { get: jest.fn().mockResolvedValue([shape]) } };
+    const builder = new BoardBuilder();
+    await builder.findNode('Role', 'B');
+    builder.reset();
+    await builder.findNode('Role', 'B');
     expect((global.miro.board.get as jest.Mock).mock.calls.length).toBe(2);
+  });
+
+  test('lookup matches shape text regardless of metadata', async () => {
+    const shape = {
+      content: 'A',
+      getMetadata: jest.fn().mockResolvedValue({ type: 'X', label: 'Y' }),
+    } as Record<string, unknown>;
+    global.miro = { board: { get: jest.fn().mockResolvedValue([shape]) } };
+    const builder = new BoardBuilder();
+    const result = await builder.findNode('Role', 'A');
+    expect(result).toBe(shape);
   });
 
   test('createEdges skips connector lookup', async () => {

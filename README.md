@@ -58,6 +58,10 @@ The app reloads templates on startup so changes are picked up automatically.
 Additional details and a sample dataset are provided in
 [`docs/TEMPLATES.md`](docs/TEMPLATES.md).
 
+When **Use existing widgets** is enabled the importer caches all basic shapes on
+the board and matches them by their text content. The cache prevents duplicates
+during placement and is cleared once processing finishes.
+
 ## Metadata Usage
 
 Nodes may include a `metadata` object with any additional information. Typical
@@ -123,6 +127,7 @@ The sidebar exposes extra tabs to manipulate existing widgets:
 - **Grid** arranges widgets into a grid with options for sorting and grouping
   the result.
 - **Templates** inserts prebuilt diagrams from the templates catalog.
+- **Frames** renames or locks selected frames via helper utilities.
 - **Export** allows saving the board to PNG, SVG, BPMN or Markdown.
 - **Data** configures live data bindings to external sources.
 - **Comment** lists discussion threads and lets you reply inline.
@@ -283,6 +288,20 @@ everyone uses the exact dependency versions when installing.
 - [Code Style](docs/CODE_STYLE.md) outlines formatting and naming rules.
 - [UI Patterns](docs/PATTERNS.md) shows common layouts and best practices.
 - [Excel Import](docs/EXCEL_IMPORT.md) details workbook loading and sync.
+
+## Docker Image
+
+The project can be packaged as a container image. Build and run using:
+
+```bash
+docker build -t miro-diagramming .
+docker run --rm -p 8080:80 miro-diagramming
+```
+
+Tagged releases push the image to the GitHub Container Registry automatically.
+The workflow builds a standard `linux/amd64` image via
+`docker/build-push-action@v5`; QEMU is unnecessary as no cross-platform
+emulation is performed.
 
 ## Docker Image
 

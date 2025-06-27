@@ -23,6 +23,18 @@ describe('format-tools', () => {
     expect(item.sync).toHaveBeenCalled();
   });
 
+  test('applyStylePreset handles items without style', async () => {
+    const item = { sync: jest.fn() };
+    const board = { getSelection: jest.fn().mockResolvedValue([item]) };
+    await applyStylePreset(preset, board);
+    expect(item.style).toEqual({
+      color: preset.fontColor,
+      borderColor: preset.borderColor,
+      borderWidth: preset.borderWidth,
+      fillColor: preset.fillColor,
+    });
+  });
+
   test('applyStylePreset throws without board', async () => {
     await expect(applyStylePreset(preset)).rejects.toThrow(
       'Miro board not available',

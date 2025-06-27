@@ -27,10 +27,13 @@ const META_KEY = 'app.miro.structgraph';
  */
 export class BoardBuilder {
   private frame: Frame | undefined;
+  /** Cached lookup map for shapes by label content. */
+  private shapeMap: Map<string, BaseItem> | undefined;
 
   /** Reset any builder state between runs. */
   public reset(): void {
     this.frame = undefined;
+    this.shapeMap = undefined;
   }
 
   /** Assign a parent frame for subsequently created items. */
@@ -215,20 +218,29 @@ export class BoardBuilder {
     return undefined;
   }
 
+  /** Populate the shape cache when not yet loaded. */
+  private async loadShapeMap(): Promise<void> {
+    if (!this.shapeMap) {
+      this.ensureBoard();
+      const shapes = (await miro.board.get({ type: 'shape' })) as Shape[];
+      this.shapeMap = new Map();
+      shapes
+        .filter((s) => typeof s.content === 'string' && s.content.trim())
+        .forEach((s) => this.shapeMap!.set(s.content, s as BaseItem));
+    }
+  }
+
   /**
    * Search board shapes for metadata that matches the given type and label.
    * Returns the corresponding item if found.
    */
   private async searchShapes(
-    type: string,
+    _type: string,
     label: string,
   ): Promise<BaseItem | Group | undefined> {
-    this.ensureBoard();
-    const shapes = (await miro.board.get({ type: 'shape' })) as BaseItem[];
-    return this.findByMetadata(shapes, (meta) => {
-      const data = meta as NodeMetadata | undefined;
-      return data?.type === type && data.label === label;
-    });
+    await this.loadShapeMap();
+    const item = this.shapeMap?.get(label);
+    return item;
   }
 
   /**
