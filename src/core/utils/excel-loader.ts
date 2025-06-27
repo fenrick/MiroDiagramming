@@ -1,5 +1,6 @@
 import * as XLSX from 'xlsx';
 import { fileUtils } from './file-utils';
+import { GraphClient, graphClient } from './graph-client';
 
 /** Row object produced from a worksheet. */
 export interface ExcelRow {
@@ -15,6 +16,11 @@ export interface ExcelRow {
 export class ExcelLoader {
   private workbook: XLSX.WorkBook | null = null;
 
+  /** Parse a workbook from raw array buffer data. */
+  public loadArrayBuffer(buffer: ArrayBuffer): void {
+    this.workbook = XLSX.read(new Uint8Array(buffer), { type: 'array' });
+  }
+
   /**
    * Load a workbook from a {@link File} instance.
    *
@@ -23,7 +29,7 @@ export class ExcelLoader {
   public async loadWorkbook(file: File): Promise<void> {
     fileUtils.validateFile(file);
     const buffer = await file.arrayBuffer();
-    this.workbook = XLSX.read(new Uint8Array(buffer), { type: 'array' });
+    this.loadArrayBuffer(buffer);
   }
 
   /** List worksheet names from the current workbook. */
@@ -74,3 +80,25 @@ export class ExcelLoader {
 
 /** Shared instance to avoid repetitive class creation. */
 export const excelLoader = new ExcelLoader();
+
+/**
+ * Excel loader capable of fetching workbooks from OneDrive or SharePoint.
+ */
+export class GraphExcelLoader extends ExcelLoader {
+  constructor(private client: GraphClient = graphClient) {
+    super();
+  }
+
+  /**
+   * Load a workbook using the Microsoft Graph API.
+   *
+   * @param identifier - File share URL or drive item ID.
+   */
+  public async loadWorkbookFromGraph(identifier: string): Promise<void> {
+    const buffer = await this.client.fetchFile(identifier);
+    this.loadArrayBuffer(buffer);
+  }
+}
+
+/** Shared instance for Graph-based loading. */
+export const graphExcelLoader = new GraphExcelLoader();
