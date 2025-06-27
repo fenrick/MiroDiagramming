@@ -19,8 +19,9 @@ export default [
     rules: { 'no-console': 'warn', 'react/react-in-jsx-scope': 'off' },
   },
   {
-    files: ['tests/**/*.ts'],
+    files: ['tests/**/*.{ts,tsx}'],
     languageOptions: { parser, ecmaVersion: 'latest', sourceType: 'module' },
+    settings: { react: { version: 'detect' } },
     rules: {},
   },
 ];
