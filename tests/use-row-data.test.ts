@@ -56,6 +56,41 @@ describe('useRowData', () => {
     });
     expect(result.current).toBeNull();
   });
+
+  test('returns null with empty selection', async () => {
+    (useSelection as unknown as vi.Mock).mockReturnValue([]);
+    const { result } = renderHook(() => useRowData([{ ID: '1' }], 'ID'));
+    await act(async () => {
+      await Promise.resolve();
+    });
+    expect(result.current).toBeNull();
+  });
+
+  test('returns null when metadata lacks rowId', async () => {
+    const item: BaseItem = {
+      type: 'shape',
+      getMetadata: vi.fn().mockResolvedValue({}),
+    } as unknown as BaseItem;
+    (useSelection as unknown as vi.Mock).mockReturnValue([item]);
+    const { result } = renderHook(() => useRowData([{ ID: '1' }], 'ID'));
+    await act(async () => {
+      await Promise.resolve();
+    });
+    expect(result.current).toBeNull();
+  });
+
+  test('returns null when group metadata retrieval fails', async () => {
+    const group: Group = {
+      type: 'group',
+      getItems: vi.fn().mockRejectedValue(new Error('fail')),
+    } as unknown as Group;
+    (useSelection as unknown as vi.Mock).mockReturnValue([group]);
+    const { result } = renderHook(() => useRowData([{ ID: '1' }], 'ID'));
+    await act(async () => {
+      await Promise.resolve();
+    });
+    expect(result.current).toBeNull();
+  });
 });
 
 describe('helpers', () => {
@@ -86,5 +121,35 @@ describe('helpers', () => {
       getMetadata: vi.fn().mockResolvedValue({ rowId: '9' }),
     } as unknown as BaseItem;
     await expect(extractRowId(item)).resolves.toBe('9');
+  });
+
+  test('extractRowId returns undefined when id missing', async () => {
+    const item: BaseItem = {
+      type: 'shape',
+      getMetadata: vi.fn().mockResolvedValue({}),
+    } as unknown as BaseItem;
+    await expect(extractRowId(item)).resolves.toBeUndefined();
+  });
+
+  test('extractRowId propagates metadata errors', async () => {
+    const item: BaseItem = {
+      type: 'shape',
+      getMetadata: vi.fn().mockRejectedValue(new Error('fail')),
+    } as unknown as BaseItem;
+    await expect(extractRowId(item)).rejects.toThrow('fail');
+  });
+
+  test('extractRowId returns undefined when group has no ids', async () => {
+    const child1: BaseItem = {
+      getMetadata: vi.fn().mockResolvedValue({}),
+    } as unknown as BaseItem;
+    const child2: BaseItem = {
+      getMetadata: vi.fn().mockResolvedValue(null),
+    } as unknown as BaseItem;
+    const group: Group = {
+      type: 'group',
+      getItems: vi.fn().mockResolvedValue([child1, child2]),
+    } as unknown as Group;
+    await expect(extractRowId(group)).resolves.toBeUndefined();
   });
 });
