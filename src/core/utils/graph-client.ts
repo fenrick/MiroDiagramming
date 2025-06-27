@@ -1,4 +1,5 @@
 import { GraphAuth, graphAuth } from './graph-auth';
+import { encodeBase64 } from './base64';
 
 /**
  * Fetch files from Microsoft Graph using an OAuth access token.
@@ -17,7 +18,7 @@ export class GraphClient {
     if (!token) throw new Error('Graph token unavailable');
     const root = 'https://graph.microsoft.com/v1.0';
     const url = identifier.startsWith('http')
-      ? `${root}/shares/u!${btoa(identifier).replace(/=+$/, '')}/driveItem/content`
+      ? `${root}/shares/u!${encodeBase64(identifier)}/driveItem/content`
       : `${root}/me/drive/items/${identifier}/content`;
     const res = await fetch(url, {
       headers: { Authorization: `Bearer ${token}` },
