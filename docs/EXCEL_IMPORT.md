@@ -1,0 +1,76 @@
+# Excel Workbook Import & Synchronisation
+
+---
+
+## 0 Purpose
+
+Explain how Excel data is imported into Miro and kept in sync with board
+widgets. The guide covers workbook loading, column mapping, template selection
+and two-way updates using existing services.
+
+---
+
+## 1 Workbook Loading
+
+Use `ExcelLoader` to parse `.xlsx`/`.xls` files. The loader exposes
+`listSheets`, `listNamedTables`, `loadSheet` and `loadNamedTable` helpers for
+accessing worksheet rows. Files are read via the
+[xlsx](https://github.com/SheetJS/sheetjs) library and converted to objects
+keyed by column headers.
+
+```ts
+import { excelLoader } from '../core/utils/excel-loader';
+
+const file = /* File from <input type="file"> */;
+await excelLoader.loadWorkbook(file);
+const rows = excelLoader.loadSheet('Sheet1');
+```
+
+---
+
+## 2 Column Mapping & Template Selection
+
+Each row is converted into a node or card definition by `mapRowsToNodes` in
+`data-mapper.ts`. A `ColumnMapping` object describes which headers supply
+identifiers, labels, templates and metadata. Templates are looked up via
+`templateManager` and applied by `BoardBuilder`.
+
+```ts
+const mapping = {
+  idColumn: 'Id',
+  labelColumn: 'Title',
+  templateColumn: 'Type',
+  metadataColumns: { role: 'Role' },
+};
+```
+
+Select a template column to allow per-row styling or choose a static template
+when creating widgets.
+
+---
+
+## 3 Two-Way Sync
+
+`ExcelSyncService` links workbook rows to board widgets using metadata. During
+import `registerMapping` stores the row identifier alongside the created widget
+ID. `updateShapesFromExcel` applies template and text changes from Excel to
+existing widgets, while `pushChangesToExcel` extracts widget content back into
+rows. The service relies on `BoardBuilder` and `templateManager` to handle
+widget updates.
+
+`RowInspector` surfaces the values of the selected widget's row inside the
+sidebar, allowing quick edits. Changes invoke the callback provided by
+`ExcelTab` to keep local row data up to date.
+
+---
+
+## 4 Workflow Summary
+
+1. Load a workbook using `ExcelLoader`.
+2. Choose a sheet or named table and map its columns.
+3. Pick a template column or fixed template.
+4. Create or update widgets on the board.
+5. Use `ExcelSyncService` to push modifications back to the workbook.
+
+This approach keeps board content and Excel data synchronised without manual
+copy/paste.
