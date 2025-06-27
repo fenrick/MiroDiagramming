@@ -19,7 +19,10 @@ export const App: React.FC = () => {
   const [idColumn, setIdColumn] = React.useState('');
   const [labelColumn, setLabelColumn] = React.useState('');
   const [templateColumn, setTemplateColumn] = React.useState('');
-  const [showMeta, setShowMeta] = React.useState(false);
+  const [showMeta, setShowMeta] = React.useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('command') === 'edit-metadata';
+  });
   const tabIds = React.useMemo(() => TAB_DATA.map((t) => t[1]), []);
   React.useEffect(() => {
     const handler = (e: KeyboardEvent) => {
