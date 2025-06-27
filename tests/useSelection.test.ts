@@ -42,4 +42,23 @@ describe('useSelection', () => {
     unmount();
     expect(board.ui.off).toHaveBeenCalledWith('selection:update', cb);
   });
+
+  test('returns empty array when board missing', async () => {
+    const { result } = renderHook(() => useSelection());
+    await act(async () => {
+      await Promise.resolve();
+    });
+    expect(result.current).toEqual([]);
+  });
+
+  test('works with board lacking ui API', async () => {
+    const board: BoardLike = {
+      getSelection: jest.fn().mockResolvedValue([{ id: 3 }]),
+    };
+    const { result } = renderHook(() => useSelection(board));
+    await act(async () => {
+      await Promise.resolve();
+    });
+    expect(result.current).toEqual([{ id: 3 }]);
+  });
 });
