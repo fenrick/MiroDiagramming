@@ -7,6 +7,7 @@ export type TabId =
   | 'grid'
   | 'frames'
   | 'spacing'
+  | 'search'
   | 'help'
   | 'dummy';
 

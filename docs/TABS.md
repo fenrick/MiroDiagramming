@@ -2,7 +2,7 @@
 
 _Explicit UI + interaction walkthrough for every tab (June 2025)_
 
-This document narrows focus to the **nine sidebar tabs** in the
+This document narrows focus to the **ten sidebar tabs** in the
 Structured Diagramming add‑on. Each tab section specifies panel layout, visible
 controls, states, interaction flows, tool‑tips, keyboard shortcuts, and
 validation rules—so any developer can translate designs into code with zero
@@ -151,6 +151,19 @@ Polling interval slider (2 – 300 s). State `dataBindings[{boardId}]`.
 - **Filter Tabs** – All / Mine / Unresolved (Tertiary buttons).
 
 Shortcut: **Shift +C** opens comment editor on current selection.
+
+---
+
+## 10  Search Tab
+
+| Control           | Details                             |
+| ----------------- | ----------------------------------- |
+| **Find Input**    | Text to locate on the board         |
+| **Replace Input** | Replacement text applied in bulk    |
+| **Replace All**   | Calls `replaceBoardContent` utility |
+
+Flow: typing in the **Find** field debounces `searchBoardContent` by 300 ms and
+updates the match count.
 
 ---
 
