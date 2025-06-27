@@ -33,11 +33,14 @@ Browser
      Layout Engine ──► Board Adapter
           ▲                 │
           │                 ▼
-        Graph Processor  ◄─ Data Sources (REST/CSV)
+        Graph Processor  ◄─ Data Sources (REST/CSV/Graph)
+                         ▲
+                         └── OAuth tokens via browser
 ```
 
-The add-on is **client-only**. All persistence is handled by Miro boards; no
-server or OAuth exchange is required.
+The add-on is **client-only**. All persistence is handled by Miro boards.
+Loading Excel workbooks from Microsoft Graph uses a client-side OAuth flow that
+acquires tokens in the browser—no server component stores credentials.
 
 ---
 
@@ -118,14 +121,15 @@ Complexity limits enforced automatically by **SonarQube** gate.
 
 ## 8 Security & Threat Model (summary)
 
-| Asset         | Threat                           | Mitigation                                          |
-| ------------- | -------------------------------- | --------------------------------------------------- |
-| Board content | Malicious SVG / script injection | Deep schema validation, CSP sandbox in iframe       |
-| Layout Worker | DOS via oversized graphs         | Node cap 5 000, timeout 5 s                         |
-| Supply-chain  | Malicious dependency             | SLSA-compliant provenance, `npm audit` blocks build |
-| User data     | Privacy breach                   | No external storage; all data stays on Miro board   |
+| Asset         | Threat                           | Mitigation                                                        |
+| ------------- | -------------------------------- | ----------------------------------------------------------------- |
+| Board content | Malicious SVG / script injection | Deep schema validation, CSP sandbox in iframe                     |
+| Layout Worker | DOS via oversized graphs         | Node cap 5 000, timeout 5 s                                       |
+| Supply-chain  | Malicious dependency             | SLSA-compliant provenance, `npm audit` blocks build               |
+| User data     | Privacy breach                   | No external storage; all data stays on Miro board                 |
+| OAuth tokens  | Leakage or misuse                | Tokens held in browser memory only, scope limited to `Files.Read` |
 
-_No OAuth token or server credentials are required._
+_Tokens are acquired via browser OAuth; no server stores credentials._
 
 ---
 
