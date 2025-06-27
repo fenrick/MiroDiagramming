@@ -5,7 +5,8 @@
 /.pnp
 .pnp.js
 .next
-package-lock.json
+# Keep lockfile under version control for reproducible installs
+# package-lock.json intentionally tracked
 
 # testing
 /coverage
