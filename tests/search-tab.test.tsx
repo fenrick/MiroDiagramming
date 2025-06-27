@@ -192,4 +192,97 @@ describe('SearchTab', () => {
     expect(zoomSpy).toHaveBeenCalledWith(result.item);
     expect(screen.getByTestId('match-count')).toHaveTextContent('Matches: 0');
   });
+
+  test('clearing query resets matches without new search', async () => {
+    const spy = vi
+      .spyOn(searchTools, 'searchBoardContent')
+      .mockResolvedValue([{ item: {}, field: 't' }]);
+    render(<SearchTab />);
+    const input = screen.getByPlaceholderText(/search board text/i);
+    fireEvent.change(input, { target: { value: 'foo' } });
+    await act(async () => {
+      vi.advanceTimersByTime(300);
+    });
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(await screen.findByTestId('match-count')).toHaveTextContent(
+      'Matches: 1',
+    );
+    fireEvent.change(input, { target: { value: '' } });
+    await act(async () => {
+      vi.advanceTimersByTime(300);
+    });
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(screen.getByTestId('match-count')).toHaveTextContent('Matches: 0');
+  });
+
+  test('zoomTo used when zoomToObject unavailable', async () => {
+    const results = [
+      { item: { id: 'a' }, field: 't' },
+      { item: { id: 'b' }, field: 't' },
+    ];
+    vi.spyOn(searchTools, 'searchBoardContent').mockResolvedValue(results);
+    const zoomSpy = vi.fn();
+    global.miro = {
+      board: { viewport: { zoomTo: zoomSpy } },
+    } as unknown as typeof global.miro;
+    render(<SearchTab />);
+    fireEvent.change(screen.getByPlaceholderText(/search board text/i), {
+      target: { value: 'foo' },
+    });
+    await act(async () => {
+      vi.advanceTimersByTime(300);
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByText(/next/i));
+    });
+    expect(zoomSpy).toHaveBeenCalledWith([results[1].item]);
+  });
+
+  test('next handles missing viewport gracefully', async () => {
+    const results = [
+      { item: { id: 'x' }, field: 't' },
+      { item: { id: 'y' }, field: 't' },
+    ];
+    vi.spyOn(searchTools, 'searchBoardContent').mockResolvedValue(results);
+    global.miro = {} as unknown as typeof global.miro;
+    render(<SearchTab />);
+    fireEvent.change(screen.getByPlaceholderText(/search board text/i), {
+      target: { value: 'foo' },
+    });
+    await act(async () => {
+      vi.advanceTimersByTime(300);
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByText(/next/i));
+    });
+    expect(screen.getByTestId('match-count')).toHaveTextContent('Matches: 2');
+  });
+
+  test('widget type filter toggles off', async () => {
+    const searchSpy = vi
+      .spyOn(searchTools, 'searchBoardContent')
+      .mockResolvedValue([]);
+    render(<SearchTab />);
+    const box = screen.getByRole('checkbox', { name: 'shape' });
+    fireEvent.click(box);
+    fireEvent.click(box);
+    fireEvent.change(screen.getByPlaceholderText(/search board text/i), {
+      target: { value: 'foo' },
+    });
+    await act(async () => {
+      vi.advanceTimersByTime(300);
+    });
+    expect(searchSpy).toHaveBeenCalledWith({ query: 'foo' });
+  });
+
+  test('replace all ignored when query is empty', async () => {
+    const repSpy = vi.spyOn(searchTools, 'replaceBoardContent');
+    const searchSpy = vi.spyOn(searchTools, 'searchBoardContent');
+    render(<SearchTab />);
+    await act(async () => {
+      fireEvent.click(screen.getByText(/replace all/i));
+    });
+    expect(repSpy).not.toHaveBeenCalled();
+    expect(searchSpy).not.toHaveBeenCalled();
+  });
 });
