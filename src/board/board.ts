@@ -15,6 +15,13 @@ export interface BoardLike {
   ui?: BoardUILike;
 }
 
+/**
+ * Board API that supports querying widgets by type.
+ *
+ * This extends {@link BoardLike} with a `get` method, mirroring the
+ * `miro.board.get()` call. Search utilities rely on this method to gather
+ * candidate widgets when scanning the board.
+ */
 export interface BoardQueryLike extends BoardLike {
   get(opts: { type: string }): Promise<Array<Record<string, unknown>>>;
 }
