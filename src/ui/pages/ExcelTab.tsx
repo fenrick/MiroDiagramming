@@ -18,6 +18,7 @@ import { GraphProcessor } from '../../core/graph/graph-processor';
 import { addMiroIds, downloadWorkbook } from '../../core/utils/workbook-writer';
 import { showError } from '../hooks/notifications';
 import { getDropzoneStyle } from '../hooks/ui-utils';
+import { RowInspector } from '../components/RowInspector';
 import type { TabTuple } from './tab-definitions';
 
 /** Sidebar tab for importing nodes from Excel files. */
@@ -77,6 +78,13 @@ export const ExcelTab: React.FC = () => {
       return next;
     });
   };
+
+  const updateRow = React.useCallback(
+    (index: number, updated: ExcelRow): void => {
+      setRows((prev) => prev.map((r, i) => (i === index ? updated : r)));
+    },
+    [],
+  );
 
   const handleCreate = async (): Promise<void> => {
     try {
@@ -240,6 +248,11 @@ export const ExcelTab: React.FC = () => {
           </div>
         </>
       )}
+      <RowInspector
+        rows={rows}
+        idColumn={idColumn || undefined}
+        onUpdate={updateRow}
+      />
     </div>
   );
 };
