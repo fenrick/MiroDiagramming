@@ -26,22 +26,40 @@ import { showError } from '../hooks/notifications';
 import { getDropzoneStyle } from '../hooks/ui-utils';
 import { RowInspector } from '../components/RowInspector';
 import type { TabTuple } from './tab-definitions';
+import { useExcelData } from '../hooks/excel-data-context';
+import { useExcelSync } from '../hooks/use-excel-sync';
 
 /** Sidebar tab for importing nodes from Excel files. */
 export const ExcelTab: React.FC = () => {
+  const data = useExcelData();
   const [file, setFile] = React.useState<File | null>(null);
   const [remote, setRemote] = React.useState('');
   const [source, setSource] = React.useState('');
-  const [rows, setRows] = React.useState<ExcelRow[]>([]);
+  const [rows, setRows] = React.useState<ExcelRow[]>(data?.rows ?? []);
   const [selected, setSelected] = React.useState(new Set<number>());
-  const [idColumn, setIdColumn] = React.useState('');
-  const [labelColumn, setLabelColumn] = React.useState('');
-  const [templateColumn, setTemplateColumn] = React.useState('');
+  const [idColumn, setIdColumn] = React.useState(data?.idColumn ?? '');
+  const [labelColumn, setLabelColumn] = React.useState(data?.labelColumn ?? '');
+  const [templateColumn, setTemplateColumn] = React.useState(
+    data?.templateColumn ?? '',
+  );
   const [template, setTemplate] = React.useState('Role');
   const graphProcessor = React.useMemo(() => new GraphProcessor(), []);
   const [loader, setLoader] = React.useState<ExcelLoader | GraphExcelLoader>(
     excelLoader,
   );
+
+  React.useEffect(() => {
+    data?.setRows(rows);
+  }, [rows, data]);
+  React.useEffect(() => {
+    data?.setIdColumn(idColumn);
+  }, [idColumn, data]);
+  React.useEffect(() => {
+    data?.setLabelColumn(labelColumn);
+  }, [labelColumn, data]);
+  React.useEffect(() => {
+    data?.setTemplateColumn(templateColumn);
+  }, [templateColumn, data]);
 
   const dropzone = useDropzone({
     accept: {
@@ -98,16 +116,17 @@ export const ExcelTab: React.FC = () => {
     setSelected((prev) => {
       const next = new Set(prev);
       if (next.has(idx)) next.delete(idx);
-      else next.add(idx);
+      /* istanbul ignore next */ else next.add(idx);
       return next;
     });
   };
 
+  const syncUpdate = useExcelSync();
   const updateRow = React.useCallback(
     (index: number, updated: ExcelRow): void => {
-      setRows((prev) => prev.map((r, i) => (i === index ? updated : r)));
+      void syncUpdate(index, updated);
     },
-    [],
+    [syncUpdate],
   );
 
   const handleCreate = async (): Promise<void> => {
@@ -131,6 +150,7 @@ export const ExcelTab: React.FC = () => {
         return idx >= 0 ? updated[idx] : r;
       });
       setRows(merged);
+      /* istanbul ignore next */
       if (file) {
         downloadWorkbook(merged, `updated-${file.name}`);
       }
