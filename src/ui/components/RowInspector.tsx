@@ -29,7 +29,7 @@ export function RowInspector({
   }, [row]);
 
   const index = row ? rows.indexOf(row) : -1;
-  if (!editRow || index < 0) return null;
+  if (!editRow) return null;
 
   const handleChange =
     (key: string) =>
@@ -37,7 +37,7 @@ export function RowInspector({
       setEditRow((prev) => {
         if (!prev) return prev;
         const next = { ...prev, [key]: value };
-        onUpdate?.(index, next);
+        onUpdate?.(index >= 0 ? index : 0, next);
         return next;
       });
     };

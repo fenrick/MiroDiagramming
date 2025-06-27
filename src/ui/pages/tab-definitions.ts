@@ -17,3 +17,17 @@ export type TabTuple = readonly [
   instructions: string,
   Component: React.FC,
 ];
+
+export interface CommandDef {
+  /** Unique identifier used for keyboard shortcuts. */
+  id: string;
+  /** Visible label for menus. */
+  label: string;
+  /** Shortcut string for documentation. */
+  shortcut: string;
+}
+
+/** List of global commands available in the app. */
+export const COMMANDS: CommandDef[] = [
+  { id: 'edit-metadata', label: 'Edit Metadata', shortcut: 'Ctrl+Alt+M' },
+];
