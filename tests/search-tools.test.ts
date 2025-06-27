@@ -222,6 +222,27 @@ describe('search-tools', () => {
     expect(items[1].plainText).toBe('hi');
   });
 
+  test('setStringAtPath guards prototype pollution', async () => {
+    const { _setStringAtPath: fn } = (await import(
+      '../src/board/search-tools'
+    )) as {
+      _setStringAtPath: (
+        o: Record<string, unknown>,
+        p: string,
+        v: string,
+      ) => void;
+    };
+    const obj1: Record<string, unknown> = {};
+    fn(obj1, '__proto__.polluted', 'yes');
+    expect(({} as Record<string, unknown>).polluted).toBeUndefined();
+    expect('polluted' in obj1).toBe(false);
+
+    const obj2: Record<string, unknown> = {};
+    fn(obj2, 'constructor.polluted', 'bad');
+    expect(({} as Record<string, unknown>).polluted).toBeUndefined();
+    expect('polluted' in obj2).toBe(false);
+  });
+  
   test('searchBoardContent rejects invalid regex patterns', async () => {
     const { board } = makeBoard();
     await expect(
