@@ -11,7 +11,13 @@ import {
   Icon,
 } from '../components/legacy';
 import { tokens } from '../tokens';
-import { excelLoader, ExcelRow } from '../../core/utils/excel-loader';
+import {
+  excelLoader,
+  graphExcelLoader,
+  ExcelRow,
+  ExcelLoader,
+  GraphExcelLoader,
+} from '../../core/utils/excel-loader';
 import { mapRowsToNodes, ColumnMapping } from '../../core/data-mapper';
 import { templateManager } from '../../board/templates';
 import { GraphProcessor } from '../../core/graph/graph-processor';
@@ -27,6 +33,7 @@ import { useExcelSync } from '../hooks/use-excel-sync';
 export const ExcelTab: React.FC = () => {
   const data = useExcelData();
   const [file, setFile] = React.useState<File | null>(null);
+  const [remote, setRemote] = React.useState('');
   const [source, setSource] = React.useState('');
   const [rows, setRows] = React.useState<ExcelRow[]>(data?.rows ?? []);
   const [selected, setSelected] = React.useState(new Set<number>());
@@ -37,6 +44,9 @@ export const ExcelTab: React.FC = () => {
   );
   const [template, setTemplate] = React.useState('Role');
   const graphProcessor = React.useMemo(() => new GraphProcessor(), []);
+  const [loader, setLoader] = React.useState<ExcelLoader | GraphExcelLoader>(
+    excelLoader,
+  );
 
   React.useEffect(() => {
     data?.setRows(rows);
@@ -63,6 +73,7 @@ export const ExcelTab: React.FC = () => {
       const f = files[0];
       try {
         await excelLoader.loadWorkbook(f);
+        setLoader(excelLoader);
         setFile(f);
         setSource('');
         setRows([]);
@@ -73,15 +84,27 @@ export const ExcelTab: React.FC = () => {
     },
   });
 
+  const fetchRemote = async (): Promise<void> => {
+    try {
+      await graphExcelLoader.loadWorkbookFromGraph(remote);
+      setLoader(graphExcelLoader);
+      setFile(null);
+      setSource('');
+      setRows([]);
+      setSelected(new Set());
+    } catch (e) {
+      await showError(String(e));
+    }
+  };
+
   const columns = React.useMemo(() => Object.keys(rows[0] ?? {}), [rows]);
 
   const loadRows = (): void => {
     try {
       if (source.startsWith('sheet:')) {
-        setRows(excelLoader.loadSheet(source.slice(6)));
+        setRows(loader.loadSheet(source.slice(6)));
       } else if (source.startsWith('table:')) {
-        /* istanbul ignore next */
-        setRows(excelLoader.loadNamedTable(source.slice(6)));
+        setRows(loader.loadNamedTable(source.slice(6)));
       }
       setSelected(new Set());
     } catch (e) {
@@ -153,7 +176,19 @@ export const ExcelTab: React.FC = () => {
           />
         </InputField>
       </div>
-      {file && (
+      <InputField label='OneDrive/SharePoint file'>
+        <input
+          value={remote}
+          onChange={(e) => setRemote(e.target.value)}
+          aria-label='graph file'
+        />
+      </InputField>
+      <Button
+        onClick={fetchRemote}
+        variant='secondary'>
+        Fetch File
+      </Button>
+      {loader.listSheets().length > 0 && (
         <>
           <InputField label='Data source'>
             <Select
@@ -161,14 +196,14 @@ export const ExcelTab: React.FC = () => {
               onChange={setSource}
               aria-label='Data source'>
               <SelectOption value=''>Select…</SelectOption>
-              {excelLoader.listSheets().map((s) => (
+              {loader.listSheets().map((s) => (
                 <SelectOption
                   key={`s-${s}`}
                   value={`sheet:${s}`}>
                   Sheet: {s}
                 </SelectOption>
               ))}
-              {excelLoader.listNamedTables().map((t) => (
+              {loader.listNamedTables().map((t) => (
                 <SelectOption
                   key={`t-${t}`}
                   value={`table:${t}`}>

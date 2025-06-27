@@ -3,7 +3,7 @@ import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { ExcelTab } from '../src/ui/pages/ExcelTab';
-import { excelLoader } from '../src/core/utils/excel-loader';
+import { excelLoader, graphExcelLoader } from '../src/core/utils/excel-loader';
 import { GraphProcessor } from '../src/core/graph/graph-processor';
 import * as writer from '../src/core/utils/workbook-writer';
 
@@ -30,6 +30,9 @@ describe('ExcelTab', () => {
       'Table1',
     ]);
     (excelLoader.loadSheet as unknown as jest.Mock).mockReturnValue([{ A: 1 }]);
+    (
+      graphExcelLoader.loadWorkbookFromGraph as unknown as jest.Mock
+    ).mockResolvedValue(undefined);
     (writer.addMiroIds as jest.Mock).mockImplementation((r) => r);
     (writer.downloadWorkbook as jest.Mock).mockImplementation(() => {});
     (
@@ -86,5 +89,16 @@ describe('ExcelTab', () => {
       fireEvent.click(screen.getByRole('button', { name: /create nodes/i }));
     });
     expect(spy).toHaveBeenCalled();
+  });
+
+  test('fetches workbook from graph', async () => {
+    render(<ExcelTab />);
+    fireEvent.change(screen.getByLabelText('graph file'), {
+      target: { value: 'url' },
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /fetch file/i }));
+    });
+    expect(graphExcelLoader.loadWorkbookFromGraph).toHaveBeenCalledWith('url');
   });
 });
