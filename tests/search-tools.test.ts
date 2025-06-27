@@ -194,4 +194,31 @@ describe('search-tools', () => {
       expect.arrayContaining([items[0], items[1], items[4], items[5]]),
     );
   });
+
+  test('search utilities throw without board', async () => {
+    await expect(searchBoardContent({ query: 'hi' })).rejects.toThrow(
+      'Miro board not available',
+    );
+    await expect(
+      replaceBoardContent({ query: 'hi', replacement: 'bye' }),
+    ).rejects.toThrow('Miro board not available');
+  });
+
+  test('replaceBoardContent skips widgets lacking text fields', async () => {
+    const items = [
+      { type: 'shape', sync: jest.fn() },
+      { type: 'sticky_note', plainText: 'hello', sync: jest.fn() },
+    ];
+    const board: BoardQueryLike = {
+      getSelection: jest.fn().mockResolvedValue([]),
+      get: jest.fn().mockResolvedValue(items),
+    } as unknown as BoardQueryLike;
+    const count = await replaceBoardContent(
+      { query: 'hello', replacement: 'hi' },
+      board,
+    );
+    expect(count).toBe(1);
+    expect(items[0].sync).not.toHaveBeenCalled();
+    expect(items[1].plainText).toBe('hi');
+  });
 });
