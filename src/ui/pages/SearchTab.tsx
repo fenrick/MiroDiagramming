@@ -30,6 +30,23 @@ export const SearchTab: React.FC = () => {
   const [creator, setCreator] = React.useState('');
   const [lastModifiedBy, setLastModifiedBy] = React.useState('');
 
+  const focusOnItem = React.useCallback(
+    async (item: unknown): Promise<void> => {
+      const vp = globalThis.miro?.board?.viewport;
+      const typedVp = vp as unknown as {
+        zoomTo(items: unknown[]): Promise<void>;
+        zoomToObject?: (i: unknown) => Promise<void>;
+      };
+      if (!typedVp) return;
+      if (typedVp.zoomToObject) {
+        await typedVp.zoomToObject(item);
+      } else {
+        await typedVp.zoomTo([item]);
+      }
+    },
+    [],
+  );
+
   const toggleType = (type: string): void => {
     setWidgetTypes((prev) =>
       prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type],
@@ -75,7 +92,11 @@ export const SearchTab: React.FC = () => {
 
   const replaceAll = async (): Promise<void> => {
     if (!query) return;
-    const count = await replaceBoardContent({ ...buildOptions(), replacement });
+    const count = await replaceBoardContent(
+      { ...buildOptions(), replacement },
+      undefined,
+      focusOnItem,
+    );
     if (count) {
       const res = await searchBoardContent(buildOptions());
       setResults(res);
@@ -88,16 +109,7 @@ export const SearchTab: React.FC = () => {
     const next = (currentIndex + 1) % results.length;
     setCurrentIndex(next);
     const { item } = results[next];
-    const vp = globalThis.miro?.board?.viewport;
-    const typedVp = vp as unknown as {
-      zoomTo(items: unknown[]): Promise<void>;
-      zoomToObject?: (i: unknown) => Promise<void>;
-    };
-    if (typedVp.zoomToObject) {
-      await typedVp.zoomToObject(item);
-    } else {
-      await typedVp.zoomTo([item]);
-    }
+    await focusOnItem(item);
   };
 
   const replaceCurrent = async (): Promise<void> => {
@@ -109,6 +121,7 @@ export const SearchTab: React.FC = () => {
     await replaceBoardContent(
       { ...buildOptions(), replacement, inSelection: true },
       board,
+      focusOnItem,
     );
     const res = await searchBoardContent(buildOptions());
     setResults(res);
