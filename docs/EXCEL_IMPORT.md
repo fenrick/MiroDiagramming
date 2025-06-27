@@ -26,11 +26,12 @@ await excelLoader.loadWorkbook(file);
 const rows = excelLoader.loadSheet('Sheet1');
 ```
 
-### Connecting to OneDrive/SharePoint
+### Loading from OneDrive/SharePoint via Microsoft Graph
 
-When files reside in OneDrive or SharePoint, use `GraphExcelLoader`. Begin by
-redirecting to Azure AD to acquire a Microsoft Graph token, then provide a share
-link or drive item ID:
+When workbooks live in OneDrive or SharePoint, use `GraphExcelLoader` to fetch
+them through the Microsoft Graph API. Begin by redirecting the user to Azure AD
+to acquire an access token. Once authorised you can pass either a share link or
+a drive item ID to `loadWorkbookFromGraph`:
 
 ```ts
 import { graphExcelLoader } from '../core/utils/excel-loader';
@@ -45,6 +46,8 @@ if (!graphAuth.getToken()) {
 await graphExcelLoader.loadWorkbookFromGraph(
   'https://contoso.sharepoint.com/:x:/r/site/doc.xlsx',
 );
+// alternatively
+// await graphExcelLoader.loadWorkbookFromGraph('01B2LJ6UYA6XC7YQO3FBD2I7RBXWJKG6SY');
 ```
 
 The loader exposes the same helpers as `ExcelLoader` so the remainder of the
@@ -86,6 +89,14 @@ widget updates.
 sidebar, allowing quick edits. Changes invoke the callback provided by
 `ExcelTab` to keep local row data up to date.
 
+### Opening the Edit Metadata Modal
+
+Use the **Edit Metadata** board action to update cell values directly on the
+board. Trigger the command from the context menu or press `Ctrl+Alt+M`. The
+action opens `app.html?command=edit-metadata`, displaying a modal with the
+selected row's fields. After editing, `ExcelSyncService` writes the changes back
+to the workbook.
+
 ---
 
 ## 4 Workflow Summary
@@ -95,6 +106,8 @@ sidebar, allowing quick edits. Changes invoke the callback provided by
 3. Pick a template column or fixed template.
 4. Create or update widgets on the board.
 5. Use `ExcelSyncService` to push modifications back to the workbook.
+6. Invoke the **Edit Metadata** board action (`Ctrl+Alt+M`) to edit row data on
+   the board.
 
 This approach keeps board content and Excel data synchronised without manual
 copy/paste.
