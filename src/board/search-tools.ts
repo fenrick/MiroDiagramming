@@ -174,16 +174,21 @@ export async function searchBoardContent(
  * Replace matching board content preserving formatting.
  *
  * @returns Number of replacements performed.
+ * @param onMatch - Optional callback invoked with each matched widget before
+ * applying the replacement. Useful for focusing the board on the updated
+ * item.
  */
 export async function replaceBoardContent(
   opts: ReplaceOptions,
   board?: BoardQueryLike,
+  onMatch?: (item: Record<string, unknown>) => Promise<void> | void,
 ): Promise<number> {
   const b = getBoardWithQuery(board);
   const matches = await searchBoardContent(opts, b);
   const pattern = buildRegex(opts);
   let count = 0;
   for (const { item, field } of matches) {
+    if (onMatch) await onMatch(item);
     const current = getStringAtPath(item, field);
     if (current === undefined) continue;
     const updated = current.replace(pattern, () => {

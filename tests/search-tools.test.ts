@@ -178,4 +178,20 @@ describe('search-tools', () => {
     expect(items[4].content).toBe('hi <b>World</b>');
     expect(items[0].sync).toHaveBeenCalled();
   });
+
+  test('onMatch callback is invoked for each replacement', async () => {
+    const { board, items } = makeBoard();
+    const seen: unknown[] = [];
+    const count = await replaceBoardContent(
+      { query: 'hello', replacement: 'hi' },
+      board,
+      (i) => {
+        seen.push(i);
+      },
+    );
+    expect(count).toBe(4);
+    expect(seen).toEqual(
+      expect.arrayContaining([items[0], items[1], items[4], items[5]]),
+    );
+  });
 });

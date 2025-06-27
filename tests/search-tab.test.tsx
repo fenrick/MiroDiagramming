@@ -32,13 +32,21 @@ describe('SearchTab', () => {
     );
   });
 
-  test('bulk replace calls replaceBoardContent', async () => {
+  test('bulk replace calls replaceBoardContent and focuses matches', async () => {
+    const match = { item: { id: '1' }, field: 't' };
     vi.spyOn(searchTools, 'searchBoardContent')
-      .mockResolvedValueOnce([{ item: {}, field: 't' }])
+      .mockResolvedValueOnce([match])
       .mockResolvedValueOnce([]);
+    const zoomSpy = vi.fn();
+    global.miro = {
+      board: { viewport: { zoomTo: vi.fn(), zoomToObject: zoomSpy } },
+    } as unknown as typeof global.miro;
     const repSpy = vi
       .spyOn(searchTools, 'replaceBoardContent')
-      .mockResolvedValue(1);
+      .mockImplementation(async (_o, _b, onMatch) => {
+        await onMatch?.(match.item);
+        return 1;
+      });
     render(<SearchTab />);
     fireEvent.change(screen.getByPlaceholderText(/search board text/i), {
       target: { value: 'foo' },
@@ -53,11 +61,14 @@ describe('SearchTab', () => {
     await act(async () => {
       fireEvent.click(screen.getByText(/replace all/i));
     });
-    expect(repSpy).toHaveBeenCalledWith({
+    const [optsArg] = repSpy.mock.calls[0];
+    expect(optsArg).toEqual({
       query: 'foo',
       widgetTypes: ['shape'],
       replacement: 'bar',
     });
+    expect(repSpy.mock.calls[0][2]).toBeInstanceOf(Function);
+    expect(zoomSpy).toHaveBeenCalledWith(match.item);
     expect(screen.getByTestId('match-count')).toHaveTextContent('Matches: 0');
   });
 
@@ -130,14 +141,21 @@ describe('SearchTab', () => {
     );
   });
 
-  test('replace button updates single match', async () => {
+  test('replace button updates single match and focuses it', async () => {
     const result = { item: { id: 'x' }, field: 't' };
     vi.spyOn(searchTools, 'searchBoardContent')
       .mockResolvedValueOnce([result])
       .mockResolvedValueOnce([]);
+    const zoomSpy = vi.fn();
+    global.miro = {
+      board: { viewport: { zoomTo: vi.fn(), zoomToObject: zoomSpy } },
+    } as unknown as typeof global.miro;
     const repSpy = vi
       .spyOn(searchTools, 'replaceBoardContent')
-      .mockResolvedValue(1);
+      .mockImplementation(async (_o, _b, onMatch) => {
+        await onMatch?.(result.item);
+        return 1;
+      });
     render(<SearchTab />);
     fireEvent.change(screen.getByPlaceholderText(/search board text/i), {
       target: { value: 'foo' },
@@ -152,13 +170,16 @@ describe('SearchTab', () => {
       fireEvent.click(screen.getByRole('button', { name: /^replace$/i }));
     });
     expect(repSpy).toHaveBeenCalled();
-    expect(repSpy.mock.calls[0][0]).toEqual({
+    const [optsArg2] = repSpy.mock.calls[0];
+    expect(optsArg2).toEqual({
       query: 'foo',
       replacement: 'bar',
       inSelection: true,
     });
     const boardArg = repSpy.mock.calls[0][1];
     await expect(boardArg.getSelection()).resolves.toEqual([result.item]);
+    expect(repSpy.mock.calls[0][2]).toBeInstanceOf(Function);
+    expect(zoomSpy).toHaveBeenCalledWith(result.item);
     expect(screen.getByTestId('match-count')).toHaveTextContent('Matches: 0');
   });
 });
