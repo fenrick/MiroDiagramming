@@ -277,6 +277,7 @@ committing so code conforms to the repository guidelines.
 - [Design Foundation](docs/FOUNDATION.md) explains tokens and theming rules.
 - [Code Style](docs/CODE_STYLE.md) outlines formatting and naming rules.
 - [UI Patterns](docs/PATTERNS.md) shows common layouts and best practices.
+- [Excel Import](docs/EXCEL_IMPORT.md) details workbook loading and sync.
 
 ## Docker Image
 
