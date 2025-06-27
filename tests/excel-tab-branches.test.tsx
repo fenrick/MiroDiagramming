@@ -6,10 +6,14 @@ import { ExcelTab } from '../src/ui/pages/ExcelTab';
 import { excelLoader, graphExcelLoader } from '../src/core/utils/excel-loader';
 import { GraphProcessor } from '../src/core/graph/graph-processor';
 import * as writer from '../src/core/utils/workbook-writer';
+import { showError } from '../src/ui/hooks/notifications';
 
 vi.mock('../src/core/utils/excel-loader');
 vi.mock('../src/core/graph/graph-processor');
 vi.mock('../src/core/utils/workbook-writer');
+vi.mock('../src/ui/hooks/notifications', () => ({
+  showError: vi.fn().mockResolvedValue(undefined),
+}));
 
 describe('ExcelTab additional paths', () => {
   beforeEach(() => {
@@ -105,5 +109,107 @@ describe('ExcelTab additional paths', () => {
       fireEvent.click(screen.getByRole('button', { name: /fetch file/i }));
     });
     expect(graphExcelLoader.loadWorkbookFromGraph).toHaveBeenCalledWith('x');
+  });
+
+  test('drop handler shows error on failure', async () => {
+    (excelLoader.loadWorkbook as unknown as vi.Mock).mockRejectedValue(
+      new Error('boom'),
+    );
+    render(<ExcelTab />);
+    const file = new File(['x'], 'data.xlsx');
+    await act(async () => {
+      fireEvent.change(screen.getByTestId('file-input'), {
+        target: { files: [file] },
+      });
+    });
+    expect(showError).toHaveBeenCalled();
+  });
+
+  test('fetchRemote shows error on failure', async () => {
+    (
+      graphExcelLoader.loadWorkbookFromGraph as unknown as vi.Mock
+    ).mockRejectedValue(new Error('nope'));
+    render(<ExcelTab />);
+    fireEvent.change(screen.getByLabelText('graph file'), {
+      target: { value: 'remote' },
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /fetch file/i }));
+    });
+    expect(showError).toHaveBeenCalled();
+  });
+
+  test('loadRows shows error when loader fails', async () => {
+    (excelLoader.loadWorkbook as unknown as vi.Mock).mockResolvedValue(
+      undefined,
+    );
+    (excelLoader.loadSheet as unknown as vi.Mock).mockImplementation(() => {
+      throw new Error('bad');
+    });
+    render(<ExcelTab />);
+    const file = new File(['x'], 'data.xlsx');
+    await act(async () => {
+      fireEvent.change(screen.getByTestId('file-input'), {
+        target: { files: [file] },
+      });
+    });
+    fireEvent.change(screen.getByRole('combobox', { name: /data source/i }), {
+      target: { value: 'sheet:Sheet1' },
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /load rows/i }));
+    });
+    expect(showError).toHaveBeenCalled();
+  });
+
+  test('downloads workbook when file exists', async () => {
+    (excelLoader.loadSheet as unknown as vi.Mock).mockReturnValue([{ A: 1 }]);
+    const process = vi
+      .spyOn(GraphProcessor.prototype, 'processGraph')
+      .mockResolvedValue(undefined as unknown as void);
+    render(<ExcelTab />);
+    const file = new File(['x'], 'rows.xlsx');
+    await act(async () => {
+      fireEvent.change(screen.getByTestId('file-input'), {
+        target: { files: [file] },
+      });
+    });
+    fireEvent.change(screen.getByRole('combobox', { name: /data source/i }), {
+      target: { value: 'sheet:Sheet1' },
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /load rows/i }));
+    });
+    fireEvent.click(screen.getByLabelText(/row 1/i));
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /create nodes/i }));
+    });
+    expect(process).toHaveBeenCalled();
+    expect(writer.downloadWorkbook).toHaveBeenCalled();
+  });
+
+  test('shows error when graph processing fails', async () => {
+    (excelLoader.loadSheet as unknown as vi.Mock).mockReturnValue([{ A: 1 }]);
+    (
+      GraphProcessor.prototype.processGraph as unknown as vi.Mock
+    ).mockRejectedValue(new Error('fail'));
+    render(<ExcelTab />);
+    const file = new File(['x'], 'data.xlsx');
+    await act(async () => {
+      fireEvent.change(screen.getByTestId('file-input'), {
+        target: { files: [file] },
+      });
+    });
+    fireEvent.change(screen.getByRole('combobox', { name: /data source/i }), {
+      target: { value: 'sheet:Sheet1' },
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /load rows/i }));
+    });
+    fireEvent.click(screen.getByLabelText(/row 1/i));
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /create nodes/i }));
+    });
+    expect(showError).toHaveBeenCalled();
   });
 });
