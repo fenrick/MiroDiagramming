@@ -33,9 +33,9 @@ describe('SearchTab', () => {
   });
 
   test('bulk replace calls replaceBoardContent', async () => {
-    vi.spyOn(searchTools, 'searchBoardContent').mockResolvedValue([
-      { item: {}, field: 't' },
-    ]);
+    vi.spyOn(searchTools, 'searchBoardContent')
+      .mockResolvedValueOnce([{ item: {}, field: 't' }])
+      .mockResolvedValueOnce([]);
     const repSpy = vi
       .spyOn(searchTools, 'replaceBoardContent')
       .mockResolvedValue(1);
@@ -98,5 +98,67 @@ describe('SearchTab', () => {
       creator: 'c1',
       lastModifiedBy: 'm1',
     });
+  });
+
+  test('next button zooms to each match', async () => {
+    const results = [
+      { item: { id: 'a' }, field: 't' },
+      { item: { id: 'b' }, field: 't' },
+    ];
+    vi.spyOn(searchTools, 'searchBoardContent').mockResolvedValue(results);
+    global.miro = {
+      board: { viewport: { zoomTo: vi.fn(), zoomToObject: vi.fn() } },
+    } as unknown as typeof global.miro;
+    render(<SearchTab />);
+    fireEvent.change(screen.getByPlaceholderText(/search board text/i), {
+      target: { value: 'foo' },
+    });
+    await act(async () => {
+      vi.advanceTimersByTime(300);
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByText(/next/i));
+    });
+    expect(global.miro.board.viewport.zoomToObject).toHaveBeenCalledWith(
+      results[1].item,
+    );
+    await act(async () => {
+      fireEvent.click(screen.getByText(/next/i));
+    });
+    expect(global.miro.board.viewport.zoomToObject).toHaveBeenLastCalledWith(
+      results[0].item,
+    );
+  });
+
+  test('replace button updates single match', async () => {
+    const result = { item: { id: 'x' }, field: 't' };
+    vi.spyOn(searchTools, 'searchBoardContent')
+      .mockResolvedValueOnce([result])
+      .mockResolvedValueOnce([]);
+    const repSpy = vi
+      .spyOn(searchTools, 'replaceBoardContent')
+      .mockResolvedValue(1);
+    render(<SearchTab />);
+    fireEvent.change(screen.getByPlaceholderText(/search board text/i), {
+      target: { value: 'foo' },
+    });
+    await act(async () => {
+      vi.advanceTimersByTime(300);
+    });
+    fireEvent.change(screen.getByPlaceholderText(/replacement text/i), {
+      target: { value: 'bar' },
+    });
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /^replace$/i }));
+    });
+    expect(repSpy).toHaveBeenCalled();
+    expect(repSpy.mock.calls[0][0]).toEqual({
+      query: 'foo',
+      replacement: 'bar',
+      inSelection: true,
+    });
+    const boardArg = repSpy.mock.calls[0][1];
+    await expect(boardArg.getSelection()).resolves.toEqual([result.item]);
+    expect(screen.getByTestId('match-count')).toHaveTextContent('Matches: 0');
   });
 });

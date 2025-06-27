@@ -166,10 +166,14 @@ Shortcut: **Shift +C** opens comment editor on current selection.
 | **Assignee ID Input**       | Filter by assigned user             |
 | **Creator ID Input**        | Filter by creator                   |
 | **Last Modified By Input**  | Filter by last modifier             |
+| **Next Button**             | Scrolls board to next match         |
+| **Replace Button**          | Replace the highlighted match only  |
 | **Replace All**             | Calls `replaceBoardContent` utility |
 
 Flow: typing in the **Find** field debounces `searchBoardContent` by 300 ms and
-updates the match count.
+updates the match count. The **Next** button cycles through results and zooms
+the board to each widget. **Replace** updates just the current item via
+`replaceBoardContent` with `inSelection` pointing to that widget.
 
 ---
 
