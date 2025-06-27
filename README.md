@@ -123,6 +123,7 @@ The sidebar exposes extra tabs to manipulate existing widgets:
 - **Grid** arranges widgets into a grid with options for sorting and grouping
   the result.
 - **Templates** inserts prebuilt diagrams from the templates catalog.
+- **Frames** renames or locks selected frames via helper utilities.
 - **Export** allows saving the board to PNG, SVG, BPMN or Markdown.
 - **Data** configures live data bindings to external sources.
 - **Comment** lists discussion threads and lets you reply inline.
