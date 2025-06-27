@@ -51,6 +51,25 @@ describe('frame-tools', () => {
     expect(items[1].title).toBe('X0');
   });
 
+  test('renameSelectedFrames does nothing when selection empty', async () => {
+    const board: BoardLike = { getSelection: jest.fn().mockResolvedValue([]) };
+    await renameSelectedFrames({ prefix: 'N-' }, board);
+    expect(board.getSelection).toHaveBeenCalled();
+  });
+
+  test('renameSelectedFrames sorts by y when x equal', async () => {
+    const frames = [
+      { x: 0, y: 10, title: 'A', sync: jest.fn(), type: 'frame' },
+      { x: 0, y: 0, title: 'B', sync: jest.fn(), type: 'frame' },
+    ];
+    const board: BoardLike = {
+      getSelection: jest.fn().mockResolvedValue(frames),
+    };
+    await renameSelectedFrames({ prefix: 'Q' }, board);
+    expect(frames[1].title).toBe('Q0');
+    expect(frames[0].title).toBe('Q1');
+  });
+
   test('renameSelectedFrames throws without board', async () => {
     await expect(renameSelectedFrames({ prefix: 'P' })).rejects.toThrow(
       'Miro board not available',
@@ -74,6 +93,21 @@ describe('frame-tools', () => {
       expect(child.locked).toBe(true);
       expect(frame.sync).toHaveBeenCalled();
       expect(child.sync).toHaveBeenCalled();
+    });
+
+    test('locks frames without children', async () => {
+      const frame = {
+        type: 'frame',
+        locked: false,
+        sync: jest.fn(),
+        getChildren: jest.fn().mockResolvedValue([]),
+      };
+      const board: BoardLike = {
+        getSelection: jest.fn().mockResolvedValue([frame]),
+      };
+      await lockSelectedFrames(board);
+      expect(frame.locked).toBe(true);
+      expect(frame.sync).toHaveBeenCalled();
     });
 
     test('ignores non-frame widgets', async () => {
