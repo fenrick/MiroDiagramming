@@ -91,11 +91,16 @@ function setStringAtPath(
   const parts = path.split('.');
   let ref: unknown = item;
   for (let i = 0; i < parts.length - 1; i += 1) {
+    const part = parts[i];
+    // Prevent prototype pollution by aborting on unsafe property names.
+    if (part === '__proto__' || part === 'constructor') return;
     if (!ref || typeof ref !== 'object') return;
-    ref = (ref as Record<string, unknown>)[parts[i]];
+    ref = (ref as Record<string, unknown>)[part];
   }
+  const last = parts[parts.length - 1];
+  if (last === '__proto__' || last === 'constructor') return;
   if (ref && typeof ref === 'object') {
-    (ref as Record<string, unknown>)[parts[parts.length - 1]] = value;
+    (ref as Record<string, unknown>)[last] = value;
   }
 }
 
@@ -218,3 +223,6 @@ export async function replaceBoardContent(
   }
   return count;
 }
+
+// Internal export for testing.
+export { setStringAtPath as _setStringAtPath };
