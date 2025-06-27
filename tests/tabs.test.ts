@@ -316,4 +316,17 @@ describe('tab auto-registration', () => {
     expect(TAB_DATA.some((t) => t[1] === 'dummy')).toBe(false);
     process.env.NODE_ENV = prev;
   });
+
+  test('includes HelpTab in all environments', async () => {
+    const envs = ['test', 'development', 'production'] as const;
+    for (const env of envs) {
+      const prev = process.env.NODE_ENV;
+      process.env.NODE_ENV = env;
+      const suffix =
+        env === 'test' ? '?test' : env === 'development' ? '?dev' : '?prod';
+      const { TAB_DATA } = await import(`../src/ui/pages/tabs${suffix}`);
+      expect(TAB_DATA.some((t) => t[1] === 'help')).toBe(true);
+      process.env.NODE_ENV = prev;
+    }
+  });
 });

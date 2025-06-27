@@ -110,7 +110,6 @@ describe('frame-tools', () => {
       'Miro board not available',
     );
   });
-
   test('renameSelectedFrames returns early with no frames', async () => {
     const board: BoardLike = {
       getSelection: jest.fn().mockResolvedValue([{ type: 'shape' }]),
@@ -131,7 +130,6 @@ describe('frame-tools', () => {
     expect(frames[0].title).toBe('Q1');
     expect(frames[1].title).toBe('Q0');
   });
-
   describe('lockSelectedFrames', () => {
     test('locks frames and children', async () => {
       const child = { locked: false, sync: jest.fn() };
