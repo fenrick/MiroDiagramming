@@ -11,6 +11,7 @@ import {
   searchBoardContent,
   replaceBoardContent,
   type SearchOptions,
+  type SearchResult,
 } from '../../board/search-tools';
 import type { TabTuple } from './tab-definitions';
 
@@ -20,7 +21,8 @@ import type { TabTuple } from './tab-definitions';
 export const SearchTab: React.FC = () => {
   const [query, setQuery] = React.useState('');
   const [replacement, setReplacement] = React.useState('');
-  const [matches, setMatches] = React.useState(0);
+  const [results, setResults] = React.useState<SearchResult[]>([]);
+  const [currentIndex, setCurrentIndex] = React.useState(-1);
   const [widgetTypes, setWidgetTypes] = React.useState<string[]>([]);
   const [tagIds, setTagIds] = React.useState('');
   const [backgroundColor, setBackgroundColor] = React.useState('');
@@ -60,19 +62,57 @@ export const SearchTab: React.FC = () => {
   React.useEffect(() => {
     const handle = setTimeout(async () => {
       if (!query) {
-        setMatches(0);
+        setResults([]);
+        setCurrentIndex(-1);
         return;
       }
       const res = await searchBoardContent(buildOptions());
-      setMatches(res.length);
+      setResults(res);
+      setCurrentIndex(res.length ? 0 : -1);
     }, 300);
     return () => clearTimeout(handle);
-  }, [buildOptions]);
+  }, [buildOptions, query]);
 
-  const replace = async (): Promise<void> => {
+  const replaceAll = async (): Promise<void> => {
     if (!query) return;
     const count = await replaceBoardContent({ ...buildOptions(), replacement });
-    setMatches(Math.max(0, matches - count));
+    if (count) {
+      const res = await searchBoardContent(buildOptions());
+      setResults(res);
+      setCurrentIndex(res.length ? 0 : -1);
+    }
+  };
+
+  const nextMatch = async (): Promise<void> => {
+    if (!results.length) return;
+    const next = (currentIndex + 1) % results.length;
+    setCurrentIndex(next);
+    const { item } = results[next];
+    const vp = globalThis.miro?.board?.viewport;
+    const typedVp = vp as unknown as {
+      zoomTo(items: unknown[]): Promise<void>;
+      zoomToObject?: (i: unknown) => Promise<void>;
+    };
+    if (typedVp.zoomToObject) {
+      await typedVp.zoomToObject(item);
+    } else {
+      await typedVp.zoomTo([item]);
+    }
+  };
+
+  const replaceCurrent = async (): Promise<void> => {
+    if (!results.length) return;
+    const board = {
+      getSelection: async () => [results[currentIndex].item],
+      get: async () => [],
+    } as unknown as Parameters<typeof replaceBoardContent>[1];
+    await replaceBoardContent(
+      { ...buildOptions(), replacement, inSelection: true },
+      board,
+    );
+    const res = await searchBoardContent(buildOptions());
+    setResults(res);
+    setCurrentIndex(res.length ? Math.min(currentIndex, res.length - 1) : -1);
   };
 
   return (
@@ -146,12 +186,30 @@ export const SearchTab: React.FC = () => {
           placeholder='User ID'
         />
       </InputField>
-      <Paragraph data-testid='match-count'>Matches: {matches}</Paragraph>
+      <Paragraph data-testid='match-count'>Matches: {results.length}</Paragraph>
       <div className='buttons'>
         <Button
-          onClick={replace}
-          variant='primary'>
+          onClick={nextMatch}
+          disabled={!results.length}
+          variant='secondary'>
           <React.Fragment key='.0'>
+            <Icon name='chevron-right' />
+            <Text>Next</Text>
+          </React.Fragment>
+        </Button>
+        <Button
+          onClick={replaceCurrent}
+          disabled={!results.length}
+          variant='secondary'>
+          <React.Fragment key='.1'>
+            <Icon name='edit' />
+            <Text>Replace</Text>
+          </React.Fragment>
+        </Button>
+        <Button
+          onClick={replaceAll}
+          variant='primary'>
+          <React.Fragment key='.2'>
             <Icon name='arrow-right' />
             <Text>Replace All</Text>
           </React.Fragment>
