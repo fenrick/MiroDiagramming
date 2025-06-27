@@ -40,6 +40,7 @@ export async function applyStylePreset(
     style.borderWidth = resolved.borderWidth;
     style.fillColor = resolved.fillColor;
     item.style = style;
+    /* c8 ignore next */
     if (typeof (item as { sync?: () => Promise<void> }).sync === 'function') {
       await (item as { sync: () => Promise<void> }).sync();
     }

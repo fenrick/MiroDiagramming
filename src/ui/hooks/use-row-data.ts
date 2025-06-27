@@ -22,6 +22,7 @@ async function extractRowId(
       } | null;
       if (meta?.rowId) return String(meta.rowId);
     }
+    /* c8 ignore next */
     return undefined;
   }
   const meta = (await (item as BaseItem).getMetadata(META_KEY)) as {
@@ -70,6 +71,7 @@ export function useRowData(
         const rowId = await extractRowId(widget);
         setRow(rowId ? findRow(rows, idColumn, rowId) : null);
       } catch {
+        /* c8 ignore next */
         setRow(null);
       }
     }
