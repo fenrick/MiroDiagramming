@@ -53,4 +53,25 @@ describe('frame-tools', () => {
       'Miro board not available',
     );
   });
+
+  test('renameSelectedFrames returns early with no frames', async () => {
+    const board: BoardLike = {
+      getSelection: jest.fn().mockResolvedValue([{ type: 'shape' }]),
+    };
+    await renameSelectedFrames({ prefix: 'N-' }, board);
+    expect(board.getSelection).toHaveBeenCalled();
+  });
+
+  test('renameSelectedFrames sorts by y when x equal', async () => {
+    const frames = [
+      { x: 0, y: 5, title: 'a', sync: jest.fn(), type: 'frame' },
+      { x: 0, y: 1, title: 'b', sync: jest.fn(), type: 'frame' },
+    ];
+    const board: BoardLike = {
+      getSelection: jest.fn().mockResolvedValue(frames),
+    };
+    await renameSelectedFrames({ prefix: 'Q' }, board);
+    expect(frames[0].title).toBe('Q1');
+    expect(frames[1].title).toBe('Q0');
+  });
 });

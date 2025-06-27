@@ -122,3 +122,44 @@ describe('ExcelSyncService', () => {
     expect(service.getWidgetId('1')).toBe('g1');
   });
 });
+
+describe('ExcelSyncService additional cases', () => {
+  test('updateShapesFromExcel skips missing widgets', async () => {
+    (global.miro!.board!.get as vi.Mock).mockResolvedValueOnce([]);
+    const service = new ExcelSyncService(new BoardBuilder());
+    await service.updateShapesFromExcel([{ ID: '1', Name: 'A' }], {
+      idColumn: 'ID',
+      labelColumn: 'Name',
+    });
+    expect(service.getWidgetId('1')).toBeUndefined();
+  });
+
+  test('pushChangesToExcel leaves rows when widget absent', async () => {
+    (global.miro!.board!.get as vi.Mock).mockResolvedValueOnce([]);
+    const service = new ExcelSyncService(new BoardBuilder());
+    const rows = await service.pushChangesToExcel([{ ID: '1', Name: '' }], {
+      idColumn: 'ID',
+      labelColumn: 'Name',
+    });
+    expect(rows[0].Name).toBe('');
+  });
+
+  test('updateShapesFromExcel returns early without template', async () => {
+    const shape = {
+      type: 'shape',
+      id: 's1',
+      getMetadata: vi.fn().mockResolvedValue({ rowId: '1' }),
+      setMetadata: vi.fn().mockResolvedValue(undefined),
+    } as unknown as Record<string, unknown>;
+    (global.miro!.board!.get as vi.Mock).mockResolvedValueOnce([shape]);
+    vi.spyOn(templateManager, 'getTemplate').mockReturnValue(
+      undefined as never,
+    );
+    const service = new ExcelSyncService(new BoardBuilder());
+    await service.updateShapesFromExcel(
+      [{ ID: '1', Name: 'A', Type: 'Role' }],
+      { idColumn: 'ID', labelColumn: 'Name', templateColumn: 'Type' },
+    );
+    expect(shape.setMetadata).not.toHaveBeenCalled();
+  });
+});

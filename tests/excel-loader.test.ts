@@ -100,4 +100,24 @@ describe('excel loader', () => {
     const rows = loader.loadNamedTable('Table1');
     expect(rows).toEqual([{ X: 5, Y: 6 }]);
   });
+
+  test('methods fail when workbook not loaded', () => {
+    const loader = new ExcelLoader();
+    expect(loader.listSheets()).toEqual([]);
+    expect(loader.listNamedTables()).toEqual([]);
+    expect(() => loader.loadSheet('Sheet1')).toThrow('Workbook not loaded');
+    expect(() => loader.loadNamedTable('Table1')).toThrow(
+      'Workbook not loaded',
+    );
+  });
+
+  test('loadNamedTable throws on missing sheet reference', async () => {
+    const loader = new ExcelLoader();
+    await loader.loadWorkbook(file);
+    const wb = (loader as unknown as { workbook: XLSX.WorkBook }).workbook!;
+    wb.Workbook = { Names: [{ Name: 'Bad', Ref: 'Missing!A1:B1' }] };
+    expect(() => loader.loadNamedTable('Bad')).toThrow(
+      'Missing sheet for table: Bad',
+    );
+  });
 });
