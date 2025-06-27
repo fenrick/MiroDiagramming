@@ -2,12 +2,15 @@ import React from 'react';
 import { tokens } from '../tokens';
 import type { ExcelRow } from '../../core/utils/excel-loader';
 import { useRowData } from '../hooks/use-row-data';
+import { InputField } from './legacy';
 
 export interface RowInspectorProps {
   /** Rows loaded from the workbook. */
   rows: ExcelRow[];
   /** Optional column holding unique identifiers. */
   idColumn?: string;
+  /** Callback invoked when any cell is edited. */
+  onUpdate?: (index: number, row: ExcelRow) => void;
 }
 
 /**
@@ -16,9 +19,28 @@ export interface RowInspectorProps {
 export function RowInspector({
   rows,
   idColumn,
+  onUpdate,
 }: RowInspectorProps): React.JSX.Element | null {
   const row = useRowData(rows, idColumn);
-  if (!row) return null;
+  const [editRow, setEditRow] = React.useState<ExcelRow | null>(row);
+
+  React.useEffect(() => {
+    setEditRow(row);
+  }, [row]);
+
+  const index = row ? rows.indexOf(row) : -1;
+  if (!editRow || index < 0) return null;
+
+  const handleChange =
+    (key: string) =>
+    (value: string): void => {
+      setEditRow((prev) => {
+        if (!prev) return prev;
+        const next = { ...prev, [key]: value };
+        onUpdate?.(index, next);
+        return next;
+      });
+    };
 
   return (
     <div
@@ -26,9 +48,13 @@ export function RowInspector({
       style={{ marginTop: tokens.space.small }}>
       <strong>Row Values</strong>
       <ul style={{ maxHeight: 120, overflowY: 'auto' }}>
-        {Object.entries(row).map(([k, v]) => (
+        {Object.entries(editRow).map(([k, v]) => (
           <li key={k}>
-            <code>{k}</code>: {String(v)}
+            <InputField
+              label={<code>{k}</code>}
+              value={String(v)}
+              onChange={handleChange(k)}
+            />
           </li>
         ))}
       </ul>

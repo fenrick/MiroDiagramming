@@ -79,6 +79,13 @@ export const ExcelTab: React.FC = () => {
     });
   };
 
+  const updateRow = React.useCallback(
+    (index: number, updated: ExcelRow): void => {
+      setRows((prev) => prev.map((r, i) => (i === index ? updated : r)));
+    },
+    [],
+  );
+
   const handleCreate = async (): Promise<void> => {
     try {
       const mapping: ColumnMapping = {
@@ -244,6 +251,7 @@ export const ExcelTab: React.FC = () => {
       <RowInspector
         rows={rows}
         idColumn={idColumn || undefined}
+        onUpdate={updateRow}
       />
     </div>
   );
