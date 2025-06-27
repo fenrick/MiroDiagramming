@@ -20,7 +20,7 @@ describe('Modal', () => {
 
   test('escape key triggers onClose', () => {
     const spy = vi.fn();
-    render(
+    const { unmount } = render(
       <Modal
         title='X'
         isOpen
@@ -30,5 +30,27 @@ describe('Modal', () => {
     );
     fireEvent.keyDown(window, { key: 'Escape' });
     expect(spy).toHaveBeenCalled();
+    unmount();
+  });
+
+  test('focus wraps with Tab and Shift+Tab', () => {
+    const spy = vi.fn();
+    render(
+      <Modal
+        title='Wrap'
+        isOpen
+        onClose={spy}>
+        <button>First</button>
+        <button>Second</button>
+      </Modal>,
+    );
+    const buttons = screen.getAllByRole('button');
+    const closeBtn = buttons[0];
+    const second = buttons[2];
+    second.focus();
+    fireEvent.keyDown(window, { key: 'Tab' });
+    expect(closeBtn).toHaveFocus();
+    fireEvent.keyDown(window, { key: 'Tab', shiftKey: true });
+    expect(second).toHaveFocus();
   });
 });

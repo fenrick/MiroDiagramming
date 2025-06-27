@@ -3,6 +3,7 @@ import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { App } from '../src/app/App';
+import { EditMetadataModal } from '../src/ui/components/EditMetadataModal';
 import { useRowData } from '../src/ui/hooks/use-row-data';
 import { ExcelSyncService } from '../src/core/excel-sync-service';
 
@@ -45,5 +46,15 @@ describe('Edit Metadata command', () => {
     const svc = (ExcelSyncService as unknown as vi.Mock).mock.results[0]
       .value as { updateShapesFromExcel: vi.Mock };
     expect(svc.updateShapesFromExcel).toHaveBeenCalled();
+  });
+
+  test('EditMetadataModal returns null without context', () => {
+    render(
+      <EditMetadataModal
+        isOpen
+        onClose={() => {}}
+      />,
+    );
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 });
