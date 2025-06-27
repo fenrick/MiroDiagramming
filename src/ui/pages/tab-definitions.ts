@@ -9,6 +9,7 @@ export type TabId =
   | 'frames'
   | 'spacing'
   | 'excel'
+  | 'help'
   | 'dummy';
 
 export type TabTuple = readonly [
