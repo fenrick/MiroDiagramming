@@ -221,4 +221,21 @@ describe('search-tools', () => {
     expect(items[0].sync).not.toHaveBeenCalled();
     expect(items[1].plainText).toBe('hi');
   });
+
+  test('searchBoardContent rejects invalid regex patterns', async () => {
+    const { board } = makeBoard();
+    await expect(
+      searchBoardContent({ query: '*foo', regex: true }, board),
+    ).rejects.toThrow(SyntaxError);
+  });
+
+  test('replaceBoardContent rejects invalid regex patterns', async () => {
+    const { board } = makeBoard();
+    await expect(
+      replaceBoardContent(
+        { query: '*foo', replacement: 'bar', regex: true },
+        board,
+      ),
+    ).rejects.toThrow(SyntaxError);
+  });
 });
