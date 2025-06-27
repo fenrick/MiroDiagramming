@@ -242,4 +242,21 @@ describe('search-tools', () => {
     expect(({} as Record<string, unknown>).polluted).toBeUndefined();
     expect('polluted' in obj2).toBe(false);
   });
+  
+  test('searchBoardContent rejects invalid regex patterns', async () => {
+    const { board } = makeBoard();
+    await expect(
+      searchBoardContent({ query: '*foo', regex: true }, board),
+    ).rejects.toThrow(SyntaxError);
+  });
+
+  test('replaceBoardContent rejects invalid regex patterns', async () => {
+    const { board } = makeBoard();
+    await expect(
+      replaceBoardContent(
+        { query: '*foo', replacement: 'bar', regex: true },
+        board,
+      ),
+    ).rejects.toThrow(SyntaxError);
+  });
 });
