@@ -126,6 +126,7 @@ The sidebar exposes extra tabs to manipulate existing widgets:
 - **Export** allows saving the board to PNG, SVG, BPMN or Markdown.
 - **Data** configures live data bindings to external sources.
 - **Comment** lists discussion threads and lets you reply inline.
+- **Search** finds text across the board and can replace all matches.
 
 ### Search Tools
 
