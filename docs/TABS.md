@@ -156,11 +156,17 @@ Shortcut: **Shift +C** opens comment editor on current selection.
 
 ## 10  Search Tab
 
-| Control           | Details                             |
-| ----------------- | ----------------------------------- |
-| **Find Input**    | Text to locate on the board         |
-| **Replace Input** | Replacement text applied in bulk    |
-| **Replace All**   | Calls `replaceBoardContent` utility |
+| Control                     | Details                             |
+| --------------------------- | ----------------------------------- |
+| **Find Input**              | Text to locate on the board         |
+| **Replace Input**           | Replacement text applied in bulk    |
+| **Widget Type Checkboxes**  | Filter results by widget type       |
+| **Tag IDs Input**           | Comma separated tags to match       |
+| **Background Colour Input** | Exact fill colour filter            |
+| **Assignee ID Input**       | Filter by assigned user             |
+| **Creator ID Input**        | Filter by creator                   |
+| **Last Modified By Input**  | Filter by last modifier             |
+| **Replace All**             | Calls `replaceBoardContent` utility |
 
 Flow: typing in the **Find** field debounces `searchBoardContent` by 300 ms and
 updates the match count.

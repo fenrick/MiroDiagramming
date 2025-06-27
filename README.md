@@ -131,9 +131,10 @@ The sidebar exposes extra tabs to manipulate existing widgets:
 ### Search Tools
 
 Utility helpers `searchBoardContent` and `replaceBoardContent` can query or
-update widgets by text. They support filtering by widget type, tag, fill colour
-and user assignments. Searches may be case sensitive, whole-word or regular
-expression based and can be limited to the current selection.
+update widgets by text. They support filtering by widget type, tag ID, fill
+colour, assignee, creator and last modifier. Searches may be case sensitive,
+whole-word or regular expression based and can be limited to the current
+selection.
 
 ## Setup
 
