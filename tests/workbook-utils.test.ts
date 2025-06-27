@@ -33,4 +33,10 @@ describe('workbook writer', () => {
     expect(anchor.click).toHaveBeenCalled();
     expect(createSpy).toHaveBeenCalled();
   });
+
+  test('addMiroIds leaves rows unchanged when id not found', () => {
+    const rows = [{ ID: '2', Name: 'B' }];
+    const result = addMiroIds(rows, 'ID', { '1': 'w1' });
+    expect(result).toEqual([{ ID: '2', Name: 'B' }]);
+  });
 });
