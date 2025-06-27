@@ -134,7 +134,10 @@ Utility helpers `searchBoardContent` and `replaceBoardContent` can query or
 update widgets by text. They support filtering by widget type, tag ID, fill
 colour, assignee, creator and last modifier. Searches may be case sensitive,
 whole-word or regular expression based and can be limited to the current
-selection.
+selection. The search tab includes **Next** to jump through results and
+**Replace** for single substitutions. During replacements the board viewport
+focuses on each matched item so you can review changes. See the
+[Search tab walkthrough](docs/TABS.md#10-search-tab) for the complete UI flow.
 
 ## Setup
 
