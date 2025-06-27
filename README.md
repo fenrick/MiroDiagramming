@@ -58,6 +58,10 @@ The app reloads templates on startup so changes are picked up automatically.
 Additional details and a sample dataset are provided in
 [`docs/TEMPLATES.md`](docs/TEMPLATES.md).
 
+When **Use existing widgets** is enabled the importer caches all basic shapes on
+the board and matches them by their text content. The cache prevents duplicates
+during placement and is cleared once processing finishes.
+
 ## Metadata Usage
 
 Nodes may include a `metadata` object with any additional information. Typical
