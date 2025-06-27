@@ -15,12 +15,20 @@ export interface BoardLike {
   ui?: BoardUILike;
 }
 
+export interface BoardQueryLike extends BoardLike {
+  get(opts: { type: string }): Promise<Array<Record<string, unknown>>>;
+}
+
 export function getBoard(board?: BoardLike): BoardLike {
   const b =
     board ??
     (globalThis as unknown as { miro?: { board?: BoardLike } }).miro?.board;
   if (!b) throw new Error('Miro board not available');
   return b;
+}
+
+export function getBoardWithQuery(board?: BoardQueryLike): BoardQueryLike {
+  return getBoard(board) as BoardQueryLike;
 }
 
 /**

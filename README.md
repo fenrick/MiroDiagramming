@@ -127,6 +127,13 @@ The sidebar exposes extra tabs to manipulate existing widgets:
 - **Data** configures live data bindings to external sources.
 - **Comment** lists discussion threads and lets you reply inline.
 
+### Search Tools
+
+Utility helpers `searchBoardContent` and `replaceBoardContent` can query or
+update widgets by text. They support filtering by widget type, tag, fill colour
+and user assignments. Searches may be case sensitive, whole-word or regular
+expression based and can be limited to the current selection.
+
 ## Setup
 
 - [Miro Web SDK](https://developers.miro.com/docs/web-sdk-reference)
