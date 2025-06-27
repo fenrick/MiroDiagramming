@@ -35,6 +35,24 @@ describe('GraphClient', () => {
     expect((fetch as vi.Mock).mock.calls[0][0]).toMatch(/shares\/u!/);
   });
 
+  test('encodes unicode share link', async () => {
+    (fetch as unknown as vi.Mock).mockResolvedValue({
+      ok: true,
+      arrayBuffer: () => Promise.resolve(new ArrayBuffer(1)),
+    });
+    const orig = (globalThis as { btoa?: (s: string) => string }).btoa;
+    (globalThis as { btoa?: undefined }).btoa = undefined;
+    const link = 'https://миру';
+    const encoded = Buffer.from(link, 'utf8')
+      .toString('base64')
+      .replace(/=+$/, '');
+    await client.fetchFile(link);
+    expect((fetch as vi.Mock).mock.calls[0][0]).toBe(
+      `https://graph.microsoft.com/v1.0/shares/u!${encoded}/driveItem/content`,
+    );
+    (globalThis as { btoa?: (s: string) => string }).btoa = orig;
+  });
+
   test('throws on error', async () => {
     (fetch as unknown as vi.Mock).mockResolvedValue({ ok: false });
     await expect(client.fetchFile('id')).rejects.toThrow(
