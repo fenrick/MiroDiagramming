@@ -1,0 +1,82 @@
+import React from 'react';
+import type { ExcelRow } from '../../core/utils/excel-loader';
+import { useSelection } from './use-selection';
+import type { BaseItem, Group } from '@mirohq/websdk-types';
+
+const META_KEY = 'app.miro.excel';
+
+/**
+ * Extract the row identifier from a widget or group.
+ *
+ * The function checks metadata on the item itself or each child of a group
+ * for a `rowId` property.
+ */
+async function extractRowId(
+  item: BaseItem | Group,
+): Promise<string | undefined> {
+  if (item.type === 'group') {
+    const items = await (item as Group).getItems();
+    for (const child of items) {
+      const meta = (await (child as BaseItem).getMetadata(META_KEY)) as {
+        rowId?: string;
+      } | null;
+      if (meta?.rowId) return String(meta.rowId);
+    }
+    return undefined;
+  }
+  const meta = (await (item as BaseItem).getMetadata(META_KEY)) as {
+    rowId?: string;
+  } | null;
+  return meta?.rowId ? String(meta.rowId) : undefined;
+}
+
+/**
+ * Locate an Excel row matching the provided identifier.
+ */
+function findRow(
+  rows: ExcelRow[],
+  idColumn: string | undefined,
+  id: string,
+): ExcelRow | null {
+  if (idColumn) {
+    return rows.find((r) => String(r[idColumn]) === id) ?? null;
+  }
+  const idx = Number(id);
+  return Number.isFinite(idx) ? (rows[idx] ?? null) : null;
+}
+
+/**
+ * React hook returning the Excel row associated with the first selected widget.
+ *
+ * @param rows - Array of workbook rows currently loaded.
+ * @param idColumn - Column containing unique identifiers or empty for index-based lookup.
+ * @returns The matching row or `null` when unavailable.
+ */
+export function useRowData(
+  rows: ExcelRow[],
+  idColumn?: string,
+): ExcelRow | null {
+  const selection = useSelection();
+  const [row, setRow] = React.useState<ExcelRow | null>(null);
+
+  React.useEffect(() => {
+    async function update(): Promise<void> {
+      const widget = selection[0] as BaseItem | Group | undefined;
+      if (!widget) {
+        setRow(null);
+        return;
+      }
+      try {
+        const rowId = await extractRowId(widget);
+        setRow(rowId ? findRow(rows, idColumn, rowId) : null);
+      } catch {
+        setRow(null);
+      }
+    }
+    void update();
+  }, [selection, rows, idColumn]);
+
+  return row;
+}
+
+export { extractRowId, findRow };
