@@ -29,6 +29,9 @@ export const SearchTab: React.FC = () => {
   const [assignee, setAssignee] = React.useState('');
   const [creator, setCreator] = React.useState('');
   const [lastModifiedBy, setLastModifiedBy] = React.useState('');
+  const [caseSensitive, setCaseSensitive] = React.useState(false);
+  const [wholeWord, setWholeWord] = React.useState(false);
+  const [regex, setRegex] = React.useState(false);
 
   const focusOnItem = React.useCallback(
     async (item: unknown): Promise<void> => {
@@ -65,6 +68,9 @@ export const SearchTab: React.FC = () => {
     if (assignee) opts.assignee = assignee;
     if (creator) opts.creator = creator;
     if (lastModifiedBy) opts.lastModifiedBy = lastModifiedBy;
+    if (caseSensitive) opts.caseSensitive = true;
+    if (wholeWord) opts.wholeWord = true;
+    if (regex) opts.regex = true;
     return opts;
   }, [
     query,
@@ -74,6 +80,9 @@ export const SearchTab: React.FC = () => {
     assignee,
     creator,
     lastModifiedBy,
+    caseSensitive,
+    wholeWord,
+    regex,
   ]);
 
   React.useEffect(() => {
@@ -146,6 +155,23 @@ export const SearchTab: React.FC = () => {
           placeholder='Replacement text'
         />
       </InputField>
+      <div className='form-group-small'>
+        <Checkbox
+          label='Case sensitive'
+          value={caseSensitive}
+          onChange={setCaseSensitive}
+        />
+        <Checkbox
+          label='Whole word'
+          value={wholeWord}
+          onChange={setWholeWord}
+        />
+        <Checkbox
+          label='Regex'
+          value={regex}
+          onChange={setRegex}
+        />
+      </div>
       <div className='form-group-small'>
         <label>Widget Types</label>
         <div>

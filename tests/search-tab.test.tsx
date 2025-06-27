@@ -52,6 +52,8 @@ describe('SearchTab', () => {
       target: { value: 'foo' },
     });
     fireEvent.click(screen.getByRole('checkbox', { name: 'shape' }));
+    fireEvent.click(screen.getByRole('checkbox', { name: /case sensitive/i }));
+    fireEvent.click(screen.getByRole('checkbox', { name: /regex/i }));
     await act(async () => {
       vi.advanceTimersByTime(300);
     });
@@ -66,6 +68,8 @@ describe('SearchTab', () => {
       query: 'foo',
       widgetTypes: ['shape'],
       replacement: 'bar',
+      caseSensitive: true,
+      regex: true,
     });
     expect(repSpy.mock.calls[0][2]).toBeInstanceOf(Function);
     expect(zoomSpy).toHaveBeenCalledWith(match.item);
@@ -97,6 +101,9 @@ describe('SearchTab', () => {
     fireEvent.change(screen.getByLabelText(/last modified by/i), {
       target: { value: 'm1' },
     });
+    fireEvent.click(screen.getByRole('checkbox', { name: /case sensitive/i }));
+    fireEvent.click(screen.getByRole('checkbox', { name: /whole word/i }));
+    fireEvent.click(screen.getByRole('checkbox', { name: /regex/i }));
     await act(async () => {
       vi.advanceTimersByTime(300);
     });
@@ -108,6 +115,9 @@ describe('SearchTab', () => {
       assignee: 'u1',
       creator: 'c1',
       lastModifiedBy: 'm1',
+      caseSensitive: true,
+      wholeWord: true,
+      regex: true,
     });
   });
 
