@@ -42,6 +42,7 @@ jobs:
           node-version: 24
       - run: corepack enable
       - run: npm install --frozen-lockfile || npm install
+      - run: npm test
       - name: SonarCloud Scan
         uses: sonarsource/sonarqube-scan-action@v5
         with:
