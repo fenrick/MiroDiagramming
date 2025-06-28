@@ -12,6 +12,11 @@ npm run lint --silent
 npm run prettier --silent
 ```
 
+Commit messages **must** follow the
+[Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) format.
+Use `type(scope): summary` with types such as `feat`, `fix`, `docs` or `chore`
+so tools like semantic-release can parse the history correctly.
+
 Refer to [docs/CODE_STYLE.md](docs/CODE_STYLE.md) for formatting and naming
 guidelines. Exported functions and complex logic should include documentation
 comments to aid readability. See [CONTRIBUTING.md](CONTRIBUTING.md) for the
