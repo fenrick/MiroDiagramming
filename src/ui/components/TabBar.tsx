@@ -13,13 +13,20 @@ export const TabBar: React.FC<{
     style={{ margin: tokens.space.xxsmall }}>
     <div className='tabs-header-list'>
       {tabs.map(([, id, label]) => (
-        <div
+        <button
           key={id}
+          type='button'
           role='tab'
           className={`tab ${tab === id ? 'tab-active' : ''}`}
-          onClick={() => onChange(id)}>
-          <div className='tab-text'>{label}</div>
-        </div>
+          onClick={() => onChange(id)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              onChange(id);
+            }
+          }}>
+          <span className='tab-text'>{label}</span>
+        </button>
       ))}
     </div>
   </div>

@@ -296,7 +296,7 @@ describe('tab auto-registration', () => {
   test('includes DummyTab in test environment', async () => {
     const prev = process.env.NODE_ENV;
     process.env.NODE_ENV = 'test';
-    const { TAB_DATA } = await import('../src/ui/pages/tabs?test');
+    const { TAB_DATA } = await import('../src/ui/pages/tabs.ts?test');
     expect(TAB_DATA.some((t) => t[1] === 'dummy')).toBe(true);
     process.env.NODE_ENV = prev;
   });
@@ -304,7 +304,7 @@ describe('tab auto-registration', () => {
   test('excludes DummyTab in development', async () => {
     const prev = process.env.NODE_ENV;
     process.env.NODE_ENV = 'development';
-    const { TAB_DATA } = await import('../src/ui/pages/tabs?dev');
+    const { TAB_DATA } = await import('../src/ui/pages/tabs.ts?dev');
     expect(TAB_DATA.some((t) => t[1] === 'dummy')).toBe(false);
     process.env.NODE_ENV = prev;
   });
@@ -312,7 +312,7 @@ describe('tab auto-registration', () => {
   test('excludes DummyTab in production', async () => {
     const prev = process.env.NODE_ENV;
     process.env.NODE_ENV = 'production';
-    const { TAB_DATA } = await import('../src/ui/pages/tabs?prod');
+    const { TAB_DATA } = await import('../src/ui/pages/tabs.ts?prod');
     expect(TAB_DATA.some((t) => t[1] === 'dummy')).toBe(false);
     process.env.NODE_ENV = prev;
   });
@@ -322,9 +322,12 @@ describe('tab auto-registration', () => {
     for (const env of envs) {
       const prev = process.env.NODE_ENV;
       process.env.NODE_ENV = env;
-      const suffix =
-        env === 'test' ? '?test' : env === 'development' ? '?dev' : '?prod';
-      const { TAB_DATA } = await import(`../src/ui/pages/tabs${suffix}`);
+      const { TAB_DATA } =
+        env === 'test'
+          ? await import('../src/ui/pages/tabs.ts?test')
+          : env === 'development'
+            ? await import('../src/ui/pages/tabs.ts?dev')
+            : await import('../src/ui/pages/tabs.ts?prod');
       expect(TAB_DATA.some((t) => t[1] === 'help')).toBe(true);
       process.env.NODE_ENV = prev;
     }
