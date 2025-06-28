@@ -2,36 +2,101 @@ name: CI
 
 on:
   pull_request:
+  push:
     branches: [main]
 
 permissions:
   contents: read
 
 jobs:
-  build:
+  lint-test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [24]
-
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-
-      # Enable Corepack to use Yarn 4
       - run: corepack enable
-
-      - name: Install dependencies
-        run: npm install --frozen-lockfile || npm install
-
-      - name: Run Prettier check
+      - run: npm install --frozen-lockfile || npm install
+      - name: Prettier
         run: npm run prettier:check
-
-      - name: Run ESLint
+      - name: ESLint
         run: npm run lint
+      - name: Stylelint
+        run: npm run stylelint
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Unit tests
+        run: npm test -- --coverage
 
+  sonar:
+    needs: lint-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: corepack enable
+      - run: npm install --frozen-lockfile || npm install
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@v2
+        with:
+          projectBaseDir: .
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  build:
+    needs: sonar
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: corepack enable
+      - run: npm install --frozen-lockfile || npm install
       - name: Build
         run: npm run build
+      - name: Build Storybook
+        run: npm run build-storybook
+      - name: Upload artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: dist
+
+  release:
+    if: github.event_name == 'push'
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: corepack enable
+      - run: npm install --frozen-lockfile || npm install
+      - name: Download artefact
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: dist
+      - name: Semantic release
+        run: npx semantic-release
+
+  rollback:
+    if: failure() && github.event_name == 'push'
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Use previous artefact
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: dist
+      - name: Deploy previous artefact
+        run: echo "Rollback to previous artefact"
