@@ -26,7 +26,8 @@
     "lint": "eslint 'src/**/*.{ts,tsx}' 'tests/**/*.{ts,tsx}'",
     "stylelint": "stylelint 'src/**/*.css'",
     "build-storybook": "echo 'Storybook build placeholder'",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "commitlint": "commitlint --color"
   },
   "dependencies": {
     "d3-dsv": "latest",
@@ -59,6 +60,13 @@
     "stylelint-config-standard": "^38.0.0",
     "typescript": "5",
     "vite": "7",
-    "vitest": "latest"
+    "vitest": "latest",
+    "@commitlint/cli": "^19.1.0",
+    "@commitlint/config-conventional": "^19.1.0"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
   }
 }

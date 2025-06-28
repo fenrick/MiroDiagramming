@@ -1,0 +1,20 @@
+name: Commitlint
+
+on:
+  pull_request:
+    types: [opened, synchronize, edited]
+
+jobs:
+  commitlint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'npm'
+      - run: corepack enable
+      - run: npm ci --prefer-offline --no-audit
+      - run:
+          npx commitlint --from=${{ github.event.pull_request.base.sha }}
+          --to=${{ github.event.pull_request.head.sha }}
