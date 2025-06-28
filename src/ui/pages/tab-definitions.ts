@@ -9,6 +9,7 @@ export type TabId =
   | 'frames'
   | 'spacing'
   | 'excel'
+  | 'search'
   | 'help'
   | 'dummy';
 

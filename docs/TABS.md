@@ -2,7 +2,7 @@
 
 _Explicit UI + interaction walkthrough for every tab (June 2025)_
 
-This document narrows focus to the **nine sidebar tabs** in the
+This document narrows focus to the **ten sidebar tabs** in the
 Structured Diagramming add‑on. Each tab section specifies panel layout, visible
 controls, states, interaction flows, tool‑tips, keyboard shortcuts, and
 validation rules—so any developer can translate designs into code with zero
@@ -153,6 +153,32 @@ Polling interval slider (2 – 300 s). State `dataBindings[{boardId}]`.
 - **Filter Tabs** – All / Mine / Unresolved (Tertiary buttons).
 
 Shortcut: **Shift +C** opens comment editor on current selection.
+
+---
+
+## 10  Search Tab
+
+| Control                     | Details                             |
+| --------------------------- | ----------------------------------- |
+| **Find Input**              | Text to locate on the board         |
+| **Replace Input**           | Replacement text applied in bulk    |
+| **Case Sensitive Checkbox** | Match exact letter case             |
+| **Whole Word Checkbox**     | Skip partial-word matches           |
+| **Regex Checkbox**          | Treat query as regular expression   |
+| **Widget Type Checkboxes**  | Filter results by widget type       |
+| **Tag IDs Input**           | Comma separated tags to match       |
+| **Background Colour Input** | Exact fill colour filter            |
+| **Assignee ID Input**       | Filter by assigned user             |
+| **Creator ID Input**        | Filter by creator                   |
+| **Last Modified By Input**  | Filter by last modifier             |
+| **Next Button**             | Scrolls board to next match         |
+| **Replace Button**          | Replace the highlighted match only  |
+| **Replace All**             | Calls `replaceBoardContent` utility |
+
+Flow: typing in the **Find** field debounces `searchBoardContent` by 300 ms and
+updates the match count. The **Next** button cycles through results and zooms
+the board to each widget. **Replace** updates just the current item via
+`replaceBoardContent` with `inSelection` pointing to that widget.
 
 ---
 
