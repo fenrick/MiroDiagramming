@@ -43,7 +43,7 @@ jobs:
       - run: corepack enable
       - run: npm install --frozen-lockfile || npm install
       - name: SonarCloud Scan
-        uses: sonarsource/sonarcloud-github-action@v5
+        uses: sonarsource/sonarqube-scan-action@v5
         with:
           projectBaseDir: .
         env:
