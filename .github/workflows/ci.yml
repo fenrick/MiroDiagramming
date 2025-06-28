@@ -19,6 +19,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
       - run: corepack enable
       - run: npm install --frozen-lockfile || npm install
       - name: Prettier
@@ -40,6 +42,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
       - run: corepack enable
       - run: npm install --frozen-lockfile || npm install
       - run: npm test
@@ -58,6 +62,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
       - run: corepack enable
       - run: npm install --frozen-lockfile || npm install
       - name: Build
@@ -79,6 +85,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
       - run: corepack enable
       - run: npm install --frozen-lockfile || npm install
       - name: Download artefact
