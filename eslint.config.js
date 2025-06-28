@@ -6,7 +6,11 @@ import react from 'eslint-plugin-react';
 export default [
   { ignores: ['node_modules/**', 'dist/**'] },
   ...tseslint.configs['flat/recommended'],
-  react.configs.flat.recommended,
+  {
+    plugins: { react },
+    ...react.configs.flat.recommended,
+    settings: { react: { version: '18.2' } },
+  },
   {
     files: ['src/**/*.{ts,tsx}'],
     languageOptions: {
@@ -15,7 +19,6 @@ export default [
       sourceType: 'module',
       parserOptions: { project: './tsconfig.json' },
     },
-    settings: { react: { version: 'detect' } },
     rules: { 'no-console': 'warn', 'react/react-in-jsx-scope': 'off' },
   },
   {

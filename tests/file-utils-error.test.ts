@@ -17,7 +17,7 @@ describe('FileUtils error handling', () => {
     (global as { FileReader?: unknown }).FileReader = FR;
     await expect(
       fileUtils.readFileAsText({ name: 'file.txt' } as unknown as File),
-    ).rejects.toBe('Failed to load file');
+    ).rejects.toEqual(new Error('Failed to load file'));
   });
   test('readFileAsText rejects when target missing', async () => {
     class FR {
@@ -30,6 +30,6 @@ describe('FileUtils error handling', () => {
     (global as { FileReader?: unknown }).FileReader = FR;
     await expect(
       fileUtils.readFileAsText({ name: 'file.txt' } as unknown as File),
-    ).rejects.toBe('Failed to load file');
+    ).rejects.toEqual(new Error('Failed to load file'));
   });
 });

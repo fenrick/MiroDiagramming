@@ -100,11 +100,12 @@ Complexity limits enforced automatically by **SonarQube** gate.
 
 **Workflow** (GitHub Actions)
 
-1. Lint, type-check, unit tests (Node 24).
-2. Build Storybook and a feature-flagged bundle for staging.
-3. SonarQube analysis and budget checks.
-4. Semantic-release creates Git tag, changelog and Chrome-Store zip.
-5. Automatic rollback uses the previously published artefact (see
+1. Restore Node dependencies from cache.
+2. Lint, type-check, unit tests (Node 24).
+3. Build Storybook and a feature-flagged bundle for staging.
+4. SonarQube analysis and budget checks.
+5. Semantic-release creates Git tag, changelog and Chrome-Store zip.
+6. Automatic rollback uses the previously published artefact (see
    **DEPLOYMENT.md** for details).
 
 ---

@@ -174,9 +174,11 @@ docker build -t miro-diagramming ..
 docker run --rm -p 8080:80 miro-diagramming
 ```
 
-Tagged releases on GitHub automatically push the built image to GHCR. The
-workflow targets `linux/amd64` only, so emulation via QEMU is skipped and
-`docker/build-push-action@v5` sets up Buildx automatically.
+Tagged releases on GitHub automatically push the built image to GHCR via the
+`docker-image` stage in `.github/workflows/ci.yml`. That job runs only when the
+release job publishes a tag. The workflow targets `linux/amd64` only, so
+emulation via QEMU is skipped and `docker/build-push-action@v5` sets up Buildx
+automatically.
 
 ---
 

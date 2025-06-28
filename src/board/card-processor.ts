@@ -160,7 +160,8 @@ export class CardProcessor {
   }
 
   /**
-   * Separate card definitions into create and update lists based on board state.
+   * Separate card definitions into create and update lists
+   * based on board state.
    */
   private partitionCards(
     cards: CardData[],
