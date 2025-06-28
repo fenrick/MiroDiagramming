@@ -242,7 +242,7 @@ describe('search-tools', () => {
     expect(({} as Record<string, unknown>).polluted).toBeUndefined();
     expect('polluted' in obj2).toBe(false);
   });
-  
+
   test('searchBoardContent rejects invalid regex patterns', async () => {
     const { board } = makeBoard();
     await expect(
