@@ -32,12 +32,12 @@ export class FileUtils {
       const reader = new FileReader();
       reader.onload = (e) => {
         if (!e.target) {
-          reject('Failed to load file');
+          reject(new Error('Failed to load file'));
           return;
         }
         resolve(e.target.result as string);
       };
-      reader.onerror = () => reject('Failed to load file');
+      reader.onerror = () => reject(new Error('Failed to load file'));
       reader.readAsText(file, 'utf-8');
     });
   }

@@ -42,26 +42,26 @@ export const ResizeTab: React.FC = () => {
       setWarning('');
     };
 
-  const copy = async (): Promise<void> => {
+  const copy = React.useCallback(async (): Promise<void> => {
     const s = await copySizeFromSelection();
     if (s) {
       setSize(s);
       setCopiedSize(s);
     }
-  };
+  }, []);
 
   const resetCopy = (): void => {
     setCopiedSize(null);
   };
 
-  const apply = async (): Promise<void> => {
+  const apply = React.useCallback(async (): Promise<void> => {
     const target = copiedSize ?? size;
     if (target.width > 10000 || target.height > 10000) {
       setWarning("That's bigger than your board viewport");
       return;
     }
     await applySizeToSelection(target);
-  };
+  }, [copiedSize, size]);
 
   React.useEffect(() => {
     const first = selection[0] as
@@ -96,7 +96,7 @@ export const ResizeTab: React.FC = () => {
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  });
+  }, [copy, apply]);
 
   return (
     <div className='custom-centered'>
