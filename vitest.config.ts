@@ -8,5 +8,12 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './tests/setupTests.ts',
     coverage: { provider: 'v8', reporter: ['text', 'lcov'] },
+    reporters: [
+      'default',
+      [
+        'junit',
+        { outputFile: 'coverage/sonar-report.xml', suiteName: 'vitest' },
+      ],
+    ],
   },
 });
