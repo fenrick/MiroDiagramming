@@ -23,7 +23,10 @@
     "prettier:check": "prettier '**/*.{js,jsx,ts,tsx,md,json,yml,yaml,html}' --check",
     "typecheck": "tsc --noEmit",
     "test": "vitest run --coverage",
-    "lint": "eslint 'src/**/*.{ts,tsx}' 'tests**/*.{ts,tsx}'"
+    "lint": "eslint 'src/**/*.{ts,tsx}' 'tests/**/*.{ts,tsx}'",
+    "stylelint": "stylelint 'src/**/*.css'",
+    "build-storybook": "echo 'Storybook build placeholder'",
+    "semantic-release": "semantic-release"
   },
   "dependencies": {
     "d3-dsv": "latest",
@@ -51,6 +54,9 @@
     "eslint-plugin-react": "latest",
     "jsdom": "latest",
     "prettier": "latest",
+    "semantic-release": "^24.2.5",
+    "stylelint": "^16.21.0",
+    "stylelint-config-standard": "^38.0.0",
     "typescript": "5",
     "vite": "7",
     "vitest": "latest"
