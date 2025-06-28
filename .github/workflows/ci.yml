@@ -32,7 +32,7 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
       - name: Unit tests
-        run: npm test -- --coverage
+        run: npm test
 
   sonar:
     needs: lint-test
