@@ -17,6 +17,6 @@ describe('FileUtils error handling', () => {
     (global as { FileReader?: unknown }).FileReader = FR;
     await expect(
       fileUtils.readFileAsText({ name: 'file.txt' } as unknown as File),
-    ).rejects.toBe('Failed to load file');
+    ).rejects.toEqual(new Error('Failed to load file'));
   });
 });
