@@ -97,6 +97,6 @@ describe('loadCards', () => {
     (global as { FileReader?: unknown }).FileReader = FR;
     await expect(
       cardLoader.loadCards({ name: 'bad.json' } as unknown as File),
-    ).rejects.toBe('Failed to load file');
+    ).rejects.toEqual(new Error('Failed to load file'));
   });
 });
