@@ -94,7 +94,10 @@ jobs:
           name: build
           path: dist
       - name: Semantic release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
+          
 
   rollback:
     if: failure() && github.event_name == 'push'
