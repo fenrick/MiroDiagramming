@@ -5,8 +5,7 @@ on:
   push:
     branches: [main]
 
-permissions:
-  contents: read
+permissions: write-all
 
 jobs:
   lint-test:
@@ -19,6 +18,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
       - run: corepack enable
       - run: npm install --frozen-lockfile || npm install
       - name: Prettier
@@ -40,6 +41,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
       - run: corepack enable
       - run: npm install --frozen-lockfile || npm install
       - run: npm test
@@ -58,6 +61,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
       - run: corepack enable
       - run: npm install --frozen-lockfile || npm install
       - name: Build
@@ -79,6 +84,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
       - run: corepack enable
       - run: npm install --frozen-lockfile || npm install
       - name: Download artefact
@@ -87,6 +94,8 @@ jobs:
           name: build
           path: dist
       - name: Semantic release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
 
   rollback:
