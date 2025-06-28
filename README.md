@@ -344,6 +344,20 @@ The workflow builds a standard `linux/amd64` image via
 `docker/build-push-action@v5`; QEMU is unnecessary as no cross-platform
 emulation is performed.
 
+## Docker Image
+
+The project can be packaged as a container image. Build and run using:
+
+```bash
+docker build -t miro-diagramming .
+docker run --rm -p 8080:80 miro-diagramming
+```
+
+Tagged releases push the image to the GitHub Container Registry automatically.
+The workflow builds a standard `linux/amd64` image via
+`docker/build-push-action@v5`; QEMU is unnecessary as no cross-platform
+emulation is performed.
+
 ## 🫱🏻‍🫲🏽 Contributing <a name="contributing"></a>
 
 Please read [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines and

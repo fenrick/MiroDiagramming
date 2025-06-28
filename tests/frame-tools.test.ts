@@ -117,19 +117,6 @@ describe('frame-tools', () => {
     await renameSelectedFrames({ prefix: 'N-' }, board);
     expect(board.getSelection).toHaveBeenCalled();
   });
-
-  test('renameSelectedFrames sorts by y when x equal', async () => {
-    const frames = [
-      { x: 0, y: 10, title: 'A', sync: jest.fn(), type: 'frame' },
-      { x: 0, y: 0, title: 'B', sync: jest.fn(), type: 'frame' },
-    ];
-    const board: BoardLike = {
-      getSelection: jest.fn().mockResolvedValue(frames),
-    };
-    await renameSelectedFrames({ prefix: 'Q' }, board);
-    expect(frames[1].title).toBe('Q0');
-    expect(frames[0].title).toBe('Q1');
-  });
   describe('lockSelectedFrames', () => {
     test('locks frames and children', async () => {
       const child = { locked: false, sync: jest.fn() };

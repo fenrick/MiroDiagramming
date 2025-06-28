@@ -8,4 +8,4 @@ We expect all participants to uphold these guidelines when interacting in issue
 trackers, discussion forums and pull requests.
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported by emailing <support@miro.com>.
+reported by opening an issue in this repository.
