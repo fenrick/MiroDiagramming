@@ -9,7 +9,7 @@
 export interface AspectRatioPreset {
   /** Unique identifier used by the UI. */
   id: AspectRatioId;
-  /** Human readable label shown in dropdowns. */
+  /** Human-readable label shown in dropdowns. */
   label: string;
   /** Numeric ratio of width / height. */
   ratio: number;

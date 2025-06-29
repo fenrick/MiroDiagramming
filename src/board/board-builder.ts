@@ -19,6 +19,10 @@ import type {
   NodeData,
   PositionedNode,
 } from '../core/graph';
+import { maybeSync } from './board';
+
+/** Union type representing a single widget or a group of widgets. */
+export type BoardItem = BaseItem | Group;
 
 const META_KEY = 'app.miro.structgraph';
 
@@ -76,31 +80,28 @@ export class BoardBuilder {
     title?: string,
   ): Promise<Frame> {
     this.ensureBoard();
-    const frame = (await miro.board.createFrame({
+    const frame = await miro.board.createFrame({
       title: title ?? '',
       x,
       y,
       width,
       height,
-    })) as Frame;
+    });
     this.frame = frame;
     return frame;
   }
 
   /** Move the viewport to show the provided frame or widgets. */
-  public async zoomTo(target: Frame | Array<BaseItem | Group>): Promise<void> {
+  public async zoomTo(target: Frame | BoardItem[]): Promise<void> {
     this.ensureBoard();
-    const items = Array.isArray(target)
-      ? (target as Array<BaseItem>)
-      : (target as BaseItem);
-    await miro.board.viewport.zoomTo(items);
+    await miro.board.viewport.zoomTo(target);
   }
 
   /** Lookup an existing widget with matching metadata. */
   public async findNode(
     type: unknown,
     label: unknown,
-  ): Promise<BaseItem | Group | undefined> {
+  ): Promise<BoardItem | undefined> {
     if (typeof type !== 'string' || typeof label !== 'string') {
       throw new Error('Invalid search parameters');
     }
@@ -113,7 +114,7 @@ export class BoardBuilder {
   public async createNode(
     node: unknown,
     pos: PositionedNode,
-  ): Promise<BaseItem | Group> {
+  ): Promise<BoardItem> {
     if (!pos || typeof pos.x !== 'number' || typeof pos.y !== 'number') {
       throw new Error('Invalid position');
     }
@@ -136,7 +137,7 @@ export class BoardBuilder {
    */
   public async createEdges(
     edges: EdgeData[],
-    nodeMap: Record<string, BaseItem | Group>,
+    nodeMap: Record<string, BoardItem>,
     hints?: EdgeHint[],
   ): Promise<Connector[]> {
     if (!Array.isArray(edges)) {
@@ -151,9 +152,7 @@ export class BoardBuilder {
         const to = nodeMap[edge.to];
         if (!from || !to) return undefined;
         const templateName =
-          edge.metadata &&
-          'template' in edge.metadata &&
-          typeof edge.metadata.template === 'string'
+          typeof edge.metadata?.template === 'string'
             ? edge.metadata.template
             : 'default';
         const template = templateManager.getConnectorTemplate(templateName);
@@ -164,33 +163,22 @@ export class BoardBuilder {
   }
 
   /** Call `.sync()` on each widget if the method exists. */
-  public async syncAll(
-    items: Array<BaseItem | Group | Connector>,
-  ): Promise<void> {
-    await Promise.all(
-      items
-        .filter(
-          (i) =>
-            typeof (i as { sync?: () => Promise<void> }).sync === 'function',
-        )
-        .map((i) => (i as { sync: () => Promise<void> }).sync()),
-    );
+  public async syncAll(items: Array<BoardItem | Connector>): Promise<void> {
+    await Promise.all(items.map((i) => maybeSync(i)));
   }
 
   /** Remove the provided widgets from the board. */
   public async removeItems(
-    items: Array<BaseItem | Group | Connector | Frame>,
+    items: Array<BoardItem | Connector | Frame>,
   ): Promise<void> {
     this.ensureBoard();
-    await Promise.all(
-      items.map((item) => miro.board.remove(item as unknown as BaseItem)),
-    );
+    await Promise.all(items.map((item) => miro.board.remove(item)));
   }
 
   /** Group multiple widgets together on the board. */
   public async groupItems(items: GroupableItem[]): Promise<Group> {
     this.ensureBoard();
-    return (await miro.board.group({ items })) as Group;
+    return miro.board.group({ items });
   }
 
   private ensureBoard(): void {
@@ -223,10 +211,11 @@ export class BoardBuilder {
     if (!this.shapeMap) {
       this.ensureBoard();
       const shapes = (await miro.board.get({ type: 'shape' })) as Shape[];
-      this.shapeMap = new Map();
+      const map = new Map<string, BaseItem>();
       shapes
         .filter((s) => typeof s.content === 'string' && s.content.trim())
-        .forEach((s) => this.shapeMap!.set(s.content, s as BaseItem));
+        .forEach((s) => map.set(s.content, s as BaseItem));
+      this.shapeMap = map;
     }
   }
 
@@ -237,7 +226,7 @@ export class BoardBuilder {
   private async searchShapes(
     _type: string,
     label: string,
-  ): Promise<BaseItem | Group | undefined> {
+  ): Promise<BoardItem | undefined> {
     await this.loadShapeMap();
     const item = this.shapeMap?.get(label);
     return item;
@@ -250,7 +239,7 @@ export class BoardBuilder {
   private async searchGroups(
     type: string,
     label: string,
-  ): Promise<BaseItem | Group | undefined> {
+  ): Promise<BoardItem | undefined> {
     this.ensureBoard();
     const groups = (await miro.board.get({ type: 'group' })) as Group[];
     const matches = await Promise.all(
@@ -337,7 +326,7 @@ export class BoardBuilder {
   private async createNewNode(
     node: NodeData,
     pos: PositionedNode,
-  ): Promise<BaseItem | Group> {
+  ): Promise<BoardItem> {
     const widget = await templateManager.createFromTemplate(
       node.type,
       node.label,
@@ -375,7 +364,7 @@ export class BoardBuilder {
    * The widget is synchronised when a sync method exists.
    */
   public async resizeItem(
-    item: BaseItem | Group,
+    item: BoardItem,
     width: number,
     height: number,
   ): Promise<void> {
@@ -386,7 +375,7 @@ export class BoardBuilder {
     };
     if (typeof target.width === 'number') target.width = width;
     if (typeof target.height === 'number') target.height = height;
-    if (typeof target.sync === 'function') await target.sync();
+    await maybeSync(target);
   }
 
   /**
@@ -437,8 +426,8 @@ export class BoardBuilder {
    */
   private async createConnector(
     edge: EdgeData,
-    from: BaseItem | Group,
-    to: BaseItem | Group,
+    from: BoardItem,
+    to: BoardItem,
     hint: EdgeHint | undefined,
     template?: ConnectorTemplate,
   ): Promise<Connector> {

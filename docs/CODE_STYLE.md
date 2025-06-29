@@ -27,5 +27,19 @@ This project enforces consistent formatting with
 - Document exported functions with TSDoc comments.
 - Import order follows standard → vendor → local, alphabetically within each
   group.
+- Avoid boolean selector parameters. Use separate functions or enums to
+  communicate intent.
+
+## Lint guidelines
+
+- Mark class fields that are assigned only in the constructor as `readonly`.
+- Use optional chaining when accessing nested properties.
+- Avoid non-null assertions (`!`) and redundant casts; refine types instead.
+- Steer clear of nested ternary expressions. Prefer `if`/`else` blocks or helper
+  functions for clarity.
+- Prefer semantic HTML tags like `<fieldset>` or `<details>` over generic `div`
+  elements with ARIA roles.
+- Avoid using array indexes as React list keys; use stable identifiers instead.
+- Event handlers should not return Promises; use `void` to fire-and-forget.
 
 For additional architectural guidelines see [ARCHITECTURE.md](ARCHITECTURE.md).

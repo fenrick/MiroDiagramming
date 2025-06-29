@@ -1,5 +1,4 @@
 import React from 'react';
-import { useDropzone } from 'react-dropzone';
 import {
   Button,
   Checkbox,
@@ -10,6 +9,7 @@ import {
   SelectOption,
   Text,
 } from '../components/legacy';
+import { JsonDropZone } from '../components/JsonDropZone';
 import { tokens } from '../tokens';
 import { GraphProcessor } from '../../core/graph/graph-processor';
 import { showError } from '../hooks/notifications';
@@ -28,7 +28,7 @@ import {
   UserLayoutOptions,
 } from '../../core/layout/elk-options';
 import { HierarchyProcessor } from '../../core/graph/hierarchy-processor';
-import { getDropzoneStyle, undoLastImport } from '../hooks/ui-utils';
+import { undoLastImport } from '../hooks/ui-utils';
 
 const LAYOUTS = [
   'Layered',
@@ -98,15 +98,11 @@ export const DiagramTab: React.FC = () => {
     return () => window.removeEventListener('keydown', handler);
   }, []);
 
-  const dropzone = useDropzone({
-    accept: { 'application/json': ['.json'] },
-    maxFiles: 1,
-    onDrop: async (droppedFiles: File[]) => {
-      const file = droppedFiles[0];
-      setImportQueue([file]);
-      setError(null);
-    },
-  });
+  const handleFiles = (droppedFiles: File[]): void => {
+    const file = droppedFiles[0];
+    setImportQueue([file]);
+    setError(null);
+  };
 
   const graphProcessor = React.useMemo(() => new GraphProcessor(), []);
   const hierarchyProcessor = React.useMemo(() => new HierarchyProcessor(), []);
@@ -152,53 +148,15 @@ export const DiagramTab: React.FC = () => {
     setImportQueue([]);
   };
 
-  const style = React.useMemo(
-    () => getDropzoneStyle(dropzone.isDragAccept, dropzone.isDragReject),
-    [dropzone.isDragAccept, dropzone.isDragReject],
-  );
-
   return (
     <div style={{ marginTop: tokens.space.small }}>
-      <div
-        {...dropzone.getRootProps({ style })}
-        aria-label='File drop area'
-        aria-describedby='dropzone-instructions'>
-        <InputField label='JSON file'>
-          <input
-            data-testid='file-input'
-            {...dropzone.getInputProps({ 'aria-label': 'JSON file input' })}
-          />
-        </InputField>
-        {dropzone.isDragAccept ? (
-          <Paragraph className='dnd-text'>Drop your JSON file here</Paragraph>
-        ) : (
-          <>
-            <div style={{ padding: tokens.space.small }}>
-              <Button variant='primary'>
-                <React.Fragment key='.0'>
-                  <Icon name='upload' />
-                  <Text>Select JSON file</Text>
-                </React.Fragment>
-              </Button>
-              <Paragraph className='dnd-text'>
-                Or drop your JSON file here
-              </Paragraph>
-            </div>
-          </>
-        )}
-      </div>
-      <Paragraph
-        id='dropzone-instructions'
-        className='custom-visually-hidden'>
-        Press Enter to open the file picker or drop a JSON file on the area
-        above.
-      </Paragraph>
+      <JsonDropZone onFiles={handleFiles} />
 
       {importQueue.length > 0 && (
         <>
           <ul className='custom-dropped-files'>
-            {importQueue.map((file, i) => (
-              <li key={i}>{file.name}</li>
+            {importQueue.map((file) => (
+              <li key={`${file.name}-${file.lastModified}`}>{file.name}</li>
             ))}
           </ul>
           <InputField label='Layout type'>
@@ -389,7 +347,7 @@ export const DiagramTab: React.FC = () => {
             {lastProc && (
               <Button
                 onClick={() => {
-                  void undoLastImport(lastProc, () => setLastProc(undefined));
+                  undoLastImport(lastProc, () => setLastProc(undefined));
                 }}
                 variant='secondary'>
                 <React.Fragment key='.0'>

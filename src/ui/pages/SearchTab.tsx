@@ -172,8 +172,8 @@ export const SearchTab: React.FC = () => {
           onChange={setRegex}
         />
       </div>
-      <div className='form-group-small'>
-        <label>Widget Types</label>
+      <fieldset className='form-group-small'>
+        <legend className='custom-visually-hidden'>Widget Types</legend>
         <div>
           {['shape', 'card', 'sticky_note', 'text'].map((t) => (
             <Checkbox
@@ -184,7 +184,7 @@ export const SearchTab: React.FC = () => {
             />
           ))}
         </div>
-      </div>
+      </fieldset>
       <InputField label='Tag IDs'>
         <input
           className='input input-small'

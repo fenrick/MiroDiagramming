@@ -1,6 +1,8 @@
 import React from 'react';
 
-export type ParagraphProps = React.HTMLAttributes<HTMLParagraphElement>;
+export type ParagraphProps = Readonly<
+  React.HTMLAttributes<HTMLParagraphElement>
+>;
 
 /** Paragraph element styled using Mirotone classes. */
 export function Paragraph({

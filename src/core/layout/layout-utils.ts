@@ -48,3 +48,86 @@ export function computeEdgeHints(
     };
   });
 }
+
+export interface NodePosition {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export interface BoundingBox {
+  minX: number;
+  minY: number;
+  maxX: number;
+  maxY: number;
+}
+
+/**
+ * Determine the bounding box of nodes positioned using their top-left corner.
+ *
+ * @param nodes - Mapping of node ids to absolute top-left coordinates.
+ * @returns The bounding box enclosing all nodes.
+ */
+export function boundingBoxFromTopLeft(
+  nodes: Record<string, NodePosition>,
+): BoundingBox {
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  Object.values(nodes).forEach(({ x, y, width, height }) => {
+    minX = Math.min(minX, x);
+    minY = Math.min(minY, y);
+    maxX = Math.max(maxX, x + width);
+    maxY = Math.max(maxY, y + height);
+  });
+  return { minX, minY, maxX, maxY };
+}
+
+/**
+ * Determine the bounding box of nodes positioned using their centre point.
+ *
+ * @param nodes - Mapping of node ids to absolute centre coordinates.
+ * @returns The bounding box enclosing all nodes.
+ */
+export function boundingBoxFromCenter(
+  nodes: Record<string, NodePosition>,
+): BoundingBox {
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  Object.values(nodes).forEach(({ x, y, width, height }) => {
+    const halfW = width / 2;
+    const halfH = height / 2;
+    minX = Math.min(minX, x - halfW);
+    minY = Math.min(minY, y - halfH);
+    maxX = Math.max(maxX, x + halfW);
+    maxY = Math.max(maxY, y + halfH);
+  });
+  return { minX, minY, maxX, maxY };
+}
+
+/**
+ * Calculate offsets for placing nodes within a frame at a given spot.
+ *
+ * @param spot - Location of the frame centre.
+ * @param frameWidth - Total frame width including margin.
+ * @param frameHeight - Total frame height including margin.
+ * @param bounds - Bounding box of the nodes.
+ * @param margin - Margin applied around the nodes.
+ * @returns Offsets to apply to node coordinates.
+ */
+export function frameOffset(
+  spot: { x: number; y: number },
+  frameWidth: number,
+  frameHeight: number,
+  bounds: { minX: number; minY: number },
+  margin: number,
+): { offsetX: number; offsetY: number } {
+  return {
+    offsetX: spot.x - frameWidth / 2 + margin - bounds.minX,
+    offsetY: spot.y - frameHeight / 2 + margin - bounds.minY,
+  };
+}

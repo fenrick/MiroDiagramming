@@ -172,6 +172,7 @@ components or compose manually with Mirotone CSS.
 | Tab order = visual order | Keyboard-walk the UI; make sure focus rings are visible.                  |
 | Icon-only buttons        | Provide `aria-label` or `title`.                                          |
 | Dialog semantics         | `role="dialog"` and `aria-modal="true"` on Modal root.                    |
+| Headings                 | Ensure each heading has visible text content.                             |
 | Labels                   | Never rely on placeholders alone – always render a `<label>` element.     |
 
 Failing any item blocks the CI gate.

@@ -285,41 +285,4 @@ describe('CardProcessor', () => {
     ).computeStartCoordinate(200, 400, 100);
     expect(result).toBe(200 - 400 / 2 + margin + 100 / 2);
   });
-
-  test('maybeCreateFrame creates frame when enabled', async () => {
-    const builder = {
-      createFrame: jest.fn().mockResolvedValue({ id: 'f' }),
-      setFrame: jest.fn(),
-    } as { createFrame: jest.Mock; setFrame: jest.Mock };
-    const p = new CardProcessor(builder as unknown as unknown);
-    const dims = { width: 10, height: 20, spot: { x: 1, y: 2 } };
-    const frame = await (
-      p as unknown as {
-        maybeCreateFrame: (
-          b: boolean,
-          d: unknown,
-          t?: string,
-        ) => Promise<unknown>;
-      }
-    ).maybeCreateFrame(true, dims, 't');
-    expect(builder.createFrame).toHaveBeenCalledWith(10, 20, 1, 2, 't');
-    expect(frame).toEqual({ id: 'f' });
-  });
-
-  test('maybeCreateFrame skips frame when disabled', async () => {
-    const builder = { createFrame: jest.fn(), setFrame: jest.fn() } as {
-      createFrame: jest.Mock;
-      setFrame: jest.Mock;
-    };
-    const p = new CardProcessor(builder as unknown as unknown);
-    const dims = { width: 5, height: 5, spot: { x: 0, y: 0 } };
-    const frame = await (
-      p as unknown as {
-        maybeCreateFrame: (b: boolean, d: unknown) => Promise<unknown>;
-      }
-    ).maybeCreateFrame(false, dims);
-    expect(frame).toBeUndefined();
-    expect(builder.createFrame).not.toHaveBeenCalled();
-    expect(builder.setFrame).toHaveBeenCalledWith(undefined);
-  });
 });

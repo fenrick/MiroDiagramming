@@ -1,4 +1,4 @@
-import { forEachSelection } from '../src/board/board';
+import { forEachSelection, maybeSync } from '../src/board/board';
 
 describe('forEachSelection', () => {
   describe('callback invocation', () => {
@@ -22,5 +22,17 @@ describe('forEachSelection', () => {
         }, board),
       ).rejects.toThrow('fail');
     });
+  });
+});
+
+describe('maybeSync', () => {
+  test('invokes sync when present', async () => {
+    const item = { sync: jest.fn() };
+    await maybeSync(item);
+    expect(item.sync).toHaveBeenCalled();
+  });
+
+  test('resolves when sync missing', async () => {
+    await expect(maybeSync({})).resolves.toBeUndefined();
   });
 });

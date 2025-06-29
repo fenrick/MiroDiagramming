@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type FormGroupProps = React.HTMLAttributes<HTMLDivElement>;
+export type FormGroupProps = Readonly<React.HTMLAttributes<HTMLDivElement>>;
 
 /** Wrapper for related form fields enforcing vertical rhythm. */
 export function FormGroup({

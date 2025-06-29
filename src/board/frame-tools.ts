@@ -1,4 +1,4 @@
-import { BoardLike, getBoard } from './board';
+import { BoardLike, getBoard, maybeSync, Syncable } from './board';
 
 /** Options for renaming selected frames. */
 export interface RenameOptions {
@@ -29,11 +29,11 @@ export async function renameSelectedFrames(
   );
   if (!frames.length) return;
   frames.sort((a, b) => {
-    const ax = (a.x as number | undefined) ?? 0;
-    const bx = (b.x as number | undefined) ?? 0;
+    const ax = a.x ?? 0;
+    const bx = b.x ?? 0;
     if (ax === bx) {
-      const ay = (a.y as number | undefined) ?? 0;
-      const by = (b.y as number | undefined) ?? 0;
+      const ay = a.y ?? 0;
+      const by = b.y ?? 0;
       return ay - by;
     }
     return ax - bx;
@@ -41,8 +41,7 @@ export async function renameSelectedFrames(
   await Promise.all(
     frames.map(async (frame, i) => {
       frame.title = `${opts.prefix}${i}`;
-      await ((frame as { sync?: () => Promise<void> }).sync?.call(frame) ??
-        Promise.resolve());
+      await maybeSync(frame as Syncable);
     }),
   );
 }
@@ -85,7 +84,7 @@ function isFrame(item: Record<string, unknown>): item is FrameLike {
  */
 async function lockItem(item: LockableItem): Promise<void> {
   item.locked = true;
-  await item.sync?.();
+  await maybeSync(item);
 }
 
 /**

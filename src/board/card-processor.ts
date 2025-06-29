@@ -1,4 +1,6 @@
 import { BoardBuilder } from './board-builder';
+import { clearActiveFrame, registerFrame } from './frame-utils';
+import { undoWidgets, syncOrUndo } from './undo-utils';
 import { CardData, cardLoader } from '../core/utils/cards';
 import type { Card, CardStyle, Frame, Tag } from '@mirohq/websdk-types';
 
@@ -34,7 +36,7 @@ export class CardProcessor {
   /** Cached board tags when processing updates. */
   private tagsCache: Tag[] | undefined;
 
-  constructor(private builder: BoardBuilder = new BoardBuilder()) {}
+  constructor(private readonly builder: BoardBuilder = new BoardBuilder()) {}
 
   /** Load cards from a file and create them on the board. */
   public async processFile(
@@ -80,11 +82,18 @@ export class CardProcessor {
       const { spot, startX, startY, columns, totalWidth, totalHeight } =
         await this.calculateLayoutArea(toCreate.length, options.columns);
 
-      frame = await this.maybeCreateFrame(
-        options.createFrame !== false,
-        { width: totalWidth, height: totalHeight, spot },
-        options.frameTitle,
-      );
+      if (options.createFrame !== false) {
+        frame = await registerFrame(
+          this.builder,
+          this.lastCreated,
+          totalWidth,
+          totalHeight,
+          spot,
+          options.frameTitle,
+        );
+      } else {
+        clearActiveFrame(this.builder);
+      }
 
       created = await Promise.all(
         toCreate.map((def, i) =>
@@ -102,10 +111,10 @@ export class CardProcessor {
       );
       created.forEach((c) => frame?.add(c));
     } else {
-      this.builder.setFrame(undefined);
+      clearActiveFrame(this.builder);
     }
 
-    await this.builder.syncAll([...created, ...updated]);
+    await syncOrUndo(this.builder, this.lastCreated, [...created, ...updated]);
 
     this.lastCreated.push(...created);
     if (frame) this.lastCreated.push(frame);
@@ -118,25 +127,24 @@ export class CardProcessor {
 
   /** Remove cards created by the last `processCards` call. */
   public async undoLast(): Promise<void> {
-    if (this.lastCreated.length) {
-      await this.builder.removeItems(this.lastCreated);
-      this.lastCreated = [];
-    }
+    await undoWidgets(this.builder, this.lastCreated);
   }
 
-  /** Retrieve all tags on the board, cached for the current run. */
+  /**
+   * Retrieve all tags on the board. Uses nullish assignment to cache
+   * results so multiple calls during a run hit the board only once.
+   */
   private async getBoardTags(): Promise<Tag[]> {
-    if (!this.tagsCache) {
-      this.tagsCache = (await miro.board.get({ type: 'tag' })) as Tag[];
-    }
+    this.tagsCache ??= (await miro.board.get({ type: 'tag' })) as Tag[];
     return this.tagsCache;
   }
 
-  /** Retrieve all cards on the board, cached for the current run. */
+  /**
+   * Retrieve all cards on the board. Like {@link getBoardTags} this
+   * caches the promise result so subsequent calls avoid extra lookups.
+   */
   private async getBoardCards(): Promise<Card[]> {
-    if (!this.cardsCache) {
-      this.cardsCache = (await miro.board.get({ type: 'card' })) as Card[];
-    }
+    this.cardsCache ??= (await miro.board.get({ type: 'card' })) as Card[];
     return this.cardsCache;
   }
 
@@ -197,7 +205,7 @@ export class CardProcessor {
     for (const name of uniqueNames) {
       let tag = tagMap.get(name);
       if (!tag) {
-        tag = (await miro.board.createTag({ title: name })) as Tag;
+        tag = await miro.board.createTag({ title: name });
         tagMap.set(name, tag);
       }
       if (tag.id) {
@@ -224,7 +232,7 @@ export class CardProcessor {
       y,
     };
     if (def.fields) createOpts.fields = def.fields;
-    const card = (await miro.board.createCard(createOpts)) as Card;
+    const card = await miro.board.createCard(createOpts);
     if (def.id) {
       await card.setMetadata(CardProcessor.META_KEY, { id: def.id });
     }
@@ -299,27 +307,5 @@ export class CardProcessor {
     itemSize: number,
   ): number {
     return center - total / 2 + CardProcessor.CARD_MARGIN + itemSize / 2;
-  }
-
-  /** Create a frame when requested and register it with the board builder. */
-  private async maybeCreateFrame(
-    useFrame: boolean,
-    dims: { width: number; height: number; spot: { x: number; y: number } },
-    title?: string,
-  ): Promise<Frame | undefined> {
-    if (!useFrame) {
-      this.builder.setFrame(undefined);
-      return undefined;
-    }
-    const { width, height, spot } = dims;
-    const frame = await this.builder.createFrame(
-      width,
-      height,
-      spot.x,
-      spot.y,
-      title,
-    );
-    this.lastCreated.push(frame);
-    return frame;
   }
 }
