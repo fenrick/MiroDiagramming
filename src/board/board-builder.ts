@@ -233,7 +233,7 @@ export class BoardBuilder {
     );
     const rowId =
       node.metadata && 'rowId' in node.metadata
-        ? String((node.metadata as Record<string, unknown>).rowId)
+        ? String(node.metadata['rowId'])
         : undefined;
     if ((widget as Group).type === 'group') {
       const items = await (widget as Group).getItems();
