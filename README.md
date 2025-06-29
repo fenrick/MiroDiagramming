@@ -261,8 +261,10 @@ npm run prettier --silent
 These commands perform TypeScript type checking, execute the **Vitest** suite
 with coverage enabled, run ESLint and format files with Prettier. Aim for at
 least 90 % line and branch coverage and keep cyclomatic complexity under eight
-(see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)). Run these checks before
-committing so code conforms to the repository guidelines.
+(see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)). ESLint enforces additional
+Sonar rules such as using `readonly` class fields, optional chaining, semantic
+HTML tags and stable React keys. Run these checks before committing so code
+conforms to the repository guidelines.
 
 ## 🗂️ Folder structure <a name="folder"></a>
 
