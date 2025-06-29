@@ -36,8 +36,8 @@ export const GridTab: React.FC = () => {
     setGrid({ ...grid, sortOrientation: value as 'horizontal' | 'vertical' });
   };
 
-  const apply = async (): Promise<void> => {
-    await applyGridLayout(grid);
+  const apply = (): void => {
+    void applyGridLayout(grid);
   };
 
   return (

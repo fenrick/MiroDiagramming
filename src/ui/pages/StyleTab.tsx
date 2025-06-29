@@ -22,8 +22,8 @@ export const StyleTab: React.FC = () => {
     () => adjustColor(baseColor, adjust / 100),
     [baseColor, adjust],
   );
-  const apply = async (): Promise<void> => {
-    await tweakFillColor(adjust / 100);
+  const apply = (): void => {
+    void tweakFillColor(adjust / 100);
   };
   return (
     <div>

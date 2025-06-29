@@ -8,33 +8,12 @@ export interface HeadingProps extends React.HTMLAttributes<HTMLHeadingElement> {
 export function Heading({
   level = 1,
   className = '',
+  children,
   ...props
 }: HeadingProps): React.JSX.Element {
-  if (level === 2)
-    return (
-      <h2
-        className={className}
-        {...props}
-      />
-    );
-  if (level === 3)
-    return (
-      <h3
-        className={className}
-        {...props}
-      />
-    );
-  if (level === 4)
-    return (
-      <h4
-        className={className}
-        {...props}
-      />
-    );
-  return (
-    <h1
-      className={className}
-      {...props}
-    />
-  );
+  const attrs = { className, ...props };
+  if (level === 2) return <h2 {...attrs}>{children}</h2>;
+  if (level === 3) return <h3 {...attrs}>{children}</h3>;
+  if (level === 4) return <h4 {...attrs}>{children}</h4>;
+  return <h1 {...attrs}>{children}</h1>;
 }

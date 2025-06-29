@@ -19,11 +19,13 @@ export function useSelection(
       return;
     }
     let active = true;
-    const update = async (): Promise<void> => {
-      const s = await b.getSelection();
-      if (active) setSel(s);
+    const update = (): void => {
+      void (async (): Promise<void> => {
+        const s = await b.getSelection();
+        if (active) setSel(s);
+      })();
     };
-    void update();
+    update();
     b.ui?.on('selection:update', update);
     return () => {
       active = false;

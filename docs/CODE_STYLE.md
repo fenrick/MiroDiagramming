@@ -35,5 +35,6 @@ This project enforces consistent formatting with
 - Prefer semantic HTML tags like `<fieldset>` or `<details>` over generic `div`
   elements with ARIA roles.
 - Avoid using array indexes as React list keys; use stable identifiers instead.
+- Event handlers should not return Promises; use `void` to fire-and-forget.
 
 For additional architectural guidelines see [ARCHITECTURE.md](ARCHITECTURE.md).

@@ -185,6 +185,7 @@ the rest of the UI. These guidelines help keep layouts consistent:
   wrapper as seen in the tabs.
 - Keep labels short and descriptive. When extra context is required add a
   `Paragraph` element next to the fields.
+- Use real heading tags with visible text so screen readers announce sections.
 - For drag‑and‑drop zones include an ARIA label and hidden instructions so
   screen readers describe the workflow.
 
