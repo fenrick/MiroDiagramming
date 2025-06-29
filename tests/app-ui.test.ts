@@ -145,11 +145,11 @@ describe('App UI integration', () => {
   });
 
   test('getDropzoneStyle computes colours', () => {
-    const base = getDropzoneStyle(false, false);
+    const base = getDropzoneStyle('base');
     expect(base.borderColor).toBe(tokens.color.indigoAlpha[40]);
-    const accept = getDropzoneStyle(true, false);
+    const accept = getDropzoneStyle('accept');
     expect(accept.borderColor).toBe(tokens.color.green[700]);
-    const reject = getDropzoneStyle(false, true);
+    const reject = getDropzoneStyle('reject');
     expect(reject.borderColor).toBe(tokens.color.red[700]);
   });
 });

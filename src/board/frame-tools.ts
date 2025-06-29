@@ -1,4 +1,4 @@
-import { BoardLike, getBoard } from './board';
+import { BoardLike, getBoard, maybeSync, Syncable } from './board';
 
 /** Options for renaming selected frames. */
 export interface RenameOptions {
@@ -41,8 +41,7 @@ export async function renameSelectedFrames(
   await Promise.all(
     frames.map(async (frame, i) => {
       frame.title = `${opts.prefix}${i}`;
-      await ((frame as { sync?: () => Promise<void> }).sync?.call(frame) ??
-        Promise.resolve());
+      await maybeSync(frame as Syncable);
     }),
   );
 }
@@ -85,7 +84,7 @@ function isFrame(item: Record<string, unknown>): item is FrameLike {
  */
 async function lockItem(item: LockableItem): Promise<void> {
   item.locked = true;
-  await item.sync?.();
+  await maybeSync(item);
 }
 
 /**

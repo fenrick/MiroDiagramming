@@ -1,5 +1,8 @@
 import { BoardBuilder } from '../../board/board-builder';
+import { clearActiveFrame, registerFrame } from '../../board/frame-utils';
+import { undoWidgets, syncOrUndo } from '../../board/undo-utils';
 import { fileUtils } from '../utils/file-utils';
+import { boundingBoxFromCenter, frameOffset } from '../layout/layout-utils';
 import {
   HierNode,
   layoutHierarchy,
@@ -75,17 +78,29 @@ export class HierarchyProcessor {
     const width = bounds.maxX - bounds.minX + margin * 2;
     const height = bounds.maxY - bounds.minY + margin * 2;
     const spot = await this.builder.findSpace(width, height);
-    const offsetX = spot.x - width / 2 + margin - bounds.minX;
-    const offsetY = spot.y - height / 2 + margin - bounds.minY;
-    const frame = await this.createFrame(
-      opts.createFrame !== false,
+    const { offsetX, offsetY } = frameOffset(
+      spot,
       width,
       height,
-      spot,
-      opts.frameTitle,
+      { minX: bounds.minX, minY: bounds.minY },
+      margin,
     );
+    let frame: Frame | undefined;
+    if (opts.createFrame !== false) {
+      frame = await registerFrame(
+        this.builder,
+        this.lastCreated,
+        width,
+        height,
+        spot,
+        opts.frameTitle,
+      );
+    } else {
+      clearActiveFrame(this.builder);
+    }
     await this.createWidgets(data, result.nodes, offsetX, offsetY);
-    await this.builder.syncAll(this.lastCreated.filter((i) => i !== frame));
+    const syncItems = this.lastCreated.filter((i) => i !== frame);
+    await syncOrUndo(this.builder, this.lastCreated, syncItems);
     const target = frame
       ? frame
       : (this.lastCreated as Array<BaseItem | Group>);
@@ -96,45 +111,12 @@ export class HierarchyProcessor {
    * Determine the overall bounding box of a layout result.
    */
   private computeBounds(result: NestedLayoutResult) {
-    let minX = Infinity,
-      minY = Infinity,
-      maxX = -Infinity,
-      maxY = -Infinity;
-    Object.values(result.nodes).forEach(({ x, y, width, height }) => {
-      const halfW = width / 2;
-      const halfH = height / 2;
-      minX = Math.min(minX, x - halfW);
-      minY = Math.min(minY, y - halfH);
-      maxX = Math.max(maxX, x + halfW);
-      maxY = Math.max(maxY, y + halfH);
-    });
-    return { minX, minY, maxX, maxY };
+    return boundingBoxFromCenter(result.nodes);
   }
 
   /**
    * Optionally create a frame around the entire hierarchy.
    */
-  private async createFrame(
-    useFrame: boolean,
-    width: number,
-    height: number,
-    spot: { x: number; y: number },
-    title?: string,
-  ): Promise<Frame | undefined> {
-    if (!useFrame) {
-      this.builder.setFrame(undefined);
-      return undefined;
-    }
-    const frame = await this.builder.createFrame(
-      width,
-      height,
-      spot.x,
-      spot.y,
-      title,
-    );
-    this.lastCreated.push(frame);
-    return frame;
-  }
 
   /**
    * Recursively create widgets for a node and its children.
@@ -208,10 +190,7 @@ export class HierarchyProcessor {
    * Remove widgets created in the last run from the board.
    */
   public async undoLast(): Promise<void> {
-    if (this.lastCreated.length) {
-      await this.builder.removeItems(this.lastCreated);
-      this.lastCreated = [];
-    }
+    await undoWidgets(this.builder, this.lastCreated);
   }
 }
 

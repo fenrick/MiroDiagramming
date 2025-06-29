@@ -27,6 +27,13 @@ import {
   AspectRatioId,
 } from '../../core/utils/aspect-ratio';
 
+/** Predefined button sizes used by the quick presets. */
+const PRESET_SIZES: Record<'S' | 'M' | 'L', Size> = {
+  S: { width: 100, height: 100 },
+  M: { width: 200, height: 150 },
+  L: { width: 400, height: 300 },
+};
+
 /** UI for the Resize tab. */
 export const ResizeTab: React.FC = () => {
   const selection = useSelection();
@@ -88,10 +95,10 @@ export const ResizeTab: React.FC = () => {
     const handler = (e: KeyboardEvent): void => {
       if (e.altKey && e.key.toLowerCase() === 'c') {
         e.preventDefault();
-        void copy();
+        copy();
       } else if (e.altKey && e.key.toLowerCase() === 'v') {
         e.preventDefault();
-        void apply();
+        apply();
       }
     };
     window.addEventListener('keydown', handler);
@@ -143,18 +150,10 @@ export const ResizeTab: React.FC = () => {
         </Select>
       </InputField>
       <div>
-        {['S', 'M', 'L'].map((p) => (
+        {(['S', 'M', 'L'] as const).map((p) => (
           <Button
             key={p}
-            onClick={() =>
-              setSize(
-                p === 'S'
-                  ? { width: 100, height: 100 }
-                  : p === 'M'
-                    ? { width: 200, height: 150 }
-                    : { width: 400, height: 300 },
-              )
-            }
+            onClick={() => setSize(PRESET_SIZES[p])}
             variant='secondary'>
             {p}
           </Button>

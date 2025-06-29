@@ -4,10 +4,16 @@ import { isNestedAlgorithm } from './layout-modes';
 import { HierarchyProcessor } from './hierarchy-processor';
 import type { HierNode } from '../layout/nested-layout';
 import { BoardBuilder } from '../../board/board-builder';
+import { clearActiveFrame, registerFrame } from '../../board/frame-utils';
+import { undoWidgets, syncOrUndo } from '../../board/undo-utils';
 import { layoutEngine, LayoutResult } from '../layout/elk-layout';
 import { UserLayoutOptions } from '../layout/elk-options';
 import { fileUtils } from '../utils/file-utils';
-import { computeEdgeHints } from '../layout/layout-utils';
+import {
+  computeEdgeHints,
+  boundingBoxFromTopLeft,
+  frameOffset,
+} from '../layout/layout-utils';
 import type { BaseItem, Connector, Frame, Group } from '@mirohq/websdk-types';
 
 /**
@@ -71,14 +77,19 @@ export class GraphProcessor {
     const frameHeight = bounds.maxY - bounds.minY + margin * 2;
     const spot = await this.builder.findSpace(frameWidth, frameHeight);
 
-    const useFrame = options.createFrame !== false;
-    const frame = await this.createFrame(
-      useFrame,
-      frameWidth,
-      frameHeight,
-      spot,
-      options.frameTitle,
-    );
+    let frame: Frame | undefined;
+    if (options.createFrame !== false) {
+      frame = await registerFrame(
+        this.builder,
+        this.lastCreated,
+        frameWidth,
+        frameHeight,
+        spot,
+        options.frameTitle,
+      );
+    } else {
+      clearActiveFrame(this.builder);
+    }
 
     const { offsetX, offsetY } = this.calculateOffset(
       spot,
@@ -95,32 +106,14 @@ export class GraphProcessor {
 
   /** Remove widgets created by the last `processGraph` call. */
   public async undoLast(): Promise<void> {
-    if (this.lastCreated.length) {
-      await this.builder.removeItems(this.lastCreated);
-      this.lastCreated = [];
-    }
+    await undoWidgets(this.builder, this.lastCreated);
   }
 
   /**
    * Determine the bounding box for positioned nodes.
    */
-  private layoutBounds(layout: LayoutResult): {
-    minX: number;
-    minY: number;
-    maxX: number;
-    maxY: number;
-  } {
-    let minX = Infinity;
-    let minY = Infinity;
-    let maxX = -Infinity;
-    let maxY = -Infinity;
-    Object.values(layout.nodes).forEach((n) => {
-      minX = Math.min(minX, n.x);
-      minY = Math.min(minY, n.y);
-      maxX = Math.max(maxX, n.x + n.width);
-      maxY = Math.max(maxY, n.y + n.height);
-    });
-    return { minX, minY, maxX, maxY };
+  private layoutBounds(layout: LayoutResult) {
+    return boundingBoxFromTopLeft(layout.nodes);
   }
 
   /**
@@ -132,36 +125,8 @@ export class GraphProcessor {
     frameHeight: number,
     bounds: { minX: number; minY: number },
     margin: number,
-  ): { offsetX: number; offsetY: number } {
-    return {
-      offsetX: spot.x - frameWidth / 2 + margin - bounds.minX,
-      offsetY: spot.y - frameHeight / 2 + margin - bounds.minY,
-    };
-  }
-
-  /**
-   * Create a frame around the diagram when requested.
-   */
-  private async createFrame(
-    useFrame: boolean,
-    width: number,
-    height: number,
-    spot: { x: number; y: number },
-    title?: string,
-  ): Promise<Frame | undefined> {
-    if (!useFrame) {
-      this.builder.setFrame(undefined);
-      return undefined;
-    }
-    const frame = await this.builder.createFrame(
-      width,
-      height,
-      spot.x,
-      spot.y,
-      title,
-    );
-    this.lastCreated.push(frame);
-    return frame;
+  ) {
+    return frameOffset(spot, frameWidth, frameHeight, bounds, margin);
   }
 
   /**
@@ -200,7 +165,10 @@ export class GraphProcessor {
       edgeHints,
     );
     this.lastCreated.push(...connectors);
-    await this.builder.syncAll([...Object.values(nodeMap), ...connectors]);
+    await syncOrUndo(this.builder, this.lastCreated, [
+      ...Object.values(nodeMap),
+      ...connectors,
+    ]);
     if (frame) {
       await this.builder.zoomTo(frame);
     } else {
