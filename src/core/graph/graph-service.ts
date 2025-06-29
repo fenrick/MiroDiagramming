@@ -35,7 +35,7 @@ export interface EdgeHint {
 
 export class GraphService {
   private static instance: GraphService;
-  private builder = new BoardBuilder();
+  private readonly builder = new BoardBuilder();
 
   private constructor() {}
 

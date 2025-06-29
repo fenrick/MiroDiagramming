@@ -28,4 +28,12 @@ This project enforces consistent formatting with
 - Import order follows standard → vendor → local, alphabetically within each
   group.
 
+## Lint guidelines
+
+- Mark class fields that are assigned only in the constructor as `readonly`.
+- Use optional chaining when accessing nested properties.
+- Prefer semantic HTML tags like `<fieldset>` or `<details>` over generic `div`
+  elements with ARIA roles.
+- Avoid using array indexes as React list keys; use stable identifiers instead.
+
 For additional architectural guidelines see [ARCHITECTURE.md](ARCHITECTURE.md).

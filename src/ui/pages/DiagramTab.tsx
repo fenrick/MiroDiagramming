@@ -197,8 +197,8 @@ export const DiagramTab: React.FC = () => {
       {importQueue.length > 0 && (
         <>
           <ul className='custom-dropped-files'>
-            {importQueue.map((file, i) => (
-              <li key={i}>{file.name}</li>
+            {importQueue.map((file) => (
+              <li key={`${file.name}-${file.lastModified}`}>{file.name}</li>
             ))}
           </ul>
           <InputField label='Layout type'>

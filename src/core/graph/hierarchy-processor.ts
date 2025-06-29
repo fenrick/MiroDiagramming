@@ -36,7 +36,7 @@ export class HierarchyProcessor {
     return this.lastCreated;
   }
 
-  constructor(private builder: BoardBuilder = new BoardBuilder()) {}
+  constructor(private readonly builder: BoardBuilder = new BoardBuilder()) {}
 
   /**
    * Load a hierarchical JSON file and create the corresponding diagram.

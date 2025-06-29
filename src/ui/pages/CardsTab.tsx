@@ -115,8 +115,8 @@ export const CardsTab: React.FC = () => {
       {files.length > 0 && (
         <>
           <ul className='custom-dropped-files'>
-            {files.map((file, i) => (
-              <li key={i}>{file.name}</li>
+            {files.map((file) => (
+              <li key={`${file.name}-${file.lastModified}`}>{file.name}</li>
             ))}
           </ul>
           <div style={{ marginTop: tokens.space.small }}>
