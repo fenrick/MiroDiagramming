@@ -215,10 +215,11 @@ export class BoardBuilder {
     if (!this.shapeMap) {
       this.ensureBoard();
       const shapes = (await miro.board.get({ type: 'shape' })) as Shape[];
-      this.shapeMap = new Map();
+      const map = new Map<string, BaseItem>();
       shapes
         .filter((s) => typeof s.content === 'string' && s.content.trim())
-        .forEach((s) => this.shapeMap!.set(s.content, s as BaseItem));
+        .forEach((s) => map.set(s.content, s as BaseItem));
+      this.shapeMap = map;
     }
   }
 

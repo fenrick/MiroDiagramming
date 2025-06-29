@@ -113,43 +113,54 @@ function applyFilters(
   item: Record<string, unknown>,
   opts: SearchOptions,
 ): boolean {
-  const filters = [
-    opts.widgetTypes &&
-      ((i: Record<string, unknown>) =>
-        opts.widgetTypes!.includes((i as { type?: string }).type ?? '')),
-    opts.tagIds &&
-      ((i: Record<string, unknown>) => {
-        const tags = (i as { tagIds?: string[] }).tagIds;
-        return (
-          Array.isArray(tags) && opts.tagIds!.some((id) => tags.includes(id))
-        );
-      }),
-    opts.backgroundColor &&
-      ((i: Record<string, unknown>) => {
-        const style = (i.style ?? {}) as Record<string, unknown>;
-        const fill = (style.fillColor ?? style.backgroundColor) as
-          | string
-          | undefined;
-        return (
-          typeof fill === 'string' &&
-          fill.toLowerCase() === opts.backgroundColor!.toLowerCase()
-        );
-      }),
-    opts.assignee &&
-      ((i: Record<string, unknown>) => {
-        const assignee =
-          (i as { assignee?: string; assigneeId?: string }).assignee ??
-          (i as { assigneeId?: string }).assigneeId;
-        return assignee === opts.assignee;
-      }),
-    opts.creator &&
-      ((i: Record<string, unknown>) =>
-        (i as { createdBy?: string }).createdBy === opts.creator),
-    opts.lastModifiedBy &&
-      ((i: Record<string, unknown>) =>
-        (i as { lastModifiedBy?: string }).lastModifiedBy ===
-        opts.lastModifiedBy),
-  ].filter(Boolean) as Array<(i: Record<string, unknown>) => boolean>;
+  const filters: Array<(i: Record<string, unknown>) => boolean> = [];
+
+  if (opts.widgetTypes) {
+    const types = new Set(opts.widgetTypes);
+    filters.push((i) => types.has((i as { type?: string }).type ?? ''));
+  }
+
+  if (opts.tagIds) {
+    const tagsWanted = new Set(opts.tagIds);
+    filters.push((i) => {
+      const tags = (i as { tagIds?: string[] }).tagIds;
+      return Array.isArray(tags) && tags.some((id) => tagsWanted.has(id));
+    });
+  }
+
+  if (opts.backgroundColor) {
+    const colour = opts.backgroundColor.toLowerCase();
+    filters.push((i) => {
+      const style = (i.style ?? {}) as Record<string, unknown>;
+      const fill = (style.fillColor ?? style.backgroundColor) as
+        | string
+        | undefined;
+      return typeof fill === 'string' && fill.toLowerCase() === colour;
+    });
+  }
+
+  if (opts.assignee) {
+    const assigneeId = opts.assignee;
+    filters.push((i) => {
+      const assignee =
+        (i as { assignee?: string; assigneeId?: string }).assignee ??
+        (i as { assigneeId?: string }).assigneeId;
+      return assignee === assigneeId;
+    });
+  }
+
+  if (opts.creator) {
+    const creator = opts.creator;
+    filters.push((i) => (i as { createdBy?: string }).createdBy === creator);
+  }
+
+  if (opts.lastModifiedBy) {
+    const modifier = opts.lastModifiedBy;
+    filters.push(
+      (i) => (i as { lastModifiedBy?: string }).lastModifiedBy === modifier,
+    );
+  }
+
   return filters.every((fn) => fn(item));
 }
 
