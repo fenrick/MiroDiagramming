@@ -44,13 +44,41 @@ describe('Modal', () => {
         <button>Second</button>
       </Modal>,
     );
+    const closeBtn = screen.getByLabelText('Close');
     const buttons = screen.getAllByRole('button');
-    const closeBtn = buttons[0];
-    const second = buttons[2];
+    const second = buttons[buttons.length - 1];
     second.focus();
     fireEvent.keyDown(window, { key: 'Tab' });
     expect(closeBtn).toHaveFocus();
     fireEvent.keyDown(window, { key: 'Tab', shiftKey: true });
     expect(second).toHaveFocus();
+  });
+
+  test('clicking the backdrop triggers onClose', () => {
+    const spy = vi.fn();
+    render(
+      <Modal
+        title='B'
+        isOpen
+        onClose={spy}>
+        <button>Inside</button>
+      </Modal>,
+    );
+    fireEvent.click(screen.getByLabelText('Close modal'));
+    expect(spy).toHaveBeenCalled();
+  });
+
+  test('pressing Enter on the backdrop triggers onClose', () => {
+    const spy = vi.fn();
+    render(
+      <Modal
+        title='C'
+        isOpen
+        onClose={spy}>
+        <button>Inner</button>
+      </Modal>,
+    );
+    fireEvent.keyDown(screen.getByLabelText('Close modal'), { key: 'Enter' });
+    expect(spy).toHaveBeenCalled();
   });
 });

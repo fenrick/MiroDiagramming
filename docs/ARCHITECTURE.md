@@ -223,4 +223,5 @@ See [CODE_STYLE.md](CODE_STYLE.md) for detailed style rules.
 - Import order: std → vendor → local, alphabetical within group.
 - No raw grid-column in style blocks (enforced by custom ESLint rule).
 - PR template checklist: coverage, complexity, a11y, dark-mode snapshot,
-  CHANGELOG entry.
+  CHANGELOG entry. Add a bullet under the `Unreleased` heading when submitting a
+  pull request.

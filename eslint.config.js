@@ -18,7 +18,11 @@ export default tseslint.config(
       sourceType: 'module',
       parserOptions: { project: './tsconfig.json' },
     },
-    rules: { 'no-console': 'warn', 'react/react-in-jsx-scope': 'off' },
+    rules: {
+      'no-console': 'warn',
+      'react/react-in-jsx-scope': 'off',
+      'complexity': ['error', 8],
+    },
   },
   {
     files: ['tests/**/*.{ts,tsx}'],

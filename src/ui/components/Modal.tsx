@@ -2,15 +2,15 @@ import React from 'react';
 
 export interface ModalProps {
   /** Dialog title displayed in the header. */
-  title: string;
+  readonly title: string;
   /** Whether the modal is visible. */
-  isOpen: boolean;
+  readonly isOpen: boolean;
   /** Callback when the dialog should close. */
-  onClose: () => void;
+  readonly onClose: () => void;
   /** Optional size variant. */
-  size?: 'small' | 'medium';
+  readonly size?: 'small' | 'medium';
   /** Modal content. */
-  children: React.ReactNode;
+  readonly children: React.ReactNode;
 }
 
 /**
@@ -23,7 +23,7 @@ export function Modal({
   size = 'medium',
   children,
 }: ModalProps): React.JSX.Element | null {
-  const ref = React.useRef<HTMLDivElement>(null);
+  const ref = React.useRef<HTMLDialogElement>(null);
 
   React.useEffect(() => {
     if (!isOpen) return;
@@ -80,18 +80,39 @@ export function Modal({
   }, [isOpen, onClose, trapTab]);
 
   if (!isOpen) return null;
+
+  // Close the modal when the backdrop is activated via mouse or keyboard.
+  const handleBackdropClick = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+  ): void => {
+    if (e.target === e.currentTarget) onClose();
+  };
+
+  const handleBackdropKeyDown = (
+    e: React.KeyboardEvent<HTMLDivElement>,
+  ): void => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onClose();
+    }
+  };
+
   return (
     <div
+      role='button'
+      tabIndex={0}
       className='modal-backdrop'
       style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
-      onMouseDown={onClose}>
-      <div
-        role='dialog'
-        aria-modal='true'
+      onClick={onClose}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') onClose();
+      }}>
+      <dialog
+        open
         aria-label={title}
         className={`modal modal-${size}`}
         ref={ref}
-        onMouseDown={(e) => e.stopPropagation()}>
+        onClick={(e) => e.stopPropagation()}>
         <header className='modal-header'>
           <h3>{title}</h3>
           <button
@@ -102,7 +123,7 @@ export function Modal({
           </button>
         </header>
         <div className='modal-content'>{children}</div>
-      </div>
+      </dialog>
     </div>
   );
 }

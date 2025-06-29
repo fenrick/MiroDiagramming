@@ -1,5 +1,6 @@
-import type { BaseItem, Connector, Frame, Group } from '@mirohq/websdk-types';
+import type { Frame } from '@mirohq/websdk-types';
 import { BoardBuilder } from './board-builder';
+import type { BoardEntity } from './item-types';
 
 /**
  * Create a frame and register it for undo handling.
@@ -14,7 +15,7 @@ import { BoardBuilder } from './board-builder';
  */
 export async function registerFrame(
   builder: BoardBuilder,
-  registry: Array<BaseItem | Group | Connector | Frame>,
+  registry: BoardEntity[],
   width: number,
   height: number,
   spot: { x: number; y: number },

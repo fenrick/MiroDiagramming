@@ -1,18 +1,12 @@
-import type { BaseItem, Connector, Frame, Group } from '@mirohq/websdk-types';
 import { BoardBuilder } from '../../board/board-builder';
+import type { BoardEntity } from '../../board/item-types';
 import { undoWidgets, syncOrUndo as syncHelper } from '../../board/undo-utils';
 
 /**
  * Base class that tracks widgets created during a processing run and
  * provides undo and sync helpers.
  */
-export abstract class UndoableProcessor<
-  T extends BaseItem | Group | Connector | Frame =
-    | BaseItem
-    | Group
-    | Connector
-    | Frame,
-> {
+export abstract class UndoableProcessor<T extends BoardEntity = BoardEntity> {
   protected lastCreated: T[] = [];
 
   constructor(protected readonly builder: BoardBuilder) {}
@@ -39,22 +33,13 @@ export abstract class UndoableProcessor<
    * Remove widgets created during the last run from the board.
    */
   public async undoLast(): Promise<void> {
-    await undoWidgets(
-      this.builder,
-      this.lastCreated as Array<BaseItem | Group | Connector | Frame>,
-    );
+    await undoWidgets(this.builder, this.lastCreated as BoardEntity[]);
   }
 
   /**
    * Sync widgets and roll back on failure.
    */
-  protected async syncOrUndo(
-    items: Array<BaseItem | Group | Connector>,
-  ): Promise<void> {
-    await syncHelper(
-      this.builder,
-      this.lastCreated as Array<BaseItem | Group | Connector | Frame>,
-      items,
-    );
+  protected async syncOrUndo(items: BoardEntity[]): Promise<void> {
+    await syncHelper(this.builder, this.lastCreated as BoardEntity[], items);
   }
 }

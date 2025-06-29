@@ -12,6 +12,10 @@ export function encodeBase64(input: string): string {
     typeof Buffer !== 'undefined' &&
     (typeof window === 'undefined' || typeof window.btoa !== 'function')
       ? Buffer.from(input, 'utf8').toString('base64')
-      : btoa(unescape(encodeURIComponent(input)));
+      : btoa(
+          encodeURIComponent(input).replace(/%([0-9A-F]{2})/g, (_, p) =>
+            String.fromCharCode(parseInt(p, 16)),
+          ),
+        );
   return base64.replace(/=+$/, '').replace(/\+/g, '-').replace(/\//g, '_');
 }
