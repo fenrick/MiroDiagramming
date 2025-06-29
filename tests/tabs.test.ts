@@ -87,9 +87,13 @@ describe('tab components', () => {
   test('ResizeTab aspect ratio adjusts height', async () => {
     render(React.createElement(ResizeTab));
     const widthInput = screen.getByPlaceholderText(/width/i);
-    fireEvent.change(widthInput, { target: { value: '160' } });
-    fireEvent.change(screen.getByTestId('ratio-select'), {
-      target: { value: '16:9' },
+    await act(async () => {
+      fireEvent.change(widthInput, { target: { value: '160' } });
+    });
+    await act(async () => {
+      fireEvent.change(screen.getByTestId('ratio-select'), {
+        target: { value: '16:9' },
+      });
     });
     const heightInput = screen.getByPlaceholderText(
       /height/i,
