@@ -1,5 +1,5 @@
 import { BoardBuilder } from '../../board/board-builder';
-import { maybeCreateFrame } from '../../board/frame-utils';
+import { clearActiveFrame, registerFrame } from '../../board/frame-utils';
 import { undoWidgets, syncOrUndo } from '../../board/undo-utils';
 import { fileUtils } from '../utils/file-utils';
 import { boundingBox, frameOffset } from '../layout/layout-utils';
@@ -85,15 +85,19 @@ export class HierarchyProcessor {
       { minX: bounds.minX, minY: bounds.minY },
       margin,
     );
-    const frame = await maybeCreateFrame(
-      this.builder,
-      this.lastCreated,
-      opts.createFrame !== false,
-      width,
-      height,
-      spot,
-      opts.frameTitle,
-    );
+    let frame: Frame | undefined;
+    if (opts.createFrame !== false) {
+      frame = await registerFrame(
+        this.builder,
+        this.lastCreated,
+        width,
+        height,
+        spot,
+        opts.frameTitle,
+      );
+    } else {
+      clearActiveFrame(this.builder);
+    }
     await this.createWidgets(data, result.nodes, offsetX, offsetY);
     const syncItems = this.lastCreated.filter((i) => i !== frame);
     await syncOrUndo(this.builder, this.lastCreated, syncItems);

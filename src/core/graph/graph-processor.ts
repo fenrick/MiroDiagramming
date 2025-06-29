@@ -4,7 +4,7 @@ import { isNestedAlgorithm } from './layout-modes';
 import { HierarchyProcessor } from './hierarchy-processor';
 import type { HierNode } from '../layout/nested-layout';
 import { BoardBuilder } from '../../board/board-builder';
-import { maybeCreateFrame } from '../../board/frame-utils';
+import { clearActiveFrame, registerFrame } from '../../board/frame-utils';
 import { undoWidgets, syncOrUndo } from '../../board/undo-utils';
 import { layoutEngine, LayoutResult } from '../layout/elk-layout';
 import { UserLayoutOptions } from '../layout/elk-options';
@@ -77,16 +77,19 @@ export class GraphProcessor {
     const frameHeight = bounds.maxY - bounds.minY + margin * 2;
     const spot = await this.builder.findSpace(frameWidth, frameHeight);
 
-    const useFrame = options.createFrame !== false;
-    const frame = await maybeCreateFrame(
-      this.builder,
-      this.lastCreated,
-      useFrame,
-      frameWidth,
-      frameHeight,
-      spot,
-      options.frameTitle,
-    );
+    let frame: Frame | undefined;
+    if (options.createFrame !== false) {
+      frame = await registerFrame(
+        this.builder,
+        this.lastCreated,
+        frameWidth,
+        frameHeight,
+        spot,
+        options.frameTitle,
+      );
+    } else {
+      clearActiveFrame(this.builder);
+    }
 
     const { offsetX, offsetY } = this.calculateOffset(
       spot,
