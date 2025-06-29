@@ -101,7 +101,7 @@ export const DiagramTab: React.FC = () => {
   const dropzone = useDropzone({
     accept: { 'application/json': ['.json'] },
     maxFiles: 1,
-    onDrop: async (droppedFiles: File[]) => {
+    onDrop: (droppedFiles: File[]): void => {
       const file = droppedFiles[0];
       setImportQueue([file]);
       setError(null);
@@ -111,45 +111,47 @@ export const DiagramTab: React.FC = () => {
   const graphProcessor = React.useMemo(() => new GraphProcessor(), []);
   const hierarchyProcessor = React.useMemo(() => new HierarchyProcessor(), []);
 
-  const handleCreate = async (): Promise<void> => {
-    setProgress(0);
-    setError(null);
-    for (const file of importQueue) {
-      try {
-        if (layoutChoice === 'Nested') {
-          setLastProc(hierarchyProcessor);
-          await hierarchyProcessor.processFile(file, {
-            createFrame: withFrame,
-            frameTitle: frameTitle || undefined,
-          });
-        } else {
-          setLastProc(graphProcessor);
-          const algorithmMap: Record<LayoutChoice, ElkAlgorithm> = {
-            'Layered': 'layered',
-            'Tree': 'mrtree',
-            'Grid': 'force',
-            'Nested': 'rectpacking',
-            'Radial': 'radial',
-            'Box': 'box',
-            'Rect Packing': 'rectpacking',
-          };
-          const selectedAlg = showAdvanced
-            ? layoutOpts.algorithm
-            : algorithmMap[layoutChoice];
-          await graphProcessor.processFile(file, {
-            createFrame: withFrame,
-            frameTitle: frameTitle || undefined,
-            layout: { ...layoutOpts, algorithm: selectedAlg },
-          });
+  const handleCreate = (): void => {
+    void (async (): Promise<void> => {
+      setProgress(0);
+      setError(null);
+      for (const file of importQueue) {
+        try {
+          if (layoutChoice === 'Nested') {
+            setLastProc(hierarchyProcessor);
+            await hierarchyProcessor.processFile(file, {
+              createFrame: withFrame,
+              frameTitle: frameTitle || undefined,
+            });
+          } else {
+            setLastProc(graphProcessor);
+            const algorithmMap: Record<LayoutChoice, ElkAlgorithm> = {
+              'Layered': 'layered',
+              'Tree': 'mrtree',
+              'Grid': 'force',
+              'Nested': 'rectpacking',
+              'Radial': 'radial',
+              'Box': 'box',
+              'Rect Packing': 'rectpacking',
+            };
+            const selectedAlg = showAdvanced
+              ? layoutOpts.algorithm
+              : algorithmMap[layoutChoice];
+            await graphProcessor.processFile(file, {
+              createFrame: withFrame,
+              frameTitle: frameTitle || undefined,
+              layout: { ...layoutOpts, algorithm: selectedAlg },
+            });
+          }
+          setProgress(100);
+        } catch (e) {
+          const msg = String(e);
+          setError(msg);
+          await showError(msg);
         }
-        setProgress(100);
-      } catch (e) {
-        const msg = String(e);
-        setError(msg);
-        await showError(msg);
       }
-    }
-    setImportQueue([]);
+      setImportQueue([]);
+    })();
   };
 
   const style = React.useMemo(

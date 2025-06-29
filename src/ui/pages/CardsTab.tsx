@@ -40,7 +40,7 @@ export const CardsTab: React.FC = () => {
   const dropzone = useDropzone({
     accept: { 'application/json': ['.json'] },
     maxFiles: 1,
-    onDrop: async (droppedFiles: File[]) => {
+    onDrop: (droppedFiles: File[]): void => {
       const file = droppedFiles[0];
       setFiles([file]);
     },
@@ -48,26 +48,28 @@ export const CardsTab: React.FC = () => {
 
   const cardProcessor = React.useMemo(() => new CardProcessor(), []);
 
-  const handleCreate = async (): Promise<void> => {
-    setProgress(0);
-    setError(null);
-    for (const file of files) {
-      try {
-        setLastProc(cardProcessor);
-        await cardProcessor.processFile(file, {
-          createFrame: withFrame,
-          frameTitle: frameTitle || undefined,
-        });
-        setProgress(100);
-        setShowUndo(true);
-        setTimeout(() => setShowUndo(false), 3000);
-      } catch (e) {
-        const msg = String(e);
-        setError(msg);
-        await showError(msg);
+  const handleCreate = (): void => {
+    void (async (): Promise<void> => {
+      setProgress(0);
+      setError(null);
+      for (const file of files) {
+        try {
+          setLastProc(cardProcessor);
+          await cardProcessor.processFile(file, {
+            createFrame: withFrame,
+            frameTitle: frameTitle || undefined,
+          });
+          setProgress(100);
+          setShowUndo(true);
+          setTimeout(() => setShowUndo(false), 3000);
+        } catch (e) {
+          const msg = String(e);
+          setError(msg);
+          await showError(msg);
+        }
       }
-    }
-    setFiles([]);
+      setFiles([]);
+    })();
   };
 
   const style = React.useMemo(

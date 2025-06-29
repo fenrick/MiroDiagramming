@@ -42,25 +42,29 @@ export const ResizeTab: React.FC = () => {
       setWarning('');
     };
 
-  const copy = React.useCallback(async (): Promise<void> => {
-    const s = await copySizeFromSelection();
-    if (s) {
-      setSize(s);
-      setCopiedSize(s);
-    }
+  const copy = React.useCallback((): void => {
+    void (async (): Promise<void> => {
+      const s = await copySizeFromSelection();
+      if (s) {
+        setSize(s);
+        setCopiedSize(s);
+      }
+    })();
   }, []);
 
   const resetCopy = (): void => {
     setCopiedSize(null);
   };
 
-  const apply = React.useCallback(async (): Promise<void> => {
-    const target = copiedSize ?? size;
-    if (target.width > 10000 || target.height > 10000) {
-      setWarning("That's bigger than your board viewport");
-      return;
-    }
-    await applySizeToSelection(target);
+  const apply = React.useCallback((): void => {
+    void (async (): Promise<void> => {
+      const target = copiedSize ?? size;
+      if (target.width > 10000 || target.height > 10000) {
+        setWarning("That's bigger than your board viewport");
+        return;
+      }
+      await applySizeToSelection(target);
+    })();
   }, [copiedSize, size]);
 
   React.useEffect(() => {
