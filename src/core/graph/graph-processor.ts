@@ -5,7 +5,7 @@ import { HierarchyProcessor } from './hierarchy-processor';
 import type { HierNode } from '../layout/nested-layout';
 import { BoardBuilder } from '../../board/board-builder';
 import { clearActiveFrame, registerFrame } from '../../board/frame-utils';
-import { undoWidgets, syncOrUndo } from '../../board/undo-utils';
+import { UndoableProcessor } from './undoable-processor';
 import { layoutEngine, LayoutResult } from '../layout/elk-layout';
 import { UserLayoutOptions } from '../layout/elk-options';
 import { fileUtils } from '../utils/file-utils';
@@ -14,7 +14,7 @@ import {
   boundingBoxFromTopLeft,
   frameOffset,
 } from '../layout/layout-utils';
-import type { BaseItem, Connector, Frame, Group } from '@mirohq/websdk-types';
+import type { BaseItem, Frame, Group } from '@mirohq/websdk-types';
 
 /**
  * High level orchestrator that loads graph data, runs layout and
@@ -30,12 +30,10 @@ export interface ProcessOptions {
   layout?: Partial<UserLayoutOptions>;
 }
 
-export class GraphProcessor {
-  private lastCreated: Array<BaseItem | Group | Connector | Frame> = [];
-
-  constructor(
-    private readonly builder: BoardBuilder = graphService.getBuilder(),
-  ) {}
+export class GraphProcessor extends UndoableProcessor {
+  constructor(builder: BoardBuilder = graphService.getBuilder()) {
+    super(builder);
+  }
 
   /**
    * Load a JSON graph file and process it.
@@ -104,10 +102,7 @@ export class GraphProcessor {
     await this.createConnectorsAndZoom(data, layout, nodeMap, frame);
   }
 
-  /** Remove widgets created by the last `processGraph` call. */
-  public async undoLast(): Promise<void> {
-    await undoWidgets(this.builder, this.lastCreated);
-  }
+  // undoLast inherited from UndoableProcessor
 
   /**
    * Determine the bounding box for positioned nodes.
@@ -144,7 +139,7 @@ export class GraphProcessor {
       const adjPos = { ...pos, x: pos.x + offsetX, y: pos.y + offsetY };
       const widget = await this.builder.createNode(node, adjPos);
       nodeMap[node.id] = widget;
-      this.lastCreated.push(widget);
+      this.registerCreated(widget);
     }
     return nodeMap;
   }
@@ -164,11 +159,8 @@ export class GraphProcessor {
       nodeMap,
       edgeHints,
     );
-    this.lastCreated.push(...connectors);
-    await syncOrUndo(this.builder, this.lastCreated, [
-      ...Object.values(nodeMap),
-      ...connectors,
-    ]);
+    this.registerCreated(connectors);
+    await this.syncOrUndo([...Object.values(nodeMap), ...connectors]);
     if (frame) {
       await this.builder.zoomTo(frame);
     } else {
