@@ -1,4 +1,5 @@
 import { CardProcessor } from '../src/board/card-processor';
+import { calculateGrid } from '../src/core/layout/grid-layout';
 import * as cardModule from '../src/core/utils/cards';
 
 interface GlobalWithMiro {
@@ -273,6 +274,35 @@ describe('CardProcessor', () => {
       processor as unknown as { loadCardMap: () => Promise<void> }
     ).loadCardMap();
     expect(global.miro.board.get).toHaveBeenCalledTimes(1);
+  });
+
+  test('calculateLayoutArea computes dimensions using grid helper', async () => {
+    const builder = (processor as unknown as { builder: unknown }).builder as {
+      findSpace: jest.Mock;
+    };
+    builder.findSpace = jest.fn().mockResolvedValue({ x: 0, y: 0 });
+    const width = (CardProcessor as unknown as { CARD_WIDTH: number })
+      .CARD_WIDTH;
+    const height = (CardProcessor as unknown as { CARD_HEIGHT: number })
+      .CARD_HEIGHT;
+    const gap = (CardProcessor as unknown as { CARD_GAP: number }).CARD_GAP;
+    const margin = (CardProcessor as unknown as { CARD_MARGIN: number })
+      .CARD_MARGIN;
+    const area = await (
+      processor as unknown as {
+        calculateLayoutArea: (
+          c: number,
+          col?: number,
+        ) => Promise<{ totalWidth: number; totalHeight: number }>;
+      }
+    ).calculateLayoutArea(4, 2);
+    const grid = calculateGrid(4, { cols: 2, padding: gap }, width, height);
+    const expectedWidth =
+      Math.max(...grid.map((p) => p.x)) + width + margin * 2;
+    const expectedHeight =
+      Math.max(...grid.map((p) => p.y)) + height + margin * 2;
+    expect(area.totalWidth).toBe(expectedWidth);
+    expect(area.totalHeight).toBe(expectedHeight);
   });
 
   test('computeStartCoordinate derives correct origin', () => {
