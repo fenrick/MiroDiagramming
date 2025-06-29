@@ -2,15 +2,15 @@ import React from 'react';
 import { Button } from './legacy';
 
 export interface SegmentedOption {
-  label: string;
-  value: string;
+  readonly label: string;
+  readonly value: string;
 }
 
-interface SegmentedControlProps {
+export type SegmentedControlProps = Readonly<{
   value: string;
   onChange: (v: string) => void;
   options: SegmentedOption[];
-}
+}>;
 
 /**
  * Generic segmented control using Mirotone buttons.
