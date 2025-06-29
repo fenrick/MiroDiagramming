@@ -1,5 +1,6 @@
 import { BoardBuilder } from '../src/board/board-builder';
 import { templateManager } from '../src/board/templates';
+import { STRUCT_GRAPH_KEY } from '../src/board/meta-constants';
 
 interface GlobalWithMiro {
   miro?: { board?: Record<string, unknown> };
@@ -124,7 +125,7 @@ describe('BoardBuilder additional cases', () => {
       } as Record<string, unknown>,
       { x: 0, y: 0, width: 1, height: 1 },
     );
-    expect(shape.setMetadata).toHaveBeenCalledWith('app.miro.structgraph', {
+    expect(shape.setMetadata).toHaveBeenCalledWith(STRUCT_GRAPH_KEY, {
       type: 'Role',
       label: 'A',
       rowId: '42',
