@@ -11,7 +11,7 @@ import {
 import {
   BoardLike,
   forEachSelection,
-  getBoard,
+  getFirstSelection,
   maybeSync,
   Syncable,
 } from './board';
@@ -114,9 +114,8 @@ export function extractFillColor(
 export async function copyFillFromSelection(
   board?: BoardLike,
 ): Promise<string | null> {
-  const b = getBoard(board);
-  const selection = await b.getSelection();
-  return extractFillColor(selection[0]);
+  const item = await getFirstSelection(board);
+  return extractFillColor(item);
 }
 
 /**
