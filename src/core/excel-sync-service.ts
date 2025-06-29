@@ -2,6 +2,7 @@ import { mapRowsToNodes, ColumnMapping } from './data-mapper';
 import type { ExcelRow } from './utils/excel-loader';
 import { templateManager } from '../board/templates';
 import { BoardBuilder } from '../board/board-builder';
+import { applyElementToItem } from '../board/element-utils';
 import type { BaseItem, Group, Json } from '@mirohq/websdk-types';
 
 /** Metadata key used to store Excel row identifiers. */
@@ -14,7 +15,7 @@ const META_KEY = 'app.miro.excel';
 export class ExcelSyncService {
   private rowMap: Record<string, string> = {};
 
-  constructor(private builder: BoardBuilder = new BoardBuilder()) {}
+  constructor(_builder: BoardBuilder = new BoardBuilder()) {}
 
   /** Clear the internal row mapping. */
   public reset(): void {
@@ -147,7 +148,7 @@ export class ExcelSyncService {
         : [widget];
     template.elements.forEach((el, idx) => {
       if (items[idx]) {
-        this.builder.applyElementToItem(items[idx] as BaseItem, el, label);
+        applyElementToItem(items[idx] as BaseItem, el, label);
       }
     });
     const meta = { ...metadata };

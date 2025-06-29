@@ -31,6 +31,8 @@ export interface ProcessOptions {
 }
 
 export class GraphProcessor extends UndoableProcessor {
+  /** Map of processed node IDs to created widget IDs. */
+  private nodeIdMap: Record<string, string> = {};
   constructor(builder: BoardBuilder = graphService.getBuilder()) {
     super(builder);
   }
@@ -145,6 +147,7 @@ export class GraphProcessor extends UndoableProcessor {
       const adjPos = { ...pos, x: pos.x + offsetX, y: pos.y + offsetY };
       const widget = await this.builder.createNode(node, adjPos);
       nodeMap[node.id] = widget;
+      this.nodeIdMap[node.id] = widget.id;
       this.registerCreated(widget);
     }
     return nodeMap;

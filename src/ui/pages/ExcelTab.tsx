@@ -159,10 +159,15 @@ export const ExcelTab: React.FC = () => {
     }
   };
 
-  const style = React.useMemo(
-    () => getDropzoneStyle(dropzone.isDragAccept, dropzone.isDragReject),
-    [dropzone.isDragAccept, dropzone.isDragReject],
-  );
+  const style = React.useMemo(() => {
+    let state: Parameters<typeof getDropzoneStyle>[0] = 'base';
+    if (dropzone.isDragReject) {
+      state = 'reject';
+    } else if (dropzone.isDragAccept) {
+      state = 'accept';
+    }
+    return getDropzoneStyle(state);
+  }, [dropzone.isDragAccept, dropzone.isDragReject]);
 
   return (
     <div style={{ marginTop: tokens.space.small }}>
