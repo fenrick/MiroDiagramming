@@ -14,7 +14,7 @@ export interface Size {
 import {
   BoardLike,
   forEachSelection,
-  getBoard,
+  getFirstSelection,
   maybeSync,
   Syncable,
 } from './board';
@@ -28,9 +28,9 @@ import {
 export async function copySizeFromSelection(
   board?: BoardLike,
 ): Promise<Size | null> {
-  const b = getBoard(board);
-  const selection = await b.getSelection();
-  const first = selection[0] as { width?: number; height?: number } | undefined;
+  const first = (await getFirstSelection(board)) as
+    | { width?: number; height?: number }
+    | undefined;
   if (
     !first ||
     typeof first.width !== 'number' ||

@@ -1,4 +1,8 @@
-import { forEachSelection, maybeSync } from '../src/board/board';
+import {
+  forEachSelection,
+  getFirstSelection,
+  maybeSync,
+} from '../src/board/board';
 
 describe('forEachSelection', () => {
   describe('callback invocation', () => {
@@ -34,5 +38,20 @@ describe('maybeSync', () => {
 
   test('resolves when sync missing', async () => {
     await expect(maybeSync({})).resolves.toBeUndefined();
+  });
+});
+
+describe('getFirstSelection', () => {
+  test('returns first selected item', async () => {
+    const items = [{ a: 1 }, { b: 2 }];
+    const board = { getSelection: jest.fn().mockResolvedValue(items) };
+    const result = await getFirstSelection(board);
+    expect(result).toBe(items[0]);
+  });
+
+  test('returns undefined when selection empty', async () => {
+    const board = { getSelection: jest.fn().mockResolvedValue([]) };
+    const result = await getFirstSelection(board);
+    expect(result).toBeUndefined();
   });
 });

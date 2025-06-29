@@ -57,6 +57,23 @@ export function getBoardWithQuery(board?: BoardQueryLike): BoardQueryLike {
 }
 
 /**
+ * Fetch the first item from the current board selection.
+ *
+ * Convenience wrapper for {@link getBoard} that resolves the active board and
+ * reads the first selected widget.
+ *
+ * @param board - Optional board API overriding `miro.board` for testing.
+ * @returns The first selected item or `undefined` when nothing is selected.
+ */
+export async function getFirstSelection(
+  board?: BoardLike,
+): Promise<Record<string, unknown> | undefined> {
+  const b = getBoard(board);
+  const selection = await b.getSelection();
+  return selection[0] as Record<string, unknown> | undefined;
+}
+
+/**
  * Invoke a callback for every selected widget.
  *
  * Abstracts the common pattern of fetching the current selection and applying
