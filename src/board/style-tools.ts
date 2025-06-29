@@ -16,41 +16,63 @@ import {
   Syncable,
 } from './board';
 
+/**
+ * Return the first style property present in the provided list.
+ *
+ * @param style - Style object to inspect.
+ * @param keys - Ordered property names to check.
+ * @returns The first key found or `null` when none match.
+ */
+export function findStyleKey(
+  style: Record<string, unknown>,
+  keys: string[],
+): string | null {
+  for (const key of keys) {
+    if (style[key] !== undefined) {
+      return key;
+    }
+  }
+  return null;
+}
+
 /** Retrieve the property name used for widget fill colour. */
 function getFillKey(
   style: Record<string, unknown>,
 ): 'fillColor' | 'backgroundColor' | null {
-  if (typeof style.fillColor === 'string') return 'fillColor';
-  if (typeof style.backgroundColor === 'string') return 'backgroundColor';
-  return null;
+  const key = findStyleKey(style, ['fillColor', 'backgroundColor']);
+  return key && typeof style[key] === 'string'
+    ? (key as 'fillColor' | 'backgroundColor')
+    : null;
 }
 
 /** Retrieve the property name used for widget font colour. */
 function getFontKey(
   style: Record<string, unknown>,
 ): 'color' | 'textColor' | null {
-  if (typeof style.color === 'string') return 'color';
-  if (typeof style.textColor === 'string') return 'textColor';
-  return null;
+  const key = findStyleKey(style, ['color', 'textColor']);
+  return key && typeof style[key] === 'string'
+    ? (key as 'color' | 'textColor')
+    : null;
 }
 
 /** Retrieve the property name used for widget opacity. */
 function getOpacityKey(
   style: Record<string, unknown>,
 ): 'fillOpacity' | 'opacity' | null {
-  if (typeof style.fillOpacity === 'number') return 'fillOpacity';
-  if (typeof style.opacity === 'number') return 'opacity';
-  return null;
+  const key = findStyleKey(style, ['fillOpacity', 'opacity']);
+  return key && typeof style[key] === 'number'
+    ? (key as 'fillOpacity' | 'opacity')
+    : null;
 }
 
 /** Retrieve the property name used for border width. */
 function getBorderWidthKey(
   style: Record<string, unknown>,
 ): 'borderWidth' | 'strokeWidth' | 'lineWidth' | null {
-  if (typeof style.borderWidth === 'number') return 'borderWidth';
-  if (typeof style.strokeWidth === 'number') return 'strokeWidth';
-  if (typeof style.lineWidth === 'number') return 'lineWidth';
-  return null;
+  const key = findStyleKey(style, ['borderWidth', 'strokeWidth', 'lineWidth']);
+  return key && typeof style[key] === 'number'
+    ? (key as 'borderWidth' | 'strokeWidth' | 'lineWidth')
+    : null;
 }
 
 /**
