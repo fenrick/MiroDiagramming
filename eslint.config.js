@@ -1,11 +1,10 @@
 /*jshint esversion: 6 */
-import tseslint from '@typescript-eslint/eslint-plugin';
-import parser from '@typescript-eslint/parser';
+import tseslint from 'typescript-eslint';
 import react from 'eslint-plugin-react';
 
-export default [
+export default tseslint.config(
   { ignores: ['node_modules/**', 'dist/**'] },
-  ...tseslint.configs['flat/recommended'],
+  ...tseslint.configs.recommended,
   {
     plugins: { react },
     ...react.configs.flat.recommended,
@@ -14,7 +13,7 @@ export default [
   {
     files: ['src/**/*.{ts,tsx}'],
     languageOptions: {
-      parser,
+      parser: tseslint.parser,
       ecmaVersion: 'latest',
       sourceType: 'module',
       parserOptions: { project: './tsconfig.json' },
@@ -23,8 +22,12 @@ export default [
   },
   {
     files: ['tests/**/*.{ts,tsx}'],
-    languageOptions: { parser, ecmaVersion: 'latest', sourceType: 'module' },
+    languageOptions: {
+      parser: tseslint.parser,
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+    },
     settings: { react: { version: 'detect' } },
     rules: {},
   },
-];
+);
