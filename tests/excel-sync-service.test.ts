@@ -1,7 +1,6 @@
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { ExcelSyncService } from '../src/core/excel-sync-service';
 import { templateManager } from '../src/board/templates';
-import { BoardBuilder } from '../src/board/board-builder';
 
 interface GlobalWithMiro {
   miro?: { board?: Record<string, unknown> };
@@ -34,7 +33,7 @@ describe('ExcelSyncService', () => {
     vi.spyOn(templateManager, 'getTemplate').mockReturnValue({
       elements: [{ text: '{{label}}' }],
     } as never);
-    const service = new ExcelSyncService(new BoardBuilder());
+    const service = new ExcelSyncService();
     await service.updateShapesFromExcel(
       [{ ID: '1', Name: 'A', Type: 'Role', Notes: 'meta' }],
       {
@@ -61,7 +60,7 @@ describe('ExcelSyncService', () => {
       setMetadata: vi.fn().mockResolvedValue(undefined),
     } as unknown as Record<string, unknown>;
     (global.miro!.board!.get as vi.Mock).mockResolvedValueOnce([shape]);
-    const service = new ExcelSyncService(new BoardBuilder());
+    const service = new ExcelSyncService();
     const rows = await service.pushChangesToExcel([{ ID: '1', Name: '' }], {
       idColumn: 'ID',
       labelColumn: 'Name',
@@ -88,7 +87,7 @@ describe('ExcelSyncService', () => {
         .mockResolvedValue({ rowId: '1', notes: 'meta', text: 'desc' }),
     } as unknown as Record<string, unknown>;
     (global.miro!.board!.get as vi.Mock).mockResolvedValueOnce([shape]);
-    const service = new ExcelSyncService(new BoardBuilder());
+    const service = new ExcelSyncService();
     const rows = await service.pushChangesToExcel([{ ID: '1', Name: '' }], {
       idColumn: 'ID',
       labelColumn: 'Name',
@@ -113,7 +112,7 @@ describe('ExcelSyncService', () => {
     (global.miro!.board!.get as vi.Mock)
       .mockResolvedValueOnce([])
       .mockResolvedValueOnce([group]);
-    const service = new ExcelSyncService(new BoardBuilder());
+    const service = new ExcelSyncService();
     const rows = await service.pushChangesToExcel([{ ID: '1', Name: '' }], {
       idColumn: 'ID',
       labelColumn: 'Name',
@@ -126,7 +125,7 @@ describe('ExcelSyncService', () => {
 describe('ExcelSyncService additional cases', () => {
   test('updateShapesFromExcel skips missing widgets', async () => {
     (global.miro!.board!.get as vi.Mock).mockResolvedValueOnce([]);
-    const service = new ExcelSyncService(new BoardBuilder());
+    const service = new ExcelSyncService();
     await service.updateShapesFromExcel([{ ID: '1', Name: 'A' }], {
       idColumn: 'ID',
       labelColumn: 'Name',
@@ -136,7 +135,7 @@ describe('ExcelSyncService additional cases', () => {
 
   test('pushChangesToExcel leaves rows when widget absent', async () => {
     (global.miro!.board!.get as vi.Mock).mockResolvedValueOnce([]);
-    const service = new ExcelSyncService(new BoardBuilder());
+    const service = new ExcelSyncService();
     const rows = await service.pushChangesToExcel([{ ID: '1', Name: '' }], {
       idColumn: 'ID',
       labelColumn: 'Name',
@@ -155,7 +154,7 @@ describe('ExcelSyncService additional cases', () => {
     vi.spyOn(templateManager, 'getTemplate').mockReturnValue(
       undefined as never,
     );
-    const service = new ExcelSyncService(new BoardBuilder());
+    const service = new ExcelSyncService();
     await service.updateShapesFromExcel(
       [{ ID: '1', Name: 'A', Type: 'Role' }],
       { idColumn: 'ID', labelColumn: 'Name', templateColumn: 'Type' },
