@@ -11,6 +11,7 @@ export type TabId =
   | 'excel'
   | 'search'
   | 'help'
+  | 'changelog'
   | 'dummy';
 
 export type TabTuple = readonly [
