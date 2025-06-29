@@ -21,6 +21,9 @@ import type {
 } from '../core/graph';
 import { maybeSync } from './board';
 
+/** Union type representing a single widget or a group of widgets. */
+export type BoardItem = BaseItem | Group;
+
 const META_KEY = 'app.miro.structgraph';
 
 /**
@@ -77,23 +80,23 @@ export class BoardBuilder {
     title?: string,
   ): Promise<Frame> {
     this.ensureBoard();
-    const frame = (await miro.board.createFrame({
+    const frame = await miro.board.createFrame({
       title: title ?? '',
       x,
       y,
       width,
       height,
-    })) as Frame;
+    });
     this.frame = frame;
     return frame;
   }
 
   /** Move the viewport to show the provided frame or widgets. */
-  public async zoomTo(target: Frame | Array<BaseItem | Group>): Promise<void> {
+  public async zoomTo(target: Frame | Array<BoardItem>): Promise<void> {
     this.ensureBoard();
     const items = Array.isArray(target)
-      ? (target as Array<BaseItem>)
-      : (target as BaseItem);
+      ? (target as Array<BoardItem>)
+      : (target as BoardItem);
     await miro.board.viewport.zoomTo(items);
   }
 
@@ -101,7 +104,7 @@ export class BoardBuilder {
   public async findNode(
     type: unknown,
     label: unknown,
-  ): Promise<BaseItem | Group | undefined> {
+  ): Promise<BoardItem | undefined> {
     if (typeof type !== 'string' || typeof label !== 'string') {
       throw new Error('Invalid search parameters');
     }
@@ -114,7 +117,7 @@ export class BoardBuilder {
   public async createNode(
     node: unknown,
     pos: PositionedNode,
-  ): Promise<BaseItem | Group> {
+  ): Promise<BoardItem> {
     if (!pos || typeof pos.x !== 'number' || typeof pos.y !== 'number') {
       throw new Error('Invalid position');
     }
@@ -137,7 +140,7 @@ export class BoardBuilder {
    */
   public async createEdges(
     edges: EdgeData[],
-    nodeMap: Record<string, BaseItem | Group>,
+    nodeMap: Record<string, BoardItem>,
     hints?: EdgeHint[],
   ): Promise<Connector[]> {
     if (!Array.isArray(edges)) {
@@ -163,15 +166,13 @@ export class BoardBuilder {
   }
 
   /** Call `.sync()` on each widget if the method exists. */
-  public async syncAll(
-    items: Array<BaseItem | Group | Connector>,
-  ): Promise<void> {
+  public async syncAll(items: Array<BoardItem | Connector>): Promise<void> {
     await Promise.all(items.map((i) => maybeSync(i)));
   }
 
   /** Remove the provided widgets from the board. */
   public async removeItems(
-    items: Array<BaseItem | Group | Connector | Frame>,
+    items: Array<BoardItem | Connector | Frame>,
   ): Promise<void> {
     this.ensureBoard();
     await Promise.all(
@@ -182,7 +183,7 @@ export class BoardBuilder {
   /** Group multiple widgets together on the board. */
   public async groupItems(items: GroupableItem[]): Promise<Group> {
     this.ensureBoard();
-    return (await miro.board.group({ items })) as Group;
+    return miro.board.group({ items });
   }
 
   private ensureBoard(): void {
@@ -230,7 +231,7 @@ export class BoardBuilder {
   private async searchShapes(
     _type: string,
     label: string,
-  ): Promise<BaseItem | Group | undefined> {
+  ): Promise<BoardItem | undefined> {
     await this.loadShapeMap();
     const item = this.shapeMap?.get(label);
     return item;
@@ -243,7 +244,7 @@ export class BoardBuilder {
   private async searchGroups(
     type: string,
     label: string,
-  ): Promise<BaseItem | Group | undefined> {
+  ): Promise<BoardItem | undefined> {
     this.ensureBoard();
     const groups = (await miro.board.get({ type: 'group' })) as Group[];
     const matches = await Promise.all(
@@ -330,7 +331,7 @@ export class BoardBuilder {
   private async createNewNode(
     node: NodeData,
     pos: PositionedNode,
-  ): Promise<BaseItem | Group> {
+  ): Promise<BoardItem> {
     const widget = await templateManager.createFromTemplate(
       node.type,
       node.label,
@@ -359,7 +360,7 @@ export class BoardBuilder {
    * The widget is synchronised when a sync method exists.
    */
   public async resizeItem(
-    item: BaseItem | Group,
+    item: BoardItem,
     width: number,
     height: number,
   ): Promise<void> {
@@ -421,8 +422,8 @@ export class BoardBuilder {
    */
   private async createConnector(
     edge: EdgeData,
-    from: BaseItem | Group,
-    to: BaseItem | Group,
+    from: BoardItem,
+    to: BoardItem,
     hint: EdgeHint | undefined,
     template?: ConnectorTemplate,
   ): Promise<Connector> {
