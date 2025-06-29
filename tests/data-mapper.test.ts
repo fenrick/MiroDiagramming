@@ -1,5 +1,10 @@
 import { describe, test, expect } from 'vitest';
-import { mapRowsToNodes, mapRowsToCards } from '../src/core/data-mapper';
+import {
+  mapRowsToNodes,
+  mapRowsToCards,
+  mapRowToNode,
+  mapRowToCard,
+} from '../src/core/data-mapper';
 
 describe('data mapper', () => {
   test('maps rows to nodes with metadata', () => {
@@ -34,5 +39,25 @@ describe('data mapper', () => {
     expect(result).toEqual([
       { id: 'a', title: 'T', description: 'D', style: { cardTheme: 'blue' } },
     ]);
+  });
+
+  test('row helper functions map single entries', () => {
+    const row = { ID: '7', Title: 'One', Theme: 'red' };
+    const opts = {
+      idColumn: 'ID',
+      labelColumn: 'Title',
+      templateColumn: 'Theme',
+    } as const;
+    expect(mapRowToNode(row, opts, 0)).toEqual({
+      id: '7',
+      label: 'One',
+      type: 'red',
+      metadata: { rowId: '7' },
+    });
+    expect(mapRowToCard(row, opts)).toEqual({
+      id: '7',
+      title: 'One',
+      style: { cardTheme: 'red' },
+    });
   });
 });
