@@ -132,17 +132,13 @@ export class CardProcessor {
 
   /** Retrieve all tags on the board, cached for the current run. */
   private async getBoardTags(): Promise<Tag[]> {
-    if (!this.tagsCache) {
-      this.tagsCache = (await miro.board.get({ type: 'tag' })) as Tag[];
-    }
+    this.tagsCache ??= (await miro.board.get({ type: 'tag' })) as Tag[];
     return this.tagsCache;
   }
 
   /** Retrieve all cards on the board, cached for the current run. */
   private async getBoardCards(): Promise<Card[]> {
-    if (!this.cardsCache) {
-      this.cardsCache = (await miro.board.get({ type: 'card' })) as Card[];
-    }
+    this.cardsCache ??= (await miro.board.get({ type: 'card' })) as Card[];
     return this.cardsCache;
   }
 
@@ -203,7 +199,7 @@ export class CardProcessor {
     for (const name of uniqueNames) {
       let tag = tagMap.get(name);
       if (!tag) {
-        tag = (await miro.board.createTag({ title: name })) as Tag;
+        tag = await miro.board.createTag({ title: name });
         tagMap.set(name, tag);
       }
       if (tag.id) {
@@ -230,7 +226,7 @@ export class CardProcessor {
       y,
     };
     if (def.fields) createOpts.fields = def.fields;
-    const card = (await miro.board.createCard(createOpts)) as Card;
+    const card = await miro.board.createCard(createOpts);
     if (def.id) {
       await card.setMetadata(CardProcessor.META_KEY, { id: def.id });
     }

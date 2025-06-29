@@ -32,7 +32,7 @@ function templateToPreset(
   tpl: { elements?: TemplateElement[] },
 ): StylePreset {
   const el = tpl.elements?.[0];
-  const style = (el?.style ?? {}) as Record<string, unknown>;
+  const style = el?.style ?? {};
   return {
     label: name,
     fontColor: (style.fontColor as string) ?? DEFAULT_PRESET.fontColor,

@@ -29,11 +29,11 @@ export async function renameSelectedFrames(
   );
   if (!frames.length) return;
   frames.sort((a, b) => {
-    const ax = (a.x as number | undefined) ?? 0;
-    const bx = (b.x as number | undefined) ?? 0;
+    const ax = a.x ?? 0;
+    const bx = b.x ?? 0;
     if (ax === bx) {
-      const ay = (a.y as number | undefined) ?? 0;
-      const by = (b.y as number | undefined) ?? 0;
+      const ay = a.y ?? 0;
+      const by = b.y ?? 0;
       return ay - by;
     }
     return ax - bx;
