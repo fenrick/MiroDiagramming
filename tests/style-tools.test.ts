@@ -4,6 +4,11 @@ import {
   tweakBorderWidth,
   copyFillFromSelection,
   extractFillColor,
+  // internal helper used for verification only
+  // findStyleKey is not part of the public API
+  // but tests rely on it to validate key detection
+  // coverage of this utility supports maintainability
+  findStyleKey,
 } from '../src/board/style-tools';
 
 describe('style-tools', () => {
@@ -90,6 +95,12 @@ describe('style-tools', () => {
     const item = { style: { fillColor: '#123456' } };
     expect(extractFillColor(item)).toBe('#123456');
     expect(extractFillColor(undefined)).toBeNull();
+  });
+
+  test('findStyleKey returns first present key', () => {
+    const style = { foo: 1, bar: 2 } as Record<string, unknown>;
+    expect(findStyleKey(style, ['baz', 'bar', 'foo'])).toBe('bar');
+    expect(findStyleKey({}, ['a', 'b'])).toBeNull();
   });
 
   test('tweakOpacity adjusts fillOpacity', async () => {
