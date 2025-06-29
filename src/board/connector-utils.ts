@@ -7,8 +7,9 @@ import type {
 } from '@mirohq/websdk-types';
 import type { ConnectorTemplate } from './templates';
 import type { EdgeData, EdgeHint } from '../core/graph';
+import { STRUCT_GRAPH_KEY } from './meta-constants';
 
-const META_KEY = 'app.miro.structgraph';
+const META_KEY = STRUCT_GRAPH_KEY;
 
 /**
  * Update an existing connector with style, label and hint data.

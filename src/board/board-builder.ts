@@ -2,6 +2,7 @@ import { templateManager } from './templates';
 import { searchGroups, searchShapes } from './node-search';
 import { createConnector } from './connector-utils';
 export { updateConnector } from './connector-utils';
+import { STRUCT_GRAPH_KEY } from './meta-constants';
 import type {
   BaseItem,
   Connector,
@@ -21,7 +22,7 @@ import { maybeSync } from './board';
 /** Union type representing a single widget or a group of widgets. */
 export type BoardItem = BaseItem | Group;
 
-const META_KEY = 'app.miro.structgraph';
+const META_KEY = STRUCT_GRAPH_KEY;
 
 /**
  * Helper responsible for finding, creating and updating widgets on the board.
