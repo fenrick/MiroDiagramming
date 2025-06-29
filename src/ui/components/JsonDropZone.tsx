@@ -4,10 +4,10 @@ import { Button, Icon, InputField, Paragraph, Text } from './legacy';
 import { getDropzoneStyle } from '../hooks/ui-utils';
 import { tokens } from '../tokens';
 
-export interface JsonDropZoneProps {
+export type JsonDropZoneProps = Readonly<{
   /** Callback invoked with selected files. */
-  readonly onFiles: (files: File[]) => void;
-}
+  onFiles: (files: File[]) => void;
+}>;
 
 /** Dropzone for importing JSON files. */
 export function JsonDropZone({
