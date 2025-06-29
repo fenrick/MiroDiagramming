@@ -1,14 +1,14 @@
-import type { ConnectorTemplate } from './templates';
 import { templateManager } from './templates';
+import { searchGroups, searchShapes } from './node-search';
+import { createConnector } from './connector-utils';
+export { updateConnector } from './connector-utils';
 import type {
   BaseItem,
   Connector,
-  ConnectorStyle,
   Frame,
   Group,
   GroupableItem,
   Shape,
-  TextAlignVertical,
 } from '@mirohq/websdk-types';
 import type {
   EdgeData,
@@ -102,9 +102,19 @@ export class BoardBuilder {
     if (typeof type !== 'string' || typeof label !== 'string') {
       throw new Error('Invalid search parameters');
     }
-    const fromShapes = await this.searchShapes(type, label);
+    this.ensureBoard();
+    await this.loadShapeMap();
+    const fromShapes = await searchShapes(
+      miro.board as unknown as import('./board').BoardQueryLike,
+      this.shapeMap as Map<string, BaseItem>,
+      label,
+    );
     if (fromShapes) return fromShapes;
-    return this.searchGroups(type, label);
+    return searchGroups(
+      miro.board as unknown as import('./board').BoardQueryLike,
+      type,
+      label,
+    );
   }
 
   /** Create or update a node widget from a template. */
@@ -153,7 +163,7 @@ export class BoardBuilder {
             ? edge.metadata.template
             : 'default';
         const template = templateManager.getConnectorTemplate(templateName);
-        return this.createConnector(edge, from, to, hints?.[i], template);
+        return createConnector(edge, from, to, hints?.[i], template);
       }),
     );
     return created.filter(Boolean) as Connector[];
@@ -188,21 +198,6 @@ export class BoardBuilder {
    * Find an item whose metadata satisfies the provided predicate.
    * Metadata for all items is loaded concurrently for efficiency.
    */
-  private async findByMetadata<
-    T extends { getMetadata: (key: string) => Promise<unknown> },
-  >(
-    items: T[],
-    predicate: (meta: unknown, item: T) => boolean,
-  ): Promise<T | undefined> {
-    const metas = await Promise.all(items.map((i) => i.getMetadata(META_KEY)));
-    for (let i = 0; i < items.length; i++) {
-      if (predicate(metas[i], items[i])) {
-        return items[i];
-      }
-    }
-    return undefined;
-  }
-
   /** Populate the shape cache when not yet loaded. */
   private async loadShapeMap(): Promise<void> {
     if (!this.shapeMap) {
@@ -220,38 +215,6 @@ export class BoardBuilder {
    * Search board shapes for metadata that matches the given type and label.
    * Returns the corresponding item if found.
    */
-  private async searchShapes(
-    _type: string,
-    label: string,
-  ): Promise<BoardItem | undefined> {
-    await this.loadShapeMap();
-    const item = this.shapeMap?.get(label);
-    return item;
-  }
-
-  /**
-   * Search all groups on the board for an item whose metadata matches
-   * the provided type and label.
-   */
-  private async searchGroups(
-    type: string,
-    label: string,
-  ): Promise<BoardItem | undefined> {
-    this.ensureBoard();
-    const groups = (await miro.board.get({ type: 'group' })) as Group[];
-    const matches = await Promise.all(
-      groups.map(async (group) => {
-        const items = await group.getItems();
-        if (!Array.isArray(items)) return undefined;
-        const found = await this.findByMetadata(items as BaseItem[], (meta) => {
-          const data = meta as NodeMetadata | undefined;
-          return data?.type === type && data.label === label;
-        });
-        return found ? group : undefined;
-      }),
-    );
-    return matches.find(Boolean);
-  }
 
   /**
    * Create a new widget (or group) for the node using template defaults.
@@ -303,79 +266,6 @@ export class BoardBuilder {
   }
 
   /**
-   * Apply metadata and styling updates to an existing connector widget.
-   */
-  /**
-   * Update an existing connector with style, label and hint data.
-   */
-  public updateConnector(
-    connector: Connector,
-    edge: EdgeData,
-    template?: ConnectorTemplate,
-    hint?: EdgeHint,
-  ): void {
-    if (edge.label) {
-      connector.captions = [
-        {
-          content: edge.label,
-          position: template?.caption?.position,
-          textAlignVertical: template?.caption
-            ?.textAlignVertical as TextAlignVertical,
-        },
-      ];
-    }
-    if (template?.style) {
-      connector.style = {
-        ...connector.style,
-        ...template.style,
-      } as ConnectorStyle;
-    }
-    connector.shape = template?.shape ?? connector.shape;
-    if (hint?.startPosition) {
-      connector.start = {
-        ...(connector.start ?? {}),
-        position: hint.startPosition,
-      } as Connector['start'];
-    }
-    if (hint?.endPosition) {
-      connector.end = {
-        ...(connector.end ?? {}),
-        position: hint.endPosition,
-      } as Connector['end'];
-    }
-  }
-
-  /**
-   * Create a new connector between the given widgets using template defaults.
-   */
-  private async createConnector(
-    edge: EdgeData,
-    from: BoardItem,
-    to: BoardItem,
-    hint: EdgeHint | undefined,
-    template?: ConnectorTemplate,
-  ): Promise<Connector> {
-    const connector = await miro.board.createConnector({
-      start: { item: from.id, position: hint?.startPosition },
-      end: { item: to.id, position: hint?.endPosition },
-      shape: template?.shape ?? 'curved',
-      captions: edge.label
-        ? [
-            {
-              content: edge.label,
-              position: template?.caption?.position,
-              textAlignVertical: template?.caption
-                ?.textAlignVertical as TextAlignVertical,
-            },
-          ]
-        : undefined,
-      style: template?.style as ConnectorStyle | undefined,
-    });
-    await connector.setMetadata(META_KEY, { from: edge.from, to: edge.to });
-    return connector;
-  }
-
-  /**
    * Type guard ensuring the provided value conforms to {@link NodeData}.
    */
   private static isNodeData(node: unknown): node is NodeData {
@@ -386,9 +276,4 @@ export class BoardBuilder {
       typeof (node as Record<string, unknown>).label === 'string'
     );
   }
-}
-
-interface NodeMetadata {
-  type: string;
-  label: string;
 }
