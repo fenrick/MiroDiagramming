@@ -28,6 +28,10 @@ export interface LayoutResult {
 
 /**
  * Run the ELK layout engine on the provided graph data.
+ *
+ * @param data - The graph to layout.
+ * @param opts - Optional layout configuration overrides.
+ * @returns The positioned nodes and edges produced by ELK.
  */
 export async function performLayout(
   data: GraphData,

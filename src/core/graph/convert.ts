@@ -2,7 +2,10 @@ import { GraphData, NodeData, EdgeData } from './graph-service';
 import { HierNode } from '../layout/nested-layout';
 
 /**
- * Transform a flat edge list into a nested hierarchy.
+ * Transform a flat edge list into a nested hierarchy structure.
+ *
+ * @param graph - The graph data containing nodes and edges.
+ * @returns An array of root hierarchy nodes with nested children.
  */
 export function edgesToHierarchy(graph: GraphData): HierNode[] {
   const nodeMap = new Map(graph.nodes.map((n) => [n.id, n]));
@@ -31,7 +34,10 @@ export function edgesToHierarchy(graph: GraphData): HierNode[] {
 }
 
 /**
- * Flatten a hierarchy into a graph with explicit edges.
+ * Flatten a hierarchy into a graph representation with explicit edges.
+ *
+ * @param roots - Top level hierarchy nodes to flatten.
+ * @returns The equivalent flat graph data.
  */
 export function hierarchyToEdges(roots: HierNode[]): GraphData {
   const nodes: NodeData[] = [];
