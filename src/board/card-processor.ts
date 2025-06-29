@@ -34,7 +34,7 @@ export class CardProcessor {
   /** Cached board tags when processing updates. */
   private tagsCache: Tag[] | undefined;
 
-  constructor(private builder: BoardBuilder = new BoardBuilder()) {}
+  constructor(private readonly builder: BoardBuilder = new BoardBuilder()) {}
 
   /** Load cards from a file and create them on the board. */
   public async processFile(

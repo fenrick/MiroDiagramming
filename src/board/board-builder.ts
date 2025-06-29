@@ -151,9 +151,7 @@ export class BoardBuilder {
         const to = nodeMap[edge.to];
         if (!from || !to) return undefined;
         const templateName =
-          edge.metadata &&
-          'template' in edge.metadata &&
-          typeof edge.metadata.template === 'string'
+          typeof edge.metadata?.template === 'string'
             ? edge.metadata.template
             : 'default';
         const template = templateManager.getConnectorTemplate(templateName);

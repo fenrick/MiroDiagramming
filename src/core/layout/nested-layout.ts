@@ -35,8 +35,9 @@ import type { ElkNode } from 'elkjs/lib/elk-api';
  */
 export class NestedLayouter {
   private sortValue(node: HierNode, key?: string): string {
-    if (key && node.metadata && key in node.metadata) {
-      return String(node.metadata[key]);
+    const metaValue = key ? node.metadata?.[key] : undefined;
+    if (metaValue !== undefined) {
+      return String(metaValue);
     }
     return node.label ?? node.id;
   }

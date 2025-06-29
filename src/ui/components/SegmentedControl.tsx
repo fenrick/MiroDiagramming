@@ -21,10 +21,8 @@ export function SegmentedControl({
   options,
 }: SegmentedControlProps): React.JSX.Element {
   return (
-    <div
-      role='group'
-      aria-label='Layout type'
-      className='segmented-control'>
+    <fieldset className='segmented-control'>
+      <legend className='custom-visually-hidden'>Layout type</legend>
       {options.map((opt) => (
         <Button
           key={opt.value}
@@ -33,6 +31,6 @@ export function SegmentedControl({
           {opt.label}
         </Button>
       ))}
-    </div>
+    </fieldset>
   );
 }

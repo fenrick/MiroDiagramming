@@ -27,7 +27,9 @@ export interface ProcessOptions {
 export class GraphProcessor {
   private lastCreated: Array<BaseItem | Group | Connector | Frame> = [];
 
-  constructor(private builder: BoardBuilder = graphService.getBuilder()) {}
+  constructor(
+    private readonly builder: BoardBuilder = graphService.getBuilder(),
+  ) {}
 
   /**
    * Load a JSON graph file and process it.
