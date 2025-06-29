@@ -92,12 +92,9 @@ export class BoardBuilder {
   }
 
   /** Move the viewport to show the provided frame or widgets. */
-  public async zoomTo(target: Frame | Array<BoardItem>): Promise<void> {
+  public async zoomTo(target: Frame | BoardItem[]): Promise<void> {
     this.ensureBoard();
-    const items = Array.isArray(target)
-      ? (target as Array<BoardItem>)
-      : (target as BoardItem);
-    await miro.board.viewport.zoomTo(items);
+    await miro.board.viewport.zoomTo(target);
   }
 
   /** Lookup an existing widget with matching metadata. */
@@ -175,9 +172,7 @@ export class BoardBuilder {
     items: Array<BoardItem | Connector | Frame>,
   ): Promise<void> {
     this.ensureBoard();
-    await Promise.all(
-      items.map((item) => miro.board.remove(item as unknown as BaseItem)),
-    );
+    await Promise.all(items.map((item) => miro.board.remove(item)));
   }
 
   /** Group multiple widgets together on the board. */
