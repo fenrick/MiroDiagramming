@@ -85,13 +85,13 @@ export async function applySpacingLayout(
   let position = items[0][axis] ?? 0;
   await moveWidget(items[0], axis, position);
 
-  for (let i = 1; i < items.length; i += 1) {
-    const prev = items[i - 1];
-    const curr = items[i];
+  let prev = items[0];
+  for (const curr of items.slice(1)) {
     const prevSize = getDimension(prev, sizeKey);
     const currSize = getDimension(curr, sizeKey);
     position += prevSize / 2 + opts.spacing + currSize / 2;
     await moveWidget(curr, axis, position);
+    prev = curr;
   }
 }
 

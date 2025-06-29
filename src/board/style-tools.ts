@@ -72,11 +72,11 @@ export async function tweakFillColor(
     const fontKey = getFontKey(style);
     const fill =
       typeof style[fillKey] === 'string'
-        ? (style[fillKey] as string)
+        ? style[fillKey]
         : resolveColor(tokens.color.white, colors.white);
     const font =
       fontKey && typeof style[fontKey] === 'string'
-        ? (style[fontKey] as string)
+        ? style[fontKey]
         : resolveColor(tokens.color.primaryText, colors['gray-700']);
     const newFill = adjustColor(fill, delta);
     style[fillKey] = newFill;
