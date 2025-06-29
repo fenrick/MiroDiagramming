@@ -231,27 +231,35 @@ export class BoardBuilder {
       pos.y,
       this.frame,
     );
-    const rowId =
-      node.metadata?.rowId != null ? String(node.metadata.rowId) : undefined;
-    if ((widget as Group).type === 'group') {
-      const items = await (widget as Group).getItems();
-      const meta: Record<string, string> = {
-        type: node.type,
-        label: node.label,
-      };
-      if (rowId) meta.rowId = rowId;
-      const master = templateManager.getTemplate(node.type)?.masterElement;
+    const meta = this.buildMeta(node);
+    await this.applyMetadata(widget, meta);
+    return widget;
+  }
+
+  private buildMeta(node: NodeData): Record<string, string> {
+    const meta: Record<string, string> = { type: node.type, label: node.label };
+    if (node.metadata?.rowId != null) {
+      meta.rowId = String(node.metadata.rowId);
+    }
+    return meta;
+  }
+
+  private async applyMetadata(
+    item: BoardItem,
+    meta: Record<string, string>,
+  ): Promise<void> {
+    if ((item as Group).type === 'group') {
+      const group = item as Group;
+      const items = await group.getItems();
+      const master = templateManager.getTemplate(meta.type)?.masterElement;
       if (master !== undefined && items[master]) {
         await items[master].setMetadata(META_KEY, meta);
       } else {
         await Promise.all(items.map((i) => i.setMetadata(META_KEY, meta)));
       }
-      return widget as Group;
+    } else {
+      await (item as BaseItem).setMetadata(META_KEY, meta);
     }
-    const meta: Record<string, string> = { type: node.type, label: node.label };
-    if (rowId) meta.rowId = rowId;
-    await (widget as BaseItem).setMetadata(META_KEY, meta);
-    return widget as BaseItem;
   }
 
   /**
