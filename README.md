@@ -244,7 +244,8 @@ scopes:
 
 ## Testing
 
-Before running the checks make sure dependencies are installed:
+The root `AGENTS.md` lists the commands to run before committing. Be sure to
+install dependencies first:
 
 ```bash
 npm install
