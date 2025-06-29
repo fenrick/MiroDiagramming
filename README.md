@@ -258,6 +258,7 @@ Then validate the codebase with:
 npm run typecheck --silent
 npm test --silent
 npm run lint --silent
+npm run stylelint --silent
 npm run prettier --silent
 ```
 
