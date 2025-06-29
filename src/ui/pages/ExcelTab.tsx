@@ -61,6 +61,21 @@ export const ExcelTab: React.FC = () => {
     data?.setTemplateColumn(templateColumn);
   }, [templateColumn, data]);
 
+  // Load a local workbook dropped onto the dropzone.
+  const handleDrop = React.useCallback(async (files: File[]): Promise<void> => {
+    const f = files[0];
+    try {
+      await excelLoader.loadWorkbook(f);
+      setLoader(excelLoader);
+      setFile(f);
+      setSource('');
+      setRows([]);
+      setSelected(new Set());
+    } catch (e) {
+      await showError(String(e));
+    }
+  }, []);
+
   const dropzone = useDropzone({
     accept: {
       'application/vnd.ms-excel': ['.xls'],
@@ -69,18 +84,8 @@ export const ExcelTab: React.FC = () => {
       ],
     },
     maxFiles: 1,
-    onDrop: async (files: File[]) => {
-      const f = files[0];
-      try {
-        await excelLoader.loadWorkbook(f);
-        setLoader(excelLoader);
-        setFile(f);
-        setSource('');
-        setRows([]);
-        setSelected(new Set());
-      } catch (e) {
-        await showError(String(e));
-      }
+    onDrop: (files: File[]) => {
+      void handleDrop(files);
     },
   });
 
