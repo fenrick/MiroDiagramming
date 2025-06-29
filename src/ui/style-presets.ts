@@ -27,21 +27,33 @@ const DEFAULT_PRESET: StylePreset = {
 /**
  * Derive a style preset from the first element of a template.
  */
+function valueOrDefault<T>(val: T | undefined, def: T): T {
+  return val === undefined ? def : val;
+}
+
 function templateToPreset(
   name: string,
   tpl: { elements?: TemplateElement[] },
 ): StylePreset {
   const el = tpl.elements?.[0];
-  const style = el?.style ?? {};
+  const style = (el?.style ?? {}) as Record<string, unknown>;
+  const fill =
+    (style.fillColor as string | undefined) ?? (el?.fill as string | undefined);
   return {
     label: name,
-    fontColor: (style.fontColor as string) ?? DEFAULT_PRESET.fontColor,
-    borderWidth: (style.borderWidth as number) ?? DEFAULT_PRESET.borderWidth,
-    borderColor: (style.borderColor as string) ?? DEFAULT_PRESET.borderColor,
-    fillColor:
-      (style.fillColor as string) ??
-      (el?.fill as string) ??
-      DEFAULT_PRESET.fillColor,
+    fontColor: valueOrDefault(
+      style.fontColor as string | undefined,
+      DEFAULT_PRESET.fontColor,
+    ),
+    borderWidth: valueOrDefault(
+      style.borderWidth as number | undefined,
+      DEFAULT_PRESET.borderWidth,
+    ),
+    borderColor: valueOrDefault(
+      style.borderColor as string | undefined,
+      DEFAULT_PRESET.borderColor,
+    ),
+    fillColor: valueOrDefault(fill, DEFAULT_PRESET.fillColor),
   };
 }
 
