@@ -19,6 +19,7 @@ import type {
   NodeData,
   PositionedNode,
 } from '../core/graph';
+import { maybeSync } from './board';
 
 const META_KEY = 'app.miro.structgraph';
 
@@ -165,14 +166,7 @@ export class BoardBuilder {
   public async syncAll(
     items: Array<BaseItem | Group | Connector>,
   ): Promise<void> {
-    await Promise.all(
-      items
-        .filter(
-          (i) =>
-            typeof (i as { sync?: () => Promise<void> }).sync === 'function',
-        )
-        .map((i) => (i as { sync: () => Promise<void> }).sync()),
-    );
+    await Promise.all(items.map((i) => maybeSync(i)));
   }
 
   /** Remove the provided widgets from the board. */
@@ -221,10 +215,11 @@ export class BoardBuilder {
     if (!this.shapeMap) {
       this.ensureBoard();
       const shapes = (await miro.board.get({ type: 'shape' })) as Shape[];
-      this.shapeMap = new Map();
+      const map = new Map<string, BaseItem>();
       shapes
         .filter((s) => typeof s.content === 'string' && s.content.trim())
-        .forEach((s) => this.shapeMap!.set(s.content, s as BaseItem));
+        .forEach((s) => map.set(s.content, s as BaseItem));
+      this.shapeMap = map;
     }
   }
 
@@ -375,7 +370,7 @@ export class BoardBuilder {
     };
     if (typeof target.width === 'number') target.width = width;
     if (typeof target.height === 'number') target.height = height;
-    if (typeof target.sync === 'function') await target.sync();
+    await maybeSync(target);
   }
 
   /**
