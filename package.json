@@ -59,7 +59,7 @@
     "eslint-plugin-react": "^7.37.5",
     "jsdom": "^26.1.0",
     "prettier": "^3.6.2",
-    "semantic-release": "^24.2.5",
+    "semantic-release": "^24.2.6",
     "stylelint": "^16.21.0",
     "stylelint-config-standard": "^38.0.0",
     "typescript": "^5.8.3",
