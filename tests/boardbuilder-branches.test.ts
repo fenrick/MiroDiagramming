@@ -1,4 +1,6 @@
-import { BoardBuilder } from '../src/board/board-builder';
+import { BoardBuilder, updateConnector } from '../src/board/board-builder';
+import { createConnector } from '../src/board/connector-utils';
+import { searchGroups, searchShapes } from '../src/board/node-search';
 import { templateManager } from '../src/board/templates';
 import {
   applyElementToItem,
@@ -121,33 +123,35 @@ describe('BoardBuilder branch coverage', () => {
       unknown
     >;
     global.miro = { board: { get: jest.fn().mockResolvedValue([group]) } };
-    const builder = new BoardBuilder();
-    const result = await (
-      builder as unknown as {
-        searchGroups: (t: string, l: string) => Promise<unknown>;
-      }
-    ).searchGroups('Role', 'A');
+    const result = await searchGroups(
+      global.miro
+        .board as unknown as import('../src/board/board').BoardQueryLike,
+      'Role',
+      'A',
+    );
     expect(result).toBeUndefined();
   });
 
   test('updateConnector handles missing template and hints', () => {
     const connector: Record<string, unknown> = { style: {}, shape: 'curved' };
-    const builder = new BoardBuilder();
-    (
-      builder as unknown as { updateConnector: (...args: unknown[]) => void }
-    ).updateConnector(connector, { from: 'a', to: 'b' }, undefined, undefined);
+    updateConnector(
+      connector as unknown as import('@mirohq/websdk-types').Connector,
+      { from: 'a', to: 'b' } as unknown as import('../src/core/graph').EdgeData,
+      undefined,
+      undefined,
+    );
     expect(connector.shape).toBe('curved');
     expect(connector.style).toEqual({});
   });
 
   test('searchShapes returns undefined when no shapes match', async () => {
-    const builder = new BoardBuilder();
     global.miro = { board: { get: jest.fn().mockResolvedValue([]) } };
-    const result = await (
-      builder as unknown as {
-        searchShapes: (t: string, l: string) => Promise<unknown>;
-      }
-    ).searchShapes('Role', 'A');
+    const result = await searchShapes(
+      global.miro
+        .board as unknown as import('../src/board/board').BoardQueryLike,
+      undefined,
+      'A',
+    );
     expect(result).toBeUndefined();
   });
 
@@ -169,13 +173,14 @@ describe('BoardBuilder branch coverage', () => {
   });
 
   test('updateConnector applies hint positions', () => {
-    const builder = new BoardBuilder();
     const connector: Record<string, unknown> = { style: {}, shape: 'curved' };
-    (
-      builder as unknown as { updateConnector: (...args: unknown[]) => void }
-    ).updateConnector(
-      connector,
-      { from: 'a', to: 'b', label: 'L' },
+    updateConnector(
+      connector as unknown as import('@mirohq/websdk-types').Connector,
+      {
+        from: 'a',
+        to: 'b',
+        label: 'L',
+      } as unknown as import('../src/core/graph').EdgeData,
       { shape: 'elbowed', style: { strokeStyle: 'dotted' } },
       { startPosition: { x: 0, y: 0 }, endPosition: { x: 1, y: 1 } },
     );
@@ -189,16 +194,11 @@ describe('BoardBuilder branch coverage', () => {
       createConnector: jest.fn().mockResolvedValue({ setMetadata: jest.fn() }),
     };
     global.miro = { board };
-    const builder = new BoardBuilder();
     const edge = { from: 'n1', to: 'n2' } as Record<string, unknown>;
-    const result = await (
-      builder as unknown as {
-        createConnector: (...args: unknown[]) => Promise<unknown>;
-      }
-    ).createConnector(
-      edge,
-      { id: 'a' } as Record<string, unknown>,
-      { id: 'b' } as Record<string, unknown>,
+    const result = await createConnector(
+      edge as unknown as import('../src/core/graph').EdgeData,
+      { id: 'a' } as unknown as import('@mirohq/websdk-types').BaseItem,
+      { id: 'b' } as unknown as import('@mirohq/websdk-types').BaseItem,
       undefined,
       undefined,
     );
