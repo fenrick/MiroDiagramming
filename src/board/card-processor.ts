@@ -1,6 +1,6 @@
 import { BoardBuilder } from './board-builder';
 import { clearActiveFrame, registerFrame } from './frame-utils';
-import { undoWidgets, syncOrUndo } from './undo-utils';
+import { UndoableProcessor } from '../core/graph/undoable-processor';
 import { CardData, cardLoader } from '../core/utils/cards';
 import type { Card, CardStyle, Frame, Tag } from '@mirohq/websdk-types';
 
@@ -17,7 +17,7 @@ export interface CardProcessOptions {
 /**
  * Helper that places cards from a data set onto the board.
  */
-export class CardProcessor {
+export class CardProcessor extends UndoableProcessor<Card | Frame> {
   /** Metadata key used to store card identifiers. */
   private static readonly META_KEY = 'app.miro.cards';
   /** Default width used for card widgets. */
@@ -28,7 +28,6 @@ export class CardProcessor {
   private static readonly CARD_MARGIN = 50;
   /** Gap between cards when arranged in a grid. */
   private static readonly CARD_GAP = 24;
-  private lastCreated: Array<Card | Frame> = [];
   /** Cached board cards when processing updates. */
   private cardsCache: Card[] | undefined;
   /** Cached map from card identifier to card widget. */
@@ -36,7 +35,9 @@ export class CardProcessor {
   /** Cached board tags when processing updates. */
   private tagsCache: Tag[] | undefined;
 
-  constructor(private readonly builder: BoardBuilder = new BoardBuilder()) {}
+  constructor(builder: BoardBuilder = new BoardBuilder()) {
+    super(builder);
+  }
 
   /** Load cards from a file and create them on the board. */
   public async processFile(
@@ -114,10 +115,10 @@ export class CardProcessor {
       clearActiveFrame(this.builder);
     }
 
-    await syncOrUndo(this.builder, this.lastCreated, [...created, ...updated]);
+    await this.syncOrUndo([...created, ...updated]);
 
-    this.lastCreated.push(...created);
-    if (frame) this.lastCreated.push(frame);
+    this.registerCreated(created);
+    if (frame) this.registerCreated(frame);
 
     const target: Frame | Card[] = frame ?? [...created, ...updated];
     if (created.length || updated.length) {
@@ -125,10 +126,7 @@ export class CardProcessor {
     }
   }
 
-  /** Remove cards created by the last `processCards` call. */
-  public async undoLast(): Promise<void> {
-    await undoWidgets(this.builder, this.lastCreated);
-  }
+  // undoLast inherited from UndoableProcessor
 
   /**
    * Retrieve all tags on the board. Uses nullish assignment to cache
@@ -236,7 +234,7 @@ export class CardProcessor {
     if (def.id) {
       await card.setMetadata(CardProcessor.META_KEY, { id: def.id });
     }
-    this.lastCreated.push(card);
+    this.registerCreated(card);
     return card;
   }
 
