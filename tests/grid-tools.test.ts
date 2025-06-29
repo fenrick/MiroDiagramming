@@ -2,7 +2,7 @@ import {
   applyGridLayout,
   calculateGridPositions,
 } from '../src/board/grid-tools';
-import { calculateGrid } from '../src/core/layout/grid-layout';
+import { calculateGrid } from '../src/board/grid-layout';
 import { BoardLike } from '../src/board/board';
 
 describe('grid-tools', () => {
