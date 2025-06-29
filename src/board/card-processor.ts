@@ -2,7 +2,7 @@ import { BoardBuilder } from './board-builder';
 import { clearActiveFrame, registerFrame } from './frame-utils';
 import { UndoableProcessor } from '../core/graph/undoable-processor';
 import { CardData, cardLoader } from '../core/utils/cards';
-import { calculateGrid } from '../core/layout/grid-layout';
+import { calculateGrid } from './grid-layout';
 import type { Card, CardStyle, Frame, Tag } from '@mirohq/websdk-types';
 
 export interface CardProcessOptions {

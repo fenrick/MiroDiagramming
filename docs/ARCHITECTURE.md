@@ -104,7 +104,8 @@ Complexity limits enforced automatically by **SonarQube** gate.
 2. Lint, type-check, unit tests (Node 24).
 3. Build Storybook and a feature-flagged bundle for staging.
 4. SonarQube analysis and budget checks.
-5. Semantic-release creates Git tag, changelog and Chrome-Store zip.
+5. Semantic-release creates a Git tag, updates the repository root
+   `CHANGELOG.md` with release notes and generates a Chrome-Store zip.
 6. Automatic rollback uses the previously published artefact (see
    **DEPLOYMENT.md** for details).
 
@@ -221,4 +222,5 @@ See [CODE_STYLE.md](CODE_STYLE.md) for detailed style rules.
 - Import order: std → vendor → local, alphabetical within group.
 - No raw grid-column in style blocks (enforced by custom ESLint rule).
 - PR template checklist: coverage, complexity, a11y, dark-mode snapshot,
-  CHANGELOG entry.
+  CHANGELOG entry. Add a bullet under the `Unreleased` heading when submitting a
+  pull request.

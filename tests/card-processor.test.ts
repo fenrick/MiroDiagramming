@@ -1,5 +1,5 @@
 import { CardProcessor } from '../src/board/card-processor';
-import { calculateGrid } from '../src/core/layout/grid-layout';
+import { calculateGrid } from '../src/board/grid-layout';
 import * as cardModule from '../src/core/utils/cards';
 
 interface GlobalWithMiro {
