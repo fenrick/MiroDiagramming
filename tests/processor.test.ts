@@ -2,6 +2,7 @@ import { GraphProcessor } from '../src/core/graph/graph-processor';
 import { graphService } from '../src/core/graph';
 import { templateManager } from '../src/board/templates';
 import { layoutEngine } from '../src/core/layout/elk-layout';
+import * as frameUtils from '../src/board/frame-utils';
 import sample from './fixtures/sample-graph.json';
 
 interface GlobalWithMiro {
@@ -89,7 +90,9 @@ describe('GraphProcessor', () => {
 
   it('delegates work to helper methods', async () => {
     const gp = new GraphProcessor();
-    const frameSpy = jest.spyOn(gp as unknown, 'createFrame');
+    const frameSpy = jest
+      .spyOn(frameUtils, 'maybeCreateFrame')
+      .mockResolvedValue(undefined);
     const nodeSpy = jest.spyOn(gp as unknown, 'createNodes');
     const connectorSpy = jest.spyOn(gp as unknown, 'createConnectorsAndZoom');
 

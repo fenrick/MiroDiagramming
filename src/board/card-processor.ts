@@ -1,4 +1,6 @@
 import { BoardBuilder } from './board-builder';
+import { maybeCreateFrame } from './frame-utils';
+import { undoWidgets, syncOrUndo } from './undo-utils';
 import { CardData, cardLoader } from '../core/utils/cards';
 import type { Card, CardStyle, Frame, Tag } from '@mirohq/websdk-types';
 
@@ -80,9 +82,13 @@ export class CardProcessor {
       const { spot, startX, startY, columns, totalWidth, totalHeight } =
         await this.calculateLayoutArea(toCreate.length, options.columns);
 
-      frame = await this.maybeCreateFrame(
+      frame = await maybeCreateFrame(
+        this.builder,
+        this.lastCreated,
         options.createFrame !== false,
-        { width: totalWidth, height: totalHeight, spot },
+        totalWidth,
+        totalHeight,
+        spot,
         options.frameTitle,
       );
 
@@ -105,7 +111,7 @@ export class CardProcessor {
       this.builder.setFrame(undefined);
     }
 
-    await this.builder.syncAll([...created, ...updated]);
+    await syncOrUndo(this.builder, this.lastCreated, [...created, ...updated]);
 
     this.lastCreated.push(...created);
     if (frame) this.lastCreated.push(frame);
@@ -118,10 +124,7 @@ export class CardProcessor {
 
   /** Remove cards created by the last `processCards` call. */
   public async undoLast(): Promise<void> {
-    if (this.lastCreated.length) {
-      await this.builder.removeItems(this.lastCreated);
-      this.lastCreated = [];
-    }
+    await undoWidgets(this.builder, this.lastCreated);
   }
 
   /** Retrieve all tags on the board, cached for the current run. */
@@ -299,27 +302,5 @@ export class CardProcessor {
     itemSize: number,
   ): number {
     return center - total / 2 + CardProcessor.CARD_MARGIN + itemSize / 2;
-  }
-
-  /** Create a frame when requested and register it with the board builder. */
-  private async maybeCreateFrame(
-    useFrame: boolean,
-    dims: { width: number; height: number; spot: { x: number; y: number } },
-    title?: string,
-  ): Promise<Frame | undefined> {
-    if (!useFrame) {
-      this.builder.setFrame(undefined);
-      return undefined;
-    }
-    const { width, height, spot } = dims;
-    const frame = await this.builder.createFrame(
-      width,
-      height,
-      spot.x,
-      spot.y,
-      title,
-    );
-    this.lastCreated.push(frame);
-    return frame;
   }
 }
