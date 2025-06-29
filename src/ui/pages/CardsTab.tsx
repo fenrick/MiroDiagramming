@@ -30,7 +30,7 @@ export const CardsTab: React.FC = () => {
     const handler = (e: KeyboardEvent): void => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'z') {
         e.preventDefault();
-        void undoLastImport(lastProc, () => setLastProc(undefined));
+        undoLastImport(lastProc, () => setLastProc(undefined));
       }
     };
     window.addEventListener('keydown', handler);
@@ -48,28 +48,26 @@ export const CardsTab: React.FC = () => {
 
   const cardProcessor = React.useMemo(() => new CardProcessor(), []);
 
-  const handleCreate = (): void => {
-    void (async (): Promise<void> => {
-      setProgress(0);
-      setError(null);
-      for (const file of files) {
-        try {
-          setLastProc(cardProcessor);
-          await cardProcessor.processFile(file, {
-            createFrame: withFrame,
-            frameTitle: frameTitle || undefined,
-          });
-          setProgress(100);
-          setShowUndo(true);
-          setTimeout(() => setShowUndo(false), 3000);
-        } catch (e) {
-          const msg = String(e);
-          setError(msg);
-          await showError(msg);
-        }
+  const handleCreate = async (): Promise<void> => {
+    setProgress(0);
+    setError(null);
+    for (const file of files) {
+      try {
+        setLastProc(cardProcessor);
+        await cardProcessor.processFile(file, {
+          createFrame: withFrame,
+          frameTitle: frameTitle || undefined,
+        });
+        setProgress(100);
+        setShowUndo(true);
+        setTimeout(() => setShowUndo(false), 3000);
+      } catch (e) {
+        const msg = String(e);
+        setError(msg);
+        await showError(msg);
       }
-      setFiles([]);
-    })();
+    }
+    setFiles([]);
   };
 
   const style = React.useMemo(
@@ -157,7 +155,7 @@ export const CardsTab: React.FC = () => {
             {showUndo && (
               <Button
                 onClick={() =>
-                  void undoLastImport(lastProc, () => setLastProc(undefined))
+                  undoLastImport(lastProc, () => setLastProc(undefined))
                 }
                 variant='secondary'>
                 Undo import (⌘Z)
@@ -166,7 +164,7 @@ export const CardsTab: React.FC = () => {
             {lastProc && (
               <Button
                 onClick={() => {
-                  void undoLastImport(lastProc, () => setLastProc(undefined));
+                  undoLastImport(lastProc, () => setLastProc(undefined));
                 }}
                 variant='secondary'>
                 <React.Fragment key='.0'>

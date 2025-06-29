@@ -28,8 +28,8 @@ export const SpacingTab: React.FC = () => {
     if (mode === 'move' || mode === 'grow') setOpts({ ...opts, mode });
   };
 
-  const apply = (): void => {
-    void applySpacingLayout(opts);
+  const apply = async (): Promise<void> => {
+    await applySpacingLayout(opts);
   };
 
   return (

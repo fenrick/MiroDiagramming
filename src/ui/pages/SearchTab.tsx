@@ -86,63 +86,55 @@ export const SearchTab: React.FC = () => {
   ]);
 
   React.useEffect(() => {
-    const handle = setTimeout(() => {
-      void (async (): Promise<void> => {
-        if (!query) {
-          setResults([]);
-          setCurrentIndex(-1);
-          return;
-        }
-        const res = await searchBoardContent(buildOptions());
-        setResults(res);
-        setCurrentIndex(res.length ? 0 : -1);
-      })();
+    const handle = setTimeout(async () => {
+      if (!query) {
+        setResults([]);
+        setCurrentIndex(-1);
+        return;
+      }
+      const res = await searchBoardContent(buildOptions());
+      setResults(res);
+      setCurrentIndex(res.length ? 0 : -1);
     }, 300);
     return () => clearTimeout(handle);
   }, [buildOptions, query]);
 
-  const replaceAll = (): void => {
-    void (async (): Promise<void> => {
-      if (!query) return;
-      const count = await replaceBoardContent(
-        { ...buildOptions(), replacement },
-        undefined,
-        focusOnItem,
-      );
-      if (count) {
-        const res = await searchBoardContent(buildOptions());
-        setResults(res);
-        setCurrentIndex(res.length ? 0 : -1);
-      }
-    })();
-  };
-
-  const nextMatch = (): void => {
-    void (async (): Promise<void> => {
-      if (!results.length) return;
-      const next = (currentIndex + 1) % results.length;
-      setCurrentIndex(next);
-      const { item } = results[next];
-      await focusOnItem(item);
-    })();
-  };
-
-  const replaceCurrent = (): void => {
-    void (async (): Promise<void> => {
-      if (!results.length) return;
-      const board = {
-        getSelection: async () => [results[currentIndex].item],
-        get: async () => [],
-      } as unknown as Parameters<typeof replaceBoardContent>[1];
-      await replaceBoardContent(
-        { ...buildOptions(), replacement, inSelection: true },
-        board,
-        focusOnItem,
-      );
+  const replaceAll = async (): Promise<void> => {
+    if (!query) return;
+    const count = await replaceBoardContent(
+      { ...buildOptions(), replacement },
+      undefined,
+      focusOnItem,
+    );
+    if (count) {
       const res = await searchBoardContent(buildOptions());
       setResults(res);
-      setCurrentIndex(res.length ? Math.min(currentIndex, res.length - 1) : -1);
-    })();
+      setCurrentIndex(res.length ? 0 : -1);
+    }
+  };
+
+  const nextMatch = async (): Promise<void> => {
+    if (!results.length) return;
+    const next = (currentIndex + 1) % results.length;
+    setCurrentIndex(next);
+    const { item } = results[next];
+    await focusOnItem(item);
+  };
+
+  const replaceCurrent = async (): Promise<void> => {
+    if (!results.length) return;
+    const board = {
+      getSelection: async () => [results[currentIndex].item],
+      get: async () => [],
+    } as unknown as Parameters<typeof replaceBoardContent>[1];
+    await replaceBoardContent(
+      { ...buildOptions(), replacement, inSelection: true },
+      board,
+      focusOnItem,
+    );
+    const res = await searchBoardContent(buildOptions());
+    setResults(res);
+    setCurrentIndex(res.length ? Math.min(currentIndex, res.length - 1) : -1);
   };
 
   return (
