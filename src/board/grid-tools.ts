@@ -25,10 +25,7 @@ export interface Position {
  */
 import { BoardLike, getBoard, maybeSync, Syncable } from './board';
 import { getTextFields } from './search-tools';
-import {
-  calculateGrid,
-  GridConfig as LayoutGridConfig,
-} from '../core/layout/grid-layout';
+import { calculateGrid, GridConfig as LayoutGridConfig } from './grid-layout';
 
 /** Extract a name field from a widget for sorting purposes. */
 function getName(item: Record<string, unknown>): string {

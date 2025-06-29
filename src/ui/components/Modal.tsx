@@ -80,6 +80,23 @@ export function Modal({
   }, [isOpen, onClose, trapTab]);
 
   if (!isOpen) return null;
+
+  // Close the modal when the backdrop is activated via mouse or keyboard.
+  const handleBackdropClick = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+  ): void => {
+    if (e.target === e.currentTarget) onClose();
+  };
+
+  const handleBackdropKeyDown = (
+    e: React.KeyboardEvent<HTMLDivElement>,
+  ): void => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onClose();
+    }
+  };
+
   return (
     <div
       role='button'

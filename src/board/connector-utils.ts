@@ -7,8 +7,9 @@ import type {
 } from '@mirohq/websdk-types';
 import type { ConnectorTemplate } from './templates';
 import type { EdgeData, EdgeHint } from '../core/graph';
+import { STRUCT_GRAPH_KEY } from './meta-constants';
 
-const META_KEY = 'app.miro.structgraph';
+const META_KEY = STRUCT_GRAPH_KEY;
 
 /**
  * Update an existing connector with style, label and hint data.
@@ -18,22 +19,22 @@ const META_KEY = 'app.miro.structgraph';
  * @param template - Connector template describing style defaults.
  * @param hint - Optional hint for start and end positions.
  */
-export function updateConnector(
-  connector: Connector,
+function buildCaptions(
   edge: EdgeData,
   template?: ConnectorTemplate,
-  hint?: EdgeHint,
-): void {
-  if (edge.label) {
-    connector.captions = [
-      {
-        content: edge.label,
-        position: template?.caption?.position,
-        textAlignVertical: template?.caption
-          ?.textAlignVertical as TextAlignVertical,
-      },
-    ];
-  }
+): Connector['captions'] {
+  if (!edge.label) return undefined;
+  return [
+    {
+      content: edge.label,
+      position: template?.caption?.position,
+      textAlignVertical: template?.caption
+        ?.textAlignVertical as TextAlignVertical,
+    },
+  ];
+}
+
+function mergeStyle(connector: Connector, template?: ConnectorTemplate): void {
   if (template?.style) {
     connector.style = {
       ...connector.style,
@@ -41,6 +42,9 @@ export function updateConnector(
     } as ConnectorStyle;
   }
   connector.shape = template?.shape ?? connector.shape;
+}
+
+function applyHint(connector: Connector, hint?: EdgeHint): void {
   if (hint?.startPosition) {
     connector.start = {
       ...(connector.start ?? {}),
@@ -53,6 +57,18 @@ export function updateConnector(
       position: hint.endPosition,
     } as Connector['end'];
   }
+}
+
+export function updateConnector(
+  connector: Connector,
+  edge: EdgeData,
+  template?: ConnectorTemplate,
+  hint?: EdgeHint,
+): void {
+  const captions = buildCaptions(edge, template);
+  if (captions) connector.captions = captions;
+  mergeStyle(connector, template);
+  applyHint(connector, hint);
 }
 
 /**
@@ -76,16 +92,7 @@ export async function createConnector(
     start: { item: from.id, position: hint?.startPosition },
     end: { item: to.id, position: hint?.endPosition },
     shape: template?.shape ?? 'curved',
-    captions: edge.label
-      ? [
-          {
-            content: edge.label,
-            position: template?.caption?.position,
-            textAlignVertical: template?.caption
-              ?.textAlignVertical as TextAlignVertical,
-          },
-        ]
-      : undefined,
+    captions: buildCaptions(edge, template),
     style: template?.style as ConnectorStyle | undefined,
   });
   await connector.setMetadata(META_KEY, { from: edge.from, to: edge.to });

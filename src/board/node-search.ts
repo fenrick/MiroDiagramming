@@ -1,7 +1,8 @@
 import type { BaseItem, Group, Shape } from '@mirohq/websdk-types';
 import type { BoardQueryLike } from './board';
+import { STRUCT_GRAPH_KEY } from './meta-constants';
 
-const META_KEY = 'app.miro.structgraph';
+const META_KEY = STRUCT_GRAPH_KEY;
 
 /**
  * Concurrently fetch metadata for items and return the first that matches.
