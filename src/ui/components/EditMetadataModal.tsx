@@ -5,8 +5,8 @@ import { useExcelData } from '../hooks/excel-data-context';
 import { useExcelSync } from '../hooks/use-excel-sync';
 
 export interface EditMetadataModalProps {
-  isOpen: boolean;
-  onClose: () => void;
+  readonly isOpen: boolean;
+  readonly onClose: () => void;
 }
 
 /** Modal wrapper displaying RowInspector for the current selection. */

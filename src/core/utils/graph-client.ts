@@ -5,7 +5,7 @@ import { encodeBase64 } from './base64';
  * Fetch files from Microsoft Graph using an OAuth access token.
  */
 export class GraphClient {
-  constructor(private auth: GraphAuth = graphAuth) {}
+  constructor(private readonly auth: GraphAuth = graphAuth) {}
 
   /**
    * Retrieve a file as an array buffer given its share URL or drive item ID.

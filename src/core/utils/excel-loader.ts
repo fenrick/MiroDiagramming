@@ -50,7 +50,7 @@ export class ExcelLoader {
    */
   public loadSheet(name: string): ExcelRow[] {
     const ws = this.getSheet(name);
-    return XLSX.utils.sheet_to_json(ws, { defval: null }) as ExcelRow[];
+    return XLSX.utils.sheet_to_json<ExcelRow>(ws, { defval: null });
   }
 
   /**
@@ -66,7 +66,7 @@ export class ExcelLoader {
     const [sheetName, range] = named.Ref.replace(/'/g, '').split('!');
     const ws = this.workbook.Sheets[sheetName];
     if (!ws) throw new Error(`Missing sheet for table: ${name}`);
-    return XLSX.utils.sheet_to_json(ws, { range, defval: null }) as ExcelRow[];
+    return XLSX.utils.sheet_to_json<ExcelRow>(ws, { range, defval: null });
   }
 
   /** Retrieve a worksheet object, throwing on missing sheet. */
@@ -85,7 +85,7 @@ export const excelLoader = new ExcelLoader();
  * Excel loader capable of fetching workbooks from OneDrive or SharePoint.
  */
 export class GraphExcelLoader extends ExcelLoader {
-  constructor(private client: GraphClient = graphClient) {
+  constructor(private readonly client: GraphClient = graphClient) {
     super();
   }
 
