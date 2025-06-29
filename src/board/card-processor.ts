@@ -130,13 +130,19 @@ export class CardProcessor {
     await undoWidgets(this.builder, this.lastCreated);
   }
 
-  /** Retrieve all tags on the board, cached for the current run. */
+  /**
+   * Retrieve all tags on the board. Uses nullish assignment to cache
+   * results so multiple calls during a run hit the board only once.
+   */
   private async getBoardTags(): Promise<Tag[]> {
     this.tagsCache ??= (await miro.board.get({ type: 'tag' })) as Tag[];
     return this.tagsCache;
   }
 
-  /** Retrieve all cards on the board, cached for the current run. */
+  /**
+   * Retrieve all cards on the board. Like {@link getBoardTags} this
+   * caches the promise result so subsequent calls avoid extra lookups.
+   */
   private async getBoardCards(): Promise<Card[]> {
     this.cardsCache ??= (await miro.board.get({ type: 'card' })) as Card[];
     return this.cardsCache;
