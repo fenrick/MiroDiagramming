@@ -273,6 +273,18 @@ With `package-lock.json` checked in you can run `npm audit` after each install
 to scan dependencies for vulnerabilities. Include the lock file in commits so
 everyone uses the exact dependency versions when installing.
 
+## Commit message checks
+
+Commit messages must follow the Conventional Commits specification. Verify the
+latest commit locally by running:
+
+```bash
+npm run commitlint -- --edit $(git rev-parse --verify HEAD)
+```
+
+The CI pipeline also enforces commitlint via
+[`\.github/workflows/commitlint.yml`](.github/workflows/commitlint.yml).
+
 ## 🗂️ Folder structure <a name="folder"></a>
 
 ```
