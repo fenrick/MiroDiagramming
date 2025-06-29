@@ -24,28 +24,12 @@ export interface Position {
  * Allows injection of a mock implementation in tests.
  */
 import { BoardLike, getBoard, maybeSync, Syncable } from './board';
+import { getTextFields } from './search-tools';
 
 /** Extract a name field from a widget for sorting purposes. */
 function getName(item: Record<string, unknown>): string {
-  const rootText =
-    (item as { title?: string }).title ??
-    (item as { plainText?: string }).plainText ??
-    (item as { content?: string }).content ??
-    (item as { text?: string }).text;
-  if (typeof rootText === 'string') return rootText;
-
-  // Some widgets expose text inside an object e.g. { text: { plainText: '' } }
-  const textObj = (item as { text?: unknown }).text;
-  if (textObj && typeof textObj === 'object') {
-    const nested =
-      (textObj as { plainText?: string; content?: string; text?: string })
-        .plainText ??
-      (textObj as { plainText?: string; content?: string; text?: string })
-        .content ??
-      (textObj as { plainText?: string; content?: string; text?: string }).text;
-    if (typeof nested === 'string') return nested;
-  }
-  return '';
+  const first = getTextFields(item)[0];
+  return first ? first[1] : '';
 }
 
 /**
