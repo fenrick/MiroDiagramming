@@ -103,9 +103,9 @@ Complexity limits enforced automatically by **SonarQube** gate.
 1. Restore Node dependencies from cache.
 2. Lint, type-check, unit tests (Node 24).
 3. Build Storybook and a feature-flagged bundle for staging.
-4. SonarQube analysis and budget checks.
-5. Semantic-release creates a Git tag, updates the repository root
-   `CHANGELOG.md` with release notes and generates a Chrome-Store zip.
+4. SonarQube analysis and budget checks (configured by
+   [sonar-project.properties](../sonar-project.properties)).
+5. Semantic-release creates Git tag, changelog and Chrome-Store zip.
 6. Automatic rollback uses the previously published artefact (see
    **DEPLOYMENT.md** for details).
 
@@ -117,7 +117,8 @@ Complexity limits enforced automatically by **SonarQube** gate.
   short.
 - **Conventional Commits** enforced by commit-lint.
 - Every PR must pass all CI gates; manual reviewers are optional.
-- **CodeQL** scan adds static-analysis findings to the check suite.
+- **CodeQL** scan adds static-analysis findings to the check suite (workflow:
+  [.github/workflows/codeql.yml](../.github/workflows/codeql.yml)).
 
 ---
 
