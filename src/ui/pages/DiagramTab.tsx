@@ -152,10 +152,14 @@ export const DiagramTab: React.FC = () => {
     setImportQueue([]);
   };
 
-  const style = React.useMemo(
-    () => getDropzoneStyle(dropzone.isDragAccept, dropzone.isDragReject),
-    [dropzone.isDragAccept, dropzone.isDragReject],
-  );
+  const style = React.useMemo(() => {
+    const state = dropzone.isDragReject
+      ? 'reject'
+      : dropzone.isDragAccept
+        ? 'accept'
+        : 'base';
+    return getDropzoneStyle(state);
+  }, [dropzone.isDragAccept, dropzone.isDragReject]);
 
   return (
     <div style={{ marginTop: tokens.space.small }}>

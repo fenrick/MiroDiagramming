@@ -27,6 +27,8 @@ This project enforces consistent formatting with
 - Document exported functions with TSDoc comments.
 - Import order follows standard → vendor → local, alphabetically within each
   group.
+- Avoid boolean selector parameters. Use separate functions or enums to
+  communicate intent.
 
 ## Lint guidelines
 

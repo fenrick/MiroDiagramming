@@ -30,15 +30,14 @@ export async function undoLastImport(
  * Compute the inline style for the dropzone element.
  * The border colour changes based on drag-and-drop state.
  */
-export function getDropzoneStyle(
-  accept: boolean,
-  reject: boolean,
-): React.CSSProperties {
+export type DropzoneState = 'base' | 'accept' | 'reject';
+
+export function getDropzoneStyle(state: DropzoneState): React.CSSProperties {
   let borderColor: string = tokens.color.indigoAlpha[40];
-  if (accept) {
+  if (state === 'accept') {
     borderColor = tokens.color.green[700];
   }
-  if (reject) {
+  if (state === 'reject') {
     borderColor = tokens.color.red[700];
   }
   return { ...dropzoneStyles, borderColor };

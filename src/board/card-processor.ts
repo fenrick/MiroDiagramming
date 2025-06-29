@@ -1,5 +1,5 @@
 import { BoardBuilder } from './board-builder';
-import { maybeCreateFrame } from './frame-utils';
+import { clearActiveFrame, registerFrame } from './frame-utils';
 import { undoWidgets, syncOrUndo } from './undo-utils';
 import { CardData, cardLoader } from '../core/utils/cards';
 import type { Card, CardStyle, Frame, Tag } from '@mirohq/websdk-types';
@@ -82,15 +82,18 @@ export class CardProcessor {
       const { spot, startX, startY, columns, totalWidth, totalHeight } =
         await this.calculateLayoutArea(toCreate.length, options.columns);
 
-      frame = await maybeCreateFrame(
-        this.builder,
-        this.lastCreated,
-        options.createFrame !== false,
-        totalWidth,
-        totalHeight,
-        spot,
-        options.frameTitle,
-      );
+      if (options.createFrame !== false) {
+        frame = await registerFrame(
+          this.builder,
+          this.lastCreated,
+          totalWidth,
+          totalHeight,
+          spot,
+          options.frameTitle,
+        );
+      } else {
+        clearActiveFrame(this.builder);
+      }
 
       created = await Promise.all(
         toCreate.map((def, i) =>
@@ -108,7 +111,7 @@ export class CardProcessor {
       );
       created.forEach((c) => frame?.add(c));
     } else {
-      this.builder.setFrame(undefined);
+      clearActiveFrame(this.builder);
     }
 
     await syncOrUndo(this.builder, this.lastCreated, [...created, ...updated]);
