@@ -224,13 +224,13 @@ export class BoardBuilder {
     node: NodeData,
     pos: PositionedNode,
   ): Promise<BoardItem> {
-    const widget = await templateManager.createFromTemplate(
+    const widget = (await templateManager.createFromTemplate(
       node.type,
       node.label,
       pos.x,
       pos.y,
       this.frame,
-    );
+    )) as BoardItem;
     const meta = this.buildMeta(node);
     await this.applyMetadata(widget, meta);
     return widget;

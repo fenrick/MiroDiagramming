@@ -1,4 +1,4 @@
-import { encodeBase64 } from '../src/core/utils/base64';
+import { encodeBase64, decodeBase64 } from '../src/core/utils/base64';
 
 function expected(input: string): string {
   return Buffer.from(input, 'utf8')
@@ -15,5 +15,12 @@ describe('encodeBase64', () => {
     'https://example.com/тест+file/?q=a/b+c',
   ])('encodes %s', (value) => {
     expect(encodeBase64(value)).toBe(expected(value));
+  });
+});
+
+describe('decodeBase64', () => {
+  test.each(['hello', 'привет'])('round trip %s', (value) => {
+    const encoded = encodeBase64(value);
+    expect(decodeBase64(encoded)).toBe(value);
   });
 });

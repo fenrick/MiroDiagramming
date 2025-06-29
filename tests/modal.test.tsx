@@ -64,7 +64,7 @@ describe('Modal', () => {
         <button>Inside</button>
       </Modal>,
     );
-    const backdrop = screen.getByRole('button', { name: /close modal/i });
+    const backdrop = screen.getByTestId('modal-backdrop');
     fireEvent.click(backdrop);
     expect(spy).toHaveBeenCalled();
   });
@@ -79,7 +79,7 @@ describe('Modal', () => {
         <button>Inner</button>
       </Modal>,
     );
-    const backdrop = screen.getByRole('button', { name: /close modal/i });
+    const backdrop = screen.getByTestId('modal-backdrop');
     fireEvent.keyDown(backdrop, { key: 'Enter' });
     expect(spy).toHaveBeenCalled();
   });

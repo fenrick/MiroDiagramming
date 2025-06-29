@@ -19,9 +19,7 @@ export function calculateSpacingOffsets(
   count: number,
   spacing: number,
 ): number[] {
-  const offsets: number[] = [];
-  for (let i = 0; i < count; i += 1) offsets.push(i * spacing);
-  return offsets;
+  return Array.from({ length: count }, (_, i) => i * spacing);
 }
 
 /** Plan widget positions and size when distributing by growth. */
