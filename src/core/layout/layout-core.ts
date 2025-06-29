@@ -82,16 +82,16 @@ export async function performLayout(
   const layouted = await elk.layout(elkGraph);
   const nodes: Record<string, PositionedNode> = {};
   const edges: PositionedEdge[] = [];
-  for (const child of layouted.children || []) {
+  for (const child of layouted.children ?? []) {
     nodes[child.id] = {
       id: child.id,
-      x: child.x || 0,
-      y: child.y || 0,
-      width: child.width || DEFAULT_WIDTH,
-      height: child.height || DEFAULT_HEIGHT,
+      x: child.x ?? 0,
+      y: child.y ?? 0,
+      width: child.width ?? DEFAULT_WIDTH,
+      height: child.height ?? DEFAULT_HEIGHT,
     };
   }
-  for (const edge of layouted.edges || []) {
+  for (const edge of layouted.edges ?? []) {
     const section = edge.sections?.[0];
     if (!section) continue;
     edges.push({

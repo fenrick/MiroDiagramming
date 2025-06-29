@@ -9,7 +9,7 @@ export function edgesToHierarchy(graph: GraphData): HierNode[] {
   const children: Record<string, string[]> = {};
   const childSet = new Set<string>();
   for (const edge of graph.edges) {
-    children[edge.from] = children[edge.from] || [];
+    children[edge.from] ??= [];
     children[edge.from].push(edge.to);
     childSet.add(edge.to);
   }
@@ -21,7 +21,7 @@ export function edgesToHierarchy(graph: GraphData): HierNode[] {
       label: n.label,
       type: n.type,
       metadata: n.metadata,
-      ...(kids && kids.length ? { children: kids } : {}),
+      ...(kids?.length ? { children: kids } : {}),
     } as HierNode;
   };
   const roots = graph.nodes

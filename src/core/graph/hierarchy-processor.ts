@@ -101,9 +101,7 @@ export class HierarchyProcessor {
     await this.createWidgets(data, result.nodes, offsetX, offsetY);
     const syncItems = this.lastCreated.filter((i) => i !== frame);
     await syncOrUndo(this.builder, this.lastCreated, syncItems);
-    const target = frame
-      ? frame
-      : (this.lastCreated as Array<BaseItem | Group>);
+    const target = frame ?? (this.lastCreated as Array<BaseItem | Group>);
     await this.builder.zoomTo(target);
   }
 
