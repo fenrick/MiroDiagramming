@@ -6,7 +6,7 @@ import { tokens } from '../tokens';
 
 export interface JsonDropZoneProps {
   /** Callback invoked with selected files. */
-  onFiles: (files: File[]) => void;
+  readonly onFiles: (files: File[]) => void;
 }
 
 /** Dropzone for importing JSON files. */
@@ -20,11 +20,12 @@ export function JsonDropZone({
   });
 
   const style = React.useMemo(() => {
-    const state = dropzone.isDragReject
-      ? 'reject'
-      : dropzone.isDragAccept
-        ? 'accept'
-        : 'base';
+    let state: Parameters<typeof getDropzoneStyle>[0] = 'base';
+    if (dropzone.isDragReject) {
+      state = 'reject';
+    } else if (dropzone.isDragAccept) {
+      state = 'accept';
+    }
     return getDropzoneStyle(state);
   }, [dropzone.isDragAccept, dropzone.isDragReject]);
 

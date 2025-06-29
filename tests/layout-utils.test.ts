@@ -1,7 +1,8 @@
 import {
   computeEdgeHints,
   relativePosition,
-  boundingBox,
+  boundingBoxFromCenter,
+  boundingBoxFromTopLeft,
   frameOffset,
 } from '../src/core/layout/layout-utils';
 
@@ -30,15 +31,20 @@ describe('layout-utils', () => {
     });
   });
 
-  test('boundingBox handles center coordinates', () => {
-    const box = boundingBox(
-      {
-        a: { x: 5, y: 5, width: 10, height: 10 },
-        b: { x: 15, y: 15, width: 10, height: 10 },
-      },
-      true,
-    );
+  test('boundingBoxFromCenter handles center coordinates', () => {
+    const box = boundingBoxFromCenter({
+      a: { x: 5, y: 5, width: 10, height: 10 },
+      b: { x: 15, y: 15, width: 10, height: 10 },
+    });
     expect(box).toEqual({ minX: 0, minY: 0, maxX: 20, maxY: 20 });
+  });
+
+  test('boundingBoxFromTopLeft handles absolute coordinates', () => {
+    const box = boundingBoxFromTopLeft({
+      a: { x: 0, y: 0, width: 10, height: 10 },
+      b: { x: 20, y: 20, width: 10, height: 10 },
+    });
+    expect(box).toEqual({ minX: 0, minY: 0, maxX: 30, maxY: 30 });
   });
 
   test('frameOffset computes relative translation', () => {

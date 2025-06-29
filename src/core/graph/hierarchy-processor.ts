@@ -2,7 +2,7 @@ import { BoardBuilder } from '../../board/board-builder';
 import { clearActiveFrame, registerFrame } from '../../board/frame-utils';
 import { undoWidgets, syncOrUndo } from '../../board/undo-utils';
 import { fileUtils } from '../utils/file-utils';
-import { boundingBox, frameOffset } from '../layout/layout-utils';
+import { boundingBoxFromCenter, frameOffset } from '../layout/layout-utils';
 import {
   HierNode,
   layoutHierarchy,
@@ -111,7 +111,7 @@ export class HierarchyProcessor {
    * Determine the overall bounding box of a layout result.
    */
   private computeBounds(result: NestedLayoutResult) {
-    return boundingBox(result.nodes, true);
+    return boundingBoxFromCenter(result.nodes);
   }
 
   /**
