@@ -1,5 +1,10 @@
 import { BoardBuilder } from '../src/board/board-builder';
 import { templateManager } from '../src/board/templates';
+import {
+  applyElementToItem,
+  applyShapeElement,
+  applyTextElement,
+} from '../src/board/element-utils';
 
 interface GlobalWithMiro {
   miro?: { board: Record<string, unknown> };
@@ -58,11 +63,7 @@ describe('BoardBuilder branch coverage', () => {
     jest
       .spyOn(templateManager, 'createFromTemplate')
       .mockImplementation(async () => {
-        (
-          builder as unknown as {
-            applyShapeElement: (i: unknown, e: unknown, l: string) => void;
-          }
-        ).applyShapeElement(shape, el, 'L');
+        applyShapeElement(shape as unknown as Record<string, unknown>, el, 'L');
         return shape;
       });
     await builder.createNode(
@@ -77,7 +78,6 @@ describe('BoardBuilder branch coverage', () => {
   });
 
   test('applyTextElement merges style when provided', () => {
-    const builder = new BoardBuilder();
     const item: Record<string, unknown> = {
       type: 'text',
       style: { fontSize: 10 },
@@ -87,11 +87,7 @@ describe('BoardBuilder branch coverage', () => {
       unknown
     >;
     // Applying a text element should merge the style properties
-    (
-      builder as unknown as {
-        applyTextElement: (i: unknown, e: unknown, l: string) => void;
-      }
-    ).applyTextElement(item, el, 'L');
+    applyTextElement(item as unknown as Record<string, unknown>, el, 'L');
     expect(item.style.color).toBe('red');
     expect(item.style.fontSize).toBe(10);
   });
@@ -156,29 +152,19 @@ describe('BoardBuilder branch coverage', () => {
   });
 
   test('applyShapeElement preserves existing fillColor', () => {
-    const builder = new BoardBuilder();
     const item: Record<string, unknown> = {
       type: 'shape',
       style: { fillColor: '#abc' },
     };
     const el = { shape: 'rect', fill: '#fff', width: 1, height: 1 };
-    (
-      builder as unknown as {
-        applyShapeElement: (i: unknown, e: unknown, l: string) => void;
-      }
-    ).applyShapeElement(item, el, 'L');
+    applyShapeElement(item as unknown as Record<string, unknown>, el, 'L');
     expect(item.style.fillColor).toBe('#abc');
   });
 
   test('applyElementToItem handles text widgets', () => {
-    const builder = new BoardBuilder();
     const item: Record<string, unknown> = { type: 'text', style: {} };
     const el = { text: 'Name' } as Record<string, unknown>;
-    (
-      builder as unknown as {
-        applyElementToItem: (i: unknown, e: unknown, l: string) => void;
-      }
-    ).applyElementToItem(item, el, 'Label');
+    applyElementToItem(item as unknown as Record<string, unknown>, el, 'Label');
     expect(item.content).toBe('Name');
   });
 

@@ -1,4 +1,4 @@
-import type { ConnectorTemplate, TemplateElement } from './templates';
+import type { ConnectorTemplate } from './templates';
 import { templateManager } from './templates';
 import type {
   BaseItem,
@@ -8,10 +8,7 @@ import type {
   Group,
   GroupableItem,
   Shape,
-  ShapeStyle,
-  Text,
   TextAlignVertical,
-  TextStyle,
 } from '@mirohq/websdk-types';
 import type {
   EdgeData,
@@ -254,70 +251,6 @@ export class BoardBuilder {
       }),
     );
     return matches.find(Boolean);
-  }
-
-  /**
-   * Apply template values for a shape element to an existing item.
-   * This updates geometry, text content and style attributes in place.
-   */
-  public applyShapeElement(
-    item: BaseItem,
-    element: TemplateElement,
-    label: string,
-  ): void {
-    const shape = item as Shape;
-    if (element.shape) shape.shape = element.shape as Shape['shape'];
-    if (element.rotation !== undefined) shape.rotation = element.rotation;
-    if (element.width)
-      (shape as unknown as { width: number }).width = element.width;
-    if (element.height)
-      (shape as unknown as { height: number }).height = element.height;
-    shape.content = (element.text ?? '{{label}}').replace('{{label}}', label);
-    const existing = (shape.style ?? {}) as Partial<ShapeStyle>;
-    const style: Partial<ShapeStyle> & Record<string, unknown> = {
-      ...existing,
-      ...templateManager.resolveStyle(element.style ?? {}),
-    };
-    if (element.fill && !('fillColor' in style)) {
-      style.fillColor = templateManager.resolveStyle({
-        fillColor: element.fill,
-      }).fillColor as string;
-    }
-    shape.style = style as ShapeStyle;
-  }
-
-  /**
-   * Apply text element properties such as content and style to a widget.
-   */
-  public applyTextElement(
-    item: BaseItem,
-    element: TemplateElement,
-    label: string,
-  ): void {
-    const text = item as Text;
-    text.content = (element.text ?? '{{label}}').replace('{{label}}', label);
-    if (element.style) {
-      text.style = {
-        ...(text.style ?? ({} as Partial<TextStyle>)),
-        ...(templateManager.resolveStyle(element.style) as Partial<TextStyle>),
-      } as TextStyle;
-    }
-  }
-
-  /**
-   * Route element application based on widget type.
-   * Shapes and text widgets share most properties but are handled separately.
-   */
-  public applyElementToItem(
-    item: BaseItem,
-    element: TemplateElement,
-    label: string,
-  ): void {
-    if (item.type === 'shape') {
-      this.applyShapeElement(item, element, label);
-    } else if (item.type === 'text') {
-      this.applyTextElement(item, element, label);
-    }
   }
 
   /**
