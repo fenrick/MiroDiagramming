@@ -1,5 +1,4 @@
 import React from 'react';
-import { useDropzone } from 'react-dropzone';
 import {
   Button,
   Checkbox,
@@ -8,11 +7,12 @@ import {
   Text,
   Icon,
 } from '../components/legacy';
+import { JsonDropZone } from '../components/JsonDropZone';
 import { tokens } from '../tokens';
 import { CardProcessor } from '../../board/card-processor';
 
 import { showError } from '../hooks/notifications';
-import { getDropzoneStyle, undoLastImport } from '../hooks/ui-utils';
+import { undoLastImport } from '../hooks/ui-utils';
 
 /** UI for the Cards tab. */
 export const CardsTab: React.FC = () => {
@@ -37,14 +37,10 @@ export const CardsTab: React.FC = () => {
     return () => window.removeEventListener('keydown', handler);
   }, [lastProc]);
 
-  const dropzone = useDropzone({
-    accept: { 'application/json': ['.json'] },
-    maxFiles: 1,
-    onDrop: (droppedFiles: File[]): void => {
-      const file = droppedFiles[0];
-      setFiles([file]);
-    },
-  });
+  const handleFiles = (droppedFiles: File[]): void => {
+    const file = droppedFiles[0];
+    setFiles([file]);
+  };
 
   const cardProcessor = React.useMemo(() => new CardProcessor(), []);
 
@@ -70,51 +66,9 @@ export const CardsTab: React.FC = () => {
     setFiles([]);
   };
 
-  const style = React.useMemo(() => {
-    const state = dropzone.isDragReject
-      ? 'reject'
-      : dropzone.isDragAccept
-        ? 'accept'
-        : 'base';
-    return getDropzoneStyle(state);
-  }, [dropzone.isDragAccept, dropzone.isDragReject]);
-
   return (
     <div style={{ marginTop: tokens.space.small }}>
-      <div
-        {...dropzone.getRootProps({ style })}
-        aria-label='File drop area'
-        aria-describedby='dropzone-instructions'>
-        <InputField label='JSON file'>
-          <input
-            data-testid='file-input'
-            {...dropzone.getInputProps({ 'aria-label': 'JSON file input' })}
-          />
-        </InputField>
-        {dropzone.isDragAccept ? (
-          <Paragraph className='dnd-text'>Drop your JSON file here</Paragraph>
-        ) : (
-          <>
-            <div style={{ padding: tokens.space.small }}>
-              <Button variant='primary'>
-                <React.Fragment key='.0'>
-                  <Icon name='upload' />
-                  <Text>Select JSON file</Text>
-                </React.Fragment>
-              </Button>
-              <Paragraph className='dnd-text'>
-                Or drop your JSON file here
-              </Paragraph>
-            </div>
-          </>
-        )}
-      </div>
-      <Paragraph
-        id='dropzone-instructions'
-        className='custom-visually-hidden'>
-        Press Enter to open the file picker or drop a JSON file on the area
-        above.
-      </Paragraph>
+      <JsonDropZone onFiles={handleFiles} />
 
       {files.length > 0 && (
         <>
