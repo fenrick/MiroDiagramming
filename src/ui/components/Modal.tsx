@@ -81,6 +81,7 @@ export function Modal({
 
   if (!isOpen) return null;
 
+
   // Close the modal when the backdrop is activated via mouse or keyboard
   return (
     <div
@@ -88,6 +89,7 @@ export function Modal({
       tabIndex={0}
       aria-label='Close modal'
       className='modal-backdrop'
+      aria-label='Close modal'
       style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();

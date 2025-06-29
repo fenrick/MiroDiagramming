@@ -20,6 +20,19 @@ export interface CardFile {
   cards: CardData[];
 }
 
+function parseCardStyle(
+  styleInput: unknown,
+): Partial<Pick<CardStyle, 'cardTheme' | 'fillBackground'>> {
+  const raw = (styleInput ?? {}) as Record<string, unknown>;
+  const style: Partial<Pick<CardStyle, 'cardTheme' | 'fillBackground'>> = {};
+  if (raw.cardTheme) style.cardTheme = raw.cardTheme as CardStyle['cardTheme'];
+  if (raw.fillBackground !== undefined) {
+    style.fillBackground =
+      raw.fillBackground === true || raw.fillBackground === 'true';
+  }
+  return style;
+}
+
 /** Load and parse card data from an uploaded file. */
 export class CardLoader {
   private static instance: CardLoader;
@@ -53,27 +66,18 @@ export class CardLoader {
 
   /** Extract supported style fields and normalize values. */
   private normalizeCard(card: Record<string, unknown>): CardData {
-    const styleRaw = (card.style ?? {}) as Record<string, unknown>;
-    const style: Partial<Pick<CardStyle, 'cardTheme' | 'fillBackground'>> = {};
-    if (styleRaw.cardTheme)
-      style.cardTheme = styleRaw.cardTheme as CardStyle['cardTheme'];
-    if (styleRaw.fillBackground !== undefined) {
-      style.fillBackground =
-        styleRaw.fillBackground === true || styleRaw.fillBackground === 'true';
-    }
-    return {
-      id: typeof card.id === 'string' ? card.id : undefined,
-      title: String(card.title),
-      description:
-        typeof card.description === 'string' ? card.description : undefined,
-      tags: Array.isArray(card.tags) ? (card.tags as string[]) : undefined,
-      fields: Array.isArray(card.fields)
-        ? (card.fields as CardField[])
-        : undefined,
-      taskStatus: card.taskStatus as CardTaskStatus | undefined,
-      style: Object.keys(style).length ? style : undefined,
-    };
+    const style = parseCardStyle(card.style);
+    const result: CardData = { title: String(card.title) };
+    if (typeof card.id === 'string') result.id = card.id;
+    if (typeof card.description === 'string')
+      result.description = card.description;
+    if (Array.isArray(card.tags)) result.tags = card.tags as string[];
+    if (Array.isArray(card.fields)) result.fields = card.fields as CardField[];
+    result.taskStatus = card.taskStatus as CardTaskStatus | undefined;
+    if (Object.keys(style).length) result.style = style;
+    return result;
   }
 }
 
 export const cardLoader = CardLoader.getInstance();
+export { parseCardStyle };
