@@ -83,7 +83,7 @@ export class NestedLayouter {
         height: node.height,
       };
     }
-    for (const child of node.children || []) {
+    for (const child of node.children ?? []) {
       const childX = typeof node.x === 'number' ? offsetX + node.x : offsetX;
       const childY = typeof node.y === 'number' ? offsetY + node.y : offsetY;
       this.collectPositions(child, map, childX, childY);
@@ -109,7 +109,7 @@ export class NestedLayouter {
     const elk = new Elk();
     const result = await elk.layout(elkRoot);
     const nodes: Record<string, PositionedNode> = {};
-    for (const child of result.children || []) {
+    for (const child of result.children ?? []) {
       this.collectPositions(child, nodes);
     }
     return { nodes };
