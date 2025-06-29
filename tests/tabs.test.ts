@@ -57,11 +57,15 @@ describe('tab components', () => {
       .spyOn(resizeTools, 'applySizeToSelection')
       .mockResolvedValue(undefined as unknown as void);
     render(React.createElement(ResizeTab));
-    fireEvent.change(screen.getByPlaceholderText(/width/i), {
-      target: { value: '50' },
+    await act(async () => {
+      fireEvent.change(screen.getByPlaceholderText(/width/i), {
+        target: { value: '50' },
+      });
     });
-    fireEvent.change(screen.getByPlaceholderText(/height/i), {
-      target: { value: '40' },
+    await act(async () => {
+      fireEvent.change(screen.getByPlaceholderText(/height/i), {
+        target: { value: '40' },
+      });
     });
     await act(async () => {
       fireEvent.click(screen.getByText(/apply size/i));
@@ -108,8 +112,10 @@ describe('tab components', () => {
     await act(async () => {
       render(React.createElement(StyleTab));
     });
-    fireEvent.change(screen.getByTestId('adjust-input'), {
-      target: { value: '20' },
+    await act(async () => {
+      fireEvent.change(screen.getByTestId('adjust-input'), {
+        target: { value: '20' },
+      });
     });
     await act(async () => {
       fireEvent.click(screen.getByRole('button', { name: /apply/i }));
@@ -209,8 +215,10 @@ describe('tab components', () => {
       .spyOn(spacingTools, 'applySpacingLayout')
       .mockResolvedValue(undefined as unknown as void);
     render(React.createElement(SpacingTab));
-    fireEvent.change(screen.getByLabelText('Mode'), {
-      target: { value: 'grow' },
+    await act(async () => {
+      fireEvent.change(screen.getByLabelText('Mode'), {
+        target: { value: 'grow' },
+      });
     });
     await act(async () => {
       fireEvent.click(screen.getByText(/distribute/i));
@@ -225,8 +233,10 @@ describe('tab components', () => {
       .spyOn(frameTools, 'renameSelectedFrames')
       .mockResolvedValue(undefined as unknown as void);
     render(React.createElement(FramesTab));
-    fireEvent.change(screen.getByLabelText('Prefix'), {
-      target: { value: 'A-' },
+    await act(async () => {
+      fireEvent.change(screen.getByLabelText('Prefix'), {
+        target: { value: 'A-' },
+      });
     });
     await act(async () => {
       fireEvent.click(screen.getByText(/rename frames/i));
