@@ -78,10 +78,8 @@ export class ExcelSyncService {
     const metaCols = mapping.metadataColumns ?? {};
     for (const [i, r] of rows.entries()) {
       const row = { ...r };
-      const idStr =
-        mapping.idColumn && row[mapping.idColumn] != null
-          ? String(row[mapping.idColumn])
-          : String(i);
+      const rowId = mapping.idColumn ? row[mapping.idColumn] : undefined;
+      const idStr = String(rowId ?? i);
       const widget = await this.findWidget(idStr);
       if (widget) {
         const item = await this.extractItem(widget);
