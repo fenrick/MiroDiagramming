@@ -6,8 +6,8 @@ import type { TabTuple } from './tab-definitions';
 /** UI for renaming selected frames. */
 export const FramesTab: React.FC = () => {
   const [prefix, setPrefix] = React.useState('Frame-');
-  const rename = (): void => {
-    void renameSelectedFrames({ prefix });
+  const rename = async (): Promise<void> => {
+    await renameSelectedFrames({ prefix });
   };
   return (
     <div>
