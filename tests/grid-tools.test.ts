@@ -2,19 +2,27 @@ import {
   applyGridLayout,
   calculateGridPositions,
 } from '../src/board/grid-tools';
+import { calculateGrid } from '../src/core/layout/grid-layout';
 import { BoardLike } from '../src/board/board';
 
 describe('grid-tools', () => {
+  test('calculateGrid computes grid positions', () => {
+    const positions = calculateGrid(3, { cols: 2, padding: 5 }, 10, 10);
+    expect(positions).toEqual([
+      { x: 0, y: 0 },
+      { x: 15, y: 0 },
+      { x: 0, y: 15 },
+    ]);
+  });
   test('calculateGridPositions computes offsets', () => {
+    const expected = calculateGrid(4, { cols: 2, padding: 5 }, 10, 10);
     const positions = calculateGridPositions(
       { cols: 2, padding: 5 },
       4,
       10,
       10,
     );
-    expect(positions).toHaveLength(4);
-    expect(positions[1]).toEqual({ x: 15, y: 0 });
-    expect(positions[2]).toEqual({ x: 0, y: 15 });
+    expect(positions).toEqual(expected);
   });
 
   test('applyGridLayout positions widgets', async () => {

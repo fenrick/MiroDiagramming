@@ -25,6 +25,10 @@ export interface Position {
  */
 import { BoardLike, getBoard, maybeSync, Syncable } from './board';
 import { getTextFields } from './search-tools';
+import {
+  calculateGrid,
+  GridConfig as LayoutGridConfig,
+} from '../core/layout/grid-layout';
 
 /** Extract a name field from a widget for sorting purposes. */
 function getName(item: Record<string, unknown>): string {
@@ -41,18 +45,12 @@ export function calculateGridPositions(
   cellWidth: number,
   cellHeight: number,
 ): Position[] {
-  const positions: Position[] = [];
-  const vertical = opts.sortOrientation === 'vertical';
-  const rows = Math.ceil(count / opts.cols);
-  for (let i = 0; i < count; i += 1) {
-    const c = vertical ? Math.floor(i / rows) : i % opts.cols;
-    const r = vertical ? i % rows : Math.floor(i / opts.cols);
-    positions.push({
-      x: c * (cellWidth + opts.padding),
-      y: r * (cellHeight + opts.padding),
-    });
-  }
-  return positions;
+  const config: LayoutGridConfig = {
+    cols: opts.cols,
+    padding: opts.padding,
+    vertical: opts.sortOrientation === 'vertical',
+  };
+  return calculateGrid(count, config, cellWidth, cellHeight);
 }
 
 /**

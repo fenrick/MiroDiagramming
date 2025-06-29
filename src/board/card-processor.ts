@@ -2,6 +2,7 @@ import { BoardBuilder } from './board-builder';
 import { clearActiveFrame, registerFrame } from './frame-utils';
 import { UndoableProcessor } from '../core/graph/undoable-processor';
 import { CardData, cardLoader } from '../core/utils/cards';
+import { calculateGrid } from '../core/layout/grid-layout';
 import type { Card, CardStyle, Frame, Tag } from '@mirohq/websdk-types';
 
 export interface CardProcessOptions {
@@ -273,15 +274,18 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
   }> {
     const autoCols = columns ?? Math.ceil(Math.sqrt(count));
     const cols = Math.max(1, Math.min(autoCols, count));
-    const rows = Math.ceil(count / cols);
+    const grid = calculateGrid(
+      count,
+      { cols, padding: CardProcessor.CARD_GAP },
+      CardProcessor.CARD_WIDTH,
+      CardProcessor.CARD_HEIGHT,
+    );
+    const maxX = grid.reduce((m, p) => Math.max(m, p.x), 0);
+    const maxY = grid.reduce((m, p) => Math.max(m, p.y), 0);
     const totalWidth =
-      CardProcessor.CARD_WIDTH * cols +
-      CardProcessor.CARD_GAP * (cols - 1) +
-      CardProcessor.CARD_MARGIN * 2;
+      maxX + CardProcessor.CARD_WIDTH + CardProcessor.CARD_MARGIN * 2;
     const totalHeight =
-      CardProcessor.CARD_HEIGHT * rows +
-      CardProcessor.CARD_GAP * (rows - 1) +
-      CardProcessor.CARD_MARGIN * 2;
+      maxY + CardProcessor.CARD_HEIGHT + CardProcessor.CARD_MARGIN * 2;
     const spot = await this.builder.findSpace(totalWidth, totalHeight);
     const startX = this.computeStartCoordinate(
       spot.x,
