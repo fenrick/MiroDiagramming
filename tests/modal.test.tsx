@@ -56,7 +56,7 @@ describe('Modal', () => {
 
   test('clicking the backdrop triggers onClose', () => {
     const spy = vi.fn();
-    render(
+    const { container } = render(
       <Modal
         title='B'
         isOpen
@@ -64,13 +64,14 @@ describe('Modal', () => {
         <button>Inside</button>
       </Modal>,
     );
-    fireEvent.click(screen.getByLabelText('Close modal'));
+    const backdrop = container.querySelector('.modal-backdrop') as HTMLElement;
+    fireEvent.click(backdrop);
     expect(spy).toHaveBeenCalled();
   });
 
   test('pressing Enter on the backdrop triggers onClose', () => {
     const spy = vi.fn();
-    render(
+    const { container } = render(
       <Modal
         title='C'
         isOpen
@@ -78,7 +79,8 @@ describe('Modal', () => {
         <button>Inner</button>
       </Modal>,
     );
-    fireEvent.keyDown(screen.getByLabelText('Close modal'), { key: 'Enter' });
+    const backdrop = container.querySelector('.modal-backdrop') as HTMLElement;
+    fireEvent.keyDown(backdrop, { key: 'Enter' });
     expect(spy).toHaveBeenCalled();
   });
 });
