@@ -1,8 +1,8 @@
 import React from 'react';
 
-export interface IconProps extends React.HTMLAttributes<HTMLSpanElement> {
-  name: string;
-}
+export type IconProps = Readonly<
+  React.HTMLAttributes<HTMLSpanElement> & { name: string }
+>;
 
 /** Renders a span with the Mirotone icon class. */
 export function Icon({

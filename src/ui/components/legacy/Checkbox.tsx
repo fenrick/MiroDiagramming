@@ -1,14 +1,12 @@
 import React from 'react';
 
-export interface CheckboxProps
-  extends Omit<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    'onChange' | 'value'
-  > {
-  label?: string;
-  value?: boolean;
-  onChange?: (value: boolean) => void;
-}
+export type CheckboxProps = Readonly<
+  Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value'> & {
+    label?: string;
+    value?: boolean;
+    onChange?: (value: boolean) => void;
+  }
+>;
 
 /**
  * Mirotone-styled checkbox component.

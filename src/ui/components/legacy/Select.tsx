@@ -1,13 +1,11 @@
 import React from 'react';
 
-export interface SelectProps
-  extends Omit<
-    React.SelectHTMLAttributes<HTMLSelectElement>,
-    'onChange' | 'value'
-  > {
-  value?: string;
-  onChange?: (value: string) => void;
-}
+export type SelectProps = Readonly<
+  Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'onChange' | 'value'> & {
+    value?: string;
+    onChange?: (value: string) => void;
+  }
+>;
 
 /** Select dropdown styled with Mirotone classes. */
 export function Select({
@@ -31,7 +29,9 @@ export function Select({
   );
 }
 
-export type SelectOptionProps = React.OptionHTMLAttributes<HTMLOptionElement>;
+export type SelectOptionProps = Readonly<
+  React.OptionHTMLAttributes<HTMLOptionElement>
+>;
 
 /** Option element for Select. */
 export function SelectOption(props: SelectOptionProps): React.JSX.Element {

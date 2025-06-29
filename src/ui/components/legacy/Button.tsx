@@ -1,9 +1,10 @@
 import React from 'react';
 
-export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'tertiary' | 'ghost' | 'danger';
-}
+export type ButtonProps = Readonly<
+  React.ButtonHTMLAttributes<HTMLButtonElement> & {
+    variant?: 'primary' | 'secondary' | 'tertiary' | 'ghost' | 'danger';
+  }
+>;
 
 /** Basic button styled with Mirotone utility classes. */
 export function Button({

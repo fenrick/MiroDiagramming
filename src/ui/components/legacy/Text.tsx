@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type TextProps = React.HTMLAttributes<HTMLSpanElement>;
+export type TextProps = Readonly<React.HTMLAttributes<HTMLSpanElement>>;
 
 /** Span element used for button labels and inline text. */
 export function Text({
