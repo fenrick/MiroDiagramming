@@ -82,7 +82,6 @@ export function Modal({
   if (!isOpen) return null;
 
   // Close the modal when the backdrop is activated via mouse or keyboard.
-
   return (
     <div
       role='button'
