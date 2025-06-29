@@ -1,4 +1,4 @@
-import { BoardLike, getBoard, maybeSync } from './board';
+import { BoardLike, getBoard, maybeSync, Syncable } from './board';
 
 /** Options for renaming selected frames. */
 export interface RenameOptions {
@@ -41,7 +41,7 @@ export async function renameSelectedFrames(
   await Promise.all(
     frames.map(async (frame, i) => {
       frame.title = `${opts.prefix}${i}`;
-      await maybeSync(frame as { sync?: () => Promise<void> });
+      await maybeSync(frame as Syncable);
     }),
   );
 }

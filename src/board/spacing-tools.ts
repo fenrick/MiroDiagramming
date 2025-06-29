@@ -1,4 +1,4 @@
-import { BoardLike, getBoard, maybeSync } from './board';
+import { BoardLike, getBoard, maybeSync, Syncable } from './board';
 
 /** Options for spacing layout. */
 export interface SpacingOptions {
@@ -68,7 +68,7 @@ export async function applySpacingLayout(
     (a, b) =>
       ((a as Record<string, number>)[axis] ?? 0) -
       ((b as Record<string, number>)[axis] ?? 0),
-  ) as Array<Record<string, number> & { sync?: () => Promise<void> }>;
+  ) as Array<Record<string, number> & Syncable>;
   const mode = opts.mode ?? 'move';
   if (mode === 'grow') {
     const plan = calculateGrowthPlan(items, axis, opts.spacing);
@@ -84,7 +84,7 @@ export async function applySpacingLayout(
 
   let position = (items[0] as Record<string, number>)[axis] ?? 0;
   await moveWidget(
-    items[0] as Record<string, number> & { sync?: () => Promise<void> },
+    items[0] as Record<string, number> & Syncable,
     axis,
     position,
   );
@@ -121,7 +121,7 @@ function getDimension(item: Record<string, number>, key: string): number {
  * @param position - New coordinate value.
  */
 async function moveWidget(
-  item: Record<string, number> & { sync?: () => Promise<void> },
+  item: Record<string, number> & Syncable,
   axis: 'x' | 'y',
   position: number,
 ): Promise<void> {

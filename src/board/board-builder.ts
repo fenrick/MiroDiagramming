@@ -19,7 +19,7 @@ import type {
   NodeData,
   PositionedNode,
 } from '../core/graph';
-import { maybeSync } from './board';
+import { maybeSync, Syncable } from './board';
 
 const META_KEY = 'app.miro.structgraph';
 
@@ -166,9 +166,7 @@ export class BoardBuilder {
   public async syncAll(
     items: Array<BaseItem | Group | Connector>,
   ): Promise<void> {
-    await Promise.all(
-      items.map((i) => maybeSync(i as { sync?: () => Promise<void> })),
-    );
+    await Promise.all(items.map((i) => maybeSync(i as Syncable)));
   }
 
   /** Remove the provided widgets from the board. */
