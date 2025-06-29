@@ -6,11 +6,11 @@ import { InputField } from './legacy';
 
 export interface RowInspectorProps {
   /** Rows loaded from the workbook. */
-  rows: ExcelRow[];
+  readonly rows: ExcelRow[];
   /** Optional column holding unique identifiers. */
-  idColumn?: string;
+  readonly idColumn?: string;
   /** Callback invoked when any cell is edited. */
-  onUpdate?: (index: number, row: ExcelRow) => void;
+  readonly onUpdate?: (index: number, row: ExcelRow) => void;
 }
 
 /**

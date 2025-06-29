@@ -1,5 +1,6 @@
-import type { BaseItem, Connector, Frame, Group } from '@mirohq/websdk-types';
+import type { BaseItem, Connector, Group } from '@mirohq/websdk-types';
 import { BoardBuilder } from './board-builder';
+import type { BoardEntity } from './item-types';
 
 /**
  * Remove widgets tracked in the registry and clear the list.
@@ -9,7 +10,7 @@ import { BoardBuilder } from './board-builder';
  */
 export async function undoWidgets(
   builder: BoardBuilder,
-  registry: Array<BaseItem | Group | Connector | Frame>,
+  registry: BoardEntity[],
 ): Promise<void> {
   if (registry.length) {
     const items = registry.slice();
@@ -31,7 +32,7 @@ export async function undoWidgets(
  */
 export async function syncOrUndo(
   builder: BoardBuilder,
-  registry: Array<BaseItem | Group | Connector | Frame>,
+  registry: BoardEntity[],
   items: Array<BaseItem | Group | Connector>,
 ): Promise<void> {
   try {

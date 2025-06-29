@@ -14,8 +14,6 @@ const META_KEY = 'app.miro.excel';
 export class ExcelSyncService {
   private rowMap: Record<string, string> = {};
 
-  constructor() {}
-
   /** Clear the internal row mapping. */
   public reset(): void {
     this.rowMap = {};
@@ -78,8 +76,8 @@ export class ExcelSyncService {
   ): Promise<ExcelRow[]> {
     const updated: ExcelRow[] = [];
     const metaCols = mapping.metadataColumns ?? {};
-    for (let i = 0; i < rows.length; i++) {
-      const row = { ...rows[i] };
+    for (const [i, r] of rows.entries()) {
+      const row = { ...r };
       const idStr =
         mapping.idColumn && row[mapping.idColumn] != null
           ? String(row[mapping.idColumn])
@@ -95,11 +93,11 @@ export class ExcelSyncService {
         const meta = (await item.getMetadata(META_KEY)) as
           | Record<string, unknown>
           | undefined;
-        if (mapping.textColumn && meta && meta.text != null) {
+        if (mapping.textColumn && meta?.text != null) {
           row[mapping.textColumn] = meta.text;
         }
         Object.keys(metaCols).forEach((key) => {
-          if (meta && meta[key] != null) {
+          if (meta?.[key] != null) {
             row[metaCols[key]] = meta[key];
           }
         });
@@ -181,8 +179,8 @@ export class ExcelSyncService {
     T extends { getMetadata: (k: string) => Promise<unknown> },
   >(items: T[], rowId: string): Promise<T | undefined> {
     const metas = await Promise.all(items.map((i) => i.getMetadata(META_KEY)));
-    for (let i = 0; i < items.length; i++) {
-      const meta = metas[i] as { rowId?: string };
+    for (const [i, metaVal] of metas.entries()) {
+      const meta = metaVal as { rowId?: string };
       if (meta?.rowId === rowId) {
         return items[i];
       }

@@ -292,7 +292,7 @@ export const ExcelTab: React.FC = () => {
           </InputField>
           <ul style={{ maxHeight: 160, overflowY: 'auto' }}>
             {rows.map((r, i) => (
-              <li key={i}>
+              <li key={idColumn ? String(r[idColumn]) : String(i)}>
                 <Checkbox
                   label={`Row ${i + 1}`}
                   value={selected.has(i)}

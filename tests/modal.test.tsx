@@ -45,7 +45,8 @@ describe('Modal', () => {
       </Modal>,
     );
     const closeBtn = screen.getByLabelText('Close');
-    const second = screen.getByText('Second');
+    const buttons = screen.getAllByRole('button');
+    const second = buttons[buttons.length - 1];
     second.focus();
     fireEvent.keyDown(window, { key: 'Tab' });
     expect(closeBtn).toHaveFocus();
