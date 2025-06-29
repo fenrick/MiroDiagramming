@@ -110,19 +110,6 @@ export function boundingBoxFromCenter(
 }
 
 /**
- * @deprecated Use {@link boundingBoxFromTopLeft} or {@link boundingBoxFromCenter}.
- * Determines the bounding box of positioned nodes.
- */
-export function boundingBox(
-  nodes: Record<string, NodePosition>,
-  centerBased = false,
-): BoundingBox {
-  return centerBased
-    ? boundingBoxFromCenter(nodes)
-    : boundingBoxFromTopLeft(nodes);
-}
-
-/**
  * Calculate offsets for placing nodes within a frame at a given spot.
  *
  * @param spot - Location of the frame centre.
