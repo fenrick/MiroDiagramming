@@ -56,7 +56,7 @@ describe('Modal', () => {
 
   test('clicking the backdrop triggers onClose', () => {
     const spy = vi.fn();
-    const { container } = render(
+    render(
       <Modal
         title='B'
         isOpen
@@ -64,14 +64,14 @@ describe('Modal', () => {
         <button>Inside</button>
       </Modal>,
     );
-    const backdrop = container.querySelector('.modal-backdrop') as HTMLElement;
+    const backdrop = screen.getByRole('button', { name: /close modal/i });
     fireEvent.click(backdrop);
     expect(spy).toHaveBeenCalled();
   });
 
   test('pressing Enter on the backdrop triggers onClose', () => {
     const spy = vi.fn();
-    const { container } = render(
+    render(
       <Modal
         title='C'
         isOpen
@@ -79,7 +79,7 @@ describe('Modal', () => {
         <button>Inner</button>
       </Modal>,
     );
-    const backdrop = container.querySelector('.modal-backdrop') as HTMLElement;
+    const backdrop = screen.getByRole('button', { name: /close modal/i });
     fireEvent.keyDown(backdrop, { key: 'Enter' });
     expect(spy).toHaveBeenCalled();
   });
