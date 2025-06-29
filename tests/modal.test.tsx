@@ -66,4 +66,18 @@ describe('Modal', () => {
     fireEvent.click(screen.getByLabelText('Close modal'));
     expect(spy).toHaveBeenCalled();
   });
+
+  test('pressing Enter on the backdrop triggers onClose', () => {
+    const spy = vi.fn();
+    render(
+      <Modal
+        title='C'
+        isOpen
+        onClose={spy}>
+        <button>Inner</button>
+      </Modal>,
+    );
+    fireEvent.keyDown(screen.getByLabelText('Close modal'), { key: 'Enter' });
+    expect(spy).toHaveBeenCalled();
+  });
 });
