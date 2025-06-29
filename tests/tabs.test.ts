@@ -346,4 +346,20 @@ describe('tab auto-registration', () => {
       process.env.NODE_ENV = prev;
     }
   });
+
+  test('includes ChangelogTab in all environments', async () => {
+    const envs = ['test', 'development', 'production'] as const;
+    for (const env of envs) {
+      const prev = process.env.NODE_ENV;
+      process.env.NODE_ENV = env;
+      const { TAB_DATA } =
+        env === 'test'
+          ? await import('../src/ui/pages/tabs.ts?test')
+          : env === 'development'
+            ? await import('../src/ui/pages/tabs.ts?dev')
+            : await import('../src/ui/pages/tabs.ts?prod');
+      expect(TAB_DATA.some((t) => t[1] === 'changelog')).toBe(true);
+      process.env.NODE_ENV = prev;
+    }
+  });
 });
