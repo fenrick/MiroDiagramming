@@ -23,7 +23,7 @@ export interface Position {
  * Minimal abstraction of the board API used for selection and grouping.
  * Allows injection of a mock implementation in tests.
  */
-import { BoardLike, getBoard } from './board';
+import { BoardLike, getBoard, maybeSync } from './board';
 
 /** Extract a name field from a widget for sorting purposes. */
 function getName(item: Record<string, unknown>): string {
@@ -109,9 +109,7 @@ export async function applyGridLayout(
     items.map(async (item: Record<string, unknown>, i: number) => {
       item.x = first.x + positions[i].x;
       item.y = first.y + positions[i].y;
-      if (typeof (item as { sync?: () => Promise<void> }).sync === 'function') {
-        await (item as { sync: () => Promise<void> }).sync();
-      }
+      await maybeSync(item as { sync?: () => Promise<void> });
     }),
   );
   if (opts.groupResult && typeof b.group === 'function') {

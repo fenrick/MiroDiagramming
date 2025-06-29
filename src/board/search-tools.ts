@@ -1,4 +1,4 @@
-import { getBoardWithQuery, BoardQueryLike } from './board';
+import { getBoardWithQuery, BoardQueryLike, maybeSync } from './board';
 
 /** Search configuration. */
 export interface SearchOptions {
@@ -217,8 +217,7 @@ export async function replaceBoardContent(
     });
     if (updated !== current) {
       setStringAtPath(item, field, updated);
-      await ((item as { sync?: () => Promise<void> }).sync?.call(item) ??
-        Promise.resolve());
+      await maybeSync(item as { sync?: () => Promise<void> });
     }
   }
   return count;

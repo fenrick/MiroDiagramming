@@ -1,5 +1,5 @@
 import { resolveColor } from '../core/utils/color-utils';
-import { BoardLike, forEachSelection } from './board';
+import { BoardLike, forEachSelection, maybeSync } from './board';
 import type { StylePreset } from '../ui/style-presets';
 
 /** Resolved preset style attributes. */
@@ -40,8 +40,6 @@ export async function applyStylePreset(
     style.borderWidth = resolved.borderWidth;
     style.fillColor = resolved.fillColor;
     item.style = style;
-    if (typeof (item as { sync?: () => Promise<void> }).sync === 'function') {
-      await (item as { sync: () => Promise<void> }).sync();
-    }
+    await maybeSync(item as { sync?: () => Promise<void> });
   }, board);
 }

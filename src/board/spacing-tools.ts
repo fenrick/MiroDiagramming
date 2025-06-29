@@ -1,4 +1,4 @@
-import { BoardLike, getBoard } from './board';
+import { BoardLike, getBoard, maybeSync } from './board';
 
 /** Options for spacing layout. */
 export interface SpacingOptions {
@@ -76,7 +76,7 @@ export async function applySpacingLayout(
       items.map(async (item, i) => {
         item[sizeKey] = plan.size;
         item[axis] = plan.positions[i];
-        await item.sync?.();
+        await maybeSync(item);
       }),
     );
     return;
@@ -126,5 +126,5 @@ async function moveWidget(
   position: number,
 ): Promise<void> {
   item[axis] = position;
-  await item.sync?.();
+  await maybeSync(item);
 }

@@ -8,7 +8,7 @@ import {
   ensureContrast,
   resolveColor,
 } from '../core/utils/color-utils';
-import { BoardLike, forEachSelection, getBoard } from './board';
+import { BoardLike, forEachSelection, getBoard, maybeSync } from './board';
 
 /** Retrieve the property name used for widget fill colour. */
 function getFillKey(
@@ -78,9 +78,7 @@ export async function tweakFillColor(
       style[fontKey] = ensureContrast(newFill, font);
     }
     item.style = style;
-    if (typeof (item as { sync?: () => Promise<void> }).sync === 'function') {
-      await (item as { sync: () => Promise<void> }).sync();
-    }
+    await maybeSync(item as { sync?: () => Promise<void> });
   }, board);
 }
 
@@ -138,9 +136,7 @@ export async function tweakOpacity(
     next = Math.max(0, Math.min(1, next));
     style[key] = next;
     item.style = style;
-    if (typeof (item as { sync?: () => Promise<void> }).sync === 'function') {
-      await (item as { sync: () => Promise<void> }).sync();
-    }
+    await maybeSync(item as { sync?: () => Promise<void> });
   }, board);
 }
 
@@ -166,8 +162,6 @@ export async function tweakBorderWidth(
     const next = Math.max(0, current + delta);
     style[key] = next;
     item.style = style;
-    if (typeof (item as { sync?: () => Promise<void> }).sync === 'function') {
-      await (item as { sync: () => Promise<void> }).sync();
-    }
+    await maybeSync(item as { sync?: () => Promise<void> });
   }, board);
 }

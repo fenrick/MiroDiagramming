@@ -73,3 +73,16 @@ export async function forEachSelection(
   const selection = await b.getSelection();
   await Promise.all(selection.map((item) => cb(item)));
 }
+
+/**
+ * Invoke the `sync` method on a widget when available.
+ *
+ * Simplifies conditional sync calls across board utilities.
+ */
+export async function maybeSync(item: {
+  sync?: () => Promise<void>;
+}): Promise<void> {
+  if (typeof item.sync === 'function') {
+    await item.sync();
+  }
+}

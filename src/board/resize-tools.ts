@@ -11,7 +11,7 @@ export interface Size {
   height: number;
 }
 
-import { BoardLike, forEachSelection, getBoard } from './board';
+import { BoardLike, forEachSelection, getBoard, maybeSync } from './board';
 
 /**
  * Retrieve the width and height of the first selected widget.
@@ -53,9 +53,7 @@ export async function applySizeToSelection(
     if (typeof item.width === 'number' && typeof item.height === 'number') {
       item.width = size.width;
       item.height = size.height;
-      if (typeof (item as { sync?: () => Promise<void> }).sync === 'function') {
-        await (item as { sync: () => Promise<void> }).sync();
-      }
+      await maybeSync(item as { sync?: () => Promise<void> });
     }
   }, board);
 }

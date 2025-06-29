@@ -19,6 +19,7 @@ import type {
   NodeData,
   PositionedNode,
 } from '../core/graph';
+import { maybeSync } from './board';
 
 const META_KEY = 'app.miro.structgraph';
 
@@ -166,12 +167,7 @@ export class BoardBuilder {
     items: Array<BaseItem | Group | Connector>,
   ): Promise<void> {
     await Promise.all(
-      items
-        .filter(
-          (i) =>
-            typeof (i as { sync?: () => Promise<void> }).sync === 'function',
-        )
-        .map((i) => (i as { sync: () => Promise<void> }).sync()),
+      items.map((i) => maybeSync(i as { sync?: () => Promise<void> })),
     );
   }
 
@@ -375,7 +371,7 @@ export class BoardBuilder {
     };
     if (typeof target.width === 'number') target.width = width;
     if (typeof target.height === 'number') target.height = height;
-    if (typeof target.sync === 'function') await target.sync();
+    await maybeSync(target);
   }
 
   /**
