@@ -22,6 +22,7 @@
     "prettier": "prettier '**/*.{js,jsx,ts,tsx,md,json,yml,yaml,html}' --write",
     "prettier:check": "prettier '**/*.{js,jsx,ts,tsx,md,json,yml,yaml,html}' --check",
     "typecheck": "tsc --noEmit",
+    "pretest": "npm install",
     "test": "vitest run --coverage",
     "lint": "eslint 'src/**/*.{ts,tsx}' 'tests/**/*.{ts,tsx}'",
     "stylelint": "stylelint 'src/**/*.css'",

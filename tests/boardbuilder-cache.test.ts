@@ -1,4 +1,4 @@
-import { BoardBuilder } from '../src/board/board-builder';
+import { BoardBuilder, updateConnector } from '../src/board/board-builder';
 
 interface GlobalWithMiro {
   miro?: { board: Record<string, unknown> };
@@ -75,10 +75,12 @@ describe('BoardBuilder lookup and connector updates', () => {
 
   test('updateConnector merges style from template', () => {
     const existing = { style: {} } as Record<string, unknown>;
-    const builder = new BoardBuilder();
-    builder.updateConnector(
+    updateConnector(
       existing as unknown as Connector,
-      { from: 'n1', to: 'n2' },
+      {
+        from: 'n1',
+        to: 'n2',
+      } as unknown as import('../src/core/graph').EdgeData,
       { shape: 'curved', style: { strokeStyle: 'dashed' } },
       undefined,
     );

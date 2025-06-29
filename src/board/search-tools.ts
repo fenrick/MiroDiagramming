@@ -56,7 +56,20 @@ function buildRegex(opts: SearchOptions): RegExp {
   return new RegExp(pattern, flags);
 }
 
-function getTextFields(item: Record<string, unknown>): Array<[string, string]> {
+/**
+ * Extract all textual fields from a widget-like object.
+ *
+ * The function inspects common properties such as `title`, `content`,
+ * `plainText` and `description`. When a `text` object is present nested
+ * strings are also included. The returned array preserves the discovery
+ * order of the fields.
+ *
+ * @param item - Record containing arbitrary widget properties.
+ * @returns Array of `[path, text]` tuples for each discovered field.
+ */
+export function getTextFields(
+  item: Record<string, unknown>,
+): Array<[string, string]> {
   const fields: Array<[string, string]> = [];
   if (typeof item.title === 'string') fields.push(['title', item.title]);
   if (typeof item.content === 'string') fields.push(['content', item.content]);
