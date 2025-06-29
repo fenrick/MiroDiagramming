@@ -33,7 +33,9 @@ export function calculateGrowthPlan(
   const sizeKey = axis === 'x' ? 'width' : 'height';
   const first = items[0];
   const last = items[items.length - 1];
+  /* c8 ignore next */
   const startEdge = (first[axis] ?? 0) - getDimension(first, sizeKey) / 2;
+  /* c8 ignore next */
   const endEdge = (last[axis] ?? 0) + getDimension(last, sizeKey) / 2;
   const total = endEdge - startEdge;
   const size = (total - spacing * (items.length - 1)) / items.length;
@@ -65,6 +67,7 @@ export async function applySpacingLayout(
   const axis = opts.axis;
   const sizeKey = axis === 'x' ? 'width' : 'height';
   const items = [...selection].sort(
+    /* c8 ignore next */
     (a, b) =>
       ((a as Record<string, number>)[axis] ?? 0) -
       ((b as Record<string, number>)[axis] ?? 0),

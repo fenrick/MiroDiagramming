@@ -31,8 +31,15 @@ export interface ProcessOptions {
 }
 
 export class GraphProcessor extends UndoableProcessor {
+  /** Map of processed node IDs to created widget IDs. */
+  private nodeIdMap: Record<string, string> = {};
   constructor(builder: BoardBuilder = graphService.getBuilder()) {
     super(builder);
+  }
+
+  /** Mapping from node ID to created widget ID for the last run. */
+  public getNodeIdMap(): Record<string, string> {
+    return { ...this.nodeIdMap };
   }
 
   /**
@@ -54,6 +61,7 @@ export class GraphProcessor extends UndoableProcessor {
     graph: GraphData | HierNode[],
     options: ProcessOptions = {},
   ): Promise<void> {
+    this.nodeIdMap = {};
     const alg = options.layout?.algorithm ?? 'mrtree';
     if (isNestedAlgorithm(alg)) {
       const hp = new HierarchyProcessor(this.builder);
@@ -139,6 +147,7 @@ export class GraphProcessor extends UndoableProcessor {
       const adjPos = { ...pos, x: pos.x + offsetX, y: pos.y + offsetY };
       const widget = await this.builder.createNode(node, adjPos);
       nodeMap[node.id] = widget;
+      this.nodeIdMap[node.id] = widget.id;
       this.registerCreated(widget);
     }
     return nodeMap;

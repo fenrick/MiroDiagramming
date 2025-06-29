@@ -193,6 +193,25 @@ describe('GraphProcessor', () => {
     ]);
   });
 
+  it('records widget ids for rows', async () => {
+    const simpleGraph = {
+      nodes: [
+        { id: 'n1', label: 'A', type: 'Role', metadata: { rowId: 'r1' } },
+      ],
+      edges: [],
+    };
+    jest
+      .spyOn(layoutEngine, 'layoutGraph')
+      .mockResolvedValue({
+        nodes: { n1: { x: 0, y: 0, width: 10, height: 10 } },
+        edges: [],
+      });
+
+    await processor.processGraph(simpleGraph as unknown);
+
+    expect(processor.getNodeIdMap()).toEqual({ n1: 's1' });
+  });
+
   it('throws when edge source is missing', async () => {
     const graph = {
       nodes: [{ id: 'n1', label: 'A', type: 'Role' }],

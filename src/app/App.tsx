@@ -4,6 +4,9 @@ import { createRoot } from 'react-dom/client';
 import { TabBar } from '../ui/components/TabBar';
 import { TAB_DATA, Tab } from '../ui/pages/tabs';
 import { Paragraph } from '../ui/components/legacy/Paragraph';
+import { EditMetadataModal } from '../ui/components/EditMetadataModal';
+import { ExcelDataProvider } from '../ui/hooks/excel-data-context';
+import type { ExcelRow } from '../core/utils/excel-loader';
 
 /**
  * React entry component that renders the file selection and mode
@@ -12,6 +15,14 @@ import { Paragraph } from '../ui/components/legacy/Paragraph';
  */
 export const App: React.FC = () => {
   const [tab, setTab] = React.useState<Tab>(TAB_DATA[0][1]);
+  const [rows, setRows] = React.useState<ExcelRow[]>([]);
+  const [idColumn, setIdColumn] = React.useState('');
+  const [labelColumn, setLabelColumn] = React.useState('');
+  const [templateColumn, setTemplateColumn] = React.useState('');
+  const [showMeta, setShowMeta] = React.useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('command') === 'edit-metadata';
+  });
   const tabIds = React.useMemo(() => TAB_DATA.map((t) => t[1]), []);
   React.useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -19,6 +30,9 @@ export const App: React.FC = () => {
         const idx = parseInt(e.key, 10);
         if (idx >= 1 && idx <= tabIds.length) {
           setTab(tabIds[idx - 1]);
+        }
+        if (e.key.toLowerCase() === 'm') {
+          setShowMeta(true);
         }
       }
     };
@@ -28,18 +42,34 @@ export const App: React.FC = () => {
   const current = TAB_DATA.find((t) => t[1] === tab)!;
   const CurrentComp = current[4];
   return (
-    <div id='root'>
-      <TabBar
-        tabs={TAB_DATA}
-        tab={tab}
-        onChange={setTab}
-      />
-      <div className='scrollable'>
-        <h2>{current[2]}</h2>
-        <Paragraph>{current[3]}</Paragraph>
-        <CurrentComp />
+    <ExcelDataProvider
+      value={{
+        rows,
+        idColumn,
+        labelColumn,
+        templateColumn,
+        setRows,
+        setIdColumn,
+        setLabelColumn,
+        setTemplateColumn,
+      }}>
+      <div id='root'>
+        <TabBar
+          tabs={TAB_DATA}
+          tab={tab}
+          onChange={setTab}
+        />
+        <div className='scrollable'>
+          <h2>{current[2]}</h2>
+          <Paragraph>{current[3]}</Paragraph>
+          <CurrentComp />
+        </div>
+        <EditMetadataModal
+          isOpen={showMeta}
+          onClose={() => setShowMeta(false)}
+        />
       </div>
-    </div>
+    </ExcelDataProvider>
   );
 };
 

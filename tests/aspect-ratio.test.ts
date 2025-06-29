@@ -13,3 +13,9 @@ describe('aspect-ratio utilities', () => {
     expect(height).toBe(90);
   });
 });
+
+test('aspectRatioValue throws on unknown preset', () => {
+  expect(() => aspectRatioValue('1:1' as never)).toThrow(
+    'Unknown aspect ratio',
+  );
+});

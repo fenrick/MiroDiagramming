@@ -201,7 +201,8 @@ the rest of the UI. These guidelines help keep layouts consistent:
 
 ## 🏃🏽‍♂️ Run the app locally <a name="run"></a>
 
-1. Run `npm install` to install dependencies.
+1. Run `npm install` to install dependencies. The project includes a
+   `package-lock.json` file so everyone installs the same versions.
 2. Run `npm start` to start the development server. \
    Your URL should be similar to this example:
 
@@ -268,6 +269,10 @@ Sonar rules such as using `readonly` class fields, optional chaining, semantic
 HTML tags and stable React keys. Run these checks before committing so code
 conforms to the repository guidelines.
 
+With `package-lock.json` checked in you can run `npm audit` after each install
+to scan dependencies for vulnerabilities. Include the lock file in commits so
+everyone uses the exact dependency versions when installing.
+
 ## 🗂️ Folder structure <a name="folder"></a>
 
 ```
@@ -299,6 +304,63 @@ conforms to the repository guidelines.
 - [Design Foundation](docs/FOUNDATION.md) explains tokens and theming rules.
 - [Code Style](docs/CODE_STYLE.md) outlines formatting and naming rules.
 - [UI Patterns](docs/PATTERNS.md) shows common layouts and best practices.
+- [Excel Import](docs/EXCEL_IMPORT.md) details workbook loading and sync.
+
+## Docker Image
+
+The project can be packaged as a container image. Build and run using:
+
+```bash
+docker build -t miro-diagramming .
+docker run --rm -p 8080:80 miro-diagramming
+```
+
+Tagged releases push the image to the GitHub Container Registry automatically.
+The workflow builds a standard `linux/amd64` image via
+`docker/build-push-action@v5`; QEMU is unnecessary as no cross-platform
+emulation is performed.
+
+## Docker Image
+
+The project can be packaged as a container image. Build and run using:
+
+```bash
+docker build -t miro-diagramming .
+docker run --rm -p 8080:80 miro-diagramming
+```
+
+Tagged releases push the image to the GitHub Container Registry automatically.
+The workflow builds a standard `linux/amd64` image via
+`docker/build-push-action@v5`; QEMU is unnecessary as no cross-platform
+emulation is performed.
+
+## Docker Image
+
+The project can be packaged as a container image. Build and run using:
+
+```bash
+docker build -t miro-diagramming .
+docker run --rm -p 8080:80 miro-diagramming
+```
+
+Tagged releases push the image to the GitHub Container Registry automatically.
+The workflow builds a standard `linux/amd64` image via
+`docker/build-push-action@v5`; QEMU is unnecessary as no cross-platform
+emulation is performed.
+
+## Docker Image
+
+The project can be packaged as a container image. Build and run using:
+
+```bash
+docker build -t miro-diagramming .
+docker run --rm -p 8080:80 miro-diagramming
+```
+
+Tagged releases push the image to the GitHub Container Registry automatically.
+The workflow builds a standard `linux/amd64` image via
+`docker/build-push-action@v5`; QEMU is unnecessary as no cross-platform
+emulation is performed.
 
 ## Docker Image
 
