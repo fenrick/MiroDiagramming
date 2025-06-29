@@ -60,7 +60,7 @@ workflow is identical.
 Each row is converted into a node or card definition by `mapRowsToNodes` in
 `data-mapper.ts`. A `ColumnMapping` object describes which headers supply
 identifiers, labels, templates and metadata. Templates are looked up via
-`templateManager` and applied by `BoardBuilder`.
+`templateManager` and applied directly to the widgets.
 
 ```ts
 const mapping = {
@@ -82,8 +82,7 @@ when creating widgets.
 import `registerMapping` stores the row identifier alongside the created widget
 ID. `updateShapesFromExcel` applies template and text changes from Excel to
 existing widgets, while `pushChangesToExcel` extracts widget content back into
-rows. The service relies on `BoardBuilder` and `templateManager` to handle
-widget updates.
+rows. The service relies on `templateManager` to handle widget updates.
 
 `RowInspector` surfaces the values of the selected widget's row inside the
 sidebar, allowing quick edits. Changes invoke the callback provided by

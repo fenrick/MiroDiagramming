@@ -1,7 +1,6 @@
 import { mapRowsToNodes, ColumnMapping } from './data-mapper';
 import type { ExcelRow } from './utils/excel-loader';
 import { templateManager } from '../board/templates';
-import { BoardBuilder } from '../board/board-builder';
 import { applyElementToItem } from '../board/element-utils';
 import type { BaseItem, Group, Json } from '@mirohq/websdk-types';
 
@@ -15,7 +14,7 @@ const META_KEY = 'app.miro.excel';
 export class ExcelSyncService {
   private rowMap: Record<string, string> = {};
 
-  constructor(_builder: BoardBuilder = new BoardBuilder()) {}
+  constructor() {}
 
   /** Clear the internal row mapping. */
   public reset(): void {

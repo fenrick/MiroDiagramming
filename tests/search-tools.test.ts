@@ -1,6 +1,7 @@
 import {
   searchBoardContent,
   replaceBoardContent,
+  getTextFields,
 } from '../src/board/search-tools';
 import { BoardQueryLike } from '../src/board/board';
 
@@ -258,5 +259,24 @@ describe('search-tools', () => {
         board,
       ),
     ).rejects.toThrow(SyntaxError);
+  });
+
+  test('getTextFields extracts common text properties', () => {
+    const item = {
+      title: 't',
+      content: 'c',
+      plainText: 'p',
+      description: 'd',
+      text: { plainText: 'tp', content: 'tc' },
+    };
+    const fields = getTextFields(item);
+    expect(fields).toEqual([
+      ['title', 't'],
+      ['content', 'c'],
+      ['plainText', 'p'],
+      ['description', 'd'],
+      ['text.plainText', 'tp'],
+      ['text.content', 'tc'],
+    ]);
   });
 });
