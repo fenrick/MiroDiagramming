@@ -11,7 +11,7 @@ import { UserLayoutOptions } from '../layout/elk-options';
 import { fileUtils } from '../utils/file-utils';
 import {
   computeEdgeHints,
-  boundingBox,
+  boundingBoxFromTopLeft,
   frameOffset,
 } from '../layout/layout-utils';
 import type { BaseItem, Connector, Frame, Group } from '@mirohq/websdk-types';
@@ -113,7 +113,7 @@ export class GraphProcessor {
    * Determine the bounding box for positioned nodes.
    */
   private layoutBounds(layout: LayoutResult) {
-    return boundingBox(layout.nodes);
+    return boundingBoxFromTopLeft(layout.nodes);
   }
 
   /**

@@ -49,42 +49,77 @@ export function computeEdgeHints(
   });
 }
 
+export interface NodePosition {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+export interface BoundingBox {
+  minX: number;
+  minY: number;
+  maxX: number;
+  maxY: number;
+}
+
 /**
- * Determine the bounding box of a set of positioned nodes.
+ * Determine the bounding box of nodes positioned using their top-left corner.
  *
- * Coordinates may represent either the node center or top-left corner.
- *
- * @param nodes - Mapping of node ids to their absolute positions.
- * @param centerBased - Treat `x`/`y` as the node center when `true`.
+ * @param nodes - Mapping of node ids to absolute top-left coordinates.
  * @returns The bounding box enclosing all nodes.
  */
-export function boundingBox(
-  nodes: Record<
-    string,
-    { x: number; y: number; width: number; height: number }
-  >,
-  centerBased = false,
-): { minX: number; minY: number; maxX: number; maxY: number } {
+export function boundingBoxFromTopLeft(
+  nodes: Record<string, NodePosition>,
+): BoundingBox {
   let minX = Infinity;
   let minY = Infinity;
   let maxX = -Infinity;
   let maxY = -Infinity;
   Object.values(nodes).forEach(({ x, y, width, height }) => {
-    if (centerBased) {
-      const halfW = width / 2;
-      const halfH = height / 2;
-      minX = Math.min(minX, x - halfW);
-      minY = Math.min(minY, y - halfH);
-      maxX = Math.max(maxX, x + halfW);
-      maxY = Math.max(maxY, y + halfH);
-    } else {
-      minX = Math.min(minX, x);
-      minY = Math.min(minY, y);
-      maxX = Math.max(maxX, x + width);
-      maxY = Math.max(maxY, y + height);
-    }
+    minX = Math.min(minX, x);
+    minY = Math.min(minY, y);
+    maxX = Math.max(maxX, x + width);
+    maxY = Math.max(maxY, y + height);
   });
   return { minX, minY, maxX, maxY };
+}
+
+/**
+ * Determine the bounding box of nodes positioned using their centre point.
+ *
+ * @param nodes - Mapping of node ids to absolute centre coordinates.
+ * @returns The bounding box enclosing all nodes.
+ */
+export function boundingBoxFromCenter(
+  nodes: Record<string, NodePosition>,
+): BoundingBox {
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  Object.values(nodes).forEach(({ x, y, width, height }) => {
+    const halfW = width / 2;
+    const halfH = height / 2;
+    minX = Math.min(minX, x - halfW);
+    minY = Math.min(minY, y - halfH);
+    maxX = Math.max(maxX, x + halfW);
+    maxY = Math.max(maxY, y + halfH);
+  });
+  return { minX, minY, maxX, maxY };
+}
+
+/**
+ * @deprecated Use {@link boundingBoxFromTopLeft} or {@link boundingBoxFromCenter}.
+ * Determines the bounding box of positioned nodes.
+ */
+export function boundingBox(
+  nodes: Record<string, NodePosition>,
+  centerBased = false,
+): BoundingBox {
+  return centerBased
+    ? boundingBoxFromCenter(nodes)
+    : boundingBoxFromTopLeft(nodes);
 }
 
 /**
