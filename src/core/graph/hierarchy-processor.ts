@@ -1,6 +1,6 @@
 import { BoardBuilder } from '../../board/board-builder';
 import { clearActiveFrame, registerFrame } from '../../board/frame-utils';
-import { undoWidgets, syncOrUndo } from '../../board/undo-utils';
+import { UndoableProcessor } from './undoable-processor';
 import { fileUtils } from '../utils/file-utils';
 import { boundingBoxFromCenter, frameOffset } from '../layout/layout-utils';
 import {
@@ -15,6 +15,7 @@ import type {
   Group,
   Frame,
   GroupableItem,
+  Connector,
 } from '@mirohq/websdk-types';
 
 export interface HierarchyProcessOptions {
@@ -28,18 +29,12 @@ export interface HierarchyProcessOptions {
  * contained inside their parent shapes. Widgets are created using
  * {@link BoardBuilder} and arranged via {@link layoutHierarchy}.
  */
-export class HierarchyProcessor {
-  /** List of widgets created in the last run for easy undo. */
-  private lastCreated: Array<BaseItem | Group | Frame> = [];
-
-  /**
-   * Access widgets created during the last processing run.
-   */
-  public getLastCreated(): Array<BaseItem | Group | Frame> {
-    return this.lastCreated;
+export class HierarchyProcessor extends UndoableProcessor<
+  BaseItem | Group | Frame
+> {
+  constructor(builder: BoardBuilder = new BoardBuilder()) {
+    super(builder);
   }
-
-  constructor(private readonly builder: BoardBuilder = new BoardBuilder()) {}
 
   /**
    * Load a hierarchical JSON file and create the corresponding diagram.
@@ -100,7 +95,7 @@ export class HierarchyProcessor {
     }
     await this.createWidgets(data, result.nodes, offsetX, offsetY);
     const syncItems = this.lastCreated.filter((i) => i !== frame);
-    await syncOrUndo(this.builder, this.lastCreated, syncItems);
+    await this.syncOrUndo(syncItems as Array<BaseItem | Group | Connector>);
     const target = frame ?? (this.lastCreated as Array<BaseItem | Group>);
     await this.builder.zoomTo(target);
   }
@@ -140,7 +135,7 @@ export class HierarchyProcessor {
     await this.builder.resizeItem(widget, pos.width, pos.height);
 
     if (!node.children?.length) {
-      this.lastCreated.push(widget);
+      this.registerCreated(widget);
       return widget;
     }
 
@@ -163,7 +158,7 @@ export class HierarchyProcessor {
       widget as unknown as GroupableItem,
       ...childWidgets,
     ]);
-    this.lastCreated.push(group);
+    this.registerCreated(group);
     return group;
   }
 
@@ -184,12 +179,7 @@ export class HierarchyProcessor {
     }
   }
 
-  /**
-   * Remove widgets created in the last run from the board.
-   */
-  public async undoLast(): Promise<void> {
-    await undoWidgets(this.builder, this.lastCreated);
-  }
+  // undoLast inherited from UndoableProcessor
 }
 
 /**
