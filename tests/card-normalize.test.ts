@@ -1,4 +1,8 @@
-import { cardLoader, CardLoader } from '../src/core/utils/cards';
+import {
+  cardLoader,
+  CardLoader,
+  parseCardStyle,
+} from '../src/core/utils/cards';
 
 interface ReaderEvent {
   target: { result?: string | null } | null;
@@ -54,5 +58,10 @@ describe('CardLoader normalization', () => {
     const second = CardLoader.getInstance();
     expect(second).toBe(first);
     (CardLoader as unknown as { instance?: CardLoader }).instance = original;
+  });
+
+  test('parseCardStyle normalises booleans', () => {
+    const style = parseCardStyle({ cardTheme: 'blue', fillBackground: 'true' });
+    expect(style).toEqual({ cardTheme: 'blue', fillBackground: true });
   });
 });

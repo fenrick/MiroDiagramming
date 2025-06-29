@@ -9,8 +9,12 @@ date and then:
 npm run typecheck --silent
 npm test --silent
 npm run lint --silent
+npm run stylelint --silent
 npm run prettier --silent
 ```
+
+These commands run **ESLint**, **Stylelint** and **Prettier** to ensure a
+consistent codebase.
 
 Commit messages **must** follow the
 [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) format.

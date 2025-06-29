@@ -9,12 +9,13 @@ export class GraphAuth {
   private static readonly STATE = 'graph.state';
 
   /**
-   * Generate and persist a random state token used for OAuth validation.
+   * Generate and persist a cryptographically secure state token used for OAuth
+   * validation.
    *
    * @returns Newly created state value.
    */
   public generateState(): string {
-    const state = Math.random().toString(36).slice(2);
+    const state = crypto.randomUUID();
     sessionStorage.setItem(GraphAuth.STATE, state);
     return state;
   }

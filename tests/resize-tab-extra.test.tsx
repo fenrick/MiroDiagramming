@@ -26,8 +26,10 @@ describe('ResizeTab extra coverage', () => {
       .spyOn(resizeTools, 'applySizeToSelection')
       .mockResolvedValue(undefined as unknown as void);
     render(React.createElement(ResizeTab));
-    fireEvent.change(screen.getByPlaceholderText(/width/i), {
-      target: { value: '15000' },
+    await act(async () => {
+      fireEvent.change(screen.getByPlaceholderText(/width/i), {
+        target: { value: '15000' },
+      });
     });
     await act(async () => {
       fireEvent.click(screen.getByText(/apply size/i));

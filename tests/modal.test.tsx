@@ -64,7 +64,8 @@ describe('Modal', () => {
         <button>Inside</button>
       </Modal>,
     );
-    fireEvent.click(screen.getByLabelText('Close modal'));
+    const backdrop = screen.getByRole('button', { name: /close modal/i });
+    fireEvent.click(backdrop);
     expect(spy).toHaveBeenCalled();
   });
 
@@ -78,7 +79,8 @@ describe('Modal', () => {
         <button>Inner</button>
       </Modal>,
     );
-    fireEvent.keyDown(screen.getByLabelText('Close modal'), { key: 'Enter' });
+    const backdrop = screen.getByRole('button', { name: /close modal/i });
+    fireEvent.keyDown(backdrop, { key: 'Enter' });
     expect(spy).toHaveBeenCalled();
   });
 });
