@@ -82,18 +82,12 @@ export async function applySpacingLayout(
     return;
   }
 
-  let position = (items[0] as Record<string, number>)[axis] ?? 0;
-  await moveWidget(
-    items[0] as Record<string, number> & Syncable,
-    axis,
-    position,
-  );
+  let position = items[0][axis] ?? 0;
+  await moveWidget(items[0], axis, position);
 
   for (let i = 1; i < items.length; i += 1) {
-    const prev = items[i - 1] as Record<string, number>;
-    const curr = items[i] as Record<string, number> & {
-      sync?: () => Promise<void>;
-    };
+    const prev = items[i - 1];
+    const curr = items[i];
     const prevSize = getDimension(prev, sizeKey);
     const currSize = getDimension(curr, sizeKey);
     position += prevSize / 2 + opts.spacing + currSize / 2;
