@@ -72,6 +72,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Automatically convert hierarchical and flat graph files when imported.
 - Refactor tab pages to use dedicated hooks for diagram, Excel and search logic.
 - Consolidate row mapping into `mapRowsWith` utility.
-- Document purposes of all modules under `src/core`, `src/board`, `src/ui` and `src/app`.
-- Extract pure spacing functions into `spacing-layout.ts` and refactor board tools.
+- Document purposes of all modules under `src/core`, `src/board`, `src/ui` and
+  `src/app`.
+- Extract pure spacing functions into `spacing-layout.ts` and refactor board
+  tools.
 - Add `calculateGridPositions` helper around grid-layout internals.
