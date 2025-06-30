@@ -1,5 +1,5 @@
 import { BoardLike, getBoard, maybeSync, Syncable } from './board';
-import { calculateGrowthPlan } from './spacing-layout';
+import { calculateGrowthPlan, getDimension } from './spacing-layout';
 
 /** Options for spacing layout. */
 export interface SpacingOptions {
@@ -63,18 +63,6 @@ export async function applySpacingLayout(
     await moveWidget(curr, axis, position);
     prev = curr;
   }
-}
-
-/**
- * Safely retrieve a numeric dimension from a widget.
- *
- * @param item - Widget instance.
- * @param key - Dimension property name ('width' or 'height').
- * @returns The numeric value or `0` when unavailable.
- */
-function getDimension(item: Record<string, number>, key: string): number {
-  const val = item[key];
-  return typeof val === 'number' ? val : 0;
 }
 
 /**

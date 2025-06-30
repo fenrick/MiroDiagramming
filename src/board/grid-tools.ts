@@ -14,11 +14,6 @@ export interface GridOptions {
   sortOrientation?: 'horizontal' | 'vertical';
 }
 
-export interface Position {
-  x: number;
-  y: number;
-}
-
 /**
  * Minimal abstraction of the board API used for selection and grouping.
  * Allows injection of a mock implementation in tests.

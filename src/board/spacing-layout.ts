@@ -38,7 +38,17 @@ export function calculateGrowthPlan(
   return { size, positions };
 }
 
-function getDimension(item: Record<string, number>, key: string): number {
+/**
+ * Safely retrieve a numeric dimension from a widget-like object.
+ *
+ * @param item - Object containing dimension properties.
+ * @param key - Dimension property name ('width' or 'height').
+ * @returns The numeric dimension or `0` when unavailable.
+ */
+export function getDimension(
+  item: Record<string, number>,
+  key: string,
+): number {
   const val = item[key];
   return typeof val === 'number' ? val : 0;
 }
