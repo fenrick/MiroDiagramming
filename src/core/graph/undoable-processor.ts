@@ -6,6 +6,8 @@ import { undoWidgets, syncOrUndo as syncHelper } from '../../board/undo-utils';
  * Base class that tracks widgets created during a processing run and
  * provides undo and sync helpers.
  */
+type ItemCollection<T> = T | T[];
+
 export abstract class UndoableProcessor<T extends BoardEntity = BoardEntity> {
   protected lastCreated: T[] = [];
 
@@ -21,7 +23,7 @@ export abstract class UndoableProcessor<T extends BoardEntity = BoardEntity> {
   /**
    * Register newly created widget(s) for later undo.
    */
-  protected registerCreated(item: T | T[]): void {
+  protected registerCreated(item: ItemCollection<T>): void {
     if (Array.isArray(item)) {
       this.lastCreated.push(...item);
     } else {

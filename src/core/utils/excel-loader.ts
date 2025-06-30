@@ -62,7 +62,7 @@ export class ExcelLoader {
   public loadNamedTable(name: string): ExcelRow[] {
     if (!this.workbook) throw new Error('Workbook not loaded');
     const named = this.workbook.Workbook?.Names?.find((n) => n.Name === name);
-    if (!named || !named.Ref) throw new Error(`Unknown table: ${name}`);
+    if (!named?.Ref) throw new Error(`Unknown table: ${name}`);
     const [sheetName, range] = named.Ref.replace(/'/g, '').split('!');
     const ws = this.workbook.Sheets[sheetName];
     if (!ws) throw new Error(`Missing sheet for table: ${name}`);
