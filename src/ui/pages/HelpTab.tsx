@@ -48,7 +48,7 @@ export const HelpTab: React.FC = () => (
 );
 
 export const tabDef: TabTuple = [
-  6,
+  99,
   'help',
   'Help',
   'Overview of diagram options and tools',
