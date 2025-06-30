@@ -85,7 +85,7 @@ export function Modal({
   return (
     <div
       tabIndex={0}
-      role="button"
+      role='button'
       aria-label='Close modal'
       data-testid='modal-backdrop'
       className='modal-backdrop'
