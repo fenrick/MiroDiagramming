@@ -62,12 +62,11 @@ export class NestedLayouter {
     return elk;
   }
 
-  private collectPositions(
+  private computePosition(
     node: ElkNode,
-    map: Record<string, PositionedNode>,
-    offsetX = 0,
-    offsetY = 0,
-  ): void {
+    offsetX: number,
+    offsetY: number,
+  ): PositionedNode | null {
     if (
       node.id !== 'root' &&
       typeof node.x === 'number' &&
@@ -75,13 +74,26 @@ export class NestedLayouter {
       typeof node.width === 'number' &&
       typeof node.height === 'number'
     ) {
-      map[node.id] = {
+      return {
         id: node.id,
         x: offsetX + node.x,
         y: offsetY + node.y,
         width: node.width,
         height: node.height,
       };
+    }
+    return null;
+  }
+
+  private collectPositions(
+    node: ElkNode,
+    map: Record<string, PositionedNode>,
+    offsetX = 0,
+    offsetY = 0,
+  ): void {
+    const pos = this.computePosition(node, offsetX, offsetY);
+    if (pos) {
+      map[node.id] = pos;
     }
     for (const child of node.children ?? []) {
       const childX = typeof node.x === 'number' ? offsetX + node.x : offsetX;

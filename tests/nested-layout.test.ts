@@ -1,4 +1,7 @@
-import { layoutHierarchy } from '../src/core/layout/nested-layout';
+import {
+  layoutHierarchy,
+  nestedLayouter,
+} from '../src/core/layout/nested-layout';
 import sampleHier from './fixtures/sample-hier.json';
 
 interface TestNode {
@@ -92,5 +95,18 @@ describe('layoutHierarchy', () => {
     expect(g1.x === g2.x && g1.y === g2.y).toBe(false);
     expect(g1.x).toBeGreaterThan(child.x);
     expect(g2.x).toBeGreaterThan(child.x);
+  });
+
+  test('computePosition returns null for root node', () => {
+    const layouter: any = nestedLayouter;
+    const result = layouter.computePosition({ id: 'root' }, 0, 0);
+    expect(result).toBeNull();
+  });
+
+  test('computePosition returns null when dimensions are missing', () => {
+    const layouter: any = nestedLayouter;
+    const node = { id: 'x', x: 1, y: 2 };
+    const result = layouter.computePosition(node, 0, 0);
+    expect(result).toBeNull();
   });
 });
