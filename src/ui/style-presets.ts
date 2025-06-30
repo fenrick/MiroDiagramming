@@ -1,4 +1,5 @@
 import templatesJson from '../../templates/shapeTemplates.json';
+import { templateManager } from '../board/templates';
 import type { TemplateElement } from '../board/templates';
 
 /** Definition of a named style preset. */
@@ -36,23 +37,28 @@ function templateToPreset(
   tpl: { elements?: TemplateElement[] },
 ): StylePreset {
   const el = tpl.elements?.[0];
-  const style = el?.style ?? {};
+  const resolved = templateManager.resolveStyle(el?.style ?? {});
   const fill = valueOrDefault(
-    style.fillColor as string | undefined,
-    valueOrDefault(el?.fill as string | undefined, ''),
+    resolved.fillColor as string | undefined,
+    valueOrDefault(
+      templateManager.resolveStyle({ fillColor: el?.fill ?? '' }).fillColor as
+        | string
+        | undefined,
+      '',
+    ),
   );
   return {
     label: name,
     fontColor: valueOrDefault(
-      style.fontColor as string | undefined,
+      resolved.fontColor as string | undefined,
       DEFAULT_PRESET.fontColor,
     ),
     borderWidth: valueOrDefault(
-      style.borderWidth as number | undefined,
+      resolved.borderWidth as number | undefined,
       DEFAULT_PRESET.borderWidth,
     ),
     borderColor: valueOrDefault(
-      style.borderColor as string | undefined,
+      resolved.borderColor as string | undefined,
       DEFAULT_PRESET.borderColor,
     ),
     fillColor: valueOrDefault(fill, DEFAULT_PRESET.fillColor),
