@@ -84,12 +84,8 @@ export const SearchTab: React.FC = () => {
     wholeWord,
     regex,
   ]);
-  const {
-    results,
-    currentIndex,
-    setResults,
-    setCurrentIndex,
-  } = useDebouncedSearch(query, buildOptions);
+  const { results, currentIndex, setResults, setCurrentIndex } =
+    useDebouncedSearch(query, buildOptions);
 
   const replaceAll = useReplaceAll(
     query,
