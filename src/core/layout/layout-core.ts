@@ -27,14 +27,32 @@ const DEFAULT_HEIGHT = 110;
  * @param node - Node data including optional metadata.
  * @returns Calculated width and height values.
  */
+function resolveDimension(
+  metaValue: number | undefined,
+  templateValue: number | undefined,
+  defaultValue: number,
+): number {
+  if (typeof metaValue === 'number') return metaValue;
+  if (typeof templateValue === 'number') return templateValue;
+  return defaultValue;
+}
+
 export function getNodeDimensions(node: {
   type: string;
   metadata?: { width?: number; height?: number };
 }): { width: number; height: number } {
   const tpl = templateManager.getTemplate(node.type);
   const dims = tpl?.elements.find((e) => e.width && e.height);
-  const width = node.metadata?.width ?? dims?.width ?? DEFAULT_WIDTH;
-  const height = node.metadata?.height ?? dims?.height ?? DEFAULT_HEIGHT;
+  const width = resolveDimension(
+    node.metadata?.width,
+    dims?.width,
+    DEFAULT_WIDTH,
+  );
+  const height = resolveDimension(
+    node.metadata?.height,
+    dims?.height,
+    DEFAULT_HEIGHT,
+  );
   return { width, height };
 }
 
