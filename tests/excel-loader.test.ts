@@ -116,4 +116,15 @@ describe('excel loader', () => {
       'Missing sheet for table: Bad',
     );
   });
+
+  test('parseRange rejects malformed references', async () => {
+    const loader = new ExcelLoader();
+    await loader.loadWorkbook(file);
+    const helper = loader as unknown as {
+      getSheet: (name: string) => ExcelJS.Worksheet;
+      parseRange: (ref: string, ws: ExcelJS.Worksheet) => unknown;
+    };
+    const ws = helper.getSheet('Sheet1');
+    expect(() => helper.parseRange('A1B2', ws)).toThrow('Invalid range: A1B2');
+  });
 });
