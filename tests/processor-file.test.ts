@@ -24,8 +24,8 @@ describe('GraphProcessor.processFile', () => {
     const mockGraph = { nodes: [], edges: [] } as Parameters<
       GraphProcessor['processGraph']
     >[0];
-    // Stub out loadGraph and internal processGraph
-    jest.spyOn(graphService, 'loadGraph').mockResolvedValue(mockGraph);
+    // Stub out loadAnyGraph and internal processGraph
+    jest.spyOn(graphService, 'loadAnyGraph').mockResolvedValue(mockGraph);
     const processSpy = jest
       .spyOn(
         gp as unknown as {
@@ -36,7 +36,7 @@ describe('GraphProcessor.processFile', () => {
       .mockResolvedValue(undefined);
     const file = { name: 'g.json' } as unknown as File;
     await gp.processFile(file);
-    expect(graphService.loadGraph).toHaveBeenCalledWith(file);
+    expect(graphService.loadAnyGraph).toHaveBeenCalledWith(file);
     expect(processSpy).toHaveBeenCalledWith(mockGraph, {});
   });
 });

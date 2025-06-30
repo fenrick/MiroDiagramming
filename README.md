@@ -101,8 +101,7 @@ Nodes are sorted alphabetically by default or via a custom metadata key. A
 three‑level sample dataset is available at
 [tests/fixtures/sample-hier.json](tests/fixtures/sample-hier.json). Simply
 select **Nested** and import this file to see parent widgets sized to fit their
-children. If a standard flat graph is supplied instead, the importer will raise
-an error indicating an invalid hierarchy.
+children. Flat graph data is automatically converted when necessary.
 
 ## Accessibility
 

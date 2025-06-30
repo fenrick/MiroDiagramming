@@ -50,8 +50,8 @@ export class GraphProcessor extends UndoableProcessor {
     options: ProcessOptions = {},
   ): Promise<void> {
     fileUtils.validateFile(file);
-    const graph = await graphService.loadGraph(file);
-    await this.processGraph(graph, options);
+    const data = await graphService.loadAnyGraph(file);
+    await this.processGraph(data, options);
   }
 
   /**
