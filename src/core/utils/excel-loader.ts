@@ -1,4 +1,4 @@
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 import { fileUtils } from './file-utils';
 import { GraphClient, graphClient } from './graph-client';
 
@@ -8,17 +8,19 @@ export interface ExcelRow {
 }
 
 /**
- * Lightweight Excel file loader built around the `xlsx` library.
+ * Lightweight Excel file loader built around the `exceljs` library.
  *
  * The loader parses `.xlsx`/`.xls` files, exposing sheet and table accessors.
  * Rows are returned as objects keyed by column headers.
  */
 export class ExcelLoader {
-  private workbook: XLSX.WorkBook | null = null;
+  private workbook: ExcelJS.Workbook | null = null;
 
   /** Parse a workbook from raw array buffer data. */
-  public loadArrayBuffer(buffer: ArrayBuffer): void {
-    this.workbook = XLSX.read(new Uint8Array(buffer), { type: 'array' });
+  public async loadArrayBuffer(buffer: ArrayBuffer): Promise<void> {
+    const wb = new ExcelJS.Workbook();
+    await wb.xlsx.load(buffer);
+    this.workbook = wb;
   }
 
   /**
@@ -29,17 +31,17 @@ export class ExcelLoader {
   public async loadWorkbook(file: File): Promise<void> {
     fileUtils.validateFile(file);
     const buffer = await file.arrayBuffer();
-    this.loadArrayBuffer(buffer);
+    await this.loadArrayBuffer(buffer);
   }
 
   /** List worksheet names from the current workbook. */
   public listSheets(): string[] {
-    return this.workbook ? [...this.workbook.SheetNames] : [];
+    return this.workbook ? this.workbook.worksheets.map((ws) => ws.name) : [];
   }
 
   /** List named table ranges from the current workbook. */
   public listNamedTables(): string[] {
-    return this.workbook?.Workbook?.Names?.map((n) => n.Name) ?? [];
+    return this.workbook?.definedNames.model.map((n) => n.name) ?? [];
   }
 
   /**
@@ -50,7 +52,7 @@ export class ExcelLoader {
    */
   public loadSheet(name: string): ExcelRow[] {
     const ws = this.getSheet(name);
-    return XLSX.utils.sheet_to_json<ExcelRow>(ws, { defval: null });
+    return this.extractRows(ws);
   }
 
   /**
@@ -61,20 +63,66 @@ export class ExcelLoader {
    */
   public loadNamedTable(name: string): ExcelRow[] {
     if (!this.workbook) throw new Error('Workbook not loaded');
-    const named = this.workbook.Workbook?.Names?.find((n) => n.Name === name);
-    if (!named?.Ref) throw new Error(`Unknown table: ${name}`);
-    const [sheetName, range] = named.Ref.replace(/'/g, '').split('!');
-    const ws = this.workbook.Sheets[sheetName];
+    const entry = this.workbook.definedNames.getRanges(name);
+    const ref = entry.ranges[0];
+    if (!ref) throw new Error(`Unknown table: ${name}`);
+    const [sheetName, range] = ref.replace(/'/g, '').split('!');
+    const ws = this.workbook.getWorksheet(sheetName);
     if (!ws) throw new Error(`Missing sheet for table: ${name}`);
-    return XLSX.utils.sheet_to_json<ExcelRow>(ws, { range, defval: null });
+    return this.extractRows(ws, range);
   }
 
   /** Retrieve a worksheet object, throwing on missing sheet. */
-  private getSheet(name: string): XLSX.WorkSheet {
+  private getSheet(name: string): ExcelJS.Worksheet {
     if (!this.workbook) throw new Error('Workbook not loaded');
-    const ws = this.workbook.Sheets[name];
+    const ws = this.workbook.getWorksheet(name);
     if (!ws) throw new Error(`Unknown sheet: ${name}`);
     return ws;
+  }
+
+  private extractRows(ws: ExcelJS.Worksheet, range?: string): ExcelRow[] {
+    const { start, end } = this.parseRange(range, ws);
+    const headers = [] as string[];
+    for (let c = start.col; c <= end.col; c++) {
+      headers.push(String(ws.getRow(start.row).getCell(c).value ?? ''));
+    }
+    const rows: ExcelRow[] = [];
+    for (let r = start.row + 1; r <= end.row; r++) {
+      const row: ExcelRow = {};
+      for (let c = start.col; c <= end.col; c++) {
+        row[headers[c - start.col]] = ws.getRow(r).getCell(c).value ?? null;
+      }
+      rows.push(row);
+    }
+    return rows;
+  }
+
+  private parseRange(
+    ref: string | undefined,
+    ws: ExcelJS.Worksheet,
+  ): {
+    start: { row: number; col: number };
+    end: { row: number; col: number };
+  } {
+    if (!ref) {
+      return {
+        start: { row: 1, col: 1 },
+        end: { row: ws.rowCount, col: ws.columnCount },
+      };
+    }
+    const clean = ref.replace(/\$/g, '');
+    const match = clean.match(/([A-Z]+)(\d+):([A-Z]+)(\d+)/i);
+    if (!match) throw new Error(`Invalid range: ${ref}`);
+    const [, sCol, sRow, eCol, eRow] = match;
+    const colNum = (col: string) =>
+      col
+        .toUpperCase()
+        .split('')
+        .reduce((n, ch) => n * 26 + ch.charCodeAt(0) - 64, 0);
+    return {
+      start: { row: Number(sRow), col: colNum(sCol) },
+      end: { row: Number(eRow), col: colNum(eCol) },
+    };
   }
 }
 
@@ -96,7 +144,7 @@ export class GraphExcelLoader extends ExcelLoader {
    */
   public async loadWorkbookFromGraph(identifier: string): Promise<void> {
     const buffer = await this.client.fetchFile(identifier);
-    this.loadArrayBuffer(buffer);
+    await this.loadArrayBuffer(buffer);
   }
 }
 

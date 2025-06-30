@@ -15,7 +15,7 @@ and two-way updates using existing services.
 Use `ExcelLoader` to parse `.xlsx`/`.xls` files. The loader exposes
 `listSheets`, `listNamedTables`, `loadSheet` and `loadNamedTable` helpers for
 accessing worksheet rows. Files are read via the
-[xlsx](https://github.com/SheetJS/sheetjs) library and converted to objects
+[exceljs](https://github.com/exceljs/exceljs) library and converted to objects
 keyed by column headers.
 
 ```ts

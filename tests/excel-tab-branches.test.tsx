@@ -35,7 +35,7 @@ describe('ExcelTab additional paths', () => {
       graphExcelLoader.loadWorkbookFromGraph as unknown as vi.Mock
     ).mockResolvedValue(undefined);
     (writer.addMiroIds as vi.Mock).mockImplementation((r) => r);
-    (writer.downloadWorkbook as vi.Mock).mockImplementation(() => {});
+    (writer.downloadWorkbook as vi.Mock).mockResolvedValue(undefined);
     (
       GraphProcessor.prototype.getNodeIdMap as unknown as vi.Mock
     ).mockReturnValue({});

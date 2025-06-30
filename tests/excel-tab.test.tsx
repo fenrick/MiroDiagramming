@@ -34,7 +34,7 @@ describe('ExcelTab', () => {
       graphExcelLoader.loadWorkbookFromGraph as unknown as jest.Mock
     ).mockResolvedValue(undefined);
     (writer.addMiroIds as jest.Mock).mockImplementation((r) => r);
-    (writer.downloadWorkbook as jest.Mock).mockImplementation(() => {});
+    (writer.downloadWorkbook as jest.Mock).mockResolvedValue(undefined);
     (
       GraphProcessor.prototype.getNodeIdMap as unknown as jest.Mock
     ).mockReturnValue({ n1: 'w1' });
