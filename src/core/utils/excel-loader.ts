@@ -97,6 +97,13 @@ export class ExcelLoader {
     return rows;
   }
 
+  /**
+   * Convert an Excel range reference into numeric row and column indices.
+   *
+   * @param ref - Standard range string like "A1:B2" or undefined for entire sheet.
+   * @param ws - Worksheet used to determine default bounds when `ref` is empty.
+   * @returns Coordinates for the start and end of the range.
+   */
   private parseRange(
     ref: string | undefined,
     ws: ExcelJS.Worksheet,

@@ -5,6 +5,12 @@ import type { BaseItem, Group } from '@mirohq/websdk-types';
 
 const META_KEY = 'app.miro.excel';
 
+/**
+ * Narrow a board item to the Group type.
+ *
+ * @param item - Widget or group from the Miro SDK.
+ * @returns True when the item exposes a `getItems` method.
+ */
 function isGroup(item: BaseItem | Group): item is Group {
   return typeof (item as Group).getItems === 'function';
 }
