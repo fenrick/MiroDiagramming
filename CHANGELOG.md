@@ -46,3 +46,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Initial creation of changelog.
 - Automatically convert hierarchical and flat graph files when imported.
 - Refactor tab pages to use dedicated hooks for diagram, Excel and search logic.
+- Consolidate row mapping into `mapRowsWith` utility.
