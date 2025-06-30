@@ -12,6 +12,7 @@ import {
 import {
   applySizeToSelection,
   copySizeFromSelection,
+  scaleSelection,
   Size,
 } from '../../board/resize-tools';
 import { useSelection } from '../hooks/use-selection';
@@ -33,6 +34,13 @@ const PRESET_SIZES: Record<'S' | 'M' | 'L', Size> = {
   M: { width: 200, height: 150 },
   L: { width: 400, height: 300 },
 };
+
+/** Scale options for quick resizing by factors. */
+const SCALE_OPTIONS = [
+  { label: '×½', factor: 0.5 },
+  { label: '×2', factor: 2 },
+  { label: '×3', factor: 3 },
+] as const;
 
 /** UI for the Resize tab. */
 export const ResizeTab: React.FC = () => {
@@ -69,6 +77,12 @@ export const ResizeTab: React.FC = () => {
     }
     await applySizeToSelection(target);
   }, [copiedSize, size]);
+
+  const scale = React.useCallback(async (factor: number): Promise<void> => {
+    await scaleSelection(factor);
+    const updated = await copySizeFromSelection();
+    if (updated) setSize(updated);
+  }, []);
 
   React.useEffect(() => {
     const first = selection[0] as
@@ -156,6 +170,16 @@ export const ResizeTab: React.FC = () => {
             onClick={() => setSize(PRESET_SIZES[p])}
             variant='secondary'>
             {p}
+          </Button>
+        ))}
+      </div>
+      <div className='buttons'>
+        {SCALE_OPTIONS.map((s) => (
+          <Button
+            key={s.label}
+            onClick={() => scale(s.factor)}
+            variant='secondary'>
+            {s.label}
           </Button>
         ))}
       </div>

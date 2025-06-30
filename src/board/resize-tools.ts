@@ -63,3 +63,24 @@ export async function applySizeToSelection(
     }
   }, board);
 }
+
+/**
+ * Scale all currently selected widgets by a factor.
+ *
+ * Both the width and height of each widget are multiplied by the provided
+ * factor. Widgets lacking numeric dimensions are ignored.
+ *
+ * @param factor - Scale multiplier to apply.
+ * @param board - Optional board API overriding `miro.board` for testing.
+ */
+export async function scaleSelection(
+  factor: number,
+  board?: BoardLike,
+): Promise<void> {
+  await forEachSelection(async (item: Record<string, unknown>) => {
+    const target = item as { width?: number; height?: number } & Syncable;
+    if (typeof target.width === 'number') target.width *= factor;
+    if (typeof target.height === 'number') target.height *= factor;
+    await maybeSync(target);
+  }, board);
+}
