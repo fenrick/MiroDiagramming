@@ -24,12 +24,15 @@ describe('DiagramApp', () => {
   test('init registers handlers and opens panel for commands', async () => {
     const openPanel = jest.fn().mockResolvedValue(undefined);
     const on = jest.fn((e: string, cb: () => Promise<void>) => {
-      if (e === 'icon:click' || e === 'edit-metadata') cb();
+      if (e === 'icon:click' || e === 'custom:edit-metadata') cb();
     });
     global.miro = { board: { ui: { on, openPanel } } };
     await DiagramApp.getInstance().init();
     expect(on).toHaveBeenCalledWith('icon:click', expect.any(Function));
-    expect(on).toHaveBeenCalledWith('edit-metadata', expect.any(Function));
+    expect(on).toHaveBeenCalledWith(
+      'custom:edit-metadata',
+      expect.any(Function),
+    );
     expect(openPanel).toHaveBeenCalledWith({ url: 'app.html' });
     expect(openPanel).toHaveBeenCalledWith({
       url: 'app.html?command=edit-metadata',
