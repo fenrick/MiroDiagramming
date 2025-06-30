@@ -1,3 +1,10 @@
+## [1.11.1](https://github.com/fenrick/MiroDiagramming/compare/v1.11.0...v1.11.1) (2025-06-30)
+
+
+### Bug Fixes
+
+* **core:** improve excel loader and UI ([758294e](https://github.com/fenrick/MiroDiagramming/commit/758294e9b7ada1479e24b5a2b3b9cf2c91c11b29))
+
 # [1.11.0](https://github.com/fenrick/MiroDiagramming/compare/v1.10.0...v1.11.0) (2025-06-30)
 
 ### Bug Fixes
