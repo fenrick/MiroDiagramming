@@ -81,6 +81,29 @@ describe('createFromTemplate', () => {
     expect(items).toHaveLength(2);
   });
 
+  test('adds created items to provided frame', async () => {
+    (
+      templateManager as unknown as { templates: Record<string, unknown> }
+    ).templates.withFrame = {
+      elements: [
+        { shape: 'rectangle', width: 20, height: 20 },
+        { text: 'Frame' },
+      ],
+    };
+    const frame = {
+      add: jest.fn(),
+    } as unknown as import('@mirohq/websdk-types').Frame;
+    const widget = await templateManager.createFromTemplate(
+      'withFrame',
+      'L',
+      0,
+      0,
+      frame,
+    );
+    expect(frame.add).toHaveBeenCalledTimes(2);
+    expect(widget.type).toBe('group');
+  });
+
   test('creates text only widget', async () => {
     (
       templateManager as unknown as { templates: Record<string, unknown> }
@@ -92,6 +115,27 @@ describe('createFromTemplate', () => {
       0,
     );
     expect(widget.type).toBe('text');
+  });
+
+  test('single element added to frame without grouping', async () => {
+    (
+      templateManager as unknown as { templates: Record<string, unknown> }
+    ).templates.frameSingle = {
+      elements: [{ shape: 'ellipse', width: 10, height: 10 }],
+    };
+    const frame = {
+      add: jest.fn(),
+    } as unknown as import('@mirohq/websdk-types').Frame;
+    const widget = await templateManager.createFromTemplate(
+      'frameSingle',
+      'L',
+      0,
+      0,
+      frame,
+    );
+    expect(frame.add).toHaveBeenCalledTimes(1);
+    expect(global.miro.board.group).not.toHaveBeenCalled();
+    expect(widget.type).toBe('shape');
   });
 
   test('apply fill property when style lacks fillColor', async () => {
@@ -111,6 +155,19 @@ describe('createFromTemplate', () => {
     ).mock.calls.pop()[0];
     expect(args.style.fillColor).toBe('#fff');
     expect(widget.type).toBe('shape');
+  });
+
+  test('ignores unsupported element types', async () => {
+    (
+      templateManager as unknown as { templates: Record<string, unknown> }
+    ).templates.unknownElement = { elements: [{ position: 'top' }] };
+    const widget = await templateManager.createFromTemplate(
+      'unknownElement',
+      'L',
+      0,
+      0,
+    );
+    expect(widget).toBeUndefined();
   });
 
   test('throws when template missing', async () => {

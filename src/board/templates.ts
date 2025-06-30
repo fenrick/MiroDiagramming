@@ -147,6 +147,80 @@ export class TemplateManager {
     return { shape: 'curved', ...tpl, style };
   }
 
+  /** Create a shape widget for a template element. */
+  private async createShapeWidget(
+    element: TemplateElement,
+    label: string,
+    x: number,
+    y: number,
+    frame?: Frame,
+  ): Promise<GroupableItem> {
+    const style: Partial<ShapeStyle> & Record<string, unknown> =
+      this.resolveStyle(element.style ?? {});
+    if (element.fill && !style.fillColor) {
+      style.fillColor = this.resolveToken(element.fill) as string;
+    }
+    const shape = await miro.board.createShape({
+      shape: element.shape as ShapeType,
+      x,
+      y,
+      width: element.width,
+      height: element.height,
+      rotation: element.rotation ?? 0,
+      content: (element.text ?? '{{label}}').replace('{{label}}', label),
+      style: style as Partial<ShapeStyle>,
+    });
+    frame?.add(shape);
+    return shape;
+  }
+
+  /** Create a text widget for a template element. */
+  private async createTextWidget(
+    element: TemplateElement,
+    label: string,
+    x: number,
+    y: number,
+    frame?: Frame,
+  ): Promise<GroupableItem> {
+    const style: Partial<TextStyle> & Record<string, unknown> = {
+      textAlign: 'center',
+      ...this.resolveStyle(element.style ?? {}),
+    };
+    const text = await miro.board.createText({
+      content: element.text?.replace('{{label}}', label) ?? label,
+      x,
+      y,
+      style: style as Partial<TextStyle>,
+    });
+    frame?.add(text);
+    return text;
+  }
+
+  private getElementType(
+    element: TemplateElement,
+  ): 'shape' | 'text' | undefined {
+    if (element.shape) return 'shape';
+    if (element.text) return 'text';
+    return undefined;
+  }
+
+  private async createElement(
+    element: TemplateElement,
+    label: string,
+    x: number,
+    y: number,
+    frame?: Frame,
+  ): Promise<GroupableItem | undefined> {
+    switch (this.getElementType(element)) {
+      case 'shape':
+        return this.createShapeWidget(element, label, x, y, frame);
+      case 'text':
+        return this.createTextWidget(element, label, x, y, frame);
+      default:
+        return undefined;
+    }
+  }
+
   /** Instantiate board widgets described by a template. */
   public async createFromTemplate(
     name: string,
@@ -162,38 +236,8 @@ export class TemplateManager {
 
     const created: GroupableItem[] = [];
     for (const el of template.elements) {
-      if (el.shape) {
-        const style: Partial<ShapeStyle> & Record<string, unknown> =
-          this.resolveStyle(el.style ?? {});
-        if (el.fill && !style.fillColor) {
-          style.fillColor = this.resolveToken(el.fill) as string;
-        }
-        const shape = await miro.board.createShape({
-          shape: el.shape as ShapeType,
-          x,
-          y,
-          width: el.width,
-          height: el.height,
-          rotation: el.rotation ?? 0,
-          content: (el.text ?? '{{label}}').replace('{{label}}', label),
-          style: style as Partial<ShapeStyle>,
-        });
-        frame?.add(shape);
-        created.push(shape);
-      } else if (el.text) {
-        const style: Partial<TextStyle> & Record<string, unknown> = {
-          textAlign: 'center',
-          ...this.resolveStyle(el.style ?? {}),
-        };
-        const text = await miro.board.createText({
-          content: el.text.replace('{{label}}', label),
-          x,
-          y,
-          style: style as Partial<TextStyle>,
-        });
-        frame?.add(text);
-        created.push(text);
-      }
+      const item = await this.createElement(el, label, x, y, frame);
+      if (item) created.push(item);
     }
 
     if (created.length > 1) {

@@ -18,6 +18,17 @@ test('template helpers return values or undefined', () => {
   delete (connectorTemplates as unknown as Record<string, unknown>).extra;
 });
 
+test('resolveStyle substitutes tokens', () => {
+  const style = templateManager.resolveStyle({
+    fillColor: 'tokens.color.yellow[150]',
+    fontWeight: 'tokens.typography.fontWeight.bold',
+    missing: 'tokens.color.nope[999]',
+  });
+  expect(style.fillColor).toMatch(/^#/);
+  expect(style.fontWeight).toBe('var(--font-weight-bold)');
+  expect(style.missing).toBeDefined();
+});
+
 describe('token resolution', () => {
   test('resolves color tokens to hex', () => {
     const style = templateManager.resolveStyle({
