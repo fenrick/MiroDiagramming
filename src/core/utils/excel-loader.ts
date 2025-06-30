@@ -111,7 +111,8 @@ export class ExcelLoader {
       };
     }
     const clean = ref.replace(/\$/g, '');
-    const match = clean.match(/([A-Z]+)(\d+):([A-Z]+)(\d+)/i);
+    const rangeRegex = /([A-Z]+)(\d+):([A-Z]+)(\d+)/i;
+    const match = rangeRegex.exec(clean);
     if (!match) throw new Error(`Invalid range: ${ref}`);
     const [, sCol, sRow, eCol, eRow] = match;
     const colNum = (col: string) =>

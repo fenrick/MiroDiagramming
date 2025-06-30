@@ -5,6 +5,10 @@ import type { BaseItem, Group } from '@mirohq/websdk-types';
 
 const META_KEY = 'app.miro.excel';
 
+function isGroup(item: BaseItem | Group): item is Group {
+  return typeof (item as Group).getItems === 'function';
+}
+
 /**
  * Extract the row identifier from a widget or group.
  *
@@ -14,10 +18,10 @@ const META_KEY = 'app.miro.excel';
 async function extractRowId(
   item: BaseItem | Group,
 ): Promise<string | undefined> {
-  if (item.type === 'group') {
-    const items = await (item as Group).getItems();
+  if (isGroup(item)) {
+    const items = await item.getItems();
     for (const child of items) {
-      const meta = (await (child as BaseItem).getMetadata(META_KEY)) as {
+      const meta = (await child.getMetadata(META_KEY)) as {
         rowId?: string;
       } | null;
       if (meta?.rowId) return String(meta.rowId);
@@ -25,9 +29,7 @@ async function extractRowId(
     /* c8 ignore next */
     return undefined;
   }
-  const meta = (await (item as BaseItem).getMetadata(META_KEY)) as {
-    rowId?: string;
-  } | null;
+  const meta = (await item.getMetadata(META_KEY)) as { rowId?: string } | null;
   return meta?.rowId ? String(meta.rowId) : undefined;
 }
 
