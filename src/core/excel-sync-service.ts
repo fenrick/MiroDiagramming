@@ -75,34 +75,72 @@ export class ExcelSyncService {
     mapping: ColumnMapping,
   ): Promise<ExcelRow[]> {
     const updated: ExcelRow[] = [];
-    const metaCols = mapping.metadataColumns ?? {};
     for (const [i, r] of rows.entries()) {
-      const row = { ...r };
-      const rowId = mapping.idColumn ? row[mapping.idColumn] : undefined;
+      const rowId = mapping.idColumn ? r[mapping.idColumn] : undefined;
       const idStr = String(rowId ?? i);
-      const widget = await this.findWidget(idStr);
+      const widget = await this.lookupWidget(idStr);
+      let row = { ...r };
       if (widget) {
-        const item = await this.extractItem(widget);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const content = (item as any).content as string | undefined;
-        if (mapping.labelColumn && content) {
-          row[mapping.labelColumn] = content;
-        }
-        const meta = (await item.getMetadata(META_KEY)) as
-          | Record<string, unknown>
-          | undefined;
-        if (mapping.textColumn && meta?.text != null) {
-          row[mapping.textColumn] = meta.text;
-        }
-        Object.keys(metaCols).forEach((key) => {
-          if (meta?.[key] != null) {
-            row[metaCols[key]] = meta[key];
-          }
-        });
+        const data = await this.extractWidgetData(widget);
+        row = this.updateRowFromWidget(row, mapping, data);
         this.registerMapping(idStr, widget.id ?? '');
       }
       updated.push(row);
     }
+    return updated;
+  }
+
+  /** Retrieve the widget corresponding to the given identifier. */
+  private async lookupWidget(
+    idStr: string,
+  ): Promise<BaseItem | Group | undefined> {
+    return this.findWidget(idStr);
+  }
+
+  /**
+   * Extract content and metadata from a widget.
+   *
+   * @param widget - Widget to inspect.
+   * @returns Widget text content and metadata.
+   */
+  private async extractWidgetData(
+    widget: BaseItem | Group,
+  ): Promise<{ content?: string; meta?: Record<string, unknown> }> {
+    const item = await this.extractItem(widget);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const content = (item as any).content as string | undefined;
+    const meta = (await item.getMetadata(META_KEY)) as
+      | Record<string, unknown>
+      | undefined;
+    return { content, meta };
+  }
+
+  /**
+   * Merge widget data into an Excel row according to the mapping.
+   *
+   * @param row - Row to update.
+   * @param mapping - Column mapping describing identifiers and labels.
+   * @param data - Extracted widget content and metadata.
+   * @returns Updated row with merged values.
+   */
+  private updateRowFromWidget(
+    row: ExcelRow,
+    mapping: ColumnMapping,
+    data: { content?: string; meta?: Record<string, unknown> },
+  ): ExcelRow {
+    const updated = { ...row };
+    const metaCols = mapping.metadataColumns ?? {};
+    if (mapping.labelColumn && data.content) {
+      updated[mapping.labelColumn] = data.content;
+    }
+    if (mapping.textColumn && data.meta?.text != null) {
+      updated[mapping.textColumn] = data.meta.text;
+    }
+    Object.keys(metaCols).forEach((key) => {
+      if (data.meta?.[key] != null) {
+        updated[metaCols[key]] = data.meta[key];
+      }
+    });
     return updated;
   }
 
