@@ -17,3 +17,33 @@ test('template helpers return values or undefined', () => {
   expect(templateManager.getConnectorTemplate('missing')).toBeUndefined();
   delete (connectorTemplates as unknown as Record<string, unknown>).extra;
 });
+
+test('resolveStyle substitutes tokens', () => {
+  const style = templateManager.resolveStyle({
+    fillColor: 'tokens.color.yellow[150]',
+    fontWeight: 'tokens.typography.fontWeight.bold',
+    missing: 'tokens.color.nope[999]',
+  });
+  expect(style.fillColor).toMatch(/^#/);
+  expect(style.fontWeight).toBe('var(--font-weight-bold)');
+  expect(style.missing).toBeDefined();
+});
+
+describe('token resolution', () => {
+  test('resolves color tokens to hex', () => {
+    const style = templateManager.resolveStyle({
+      fillColor: 'tokens.color.red[700]',
+    });
+    expect(style.fillColor).toBe('#6b1720');
+  });
+
+  test('returns raw value for unknown tokens', () => {
+    const style = templateManager.resolveStyle({ something: 'tokens.foo.bar' });
+    expect(style.something).toBe('tokens.foo.bar');
+  });
+
+  test('looks up generic tokens', () => {
+    const style = templateManager.resolveStyle({ gap: 'tokens.space.small' });
+    expect(style.gap).toBe('var(--space-small)');
+  });
+});

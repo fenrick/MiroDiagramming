@@ -62,32 +62,59 @@ function readColumn(row: Record<string, unknown>, column?: string): unknown {
  * @param rows - Parsed rows from {@link ExcelLoader}.
  * @param mapping - Column mapping configuration.
  */
-export function mapRowToNode(
+export function buildMetadata(
   row: Record<string, unknown>,
   mapping: ColumnMapping,
   index: number,
-): NodeDefinition {
+): Record<string, unknown> {
   const metadata: Record<string, unknown> = {};
   if (mapping.textColumn && row[mapping.textColumn] != null) {
     metadata.text = row[mapping.textColumn];
   }
-  const metaCols = mapping.metadataColumns ?? {};
-  Object.entries(metaCols).forEach(([key, col]) => {
+  const extra = mapping.metadataColumns ?? {};
+  Object.entries(extra).forEach(([key, col]) => {
     const value = row[col];
     if (value != null) metadata[key] = value;
   });
   const idVal = mapping.idColumn ? row[mapping.idColumn] : undefined;
   metadata.rowId = idVal != null ? String(idVal) : String(index);
+  return metadata;
+}
+
+/**
+ * Resolve identifier, label and type values from the given row.
+ */
+export function resolveIdLabelType(
+  row: Record<string, unknown>,
+  mapping: ColumnMapping,
+  index: number,
+): { id: string; label: string; type: string } {
+  const idVal = mapping.idColumn ? row[mapping.idColumn] : undefined;
+  const labelVal = mapping.labelColumn ? row[mapping.labelColumn] : undefined;
   const typeVal = mapping.templateColumn
     ? row[mapping.templateColumn]
     : undefined;
-  const labelVal = mapping.labelColumn ? row[mapping.labelColumn] : undefined;
   return {
     id: idVal != null ? String(idVal) : String(index),
     label: labelVal != null ? String(labelVal) : '',
     type: typeVal != null ? String(typeVal) : 'default',
-    metadata: Object.keys(metadata).length ? metadata : undefined,
   };
+}
+
+/**
+ * Convert an array of Excel rows into {@link NodeDefinition} objects.
+ *
+ * @param rows - Parsed rows from {@link ExcelLoader}.
+ * @param mapping - Column mapping configuration.
+ */
+export function mapRowToNode(
+  row: Record<string, unknown>,
+  mapping: ColumnMapping,
+  index: number,
+): NodeDefinition {
+  const { id, label, type } = resolveIdLabelType(row, mapping, index);
+  const metadata = buildMetadata(row, mapping, index);
+  return { id, label, type, metadata };
 }
 
 export function mapRowsToNodes(

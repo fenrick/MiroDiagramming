@@ -62,6 +62,45 @@ export class TemplateManager {
     connectorJson as ConnectorTemplateCollection;
 
   /**
+   * Translate `tokens.color.*` references to concrete hex values.
+   *
+   * @param path - Token lookup path without the `tokens.` prefix.
+   * @returns The resolved colour string or `undefined` when the path does not
+   *   match the expected pattern.
+   */
+  private parseColorToken(path: string): string | undefined {
+    const match = /^color\.([a-zA-Z]+)\[(\d+)\]$/.exec(path);
+    if (!match) return undefined;
+    const [, name, shade] = match;
+    const palette = tokens as unknown as Record<
+      string,
+      Record<string, Record<string, string>>
+    >;
+    const token = palette.color?.[name]?.[shade];
+    const fallback =
+      (colors as Record<string, string>)[`${name}-${shade}`] ?? colors.white;
+    return typeof token === 'string' ? resolveColor(token, fallback) : fallback;
+  }
+
+  /**
+   * Resolve arbitrary token paths such as `tokens.space.small`.
+   *
+   * @param path - Dot-separated token path without the `tokens.` prefix.
+   * @returns The token value or `undefined` if not found.
+   */
+  private lookupToken(path: string): unknown {
+    let ref: unknown = tokens;
+    for (const part of path.split('.')) {
+      const m = /^([a-zA-Z]+)(?:\[(\d+)\])?$/.exec(part);
+      if (!m) return undefined;
+      ref = (ref as Record<string, unknown>)[m[1]];
+      if (ref === undefined) return undefined;
+      if (m[2]) ref = (ref as Record<string, unknown>)[m[2]];
+    }
+    return ref;
+  }
+
+  /**
    * Resolve design-token identifiers to concrete values.
    *
    * Currently supports `tokens.color.*` paths which are converted to the
@@ -71,30 +110,10 @@ export class TemplateManager {
   private resolveToken(value: unknown): unknown {
     if (typeof value !== 'string' || !value.startsWith('tokens.')) return value;
     const path = value.slice('tokens.'.length);
-    const colorMatch = /^color\.([a-zA-Z]+)\[(\d+)\]$/.exec(path);
-    if (colorMatch) {
-      const [, name, shade] = colorMatch;
-      const palette = tokens as unknown as Record<
-        string,
-        Record<string, Record<string, string>>
-      >;
-      const token = palette.color?.[name]?.[shade];
-      const fallback =
-        (colors as Record<string, string>)[`${name}-${shade}`] ?? colors.white;
-      return typeof token === 'string'
-        ? resolveColor(token, fallback)
-        : fallback;
-    }
-    // generic token access e.g. tokens.typography.fontWeight.bold
-    let ref: unknown = tokens;
-    for (const part of path.split('.')) {
-      const m = /^([a-zA-Z]+)(?:\[(\d+)\])?$/.exec(part);
-      if (!m) return value;
-      ref = (ref as Record<string, unknown>)[m[1]];
-      if (ref === undefined) return value;
-      if (m[2]) ref = (ref as Record<string, unknown>)[m[2]];
-    }
-    return ref ?? value;
+    const color = this.parseColorToken(path);
+    if (color !== undefined) return color;
+    const token = this.lookupToken(path);
+    return token ?? value;
   }
 
   /** Apply token resolution to all string properties in the provided object. */
@@ -128,6 +147,80 @@ export class TemplateManager {
     return { shape: 'curved', ...tpl, style };
   }
 
+  /** Create a shape widget for a template element. */
+  private async createShapeWidget(
+    element: TemplateElement,
+    label: string,
+    x: number,
+    y: number,
+    frame?: Frame,
+  ): Promise<GroupableItem> {
+    const style: Partial<ShapeStyle> & Record<string, unknown> =
+      this.resolveStyle(element.style ?? {});
+    if (element.fill && !style.fillColor) {
+      style.fillColor = this.resolveToken(element.fill) as string;
+    }
+    const shape = await miro.board.createShape({
+      shape: element.shape as ShapeType,
+      x,
+      y,
+      width: element.width,
+      height: element.height,
+      rotation: element.rotation ?? 0,
+      content: (element.text ?? '{{label}}').replace('{{label}}', label),
+      style: style as Partial<ShapeStyle>,
+    });
+    frame?.add(shape);
+    return shape;
+  }
+
+  /** Create a text widget for a template element. */
+  private async createTextWidget(
+    element: TemplateElement,
+    label: string,
+    x: number,
+    y: number,
+    frame?: Frame,
+  ): Promise<GroupableItem> {
+    const style: Partial<TextStyle> & Record<string, unknown> = {
+      textAlign: 'center',
+      ...this.resolveStyle(element.style ?? {}),
+    };
+    const text = await miro.board.createText({
+      content: element.text?.replace('{{label}}', label) ?? label,
+      x,
+      y,
+      style: style as Partial<TextStyle>,
+    });
+    frame?.add(text);
+    return text;
+  }
+
+  private getElementType(
+    element: TemplateElement,
+  ): 'shape' | 'text' | undefined {
+    if (element.shape) return 'shape';
+    if (element.text) return 'text';
+    return undefined;
+  }
+
+  private async createElement(
+    element: TemplateElement,
+    label: string,
+    x: number,
+    y: number,
+    frame?: Frame,
+  ): Promise<GroupableItem | undefined> {
+    switch (this.getElementType(element)) {
+      case 'shape':
+        return this.createShapeWidget(element, label, x, y, frame);
+      case 'text':
+        return this.createTextWidget(element, label, x, y, frame);
+      default:
+        return undefined;
+    }
+  }
+
   /** Instantiate board widgets described by a template. */
   public async createFromTemplate(
     name: string,
@@ -143,38 +236,8 @@ export class TemplateManager {
 
     const created: GroupableItem[] = [];
     for (const el of template.elements) {
-      if (el.shape) {
-        const style: Partial<ShapeStyle> & Record<string, unknown> =
-          this.resolveStyle(el.style ?? {});
-        if (el.fill && !style.fillColor) {
-          style.fillColor = this.resolveToken(el.fill) as string;
-        }
-        const shape = await miro.board.createShape({
-          shape: el.shape as ShapeType,
-          x,
-          y,
-          width: el.width,
-          height: el.height,
-          rotation: el.rotation ?? 0,
-          content: (el.text ?? '{{label}}').replace('{{label}}', label),
-          style: style as Partial<ShapeStyle>,
-        });
-        frame?.add(shape);
-        created.push(shape);
-      } else if (el.text) {
-        const style: Partial<TextStyle> & Record<string, unknown> = {
-          textAlign: 'center',
-          ...this.resolveStyle(el.style ?? {}),
-        };
-        const text = await miro.board.createText({
-          content: el.text.replace('{{label}}', label),
-          x,
-          y,
-          style: style as Partial<TextStyle>,
-        });
-        frame?.add(text);
-        created.push(text);
-      }
+      const item = await this.createElement(el, label, x, y, frame);
+      if (item) created.push(item);
     }
 
     if (created.length > 1) {
