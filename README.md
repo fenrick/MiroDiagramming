@@ -1,8 +1,7 @@
 # Miro JSON Graph Diagram App
 
-This project demonstrates how to import a JSON description of a graph and build
-
-a diagram on a Miro board. The application uses the **Eclipse Layout Kernel
+This project imports graphs or cards from JSON or Excel files and builds
+diagrams on a Miro board. The application uses the **Eclipse Layout Kernel
 (ELK)** to arrange nodes and edges automatically. Shapes are generated from
 templates and each element can carry metadata that controls its appearance and
 placement.
@@ -317,62 +316,6 @@ The CI pipeline also enforces commitlint via
 - [Code Style](docs/CODE_STYLE.md) outlines formatting and naming rules.
 - [UI Patterns](docs/PATTERNS.md) shows common layouts and best practices.
 - [Excel Import](docs/EXCEL_IMPORT.md) details workbook loading and sync.
-
-## Docker Image
-
-The project can be packaged as a container image. Build and run using:
-
-```bash
-docker build -t miro-diagramming .
-docker run --rm -p 8080:80 miro-diagramming
-```
-
-Tagged releases push the image to the GitHub Container Registry automatically.
-The workflow builds a standard `linux/amd64` image via
-`docker/build-push-action@v5`; QEMU is unnecessary as no cross-platform
-emulation is performed.
-
-## Docker Image
-
-The project can be packaged as a container image. Build and run using:
-
-```bash
-docker build -t miro-diagramming .
-docker run --rm -p 8080:80 miro-diagramming
-```
-
-Tagged releases push the image to the GitHub Container Registry automatically.
-The workflow builds a standard `linux/amd64` image via
-`docker/build-push-action@v5`; QEMU is unnecessary as no cross-platform
-emulation is performed.
-
-## Docker Image
-
-The project can be packaged as a container image. Build and run using:
-
-```bash
-docker build -t miro-diagramming .
-docker run --rm -p 8080:80 miro-diagramming
-```
-
-Tagged releases push the image to the GitHub Container Registry automatically.
-The workflow builds a standard `linux/amd64` image via
-`docker/build-push-action@v5`; QEMU is unnecessary as no cross-platform
-emulation is performed.
-
-## Docker Image
-
-The project can be packaged as a container image. Build and run using:
-
-```bash
-docker build -t miro-diagramming .
-docker run --rm -p 8080:80 miro-diagramming
-```
-
-Tagged releases push the image to the GitHub Container Registry automatically.
-The workflow builds a standard `linux/amd64` image via
-`docker/build-push-action@v5`; QEMU is unnecessary as no cross-platform
-emulation is performed.
 
 ## Docker Image
 
