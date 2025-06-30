@@ -1,4 +1,10 @@
 /**
+ * Pure grid layout utilities used by board tools.
+ *
+ * Resides in `src/board` alongside functions that manipulate widgets.
+ */
+
+/**
  * Grid layout helper for board items.
  *
  * Calculates relative cell coordinates for an item grid.

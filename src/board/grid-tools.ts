@@ -1,5 +1,7 @@
 /**
- * Calculate grid positions and apply a grid layout to the current selection.
+ * Grid layout helpers for arranging selected widgets.
+ *
+ * Lives in `src/board` with other board manipulation utilities.
  */
 export interface GridOptions {
   /** Number of columns in the grid */
