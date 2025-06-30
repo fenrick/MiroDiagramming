@@ -144,20 +144,54 @@ function setStringAtPath(
   parent[last] = value;
 }
 
-function applyFilters(
+/**
+ * Collect matching text fields from a single widget.
+ */
+function collectMatches(
   item: Record<string, unknown>,
+  pattern: RegExp,
+): SearchResult[] {
+  const matches: SearchResult[] = [];
+  for (const [field, text] of getTextFields(item)) {
+    pattern.lastIndex = 0;
+    if (pattern.test(text)) matches.push({ item, field });
+  }
+  return matches;
+}
+
+/**
+ * Retrieve candidate widgets from the board based on type and selection.
+ */
+async function queryBoardItems(
   opts: SearchOptions,
-): boolean {
-  const filters: Array<(i: Record<string, unknown>) => boolean> = [];
+  board: BoardQueryLike,
+): Promise<Record<string, unknown>[]> {
+  if (opts.inSelection) return board.getSelection();
+  const types = opts.widgetTypes?.length ? opts.widgetTypes : ['widget'];
+  const items: Record<string, unknown>[] = [];
+  for (const t of types) items.push(...(await board.get({ type: t })));
+  return items;
+}
+
+/**
+ * Create a predicate that evaluates search filters on a widget.
+ *
+ * Each option in {@link SearchOptions} corresponds to a simple check. The
+ * returned function returns `true` only when all configured checks succeed.
+ */
+function buildFilter(
+  opts: SearchOptions,
+): (item: Record<string, unknown>) => boolean {
+  const checks: Array<(i: Record<string, unknown>) => boolean> = [];
 
   if (opts.widgetTypes) {
     const types = new Set(opts.widgetTypes);
-    filters.push((i) => types.has((i as { type?: string }).type ?? ''));
+    checks.push((i) => types.has((i as { type?: string }).type ?? ''));
   }
 
   if (opts.tagIds) {
     const tagsWanted = new Set(opts.tagIds);
-    filters.push((i) => {
+    checks.push((i) => {
       const tags = (i as { tagIds?: string[] }).tagIds;
       return Array.isArray(tags) && tags.some((id) => tagsWanted.has(id));
     });
@@ -165,7 +199,7 @@ function applyFilters(
 
   if (opts.backgroundColor) {
     const colour = opts.backgroundColor.toLowerCase();
-    filters.push((i) => {
+    checks.push((i) => {
       const style = (i.style ?? {}) as Record<string, unknown>;
       const fill = (style.fillColor ?? style.backgroundColor) as
         | string
@@ -176,7 +210,7 @@ function applyFilters(
 
   if (opts.assignee) {
     const assigneeId = opts.assignee;
-    filters.push((i) => {
+    checks.push((i) => {
       const assignee =
         (i as { assignee?: string; assigneeId?: string }).assignee ??
         (i as { assigneeId?: string }).assigneeId;
@@ -186,17 +220,16 @@ function applyFilters(
 
   if (opts.creator) {
     const creator = opts.creator;
-    filters.push((i) => (i as { createdBy?: string }).createdBy === creator);
+    checks.push((i) => (i as { createdBy?: string }).createdBy === creator);
   }
 
   if (opts.lastModifiedBy) {
     const modifier = opts.lastModifiedBy;
-    filters.push(
+    checks.push(
       (i) => (i as { lastModifiedBy?: string }).lastModifiedBy === modifier,
     );
   }
-
-  return filters.every((fn) => fn(item));
+  return (item: Record<string, unknown>) => checks.every((fn) => fn(item));
 }
 
 /**
@@ -217,21 +250,13 @@ export async function searchBoardContent(
   board?: BoardQueryLike,
 ): Promise<SearchResult[]> {
   const b = getBoardWithQuery(board);
-  let items: Record<string, unknown>[] = [];
-  if (opts.inSelection) {
-    items = await b.getSelection();
-  } else {
-    const types = opts.widgetTypes?.length ? opts.widgetTypes : ['widget'];
-    for (const t of types) items.push(...(await b.get({ type: t })));
-  }
+  const items = await queryBoardItems(opts, b);
+  const filter = buildFilter(opts);
   const pattern = buildRegex(opts);
   const results: SearchResult[] = [];
   for (const item of items) {
-    if (!applyFilters(item, opts)) continue;
-    for (const [field, text] of getTextFields(item)) {
-      pattern.lastIndex = 0;
-      if (pattern.test(text)) results.push({ item, field });
-    }
+    if (!filter(item)) continue;
+    results.push(...collectMatches(item, pattern));
   }
   return results;
 }
