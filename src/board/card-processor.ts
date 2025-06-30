@@ -81,37 +81,12 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
     let created: Card[] = [];
     let frame: Frame | undefined;
     if (toCreate.length > 0) {
-      const { spot, startX, startY, columns, totalWidth, totalHeight } =
-        await this.calculateLayoutArea(toCreate.length, options.columns);
-
-      if (options.createFrame !== false) {
-        frame = await registerFrame(
-          this.builder,
-          this.lastCreated,
-          totalWidth,
-          totalHeight,
-          spot,
-          options.frameTitle,
-        );
-      } else {
-        clearActiveFrame(this.builder);
-      }
-
-      created = await Promise.all(
-        toCreate.map((def, i) =>
-          this.createCardWidget(
-            def,
-            startX +
-              (i % columns) *
-                (CardProcessor.CARD_WIDTH + CardProcessor.CARD_GAP),
-            startY +
-              Math.floor(i / columns) *
-                (CardProcessor.CARD_HEIGHT + CardProcessor.CARD_GAP),
-            tagMap,
-          ),
-        ),
+      const layout = await this.calculateLayoutArea(
+        toCreate.length,
+        options.columns,
       );
-      created.forEach((c) => frame?.add(c));
+      frame = await this.createFrame(options, layout);
+      created = await this.createCardWidgets(toCreate, layout, tagMap, frame);
     } else {
       clearActiveFrame(this.builder);
     }
@@ -309,5 +284,57 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
     itemSize: number,
   ): number {
     return center - total / 2 + CardProcessor.CARD_MARGIN + itemSize / 2;
+  }
+
+  /**
+   * Create a frame to contain newly created cards when requested.
+   */
+  private async createFrame(
+    options: CardProcessOptions,
+    layout: {
+      totalWidth: number;
+      totalHeight: number;
+      spot: { x: number; y: number };
+    },
+  ): Promise<Frame | undefined> {
+    if (options.createFrame === false) {
+      clearActiveFrame(this.builder);
+      return undefined;
+    }
+    return registerFrame(
+      this.builder,
+      this.lastCreated,
+      layout.totalWidth,
+      layout.totalHeight,
+      layout.spot,
+      options.frameTitle,
+    );
+  }
+
+  /**
+   * Create card widgets and optionally add them to a frame.
+   */
+  private async createCardWidgets(
+    defs: CardData[],
+    layout: { startX: number; startY: number; columns: number },
+    tagMap: Map<string, Tag>,
+    frame?: Frame,
+  ): Promise<Card[]> {
+    const cards = await Promise.all(
+      defs.map((def, i) =>
+        this.createCardWidget(
+          def,
+          layout.startX +
+            (i % layout.columns) *
+              (CardProcessor.CARD_WIDTH + CardProcessor.CARD_GAP),
+          layout.startY +
+            Math.floor(i / layout.columns) *
+              (CardProcessor.CARD_HEIGHT + CardProcessor.CARD_GAP),
+          tagMap,
+        ),
+      ),
+    );
+    cards.forEach((c) => frame?.add(c));
+    return cards;
   }
 }
