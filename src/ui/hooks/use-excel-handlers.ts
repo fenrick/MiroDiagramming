@@ -108,7 +108,7 @@ export function useExcelCreate({
       setRows(merged);
       /* istanbul ignore next */
       if (file) {
-        downloadWorkbook(merged, `updated-${file.name}`);
+        await downloadWorkbook(merged, `updated-${file.name}`);
       }
     } catch (e) {
       await showError(String(e));

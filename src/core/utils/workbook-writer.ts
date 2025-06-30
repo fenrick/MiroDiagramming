@@ -1,4 +1,4 @@
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 import type { ExcelRow } from './excel-loader';
 
 /**
@@ -27,11 +27,17 @@ export function addMiroIds(
  * @param rows - Rows to write into the workbook.
  * @param fileName - Suggested download file name.
  */
-export function downloadWorkbook(rows: ExcelRow[], fileName: string): void {
-  const ws = XLSX.utils.json_to_sheet(rows);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-  const data = XLSX.write(wb, { type: 'array', bookType: 'xlsx' });
+export async function downloadWorkbook(
+  rows: ExcelRow[],
+  fileName: string,
+): Promise<void> {
+  const wb = new ExcelJS.Workbook();
+  const ws = wb.addWorksheet('Sheet1');
+  if (rows.length) {
+    ws.addRow(Object.keys(rows[0]));
+  }
+  rows.forEach((r) => ws.addRow(Object.values(r)));
+  const data = await wb.xlsx.writeBuffer();
   const blob = new Blob([data], {
     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   });
