@@ -1,4 +1,6 @@
 import { CardProcessor } from '../src/board/card-processor';
+import type { Frame, Tag } from '@mirohq/websdk-types';
+import type { CardData } from '../src/core/utils/cards';
 
 interface GlobalWithMiro {
   miro?: { board?: Record<string, unknown> };
@@ -89,5 +91,50 @@ describe('CardProcessor branches', () => {
     expect(card.setMetadata).toHaveBeenCalledWith('app.miro.cards', {
       id: '1',
     });
+  });
+
+  test('createFrame skips when disabled', async () => {
+    const cp = new CardProcessor();
+    global.miro = { board: { createFrame: jest.fn() } };
+    const frame = await (
+      cp as unknown as {
+        createFrame: (
+          o: Record<string, unknown>,
+          l: {
+            totalWidth: number;
+            totalHeight: number;
+            spot: { x: number; y: number };
+          },
+        ) => Promise<unknown>;
+      }
+    ).createFrame(
+      { createFrame: false },
+      { totalWidth: 1, totalHeight: 1, spot: { x: 0, y: 0 } },
+    );
+    expect(frame).toBeUndefined();
+    expect(global.miro.board.createFrame).not.toHaveBeenCalled();
+  });
+
+  test('createCardWidgets adds cards to frame', async () => {
+    const cp = new CardProcessor();
+    const frame = { add: jest.fn() } as unknown as Frame;
+    const mockCreate = jest.fn().mockResolvedValue({});
+    (
+      cp as unknown as { createCardWidget: typeof mockCreate }
+    ).createCardWidget = mockCreate;
+    const layout = { startX: 0, startY: 0, columns: 1 };
+    const defs = [{ title: 'A' }, { title: 'B' }];
+    await (
+      cp as unknown as {
+        createCardWidgets: (
+          d: CardData[],
+          l: typeof layout,
+          m: Map<string, Tag>,
+          f?: Frame,
+        ) => Promise<unknown[]>;
+      }
+    ).createCardWidgets(defs as CardData[], layout, new Map(), frame);
+    expect(mockCreate).toHaveBeenCalledTimes(2);
+    expect(frame.add).toHaveBeenCalledTimes(2);
   });
 });
