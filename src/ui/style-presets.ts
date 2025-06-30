@@ -28,7 +28,7 @@ const DEFAULT_PRESET: StylePreset = {
  * Derive a style preset from the first element of a template.
  */
 function valueOrDefault<T>(val: T | undefined, def: T): T {
-  return val === undefined ? def : val;
+  return val ?? def;
 }
 
 function templateToPreset(
