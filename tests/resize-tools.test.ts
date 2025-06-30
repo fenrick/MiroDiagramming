@@ -1,6 +1,7 @@
 import {
   applySizeToSelection,
   copySizeFromSelection,
+  scaleSelection,
 } from '../src/board/resize-tools';
 
 describe('resize-tools', () => {
@@ -47,5 +48,23 @@ describe('resize-tools', () => {
     await expect(applySizeToSelection({ width: 1, height: 1 })).rejects.toThrow(
       'Miro board not available',
     );
+  });
+
+  test('scaleSelection multiplies widget dimensions', async () => {
+    const item = { width: 10, height: 5, sync: jest.fn() };
+    const board = { getSelection: jest.fn().mockResolvedValue([item]) };
+    await scaleSelection(2, board);
+    expect(item.width).toBe(20);
+    expect(item.height).toBe(10);
+    expect(item.sync).toHaveBeenCalled();
+  });
+
+  test('scaleSelection ignores unsupported items', async () => {
+    const items = [{ width: 4, height: 4, sync: jest.fn() }, { foo: 'bar' }];
+    const board = { getSelection: jest.fn().mockResolvedValue(items) };
+    await scaleSelection(0.5, board);
+    expect(items[0].width).toBe(2);
+    expect(items[0].height).toBe(2);
+    expect(items[1]).toEqual({ foo: 'bar' });
   });
 });

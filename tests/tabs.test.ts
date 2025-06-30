@@ -104,6 +104,17 @@ describe('tab components', () => {
     expect(heightInput.value).toBe('90');
   });
 
+  test('ResizeTab scaling buttons apply factor', async () => {
+    const spy = jest
+      .spyOn(resizeTools, 'scaleSelection')
+      .mockResolvedValue(undefined as unknown as void);
+    render(React.createElement(ResizeTab));
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /×2/i }));
+    });
+    expect(spy).toHaveBeenCalledWith(2);
+  });
+
   test('StyleTab tweaks fill colour', async () => {
     const spy = jest
       .spyOn(styleTools, 'tweakFillColor')
