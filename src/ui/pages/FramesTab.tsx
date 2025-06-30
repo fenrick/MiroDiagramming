@@ -1,13 +1,20 @@
 import React from 'react';
 import { Button, Icon, InputField, Text } from '../components/legacy';
-import { renameSelectedFrames } from '../../board/frame-tools';
+import {
+  lockSelectedFrames,
+  renameSelectedFrames,
+} from '../../board/frame-tools';
 import type { TabTuple } from './tab-definitions';
 
-/** UI for renaming selected frames. */
+/** UI for renaming or locking selected frames. */
 export const FramesTab: React.FC = () => {
   const [prefix, setPrefix] = React.useState('Frame-');
   const rename = async (): Promise<void> => {
     await renameSelectedFrames({ prefix });
+  };
+  /** Lock selected frames and their contents. */
+  const lock = async (): Promise<void> => {
+    await lockSelectedFrames();
   };
   return (
     <div>
@@ -28,6 +35,14 @@ export const FramesTab: React.FC = () => {
             <Text>Rename Frames</Text>
           </React.Fragment>
         </Button>
+        <Button
+          onClick={lock}
+          variant='secondary'>
+          <React.Fragment key='.1'>
+            <Icon name='lock' />
+            <Text>Lock Selected</Text>
+          </React.Fragment>
+        </Button>
       </div>
     </div>
   );
@@ -37,6 +52,6 @@ export const tabDef: TabTuple = [
   2,
   'frames',
   'Frames',
-  'Rename selected frames',
+  'Rename or lock selected frames',
   FramesTab,
 ];
