@@ -92,7 +92,9 @@ vercel deploy --prod --confirm
 ```
 
 The GitHub Actions workflow in **.github/workflows/ci.yml** performs the same
-steps automatically on merge to `main`.
+steps automatically on merge to `main`. It also audits production dependencies
+with `npm audit --omit=dev` and fails the build when a moderate or higher
+severity vulnerability is found.
 
 ---
 
