@@ -11,5 +11,8 @@ describe('HelpTab', () => {
       screen.getByRole('heading', { name: /diagram layout options/i }),
     ).toBeInTheDocument();
     expect(screen.getByText(/compact hierarchical tree/i)).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: /changelog/i }),
+    ).toBeInTheDocument();
   });
 });
