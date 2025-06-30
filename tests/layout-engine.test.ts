@@ -33,7 +33,7 @@ describe('LayoutEngine', () => {
         layoutOptions: expect.objectContaining({
           'elk.algorithm': 'force',
           'elk.direction': 'LEFT',
-          'elk.spacing.nodeNode': 50,
+          'elk.spacing.nodeNode': '50',
         }),
       }),
     );

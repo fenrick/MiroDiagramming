@@ -21,6 +21,54 @@ export interface PositionedEdge {
 const DEFAULT_WIDTH = 180;
 const DEFAULT_HEIGHT = 110;
 
+/**
+ * Determine the rendered dimensions for a graph node.
+ *
+ * @param node - Node data including optional metadata.
+ * @returns Calculated width and height values.
+ */
+export function getNodeDimensions(node: {
+  type: string;
+  metadata?: { width?: number; height?: number };
+}): { width: number; height: number } {
+  const tpl = templateManager.getTemplate(node.type);
+  const dims = tpl?.elements.find((e) => e.width && e.height);
+  const width = node.metadata?.width ?? dims?.width ?? DEFAULT_WIDTH;
+  const height = node.metadata?.height ?? dims?.height ?? DEFAULT_HEIGHT;
+  return { width, height };
+}
+
+/**
+ * Convert validated layout options into ELK graph options.
+ *
+ * @param opts - Normalised layout options.
+ * @returns ELK configuration for {@link performLayout}.
+ */
+export function buildElkGraphOptions(
+  opts: UserLayoutOptions,
+): Record<string, string> {
+  return {
+    'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
+    'elk.algorithm': opts.algorithm,
+    'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF',
+    'elk.layered.mergeEdges': 'false',
+    'elk.direction': opts.direction,
+    'elk.layered.spacing.nodeNodeBetweenLayers': String(opts.spacing),
+    'elk.spacing.nodeNode': String(opts.spacing),
+    'elk.layered.unnecessaryBendpoints': 'true',
+    'elk.layered.cycleBreaking.strategy': 'GREEDY',
+    ...(opts.aspectRatio && { 'elk.aspectRatio': String(opts.aspectRatio) }),
+    ...(opts.edgeRouting && { 'elk.edgeRouting': opts.edgeRouting }),
+    ...(opts.edgeRoutingMode && {
+      'elk.mrtree.edgeRoutingMode': opts.edgeRoutingMode,
+    }),
+    ...(opts.optimizationGoal && {
+      'elk.rectpacking.widthApproximation.optimizationGoal':
+        opts.optimizationGoal,
+    }),
+  };
+}
+
 export interface LayoutResult {
   nodes: Record<string, PositionedNode>;
   edges: PositionedEdge[];
@@ -42,41 +90,8 @@ export async function performLayout(
   const userOpts = validateLayoutOptions(opts);
   const elkGraph: ElkNode = {
     id: 'root',
-    layoutOptions: {
-      'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
-      'elk.algorithm': userOpts.algorithm,
-      'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF',
-      'elk.layered.mergeEdges': 'false',
-      'elk.direction': userOpts.direction,
-      'elk.layered.spacing.nodeNodeBetweenLayers': String(userOpts.spacing),
-      'elk.spacing.nodeNode': userOpts.spacing as unknown as string,
-      'elk.layered.unnecessaryBendpoints': 'true',
-      'elk.layered.cycleBreaking.strategy': 'GREEDY',
-      ...(userOpts.aspectRatio && {
-        'elk.aspectRatio': String(userOpts.aspectRatio),
-      }),
-      ...(userOpts.edgeRouting && { 'elk.edgeRouting': userOpts.edgeRouting }),
-      ...(userOpts.edgeRoutingMode && {
-        'elk.mrtree.edgeRoutingMode': userOpts.edgeRoutingMode,
-      }),
-      ...(userOpts.optimizationGoal && {
-        'elk.rectpacking.widthApproximation.optimizationGoal':
-          userOpts.optimizationGoal,
-      }),
-    },
-    children: data.nodes.map((n) => {
-      const tpl = templateManager.getTemplate(n.type);
-      const dims = tpl?.elements.find((e) => e.width && e.height);
-      const width =
-        (n.metadata as { width?: number } | undefined)?.width ??
-        dims?.width ??
-        DEFAULT_WIDTH;
-      const height =
-        (n.metadata as { height?: number } | undefined)?.height ??
-        dims?.height ??
-        DEFAULT_HEIGHT;
-      return { id: n.id, width, height };
-    }),
+    layoutOptions: buildElkGraphOptions(userOpts),
+    children: data.nodes.map((n) => ({ id: n.id, ...getNodeDimensions(n) })),
     edges: data.edges.map((e, idx) => ({
       id: `e${idx}`,
       sources: [e.from],
