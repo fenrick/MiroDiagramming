@@ -1,12 +1,15 @@
 import { GraphExcelLoader } from '../src/core/utils/excel-loader';
 import { GraphClient } from '../src/core/utils/graph-client';
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 
 vi.mock('../src/core/utils/graph-client');
 
-const wb = XLSX.utils.book_new();
-XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([[1]]), 'Sheet1');
-const buf = XLSX.write(wb, { type: 'array', bookType: 'xlsx' });
+let buf: ArrayBuffer;
+beforeAll(async () => {
+  const wb = new ExcelJS.Workbook();
+  wb.addWorksheet('Sheet1').addRow([1]);
+  buf = await wb.xlsx.writeBuffer();
+});
 
 describe('GraphExcelLoader', () => {
   test('loads workbook via client', async () => {

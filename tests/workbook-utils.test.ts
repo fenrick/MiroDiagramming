@@ -12,7 +12,7 @@ describe('workbook writer', () => {
     expect(result[0].MiroId).toBe('w1');
   });
 
-  test('downloadWorkbook triggers anchor click', () => {
+  test('downloadWorkbook triggers anchor click', async () => {
     const rows = [{ ID: '1' }];
     const anchor = {
       click: vi.fn(),
@@ -28,7 +28,7 @@ describe('workbook writer', () => {
     } else {
       URL.revokeObjectURL = vi.fn();
     }
-    downloadWorkbook(rows, 'f.xlsx');
+    await downloadWorkbook(rows, 'f.xlsx');
     expect(anchor.download).toBe('f.xlsx');
     expect(anchor.click).toHaveBeenCalled();
     expect(createSpy).toHaveBeenCalled();
