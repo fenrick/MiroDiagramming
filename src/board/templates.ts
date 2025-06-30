@@ -62,6 +62,45 @@ export class TemplateManager {
     connectorJson as ConnectorTemplateCollection;
 
   /**
+   * Translate `tokens.color.*` references to concrete hex values.
+   *
+   * @param path - Token lookup path without the `tokens.` prefix.
+   * @returns The resolved colour string or `undefined` when the path does not
+   *   match the expected pattern.
+   */
+  private parseColorToken(path: string): string | undefined {
+    const match = /^color\.([a-zA-Z]+)\[(\d+)\]$/.exec(path);
+    if (!match) return undefined;
+    const [, name, shade] = match;
+    const palette = tokens as unknown as Record<
+      string,
+      Record<string, Record<string, string>>
+    >;
+    const token = palette.color?.[name]?.[shade];
+    const fallback =
+      (colors as Record<string, string>)[`${name}-${shade}`] ?? colors.white;
+    return typeof token === 'string' ? resolveColor(token, fallback) : fallback;
+  }
+
+  /**
+   * Resolve arbitrary token paths such as `tokens.space.small`.
+   *
+   * @param path - Dot-separated token path without the `tokens.` prefix.
+   * @returns The token value or `undefined` if not found.
+   */
+  private lookupToken(path: string): unknown {
+    let ref: unknown = tokens;
+    for (const part of path.split('.')) {
+      const m = /^([a-zA-Z]+)(?:\[(\d+)\])?$/.exec(part);
+      if (!m) return undefined;
+      ref = (ref as Record<string, unknown>)[m[1]];
+      if (ref === undefined) return undefined;
+      if (m[2]) ref = (ref as Record<string, unknown>)[m[2]];
+    }
+    return ref;
+  }
+
+  /**
    * Resolve design-token identifiers to concrete values.
    *
    * Currently supports `tokens.color.*` paths which are converted to the
@@ -71,30 +110,10 @@ export class TemplateManager {
   private resolveToken(value: unknown): unknown {
     if (typeof value !== 'string' || !value.startsWith('tokens.')) return value;
     const path = value.slice('tokens.'.length);
-    const colorMatch = /^color\.([a-zA-Z]+)\[(\d+)\]$/.exec(path);
-    if (colorMatch) {
-      const [, name, shade] = colorMatch;
-      const palette = tokens as unknown as Record<
-        string,
-        Record<string, Record<string, string>>
-      >;
-      const token = palette.color?.[name]?.[shade];
-      const fallback =
-        (colors as Record<string, string>)[`${name}-${shade}`] ?? colors.white;
-      return typeof token === 'string'
-        ? resolveColor(token, fallback)
-        : fallback;
-    }
-    // generic token access e.g. tokens.typography.fontWeight.bold
-    let ref: unknown = tokens;
-    for (const part of path.split('.')) {
-      const m = /^([a-zA-Z]+)(?:\[(\d+)\])?$/.exec(part);
-      if (!m) return value;
-      ref = (ref as Record<string, unknown>)[m[1]];
-      if (ref === undefined) return value;
-      if (m[2]) ref = (ref as Record<string, unknown>)[m[2]];
-    }
-    return ref ?? value;
+    const color = this.parseColorToken(path);
+    if (color !== undefined) return color;
+    const token = this.lookupToken(path);
+    return token ?? value;
   }
 
   /** Apply token resolution to all string properties in the provided object. */
