@@ -1,3 +1,8 @@
+/**
+ * Spacing utilities operating on board selection.
+ *
+ * Located in `src/board` alongside other widget manipulation helpers.
+ */
 import { BoardLike, getBoard, maybeSync, Syncable } from './board';
 import { calculateGrowthPlan, getDimension } from './spacing-layout';
 
