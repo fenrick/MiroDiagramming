@@ -64,6 +64,11 @@ Data        → Graph Normalisation → Layout Engine → Board Rendering → UI
 src/
   core/        graph/, layout/, utils/
   board/       BoardBuilder, CardProcessor
+  # Detailed per-file descriptions:
+  # - [CORE_MODULES.md](CORE_MODULES.md)
+  # - [BOARD_MODULES.md](BOARD_MODULES.md)
+  # - [UI_MODULES.md](UI_MODULES.md)
+  # - [APP_MODULES.md](APP_MODULES.md)
   ui/          components/, hooks/, pages/
   app/         entry + routing
 tests/         mirrors src

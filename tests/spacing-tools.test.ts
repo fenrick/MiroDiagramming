@@ -1,7 +1,5 @@
-import {
-  applySpacingLayout,
-  calculateSpacingOffsets,
-} from '../src/board/spacing-tools';
+import { applySpacingLayout } from '../src/board/spacing-tools';
+import { calculateSpacingOffsets } from '../src/board/spacing-layout';
 import { BoardLike } from '../src/board/board';
 
 describe('spacing-tools', () => {

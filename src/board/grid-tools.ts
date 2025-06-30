@@ -1,5 +1,7 @@
 /**
- * Calculate grid positions and apply a grid layout to the current selection.
+ * Grid layout helpers for arranging selected widgets.
+ *
+ * Lives in `src/board` with other board manipulation utilities.
  */
 export interface GridOptions {
   /** Number of columns in the grid */
@@ -14,40 +16,18 @@ export interface GridOptions {
   sortOrientation?: 'horizontal' | 'vertical';
 }
 
-export interface Position {
-  x: number;
-  y: number;
-}
-
 /**
  * Minimal abstraction of the board API used for selection and grouping.
  * Allows injection of a mock implementation in tests.
  */
 import { BoardLike, getBoard, maybeSync, Syncable } from './board';
 import { getTextFields } from './search-tools';
-import { calculateGrid, GridConfig as LayoutGridConfig } from './grid-layout';
+import { calculateGridPositions } from './grid-layout';
 
 /** Extract a name field from a widget for sorting purposes. */
 function getName(item: Record<string, unknown>): string {
   const first = getTextFields(item)[0];
   return first ? first[1] : '';
-}
-
-/**
- * Compute the relative offsets for each grid cell.
- */
-export function calculateGridPositions(
-  opts: GridOptions,
-  count: number,
-  cellWidth: number,
-  cellHeight: number,
-): Position[] {
-  const config: LayoutGridConfig = {
-    cols: opts.cols,
-    padding: opts.padding,
-    vertical: opts.sortOrientation === 'vertical',
-  };
-  return calculateGrid(count, config, cellWidth, cellHeight);
 }
 
 /**

@@ -1,4 +1,10 @@
+/**
+ * Spacing utilities operating on board selection.
+ *
+ * Located in `src/board` alongside other widget manipulation helpers.
+ */
 import { BoardLike, getBoard, maybeSync, Syncable } from './board';
+import { calculateGrowthPlan, getDimension } from './spacing-layout';
 
 /** Options for spacing layout. */
 export interface SpacingOptions {
@@ -12,39 +18,6 @@ export interface SpacingOptions {
    * - `grow` expands all widgets equally so outer edges remain fixed.
    */
   mode?: 'move' | 'grow';
-}
-
-/** Compute linear offsets for a given count and spacing. */
-export function calculateSpacingOffsets(
-  count: number,
-  spacing: number,
-): number[] {
-  return Array.from({ length: count }, (_, i) => i * spacing);
-}
-
-/** Plan widget positions and size when distributing by growth. */
-export function calculateGrowthPlan(
-  items: Array<Record<string, number>>,
-  axis: 'x' | 'y',
-  spacing: number,
-): { size: number; positions: number[] } {
-  const sizeKey = axis === 'x' ? 'width' : 'height';
-  const first = items[0];
-  const last = items[items.length - 1];
-  /* c8 ignore next */
-  const startEdge = (first[axis] ?? 0) - getDimension(first, sizeKey) / 2;
-  /* c8 ignore next */
-  const endEdge = (last[axis] ?? 0) + getDimension(last, sizeKey) / 2;
-  const total = endEdge - startEdge;
-  const size = (total - spacing * (items.length - 1)) / items.length;
-  const positions: number[] = [];
-  let pos = startEdge + size / 2;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  for (const _ of items) {
-    positions.push(pos);
-    pos += size + spacing;
-  }
-  return { size, positions };
 }
 
 /**
@@ -95,18 +68,6 @@ export async function applySpacingLayout(
     await moveWidget(curr, axis, position);
     prev = curr;
   }
-}
-
-/**
- * Safely retrieve a numeric dimension from a widget.
- *
- * @param item - Widget instance.
- * @param key - Dimension property name ('width' or 'height').
- * @returns The numeric value or `0` when unavailable.
- */
-function getDimension(item: Record<string, number>, key: string): number {
-  const val = item[key];
-  return typeof val === 'number' ? val : 0;
 }
 
 /**
