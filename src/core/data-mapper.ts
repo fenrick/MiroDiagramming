@@ -29,6 +29,49 @@ export interface CardDefinition {
 }
 
 /**
+ * Build a metadata object for the provided row. Always includes a `rowId`
+ * derived from either the `idColumn` or the row index.
+ */
+export function buildMetadata(
+  row: Record<string, unknown>,
+  mapping: ColumnMapping,
+  index: number,
+): Record<string, unknown> {
+  const metadata: Record<string, unknown> = {};
+  if (mapping.textColumn && row[mapping.textColumn] != null) {
+    metadata.text = row[mapping.textColumn];
+  }
+  const extra = mapping.metadataColumns ?? {};
+  Object.entries(extra).forEach(([key, col]) => {
+    const value = row[col];
+    if (value != null) metadata[key] = value;
+  });
+  const idVal = mapping.idColumn ? row[mapping.idColumn] : undefined;
+  metadata.rowId = idVal != null ? String(idVal) : String(index);
+  return metadata;
+}
+
+/**
+ * Resolve identifier, label and type values from the given row.
+ */
+export function resolveIdLabelType(
+  row: Record<string, unknown>,
+  mapping: ColumnMapping,
+  index: number,
+): { id: string; label: string; type: string } {
+  const idVal = mapping.idColumn ? row[mapping.idColumn] : undefined;
+  const labelVal = mapping.labelColumn ? row[mapping.labelColumn] : undefined;
+  const typeVal = mapping.templateColumn
+    ? row[mapping.templateColumn]
+    : undefined;
+  return {
+    id: idVal != null ? String(idVal) : String(index),
+    label: labelVal != null ? String(labelVal) : '',
+    type: typeVal != null ? String(typeVal) : 'default',
+  };
+}
+
+/**
  * Convert an array of Excel rows into {@link NodeDefinition} objects.
  *
  * @param rows - Parsed rows from {@link ExcelLoader}.
@@ -39,27 +82,9 @@ export function mapRowToNode(
   mapping: ColumnMapping,
   index: number,
 ): NodeDefinition {
-  const metadata: Record<string, unknown> = {};
-  if (mapping.textColumn && row[mapping.textColumn] != null) {
-    metadata.text = row[mapping.textColumn];
-  }
-  const metaCols = mapping.metadataColumns ?? {};
-  Object.entries(metaCols).forEach(([key, col]) => {
-    const value = row[col];
-    if (value != null) metadata[key] = value;
-  });
-  const idVal = mapping.idColumn ? row[mapping.idColumn] : undefined;
-  metadata.rowId = idVal != null ? String(idVal) : String(index);
-  const typeVal = mapping.templateColumn
-    ? row[mapping.templateColumn]
-    : undefined;
-  const labelVal = mapping.labelColumn ? row[mapping.labelColumn] : undefined;
-  return {
-    id: idVal != null ? String(idVal) : String(index),
-    label: labelVal != null ? String(labelVal) : '',
-    type: typeVal != null ? String(typeVal) : 'default',
-    metadata: Object.keys(metadata).length ? metadata : undefined,
-  };
+  const { id, label, type } = resolveIdLabelType(row, mapping, index);
+  const metadata = buildMetadata(row, mapping, index);
+  return { id, label, type, metadata };
 }
 
 export function mapRowsToNodes(
@@ -79,18 +104,19 @@ export function mapRowToCard(
   row: Record<string, unknown>,
   mapping: ColumnMapping,
 ): CardDefinition {
-  const idVal = mapping.idColumn ? row[mapping.idColumn] : undefined;
-  const titleVal = mapping.labelColumn ? row[mapping.labelColumn] : undefined;
-  const descVal = mapping.textColumn ? row[mapping.textColumn] : undefined;
-  const themeVal = mapping.templateColumn
-    ? row[mapping.templateColumn]
-    : undefined;
-  const card: CardDefinition = {
-    title: titleVal != null ? String(titleVal) : '',
-  };
-  if (idVal != null) card.id = String(idVal);
-  if (descVal != null) card.description = String(descVal);
-  if (themeVal != null) card.style = { cardTheme: String(themeVal) };
+  const card: CardDefinition = { title: '' };
+  if (mapping.labelColumn && row[mapping.labelColumn] != null) {
+    card.title = String(row[mapping.labelColumn]);
+  }
+  if (mapping.idColumn && row[mapping.idColumn] != null) {
+    card.id = String(row[mapping.idColumn]);
+  }
+  if (mapping.textColumn && row[mapping.textColumn] != null) {
+    card.description = String(row[mapping.textColumn]);
+  }
+  if (mapping.templateColumn && row[mapping.templateColumn] != null) {
+    card.style = { cardTheme: String(row[mapping.templateColumn]) };
+  }
   return card;
 }
 
