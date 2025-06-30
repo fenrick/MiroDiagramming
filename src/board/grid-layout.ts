@@ -40,3 +40,29 @@ export function calculateGrid(
   }
   return positions;
 }
+
+/**
+ * Convenience wrapper building a grid configuration from {@link GridOptions}.
+ *
+ * @param opts - Layout options controlling columns and padding.
+ * @param count - Number of items to position.
+ * @param cellWidth - Width of each grid cell.
+ * @param cellHeight - Height of each grid cell.
+ */
+export function calculateGridPositions(
+  opts: {
+    cols: number;
+    padding: number;
+    sortOrientation?: 'horizontal' | 'vertical';
+  },
+  count: number,
+  cellWidth: number,
+  cellHeight: number,
+): GridPosition[] {
+  const config: GridConfig = {
+    cols: opts.cols,
+    padding: opts.padding,
+    vertical: opts.sortOrientation === 'vertical',
+  };
+  return calculateGrid(count, config, cellWidth, cellHeight);
+}
