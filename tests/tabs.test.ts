@@ -254,6 +254,17 @@ describe('tab components', () => {
     expect(spy).toHaveBeenCalledWith({ prefix: 'A-' });
   });
 
+  test('FramesTab locks frames', async () => {
+    const spy = jest
+      .spyOn(frameTools, 'lockSelectedFrames')
+      .mockResolvedValue(undefined as unknown as void);
+    render(React.createElement(FramesTab));
+    await act(async () => {
+      fireEvent.click(screen.getByText(/lock selected/i));
+    });
+    expect(spy).toHaveBeenCalled();
+  });
+
   test('DiagramTab processes file', async () => {
     const spy = jest
       .spyOn(GraphProcessor.prototype, 'processFile')
