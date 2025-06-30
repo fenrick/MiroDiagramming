@@ -1,16 +1,18 @@
 # [1.11.0](https://github.com/fenrick/MiroDiagramming/compare/v1.10.0...v1.11.0) (2025-06-30)
 
-
 ### Bug Fixes
 
-* **app:** prefix custom event ([e995a1c](https://github.com/fenrick/MiroDiagramming/commit/e995a1c2041caf47cfeaa87d1f86273f6accde06))
-* **core:** replace xlsx with exceljs ([68e81c5](https://github.com/fenrick/MiroDiagramming/commit/68e81c57bf20e9e47aba539cf303a1252a89c112))
-
+- **app:** prefix custom event
+  ([e995a1c](https://github.com/fenrick/MiroDiagramming/commit/e995a1c2041caf47cfeaa87d1f86273f6accde06))
+- **core:** replace xlsx with exceljs
+  ([68e81c5](https://github.com/fenrick/MiroDiagramming/commit/68e81c57bf20e9e47aba539cf303a1252a89c112))
 
 ### Features
 
-* **resize:** add scaling controls ([6a639d1](https://github.com/fenrick/MiroDiagramming/commit/6a639d1644bdd3cb2aa239bb586268d628f291d8))
-* **ui:** add frame locking option ([b173648](https://github.com/fenrick/MiroDiagramming/commit/b17364825236314b31a08de91a5a7ce2e1309273))
+- **resize:** add scaling controls
+  ([6a639d1](https://github.com/fenrick/MiroDiagramming/commit/6a639d1644bdd3cb2aa239bb586268d628f291d8))
+- **ui:** add frame locking option
+  ([b173648](https://github.com/fenrick/MiroDiagramming/commit/b17364825236314b31a08de91a5a7ce2e1309273))
 
 # [1.10.0](https://github.com/fenrick/MiroDiagramming/compare/v1.9.0...v1.10.0) (2025-06-30)
 

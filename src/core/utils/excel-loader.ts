@@ -97,6 +97,13 @@ export class ExcelLoader {
     return rows;
   }
 
+  /**
+   * Convert an Excel range reference into numeric row and column indices.
+   *
+   * @param ref - Standard range string like "A1:B2" or undefined for entire sheet.
+   * @param ws - Worksheet used to determine default bounds when `ref` is empty.
+   * @returns Coordinates for the start and end of the range.
+   */
   private parseRange(
     ref: string | undefined,
     ws: ExcelJS.Worksheet,
@@ -111,7 +118,8 @@ export class ExcelLoader {
       };
     }
     const clean = ref.replace(/\$/g, '');
-    const match = clean.match(/([A-Z]+)(\d+):([A-Z]+)(\d+)/i);
+    const rangeRegex = /([A-Z]+)(\d+):([A-Z]+)(\d+)/i;
+    const match = rangeRegex.exec(clean);
     if (!match) throw new Error(`Invalid range: ${ref}`);
     const [, sCol, sRow, eCol, eRow] = match;
     const colNum = (col: string) =>
