@@ -25,29 +25,12 @@ export interface Position {
  */
 import { BoardLike, getBoard, maybeSync, Syncable } from './board';
 import { getTextFields } from './search-tools';
-import { calculateGrid, GridConfig as LayoutGridConfig } from './grid-layout';
+import { calculateGridPositions } from './grid-layout';
 
 /** Extract a name field from a widget for sorting purposes. */
 function getName(item: Record<string, unknown>): string {
   const first = getTextFields(item)[0];
   return first ? first[1] : '';
-}
-
-/**
- * Compute the relative offsets for each grid cell.
- */
-export function calculateGridPositions(
-  opts: GridOptions,
-  count: number,
-  cellWidth: number,
-  cellHeight: number,
-): Position[] {
-  const config: LayoutGridConfig = {
-    cols: opts.cols,
-    padding: opts.padding,
-    vertical: opts.sortOrientation === 'vertical',
-  };
-  return calculateGrid(count, config, cellWidth, cellHeight);
 }
 
 /**
