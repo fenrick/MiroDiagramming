@@ -68,4 +68,10 @@ describe('data mapper', () => {
       style: { cardTheme: 'red' },
     });
   });
+
+  test('mapRowToCard omits undefined fields', () => {
+    const row = { Title: 'Only Title' };
+    const opts = { labelColumn: 'Title' } as const;
+    expect(mapRowToCard(row, opts)).toEqual({ title: 'Only Title' });
+  });
 });
