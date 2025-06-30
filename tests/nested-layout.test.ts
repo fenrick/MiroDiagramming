@@ -1,5 +1,6 @@
 import {
   layoutHierarchy,
+  NestedLayouter,
   nestedLayouter,
 } from '../src/core/layout/nested-layout';
 import sampleHier from './fixtures/sample-hier.json';
@@ -98,13 +99,13 @@ describe('layoutHierarchy', () => {
   });
 
   test('computePosition returns null for root node', () => {
-    const layouter: any = nestedLayouter;
+    const layouter: NestedLayouter = nestedLayouter;
     const result = layouter.computePosition({ id: 'root' }, 0, 0);
     expect(result).toBeNull();
   });
 
   test('computePosition returns null when dimensions are missing', () => {
-    const layouter: any = nestedLayouter;
+    const layouter: NestedLayouter = nestedLayouter;
     const node = { id: 'x', x: 1, y: 2 };
     const result = layouter.computePosition(node, 0, 0);
     expect(result).toBeNull();

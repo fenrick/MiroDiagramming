@@ -62,7 +62,7 @@ export class NestedLayouter {
     return elk;
   }
 
-  private computePosition(
+  public computePosition(
     node: ElkNode,
     offsetX: number,
     offsetY: number,
