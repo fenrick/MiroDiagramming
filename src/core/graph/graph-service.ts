@@ -1,6 +1,7 @@
 import type { BaseItem, Group, Connector } from '@mirohq/websdk-types';
 import { BoardBuilder } from '../../board/board-builder';
 import { fileUtils } from '../utils/file-utils';
+import type { HierNode } from '../layout/nested-layout';
 
 export interface NodeData {
   id: string;
@@ -67,6 +68,34 @@ export class GraphService {
     }
     this.resetBoardCache();
     return data as GraphData;
+  }
+
+  /**
+   * Load graph data which may be hierarchical or flat.
+   *
+   * @param file File containing either a {@link GraphData} object or a
+   *   hierarchy array. The board cache is always reset before returning.
+   * @returns Parsed graph structure suitable for {@link GraphProcessor}.
+   * @throws {Error} If the JSON structure is not recognised.
+   */
+  public async loadAnyGraph(file: File): Promise<GraphData | HierNode[]> {
+    fileUtils.validateFile(file);
+    const text = await fileUtils.readFileAsText(file);
+    const data = JSON.parse(text) as unknown;
+    const isObj = data !== null && typeof data === 'object';
+    const hasNodes =
+      isObj && Array.isArray((data as { nodes?: unknown }).nodes);
+    const hasEdges =
+      isObj && Array.isArray((data as { edges?: unknown }).edges);
+    if (isObj && hasNodes && hasEdges) {
+      this.resetBoardCache();
+      return data as GraphData;
+    }
+    if (Array.isArray(data)) {
+      this.resetBoardCache();
+      return data as HierNode[];
+    }
+    throw new Error('Invalid graph data');
   }
 
   /** Clear caches for board lookups. */
