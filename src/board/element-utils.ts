@@ -9,6 +9,31 @@ import type {
 import type { TemplateElement } from './templates';
 
 /**
+ * Combine existing widget style with template values.
+ *
+ * Resolves design tokens and applies the legacy {@link TemplateElement.fill}
+ * property when no `fillColor` is present in the style object.
+ *
+ * @param existing - Current widget style object.
+ * @param element - Template element providing defaults.
+ * @returns Final style ready for assignment to a widget.
+ */
+export function buildShapeStyle(
+  existing: Partial<ShapeStyle> | undefined,
+  element: TemplateElement,
+): ShapeStyle {
+  const style: Record<string, unknown> = {
+    ...(existing ?? {}),
+    ...templateManager.resolveStyle(element.style ?? {}),
+  };
+  if (element.fill && style.fillColor === undefined) {
+    style.fillColor = templateManager.resolveStyle({ fillColor: element.fill })
+      .fillColor as string;
+  }
+  return style as ShapeStyle;
+}
+
+/**
  * Apply template values for a shape element to an existing widget.
  *
  * This updates geometry, text content and style attributes in place.
@@ -22,24 +47,22 @@ export function applyShapeElement(
   element: TemplateElement,
   label: string,
 ): void {
+  if (item.type !== 'shape') return;
   const shape = item as Shape;
-  if (element.shape) shape.shape = element.shape as Shape['shape'];
-  if (element.rotation !== undefined) shape.rotation = element.rotation;
-  if (element.width)
-    (shape as unknown as { width: number }).width = element.width;
-  if (element.height)
-    (shape as unknown as { height: number }).height = element.height;
-  shape.content = (element.text ?? '{{label}}').replace('{{label}}', label);
-  const existing = (shape.style ?? {}) as Partial<ShapeStyle>;
-  const style: Partial<ShapeStyle> & Record<string, unknown> = {
-    ...existing,
-    ...templateManager.resolveStyle(element.style ?? {}),
-  };
-  if (element.fill && !('fillColor' in style)) {
-    style.fillColor = templateManager.resolveStyle({ fillColor: element.fill })
-      .fillColor as string;
+  const assignments: Array<[keyof TemplateElement, string]> = [
+    ['shape', 'shape'],
+    ['rotation', 'rotation'],
+    ['width', 'width'],
+    ['height', 'height'],
+  ];
+  for (const [src, dest] of assignments) {
+    const value = (element as Record<string, unknown>)[src];
+    if (value) {
+      (shape as unknown as Record<string, unknown>)[dest] = value;
+    }
   }
-  shape.style = style as ShapeStyle;
+  shape.content = (element.text ?? '{{label}}').replace('{{label}}', label);
+  shape.style = buildShapeStyle(shape.style as Partial<ShapeStyle>, element);
 }
 
 /**
@@ -54,6 +77,7 @@ export function applyTextElement(
   element: TemplateElement,
   label: string,
 ): void {
+  if (item.type !== 'text') return;
   const text = item as Text;
   text.content = (element.text ?? '{{label}}').replace('{{label}}', label);
   if (element.style) {
