@@ -4,8 +4,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { ResizeTab } from '../src/ui/pages/ResizeTab';
 import { StyleTab } from '../src/ui/pages/StyleTab';
-import { GridTab } from '../src/ui/pages/GridTab';
-import { SpacingTab } from '../src/ui/pages/SpacingTab';
+import { ArrangeTab } from '../src/ui/pages/ArrangeTab';
 import { DiagramTab } from '../src/ui/pages/DiagramTab';
 import { CardsTab } from '../src/ui/pages/CardsTab';
 import { FramesTab } from '../src/ui/pages/FramesTab';
@@ -192,29 +191,29 @@ describe('tab components', () => {
     style.removeProperty('--primary-text-color');
   });
 
-  test('GridTab applies layout', async () => {
+  test('ArrangeTab applies grid layout', async () => {
     const spy = jest
       .spyOn(gridTools, 'applyGridLayout')
       .mockResolvedValue(undefined as unknown as void);
-    render(React.createElement(GridTab));
+    render(React.createElement(ArrangeTab));
     await act(async () => {
       fireEvent.click(screen.getByText(/arrange grid/i));
     });
     expect(spy).toHaveBeenCalled();
   });
 
-  test('GridTab toggles frame title input', () => {
-    render(React.createElement(GridTab));
+  test('ArrangeTab toggles frame title input', () => {
+    render(React.createElement(ArrangeTab));
     expect(screen.queryByPlaceholderText('Optional')).toBeNull();
     fireEvent.click(screen.getByLabelText('Group items into Frame'));
     expect(screen.getByPlaceholderText('Optional')).toBeInTheDocument();
   });
 
-  test('SpacingTab applies layout', async () => {
+  test('ArrangeTab applies spacing layout', async () => {
     const spy = jest
       .spyOn(spacingTools, 'applySpacingLayout')
       .mockResolvedValue(undefined as unknown as void);
-    render(React.createElement(SpacingTab));
+    render(React.createElement(ArrangeTab));
     await act(async () => {
       fireEvent.change(screen.getByLabelText('Mode'), {
         target: { value: 'grow' },
@@ -343,22 +342,6 @@ describe('tab auto-registration', () => {
             ? await import('../src/ui/pages/tabs.ts?dev')
             : await import('../src/ui/pages/tabs.ts?prod');
       expect(TAB_DATA.some((t) => t[1] === 'help')).toBe(true);
-      process.env.NODE_ENV = prev;
-    }
-  });
-
-  test('includes ChangelogTab in all environments', async () => {
-    const envs = ['test', 'development', 'production'] as const;
-    for (const env of envs) {
-      const prev = process.env.NODE_ENV;
-      process.env.NODE_ENV = env;
-      const { TAB_DATA } =
-        env === 'test'
-          ? await import('../src/ui/pages/tabs.ts?test')
-          : env === 'development'
-            ? await import('../src/ui/pages/tabs.ts?dev')
-            : await import('../src/ui/pages/tabs.ts?prod');
-      expect(TAB_DATA.some((t) => t[1] === 'changelog')).toBe(true);
       process.env.NODE_ENV = prev;
     }
   });

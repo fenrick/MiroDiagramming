@@ -1,5 +1,6 @@
 import React from 'react';
 import { Heading, Paragraph } from '../components/legacy';
+import changelog from '../../../CHANGELOG.md?raw';
 import type { TabTuple } from './tab-definitions';
 
 /** Static help page summarising diagram options and tools. */
@@ -39,9 +40,10 @@ export const HelpTab: React.FC = () => (
       <li>Resize – adjust widget size or copy from selection.</li>
       <li>Frames – rename selected frames.</li>
       <li>Colours – modify fill colours.</li>
-      <li>Grid – arrange widgets into a grid.</li>
-      <li>Spacing – distribute items evenly.</li>
+      <li>Arrange – grid and spacing tools.</li>
     </ul>
+    <Heading level={3}>Changelog</Heading>
+    <pre style={{ whiteSpace: 'pre-wrap' }}>{changelog}</pre>
   </div>
 );
 
