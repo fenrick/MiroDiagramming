@@ -62,6 +62,7 @@ export class NestedLayouter {
     return elk;
   }
 
+  // eslint-disable-next-line complexity
   private collectPositions(
     node: ElkNode,
     map: Record<string, PositionedNode>,

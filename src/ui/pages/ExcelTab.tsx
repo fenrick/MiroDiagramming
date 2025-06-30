@@ -1,5 +1,4 @@
 import React from 'react';
-import { useDropzone } from 'react-dropzone';
 import {
   Button,
   Checkbox,
@@ -18,18 +17,21 @@ import {
   ExcelLoader,
   GraphExcelLoader,
 } from '../../core/utils/excel-loader';
-import { mapRowsToNodes, ColumnMapping } from '../../core/data-mapper';
 import { templateManager } from '../../board/templates';
-import { GraphProcessor } from '../../core/graph/graph-processor';
-import { addMiroIds, downloadWorkbook } from '../../core/utils/workbook-writer';
 import { showError } from '../hooks/notifications';
-import { getDropzoneStyle } from '../hooks/ui-utils';
 import { RowInspector } from '../components/RowInspector';
 import type { TabTuple } from './tab-definitions';
 import { useExcelData } from '../hooks/excel-data-context';
 import { useExcelSync } from '../hooks/use-excel-sync';
+import {
+  useExcelDrop,
+  useExcelCreate,
+  handleLocalDrop,
+  fetchRemoteWorkbook,
+} from '../hooks/use-excel-handlers';
 
 /** Sidebar tab for importing nodes from Excel files. */
+// eslint-disable-next-line complexity
 export const ExcelTab: React.FC = () => {
   const data = useExcelData();
   const [file, setFile] = React.useState<File | null>(null);
@@ -43,7 +45,6 @@ export const ExcelTab: React.FC = () => {
     data?.templateColumn ?? '',
   );
   const [template, setTemplate] = React.useState('Role');
-  const graphProcessor = React.useMemo(() => new GraphProcessor(), []);
   const [loader, setLoader] = React.useState<ExcelLoader | GraphExcelLoader>(
     excelLoader,
   );
@@ -61,37 +62,9 @@ export const ExcelTab: React.FC = () => {
     data?.setTemplateColumn(templateColumn);
   }, [templateColumn, data]);
 
-  // Load a local workbook dropped onto the dropzone.
-  const handleDrop = React.useCallback(async (files: File[]): Promise<void> => {
-    const f = files[0];
-    try {
-      await excelLoader.loadWorkbook(f);
-      setLoader(excelLoader);
-      setFile(f);
-      setSource('');
-      setRows([]);
-      setSelected(new Set());
-    } catch (e) {
-      await showError(String(e));
-    }
-  }, []);
-
-  const dropzone = useDropzone({
-    accept: {
-      'application/vnd.ms-excel': ['.xls'],
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [
-        '.xlsx',
-      ],
-    },
-    maxFiles: 1,
-    onDrop: (files: File[]) => {
-      void handleDrop(files);
-    },
-  });
-
   const fetchRemote = async (): Promise<void> => {
     try {
-      await graphExcelLoader.loadWorkbookFromGraph(remote);
+      await fetchRemoteWorkbook(remote);
       setLoader(graphExcelLoader);
       setFile(null);
       setSource('');
@@ -134,45 +107,30 @@ export const ExcelTab: React.FC = () => {
     [syncUpdate],
   );
 
-  const handleCreate = async (): Promise<void> => {
+  const handleCreate = useExcelCreate({
+    rows,
+    selected,
+    template,
+    templateColumn,
+    idColumn,
+    labelColumn,
+    file,
+    setRows,
+  });
+
+  const { dropzone, style } = useExcelDrop(async (files) => {
     try {
-      const mapping: ColumnMapping = {
-        idColumn: idColumn || undefined,
-        labelColumn: labelColumn || undefined,
-        templateColumn: templateColumn || undefined,
-      };
-      const indices = [...selected];
-      const chosen = rows.filter((_, i) => selected.has(i));
-      const nodes = mapRowsToNodes(chosen, mapping).map((n) => ({
-        ...n,
-        type: templateColumn ? n.type : template,
-      }));
-      await graphProcessor.processGraph({ nodes, edges: [] });
-      const idMap = graphProcessor.getNodeIdMap();
-      const updated = addMiroIds(chosen, mapping.idColumn ?? '', idMap);
-      const merged = rows.map((r, i) => {
-        const idx = indices.indexOf(i);
-        return idx >= 0 ? updated[idx] : r;
-      });
-      setRows(merged);
-      /* istanbul ignore next */
-      if (file) {
-        downloadWorkbook(merged, `updated-${file.name}`);
-      }
+      await handleLocalDrop(files);
+      const f = files[0];
+      setLoader(excelLoader);
+      setFile(f);
+      setSource('');
+      setRows([]);
+      setSelected(new Set());
     } catch (e) {
       await showError(String(e));
     }
-  };
-
-  const style = React.useMemo(() => {
-    let state: Parameters<typeof getDropzoneStyle>[0] = 'base';
-    if (dropzone.isDragReject) {
-      state = 'reject';
-    } else if (dropzone.isDragAccept) {
-      state = 'accept';
-    }
-    return getDropzoneStyle(state);
-  }, [dropzone.isDragAccept, dropzone.isDragReject]);
+  });
 
   return (
     <div style={{ marginTop: tokens.space.small }}>
