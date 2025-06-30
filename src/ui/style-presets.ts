@@ -37,7 +37,10 @@ function templateToPreset(
 ): StylePreset {
   const el = tpl.elements?.[0];
   const style = el?.style ?? {};
-  const fill = style.fillColor ?? el?.fill;
+  const fill = valueOrDefault(
+    style.fillColor as string | undefined,
+    valueOrDefault(el?.fill as string | undefined, ''),
+  );
   return {
     label: name,
     fontColor: valueOrDefault(
