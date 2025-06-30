@@ -83,25 +83,25 @@ export function Modal({
 
   // Close the modal when the backdrop is activated via mouse or keyboard
   return (
-    <div
-      tabIndex={0}
-      role='button'
-      aria-label='Close modal'
-      data-testid='modal-backdrop'
-      className='modal-backdrop'
-      style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-      onKeyDown={(e) => {
-        if (
-          e.target === e.currentTarget &&
-          (e.key === 'Enter' || e.key === ' ')
-        ) {
-          e.preventDefault();
-          onClose();
-        }
-      }}>
+    <div className='modal-container'>
+      <button
+        type='button'
+        aria-label='Close modal'
+        data-testid='modal-backdrop'
+        className='modal-backdrop'
+        onClick={(e) => {
+          if (e.target === e.currentTarget) onClose();
+        }}
+        onKeyDown={(e) => {
+          if (
+            e.target === e.currentTarget &&
+            (e.key === 'Enter' || e.key === ' ')
+          ) {
+            e.preventDefault();
+            onClose();
+          }
+        }}
+      />
       <dialog
         open
         aria-label={title}
