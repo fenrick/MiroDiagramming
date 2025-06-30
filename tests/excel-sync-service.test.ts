@@ -97,6 +97,34 @@ describe('ExcelSyncService', () => {
     expect(rows[0].Desc).toBe('desc');
   });
 
+  test('extractWidgetData returns widget values', async () => {
+    const shape = {
+      type: 'shape',
+      id: 's1',
+      content: 'Z',
+      getMetadata: vi.fn().mockResolvedValue({ rowId: '1', notes: 'meta' }),
+    } as unknown as Record<string, unknown>;
+    const service = new ExcelSyncService();
+    const data = await (service as never)['extractWidgetData'](shape);
+    expect(data.content).toBe('Z');
+    expect(data.meta).toEqual({ rowId: '1', notes: 'meta' });
+  });
+
+  test('updateRowFromWidget merges values', () => {
+    const service = new ExcelSyncService();
+    const result = (service as never)['updateRowFromWidget'](
+      { ID: '1', Name: '' },
+      {
+        idColumn: 'ID',
+        labelColumn: 'Name',
+        metadataColumns: { notes: 'Notes' },
+      },
+      { content: 'A', meta: { notes: 'm' } },
+    );
+    expect(result.Name).toBe('A');
+    expect(result.Notes).toBe('m');
+  });
+
   test('findWidget locates groups by metadata', async () => {
     const shape = {
       type: 'shape',

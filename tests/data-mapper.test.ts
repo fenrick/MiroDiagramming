@@ -4,6 +4,8 @@ import {
   mapRowsToCards,
   mapRowToNode,
   mapRowToCard,
+  buildMetadata,
+  resolveIdLabelType,
 } from '../src/core/data-mapper';
 
 describe('data mapper', () => {
@@ -48,6 +50,12 @@ describe('data mapper', () => {
       labelColumn: 'Title',
       templateColumn: 'Theme',
     } as const;
+    expect(resolveIdLabelType(row, opts, 0)).toEqual({
+      id: '7',
+      label: 'One',
+      type: 'red',
+    });
+    expect(buildMetadata(row, opts, 0)).toEqual({ rowId: '7' });
     expect(mapRowToNode(row, opts, 0)).toEqual({
       id: '7',
       label: 'One',
@@ -59,5 +67,11 @@ describe('data mapper', () => {
       title: 'One',
       style: { cardTheme: 'red' },
     });
+  });
+
+  test('mapRowToCard omits undefined fields', () => {
+    const row = { Title: 'Only Title' };
+    const opts = { labelColumn: 'Title' } as const;
+    expect(mapRowToCard(row, opts)).toEqual({ title: 'Only Title' });
   });
 });

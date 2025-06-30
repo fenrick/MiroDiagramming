@@ -29,6 +29,79 @@ export interface CardDefinition {
 }
 
 /**
+ * Add a property to the target object when the provided value is defined.
+ *
+ * @param target - Object to modify.
+ * @param key - Property key.
+ * @param value - Value to assign if defined.
+ */
+function assignIfDefined<T extends object, K extends PropertyKey, V>(
+  target: T,
+  key: K,
+  value: V | undefined,
+): void {
+  if (value != null) {
+    (target as Record<PropertyKey, V>)[key] = value;
+  }
+}
+
+/**
+ * Retrieve a cell value from a row based on the provided column header.
+ *
+ * @param row - Data row parsed from Excel.
+ * @param column - Column header to read.
+ * @returns The cell value or `undefined` when no column is mapped.
+ */
+function readColumn(row: Record<string, unknown>, column?: string): unknown {
+  return column ? row[column] : undefined;
+}
+
+/**
+ * Convert an array of Excel rows into {@link NodeDefinition} objects.
+ *
+ * @param rows - Parsed rows from {@link ExcelLoader}.
+ * @param mapping - Column mapping configuration.
+ */
+export function buildMetadata(
+  row: Record<string, unknown>,
+  mapping: ColumnMapping,
+  index: number,
+): Record<string, unknown> {
+  const metadata: Record<string, unknown> = {};
+  if (mapping.textColumn && row[mapping.textColumn] != null) {
+    metadata.text = row[mapping.textColumn];
+  }
+  const extra = mapping.metadataColumns ?? {};
+  Object.entries(extra).forEach(([key, col]) => {
+    const value = row[col];
+    if (value != null) metadata[key] = value;
+  });
+  const idVal = mapping.idColumn ? row[mapping.idColumn] : undefined;
+  metadata.rowId = idVal != null ? String(idVal) : String(index);
+  return metadata;
+}
+
+/**
+ * Resolve identifier, label and type values from the given row.
+ */
+export function resolveIdLabelType(
+  row: Record<string, unknown>,
+  mapping: ColumnMapping,
+  index: number,
+): { id: string; label: string; type: string } {
+  const idVal = mapping.idColumn ? row[mapping.idColumn] : undefined;
+  const labelVal = mapping.labelColumn ? row[mapping.labelColumn] : undefined;
+  const typeVal = mapping.templateColumn
+    ? row[mapping.templateColumn]
+    : undefined;
+  return {
+    id: idVal != null ? String(idVal) : String(index),
+    label: labelVal != null ? String(labelVal) : '',
+    type: typeVal != null ? String(typeVal) : 'default',
+  };
+}
+
+/**
  * Convert an array of Excel rows into {@link NodeDefinition} objects.
  *
  * @param rows - Parsed rows from {@link ExcelLoader}.
@@ -40,27 +113,9 @@ export function mapRowToNode(
   mapping: ColumnMapping,
   index: number,
 ): NodeDefinition {
-  const metadata: Record<string, unknown> = {};
-  if (mapping.textColumn && row[mapping.textColumn] != null) {
-    metadata.text = row[mapping.textColumn];
-  }
-  const metaCols = mapping.metadataColumns ?? {};
-  Object.entries(metaCols).forEach(([key, col]) => {
-    const value = row[col];
-    if (value != null) metadata[key] = value;
-  });
-  const idVal = mapping.idColumn ? row[mapping.idColumn] : undefined;
-  metadata.rowId = idVal != null ? String(idVal) : String(index);
-  const typeVal = mapping.templateColumn
-    ? row[mapping.templateColumn]
-    : undefined;
-  const labelVal = mapping.labelColumn ? row[mapping.labelColumn] : undefined;
-  return {
-    id: idVal != null ? String(idVal) : String(index),
-    label: labelVal != null ? String(labelVal) : '',
-    type: typeVal != null ? String(typeVal) : 'default',
-    metadata: Object.keys(metadata).length ? metadata : undefined,
-  };
+  const { id, label, type } = resolveIdLabelType(row, mapping, index);
+  const metadata = buildMetadata(row, mapping, index);
+  return { id, label, type, metadata };
 }
 
 export function mapRowsToNodes(
@@ -81,18 +136,24 @@ export function mapRowToCard(
   row: Record<string, unknown>,
   mapping: ColumnMapping,
 ): CardDefinition {
-  const idVal = mapping.idColumn ? row[mapping.idColumn] : undefined;
-  const titleVal = mapping.labelColumn ? row[mapping.labelColumn] : undefined;
-  const descVal = mapping.textColumn ? row[mapping.textColumn] : undefined;
-  const themeVal = mapping.templateColumn
-    ? row[mapping.templateColumn]
-    : undefined;
+  const idVal = readColumn(row, mapping.idColumn);
+  const titleVal = readColumn(row, mapping.labelColumn);
+  const descVal = readColumn(row, mapping.textColumn);
+  const themeVal = readColumn(row, mapping.templateColumn);
   const card: CardDefinition = {
     title: titleVal != null ? String(titleVal) : '',
   };
-  if (idVal != null) card.id = String(idVal);
-  if (descVal != null) card.description = String(descVal);
-  if (themeVal != null) card.style = { cardTheme: String(themeVal) };
+  assignIfDefined(card, 'id', idVal != null ? String(idVal) : undefined);
+  assignIfDefined(
+    card,
+    'description',
+    descVal != null ? String(descVal) : undefined,
+  );
+  assignIfDefined(
+    card,
+    'style',
+    themeVal != null ? { cardTheme: String(themeVal) } : undefined,
+  );
   return card;
 }
 
