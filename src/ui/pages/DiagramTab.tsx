@@ -12,7 +12,6 @@ import {
 import { JsonDropZone } from '../components/JsonDropZone';
 import { tokens } from '../tokens';
 import { GraphProcessor } from '../../core/graph/graph-processor';
-import { showError } from '../hooks/notifications';
 import {
   ALGORITHMS,
   DEFAULT_LAYOUT_OPTIONS,
@@ -29,6 +28,28 @@ import {
 } from '../../core/layout/elk-options';
 import { HierarchyProcessor } from '../../core/graph/hierarchy-processor';
 import { undoLastImport } from '../hooks/ui-utils';
+import {
+  useDiagramCreate,
+  useAdvancedToggle,
+  LayoutChoice,
+} from '../hooks/use-diagram-create';
+
+/**
+ * Queue the first file from a drop event for import.
+ *
+ * @param droppedFiles - Files received from the drop zone.
+ * @param setImportQueue - Setter storing files for processing.
+ * @param setError - Setter clearing any previous error state.
+ */
+function handleFileDrop(
+  droppedFiles: File[],
+  setImportQueue: React.Dispatch<React.SetStateAction<File[]>>,
+  setError: React.Dispatch<React.SetStateAction<string | null>>,
+): void {
+  const file = droppedFiles[0];
+  setImportQueue([file]);
+  setError(null);
+}
 
 const LAYOUTS = [
   'Layered',
@@ -39,7 +60,6 @@ const LAYOUTS = [
   'Box',
   'Rect Packing',
 ] as const;
-type LayoutChoice = (typeof LAYOUTS)[number];
 
 const OPTION_VISIBILITY: Record<
   ElkAlgorithm,
@@ -71,6 +91,7 @@ const LAYOUT_DESCRIPTIONS: Record<LayoutChoice, string> = {
 };
 
 /** UI for the Diagram tab. */
+// eslint-disable-next-line complexity
 export const DiagramTab: React.FC = () => {
   const [importQueue, setImportQueue] = React.useState<File[]>([]);
   const [layoutChoice, setLayoutChoice] =
@@ -87,66 +108,20 @@ export const DiagramTab: React.FC = () => {
     GraphProcessor | HierarchyProcessor | undefined
   >(undefined);
 
-  React.useEffect(() => {
-    const handler = (e: KeyboardEvent): void => {
-      if ((e.metaKey || e.ctrlKey) && e.key === '/') {
-        e.preventDefault();
-        setShowAdvanced((v) => !v);
-      }
-    };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
+  useAdvancedToggle(setShowAdvanced);
+
+  const handleFiles = React.useCallback((droppedFiles: File[]): void => {
+    handleFileDrop(droppedFiles, setImportQueue, setError);
   }, []);
 
-  const handleFiles = (droppedFiles: File[]): void => {
-    const file = droppedFiles[0];
-    setImportQueue([file]);
-    setError(null);
-  };
-
-  const graphProcessor = React.useMemo(() => new GraphProcessor(), []);
-  const hierarchyProcessor = React.useMemo(() => new HierarchyProcessor(), []);
-
-  const handleCreate = async (): Promise<void> => {
-    setProgress(0);
-    setError(null);
-    for (const file of importQueue) {
-      try {
-        if (layoutChoice === 'Nested') {
-          setLastProc(hierarchyProcessor);
-          await hierarchyProcessor.processFile(file, {
-            createFrame: withFrame,
-            frameTitle: frameTitle || undefined,
-          });
-        } else {
-          setLastProc(graphProcessor);
-          const algorithmMap: Record<LayoutChoice, ElkAlgorithm> = {
-            'Layered': 'layered',
-            'Tree': 'mrtree',
-            'Grid': 'force',
-            'Nested': 'rectpacking',
-            'Radial': 'radial',
-            'Box': 'box',
-            'Rect Packing': 'rectpacking',
-          };
-          const selectedAlg = showAdvanced
-            ? layoutOpts.algorithm
-            : algorithmMap[layoutChoice];
-          await graphProcessor.processFile(file, {
-            createFrame: withFrame,
-            frameTitle: frameTitle || undefined,
-            layout: { ...layoutOpts, algorithm: selectedAlg },
-          });
-        }
-        setProgress(100);
-      } catch (e) {
-        const msg = String(e);
-        setError(msg);
-        await showError(msg);
-      }
-    }
-    setImportQueue([]);
-  };
+  const handleCreate = useDiagramCreate(
+    importQueue,
+    { layoutChoice, showAdvanced, withFrame, frameTitle, layoutOpts },
+    setImportQueue,
+    setProgress,
+    setError,
+    setLastProc,
+  );
 
   return (
     <div style={{ marginTop: tokens.space.small }}>

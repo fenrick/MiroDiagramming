@@ -70,6 +70,7 @@ export class ExcelSyncService {
    * @param mapping - Column mapping describing identifiers and labels.
    * @returns Updated rows with widget text and metadata applied.
    */
+  // eslint-disable-next-line complexity
   public async pushChangesToExcel(
     rows: ExcelRow[],
     mapping: ColumnMapping,

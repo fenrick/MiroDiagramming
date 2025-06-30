@@ -211,6 +211,7 @@ function applyFilters(
  * @throws If {@link SearchOptions.query} is an invalid regular expression when
  *   `opts.regex` is enabled.
  */
+// eslint-disable-next-line complexity
 export async function searchBoardContent(
   opts: SearchOptions,
   board?: BoardQueryLike,

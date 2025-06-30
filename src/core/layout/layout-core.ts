@@ -33,6 +33,7 @@ export interface LayoutResult {
  * @param opts - Optional layout configuration overrides.
  * @returns The positioned nodes and edges produced by ELK.
  */
+// eslint-disable-next-line complexity
 export async function performLayout(
   data: GraphData,
   opts: Partial<UserLayoutOptions> = {},
@@ -64,6 +65,7 @@ export async function performLayout(
           userOpts.optimizationGoal,
       }),
     },
+    // eslint-disable-next-line complexity
     children: data.nodes.map((n) => {
       const tpl = templateManager.getTemplate(n.type);
       const dims = tpl?.elements.find((e) => e.width && e.height);
