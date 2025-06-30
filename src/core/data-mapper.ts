@@ -91,7 +91,7 @@ export function mapRowsToNodes(
   rows: Array<Record<string, unknown>>,
   mapping: ColumnMapping,
 ): NodeDefinition[] {
-  return rows.map((row, index) => mapRowToNode(row, mapping, index));
+  return mapRowsWith(rows, mapping, mapRowToNode);
 }
 
 /**
@@ -124,5 +124,27 @@ export function mapRowsToCards(
   rows: Array<Record<string, unknown>>,
   mapping: ColumnMapping,
 ): CardDefinition[] {
-  return rows.map((row) => mapRowToCard(row, mapping));
+  return mapRowsWith(rows, mapping, (row, map) => mapRowToCard(row, map));
+}
+
+/**
+ * Generic helper mapping rows into arbitrary objects using the provided
+ * mapping function. The mapping configuration is forwarded to each call.
+ *
+ * @typeParam T - Resulting object type produced by the mapper.
+ * @param rows - Parsed rows from {@link ExcelLoader}.
+ * @param mapping - Column mapping configuration.
+ * @param mapper - Row conversion function.
+ * @returns Array of mapped objects.
+ */
+export function mapRowsWith<T>(
+  rows: Array<Record<string, unknown>>,
+  mapping: ColumnMapping,
+  mapper: (
+    row: Record<string, unknown>,
+    map: ColumnMapping,
+    index: number,
+  ) => T,
+): T[] {
+  return rows.map((row, index) => mapper(row, mapping, index));
 }

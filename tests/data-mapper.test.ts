@@ -4,6 +4,7 @@ import {
   mapRowsToCards,
   mapRowToNode,
   mapRowToCard,
+  mapRowsWith,
   buildMetadata,
   resolveIdLabelType,
 } from '../src/core/data-mapper';
@@ -73,5 +74,11 @@ describe('data mapper', () => {
     const row = { Title: 'Only Title' };
     const opts = { labelColumn: 'Title' } as const;
     expect(mapRowToCard(row, opts)).toEqual({ title: 'Only Title' });
+  });
+
+  test('mapRowsWith delegates mapping logic', () => {
+    const rows = [{ id: '1' }, { id: '2' }];
+    const ids = mapRowsWith(rows, {}, (r) => r.id as string);
+    expect(ids).toEqual(['1', '2']);
   });
 });
