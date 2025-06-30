@@ -28,7 +28,7 @@ const DEFAULT_PRESET: StylePreset = {
  * Derive a style preset from the first element of a template.
  */
 function valueOrDefault<T>(val: T | undefined, def: T): T {
-  return val === undefined ? def : val;
+  return val ?? def;
 }
 
 function templateToPreset(
@@ -36,9 +36,11 @@ function templateToPreset(
   tpl: { elements?: TemplateElement[] },
 ): StylePreset {
   const el = tpl.elements?.[0];
-  const style = (el?.style ?? {}) as Record<string, unknown>;
-  const fill =
-    (style.fillColor as string | undefined) ?? (el?.fill as string | undefined);
+  const style = el?.style ?? {};
+  const fill = valueOrDefault(
+    style.fillColor as string | undefined,
+    valueOrDefault(el?.fill as string | undefined, ''),
+  );
   return {
     label: name,
     fontColor: valueOrDefault(
