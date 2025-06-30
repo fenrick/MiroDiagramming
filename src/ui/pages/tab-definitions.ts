@@ -5,13 +5,11 @@ export type TabId =
   | 'create'
   | 'resize'
   | 'style'
-  | 'grid'
+  | 'arrange'
   | 'frames'
-  | 'spacing'
   | 'excel'
   | 'search'
   | 'help'
-  | 'changelog'
   | 'dummy';
 
 export type TabTuple = readonly [

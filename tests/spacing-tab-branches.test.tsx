@@ -2,12 +2,12 @@
 import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { SpacingTab } from '../src/ui/pages/SpacingTab';
+import { ArrangeTab } from '../src/ui/pages/ArrangeTab';
 import * as spacingTools from '../src/board/spacing-tools';
 
 vi.mock('../src/board/spacing-tools');
 
-describe('SpacingTab branches', () => {
+describe('ArrangeTab spacing branch', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -16,7 +16,7 @@ describe('SpacingTab branches', () => {
     const spy = vi
       .spyOn(spacingTools, 'applySpacingLayout')
       .mockResolvedValue(undefined as unknown as void);
-    render(<SpacingTab />);
+    render(<ArrangeTab />);
     await act(async () => {
       fireEvent.change(screen.getByLabelText('Axis'), {
         target: { value: 'y' },
@@ -36,7 +36,7 @@ describe('SpacingTab branches', () => {
     const spy = vi
       .spyOn(spacingTools, 'applySpacingLayout')
       .mockResolvedValue(undefined as unknown as void);
-    render(<SpacingTab />);
+    render(<ArrangeTab />);
     await act(async () => {
       fireEvent.change(screen.getByLabelText('Axis'), {
         target: { value: 'y' },
@@ -62,7 +62,7 @@ describe('SpacingTab branches', () => {
     const spy = vi
       .spyOn(spacingTools, 'applySpacingLayout')
       .mockResolvedValue(undefined as unknown as void);
-    render(<SpacingTab />);
+    render(<ArrangeTab />);
     await act(async () => {
       fireEvent.change(screen.getByLabelText('Spacing'), {
         target: { value: 'abc' },
@@ -77,7 +77,7 @@ describe('SpacingTab branches', () => {
       { axis: 'x', spacing: 20 } as spacingTools.SpacingOptions,
       vi.fn(),
     ]);
-    render(<SpacingTab />);
+    render(<ArrangeTab />);
     const modeSelect = screen.getByLabelText('Mode') as HTMLSelectElement;
     expect(modeSelect.value).toBe('move');
   });
