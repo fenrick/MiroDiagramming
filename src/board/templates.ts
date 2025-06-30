@@ -107,7 +107,6 @@ export class TemplateManager {
    * corresponding CSS variable and resolved to a hex fallback using
    * {@link resolveColor}.
    */
-  // eslint-disable-next-line complexity
   private resolveToken(value: unknown): unknown {
     if (typeof value !== 'string' || !value.startsWith('tokens.')) return value;
     const path = value.slice('tokens.'.length);
@@ -223,7 +222,6 @@ export class TemplateManager {
   }
 
   /** Instantiate board widgets described by a template. */
-  // eslint-disable-next-line complexity
   public async createFromTemplate(
     name: string,
     label: string,

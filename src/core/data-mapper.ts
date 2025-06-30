@@ -107,7 +107,6 @@ export function resolveIdLabelType(
  * @param rows - Parsed rows from {@link ExcelLoader}.
  * @param mapping - Column mapping configuration.
  */
-// eslint-disable-next-line complexity
 export function mapRowToNode(
   row: Record<string, unknown>,
   mapping: ColumnMapping,
@@ -131,7 +130,6 @@ export function mapRowsToNodes(
  * @param rows - Parsed rows from {@link ExcelLoader}.
  * @param mapping - Column mapping configuration.
  */
-// eslint-disable-next-line complexity
 export function mapRowToCard(
   row: Record<string, unknown>,
   mapping: ColumnMapping,
