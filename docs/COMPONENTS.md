@@ -35,21 +35,21 @@ import 'mirotone/dist/styles.css';
 Only props that junior devs **must** supply are shown. Use the wrapper
 components or compose manually with Mirotone CSS.
 
-| Name           | Core props               | Variants                  | Default height (px) |
-| -------------- | ------------------------ | ------------------------- | ------------------- |
-| **Button**     | label, onClick, disabled | primary, secondary, ghost | 32                  |
-| **IconButton** | icon, ariaLabel          | square, circle            | 32                  |
-| **InputField** | value, onChange          | text, number              | 32                  |
-| **Select**     | options, value, onChange | single, multi             | 32                  |
-| **Checkbox**   | checked, onChange        | —                         | 20                  |
-| **Radio**      | checked, onChange, name  | —                         | 20                  |
-| **Textarea**   | value, onChange          | resize-auto               | 80                  |
-| **Modal**      | title, isOpen, onClose   | small, medium             | auto                |
-| _SidebarTab_   | id, icon, title          | persistent, modal         | fill                |
-| _TabBar_       | tabs, activeId, onChange | top, bottom               | 48                  |
-| **Grid**       | gap, columns             | responsive                | n/a                 |
-| **Stack**      | gap, direction           | vertical, horizontal      | n/a                 |
-| **Cluster**    | gap, align               | left, right, centre       | n/a                 |
+| Name           | Core props                      | Variants                  | Default height (px) |
+| -------------- | ------------------------------- | ------------------------- | ------------------- |
+| **Button**     | label, onClick, disabled        | primary, secondary, ghost | 32                  |
+| **IconButton** | icon, ariaLabel                 | square, circle            | 32                  |
+| **InputField** | value, onChange                 | text, number              | 32                  |
+| **Select**     | options, value, onChange        | single, multi             | 32                  |
+| **Checkbox**   | checked, onChange               | —                         | 20                  |
+| **Radio**      | checked, onChange, name         | —                         | 20                  |
+| **Textarea**   | value, onChange                 | resize-auto               | 80                  |
+| **Modal**      | title, isOpen, onClose          | small, medium             | auto                |
+| _SidebarTab_   | id, icon, title                 | persistent, modal         | fill                |
+| _TabBar_       | tabs, activeId, onChange, size? | regular, small            | 48                  |
+| **Grid**       | gap, columns                    | responsive                | n/a                 |
+| **Stack**      | gap, direction                  | vertical, horizontal      | n/a                 |
+| **Cluster**    | gap, align                      | left, right, centre       | n/a                 |
 
 > **When a wrapper is missing**
 >
