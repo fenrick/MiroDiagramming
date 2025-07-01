@@ -1,3 +1,12 @@
+# [1.14.0](https://github.com/fenrick/MiroDiagramming/compare/v1.13.0...v1.14.0) (2025-07-01)
+
+
+### Features
+
+* **ui:** improve tab navigation accessibility ([cf3ef09](https://github.com/fenrick/MiroDiagramming/commit/cf3ef09eda00babc7aec776e1362f87fd8688ca1))
+* **ui:** introduce tools tab with subtabs ([554a4e6](https://github.com/fenrick/MiroDiagramming/commit/554a4e6be579e62b7c07cd68e0e24a2b016bdd0d))
+* **utils:** add color mixing function ([3aa2adc](https://github.com/fenrick/MiroDiagramming/commit/3aa2adc3466cfe7104309966b3a0edcc5c676c8a))
+
 # [1.13.0](https://github.com/fenrick/MiroDiagramming/compare/v1.12.1...v1.13.0) (2025-07-01)
 
 
