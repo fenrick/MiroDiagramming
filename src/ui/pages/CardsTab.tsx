@@ -67,7 +67,11 @@ export const CardsTab: React.FC = () => {
   };
 
   return (
-    <div style={{ marginTop: tokens.space.small }}>
+    <div
+      id='panel-cards'
+      role='tabpanel'
+      aria-labelledby='tab-cards'
+      style={{ marginTop: tokens.space.small }}>
       <JsonDropZone onFiles={handleFiles} />
 
       {files.length > 0 && (
