@@ -10,7 +10,12 @@ const modules = import.meta.glob<{ tabDef: TabTuple }>('./*Tab.tsx', {
 export const TAB_DATA: TabTuple[] = Object.values(modules)
   .filter((m): m is { tabDef: TabTuple } => 'tabDef' in m)
   .map((m) => m.tabDef)
-  .filter((t) => (process.env.NODE_ENV === 'test' ? true : t[1] !== 'dummy'))
+  .filter((t) =>
+    process.env.NODE_ENV === 'test'
+      ? true
+      : t[1] !== 'dummy' &&
+        !['resize', 'style', 'arrange', 'frames'].includes(t[1]),
+  )
   .sort((a, b) => a[0] - b[0]);
 
 export type Tab = TabId;
