@@ -273,7 +273,7 @@ describe('tab components', () => {
       .mockResolvedValue(undefined as unknown as void);
     render(React.createElement(FramesTab));
     await act(async () => {
-      fireEvent.click(screen.getByText(/lock selected/i));
+      fireEvent.click(screen.getByRole('button', { name: /lock selected/i }));
     });
     expect(spy).toHaveBeenCalled();
   });
