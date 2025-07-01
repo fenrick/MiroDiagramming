@@ -30,17 +30,13 @@ test('drag accept toggles text and triggers drop', async () => {
     fireEvent.dragEnter(zone, { dataTransfer: data });
     await Promise.resolve();
   });
-  expect(
-    screen.getByText('Drop your JSON file here'),
-  ).toBeInTheDocument();
+  expect(screen.getByText('Drop your JSON file here')).toBeInTheDocument();
   await act(async () => {
     fireEvent.drop(zone, { dataTransfer: data });
     await Promise.resolve();
   });
   expect(handle.mock.calls[0][0]).toEqual([file]);
-  expect(
-    screen.getByText('Or drop your JSON file here'),
-  ).toBeInTheDocument();
+  expect(screen.getByText('Or drop your JSON file here')).toBeInTheDocument();
 });
 
 test('drag reject toggles reject style', async () => {
