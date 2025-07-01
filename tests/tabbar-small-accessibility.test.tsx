@@ -2,10 +2,10 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { SubTabBar, SubTab } from '../src/ui/components/SubTabBar';
+import { TabBar, TabItem } from '../src/ui/components/TabBar';
 
-describe('SubTabBar accessibility', () => {
-  const tabs: SubTab[] = [
+describe('TabBar small variant accessibility', () => {
+  const tabs: TabItem[] = [
     { id: 'one', label: 'One' },
     { id: 'two', label: 'Two' },
   ];
@@ -13,10 +13,11 @@ describe('SubTabBar accessibility', () => {
   test('arrow key navigation and roles', () => {
     const handler = vi.fn();
     render(
-      <SubTabBar
+      <TabBar
         tabs={tabs}
         tab='one'
         onChange={handler}
+        size='small'
       />,
     );
     expect(screen.getByRole('tablist')).toBeInTheDocument();

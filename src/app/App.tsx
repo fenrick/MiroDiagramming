@@ -57,7 +57,7 @@ export const App: React.FC = () => {
         <TabBar
           tabs={TAB_DATA}
           tab={tab}
-          onChange={setTab}
+          onChange={(id) => setTab(id as Tab)}
         />
         <div className='scrollable'>
           <h2>{current[2]}</h2>
