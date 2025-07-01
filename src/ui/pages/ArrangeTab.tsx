@@ -59,8 +59,7 @@ export const ArrangeTab: React.FC = () => {
 
   return (
     <div>
-      <fieldset>
-        <legend>Grid</legend>
+      <fieldset className='form-group-small'>
         <InputField label='Columns'>
           <input
             className='input input-small'
@@ -121,8 +120,7 @@ export const ArrangeTab: React.FC = () => {
           </Button>
         </div>
       </fieldset>
-      <fieldset>
-        <legend>Spacing</legend>
+      <fieldset className='form-group-small'>
         <InputField label='Axis'>
           <Select
             value={spacing.axis}

@@ -18,32 +18,40 @@ export const FramesTab: React.FC = () => {
   };
   return (
     <div>
-      <InputField label='Prefix'>
-        <input
-          className='input input-small'
-          value={prefix}
-          onChange={(e) => setPrefix(e.target.value)}
-          placeholder='Prefix'
-        />
-      </InputField>
-      <div className='buttons'>
-        <Button
-          onClick={rename}
-          variant='primary'>
-          <React.Fragment key='.0'>
-            <Icon name='edit' />
-            <Text>Rename Frames</Text>
-          </React.Fragment>
-        </Button>
-        <Button
-          onClick={lock}
-          variant='secondary'>
-          <React.Fragment key='.1'>
-            <Icon name='lock' />
-            <Text>Lock Selected</Text>
-          </React.Fragment>
-        </Button>
-      </div>
+      <fieldset>
+        <legend>Rename Frames</legend>
+        <InputField label='Prefix'>
+          <input
+            className='input input-small'
+            value={prefix}
+            onChange={(e) => setPrefix(e.target.value)}
+            placeholder='Prefix'
+          />
+        </InputField>
+        <div className='buttons'>
+          <Button
+            onClick={rename}
+            variant='primary'>
+            <React.Fragment key='.0'>
+              <Icon name='edit' />
+              <Text>Rename Frames</Text>
+            </React.Fragment>
+          </Button>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Lock Frames</legend>
+        <div className='buttons'>
+          <Button
+            onClick={lock}
+            variant='secondary'>
+            <React.Fragment key='.1'>
+              <Icon name='lock' />
+              <Text>Lock Selected</Text>
+            </React.Fragment>
+          </Button>
+        </div>
+      </fieldset>
     </div>
   );
 };
