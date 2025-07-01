@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Icon, InputField, Text } from '../components/legacy';
+import { Button, Icon, InputField, Text, Heading } from '../components/legacy';
 import { tweakFillColor, extractFillColor } from '../../board/style-tools';
 import { applyStylePreset, presetStyle } from '../../board/format-tools';
 import { STYLE_PRESET_NAMES, stylePresets } from '../style-presets';
@@ -7,6 +7,7 @@ import { adjustColor } from '../../core/utils/color-utils';
 import { useSelection } from '../hooks/use-selection';
 import { tokens } from '../tokens';
 import { TabPanel } from '../components/TabPanel';
+import { TabGrid } from '../components/TabGrid';
 import type { TabTuple } from './tab-definitions';
 
 /** Adjusts the fill colour of selected widgets. */
@@ -29,7 +30,9 @@ export const StyleTab: React.FC = () => {
   return (
     <TabPanel tabId='style'>
       <div className='grid form-example'>
-        <form className='cs1 ce12 form-example-main-content'>
+        <TabGrid
+          className='cs1 ce12 form-example-main-content'
+          columns={2}>
           <InputField label='Adjust fill'>
             <input
               data-testid='adjust-slider'
@@ -89,33 +92,31 @@ export const StyleTab: React.FC = () => {
               </React.Fragment>
             </Button>
           </div>
-          <fieldset className='form-group-small'>
-            <legend className='p-medium'>Style presets</legend>
-            <div className='buttons'>
-              {STYLE_PRESET_NAMES.map((name) => {
-                const preset = stylePresets[name];
-                const style = presetStyle(preset);
-                return (
-                  <Button
-                    key={name}
-                    onClick={() => applyStylePreset(preset)}
-                    type='button'
-                    variant='secondary'
-                    className='button-small'
-                    style={{
-                      color: style.color,
-                      backgroundColor: style.fillColor,
-                      borderColor: style.borderColor,
-                      borderWidth: style.borderWidth,
-                      borderStyle: 'solid',
-                    }}>
-                    {preset.label}
-                  </Button>
-                );
-              })}
-            </div>
-          </fieldset>
-        </form>
+          <Heading level={2}>Style presets</Heading>
+          <div className='buttons'>
+            {STYLE_PRESET_NAMES.map((name) => {
+              const preset = stylePresets[name];
+              const style = presetStyle(preset);
+              return (
+                <Button
+                  key={name}
+                  onClick={() => applyStylePreset(preset)}
+                  type='button'
+                  variant='secondary'
+                  className='button-small'
+                  style={{
+                    color: style.color,
+                    backgroundColor: style.fillColor,
+                    borderColor: style.borderColor,
+                    borderWidth: style.borderWidth,
+                    borderStyle: 'solid',
+                  }}>
+                  {preset.label}
+                </Button>
+              );
+            })}
+          </div>
+        </TabGrid>
       </div>
     </TabPanel>
   );
