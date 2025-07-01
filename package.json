@@ -28,7 +28,8 @@
     "stylelint": "stylelint 'src/**/*.css'",
     "build-storybook": "echo 'Storybook build placeholder'",
     "semantic-release": "semantic-release",
-    "commitlint": "commitlint --color"
+    "commitlint": "commitlint --color",
+    "prepare": "husky install"
   },
   "dependencies": {
     "d3-dsv": "^3.0.1",
@@ -59,6 +60,7 @@
     "@vitest/coverage-v8": "^3.2.4",
     "eslint": "^9.30.0",
     "eslint-plugin-react": "^7.37.5",
+    "husky": "^9.0.11",
     "jsdom": "^26.1.0",
     "prettier": "^3.6.2",
     "semantic-release": "^24.2.6",
