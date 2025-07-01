@@ -249,7 +249,7 @@ describe('tab components', () => {
       });
     });
     await act(async () => {
-      fireEvent.click(screen.getByText(/rename frames/i));
+      fireEvent.click(screen.getByRole('button', { name: /rename frames/i }));
     });
     expect(spy).toHaveBeenCalledWith({ prefix: 'A-' });
   });
@@ -260,7 +260,7 @@ describe('tab components', () => {
       .mockResolvedValue(undefined as unknown as void);
     render(React.createElement(FramesTab));
     await act(async () => {
-      fireEvent.click(screen.getByText(/lock selected/i));
+      fireEvent.click(screen.getByRole('button', { name: /lock selected/i }));
     });
     expect(spy).toHaveBeenCalled();
   });
