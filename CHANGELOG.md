@@ -1,3 +1,10 @@
+# [1.12.0](https://github.com/fenrick/MiroDiagramming/compare/v1.11.2...v1.12.0) (2025-07-01)
+
+
+### Features
+
+* **core:** load exceljs from cdn ([6ebfff8](https://github.com/fenrick/MiroDiagramming/commit/6ebfff8a39ff19f9761f78abe66c8a4e17f19080))
+
 ## [1.11.2](https://github.com/fenrick/MiroDiagramming/compare/v1.11.1...v1.11.2) (2025-07-01)
 
 

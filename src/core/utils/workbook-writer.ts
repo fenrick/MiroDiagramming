@@ -1,4 +1,4 @@
-import ExcelJS from 'exceljs';
+import { loadExcelJS } from './exceljs-loader';
 import type { ExcelRow } from './excel-loader';
 
 /**
@@ -31,7 +31,8 @@ export async function downloadWorkbook(
   rows: ExcelRow[],
   fileName: string,
 ): Promise<void> {
-  const wb = new ExcelJS.Workbook();
+  const Excel = await loadExcelJS();
+  const wb = new Excel.Workbook();
   const ws = wb.addWorksheet('Sheet1');
   if (rows.length) {
     ws.addRow(Object.keys(rows[0]));
