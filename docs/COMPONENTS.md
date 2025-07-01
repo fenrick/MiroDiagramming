@@ -35,21 +35,22 @@ import 'mirotone/dist/styles.css';
 Only props that junior devs **must** supply are shown. Use the wrapper
 components or compose manually with Mirotone CSS.
 
-| Name           | Core props                      | Variants                  | Default height (px) |
-| -------------- | ------------------------------- | ------------------------- | ------------------- |
-| **Button**     | label, onClick, disabled        | primary, secondary, ghost | 32                  |
-| **IconButton** | icon, ariaLabel                 | square, circle            | 32                  |
-| **InputField** | value, onChange                 | text, number              | 32                  |
-| **Select**     | options, value, onChange        | single, multi             | 32                  |
-| **Checkbox**   | checked, onChange               | —                         | 20                  |
-| **Radio**      | checked, onChange, name         | —                         | 20                  |
-| **Textarea**   | value, onChange                 | resize-auto               | 80                  |
-| **Modal**      | title, isOpen, onClose          | small, medium             | auto                |
-| _SidebarTab_   | id, icon, title                 | persistent, modal         | fill                |
-| _TabBar_       | tabs, activeId, onChange, size? | regular, small            | 48                  |
-| **Grid**       | gap, columns                    | responsive                | n/a                 |
-| **Stack**      | gap, direction                  | vertical, horizontal      | n/a                 |
-| **Cluster**    | gap, align                      | left, right, centre       | n/a                 |
+| Name           | Core props                 | Variants                  | Default height (px) |
+| -------------- | -------------------------- | ------------------------- | ------------------- |
+| **Button**     | label, onClick, disabled   | primary, secondary, ghost | 32                  |
+| **InputField** | value, onChange            | text, number              | 32                  |
+| **Select**     | options, value, onChange   | single, multi             | 32                  |
+| **Checkbox**   | checked, onChange          | —                         | 20                  |
+| **Modal**      | title, isOpen, onClose     | small, medium             | auto                |
+| _SidebarTab_   | id, icon, title            | persistent, modal         | fill                |
+| _TabBar_       | tabs, tab, onChange, size? | regular, small            | 48                  |
+| **Grid**       | gap, columns               | responsive                | n/a                 |
+| **Stack**      | gap, direction             | vertical, horizontal      | n/a                 |
+| **Cluster**    | gap, align                 | left, right, centre       | n/a                 |
+
+The **TabBar** component now covers both sidebar and nested navigation. Pass the
+current tab id via `tab` and handle selection with `onChange`. Use
+`size='small'` for compact nested tab sets.
 
 > **When a wrapper is missing**
 >
@@ -133,10 +134,11 @@ components or compose manually with Mirotone CSS.
         value={title}
         onChange={setTitle}
       />
-      <Textarea
+      <textarea
+        className='textarea resize-auto'
         placeholder='Description'
         value={desc}
-        onChange={setDesc}
+        onChange={(e) => setDesc(e.target.value)}
       />
       <Cluster
         gap='8'
