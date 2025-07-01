@@ -380,4 +380,12 @@ describe('tab auto-registration', () => {
       process.env.NODE_ENV = prev;
     }
   });
+
+  test('includes ToolsTab by default', async () => {
+    const prev = process.env.NODE_ENV;
+    process.env.NODE_ENV = 'test';
+    const { TAB_DATA } = await import('../src/ui/pages/tabs.ts?test');
+    expect(TAB_DATA.some((t) => t[1] === 'tools')).toBe(true);
+    process.env.NODE_ENV = prev;
+  });
 });

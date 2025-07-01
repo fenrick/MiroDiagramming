@@ -34,63 +34,27 @@ ambiguity.
 
 ---
 
-## 2\u00a0 Frames Tab
+## 2  Tools Tab
 
-| Control           | Details                                         |
-| ----------------- | ----------------------------------------------- |
-| **Prefix Input**  | Text prefix used for renaming                   |
-| **Rename Button** | Applies prefix in left\u2011to\u2011right order |
-| **Lock Button**   | Locks selected frames and their contents        |
+Combines resizing, style tweaks, arranging widgets and frame utilities. Tabs
+within this section mirror the previous individual tabs.
 
-Flow: select frames, type prefix, press **Rename Frames** → titles become
-`<prefix>0`, `<prefix>1`, ... Press **Lock Selected** to prevent modifications.
-Widgets receive the undocumented `locked` flag used by the Web‑SDK.
+### 2.1 Resize
 
----
+As per the former **Resize Tab** with width/height inputs, aspect ratio and copy
+functions.
 
-## 3  Resize Tab
+### 2.2 Colours
 
-Panel split vertically **(Stack space="lg")**
+Brightness slider and preset buttons from the old **Style Tab**.
 
-| Section               | UI Elements                                   | Copy                                       | Interaction                                   |
-| --------------------- | --------------------------------------------- | ------------------------------------------ | --------------------------------------------- | --------------- |
-| **Current Selection** | `<Text>` size readout (W × H px)              | “Selection: 180 × 120 px”                  | Updates on `selection:update`                 | `selectionSize` |
-| **Copied Size**       | `<Text>` (grey if none)                       | “Copied: (none)” OR “Copied: 280 × 160 px” | Shows last copied dimensions                  | `copiedSize`    |
-| **Presets**           | Buttons S/M/L, `<InputField>` Width + Height  | “Apply”                                    | Click preset or enter numbers → preview ghost | –               |
-| **Aspect Ratio**      | `<Select>` Golden, 16:9, 16:10, 4:3           | “Free” default                             | Changing width or ratio updates height        | `ratio`         |
-| **Copy Size**         | `<Button variant="secondary">Copy size`       | Copies `selectionSize` → `copiedSize`      | –                                             |
-| **Apply Copied**      | `<Button variant="primary">Apply copied size` | Disabled if `!copiedSize`                  | Iterates selection; sets dimensions           |
+### 2.3 Arrange
 
-Validation: warn if width/height > 10 000 px (“That’s bigger than your board
-viewport”). Shortcut: **⌥C** copies size, **⌥V** applies.
+Grid and spacing controls previously found in the **Arrange Tab**.
 
----
+### 2.4 Frames
 
-## 4  Style Tab
-
-Layout: single column Stack.
-
-- **Brightness Slider** (−100 %–100 %) – down/up arrow changes by 1 %.
-- Numeric input mirrors slider value.
-- **Apply** button calls `tweakFillColor` with the selected adjustment.
-
-This tab no longer exposes border or text options; use native Miro style tools
-instead.
-
----
-
-## 5  Grid Tab
-
-| Control               | Details                          |
-| --------------------- | -------------------------------- |
-| **Columns Input**     | Numeric; min 1, max 20           |
-| **Gap**               | Numeric spacing in px            |
-| **Frame Title Input** | Optional; enables frame creation |
-| **Preview Overlay**   | CSS grid lines, `opacity: 0.3`   |
-| **Group Checkbox**    | “Group items into Frame”         |
-
-Flow: Change value → overlay updates real‑time. Press **Arrange** creates frame
-if enabled.
+Prefix rename and locking options from the old **Frames Tab**.
 
 ---
 
