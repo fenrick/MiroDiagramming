@@ -1,3 +1,12 @@
+## [1.12.1](https://github.com/fenrick/MiroDiagramming/compare/v1.12.0...v1.12.1) (2025-07-01)
+
+
+### Bug Fixes
+
+* style issues ([f69acd6](https://github.com/fenrick/MiroDiagramming/commit/f69acd66cecd9f8d5ddc7a4dbf91f6848c4c0291))
+* **style:** add button type to StyleTab ([e078c17](https://github.com/fenrick/MiroDiagramming/commit/e078c17b417749ad32d5f99b2a592df0c71de042))
+* **tabs:** adjust selectors and tests ([4298f65](https://github.com/fenrick/MiroDiagramming/commit/4298f656d518ca7a166a261a7e7f0e1c94f1d2e7))
+
 # [1.12.0](https://github.com/fenrick/MiroDiagramming/compare/v1.11.2...v1.12.0) (2025-07-01)
 
 
