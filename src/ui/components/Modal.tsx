@@ -15,6 +15,9 @@ export interface ModalProps {
 
 /**
  * Accessible modal dialog with focus trap and Escape key handling.
+ *
+ * Uses the native `<dialog>` element which has an implicit
+ * `dialog` role, so no explicit ARIA role is set.
  */
 export function Modal({
   title,
@@ -106,7 +109,6 @@ export function Modal({
         open
         aria-label={title}
         aria-modal='true'
-        role='dialog'
         className={`modal modal-${size}`}
         ref={ref}>
         <header className='modal-header'>
