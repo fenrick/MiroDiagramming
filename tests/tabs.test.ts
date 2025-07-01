@@ -52,6 +52,20 @@ describe('tab components', () => {
     delete (globalThis as any).miro;
     jest.clearAllMocks();
   });
+
+  const COMPONENTS: Array<[string, React.FC]> = [
+    ['ResizeTab', ResizeTab],
+    ['StyleTab', StyleTab],
+    ['ArrangeTab', ArrangeTab],
+    ['DiagramTab', DiagramTab],
+    ['CardsTab', CardsTab],
+    ['FramesTab', FramesTab],
+  ];
+
+  test.each(COMPONENTS)('%s exposes tabpanel role', (_, Comp) => {
+    render(React.createElement(Comp));
+    expect(screen.getAllByRole('tabpanel').length).toBeGreaterThan(0);
+  });
   test('ResizeTab applies size', async () => {
     const spy = jest
       .spyOn(resizeTools, 'applySizeToSelection')

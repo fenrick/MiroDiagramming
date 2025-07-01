@@ -124,7 +124,11 @@ export const DiagramTab: React.FC = () => {
   );
 
   return (
-    <div style={{ marginTop: tokens.space.small }}>
+    <div
+      id='panel-diagram'
+      role='tabpanel'
+      aria-labelledby='tab-diagram'
+      style={{ marginTop: tokens.space.small }}>
       <JsonDropZone onFiles={handleFiles} />
 
       {importQueue.length > 0 && (
