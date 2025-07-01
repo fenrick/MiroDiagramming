@@ -8,6 +8,7 @@ import { ArrangeTab } from '../src/ui/pages/ArrangeTab';
 import { DiagramTab } from '../src/ui/pages/DiagramTab';
 import { CardsTab } from '../src/ui/pages/CardsTab';
 import { FramesTab } from '../src/ui/pages/FramesTab';
+import { STYLE_PRESET_NAMES } from '../src/ui/style-presets';
 import * as resizeTools from '../src/board/resize-tools';
 import * as styleTools from '../src/board/style-tools';
 import * as formatTools from '../src/board/format-tools';
@@ -200,6 +201,18 @@ describe('tab components', () => {
     style.removeProperty('--colors-blue-200');
     style.removeProperty('--colors-gray-200');
     style.removeProperty('--primary-text-color');
+  });
+
+  test('StyleTab buttons use type button', async () => {
+    render(React.createElement(StyleTab));
+    expect(screen.getByRole('button', { name: /apply/i })).toHaveAttribute(
+      'type',
+      'button',
+    );
+    const first = STYLE_PRESET_NAMES[0];
+    expect(
+      screen.getByRole('button', { name: new RegExp(first, 'i') }),
+    ).toHaveAttribute('type', 'button');
   });
 
   test('ArrangeTab applies grid layout', async () => {

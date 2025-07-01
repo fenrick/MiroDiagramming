@@ -78,6 +78,7 @@ export const StyleTab: React.FC = () => {
         <div className='buttons'>
           <Button
             onClick={apply}
+            type='button'
             variant='primary'
             className='button-small'>
             <React.Fragment>
@@ -96,6 +97,7 @@ export const StyleTab: React.FC = () => {
                 <Button
                   key={name}
                   onClick={() => applyStylePreset(preset)}
+                  type='button'
                   variant='secondary'
                   className='button-small'
                   style={{
