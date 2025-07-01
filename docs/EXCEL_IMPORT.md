@@ -14,9 +14,10 @@ and two-way updates using existing services.
 
 Use `ExcelLoader` to parse `.xlsx`/`.xls` files. The loader exposes
 `listSheets`, `listNamedTables`, `loadSheet` and `loadNamedTable` helpers for
-accessing worksheet rows. Files are read via the
-[exceljs](https://github.com/exceljs/exceljs) library and converted to objects
-keyed by column headers.
+accessing worksheet rows. The heavy
+[exceljs](https://github.com/exceljs/exceljs) library is loaded dynamically from
+jsDelivr to keep bundle size small and then converted to objects keyed by column
+headers.
 
 ```ts
 import { excelLoader } from '../core/utils/excel-loader';

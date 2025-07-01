@@ -65,6 +65,7 @@ src/core/
 | utils/base64.ts              | Encode data in Base64 without regex backtracking.   |
 | utils/cards.ts               | Format card content for widgets.                    |
 | utils/color-utils.ts         | Map semantic color names to Miro tokens.            |
+| utils/exceljs-loader.ts      | Dynamically load ExcelJS from the CDN.              |
 | utils/excel-loader.ts        | Parse Excel files into row objects.                 |
 | utils/file-utils.ts          | Read and write local files for import/export.       |
 | utils/graph-auth.ts          | Handle OAuth login for the graph service.           |

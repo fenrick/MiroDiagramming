@@ -22,7 +22,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: allHtmlEntries,
-      external: ['elkjs/lib/elk.bundled.js'],
+      external: ['elkjs/lib/elk.bundled.js', 'exceljs'],
     },
   },
   plugins: [react()],

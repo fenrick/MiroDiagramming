@@ -1,4 +1,5 @@
-import ExcelJS from 'exceljs';
+import type ExcelJS from 'exceljs';
+import { loadExcelJS } from './exceljs-loader';
 import { fileUtils } from './file-utils';
 import { GraphClient, graphClient } from './graph-client';
 
@@ -18,7 +19,8 @@ export class ExcelLoader {
 
   /** Parse a workbook from raw array buffer data. */
   public async loadArrayBuffer(buffer: ArrayBuffer): Promise<void> {
-    const wb = new ExcelJS.Workbook();
+    const Excel = await loadExcelJS();
+    const wb = new Excel.Workbook();
     await wb.xlsx.load(buffer);
     this.workbook = wb;
   }
