@@ -78,7 +78,6 @@ export const StyleTab: React.FC = () => {
         <div className='buttons'>
           <Button
             onClick={apply}
-            type='button'
             variant='primary'
             className='button-small'>
             <React.Fragment>
