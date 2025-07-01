@@ -6,6 +6,7 @@ import {
   resolveColor,
   hexToRgb,
   rgbToHex,
+  mixColors,
 } from '../src/core/utils/color-utils';
 
 describe('color-utils', () => {
@@ -36,4 +37,9 @@ test('resolveColor reads CSS variable', () => {
 test('hexToRgb and rgbToHex roundtrip', () => {
   const rgb = hexToRgb('#abcdef');
   expect(rgbToHex(rgb)).toBe('#abcdef');
+});
+
+test('mixColors blends values', () => {
+  expect(mixColors('#ff0000', '#0000ff', 0.5)).toBe('#800080');
+  expect(mixColors('#000000', '#ffffff', 0.25)).toBe('#404040');
 });
