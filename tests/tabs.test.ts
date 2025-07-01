@@ -62,15 +62,19 @@ describe('tab components', () => {
     ['FramesTab', FramesTab],
   ];
 
-  test.each(COMPONENTS)('%s exposes tabpanel role', (_, Comp) => {
-    render(React.createElement(Comp));
+  test.each(COMPONENTS)('%s exposes tabpanel role', async (_, Comp) => {
+    await act(async () => {
+      render(React.createElement(Comp));
+    });
     expect(screen.getAllByRole('tabpanel').length).toBeGreaterThan(0);
   });
   test('ResizeTab applies size', async () => {
     const spy = jest
       .spyOn(resizeTools, 'applySizeToSelection')
       .mockResolvedValue(undefined as unknown as void);
-    render(React.createElement(ResizeTab));
+    await act(async () => {
+      render(React.createElement(ResizeTab));
+    });
     await act(async () => {
       fireEvent.change(screen.getByPlaceholderText(/width/i), {
         target: { value: '50' },
@@ -91,7 +95,9 @@ describe('tab components', () => {
     jest
       .spyOn(resizeTools, 'copySizeFromSelection')
       .mockResolvedValue({ width: 20, height: 30 });
-    render(React.createElement(ResizeTab));
+    await act(async () => {
+      render(React.createElement(ResizeTab));
+    });
     await act(async () => {
       fireEvent.click(screen.getByText(/copy size/i));
     });
@@ -103,7 +109,9 @@ describe('tab components', () => {
   });
 
   test('ResizeTab aspect ratio adjusts height', async () => {
-    render(React.createElement(ResizeTab));
+    await act(async () => {
+      render(React.createElement(ResizeTab));
+    });
     const widthInput = screen.getByPlaceholderText(/width/i);
     await act(async () => {
       fireEvent.change(widthInput, { target: { value: '160' } });
@@ -123,7 +131,9 @@ describe('tab components', () => {
     const spy = jest
       .spyOn(resizeTools, 'scaleSelection')
       .mockResolvedValue(undefined as unknown as void);
-    render(React.createElement(ResizeTab));
+    await act(async () => {
+      render(React.createElement(ResizeTab));
+    });
     await act(async () => {
       fireEvent.click(screen.getByRole('button', { name: /×2/i }));
     });
@@ -218,7 +228,9 @@ describe('tab components', () => {
   });
 
   test('StyleTab buttons use type button', async () => {
-    render(React.createElement(StyleTab));
+    await act(async () => {
+      render(React.createElement(StyleTab));
+    });
     expect(screen.getByRole('button', { name: /apply/i })).toHaveAttribute(
       'type',
       'button',
@@ -233,17 +245,23 @@ describe('tab components', () => {
     const spy = jest
       .spyOn(gridTools, 'applyGridLayout')
       .mockResolvedValue(undefined as unknown as void);
-    render(React.createElement(ArrangeTab));
+    await act(async () => {
+      render(React.createElement(ArrangeTab));
+    });
     await act(async () => {
       fireEvent.click(screen.getByText(/arrange grid/i));
     });
     expect(spy).toHaveBeenCalled();
   });
 
-  test('ArrangeTab toggles frame title input', () => {
-    render(React.createElement(ArrangeTab));
+  test('ArrangeTab toggles frame title input', async () => {
+    await act(async () => {
+      render(React.createElement(ArrangeTab));
+    });
     expect(screen.queryByPlaceholderText('Optional')).toBeNull();
-    fireEvent.click(screen.getByLabelText('Group items into Frame'));
+    await act(async () => {
+      fireEvent.click(screen.getByLabelText('Group items into Frame'));
+    });
     expect(screen.getByPlaceholderText('Optional')).toBeInTheDocument();
   });
 
@@ -251,7 +269,9 @@ describe('tab components', () => {
     const spy = jest
       .spyOn(spacingTools, 'applySpacingLayout')
       .mockResolvedValue(undefined as unknown as void);
-    render(React.createElement(ArrangeTab));
+    await act(async () => {
+      render(React.createElement(ArrangeTab));
+    });
     await act(async () => {
       fireEvent.change(screen.getByLabelText('Mode'), {
         target: { value: 'grow' },
@@ -269,7 +289,9 @@ describe('tab components', () => {
     const spy = jest
       .spyOn(frameTools, 'renameSelectedFrames')
       .mockResolvedValue(undefined as unknown as void);
-    render(React.createElement(FramesTab));
+    await act(async () => {
+      render(React.createElement(FramesTab));
+    });
     await act(async () => {
       fireEvent.change(screen.getByLabelText('Prefix'), {
         target: { value: 'A-' },
@@ -285,7 +307,9 @@ describe('tab components', () => {
     const spy = jest
       .spyOn(frameTools, 'lockSelectedFrames')
       .mockResolvedValue(undefined as unknown as void);
-    render(React.createElement(FramesTab));
+    await act(async () => {
+      render(React.createElement(FramesTab));
+    });
     await act(async () => {
       fireEvent.click(screen.getByRole('button', { name: /lock selected/i }));
     });
@@ -296,7 +320,9 @@ describe('tab components', () => {
     const spy = jest
       .spyOn(GraphProcessor.prototype, 'processFile')
       .mockResolvedValue(undefined as unknown as void);
-    render(React.createElement(DiagramTab));
+    await act(async () => {
+      render(React.createElement(DiagramTab));
+    });
     const input = screen.getByTestId('file-input');
     const file = new File(['{}'], 'graph.json', { type: 'application/json' });
     await act(async () => {
@@ -327,7 +353,9 @@ describe('tab components', () => {
   });
 
   test('CardsTab UI after file drop', async () => {
-    render(React.createElement(CardsTab));
+    await act(async () => {
+      render(React.createElement(CardsTab));
+    });
     const input = screen.getByTestId('file-input');
     const file = new File(['{}'], 'cards.json', { type: 'application/json' });
     await act(async () => {
@@ -341,7 +369,9 @@ describe('tab components', () => {
     const spy = jest
       .spyOn(CardProcessor.prototype, 'processFile')
       .mockResolvedValue(undefined as unknown as void);
-    render(React.createElement(CardsTab));
+    await act(async () => {
+      render(React.createElement(CardsTab));
+    });
     const input = screen.getByTestId('file-input');
     const file = new File(['{}'], 'cards.json', { type: 'application/json' });
     await act(async () => {
