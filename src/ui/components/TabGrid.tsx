@@ -17,7 +17,7 @@ export function TabGrid({
   columns = 2,
   className = '',
   children,
-}: ReadOnly<TabGridProps>): React.JSX.Element {
+}: Readonly<TabGridProps>): React.JSX.Element {
   const span = Math.floor(12 / columns);
   return (
     <div className={`grid ${className}`.trim()}>
