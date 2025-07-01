@@ -102,3 +102,24 @@ export function ensureContrast(bg: string, fg: string): string {
     ? resolveColor(tokens.color.black, colors.black)
     : resolveColor(tokens.color.white, colors.white);
 }
+
+/**
+ * Blend two colours by linearly mixing their RGB values.
+ *
+ * @param a - Hex colour string used as the base.
+ * @param b - Hex colour string that is mixed in.
+ * @param weight - Amount of colour `b` from 0 to 1.
+ * @returns Hex colour between `a` and `b`.
+ */
+export function mixColors(a: string, b: string, weight: number): string {
+  const w = Math.min(Math.max(weight, 0), 1);
+  const rgbA = hexToRgb(a);
+  const rgbB = hexToRgb(b);
+  const mix = (va: number, vb: number): number =>
+    Math.round(va * (1 - w) + vb * w);
+  return rgbToHex({
+    r: mix(rgbA.r, rgbB.r),
+    g: mix(rgbA.g, rgbB.g),
+    b: mix(rgbA.b, rgbB.b),
+  });
+}
