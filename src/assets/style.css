@@ -76,8 +76,8 @@ button {
 }
 
 .form-example {
-	grid-auto-rows: 1fr auto
+        grid-auto-rows: 1fr auto;
 }
 .form-example-main-content {
-        align-self: flex-start
+        align-self: flex-start;
 }
