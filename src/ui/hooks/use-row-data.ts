@@ -16,6 +16,20 @@ function isGroup(item: BaseItem | Group): item is Group {
 }
 
 /**
+ * Safely read the `rowId` property from arbitrary metadata.
+ *
+ * @param meta - Metadata value retrieved from a board item.
+ * @returns The row identifier as a string or `undefined`.
+ */
+function parseRowId(meta: unknown): string | undefined {
+  if (meta && typeof meta === 'object' && 'rowId' in meta) {
+    const value = (meta as { rowId?: unknown }).rowId;
+    return value != null ? String(value) : undefined;
+  }
+  return undefined;
+}
+
+/**
  * Extract the row identifier from a widget or group.
  *
  * The function checks metadata on the item itself or each child of a group
@@ -27,16 +41,15 @@ async function extractRowId(
   if (isGroup(item)) {
     const items = await item.getItems();
     for (const child of items) {
-      const meta = (await child.getMetadata(META_KEY)) as {
-        rowId?: string;
-      } | null;
-      if (meta?.rowId) return String(meta.rowId);
+      const meta = await child.getMetadata(META_KEY);
+      const rowId = parseRowId(meta);
+      if (rowId) return rowId;
     }
     /* c8 ignore next */
     return undefined;
   }
-  const meta = (await item.getMetadata(META_KEY)) as { rowId?: string } | null;
-  return meta?.rowId ? String(meta.rowId) : undefined;
+  const meta = await item.getMetadata(META_KEY);
+  return parseRowId(meta);
 }
 
 /**
