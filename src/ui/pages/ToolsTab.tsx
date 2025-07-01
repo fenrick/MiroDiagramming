@@ -1,5 +1,5 @@
 import React from 'react';
-import { SubTabBar, SubTab } from '../components/SubTabBar';
+import { TabBar, TabItem } from '../components/TabBar';
 import { ResizeTab } from './ResizeTab';
 import { StyleTab } from './StyleTab';
 import { ArrangeTab } from './ArrangeTab';
@@ -7,7 +7,7 @@ import { FramesTab } from './FramesTab';
 import { TabPanel } from '../components/TabPanel';
 import type { TabTuple } from './tab-definitions';
 
-const SUB_TABS: SubTab[] = [
+const SUB_TABS: TabItem[] = [
   { id: 'resize', label: 'Resize' },
   { id: 'style', label: 'Colours' },
   { id: 'arrange', label: 'Arrange' },
@@ -36,10 +36,11 @@ export const ToolsTab: React.FC = () => {
   return (
     <TabPanel tabId='tools'>
       <div>
-        <SubTabBar
+        <TabBar
           tabs={SUB_TABS}
           tab={sub}
           onChange={setSub}
+          size='small'
         />
         <Current />
       </div>

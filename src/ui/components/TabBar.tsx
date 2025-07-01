@@ -1,26 +1,63 @@
 import React from 'react';
-import type { Tab, TabTuple } from '../pages/tabs';
+import type { TabTuple } from '../pages/tabs';
 import { tokens } from '../tokens';
 
-/** Tab bar with an overflow menu for additional tabs. */
-export const TabBar: React.FC<{
-  tabs: TabTuple[];
-  tab: Tab;
-  onChange: (t: Tab) => void;
-}> = ({ tabs, tab, onChange }) => {
+/**
+ * Minimal data required to render a tab entry.
+ */
+export interface TabItem {
+  /** Unique identifier for the tab. */
+  id: string;
+  /** Visible label displayed in the tab. */
+  label: string;
+}
+
+export interface TabBarProps {
+  /** Tabs to render. Accepts TabTuple or TabItem objects. */
+  tabs: (TabTuple | TabItem)[];
+  /** Currently active tab identifier. */
+  tab: string;
+  /** Change handler for new tab selection. */
+  onChange: (id: string) => void;
+  /** Visual size variant; "small" removes margin and shrinks tabs. */
+  size?: 'regular' | 'small';
+}
+
+/**
+ * Accessible tab bar used for both primary and nested navigation.
+ */
+export const TabBar: React.FC<TabBarProps> = ({
+  tabs,
+  tab,
+  onChange,
+  size = 'regular',
+}) => {
   const refs = React.useRef<HTMLButtonElement[]>([]);
+
+  const items = React.useMemo<TabItem[]>(
+    () =>
+      tabs.map((t) =>
+        Array.isArray(t)
+          ? ({ id: String(t[1]), label: t[2] } as TabItem)
+          : (t as TabItem),
+      ),
+    [tabs],
+  );
+
   /** Move focus to the target tab index. */
   const focusTab = (idx: number): void => {
     refs.current[idx]?.focus();
   };
 
+  const className = size === 'small' ? 'tabs tabs-small' : 'tabs';
+
   return (
     <div
       role='tablist'
-      className='tabs'
-      style={{ margin: tokens.space.xxsmall }}>
+      className={className}
+      style={size === 'regular' ? { margin: tokens.space.xxsmall } : undefined}>
       <div className='tabs-header-list'>
-        {tabs.map(([, id, label], idx) => (
+        {items.map(({ id, label }, idx) => (
           <button
             key={id}
             ref={(el) => {
@@ -35,11 +72,11 @@ export const TabBar: React.FC<{
               switch (e.key) {
                 case 'ArrowRight':
                   e.preventDefault();
-                  focusTab((idx + 1) % tabs.length);
+                  focusTab((idx + 1) % items.length);
                   break;
                 case 'ArrowLeft':
                   e.preventDefault();
-                  focusTab((idx - 1 + tabs.length) % tabs.length);
+                  focusTab((idx - 1 + items.length) % items.length);
                   break;
                 case 'Home':
                   e.preventDefault();
@@ -47,13 +84,14 @@ export const TabBar: React.FC<{
                   break;
                 case 'End':
                   e.preventDefault();
-                  focusTab(tabs.length - 1);
+                  focusTab(items.length - 1);
                   break;
                 case 'Enter':
-                case ' ': // Space
+                case ' ': {
                   e.preventDefault();
                   onChange(id);
                   break;
+                }
                 default:
                   break;
               }
