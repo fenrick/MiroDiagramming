@@ -27,64 +27,66 @@ export const StyleTab: React.FC = () => {
   };
   return (
     <div className='grid form-example'>
-      <form className='cs1 ce12 form-example--main-content'>
-          <InputField label='Adjust fill'>
-            <input
-              data-testid='adjust-slider'
-              type='range'
-              min='-100'
-              max='100'
-              list='adjust-marks'
-              value={adjust}
-              onChange={(e) => setAdjust(Number(e.target.value))}
-            />
-            <datalist id='adjust-marks'>
-              {[-100, -50, 0, 50, 100].map((n) => (
-                <option
-                  key={n}
-                  value={n}
-                />
-              ))}
-            </datalist>
-            <span
-              data-testid='adjust-preview'
-              style={{
-                display: 'inline-block',
-                width: '24px',
-                height: '24px',
-                marginLeft: tokens.space.small,
-                border: `1px solid ${tokens.color.gray[200]}`,
-                backgroundColor: preview,
-              }}
-            />
-            <code
-              data-testid='color-hex'
-              style={{ marginLeft: tokens.space.xxsmall }}>
-              {preview}
-            </code>
-          </InputField>
-          <InputField label='Adjust value'>
-            <input
-              className='input input-small'
-              data-testid='adjust-input'
-              type='number'
-              min='-100'
-              max='100'
-              value={String(adjust)}
-              onChange={(e) => setAdjust(Number(e.target.value))}
-              placeholder='Adjust (-100–100)'
-            />
-          </InputField>
-          <div className='buttons'>
-            <Button
-              onClick={apply}
-              variant='primary' className="button-small">
-              <React.Fragment>
-                <Icon name='parameters' />
-                <Text>Apply</Text>
-              </React.Fragment>
-            </Button>
-          </div>
+      <form className='cs1 ce12 form-example-main-content'>
+        <InputField label='Adjust fill'>
+          <input
+            data-testid='adjust-slider'
+            type='range'
+            min='-100'
+            max='100'
+            list='adjust-marks'
+            value={adjust}
+            onChange={(e) => setAdjust(Number(e.target.value))}
+          />
+          <datalist id='adjust-marks'>
+            {[-100, -50, 0, 50, 100].map((n) => (
+              <option
+                key={n}
+                value={n}
+              />
+            ))}
+          </datalist>
+          <span
+            data-testid='adjust-preview'
+            style={{
+              display: 'inline-block',
+              width: '24px',
+              height: '24px',
+              marginLeft: tokens.space.small,
+              border: `1px solid ${tokens.color.gray[200]}`,
+              backgroundColor: preview,
+            }}
+          />
+          <code
+            data-testid='color-hex'
+            style={{ marginLeft: tokens.space.xxsmall }}>
+            {preview}
+          </code>
+        </InputField>
+        <InputField label='Adjust value'>
+          <input
+            className='input input-small'
+            data-testid='adjust-input'
+            type='number'
+            min='-100'
+            max='100'
+            value={String(adjust)}
+            onChange={(e) => setAdjust(Number(e.target.value))}
+            placeholder='Adjust (-100–100)'
+          />
+        </InputField>
+        <div className='buttons'>
+          <Button
+            onClick={apply}
+            type='button'
+            variant='primary'
+            className='button-small'>
+            <React.Fragment>
+              <Icon name='parameters' />
+              <Text>Apply</Text>
+            </React.Fragment>
+          </Button>
+        </div>
         <fieldset className='form-group-small'>
           <legend className='p-medium'>Style presets</legend>
           <div className='buttons'>
@@ -95,6 +97,7 @@ export const StyleTab: React.FC = () => {
                 <Button
                   key={name}
                   onClick={() => applyStylePreset(preset)}
+                  type='button'
                   variant='secondary'
                   className='button-small'
                   style={{

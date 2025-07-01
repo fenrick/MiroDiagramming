@@ -78,6 +78,6 @@ button {
 .form-example {
 	grid-auto-rows: 1fr auto
 }
-.form-example--main-content {
-	align-self: flex-start
+.form-example-main-content {
+        align-self: flex-start
 }
