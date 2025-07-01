@@ -4,6 +4,12 @@ import { templateManager } from '../board/templates';
 import { applyElementToItem } from '../board/element-utils';
 import type { BaseItem, Group, Json } from '@mirohq/websdk-types';
 
+/** Item supporting text content on the board. */
+export interface ContentItem extends BaseItem {
+  /** Text value of the widget. */
+  content?: string;
+}
+
 /** Metadata key used to store Excel row identifiers. */
 const META_KEY = 'app.miro.excel';
 
@@ -106,9 +112,8 @@ export class ExcelSyncService {
   private async extractWidgetData(
     widget: BaseItem | Group,
   ): Promise<{ content?: string; meta?: Record<string, unknown> }> {
-    const item = await this.extractItem(widget);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const content = (item as any).content as string | undefined;
+    const item = (await this.extractItem(widget)) as ContentItem;
+    const content = item.content;
     const meta = (await item.getMetadata(META_KEY)) as
       | Record<string, unknown>
       | undefined;

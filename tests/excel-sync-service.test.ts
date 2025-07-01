@@ -1,10 +1,18 @@
 import { describe, test, expect, beforeEach, vi } from 'vitest';
-import { ExcelSyncService } from '../src/core/excel-sync-service';
+import { ExcelSyncService, ContentItem } from '../src/core/excel-sync-service';
 import { templateManager } from '../src/board/templates';
 
 interface GlobalWithMiro {
   miro?: { board?: Record<string, unknown> };
 }
+
+type MockContentItem = ContentItem & {
+  getMetadata: vi.Mock;
+  setMetadata?: vi.Mock;
+  getItems?: vi.Mock;
+  style?: Record<string, unknown>;
+  shape?: string;
+};
 
 declare const global: GlobalWithMiro;
 
@@ -20,7 +28,7 @@ describe('ExcelSyncService', () => {
   });
 
   test('updateShapesFromExcel applies template to matching widget', async () => {
-    const shape = {
+    const shape: MockContentItem = {
       type: 'shape',
       id: 's1',
       shape: 'rectangle',
@@ -28,7 +36,7 @@ describe('ExcelSyncService', () => {
       style: {},
       getMetadata: vi.fn().mockResolvedValue({ rowId: '1' }),
       setMetadata: vi.fn().mockResolvedValue(undefined),
-    } as unknown as Record<string, unknown>;
+    } as unknown as MockContentItem;
     (global.miro!.board!.get as vi.Mock).mockResolvedValueOnce([shape]);
     vi.spyOn(templateManager, 'getTemplate').mockReturnValue({
       elements: [{ text: '{{label}}' }],
@@ -52,13 +60,13 @@ describe('ExcelSyncService', () => {
   });
 
   test('pushChangesToExcel writes widget text into rows', async () => {
-    const shape = {
+    const shape: MockContentItem = {
       type: 'shape',
       id: 's1',
       content: 'X',
       getMetadata: vi.fn().mockResolvedValue({ rowId: '1', notes: 'meta' }),
       setMetadata: vi.fn().mockResolvedValue(undefined),
-    } as unknown as Record<string, unknown>;
+    } as unknown as MockContentItem;
     (global.miro!.board!.get as vi.Mock).mockResolvedValueOnce([shape]);
     const service = new ExcelSyncService();
     const rows = await service.pushChangesToExcel([{ ID: '1', Name: '' }], {
@@ -78,14 +86,14 @@ describe('ExcelSyncService', () => {
   });
 
   test('pushChangesToExcel reads text column from metadata', async () => {
-    const shape = {
+    const shape: MockContentItem = {
       type: 'shape',
       id: 's1',
       content: 'X',
       getMetadata: vi
         .fn()
         .mockResolvedValue({ rowId: '1', notes: 'meta', text: 'desc' }),
-    } as unknown as Record<string, unknown>;
+    } as unknown as MockContentItem;
     (global.miro!.board!.get as vi.Mock).mockResolvedValueOnce([shape]);
     const service = new ExcelSyncService();
     const rows = await service.pushChangesToExcel([{ ID: '1', Name: '' }], {
@@ -98,12 +106,12 @@ describe('ExcelSyncService', () => {
   });
 
   test('extractWidgetData returns widget values', async () => {
-    const shape = {
+    const shape: MockContentItem = {
       type: 'shape',
       id: 's1',
       content: 'Z',
       getMetadata: vi.fn().mockResolvedValue({ rowId: '1', notes: 'meta' }),
-    } as unknown as Record<string, unknown>;
+    } as unknown as MockContentItem;
     const service = new ExcelSyncService();
     const data = await (service as never)['extractWidgetData'](shape);
     expect(data.content).toBe('Z');
@@ -126,12 +134,12 @@ describe('ExcelSyncService', () => {
   });
 
   test('findWidget locates groups by metadata', async () => {
-    const shape = {
+    const shape: MockContentItem = {
       type: 'shape',
       id: 's1',
       content: 'Y',
       getMetadata: vi.fn().mockResolvedValue({ rowId: '1' }),
-    } as Record<string, unknown>;
+    } as unknown as MockContentItem;
     const group = {
       type: 'group',
       id: 'g1',
@@ -172,12 +180,12 @@ describe('ExcelSyncService additional cases', () => {
   });
 
   test('updateShapesFromExcel returns early without template', async () => {
-    const shape = {
+    const shape: MockContentItem = {
       type: 'shape',
       id: 's1',
       getMetadata: vi.fn().mockResolvedValue({ rowId: '1' }),
       setMetadata: vi.fn().mockResolvedValue(undefined),
-    } as unknown as Record<string, unknown>;
+    } as unknown as MockContentItem;
     (global.miro!.board!.get as vi.Mock).mockResolvedValueOnce([shape]);
     vi.spyOn(templateManager, 'getTemplate').mockReturnValue(
       undefined as never,
