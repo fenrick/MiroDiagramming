@@ -14,6 +14,7 @@ import {
   useNextMatch,
   useReplaceCurrent,
 } from '../hooks/use-search-handlers';
+import { TabPanel } from '../components/TabPanel';
 import type { TabTuple } from './tab-definitions';
 
 /**
@@ -114,123 +115,127 @@ export const SearchTab: React.FC = () => {
   );
 
   return (
-    <div>
-      <InputField label='Find'>
-        <input
-          className='input input-small'
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder='Search board text'
-        />
-      </InputField>
-      <InputField label='Replace'>
-        <input
-          className='input input-small'
-          value={replacement}
-          onChange={(e) => setReplacement(e.target.value)}
-          placeholder='Replacement text'
-        />
-      </InputField>
-      <div className='form-group-small'>
-        <Checkbox
-          label='Case sensitive'
-          value={caseSensitive}
-          onChange={setCaseSensitive}
-        />
-        <Checkbox
-          label='Whole word'
-          value={wholeWord}
-          onChange={setWholeWord}
-        />
-        <Checkbox
-          label='Regex'
-          value={regex}
-          onChange={setRegex}
-        />
-      </div>
-      <fieldset className='form-group-small'>
-        <legend className='custom-visually-hidden'>Widget Types</legend>
-        <div>
-          {['shape', 'card', 'sticky_note', 'text'].map((t) => (
-            <Checkbox
-              key={t}
-              label={t}
-              value={widgetTypes.includes(t)}
-              onChange={() => toggleType(t)}
-            />
-          ))}
+    <TabPanel tabId='search'>
+      <div>
+        <InputField label='Find'>
+          <input
+            className='input input-small'
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder='Search board text'
+          />
+        </InputField>
+        <InputField label='Replace'>
+          <input
+            className='input input-small'
+            value={replacement}
+            onChange={(e) => setReplacement(e.target.value)}
+            placeholder='Replacement text'
+          />
+        </InputField>
+        <div className='form-group-small'>
+          <Checkbox
+            label='Case sensitive'
+            value={caseSensitive}
+            onChange={setCaseSensitive}
+          />
+          <Checkbox
+            label='Whole word'
+            value={wholeWord}
+            onChange={setWholeWord}
+          />
+          <Checkbox
+            label='Regex'
+            value={regex}
+            onChange={setRegex}
+          />
         </div>
-      </fieldset>
-      <InputField label='Tag IDs'>
-        <input
-          className='input input-small'
-          value={tagIds}
-          onChange={(e) => setTagIds(e.target.value)}
-          placeholder='Comma separated'
-        />
-      </InputField>
-      <InputField label='Background colour'>
-        <input
-          className='input input-small'
-          value={backgroundColor}
-          onChange={(e) => setBackgroundColor(e.target.value)}
-          placeholder='CSS colour'
-        />
-      </InputField>
-      <InputField label='Assignee ID'>
-        <input
-          className='input input-small'
-          value={assignee}
-          onChange={(e) => setAssignee(e.target.value)}
-          placeholder='User ID'
-        />
-      </InputField>
-      <InputField label='Creator ID'>
-        <input
-          className='input input-small'
-          value={creator}
-          onChange={(e) => setCreator(e.target.value)}
-          placeholder='User ID'
-        />
-      </InputField>
-      <InputField label='Last modified by'>
-        <input
-          className='input input-small'
-          value={lastModifiedBy}
-          onChange={(e) => setLastModifiedBy(e.target.value)}
-          placeholder='User ID'
-        />
-      </InputField>
-      <Paragraph data-testid='match-count'>Matches: {results.length}</Paragraph>
-      <div className='buttons'>
-        <Button
-          onClick={nextMatch}
-          disabled={!results.length}
-          variant='secondary'>
-          <React.Fragment key='.0'>
-            <Icon name='chevron-right' />
-            <Text>Next</Text>
-          </React.Fragment>
-        </Button>
-        <Button
-          onClick={replaceCurrent}
-          disabled={!results.length}
-          variant='secondary'>
-          <React.Fragment key='.1'>
-            <Icon name='edit' />
-            <Text>Replace</Text>
-          </React.Fragment>
-        </Button>
-        <Button
-          onClick={replaceAll}
-          variant='primary'>
-          <React.Fragment key='.2'>
-            <Icon name='arrow-right' />
-            <Text>Replace All</Text>
-          </React.Fragment>
-        </Button>
+        <fieldset className='form-group-small'>
+          <legend className='custom-visually-hidden'>Widget Types</legend>
+          <div>
+            {['shape', 'card', 'sticky_note', 'text'].map((t) => (
+              <Checkbox
+                key={t}
+                label={t}
+                value={widgetTypes.includes(t)}
+                onChange={() => toggleType(t)}
+              />
+            ))}
+          </div>
+        </fieldset>
+        <InputField label='Tag IDs'>
+          <input
+            className='input input-small'
+            value={tagIds}
+            onChange={(e) => setTagIds(e.target.value)}
+            placeholder='Comma separated'
+          />
+        </InputField>
+        <InputField label='Background colour'>
+          <input
+            className='input input-small'
+            value={backgroundColor}
+            onChange={(e) => setBackgroundColor(e.target.value)}
+            placeholder='CSS colour'
+          />
+        </InputField>
+        <InputField label='Assignee ID'>
+          <input
+            className='input input-small'
+            value={assignee}
+            onChange={(e) => setAssignee(e.target.value)}
+            placeholder='User ID'
+          />
+        </InputField>
+        <InputField label='Creator ID'>
+          <input
+            className='input input-small'
+            value={creator}
+            onChange={(e) => setCreator(e.target.value)}
+            placeholder='User ID'
+          />
+        </InputField>
+        <InputField label='Last modified by'>
+          <input
+            className='input input-small'
+            value={lastModifiedBy}
+            onChange={(e) => setLastModifiedBy(e.target.value)}
+            placeholder='User ID'
+          />
+        </InputField>
+        <Paragraph data-testid='match-count'>
+          Matches: {results.length}
+        </Paragraph>
+        <div className='buttons'>
+          <Button
+            onClick={nextMatch}
+            disabled={!results.length}
+            variant='secondary'>
+            <React.Fragment key='.0'>
+              <Icon name='chevron-right' />
+              <Text>Next</Text>
+            </React.Fragment>
+          </Button>
+          <Button
+            onClick={replaceCurrent}
+            disabled={!results.length}
+            variant='secondary'>
+            <React.Fragment key='.1'>
+              <Icon name='edit' />
+              <Text>Replace</Text>
+            </React.Fragment>
+          </Button>
+          <Button
+            onClick={replaceAll}
+            variant='primary'>
+            <React.Fragment key='.2'>
+              <Icon name='arrow-right' />
+              <Text>Replace All</Text>
+            </React.Fragment>
+          </Button>
+        </div>
       </div>
-    </div>
+    </TabPanel>
   );
 };
 
