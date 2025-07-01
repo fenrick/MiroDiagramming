@@ -1,3 +1,10 @@
+# [1.15.0](https://github.com/fenrick/MiroDiagramming/compare/v1.14.0...v1.15.0) (2025-07-01)
+
+
+### Features
+
+* **ui:** unify tab bar component ([2644b61](https://github.com/fenrick/MiroDiagramming/commit/2644b6111013ecee4dc7daef83086e479c07a833))
+
 # [1.14.0](https://github.com/fenrick/MiroDiagramming/compare/v1.13.0...v1.14.0) (2025-07-01)
 
 
