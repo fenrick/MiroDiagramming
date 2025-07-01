@@ -8,6 +8,7 @@ import {
   SelectOption,
   Text,
 } from '../components/legacy';
+import { TabGrid } from '../components/TabGrid';
 import { applyGridLayout, GridOptions } from '../../board/grid-tools';
 import { applySpacingLayout, SpacingOptions } from '../../board/spacing-tools';
 import { TabPanel } from '../components/TabPanel';
@@ -60,69 +61,68 @@ export const ArrangeTab: React.FC = () => {
 
   return (
     <TabPanel tabId='arrange'>
-      <div>
-        <fieldset className='form-group-small'>
-          <InputField label='Columns'>
+      <TabGrid columns={2}>
+        <InputField label='Columns'>
+          <input
+            className='input input-small'
+            type='number'
+            value={String(grid.cols)}
+            onChange={(e) => updateNumber('cols')(e.target.value)}
+            placeholder='Columns'
+          />
+        </InputField>
+        <InputField label='Gap'>
+          <input
+            className='input input-small'
+            type='number'
+            value={String(grid.padding)}
+            onChange={(e) => updateNumber('padding')(e.target.value)}
+            placeholder='Gap'
+          />
+        </InputField>
+        <Checkbox
+          label='Sort by name'
+          value={Boolean(grid.sortByName)}
+          onChange={toggle('sortByName')}
+        />
+        {grid.sortByName && (
+          <InputField label='Order'>
+            <Select
+              value={grid.sortOrientation}
+              onChange={setOrientation}
+              className='select-small'>
+              <SelectOption value='horizontal'>Horizontally</SelectOption>
+              <SelectOption value='vertical'>Vertically</SelectOption>
+            </Select>
+          </InputField>
+        )}
+        <Checkbox
+          label='Group items into Frame'
+          value={Boolean(grid.groupResult)}
+          onChange={toggle('groupResult')}
+        />
+        {grid.groupResult && (
+          <InputField label='Frame Title'>
             <input
               className='input input-small'
-              type='number'
-              value={String(grid.cols)}
-              onChange={(e) => updateNumber('cols')(e.target.value)}
-              placeholder='Columns'
+              value={frameTitle}
+              onChange={(e) => setFrameTitle(e.target.value)}
+              placeholder='Optional'
             />
           </InputField>
-          <InputField label='Gap'>
-            <input
-              className='input input-small'
-              type='number'
-              value={String(grid.padding)}
-              onChange={(e) => updateNumber('padding')(e.target.value)}
-              placeholder='Gap'
-            />
-          </InputField>
-          <Checkbox
-            label='Sort by name'
-            value={Boolean(grid.sortByName)}
-            onChange={toggle('sortByName')}
-          />
-          {grid.sortByName && (
-            <InputField label='Order'>
-              <Select
-                value={grid.sortOrientation}
-                onChange={setOrientation}
-                className='select-small'>
-                <SelectOption value='horizontal'>Horizontally</SelectOption>
-                <SelectOption value='vertical'>Vertically</SelectOption>
-              </Select>
-            </InputField>
-          )}
-          <Checkbox
-            label='Group items into Frame'
-            value={Boolean(grid.groupResult)}
-            onChange={toggle('groupResult')}
-          />
-          {grid.groupResult && (
-            <InputField label='Frame Title'>
-              <input
-                className='input input-small'
-                value={frameTitle}
-                onChange={(e) => setFrameTitle(e.target.value)}
-                placeholder='Optional'
-              />
-            </InputField>
-          )}
-          <div className='buttons'>
-            <Button
-              onClick={applyGrid}
-              variant='primary'>
-              <React.Fragment>
-                <Icon name='grid' />
-                <Text>Arrange Grid</Text>
-              </React.Fragment>
-            </Button>
-          </div>
-        </fieldset>
-        <fieldset className='form-group-small'>
+        )}
+        <div className='buttons'>
+          <Button
+            onClick={applyGrid}
+            variant='primary'>
+            <React.Fragment>
+              <Icon name='grid' />
+              <Text>Arrange Grid</Text>
+            </React.Fragment>
+          </Button>
+        </div>
+
+        <div className='form-group-small'>
           <InputField label='Axis'>
             <Select
               value={spacing.axis}
@@ -160,8 +160,8 @@ export const ArrangeTab: React.FC = () => {
               </React.Fragment>
             </Button>
           </div>
-        </fieldset>
-      </div>
+        </div>
+      </TabGrid>
     </TabPanel>
   );
 };

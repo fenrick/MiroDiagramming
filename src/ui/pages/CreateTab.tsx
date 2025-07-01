@@ -1,5 +1,6 @@
 import React from 'react';
 import { Select, SelectOption, InputField } from '../components/legacy';
+import { TabGrid } from '../components/TabGrid';
 import { DiagramTab } from './DiagramTab';
 import { CardsTab } from './CardsTab';
 import { TabPanel } from '../components/TabPanel';
@@ -12,7 +13,7 @@ export const CreateTab: React.FC = () => {
   const [mode, setMode] = React.useState<'diagram' | 'cards'>('diagram');
   return (
     <TabPanel tabId='create'>
-      <div>
+      <TabGrid columns={2}>
         <InputField label='Create mode'>
           <Select
             value={mode}
@@ -23,7 +24,7 @@ export const CreateTab: React.FC = () => {
           </Select>
         </InputField>
         {mode === 'diagram' ? <DiagramTab /> : <CardsTab />}
-      </div>
+      </TabGrid>
     </TabPanel>
   );
 };

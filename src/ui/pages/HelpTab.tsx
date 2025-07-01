@@ -8,12 +8,12 @@ import type { TabTuple } from './tab-definitions';
 export const HelpTab: React.FC = () => (
   <TabPanel tabId='help'>
     <div data-testid='help-tab'>
-      <Heading level={3}>Getting Started</Heading>
+      <Heading level={2}>Getting Started</Heading>
       <Paragraph>
         Use the Create tab to import diagrams or cards from a JSON file. Nodes
         may define templates, labels and ELK options to influence placement.
       </Paragraph>
-      <Heading level={3}>Diagram Layout Options</Heading>
+      <Heading level={2}>Diagram Layout Options</Heading>
       <ul className='list'>
         <li>
           <strong>Layered</strong> – Flow diagrams with layers
@@ -37,14 +37,14 @@ export const HelpTab: React.FC = () => (
           <strong>Rect Packing</strong> – Fits rectangles within parents
         </li>
       </ul>
-      <Heading level={3}>Other Tools</Heading>
+      <Heading level={2}>Other Tools</Heading>
       <ul className='list'>
         <li>Resize – adjust widget size or copy from selection.</li>
         <li>Frames – rename selected frames.</li>
         <li>Colours – modify fill colours.</li>
         <li>Arrange – grid and spacing tools.</li>
       </ul>
-      <Heading level={3}>Changelog</Heading>
+      <Heading level={2}>Changelog</Heading>
       <pre style={{ whiteSpace: 'pre-wrap' }}>{changelog}</pre>
     </div>
   </TabPanel>
