@@ -105,9 +105,10 @@ export function Modal({
       <dialog
         open
         aria-label={title}
+        aria-modal='true'
+        role='dialog'
         className={`modal modal-${size}`}
-        ref={ref}
-        onClick={(e) => e.stopPropagation()}>
+        ref={ref}>
         <header className='modal-header'>
           <h3>{title}</h3>
           <button

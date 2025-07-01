@@ -15,7 +15,7 @@ describe('Modal', () => {
       </Modal>,
     );
     expect(screen.getByRole('dialog')).toBeInTheDocument();
-    expect(screen.getByLabelText('Close')).toHaveFocus();
+    expect(screen.getByRole('button', { name: 'Close' })).toHaveFocus();
   });
 
   test('escape key triggers onClose', () => {
@@ -81,6 +81,55 @@ describe('Modal', () => {
     );
     const backdrop = screen.getByTestId('modal-backdrop');
     fireEvent.keyDown(backdrop, { key: 'Enter' });
+    expect(spy).toHaveBeenCalled();
+  });
+
+  test('pressing Space on the backdrop triggers onClose', () => {
+    const spy = vi.fn();
+    render(
+      <Modal
+        title='S'
+        isOpen
+        onClose={spy}>
+        <button>Inner</button>
+      </Modal>,
+    );
+    const backdrop = screen.getByTestId('modal-backdrop');
+    fireEvent.keyDown(backdrop, { key: ' ' });
+    expect(spy).toHaveBeenCalled();
+  });
+
+  test('Enter key activates the close button', () => {
+    const spy = vi.fn();
+    render(
+      <Modal
+        title='Close'
+        isOpen
+        onClose={spy}>
+        <button>OK</button>
+      </Modal>,
+    );
+    const closeBtn = screen.getByRole('button', { name: 'Close' });
+    fireEvent.keyDown(closeBtn, { key: 'Enter' });
+    fireEvent.keyUp(closeBtn, { key: 'Enter' });
+    fireEvent.click(closeBtn);
+    expect(spy).toHaveBeenCalled();
+  });
+
+  test('Space key activates the close button', () => {
+    const spy = vi.fn();
+    render(
+      <Modal
+        title='CloseSpace'
+        isOpen
+        onClose={spy}>
+        <button>OK</button>
+      </Modal>,
+    );
+    const closeBtn = screen.getByRole('button', { name: 'Close' });
+    fireEvent.keyDown(closeBtn, { key: ' ' });
+    fireEvent.keyUp(closeBtn, { key: ' ' });
+    fireEvent.click(closeBtn);
     expect(spy).toHaveBeenCalled();
   });
 });
