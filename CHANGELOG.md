@@ -1,3 +1,17 @@
+# [1.13.0](https://github.com/fenrick/MiroDiagramming/compare/v1.12.1...v1.13.0) (2025-07-01)
+
+
+### Bug Fixes
+
+* **style:** add missing semicolons ([e1ad64b](https://github.com/fenrick/MiroDiagramming/commit/e1ad64b78703a6b5eabd8a07f2cfa0f3acf91711))
+* **ui:** remove metadata casts in row hook ([e41686e](https://github.com/fenrick/MiroDiagramming/commit/e41686e66e1a712e3cc7f85edc318dcda8b3c17f))
+
+
+### Features
+
+* **sync:** type widget extraction ([d567e11](https://github.com/fenrick/MiroDiagramming/commit/d567e11ffac6fca3c80c5b7485537ea21493a087))
+* **ui:** improve modal accessibility ([1fe800a](https://github.com/fenrick/MiroDiagramming/commit/1fe800aeb91a1b3e494fcadb874f7b8f6efb3f3d))
+
 ## [1.12.1](https://github.com/fenrick/MiroDiagramming/compare/v1.12.0...v1.12.1) (2025-07-01)
 
 
