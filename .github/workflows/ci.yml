@@ -19,7 +19,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-          cache-dependency-path: package-lock.json
       - run: corepack enable
       - run: npm install --frozen-lockfile || npm install
       - name: Audit dependencies
@@ -44,7 +43,6 @@ jobs:
         with:
           node-version: 24
           cache: 'npm'
-          cache-dependency-path: package-lock.json
       - run: corepack enable
       - run: npm install --frozen-lockfile || npm install
       - name: Audit dependencies
@@ -66,7 +64,6 @@ jobs:
         with:
           node-version: 24
           cache: 'npm'
-          cache-dependency-path: package-lock.json
       - run: corepack enable
       - run: npm install --frozen-lockfile || npm install
       - name: Audit dependencies
@@ -93,7 +90,6 @@ jobs:
         with:
           node-version: 24
           cache: 'npm'
-          cache-dependency-path: package-lock.json
       - run: corepack enable
       - run: npm install --frozen-lockfile || npm install
       - name: Audit dependencies
