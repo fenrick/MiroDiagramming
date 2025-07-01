@@ -1,4 +1,3 @@
-/* c8 ignore start */
 import type React from 'react';
 
 export type TabId =
@@ -34,4 +33,3 @@ export interface CommandDef {
 export const COMMANDS: CommandDef[] = [
   { id: 'edit-metadata', label: 'Edit Metadata', shortcut: 'Ctrl+Alt+M' },
 ];
-/* c8 ignore stop */
