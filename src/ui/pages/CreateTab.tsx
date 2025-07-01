@@ -2,6 +2,7 @@ import React from 'react';
 import { Select, SelectOption, InputField } from '../components/legacy';
 import { DiagramTab } from './DiagramTab';
 import { CardsTab } from './CardsTab';
+import { TabPanel } from '../components/TabPanel';
 import type { TabTuple } from './tab-definitions';
 
 /**
@@ -10,18 +11,20 @@ import type { TabTuple } from './tab-definitions';
 export const CreateTab: React.FC = () => {
   const [mode, setMode] = React.useState<'diagram' | 'cards'>('diagram');
   return (
-    <div>
-      <InputField label='Create mode'>
-        <Select
-          value={mode}
-          onChange={(v) => setMode(v as 'diagram' | 'cards')}
-          className='select-small'>
-          <SelectOption value='diagram'>Diagram</SelectOption>
-          <SelectOption value='cards'>Cards</SelectOption>
-        </Select>
-      </InputField>
-      {mode === 'diagram' ? <DiagramTab /> : <CardsTab />}
-    </div>
+    <TabPanel tabId='create'>
+      <div>
+        <InputField label='Create mode'>
+          <Select
+            value={mode}
+            onChange={(v) => setMode(v as 'diagram' | 'cards')}
+            className='select-small'>
+            <SelectOption value='diagram'>Diagram</SelectOption>
+            <SelectOption value='cards'>Cards</SelectOption>
+          </Select>
+        </InputField>
+        {mode === 'diagram' ? <DiagramTab /> : <CardsTab />}
+      </div>
+    </TabPanel>
   );
 };
 

@@ -20,10 +20,29 @@ describe('TabBar accessibility', () => {
         onChange={handler}
       />,
     );
+    expect(screen.getByRole('tablist')).toBeInTheDocument();
     const second = screen.getByRole('tab', { name: 'Second' });
     second.focus();
     expect(second).toHaveFocus();
     fireEvent.keyDown(second, { key: 'Enter' });
     expect(handler).toHaveBeenCalledWith('second');
+  });
+
+  test('arrow keys move focus without activation', () => {
+    const handler = vi.fn();
+    render(
+      <TabBar
+        tabs={tabs}
+        tab='first'
+        onChange={handler}
+      />,
+    );
+    const [first, second] = screen.getAllByRole('tab');
+    first.focus();
+    fireEvent.keyDown(first, { key: 'ArrowRight' });
+    expect(second).toHaveFocus();
+    expect(handler).not.toHaveBeenCalled();
+    fireEvent.keyDown(second, { key: 'Home' });
+    expect(first).toHaveFocus();
   });
 });

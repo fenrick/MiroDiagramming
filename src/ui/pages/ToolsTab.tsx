@@ -4,6 +4,7 @@ import { ResizeTab } from './ResizeTab';
 import { StyleTab } from './StyleTab';
 import { ArrangeTab } from './ArrangeTab';
 import { FramesTab } from './FramesTab';
+import { TabPanel } from '../components/TabPanel';
 import type { TabTuple } from './tab-definitions';
 
 const SUB_TABS: SubTab[] = [
@@ -33,14 +34,16 @@ export const ToolsTab: React.FC = () => {
       Current = ResizeTab;
   }
   return (
-    <div>
-      <SubTabBar
-        tabs={SUB_TABS}
-        tab={sub}
-        onChange={setSub}
-      />
-      <Current />
-    </div>
+    <TabPanel tabId='tools'>
+      <div>
+        <SubTabBar
+          tabs={SUB_TABS}
+          tab={sub}
+          onChange={setSub}
+        />
+        <Current />
+      </div>
+    </TabPanel>
   );
 };
 

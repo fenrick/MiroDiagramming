@@ -3,7 +3,10 @@ import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { DiagramTab } from '../src/ui/pages/DiagramTab';
-import { DEFAULT_LAYOUT_OPTIONS } from '../src/core/layout/elk-options';
+import {
+  DEFAULT_LAYOUT_OPTIONS,
+  ElkAlgorithm,
+} from '../src/core/layout/elk-options';
 import type { GraphProcessor } from '../src/core/graph/graph-processor';
 vi.mock('../src/core/graph/graph-processor');
 
@@ -35,7 +38,6 @@ describe('DiagramTab additional branches', () => {
   });
 
   test('all conditional elements render with preset state', () => {
-    const orig = React.useState;
     vi.spyOn(React, 'useState')
       .mockImplementationOnce(() => [[new File([], 'a.json')], vi.fn()])
       .mockImplementationOnce(() => ['Layered', vi.fn()])
@@ -74,7 +76,7 @@ describe('DiagramTab additional branches', () => {
       .mockImplementationOnce(() => [false, vi.fn()])
       .mockImplementationOnce(() => ['', vi.fn()])
       .mockImplementationOnce(() => [
-        { ...DEFAULT_LAYOUT_OPTIONS, algorithm: alg as any },
+        { ...DEFAULT_LAYOUT_OPTIONS, algorithm: alg as ElkAlgorithm },
         vi.fn(),
       ])
       .mockImplementationOnce(() => [0, vi.fn()])
