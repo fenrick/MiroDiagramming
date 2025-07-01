@@ -1,3 +1,10 @@
+## [1.11.2](https://github.com/fenrick/MiroDiagramming/compare/v1.11.1...v1.11.2) (2025-07-01)
+
+
+### Bug Fixes
+
+* prettier to ignore CHANGELOG.md ([f8aecd2](https://github.com/fenrick/MiroDiagramming/commit/f8aecd2b95f2f4effca80568a9aa4ee9fd427fb0))
+
 ## [1.11.1](https://github.com/fenrick/MiroDiagramming/compare/v1.11.0...v1.11.1) (2025-06-30)
 
 
