@@ -14,7 +14,9 @@ describe('Modal', () => {
         <button>Ok</button>
       </Modal>,
     );
-    expect(screen.getByRole('dialog')).toBeInTheDocument();
+    const dialog = screen.getByRole('dialog');
+    expect(dialog).toBeInTheDocument();
+    expect(dialog).not.toHaveAttribute('role');
     expect(screen.getByRole('button', { name: 'Close' })).toHaveFocus();
   });
 
