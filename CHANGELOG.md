@@ -1,3 +1,10 @@
+## [1.15.2](https://github.com/fenrick/MiroDiagramming/compare/v1.15.1...v1.15.2) (2025-07-01)
+
+
+### Bug Fixes
+
+* **tests:** remove orig variable and avoid state mocking ([677b809](https://github.com/fenrick/MiroDiagramming/commit/677b8095cdcf8bc362b3b497881fb28e29fc5e6a))
+
 ## [1.15.1](https://github.com/fenrick/MiroDiagramming/compare/v1.15.0...v1.15.1) (2025-07-01)
 
 
