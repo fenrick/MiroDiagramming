@@ -74,3 +74,10 @@ body {
 button {
   padding: var(--space-xxsmall) var(--space-xsmall);
 }
+
+.form-example {
+	grid-auto-rows: 1fr auto
+}
+.form-example--main-content {
+	align-self: flex-start
+}
