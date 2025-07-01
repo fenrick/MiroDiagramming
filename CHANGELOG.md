@@ -1,3 +1,10 @@
+## [1.15.1](https://github.com/fenrick/MiroDiagramming/compare/v1.15.0...v1.15.1) (2025-07-01)
+
+
+### Bug Fixes
+
+* **ui:** remove redundant dialog role ([5368a22](https://github.com/fenrick/MiroDiagramming/commit/5368a22eeab503e18f39932a03f7295fee8866a9))
+
 # [1.15.0](https://github.com/fenrick/MiroDiagramming/compare/v1.14.0...v1.15.0) (2025-07-01)
 
 
