@@ -40,7 +40,7 @@ describe('GraphClient', () => {
       ok: true,
       arrayBuffer: () => Promise.resolve(new ArrayBuffer(1)),
     });
-    const orig = (globalThis as { btoa?: (s: string) => string }).btoa;
+    const originalBtoa = (globalThis as { btoa?: (s: string) => string }).btoa;
     (globalThis as { btoa?: undefined }).btoa = undefined;
     const link = 'https://миру';
     const encoded = Buffer.from(link, 'utf8')
@@ -52,7 +52,7 @@ describe('GraphClient', () => {
     expect((fetch as vi.Mock).mock.calls[0][0]).toBe(
       `https://graph.microsoft.com/v1.0/shares/u!${encoded}/driveItem/content`,
     );
-    (globalThis as { btoa?: (s: string) => string }).btoa = orig;
+    (globalThis as { btoa?: (s: string) => string }).btoa = originalBtoa;
   });
 
   test('encodes special characters in share link', async () => {
