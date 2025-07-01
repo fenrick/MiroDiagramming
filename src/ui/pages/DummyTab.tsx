@@ -1,10 +1,13 @@
 import React from 'react';
+import { TabPanel } from '../components/TabPanel';
 import type { TabTuple } from './tab-definitions';
 
 /** Dummy tab for testing auto-registration. */
-export const DummyTab: React.FC = () => {
-  return <div data-testid='dummy'>Dummy</div>;
-};
+export const DummyTab: React.FC = () => (
+  <TabPanel tabId='dummy'>
+    <div data-testid='dummy'>Dummy</div>
+  </TabPanel>
+);
 
 export const tabDef: TabTuple = [
   99,

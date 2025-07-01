@@ -6,6 +6,7 @@ import { STYLE_PRESET_NAMES, stylePresets } from '../style-presets';
 import { adjustColor } from '../../core/utils/color-utils';
 import { useSelection } from '../hooks/use-selection';
 import { tokens } from '../tokens';
+import { TabPanel } from '../components/TabPanel';
 import type { TabTuple } from './tab-definitions';
 
 /** Adjusts the fill colour of selected widgets. */
@@ -26,94 +27,97 @@ export const StyleTab: React.FC = () => {
     await tweakFillColor(adjust / 100);
   };
   return (
-    <div className='grid form-example'>
-      <form className='cs1 ce12 form-example-main-content'>
-        <InputField label='Adjust fill'>
-          <input
-            data-testid='adjust-slider'
-            type='range'
-            min='-100'
-            max='100'
-            list='adjust-marks'
-            value={adjust}
-            onChange={(e) => setAdjust(Number(e.target.value))}
-          />
-          <datalist id='adjust-marks'>
-            {[-100, -50, 0, 50, 100].map((n) => (
-              <option
-                key={n}
-                value={n}
-              />
-            ))}
-          </datalist>
-          <span
-            data-testid='adjust-preview'
-            style={{
-              display: 'inline-block',
-              width: '24px',
-              height: '24px',
-              marginLeft: tokens.space.small,
-              border: `1px solid ${tokens.color.gray[200]}`,
-              backgroundColor: preview,
-            }}
-          />
-          <code
-            data-testid='color-hex'
-            style={{ marginLeft: tokens.space.xxsmall }}>
-            {preview}
-          </code>
-        </InputField>
-        <InputField label='Adjust value'>
-          <input
-            className='input input-small'
-            data-testid='adjust-input'
-            type='number'
-            min='-100'
-            max='100'
-            value={String(adjust)}
-            onChange={(e) => setAdjust(Number(e.target.value))}
-            placeholder='Adjust (-100–100)'
-          />
-        </InputField>
-        <div className='buttons'>
-          <Button
-            onClick={apply}
-            variant='primary'
-            className='button-small'>
-            <React.Fragment>
-              <Icon name='parameters' />
-              <Text>Apply</Text>
-            </React.Fragment>
-          </Button>
-        </div>
-        <fieldset className='form-group-small'>
-          <legend className='p-medium'>Style presets</legend>
+    <TabPanel tabId='style'>
+      <div className='grid form-example'>
+        <form className='cs1 ce12 form-example-main-content'>
+          <InputField label='Adjust fill'>
+            <input
+              data-testid='adjust-slider'
+              type='range'
+              min='-100'
+              max='100'
+              list='adjust-marks'
+              value={adjust}
+              onChange={(e) => setAdjust(Number(e.target.value))}
+            />
+            <datalist id='adjust-marks'>
+              {[-100, -50, 0, 50, 100].map((n) => (
+                <option
+                  key={n}
+                  value={n}
+                />
+              ))}
+            </datalist>
+            <span
+              data-testid='adjust-preview'
+              style={{
+                display: 'inline-block',
+                width: '24px',
+                height: '24px',
+                marginLeft: tokens.space.small,
+                border: `1px solid ${tokens.color.gray[200]}`,
+                backgroundColor: preview,
+              }}
+            />
+            <code
+              data-testid='color-hex'
+              style={{ marginLeft: tokens.space.xxsmall }}>
+              {preview}
+            </code>
+          </InputField>
+          <InputField label='Adjust value'>
+            <input
+              className='input input-small'
+              data-testid='adjust-input'
+              type='number'
+              min='-100'
+              max='100'
+              value={String(adjust)}
+              onChange={(e) => setAdjust(Number(e.target.value))}
+              placeholder='Adjust (-100–100)'
+            />
+          </InputField>
           <div className='buttons'>
-            {STYLE_PRESET_NAMES.map((name) => {
-              const preset = stylePresets[name];
-              const style = presetStyle(preset);
-              return (
-                <Button
-                  key={name}
-                  onClick={() => applyStylePreset(preset)}
-                  type='button'
-                  variant='secondary'
-                  className='button-small'
-                  style={{
-                    color: style.color,
-                    backgroundColor: style.fillColor,
-                    borderColor: style.borderColor,
-                    borderWidth: style.borderWidth,
-                    borderStyle: 'solid',
-                  }}>
-                  {preset.label}
-                </Button>
-              );
-            })}
+            <Button
+              onClick={apply}
+              type='button'
+              variant='primary'
+              className='button-small'>
+              <React.Fragment>
+                <Icon name='parameters' />
+                <Text>Apply</Text>
+              </React.Fragment>
+            </Button>
           </div>
-        </fieldset>
-      </form>
-    </div>
+          <fieldset className='form-group-small'>
+            <legend className='p-medium'>Style presets</legend>
+            <div className='buttons'>
+              {STYLE_PRESET_NAMES.map((name) => {
+                const preset = stylePresets[name];
+                const style = presetStyle(preset);
+                return (
+                  <Button
+                    key={name}
+                    onClick={() => applyStylePreset(preset)}
+                    type='button'
+                    variant='secondary'
+                    className='button-small'
+                    style={{
+                      color: style.color,
+                      backgroundColor: style.fillColor,
+                      borderColor: style.borderColor,
+                      borderWidth: style.borderWidth,
+                      borderStyle: 'solid',
+                    }}>
+                    {preset.label}
+                  </Button>
+                );
+              })}
+            </div>
+          </fieldset>
+        </form>
+      </div>
+    </TabPanel>
   );
 };
 
