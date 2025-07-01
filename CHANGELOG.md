@@ -1,3 +1,10 @@
+# [1.16.0](https://github.com/fenrick/MiroDiagramming/compare/v1.15.2...v1.16.0) (2025-07-01)
+
+
+### Features
+
+* **ui:** expose tab panels with ARIA role ([a90df9f](https://github.com/fenrick/MiroDiagramming/commit/a90df9f871861388e597b866f2961b0ec093fd78))
+
 ## [1.15.2](https://github.com/fenrick/MiroDiagramming/compare/v1.15.1...v1.15.2) (2025-07-01)
 
 
