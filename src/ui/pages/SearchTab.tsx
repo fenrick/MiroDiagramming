@@ -7,6 +7,7 @@ import {
   Icon,
   Text,
 } from '../components/legacy';
+import { TabGrid } from '../components/TabGrid';
 import type { SearchOptions } from '../../board/search-tools';
 import {
   useDebouncedSearch,
@@ -116,7 +117,7 @@ export const SearchTab: React.FC = () => {
 
   return (
     <TabPanel tabId='search'>
-      <div>
+      <TabGrid columns={2}>
         <InputField label='Find'>
           <input
             className='input input-small'
@@ -150,7 +151,7 @@ export const SearchTab: React.FC = () => {
             onChange={setRegex}
           />
         </div>
-        <fieldset className='form-group-small'>
+        <div className='form-group-small'>
           <legend className='custom-visually-hidden'>Widget Types</legend>
           <div>
             {['shape', 'card', 'sticky_note', 'text'].map((t) => (
@@ -162,7 +163,7 @@ export const SearchTab: React.FC = () => {
               />
             ))}
           </div>
-        </fieldset>
+        </div>
         <InputField label='Tag IDs'>
           <input
             className='input input-small'
@@ -234,7 +235,7 @@ export const SearchTab: React.FC = () => {
             </React.Fragment>
           </Button>
         </div>
-      </div>
+      </TabGrid>
     </TabPanel>
   );
 };

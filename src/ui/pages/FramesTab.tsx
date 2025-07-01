@@ -1,10 +1,11 @@
 import React from 'react';
-import { Button, Icon, InputField, Text } from '../components/legacy';
+import { Button, Icon, InputField, Text, Heading } from '../components/legacy';
 import {
   lockSelectedFrames,
   renameSelectedFrames,
 } from '../../board/frame-tools';
 import { TabPanel } from '../components/TabPanel';
+import { TabGrid } from '../components/TabGrid';
 import type { TabTuple } from './tab-definitions';
 
 /** UI for renaming or locking selected frames. */
@@ -19,9 +20,9 @@ export const FramesTab: React.FC = () => {
   };
   return (
     <TabPanel tabId='frames'>
-      <div>
-        <fieldset>
-          <legend>Rename Frames</legend>
+      <TabGrid columns={2}>
+        <section>
+          <Heading level={2}>Rename Frames</Heading>
           <InputField label='Prefix'>
             <input
               className='input input-small'
@@ -40,9 +41,9 @@ export const FramesTab: React.FC = () => {
               </React.Fragment>
             </Button>
           </div>
-        </fieldset>
-        <fieldset>
-          <legend>Lock Frames</legend>
+        </section>
+        <section>
+          <Heading level={2}>Lock Frames</Heading>
           <div className='buttons'>
             <Button
               onClick={lock}
@@ -53,8 +54,8 @@ export const FramesTab: React.FC = () => {
               </React.Fragment>
             </Button>
           </div>
-        </fieldset>
-      </div>
+        </section>
+      </TabGrid>
     </TabPanel>
   );
 };

@@ -47,6 +47,7 @@ components or compose manually with Mirotone CSS.
 | **Grid**       | gap, columns               | responsive                | n/a                 |
 | **Stack**      | gap, direction             | vertical, horizontal      | n/a                 |
 | **Cluster**    | gap, align                 | left, right, centre       | n/a                 |
+| **TabGrid**    | columns, className?        | —                         | n/a                 |
 
 The **TabBar** component now covers both sidebar and nested navigation. Pass the
 current tab id via `tab` and handle selection with `onChange`. Use

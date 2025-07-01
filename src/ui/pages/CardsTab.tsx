@@ -9,6 +9,7 @@ import {
 } from '../components/legacy';
 import { JsonDropZone } from '../components/JsonDropZone';
 import { tokens } from '../tokens';
+import { TabGrid } from '../components/TabGrid';
 import { CardProcessor } from '../../board/card-processor';
 
 import { showError } from '../hooks/notifications';
@@ -75,7 +76,7 @@ export const CardsTab: React.FC = () => {
       <JsonDropZone onFiles={handleFiles} />
 
       {files.length > 0 && (
-        <>
+        <TabGrid columns={2}>
           <ul className='custom-dropped-files'>
             {files.map((file) => (
               <li key={`${file.name}-${file.lastModified}`}>{file.name}</li>
@@ -136,7 +137,7 @@ export const CardsTab: React.FC = () => {
               </Button>
             )}
           </div>
-        </>
+        </TabGrid>
       )}
     </div>
   );

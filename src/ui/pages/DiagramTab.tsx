@@ -11,6 +11,7 @@ import {
 } from '../components/legacy';
 import { JsonDropZone } from '../components/JsonDropZone';
 import { tokens } from '../tokens';
+import { TabGrid } from '../components/TabGrid';
 import { GraphProcessor } from '../../core/graph/graph-processor';
 import {
   ALGORITHMS,
@@ -132,7 +133,7 @@ export const DiagramTab: React.FC = () => {
       <JsonDropZone onFiles={handleFiles} />
 
       {importQueue.length > 0 && (
-        <>
+        <TabGrid columns={2}>
           <ul className='custom-dropped-files'>
             {importQueue.map((file) => (
               <li key={`${file.name}-${file.lastModified}`}>{file.name}</li>
@@ -336,7 +337,7 @@ export const DiagramTab: React.FC = () => {
               </Button>
             )}
           </div>
-        </>
+        </TabGrid>
       )}
     </div>
   );
