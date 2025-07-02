@@ -85,8 +85,7 @@ export const StyleTab: React.FC = () => {
             <Button
               onClick={apply}
               type='button'
-              variant='primary'
-              className='button-small'>
+              variant='primary'>
               <React.Fragment>
                 <Icon name='parameters' />
                 <Text>Apply</Text>
@@ -103,16 +102,19 @@ export const StyleTab: React.FC = () => {
                   key={name}
                   onClick={() => applyStylePreset(preset)}
                   type='button'
-                  variant='secondary'
-                  className='button-small'
-                  style={{
-                    color: style.color,
-                    backgroundColor: style.fillColor,
-                    borderColor: style.borderColor,
-                    borderWidth: style.borderWidth,
-                    borderStyle: 'solid',
-                  }}>
-                  {preset.label}
+                  variant='secondary'>
+                  <span
+                    style={{
+                      color: style.color,
+                      backgroundColor: style.fillColor,
+                      borderColor: style.borderColor,
+                      borderWidth: style.borderWidth,
+                      borderStyle: 'solid',
+                      display: 'inline-block',
+                      padding: '0 4px',
+                    }}>
+                    {preset.label}
+                  </span>
                 </Button>
               );
             })}

@@ -75,6 +75,10 @@ Wrappers forward additional props to the underlying design-system primitives so
 layouts remain extensible without leaking styles. Keep nesting shallow to avoid
 unnecessary DOM layers.
 
+Common form controls such as `Button` and `InputField` are also provided in the
+`legacy` folder. They pass sizing tokens and `onChange` events through to the
+design-system components so existing code keeps working while the UI migrates.
+
 > **When a wrapper is missing**
 >
 > 1. Write semantic HTML (for example `<div class="grid grid-gap-8">`).
