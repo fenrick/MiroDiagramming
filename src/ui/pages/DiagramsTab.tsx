@@ -1,14 +1,16 @@
 import React from 'react';
-import { TabBar, TabItem } from '../components/TabBar';
 import { StructuredTab } from './StructuredTab';
 import { CardsTab } from './CardsTab';
 import { LayoutEngineTab } from './LayoutEngineTab';
 import { TabPanel } from '../components/TabPanel';
 import type { TabTuple } from './tab-definitions';
+import { Tabs } from '@mirohq/design-system';
 
 /**
  * Parent tab hosting diagram-related tools via nested navigation.
  */
+type TabItem = { id: string; label: string };
+
 const SUB_TABS: TabItem[] = [
   { id: 'structured', label: 'Structured' },
   { id: 'cards', label: 'Cards' },
@@ -31,12 +33,20 @@ export const DiagramsTab: React.FC = () => {
   return (
     <TabPanel tabId='diagrams'>
       <div>
-        <TabBar
-          tabs={SUB_TABS}
-          tab={sub}
-          onChange={setSub}
-          size='small'
-        />
+        <Tabs
+          value='{sub}'
+          onChange={(id: React.SetStateAction<string>) => setSub(id)}
+          size='large'>
+          <Tabs.List>
+            {SUB_TABS.map((t) => (
+              <Tabs.Trigger
+                key={t.id}
+                value={t.id}>
+                {t.label}
+              </Tabs.Trigger>
+            ))}
+          </Tabs.List>
+        </Tabs>
         <Current />
       </div>
     </TabPanel>
