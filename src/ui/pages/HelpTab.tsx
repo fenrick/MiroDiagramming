@@ -1,8 +1,9 @@
 import React from 'react';
-import { Heading, Paragraph } from '../components/legacy';
+import { Paragraph } from '../components/legacy';
 import changelog from '../../../CHANGELOG.md?raw';
 import { TabPanel } from '../components/TabPanel';
 import type { TabTuple } from './tab-definitions';
+import { Heading } from '@mirohq/design-system';
 
 /** Static help page summarising diagram options and tools. */
 export const HelpTab: React.FC = () => (

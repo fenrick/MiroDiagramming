@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Icon, InputField, Text, Heading } from '../components/legacy';
+import { Button, Icon, InputField, Text } from '../components/legacy';
 import {
   lockSelectedFrames,
   renameSelectedFrames,
@@ -7,6 +7,7 @@ import {
 import { TabPanel } from '../components/TabPanel';
 import { TabGrid } from '../components/TabGrid';
 import type { TabTuple } from './tab-definitions';
+import { Heading } from '@mirohq/design-system';
 
 /** UI for renaming or locking selected frames. */
 export const FramesTab: React.FC = () => {

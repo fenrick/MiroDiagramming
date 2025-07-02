@@ -6,7 +6,6 @@ import {
   Select,
   SelectOption,
   Paragraph,
-  Heading,
   Icon,
   Text,
 } from '../components/legacy';
@@ -30,6 +29,7 @@ import {
 } from '../../core/utils/aspect-ratio';
 import { TabPanel } from '../components/TabPanel';
 import { TabGrid } from '../components/TabGrid';
+import { Heading } from '@mirohq/design-system';
 
 /** Predefined button sizes used by the quick presets. */
 const PRESET_SIZES: Record<'S' | 'M' | 'L', Size> = {
