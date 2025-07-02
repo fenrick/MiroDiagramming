@@ -2,7 +2,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { Button } from '../src/ui/components/legacy/Button';
+import { Button } from '../src/ui/components/Button';
 
 test('renders start icon before children', () => {
   const { getByRole } = render(<Button icon='edit'>Edit</Button>);

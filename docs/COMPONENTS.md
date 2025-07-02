@@ -8,7 +8,8 @@ Practical, step-by-step reference for junior engineers who build the add-on UI.
 Explains how to:
 
 - Consume the **Mirotone CSS** design language. ([mirotone.xyz][1])
-- Use the lightweight wrapper components in `src/ui/components/legacy`.
+- Use the lightweight wrapper components under `src/ui/components`. Legacy shims
+  live in `src/ui/components/legacy`.
 - Meet the accessibility, performance and quality gates defined in
   **ARCHITECTURE.md** and **FOUNDATION.md**.
 
@@ -58,9 +59,9 @@ prop. Set `iconPosition="end"` to place the icon after the children.
 >
 > 1. Write semantic HTML (for example `<div class="grid grid-gap-8">`).
 > 2. Apply the documented Mirotone CSS classes.
-> 3. Encapsulate in a small local React component under
->    `src/ui/components/legacy/` so that future upgrades swap the implementation
->    behind a stable API.
+> 3. Encapsulate in a small local React component under `src/ui/components/` so
+>    that future upgrades swap the implementation behind a stable API. Previous
+>    wrappers remain available in `src/ui/components/legacy/`.
 
 ---
 
