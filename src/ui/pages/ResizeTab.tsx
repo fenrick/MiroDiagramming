@@ -1,13 +1,13 @@
 import React from 'react';
-import { Button, InputField, Panel, Section } from '../components';
 import {
-  FormGroup,
+  Button,
+  InputField,
+  Panel,
+  Section,
   Select,
   SelectOption,
-  Paragraph,
-  Icon,
-  Text,
-} from '../components/legacy';
+} from '../components';
+import { FormGroup, Paragraph, Icon, Text } from '../components/legacy';
 import {
   applySizeToSelection,
   copySizeFromSelection,

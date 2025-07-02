@@ -10,3 +10,4 @@ export { RowInspector } from './RowInspector';
 export { SegmentedControl } from './SegmentedControl';
 export { TabGrid } from './TabGrid';
 export { TabPanel } from './TabPanel';
+export { Select, SelectOption } from './Select';

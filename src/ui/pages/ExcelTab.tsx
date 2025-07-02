@@ -1,12 +1,13 @@
 import React from 'react';
-import { Button, Checkbox, InputField, Panel } from '../components';
 import {
-  Paragraph,
+  Button,
+  Checkbox,
+  InputField,
+  Panel,
   Select,
   SelectOption,
-  Text,
-  Icon,
-} from '../components/legacy';
+} from '../components';
+import { Paragraph, Text, Icon } from '../components/legacy';
 import {
   excelLoader,
   graphExcelLoader,

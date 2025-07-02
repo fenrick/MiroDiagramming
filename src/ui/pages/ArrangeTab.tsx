@@ -1,6 +1,13 @@
 import React from 'react';
-import { Button, Checkbox, InputField, Panel } from '../components';
-import { Icon, Select, SelectOption, Text } from '../components/legacy';
+import {
+  Button,
+  Checkbox,
+  InputField,
+  Panel,
+  Select,
+  SelectOption,
+} from '../components';
+import { Icon, Text } from '../components/legacy';
 import { TabGrid } from '../components/TabGrid';
 import { applyGridLayout, GridOptions } from '../../board/grid-tools';
 import { applySpacingLayout, SpacingOptions } from '../../board/spacing-tools';

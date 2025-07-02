@@ -75,9 +75,9 @@ Wrappers forward standard HTML attributes—except `className` and `style`—to 
 underlying design-system primitives. This keeps styling decisions inside the
 component. Keep nesting shallow to avoid unnecessary DOM layers.
 
-Common form controls such as `Button` and `InputField` are also provided in the
-`legacy` folder. They pass sizing tokens and `onChange` events through to the
-design-system components so existing code keeps working while the UI migrates.
+Common form controls such as `Button`, `InputField` and `Select` are provided
+under `src/ui/components`. Older variants remain in `src/ui/components/legacy`
+while the UI migrates to the design system.
 
 `InputField` composes a label with a form control. Pass the control component
 via the `as` prop and provide its props through `options`:
