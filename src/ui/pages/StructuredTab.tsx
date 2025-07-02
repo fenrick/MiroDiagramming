@@ -1,12 +1,13 @@
 import React from 'react';
-import { Button, Checkbox, InputField, Panel } from '../components';
 import {
-  Icon,
-  Paragraph,
+  Button,
+  Checkbox,
+  InputField,
+  Panel,
   Select,
   SelectOption,
-  Text,
-} from '../components/legacy';
+} from '../components';
+import { Icon, Paragraph, Text } from '../components/legacy';
 import { JsonDropZone } from '../components/JsonDropZone';
 import { tokens } from '../tokens';
 import { TabGrid } from '../components/TabGrid';
