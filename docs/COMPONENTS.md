@@ -57,6 +57,21 @@ The main navigation now relies on `@mirohq/design-system-tabs`. The custom
 `tab` and handle selection with `onChange`. Use `size='small'` for compact
 nested tab sets.
 
+### 2.1 Wrapper components and padding
+
+The design system expects container elements to declare their own padding. To
+preserve the existing API and layering, small wrappers live under
+`src/ui/components/legacy` (e.g. `Panel`, `Section`, `ActionBar`). Each wrapper
+accepts a `padding` prop that maps to the numeric tokens exported from
+`src/ui/tokens.ts`:
+
+```tsx
+<Panel padding='medium'>{/* content */}</Panel>
+```
+
+Wrappers forward additional props to the underlying design-system primitives so
+layouts remain extensible without leaking styles.
+
 > **When a wrapper is missing**
 >
 > 1. Write semantic HTML (for example `<div class="grid grid-gap-8">`).
