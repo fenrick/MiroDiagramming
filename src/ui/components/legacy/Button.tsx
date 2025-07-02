@@ -2,7 +2,10 @@ import React from 'react';
 import { Button as DSButton } from '@mirohq/design-system';
 
 export type ButtonProps = Readonly<
-  Omit<React.ComponentProps<typeof DSButton>, 'variant' | 'size'> & {
+  Omit<
+    React.ComponentProps<typeof DSButton>,
+    'variant' | 'size' | 'className' | 'style'
+  > & {
     variant?: 'primary' | 'secondary' | 'tertiary' | 'ghost' | 'danger';
     /**
      * Optional size override. When omitted, primary buttons default to

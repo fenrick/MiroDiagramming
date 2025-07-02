@@ -2,7 +2,10 @@ import React from 'react';
 import { Form, Input } from '@mirohq/design-system';
 
 export type InputFieldProps = Readonly<
-  Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> & {
+  Omit<
+    React.InputHTMLAttributes<HTMLInputElement>,
+    'onChange' | 'className' | 'style'
+  > & {
     /** Visible label text. */
     label: React.ReactNode;
     /** Optional custom form control. If omitted, a text input is rendered. */
@@ -11,6 +14,9 @@ export type InputFieldProps = Readonly<
     onChange?: (value: string) => void;
   }
 >;
+
+// Custom class names and inline styles are intentionally excluded so spacing
+// and typography remain consistent across the app.
 
 /** Single component combining label and input control. */
 export const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(

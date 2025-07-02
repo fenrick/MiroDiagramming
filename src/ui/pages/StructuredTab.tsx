@@ -139,10 +139,9 @@ export const StructuredTab: React.FC = () => {
     <div
       id='panel-diagram'
       role='tabpanel'
-      aria-labelledby='tab-diagram'>
-      <Panel
-        padding='small'
-        style={{ marginTop: tokens.space.small }}>
+      aria-labelledby='tab-diagram'
+      style={{ marginTop: tokens.space.small }}>
+      <Panel padding='small'>
         <JsonDropZone onFiles={handleFiles} />
 
         {importQueue.length > 0 && (

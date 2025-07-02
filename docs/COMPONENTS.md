@@ -71,9 +71,9 @@ accepts a `padding` prop that maps to the numeric tokens exported from
 </Panel>
 ```
 
-Wrappers forward additional props to the underlying design-system primitives so
-layouts remain extensible without leaking styles. Keep nesting shallow to avoid
-unnecessary DOM layers.
+Wrappers forward standard HTML attributes—except `className` and `style`—to the
+underlying design-system primitives. This keeps styling decisions inside the
+component. Keep nesting shallow to avoid unnecessary DOM layers.
 
 Common form controls such as `Button` and `InputField` are also provided in the
 `legacy` folder. They pass sizing tokens and `onChange` events through to the
