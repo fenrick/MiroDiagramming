@@ -22,7 +22,7 @@ describe('App layout options and undo button', () => {
       selectFile();
     });
     fireEvent.keyDown(window, { key: '/', metaKey: true });
-    fireEvent.click(screen.getByRole('tab', { name: 'Create' }));
+    fireEvent.click(screen.getByRole('tab', { name: 'Diagrams' }));
     await act(async () => {
       fireEvent.change(screen.getByLabelText('Algorithm'), {
         target: { value: 'force' },
@@ -47,9 +47,7 @@ describe('App layout options and undo button', () => {
 
   test('hides layout options in cards mode', () => {
     render(React.createElement(App));
-    fireEvent.change(screen.getByRole('combobox'), {
-      target: { value: 'cards' },
-    });
+    fireEvent.click(screen.getByRole('tab', { name: 'Cards' }));
     expect(screen.queryByLabelText('Algorithm')).toBeNull();
     expect(screen.queryByLabelText('Direction')).toBeNull();
     expect(screen.queryByLabelText('Spacing')).toBeNull();
