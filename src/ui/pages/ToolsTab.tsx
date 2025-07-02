@@ -39,8 +39,9 @@ export const ToolsTab: React.FC = () => {
       <div>
         <Tabs
           value='{sub}'
+          variant={'buttons'}
           onChange={(id: React.SetStateAction<string>) => setSub(id)}
-          size='large'>
+          size='medium'>
           <Tabs.List>
             {SUB_TABS.map((t) => (
               <Tabs.Trigger

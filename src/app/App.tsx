@@ -62,7 +62,8 @@ export const App: React.FC = () => {
         <Tabs
           value='{tab}'
           onChange={(id) => setTab(id as Tab)}
-          size='large'>
+          variant={'buttons'}
+          size='medium'>
           <Tabs.List>
             {TAB_DATA.map((t) => (
               <Tabs.Trigger
