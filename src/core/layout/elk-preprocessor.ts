@@ -43,7 +43,7 @@ function insertSpacer(node: LayoutNode, opts: Required<SpacerOptions>): void {
 function applyAlgorithm(node: LayoutNode): void {
   if (!node.children?.length) return;
   node.layoutOptions = node.layoutOptions || {};
-  node.layoutOptions['algorithm'] = 'org.eclipse.elk.rectanglePacking';
+  node.layoutOptions['elk.algorithm'] = 'org.eclipse.elk.rectpacking';
 }
 
 /**

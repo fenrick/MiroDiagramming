@@ -9,6 +9,10 @@ export interface HierNode {
 export interface NestedLayoutOptions {
   /** Optional metadata key used for sorting children. */
   sortKey?: string;
+  /** Spacing between sibling nodes. */
+  padding?: number;
+  /** Height of the invisible spacer inserted above children. */
+  topSpacing?: number;
 }
 
 export interface PositionedNode {
@@ -25,10 +29,13 @@ export interface NestedLayoutResult {
 
 const LEAF_WIDTH = 120;
 const LEAF_HEIGHT = 30;
-const PADDING = 20;
+const DEFAULT_PADDING = 20;
+const DEFAULT_TOP_SPACING = 50;
 
 import { loadElk } from './elk-loader';
 import type { ElkNode } from 'elkjs/lib/elk-api';
+import type { LayoutNode } from './elk-preprocessor';
+import { prepareForElk } from './elk-preprocessor';
 
 /**
  * Layout hierarchical data using the ELK engine and compute container sizes.
@@ -42,7 +49,11 @@ export class NestedLayouter {
     return node.label ?? node.id;
   }
 
-  private buildElkNode(node: HierNode, sortKey?: string): ElkNode {
+  private buildElkNode(
+    node: HierNode,
+    sortKey?: string,
+    padding: number = DEFAULT_PADDING,
+  ): ElkNode {
     const elk: ElkNode = { id: node.id };
     const children = node.children;
     if (!children?.length) {
@@ -53,10 +64,10 @@ export class NestedLayouter {
     const sorted = [...children].sort((a, b) =>
       this.sortValue(a, sortKey).localeCompare(this.sortValue(b, sortKey)),
     );
-    elk.children = sorted.map((c) => this.buildElkNode(c, sortKey));
+    elk.children = sorted.map((c) => this.buildElkNode(c, sortKey, padding));
     elk.layoutOptions = {
       'elk.algorithm': 'org.eclipse.elk.rectpacking',
-      'elk.spacing.nodeNode': String(PADDING),
+      'elk.spacing.nodeNode': String(padding),
       'elk.direction': 'RIGHT',
     };
     return elk;
@@ -109,14 +120,17 @@ export class NestedLayouter {
     roots: HierNode[],
     opts: NestedLayoutOptions = {},
   ): Promise<NestedLayoutResult> {
-    const elkRoot: ElkNode = {
+    const padding = opts.padding ?? DEFAULT_PADDING;
+    const topSpacing = opts.topSpacing ?? DEFAULT_TOP_SPACING;
+    const elkRoot: LayoutNode = {
       id: 'root',
       layoutOptions: {
         'elk.algorithm': 'org.eclipse.elk.rectpacking',
-        'elk.spacing.nodeNode': String(PADDING),
+        'elk.spacing.nodeNode': String(padding),
       },
-      children: roots.map((r) => this.buildElkNode(r, opts.sortKey)),
+      children: roots.map((r) => this.buildElkNode(r, opts.sortKey, padding)),
     };
+    prepareForElk(elkRoot, topSpacing, LEAF_WIDTH);
     const Elk = await loadElk();
     const elk = new Elk();
     const result = await elk.layout(elkRoot);
