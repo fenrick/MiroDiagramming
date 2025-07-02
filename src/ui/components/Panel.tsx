@@ -20,17 +20,17 @@ export interface PanelProps
  */
 export const Panel = React.forwardRef<HTMLDivElement, PanelProps>(
   function Panel({ padding = 'medium', ...props }, ref) {
+    // Remove style and className so callers cannot override layout
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const {
-      style: _s,
-      className: _c,
+      style: _style,
+      className: _className,
       ...rest
     } = props as {
       style?: React.CSSProperties;
       className?: string;
       [key: string]: unknown;
     };
-    void _s;
-    void _c;
     return (
       <Primitive.section
         ref={ref}
