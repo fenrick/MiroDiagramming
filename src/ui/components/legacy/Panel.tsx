@@ -9,8 +9,10 @@ export interface PanelProps
 }
 
 /**
- * Generic container used by tabs and modals. It applies consistent padding via
- * design-system tokens while forwarding all native props.
+ * Generic container used by tabs and modals.
+ *
+ * The component sets consistent padding using design-system tokens and merges
+ * any additional `style` values provided by callers.
  */
 export const Panel = React.forwardRef<HTMLDivElement, PanelProps>(
   function Panel({ padding = 'medium', style, ...props }, ref) {
