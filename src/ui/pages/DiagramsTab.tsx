@@ -5,7 +5,7 @@ import { LayoutEngineTab } from './LayoutEngineTab';
 import { TabPanel } from '../components/TabPanel';
 import type { TabTuple } from './tab-definitions';
 import { Tabs } from '@mirohq/design-system';
-import { Panel, Section } from '../components/legacy';
+import { Panel } from '../components/legacy';
 
 /**
  * Parent tab hosting diagram-related tools via nested navigation.
@@ -34,26 +34,22 @@ export const DiagramsTab: React.FC = () => {
   return (
     <TabPanel tabId='diagrams'>
       <Panel padding='small'>
-        <Section padding='small'>
-          <Tabs
-            value={sub}
-            variant={'buttons'}
-            onChange={(id) => setSub(id as string)}
-            size='medium'>
-            <Tabs.List>
-              {SUB_TABS.map((t) => (
-                <Tabs.Trigger
-                  key={t.id}
-                  value={t.id}>
-                  {t.label}
-                </Tabs.Trigger>
-              ))}
-            </Tabs.List>
-          </Tabs>
-        </Section>
-        <Section padding='small'>
-          <Current />
-        </Section>
+        <Tabs
+          value={sub}
+          variant={'buttons'}
+          onChange={(id) => setSub(id as string)}
+          size='medium'>
+          <Tabs.List>
+            {SUB_TABS.map((t) => (
+              <Tabs.Trigger
+                key={t.id}
+                value={t.id}>
+                {t.label}
+              </Tabs.Trigger>
+            ))}
+          </Tabs.List>
+        </Tabs>
+        <Current />
       </Panel>
     </TabPanel>
   );
