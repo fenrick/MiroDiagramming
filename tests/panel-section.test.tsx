@@ -16,14 +16,15 @@ describe('Panel', () => {
     expect(container.firstChild).toHaveStyle(`padding: ${tokens.space.small}`);
   });
 
-  it('forwards additional props', () => {
+  it('forwards attributes but ignores style', () => {
     const { getByTestId } = render(
+      // @ts-expect-error style is intentionally unsupported
       <Panel
         data-testid='panel'
         style={{ background: 'red' }}
       />,
     );
-    expect(getByTestId('panel')).toHaveStyle('background: red');
+    expect(getByTestId('panel')).not.toHaveStyle('background: red');
   });
 });
 
@@ -38,13 +39,14 @@ describe('Section', () => {
     expect(container.firstChild).toHaveStyle(`padding: ${tokens.space.large}`);
   });
 
-  it('forwards additional props', () => {
+  it('forwards attributes but ignores style', () => {
     const { getByTestId } = render(
+      // @ts-expect-error style is intentionally unsupported
       <Section
         data-testid='section'
         style={{ background: 'blue' }}
       />,
     );
-    expect(getByTestId('section')).toHaveStyle('background: blue');
+    expect(getByTestId('section')).not.toHaveStyle('background: blue');
   });
 });

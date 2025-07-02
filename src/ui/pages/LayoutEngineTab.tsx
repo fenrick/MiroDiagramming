@@ -8,10 +8,9 @@ export const LayoutEngineTab: React.FC = () => (
   <div
     id='panel-layout'
     role='tabpanel'
-    aria-labelledby='tab-layout'>
-    <Panel
-      padding='small'
-      style={{ marginTop: tokens.space.small }}>
+    aria-labelledby='tab-layout'
+    style={{ marginTop: tokens.space.small }}>
+    <Panel padding='small'>
       <Paragraph>Layout engine coming soon.</Paragraph>
     </Panel>
   </div>

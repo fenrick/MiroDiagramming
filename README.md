@@ -178,6 +178,8 @@ the rest of the UI. These guidelines help keep layouts consistent:
   hard‑coded numbers.
 - Layout wrappers such as `Panel` or `Section` expose a `padding` prop. Pass a
   token from `src/ui/tokens.ts` so spacing stays consistent.
+- Avoid passing custom `className` or `style` props to these wrappers; spacing
+  decisions belong inside the component.
 - Keep wrapper nesting shallow; avoid unnecessary layers.
 - When customisation is needed prefer extending design-system tokens over
   creating bespoke CSS classes.
