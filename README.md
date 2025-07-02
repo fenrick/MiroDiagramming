@@ -277,8 +277,9 @@ everyone uses the exact dependency versions when installing.
 
 ## Commit message checks
 
-Commit messages must follow the Conventional Commits specification. Verify the
-latest commit locally by running:
+Commit messages must follow the Conventional Commits specification. A
+`commit-msg` hook now runs commitlint automatically. Verify the latest commit
+manually by running:
 
 ```bash
 npm run commitlint -- --edit $(git rev-parse --verify HEAD)

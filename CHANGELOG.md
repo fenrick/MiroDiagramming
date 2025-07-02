@@ -1,3 +1,12 @@
+## [1.16.1](https://github.com/fenrick/MiroDiagramming/compare/v1.16.0...v1.16.1) (2025-07-01)
+
+
+### Performance Improvements
+
+* ci.yml ([ccb7989](https://github.com/fenrick/MiroDiagramming/commit/ccb79893027332673a866ba17debd248867e1c66))
+* update TabGrid.tsx ([a5bb3c1](https://github.com/fenrick/MiroDiagramming/commit/a5bb3c184cee3a73ec17bd62157740e97f00c361))
+* update TabGrid.tsx ([c3f2c25](https://github.com/fenrick/MiroDiagramming/commit/c3f2c2578e5b810fedd97818439605047ae67d2b))
+
 # [1.16.0](https://github.com/fenrick/MiroDiagramming/compare/v1.15.2...v1.16.0) (2025-07-01)
 
 
