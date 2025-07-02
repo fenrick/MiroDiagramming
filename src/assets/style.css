@@ -1,3 +1,9 @@
+/**
+@import '@mirohq/design-tokens/tokens.css';
+@import '@mirohq/design-system-themes/base.css';
+@import '@mirohq/design-system-themes/light.css';
+**/
+@import 'mirotone/dist/styles.css';
 
 *,
 *:before,
@@ -9,6 +15,7 @@ html,
 body {
   height: 100%;
   background: none;
+  padding: var(--space-xxsmall);
 }
 
 #root {

@@ -54,7 +54,7 @@ export const App: React.FC = () => {
   const CurrentComp = current[4];
 
   return (
-    <div className={lightThemeClassName}>
+    <Primitive.div className={lightThemeClassName}>
       <ExcelDataProvider
         value={{
           rows,
@@ -66,11 +66,12 @@ export const App: React.FC = () => {
           setLabelColumn,
           setTemplateColumn,
         }}>
+          <Primitive.div>
         <Tabs
           value='{tab}'
           onChange={(id) => setTab(id as Tab)}
-          variant={'buttons'}
-          size='large'>
+          variant={'tabs'}
+          size='medium'>
           <Tabs.List>
             {TAB_DATA.map((t) => (
               <Tabs.Trigger
@@ -81,6 +82,7 @@ export const App: React.FC = () => {
             ))}
           </Tabs.List>
         </Tabs>
+        </Primitive.div>
         <Primitive.div className='scrollable'>
           <Paragraph>{current[3]}</Paragraph>
           <CurrentComp />
@@ -90,7 +92,7 @@ export const App: React.FC = () => {
           onClose={() => setShowMeta(false)}
         />
       </ExcelDataProvider>
-    </div>
+    </Primitive.div>
   );
 };
 
