@@ -8,7 +8,7 @@ import {
   Icon,
 } from '../components/legacy';
 import { JsonDropZone } from '../components/JsonDropZone';
-import { tokens } from '../tokens';
+import { Panel, Section } from '../components/legacy';
 import { TabGrid } from '../components/TabGrid';
 import { CardProcessor } from '../../board/card-processor';
 
@@ -71,74 +71,75 @@ export const CardsTab: React.FC = () => {
     <div
       id='panel-cards'
       role='tabpanel'
-      aria-labelledby='tab-cards'
-      style={{ marginTop: tokens.space.small }}>
-      <JsonDropZone onFiles={handleFiles} />
+      aria-labelledby='tab-cards'>
+      <Panel padding='small'>
+        <JsonDropZone onFiles={handleFiles} />
 
-      {files.length > 0 && (
-        <TabGrid columns={2}>
-          <ul className='custom-dropped-files'>
-            {files.map((file) => (
-              <li key={`${file.name}-${file.lastModified}`}>{file.name}</li>
-            ))}
-          </ul>
-          <div style={{ marginTop: tokens.space.small }}>
-            <Checkbox
-              label='Wrap items in frame'
-              value={withFrame}
-              onChange={setWithFrame}
-            />
-          </div>
-          {withFrame && (
-            <InputField label='Frame title'>
-              <input
-                className='input'
-                placeholder='Frame title'
-                value={frameTitle}
-                onChange={(e) => setFrameTitle(e.target.value)}
+        {files.length > 0 && (
+          <TabGrid columns={2}>
+            <ul className='custom-dropped-files'>
+              {files.map((file) => (
+                <li key={`${file.name}-${file.lastModified}`}>{file.name}</li>
+              ))}
+            </ul>
+            <Section padding='small'>
+              <Checkbox
+                label='Wrap items in frame'
+                value={withFrame}
+                onChange={setWithFrame}
               />
-            </InputField>
-          )}
-          <div className='buttons'>
-            <Button
-              onClick={handleCreate}
-              variant='primary'>
-              <React.Fragment key='.0'>
-                <Icon name='plus' />
-                <Text>Create Cards</Text>
-              </React.Fragment>
-            </Button>
-            {progress > 0 && progress < 100 && (
-              <progress
-                value={progress}
-                max={100}
-              />
+            </Section>
+            {withFrame && (
+              <InputField label='Frame title'>
+                <input
+                  className='input'
+                  placeholder='Frame title'
+                  value={frameTitle}
+                  onChange={(e) => setFrameTitle(e.target.value)}
+                />
+              </InputField>
             )}
-            {error && <Paragraph className='error'>{error}</Paragraph>}
-            {showUndo && (
+            <div className='buttons'>
               <Button
-                onClick={() =>
-                  undoLastImport(lastProc, () => setLastProc(undefined))
-                }
-                variant='secondary'>
-                Undo import (⌘Z)
-              </Button>
-            )}
-            {lastProc && (
-              <Button
-                onClick={() => {
-                  undoLastImport(lastProc, () => setLastProc(undefined));
-                }}
-                variant='secondary'>
+                onClick={handleCreate}
+                variant='primary'>
                 <React.Fragment key='.0'>
-                  <Icon name='undo' />
-                  <Text>Undo Last Import</Text>
+                  <Icon name='plus' />
+                  <Text>Create Cards</Text>
                 </React.Fragment>
               </Button>
-            )}
-          </div>
-        </TabGrid>
-      )}
+              {progress > 0 && progress < 100 && (
+                <progress
+                  value={progress}
+                  max={100}
+                />
+              )}
+              {error && <Paragraph className='error'>{error}</Paragraph>}
+              {showUndo && (
+                <Button
+                  onClick={() =>
+                    undoLastImport(lastProc, () => setLastProc(undefined))
+                  }
+                  variant='secondary'>
+                  Undo import (⌘Z)
+                </Button>
+              )}
+              {lastProc && (
+                <Button
+                  onClick={() => {
+                    undoLastImport(lastProc, () => setLastProc(undefined));
+                  }}
+                  variant='secondary'>
+                  <React.Fragment key='.0'>
+                    <Icon name='undo' />
+                    <Text>Undo Last Import</Text>
+                  </React.Fragment>
+                </Button>
+              )}
+            </div>
+          </TabGrid>
+        )}
+      </Panel>
     </div>
   );
 };

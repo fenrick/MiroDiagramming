@@ -10,6 +10,7 @@ import { TabPanel } from '../components/TabPanel';
 import { TabGrid } from '../components/TabGrid';
 import type { TabTuple } from './tab-definitions';
 import { Heading } from '@mirohq/design-system';
+import { Panel } from '../components/legacy';
 
 /** Adjusts the fill colour of selected widgets. */
 export const StyleTab: React.FC = () => {
@@ -30,10 +31,8 @@ export const StyleTab: React.FC = () => {
   };
   return (
     <TabPanel tabId='style'>
-      <div className='grid form-example'>
-        <TabGrid
-          className='cs1 ce12 form-example-main-content'
-          columns={2}>
+      <Panel padding='small'>
+        <TabGrid columns={2}>
           <InputField label='Adjust fill'>
             <input
               data-testid='adjust-slider'
@@ -120,7 +119,7 @@ export const StyleTab: React.FC = () => {
             })}
           </div>
         </TabGrid>
-      </div>
+      </Panel>
     </TabPanel>
   );
 };
