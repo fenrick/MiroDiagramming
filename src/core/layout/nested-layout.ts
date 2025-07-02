@@ -96,6 +96,19 @@ export class NestedLayouter {
     return null;
   }
 
+  private collectChildPositions(
+    node: ElkNode,
+    map: Record<string, PositionedNode>,
+    offsetX: number,
+    offsetY: number,
+  ): void {
+    const childX = (typeof node.x === 'number' ? node.x : 0) + offsetX;
+    const childY = (typeof node.y === 'number' ? node.y : 0) + offsetY;
+    for (const child of node.children ?? []) {
+      this.collectPositions(child, map, childX, childY);
+    }
+  }
+
   private collectPositions(
     node: ElkNode,
     map: Record<string, PositionedNode>,
@@ -103,14 +116,14 @@ export class NestedLayouter {
     offsetY = 0,
   ): void {
     const pos = this.computePosition(node, offsetX, offsetY);
-    if (pos) {
+    // Skip spacer nodes that only influence layout sizing
+    const isInvisible =
+      (node as LayoutNode).properties?.invisible === true ||
+      String(node.id).startsWith('spacer_');
+    if (pos && !isInvisible) {
       map[node.id] = pos;
     }
-    for (const child of node.children ?? []) {
-      const childX = typeof node.x === 'number' ? offsetX + node.x : offsetX;
-      const childY = typeof node.y === 'number' ? offsetY + node.y : offsetY;
-      this.collectPositions(child, map, childX, childY);
-    }
+    this.collectChildPositions(node, map, offsetX, offsetY);
   }
 
   /**
