@@ -1,4 +1,6 @@
 import React from 'react';
+import { Flex } from '@mirohq/design-system';
+import { Checkbox as DSCheckbox } from '@mirohq/design-system';
 
 export type CheckboxProps = Readonly<
   Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value'> & {
@@ -19,30 +21,22 @@ export function Checkbox({
   label,
   value,
   onChange,
-  className = '',
   ...props
 }: CheckboxProps): React.JSX.Element {
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    onChange?.(e.target.checked);
+  const handleChange = (e: React.FormEvent<HTMLButtonElement>): void => {
+    onChange?.((e.currentTarget as HTMLButtonElement).ariaPressed === 'true');
   };
   const generatedId = React.useId();
   const inputId = props.id ?? generatedId;
 
   return (
-    <div className='form-group-small'>
-      <label
-        htmlFor={inputId}
-        className={`toggle ${className}`.trim()}>
-        <input
-          id={inputId}
-          type='checkbox'
-          checked={value}
-          onChange={handleChange}
-          {...props}
-        />
-        {/* span enables Mirotone checkbox styling */}
-        <span>{label}</span>
-      </label>
-    </div>
+    <Flex gap={200}>
+      <DSCheckbox
+        id={inputId}
+        checked={value}
+        onChange={handleChange}
+      />
+      <label htmlFor={inputId}>{label}</label>
+    </Flex>
   );
 }
