@@ -19,7 +19,7 @@ const SUB_TABS: TabItem[] = [
  * Combines editing tools into a single tab with sub navigation.
  */
 export const ToolsTab: React.FC = () => {
-  const [sub, setSub] = React.useState<string>('resize');
+  const [sub, setSub] = React.useState<string>('size');
   let Current: React.FC;
   switch (sub) {
     case 'style':
@@ -38,7 +38,7 @@ export const ToolsTab: React.FC = () => {
     <TabPanel tabId='tools'>
       <div>
         <Tabs
-          value='{sub}'
+          value={sub}
           variant={'buttons'}
           onChange={(id: React.SetStateAction<string>) => setSub(id)}
           size='medium'>
