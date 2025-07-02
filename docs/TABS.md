@@ -20,14 +20,15 @@ ambiguity.
 
 ---
 
-## 1  Create Tab
+## 1  Diagrams Tab
 
-| Step | UI Element               | Copy (EN‑AU)           | Interaction Flow                               | State Store   |
-| ---- | ------------------------ | ---------------------- | ---------------------------------------------- | ------------- |
-| 1    | `<Select>` mode dropdown | –                      | Choose **Diagram** or **Cards** mode           | `createMode`  |
-| 2    | `<DropZone>` area        | "Drag a .json file"    | Drag file → highlight border; on drop validate | `importQueue` |
-| 3    | Diagram mode options     | as per old Diagram tab | Layout settings + build button                 | –             |
-| 4    | Cards mode options       | as per old Cards tab   | Search, tag filter and create button           | –             |
+| Step | UI Element         | Copy (EN‑AU)                           | Interaction Flow                               | State Store   |
+| ---- | ------------------ | -------------------------------------- | ---------------------------------------------- | ------------- |
+| 1    | `<TabBar>` sub-nav | “Structured”, “Cards”, “Layout Engine” | Choose sub-tab                                 | `createMode`  |
+| 2    | `<DropZone>` area  | "Drag a .json file"                    | Drag file → highlight border; on drop validate | `importQueue` |
+| 3    | Structured options | as per old Diagram tab                 | Layout settings + build button                 | –             |
+| 4    | Cards options      | as per old Cards tab                   | Search, tag filter and create button           | –             |
+| 5    | Layout Engine      | Placeholder text                       | Coming soon                                    | –             |
 
 **Tooltip for invalid row** – "Edge refers to missing node '‘%id%’.'" Shortcut:
 **⌘/** toggles the **Advanced options** accordion on the Diagram tab.

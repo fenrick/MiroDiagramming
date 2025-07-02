@@ -1,13 +1,13 @@
 import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { DiagramTab } from '../src/ui/pages/DiagramTab';
+import { StructuredTab } from '../src/ui/pages/StructuredTab';
 
 /** Ensure advanced options panel can be toggled via details element. */
 
-describe('DiagramTab advanced options', () => {
+describe('StructuredTab advanced options', () => {
   test('toggle reveals algorithm field', async () => {
-    render(<DiagramTab />);
+    render(<StructuredTab />);
     const input = screen.getByTestId('file-input');
     const file = new File(['{}'], 'graph.json', { type: 'application/json' });
     await act(async () => {

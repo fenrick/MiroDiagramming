@@ -2,11 +2,11 @@
 import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { DiagramTab } from '../src/ui/pages/DiagramTab';
+import { StructuredTab } from '../src/ui/pages/StructuredTab';
 import { ElkAlgorithm } from '../src/core/layout/elk-options';
 vi.mock('../src/core/graph/graph-processor');
 
-describe('DiagramTab additional branches', () => {
+describe('StructuredTab additional branches', () => {
   beforeEach(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (globalThis as any).miro = {
@@ -21,7 +21,7 @@ describe('DiagramTab additional branches', () => {
   });
 
   test('keyboard shortcut toggles advanced options', async () => {
-    render(<DiagramTab />);
+    render(<StructuredTab />);
     const file = new File(['{}'], 'graph.json', { type: 'application/json' });
     await act(async () => {
       fireEvent.change(screen.getByTestId('file-input'), {
@@ -34,7 +34,7 @@ describe('DiagramTab additional branches', () => {
   });
 
   test('all conditional elements render after interaction', async () => {
-    render(<DiagramTab />);
+    render(<StructuredTab />);
     const file = new File(['{}'], 'a.json', { type: 'application/json' });
     await act(async () => {
       fireEvent.change(screen.getByTestId('file-input'), {
@@ -61,7 +61,7 @@ describe('DiagramTab additional branches', () => {
     ['rectpacking', 'Optimisation goal'],
     ['box', null],
   ])('option visibility for %s', async (alg, label) => {
-    render(<DiagramTab />);
+    render(<StructuredTab />);
     const file = new File(['{}'], 'a.json', { type: 'application/json' });
     await act(async () => {
       fireEvent.change(screen.getByTestId('file-input'), {
