@@ -7,6 +7,7 @@ import { Paragraph } from '../ui/components/legacy/Paragraph';
 import { EditMetadataModal } from '../ui/components/EditMetadataModal';
 import { ExcelDataProvider } from '../ui/hooks/excel-data-context';
 import type { ExcelRow } from '../core/utils/excel-loader';
+import { Heading } from '../ui/components/legacy';
 
 /**
  * React entry component that renders the file selection and mode
@@ -60,7 +61,7 @@ export const App: React.FC = () => {
           onChange={(id) => setTab(id as Tab)}
         />
         <div className='scrollable'>
-          <h2>{current[2]}</h2>
+          <Heading level={2}>{current[2]}</Heading>
           <Paragraph>{current[3]}</Paragraph>
           <CurrentComp />
         </div>
