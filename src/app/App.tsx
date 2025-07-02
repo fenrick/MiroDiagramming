@@ -11,6 +11,8 @@ import { ExcelDataProvider } from '../ui/hooks/excel-data-context';
 import type { ExcelRow } from '../core/utils/excel-loader';
 import { createTheme, Paragraph, Tabs, themes } from '@mirohq/design-system';
 
+const lightThemeClassName = createTheme(themes.light);
+
 /**
  * React entry component that renders the file selection and mode
  * toggling user interface. Extraction as an exported constant allows
