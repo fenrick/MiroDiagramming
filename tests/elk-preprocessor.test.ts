@@ -5,8 +5,8 @@ describe('prepareForElk', () => {
   test('assigns algorithm and inserts spacer', () => {
     const root: LayoutNode = { id: 'r', children: [{ id: 'c' }] };
     prepareForElk(root, 10, 50);
-    expect(root.layoutOptions?.algorithm).toBe(
-      'org.eclipse.elk.rectanglePacking',
+    expect(root.layoutOptions?.['elk.algorithm']).toBe(
+      'org.eclipse.elk.rectpacking',
     );
     expect(root.children?.[0].id).toBe('spacer_r');
     expect(root.children).toHaveLength(2);
@@ -39,8 +39,8 @@ describe('prepareForElk', () => {
     };
     prepareForElk(root);
     const parent = root.children?.find((n) => n.id === 'p') as LayoutNode;
-    expect(parent.layoutOptions?.algorithm).toBe(
-      'org.eclipse.elk.rectanglePacking',
+    expect(parent.layoutOptions?.['elk.algorithm']).toBe(
+      'org.eclipse.elk.rectpacking',
     );
     expect(parent.children?.[0].id).toBe('spacer_p');
   });

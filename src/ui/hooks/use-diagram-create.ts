@@ -22,6 +22,8 @@ interface CreateOptions {
   withFrame: boolean;
   frameTitle: string;
   layoutOpts: UserLayoutOptions;
+  nestedPadding: number;
+  nestedTopSpacing: number;
 }
 
 /**
@@ -56,6 +58,8 @@ export function useDiagramCreate(
           await hierarchyProcessor.processFile(file, {
             createFrame: opts.withFrame,
             frameTitle: opts.frameTitle || undefined,
+            padding: opts.nestedPadding,
+            topSpacing: opts.nestedTopSpacing,
           });
         } else {
           setLastProc(graphProcessor);

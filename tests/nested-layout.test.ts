@@ -3,6 +3,8 @@ import {
   NestedLayouter,
   nestedLayouter,
 } from '../src/core/layout/nested-layout';
+import ELK from 'elkjs/lib/elk.bundled.js';
+import type { ElkNode } from 'elkjs/lib/elk-api';
 import sampleHier from './fixtures/sample-hier.json';
 
 interface TestNode {
@@ -31,12 +33,12 @@ describe('layoutHierarchy', () => {
       },
     ];
     const result = await layoutHierarchy(data);
-    expect(Object.keys(result.nodes)).toHaveLength(3);
     const parent = result.nodes.p;
     const childA = result.nodes.a;
     const childB = result.nodes.b;
     expect(childA.y).not.toBe(childB.y);
     expect(parent.width).toBeGreaterThan(childA.width);
+    expect(Object.keys(result.nodes)).toContain('spacer_p');
   });
 
   test('sorts children by custom key', async () => {
@@ -65,7 +67,7 @@ describe('layoutHierarchy', () => {
 
   test('positions example dataset', async () => {
     const result = await layoutHierarchy(sampleHier as TestNode[]);
-    expect(Object.keys(result.nodes)).toHaveLength(84);
+    expect(Object.keys(result.nodes)).toHaveLength(105);
     expect(result.nodes['r1c1g1'].width).toBe(120);
     expect(result.nodes['r1c1g1'].height).toBe(30);
   });
@@ -109,5 +111,28 @@ describe('layoutHierarchy', () => {
     const node = { id: 'x', x: 1, y: 2 };
     const result = layouter.computePosition(node, 0, 0);
     expect(result).toBeNull();
+  });
+
+  test('respects padding and top spacing options', async () => {
+    const data: TestNode[] = [
+      {
+        id: 'p',
+        label: 'P',
+        type: 'Role',
+        children: [{ id: 'c', type: 'Role', label: 'C' }],
+      },
+    ];
+    const spy = vi
+      .spyOn(ELK.prototype, 'layout')
+      .mockResolvedValue({ children: [] } as unknown as ElkNode);
+    await layoutHierarchy(data, { padding: 42, topSpacing: 30 });
+    const arg = spy.mock.calls[0][0] as ElkNode;
+    expect(arg.layoutOptions?.['elk.spacing.nodeNode']).toBe('42');
+    const parent = (arg.children as ElkNode[]).find(
+      (n) => n.id === 'p',
+    ) as ElkNode;
+    expect(parent.children?.[0].id).toBe('spacer_p');
+    expect(parent.children?.[0].height).toBe(30);
+    spy.mockRestore();
   });
 });
