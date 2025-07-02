@@ -1,12 +1,13 @@
 import React from 'react';
-import { TabBar, TabItem } from '../components/TabBar';
 import { ResizeTab } from './ResizeTab';
 import { StyleTab } from './StyleTab';
 import { ArrangeTab } from './ArrangeTab';
 import { FramesTab } from './FramesTab';
 import { TabPanel } from '../components/TabPanel';
 import type { TabTuple } from './tab-definitions';
+import { Tabs } from '@mirohq/design-system';
 
+type TabItem = { id: string; label: string };
 const SUB_TABS: TabItem[] = [
   { id: 'size', label: 'Size' },
   { id: 'style', label: 'Colours' },
@@ -36,12 +37,20 @@ export const ToolsTab: React.FC = () => {
   return (
     <TabPanel tabId='tools'>
       <div>
-        <TabBar
-          tabs={SUB_TABS}
-          tab={sub}
-          onChange={setSub}
-          size='small'
-        />
+        <Tabs
+          value='{sub}'
+          onChange={(id: React.SetStateAction<string>) => setSub(id)}
+          size='large'>
+          <Tabs.List>
+            {SUB_TABS.map((t) => (
+              <Tabs.Trigger
+                key={t.id}
+                value={t.id}>
+                {t.label}
+              </Tabs.Trigger>
+            ))}
+          </Tabs.List>
+        </Tabs>
         <Current />
       </div>
     </TabPanel>

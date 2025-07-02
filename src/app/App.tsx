@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { TabBar } from '../ui/components/TabBar';
 import { TAB_DATA, Tab } from '../ui/pages/tabs';
 import { Paragraph } from '../ui/components/legacy/Paragraph';
 import { EditMetadataModal } from '../ui/components/EditMetadataModal';
 import { ExcelDataProvider } from '../ui/hooks/excel-data-context';
 import type { ExcelRow } from '../core/utils/excel-loader';
 import { Heading } from '../ui/components/legacy';
+import { Tabs } from '@mirohq/design-system';
 
 /**
  * React entry component that renders the file selection and mode
@@ -55,11 +55,20 @@ export const App: React.FC = () => {
         setTemplateColumn,
       }}>
       <div id='root'>
-        <TabBar
-          tabs={TAB_DATA}
-          tab={tab}
+        <Tabs
+          value='{tab}'
           onChange={(id) => setTab(id as Tab)}
-        />
+          size='large'>
+          <Tabs.List>
+            {TAB_DATA.map((t) => (
+              <Tabs.Trigger
+                key={t[1]}
+                value={t[1]}>
+                {t[2]}
+              </Tabs.Trigger>
+            ))}
+          </Tabs.List>
+        </Tabs>
         <div className='scrollable'>
           <Heading level={2}>{current[2]}</Heading>
           <Paragraph>{current[3]}</Paragraph>
