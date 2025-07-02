@@ -9,7 +9,6 @@ import {
   Text,
   Icon,
 } from '../components/legacy';
-import { tokens } from '../tokens';
 import {
   excelLoader,
   graphExcelLoader,
@@ -19,6 +18,7 @@ import {
 } from '../../core/utils/excel-loader';
 import { templateManager } from '../../board/templates';
 import { TabPanel } from '../components/TabPanel';
+import { Panel } from '../components/legacy';
 import { showError } from '../hooks/notifications';
 import { RowInspector } from '../components/RowInspector';
 import type { TabTuple } from './tab-definitions';
@@ -135,7 +135,7 @@ export const ExcelTab: React.FC = () => {
 
   return (
     <TabPanel tabId='excel'>
-      <div style={{ marginTop: tokens.space.small }}>
+      <Panel padding='small'>
         <div
           {...dropzone.getRootProps({ style })}
           aria-label='Excel drop area'>
@@ -279,7 +279,7 @@ export const ExcelTab: React.FC = () => {
           idColumn={idColumn || undefined}
           onUpdate={updateRow}
         />
-      </div>
+      </Panel>
     </TabPanel>
   );
 };

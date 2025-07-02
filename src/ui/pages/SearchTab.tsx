@@ -8,6 +8,7 @@ import {
   Text,
 } from '../components/legacy';
 import { TabGrid } from '../components/TabGrid';
+import { Panel } from '../components/legacy';
 import type { SearchOptions } from '../../board/search-tools';
 import {
   useDebouncedSearch,
@@ -117,125 +118,127 @@ export const SearchTab: React.FC = () => {
 
   return (
     <TabPanel tabId='search'>
-      <TabGrid columns={2}>
-        <InputField label='Find'>
-          <input
-            className='input input-small'
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder='Search board text'
-          />
-        </InputField>
-        <InputField label='Replace'>
-          <input
-            className='input input-small'
-            value={replacement}
-            onChange={(e) => setReplacement(e.target.value)}
-            placeholder='Replacement text'
-          />
-        </InputField>
-        <div className='form-group-small'>
-          <Checkbox
-            label='Case sensitive'
-            value={caseSensitive}
-            onChange={setCaseSensitive}
-          />
-          <Checkbox
-            label='Whole word'
-            value={wholeWord}
-            onChange={setWholeWord}
-          />
-          <Checkbox
-            label='Regex'
-            value={regex}
-            onChange={setRegex}
-          />
-        </div>
-        <div className='form-group-small'>
-          <legend className='custom-visually-hidden'>Widget Types</legend>
-          <div>
-            {['shape', 'card', 'sticky_note', 'text'].map((t) => (
-              <Checkbox
-                key={t}
-                label={t}
-                value={widgetTypes.includes(t)}
-                onChange={() => toggleType(t)}
-              />
-            ))}
+      <Panel padding='small'>
+        <TabGrid columns={2}>
+          <InputField label='Find'>
+            <input
+              className='input input-small'
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder='Search board text'
+            />
+          </InputField>
+          <InputField label='Replace'>
+            <input
+              className='input input-small'
+              value={replacement}
+              onChange={(e) => setReplacement(e.target.value)}
+              placeholder='Replacement text'
+            />
+          </InputField>
+          <div className='form-group-small'>
+            <Checkbox
+              label='Case sensitive'
+              value={caseSensitive}
+              onChange={setCaseSensitive}
+            />
+            <Checkbox
+              label='Whole word'
+              value={wholeWord}
+              onChange={setWholeWord}
+            />
+            <Checkbox
+              label='Regex'
+              value={regex}
+              onChange={setRegex}
+            />
           </div>
-        </div>
-        <InputField label='Tag IDs'>
-          <input
-            className='input input-small'
-            value={tagIds}
-            onChange={(e) => setTagIds(e.target.value)}
-            placeholder='Comma separated'
-          />
-        </InputField>
-        <InputField label='Background colour'>
-          <input
-            className='input input-small'
-            value={backgroundColor}
-            onChange={(e) => setBackgroundColor(e.target.value)}
-            placeholder='CSS colour'
-          />
-        </InputField>
-        <InputField label='Assignee ID'>
-          <input
-            className='input input-small'
-            value={assignee}
-            onChange={(e) => setAssignee(e.target.value)}
-            placeholder='User ID'
-          />
-        </InputField>
-        <InputField label='Creator ID'>
-          <input
-            className='input input-small'
-            value={creator}
-            onChange={(e) => setCreator(e.target.value)}
-            placeholder='User ID'
-          />
-        </InputField>
-        <InputField label='Last modified by'>
-          <input
-            className='input input-small'
-            value={lastModifiedBy}
-            onChange={(e) => setLastModifiedBy(e.target.value)}
-            placeholder='User ID'
-          />
-        </InputField>
-        <Paragraph data-testid='match-count'>
-          Matches: {results.length}
-        </Paragraph>
-        <div className='buttons'>
-          <Button
-            onClick={nextMatch}
-            disabled={!results.length}
-            variant='secondary'>
-            <React.Fragment key='.0'>
-              <Icon name='chevron-right' />
-              <Text>Next</Text>
-            </React.Fragment>
-          </Button>
-          <Button
-            onClick={replaceCurrent}
-            disabled={!results.length}
-            variant='secondary'>
-            <React.Fragment key='.1'>
-              <Icon name='edit' />
-              <Text>Replace</Text>
-            </React.Fragment>
-          </Button>
-          <Button
-            onClick={replaceAll}
-            variant='primary'>
-            <React.Fragment key='.2'>
-              <Icon name='arrow-right' />
-              <Text>Replace All</Text>
-            </React.Fragment>
-          </Button>
-        </div>
-      </TabGrid>
+          <div className='form-group-small'>
+            <legend className='custom-visually-hidden'>Widget Types</legend>
+            <div>
+              {['shape', 'card', 'sticky_note', 'text'].map((t) => (
+                <Checkbox
+                  key={t}
+                  label={t}
+                  value={widgetTypes.includes(t)}
+                  onChange={() => toggleType(t)}
+                />
+              ))}
+            </div>
+          </div>
+          <InputField label='Tag IDs'>
+            <input
+              className='input input-small'
+              value={tagIds}
+              onChange={(e) => setTagIds(e.target.value)}
+              placeholder='Comma separated'
+            />
+          </InputField>
+          <InputField label='Background colour'>
+            <input
+              className='input input-small'
+              value={backgroundColor}
+              onChange={(e) => setBackgroundColor(e.target.value)}
+              placeholder='CSS colour'
+            />
+          </InputField>
+          <InputField label='Assignee ID'>
+            <input
+              className='input input-small'
+              value={assignee}
+              onChange={(e) => setAssignee(e.target.value)}
+              placeholder='User ID'
+            />
+          </InputField>
+          <InputField label='Creator ID'>
+            <input
+              className='input input-small'
+              value={creator}
+              onChange={(e) => setCreator(e.target.value)}
+              placeholder='User ID'
+            />
+          </InputField>
+          <InputField label='Last modified by'>
+            <input
+              className='input input-small'
+              value={lastModifiedBy}
+              onChange={(e) => setLastModifiedBy(e.target.value)}
+              placeholder='User ID'
+            />
+          </InputField>
+          <Paragraph data-testid='match-count'>
+            Matches: {results.length}
+          </Paragraph>
+          <div className='buttons'>
+            <Button
+              onClick={nextMatch}
+              disabled={!results.length}
+              variant='secondary'>
+              <React.Fragment key='.0'>
+                <Icon name='chevron-right' />
+                <Text>Next</Text>
+              </React.Fragment>
+            </Button>
+            <Button
+              onClick={replaceCurrent}
+              disabled={!results.length}
+              variant='secondary'>
+              <React.Fragment key='.1'>
+                <Icon name='edit' />
+                <Text>Replace</Text>
+              </React.Fragment>
+            </Button>
+            <Button
+              onClick={replaceAll}
+              variant='primary'>
+              <React.Fragment key='.2'>
+                <Icon name='arrow-right' />
+                <Text>Replace All</Text>
+              </React.Fragment>
+            </Button>
+          </div>
+        </TabGrid>
+      </Panel>
     </TabPanel>
   );
 };

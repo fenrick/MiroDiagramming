@@ -6,6 +6,7 @@ import { FramesTab } from './FramesTab';
 import { TabPanel } from '../components/TabPanel';
 import type { TabTuple } from './tab-definitions';
 import { Tabs } from '@mirohq/design-system';
+import { Panel } from '../components/legacy';
 
 type TabItem = { id: string; label: string };
 const SUB_TABS: TabItem[] = [
@@ -36,7 +37,7 @@ export const ToolsTab: React.FC = () => {
   }
   return (
     <TabPanel tabId='tools'>
-      <div>
+      <Panel padding='small'>
         <Tabs
           value={sub}
           variant={'buttons'}
@@ -53,7 +54,7 @@ export const ToolsTab: React.FC = () => {
           </Tabs.List>
         </Tabs>
         <Current />
-      </div>
+      </Panel>
     </TabPanel>
   );
 };
