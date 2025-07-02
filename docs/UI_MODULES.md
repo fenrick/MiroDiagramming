@@ -69,7 +69,7 @@ src/ui/
 | components/RowInspector.tsx      | Displays row details in side panel.                    |
 | components/SegmentedControl.tsx  | Simple segmented switch for small options.             |
 | components/TabBar.tsx            | Horizontal list of available tabs.                     |
-| components/legacy/               | Thin wrappers over Mirotone markup for easier updates. |
+| components/legacy/               | Remaining Mirotone wrappers pending upgrade.           |
 | hooks/                           | React hooks for state management and board operations. |
 | pages/                           | Individual tabs rendered inside the panel.             |
 | style-presets.ts                 | Named style collections for widgets.                   |

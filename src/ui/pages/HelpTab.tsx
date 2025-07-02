@@ -4,7 +4,7 @@ import changelog from '../../../CHANGELOG.md?raw';
 import { TabPanel } from '../components/TabPanel';
 import type { TabTuple } from './tab-definitions';
 import { Heading } from '@mirohq/design-system';
-import { Panel } from '../components/legacy';
+import { Panel } from '../components';
 
 /** Static help page summarising diagram options and tools. */
 export const HelpTab: React.FC = () => (

@@ -6,7 +6,7 @@ import { FramesTab } from './FramesTab';
 import { TabPanel } from '../components/TabPanel';
 import type { TabTuple } from './tab-definitions';
 import { Tabs } from '@mirohq/design-system';
-import { Panel } from '../components/legacy';
+import { Panel } from '../components';
 
 type TabItem = { id: string; label: string };
 const SUB_TABS: TabItem[] = [

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Paragraph } from '../components/legacy/Paragraph';
 import { tokens } from '../tokens';
-import { Panel } from '../components/legacy';
+import { Panel } from '../components';
 
 /** Placeholder for future layout engine options. */
 export const LayoutEngineTab: React.FC = () => (

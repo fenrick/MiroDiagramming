@@ -1,12 +1,12 @@
 import React from 'react';
-import { Button, Icon, InputField, Text } from '../components/legacy';
+import { Button, InputField, Panel } from '../components';
+import { Icon, Text } from '../components/legacy';
 import {
   lockSelectedFrames,
   renameSelectedFrames,
 } from '../../board/frame-tools';
 import { TabPanel } from '../components/TabPanel';
 import { TabGrid } from '../components/TabGrid';
-import { Panel } from '../components/legacy';
 import type { TabTuple } from './tab-definitions';
 import { Heading } from '@mirohq/design-system';
 

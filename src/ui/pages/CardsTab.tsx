@@ -1,14 +1,7 @@
 import React from 'react';
-import {
-  Button,
-  Checkbox,
-  InputField,
-  Paragraph,
-  Text,
-  Icon,
-} from '../components/legacy';
+import { Button, Checkbox, InputField, Panel, Section } from '../components';
+import { Paragraph, Text, Icon } from '../components/legacy';
 import { JsonDropZone } from '../components/JsonDropZone';
-import { Panel, Section } from '../components/legacy';
 import { TabGrid } from '../components/TabGrid';
 import { CardProcessor } from '../../board/card-processor';
 

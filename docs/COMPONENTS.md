@@ -10,8 +10,8 @@ Explains how to:
 - Adopt the **@mirohq/design-system** components to ensure 100% alignment with
   Miro visuals.
 - Use **@mirohq/design-system** components directly for new features.
-- Use the lightweight wrapper components in `src/ui/components/legacy` until
-  migration completes.
+- Use the lightweight wrapper components in `src/ui/components` while older
+  versions remain in `src/ui/components/legacy` until migration completes.
 - Meet the accessibility, performance and quality gates defined in
   **ARCHITECTURE.md** and **FOUNDATION.md**.
 
@@ -61,9 +61,9 @@ nested tab sets.
 
 The design system expects container elements to declare their own padding. To
 preserve the existing API and layering, small wrappers live under
-`src/ui/components/legacy` (e.g. `Panel`, `Section`, `ActionBar`). Each wrapper
-accepts a `padding` prop that maps to the numeric tokens exported from
-`src/ui/tokens.ts`:
+`src/ui/components` (e.g. `Panel`, `Section`, `ActionBar`). Legacy variants live
+under `src/ui/components/legacy`. Each wrapper accepts a `padding` prop that
+maps to the numeric tokens exported from `src/ui/tokens.ts`:
 
 ```tsx
 <Panel padding='medium'>
@@ -83,8 +83,8 @@ design-system components so existing code keeps working while the UI migrates.
 >
 > 1. Write semantic HTML (for example `<div class="grid grid-gap-8">`).
 > 2. Apply the documented design-system tokens or component styles.
-> 3. Encapsulate in a small local React component under
->    `src/ui/components/legacy/` so that future upgrades swap the implementation
+> 3. Encapsulate the markup in a small local React component under
+>    `src/ui/components/legacy/` so future upgrades can swap the implementation
 >    behind a stable API.
 
 ---

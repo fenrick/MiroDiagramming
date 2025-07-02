@@ -1,9 +1,7 @@
 import React from 'react';
+import { Button, Checkbox, InputField, Panel } from '../components';
 import {
-  Button,
-  Checkbox,
   Icon,
-  InputField,
   Paragraph,
   Select,
   SelectOption,
@@ -12,7 +10,6 @@ import {
 import { JsonDropZone } from '../components/JsonDropZone';
 import { tokens } from '../tokens';
 import { TabGrid } from '../components/TabGrid';
-import { Panel } from '../components/legacy';
 import { GraphProcessor } from '../../core/graph/graph-processor';
 import {
   ALGORITHMS,

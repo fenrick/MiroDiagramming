@@ -1,8 +1,6 @@
 import React from 'react';
+import { Button, Checkbox, InputField, Panel } from '../components';
 import {
-  Button,
-  Checkbox,
-  InputField,
   Paragraph,
   Select,
   SelectOption,
@@ -18,7 +16,6 @@ import {
 } from '../../core/utils/excel-loader';
 import { templateManager } from '../../board/templates';
 import { TabPanel } from '../components/TabPanel';
-import { Panel } from '../components/legacy';
 import { showError } from '../hooks/notifications';
 import { RowInspector } from '../components/RowInspector';
 import type { TabTuple } from './tab-definitions';

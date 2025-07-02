@@ -1,14 +1,7 @@
 import React from 'react';
-import {
-  Button,
-  Checkbox,
-  InputField,
-  Paragraph,
-  Icon,
-  Text,
-} from '../components/legacy';
+import { Button, Checkbox, InputField, Panel } from '../components';
+import { Paragraph, Icon, Text } from '../components/legacy';
 import { TabGrid } from '../components/TabGrid';
-import { Panel } from '../components/legacy';
 import type { SearchOptions } from '../../board/search-tools';
 import {
   useDebouncedSearch,
