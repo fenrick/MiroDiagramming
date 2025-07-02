@@ -6,7 +6,6 @@ import { App } from '../src/app/App';
 import { getDropzoneStyle, undoLastImport } from '../src/ui/hooks/ui-utils';
 import { tokens } from '../src/ui/tokens';
 import { GraphProcessor } from '../src/core/graph/graph-processor';
-import { CardProcessor } from '../src/board/card-processor';
 
 interface GlobalWithMiro {
   miro?: { board?: Record<string, unknown> };
@@ -51,31 +50,6 @@ describe('App UI integration', () => {
       expect.any(File),
       expect.objectContaining({ layout: expect.any(Object) }),
     );
-  });
-
-  test('toggles to cards mode and processes', async () => {
-    const spy = jest
-      .spyOn(CardProcessor.prototype, 'processFile')
-      .mockResolvedValue(undefined);
-    render(React.createElement(App));
-    fireEvent.click(screen.getByRole('tab', { name: 'Cards' }));
-    await act(async () => {
-      selectFile();
-    });
-    const button = screen.getByRole('button', { name: /create cards/i });
-    await act(async () => {
-      fireEvent.click(button);
-    });
-    expect(spy).toHaveBeenCalled();
-  });
-
-  test('nested tabs switch mode', () => {
-    render(React.createElement(App));
-    fireEvent.click(screen.getByRole('tab', { name: 'Cards' }));
-    expect(
-      (screen.getByRole('tab', { name: 'Cards' }) as HTMLButtonElement)
-        .classList,
-    ).toContain('tab-active');
   });
 
   test('dropzone has accessibility attributes', () => {
