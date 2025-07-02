@@ -47,8 +47,6 @@ export const App: React.FC = () => {
   const current = TAB_DATA.find((t) => t[1] === tab)!;
   const CurrentComp = current[4];
 
-  //const darkThemeClassName = createTheme(themes.dark);
-
   return (
     <div className={lightThemeClassName}>
       <ExcelDataProvider
