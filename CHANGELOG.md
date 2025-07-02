@@ -1,3 +1,32 @@
+# [1.17.0](https://github.com/fenrick/MiroDiagramming/compare/v1.16.1...v1.17.0) (2025-07-02)
+
+
+### Bug Fixes
+
+* form layout ([d085888](https://github.com/fenrick/MiroDiagramming/commit/d0858887c9936a773b76de7459321f7643764df3))
+* husky install deprecated ([0d1cb5e](https://github.com/fenrick/MiroDiagramming/commit/0d1cb5e3496c7e41bca59237d222c5c4c0d4f281))
+* layout corrections ([9c8ffcd](https://github.com/fenrick/MiroDiagramming/commit/9c8ffcd0b1daee0a6fe880bf855eb07d63310e73))
+* **layout:** skip spacer nodes in results ([c9307ac](https://github.com/fenrick/MiroDiagramming/commit/c9307ace285707f5b4d925e8af927fa05faa7dff))
+* move to component ([f8c91fd](https://github.com/fenrick/MiroDiagramming/commit/f8c91fd92022dabd047265de1a9217a0007bc116))
+* rename tab ([4599771](https://github.com/fenrick/MiroDiagramming/commit/459977170324e86fa9626286bb3ef4673908ec53))
+* update package.json ([5d15ce1](https://github.com/fenrick/MiroDiagramming/commit/5d15ce1b7f84a2ab9b9273628eda8ccb72036055))
+
+
+### Features
+
+* **build:** add local CI script ([1ad4bd5](https://github.com/fenrick/MiroDiagramming/commit/1ad4bd53e2bf17fc41c7205038c9b46e075cc64e))
+* **layout:** add recursive ELK preprocessor ([0d8c087](https://github.com/fenrick/MiroDiagramming/commit/0d8c0878d1ff74700937ab98629497e793d3e3e9))
+* **layout:** integrate elk preprocessor and options ([bbacd8c](https://github.com/fenrick/MiroDiagramming/commit/bbacd8c5c3c948b33bc4f8c9fdf2e16fa3edaf34))
+* square aspect ratio ([9dc3e78](https://github.com/fenrick/MiroDiagramming/commit/9dc3e78a1114abf8bfe6c1c097e4c9f0e26f5ae9))
+
+
+### Performance Improvements
+
+* aspect-ratio.ts ([6cab979](https://github.com/fenrick/MiroDiagramming/commit/6cab9798890ed01f16dcad2be27cb3feee557dc4))
+* missed this ([a81ccd3](https://github.com/fenrick/MiroDiagramming/commit/a81ccd361a0e6a7f936fab00dd768a7ae1f2e9d4))
+* prettier ([bf2e29c](https://github.com/fenrick/MiroDiagramming/commit/bf2e29c7f0d7cc88beaa304ca6eec56711f64e96))
+* prettier ([52248cc](https://github.com/fenrick/MiroDiagramming/commit/52248cca7d92fc42b56c4f7864f111c790801f91))
+
 ## [1.16.1](https://github.com/fenrick/MiroDiagramming/compare/v1.16.0...v1.16.1) (2025-07-01)
 
 
