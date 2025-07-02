@@ -1,10 +1,10 @@
 import React from 'react';
 import { Flex } from '@mirohq/design-system';
-import { Checkbox as DSCheckbox } from '@mirohq/design-system';
+import { Switch as DSSwitch } from '@mirohq/design-system';
 
 export type CheckboxProps = Readonly<
   Omit<
-    React.ComponentProps<typeof DSCheckbox>,
+    React.ComponentProps<typeof DSSwitch>,
     | 'checked'
     | 'onChecked'
     | 'onUnchecked'
@@ -17,7 +17,7 @@ export type CheckboxProps = Readonly<
 >;
 
 /**
- * Checkbox wrapper bridging the legacy API to the design-system component.
+ * Checkbox wrapper implemented using the design-system `Switch` component.
  * It exposes a boolean `value` prop and triggers `onChange` when toggled.
  */
 export function Checkbox({
@@ -35,7 +35,7 @@ export function Checkbox({
 
   return (
     <Flex gap={200}>
-      <DSCheckbox
+      <DSSwitch
         id={inputId}
         checked={value}
         onChecked={() => handleChange(true)}

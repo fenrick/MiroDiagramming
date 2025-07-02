@@ -8,7 +8,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { Checkbox } from '../src/ui/components/Checkbox';
 
-test('Checkbox renders span for Mirotone styling', () => {
+test('renders label connected via htmlFor', () => {
   render(
     <Checkbox
       label='Option'
@@ -16,10 +16,9 @@ test('Checkbox renders span for Mirotone styling', () => {
       onChange={() => {}}
     />,
   );
-  const input = screen.getByRole('checkbox', { name: 'Option' });
-  expect(input.nextSibling).toBeInstanceOf(HTMLElement);
+  const control = screen.getByRole('switch', { name: 'Option' });
   const label = screen.getByText('Option').closest('label');
-  expect(label).toHaveAttribute('for', input.getAttribute('id'));
+  expect(label).toHaveAttribute('for', control.getAttribute('id'));
 });
 
 test('triggers onChange when toggled on', () => {
@@ -31,8 +30,8 @@ test('triggers onChange when toggled on', () => {
       onChange={handler}
     />,
   );
-  const input = screen.getByRole('checkbox', { name: 'Option' });
-  fireEvent.click(input);
+  const control = screen.getByRole('switch', { name: 'Option' });
+  fireEvent.click(control);
   expect(handler).toHaveBeenCalledWith(true);
 });
 
@@ -45,7 +44,7 @@ test('triggers onChange when toggled off', () => {
       onChange={handler}
     />,
   );
-  const input = screen.getByRole('checkbox', { name: 'Option' });
-  fireEvent.click(input);
+  const control = screen.getByRole('switch', { name: 'Option' });
+  fireEvent.click(control);
   expect(handler).toHaveBeenCalledWith(false);
 });
