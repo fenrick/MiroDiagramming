@@ -15,6 +15,16 @@ describe('Panel', () => {
     const { container } = render(<Panel padding='small'>content</Panel>);
     expect(container.firstChild).toHaveStyle(`padding: ${tokens.space.small}`);
   });
+
+  it('forwards additional props', () => {
+    const { getByTestId } = render(
+      <Panel
+        data-testid='panel'
+        style={{ background: 'red' }}
+      />,
+    );
+    expect(getByTestId('panel')).toHaveStyle('background: red');
+  });
 });
 
 describe('Section', () => {
@@ -26,5 +36,15 @@ describe('Section', () => {
   it('supports padding tokens', () => {
     const { container } = render(<Section padding='large'>content</Section>);
     expect(container.firstChild).toHaveStyle(`padding: ${tokens.space.large}`);
+  });
+
+  it('forwards additional props', () => {
+    const { getByTestId } = render(
+      <Section
+        data-testid='section'
+        style={{ background: 'blue' }}
+      />,
+    );
+    expect(getByTestId('section')).toHaveStyle('background: blue');
   });
 });

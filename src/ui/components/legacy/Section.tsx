@@ -9,8 +9,10 @@ export interface SectionProps
 }
 
 /**
- * Lightweight wrapper for subsections inside panels or forms. It exposes a
- * padding prop and forwards all other attributes to a div element.
+ * Lightweight wrapper for subsections inside panels or forms.
+ *
+ * The component exposes a padding prop and merges extra `style` properties
+ * before forwarding all other attributes to the underlying div element.
  */
 export const Section = React.forwardRef<HTMLDivElement, SectionProps>(
   function Section({ padding = 'small', style, ...props }, ref) {
