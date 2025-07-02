@@ -5,7 +5,7 @@ import '@testing-library/jest-dom';
 import { ResizeTab } from '../src/ui/pages/ResizeTab';
 import { StyleTab } from '../src/ui/pages/StyleTab';
 import { ArrangeTab } from '../src/ui/pages/ArrangeTab';
-import { DiagramTab } from '../src/ui/pages/DiagramTab';
+import { StructuredTab } from '../src/ui/pages/StructuredTab';
 import { CardsTab } from '../src/ui/pages/CardsTab';
 import { FramesTab } from '../src/ui/pages/FramesTab';
 import { STYLE_PRESET_NAMES } from '../src/ui/style-presets';
@@ -57,7 +57,7 @@ describe('tab components', () => {
     ['ResizeTab', ResizeTab],
     ['StyleTab', StyleTab],
     ['ArrangeTab', ArrangeTab],
-    ['DiagramTab', DiagramTab],
+    ['StructuredTab', StructuredTab],
     ['CardsTab', CardsTab],
     ['FramesTab', FramesTab],
   ];
@@ -316,12 +316,12 @@ describe('tab components', () => {
     expect(spy).toHaveBeenCalled();
   });
 
-  test('DiagramTab processes file', async () => {
+  test('StructuredTab processes file', async () => {
     const spy = jest
       .spyOn(GraphProcessor.prototype, 'processFile')
       .mockResolvedValue(undefined as unknown as void);
     await act(async () => {
-      render(React.createElement(DiagramTab));
+      render(React.createElement(StructuredTab));
     });
     const input = screen.getByTestId('file-input');
     const file = new File(['{}'], 'graph.json', { type: 'application/json' });

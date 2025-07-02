@@ -58,9 +58,7 @@ describe('App UI integration', () => {
       .spyOn(CardProcessor.prototype, 'processFile')
       .mockResolvedValue(undefined);
     render(React.createElement(App));
-    fireEvent.change(screen.getByRole('combobox'), {
-      target: { value: 'cards' },
-    });
+    fireEvent.click(screen.getByRole('tab', { name: 'Cards' }));
     await act(async () => {
       selectFile();
     });
@@ -71,11 +69,13 @@ describe('App UI integration', () => {
     expect(spy).toHaveBeenCalled();
   });
 
-  test('mode dropdown switches value', () => {
+  test('nested tabs switch mode', () => {
     render(React.createElement(App));
-    const combo = screen.getByRole('combobox');
-    fireEvent.change(combo, { target: { value: 'cards' } });
-    expect(combo).toHaveValue('cards');
+    fireEvent.click(screen.getByRole('tab', { name: 'Cards' }));
+    expect(
+      (screen.getByRole('tab', { name: 'Cards' }) as HTMLButtonElement)
+        .classList,
+    ).toContain('tab-active');
   });
 
   test('dropzone has accessibility attributes', () => {
