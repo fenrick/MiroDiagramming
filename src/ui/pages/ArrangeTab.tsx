@@ -3,7 +3,6 @@ import {
   Button,
   Checkbox,
   InputField,
-  Panel,
   Select,
   SelectOption,
 } from '../components';
@@ -61,127 +60,125 @@ export const ArrangeTab: React.FC = () => {
 
   return (
     <TabPanel tabId='arrange'>
-      <Panel padding='small'>
-        <TabGrid columns={2}>
+      <TabGrid columns={2}>
+        <InputField
+          label='Columns'
+          as='input'
+          options={{
+            className: 'input input-small',
+            type: 'number',
+            value: String(grid.cols),
+            onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+              updateNumber('cols')(e.target.value),
+            placeholder: 'Columns',
+          }}
+        />
+        <InputField
+          label='Gap'
+          as='input'
+          options={{
+            className: 'input input-small',
+            type: 'number',
+            value: String(grid.padding),
+            onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+              updateNumber('padding')(e.target.value),
+            placeholder: 'Gap',
+          }}
+        />
+        <Checkbox
+          label='Sort by name'
+          value={Boolean(grid.sortByName)}
+          onChange={toggle('sortByName')}
+        />
+        {grid.sortByName && (
           <InputField
-            label='Columns'
+            label='Order'
+            as={Select}
+            options={{
+              value: grid.sortOrientation,
+              onChange: setOrientation,
+              className: 'select-small',
+            }}>
+            <SelectOption value='horizontal'>Horizontally</SelectOption>
+            <SelectOption value='vertical'>Vertically</SelectOption>
+          </InputField>
+        )}
+        <Checkbox
+          label='Group items into Frame'
+          value={Boolean(grid.groupResult)}
+          onChange={toggle('groupResult')}
+        />
+        {grid.groupResult && (
+          <InputField
+            label='Frame Title'
+            as='input'
+            options={{
+              className: 'input input-small',
+              value: frameTitle,
+              onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+                setFrameTitle(e.target.value),
+              placeholder: 'Optional',
+            }}
+          />
+        )}
+        <div className='buttons'>
+          <Button
+            onClick={applyGrid}
+            variant='primary'>
+            <React.Fragment>
+              <Icon name='grid' />
+              <Text>Arrange Grid</Text>
+            </React.Fragment>
+          </Button>
+        </div>
+
+        <div className='form-group-small'>
+          <InputField
+            label='Axis'
+            as={Select}
+            options={{
+              value: spacing.axis,
+              onChange: updateAxis,
+              className: 'select-small',
+            }}>
+            <SelectOption value='x'>Horizontal</SelectOption>
+            <SelectOption value='y'>Vertical</SelectOption>
+          </InputField>
+          <InputField
+            label='Mode'
+            as={Select}
+            options={{
+              value: spacing.mode ?? 'move',
+              onChange: updateMode,
+              className: 'select-small',
+            }}>
+            <SelectOption value='move'>Move</SelectOption>
+            <SelectOption value='grow'>Expand</SelectOption>
+          </InputField>
+          <InputField
+            label='Spacing'
             as='input'
             options={{
               className: 'input input-small',
               type: 'number',
-              value: String(grid.cols),
+              value: String(spacing.spacing),
               onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
-                updateNumber('cols')(e.target.value),
-              placeholder: 'Columns',
+                updateSpacing(e.target.value),
+              placeholder: 'Distance',
             }}
           />
-          <InputField
-            label='Gap'
-            as='input'
-            options={{
-              className: 'input input-small',
-              type: 'number',
-              value: String(grid.padding),
-              onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
-                updateNumber('padding')(e.target.value),
-              placeholder: 'Gap',
-            }}
-          />
-          <Checkbox
-            label='Sort by name'
-            value={Boolean(grid.sortByName)}
-            onChange={toggle('sortByName')}
-          />
-          {grid.sortByName && (
-            <InputField
-              label='Order'
-              as={Select}
-              options={{
-                value: grid.sortOrientation,
-                onChange: setOrientation,
-                className: 'select-small',
-              }}>
-              <SelectOption value='horizontal'>Horizontally</SelectOption>
-              <SelectOption value='vertical'>Vertically</SelectOption>
-            </InputField>
-          )}
-          <Checkbox
-            label='Group items into Frame'
-            value={Boolean(grid.groupResult)}
-            onChange={toggle('groupResult')}
-          />
-          {grid.groupResult && (
-            <InputField
-              label='Frame Title'
-              as='input'
-              options={{
-                className: 'input input-small',
-                value: frameTitle,
-                onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
-                  setFrameTitle(e.target.value),
-                placeholder: 'Optional',
-              }}
-            />
-          )}
           <div className='buttons'>
             <Button
-              onClick={applyGrid}
+              onClick={applySpacing}
               variant='primary'>
               <React.Fragment>
-                <Icon name='grid' />
-                <Text>Arrange Grid</Text>
+                <Icon name='arrow-right' />
+                <Text>Distribute</Text>
               </React.Fragment>
             </Button>
           </div>
-
-          <div className='form-group-small'>
-            <InputField
-              label='Axis'
-              as={Select}
-              options={{
-                value: spacing.axis,
-                onChange: updateAxis,
-                className: 'select-small',
-              }}>
-              <SelectOption value='x'>Horizontal</SelectOption>
-              <SelectOption value='y'>Vertical</SelectOption>
-            </InputField>
-            <InputField
-              label='Mode'
-              as={Select}
-              options={{
-                value: spacing.mode ?? 'move',
-                onChange: updateMode,
-                className: 'select-small',
-              }}>
-              <SelectOption value='move'>Move</SelectOption>
-              <SelectOption value='grow'>Expand</SelectOption>
-            </InputField>
-            <InputField
-              label='Spacing'
-              as='input'
-              options={{
-                className: 'input input-small',
-                type: 'number',
-                value: String(spacing.spacing),
-                onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
-                  updateSpacing(e.target.value),
-                placeholder: 'Distance',
-              }}
-            />
-            <div className='buttons'>
-              <Button
-                onClick={applySpacing}
-                variant='primary'>
-                <React.Fragment>
-                  <Icon name='arrow-right' />
-                  <Text>Distribute</Text>
-                </React.Fragment>
-              </Button>
-            </div>
-          </div>
-        </TabGrid>
-      </Panel>
+        </div>
+      </TabGrid>
     </TabPanel>
   );
 };

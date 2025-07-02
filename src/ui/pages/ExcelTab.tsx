@@ -3,11 +3,11 @@ import {
   Button,
   Checkbox,
   InputField,
-  Panel,
+  Paragraph,
   Select,
   SelectOption,
 } from '../components';
-import { Paragraph, Text, Icon } from '../components/legacy';
+import { Text, Icon } from '../components/legacy';
 import {
   excelLoader,
   graphExcelLoader,
@@ -133,166 +133,161 @@ export const ExcelTab: React.FC = () => {
 
   return (
     <TabPanel tabId='excel'>
-      <Panel padding='small'>
-        <div
-          {...dropzone.getRootProps({ style })}
-          aria-label='Excel drop area'>
-          <InputField
-            label='Excel file'
-            as='input'
-            options={{
-              'data-testid': 'file-input',
-              ...dropzone.getInputProps(),
-            }}
-          />
-        </div>
+      <div
+        {...dropzone.getRootProps({ style })}
+        aria-label='Excel drop area'>
         <InputField
-          label='OneDrive/SharePoint file'
+          label='Excel file'
           as='input'
-          options={{
-            'value': remote,
-            'onChange': (e: React.ChangeEvent<HTMLInputElement>) =>
-              setRemote(e.target.value),
-            'aria-label': 'graph file',
-          }}
+          options={{ 'data-testid': 'file-input', ...dropzone.getInputProps() }}
         />
-        <Button
-          onClick={fetchRemote}
-          variant='secondary'>
-          Fetch File
-        </Button>
-        {loader.listSheets().length > 0 && (
-          <>
-            <InputField
-              label='Data source'
-              as={Select}
-              options={{
-                'value': source,
-                'onChange': setSource,
-                'aria-label': 'Data source',
-              }}>
-              <SelectOption value=''>Select…</SelectOption>
-              {loader.listSheets().map((s) => (
-                <SelectOption
-                  key={`s-${s}`}
-                  value={`sheet:${s}`}>
-                  Sheet: {s}
-                </SelectOption>
-              ))}
-              {loader.listNamedTables().map((t) => (
-                <SelectOption
-                  key={`t-${t}`}
-                  value={`table:${t}`}>
-                  Table: {t}
-                </SelectOption>
-              ))}
-            </InputField>
+      </div>
+      <InputField
+        label='OneDrive/SharePoint file'
+        as='input'
+        options={{
+          'value': remote,
+          'onChange': (e: React.ChangeEvent<HTMLInputElement>) =>
+            setRemote(e.target.value),
+          'aria-label': 'graph file',
+        }}
+      />
+      <Button
+        onClick={fetchRemote}
+        variant='secondary'>
+        Fetch File
+      </Button>
+      {loader.listSheets().length > 0 && (
+        <>
+          <InputField
+            label='Data source'
+            as={Select}
+            options={{
+              'value': source,
+              'onChange': setSource,
+              'aria-label': 'Data source',
+            }}>
+            <SelectOption value=''>Select…</SelectOption>
+            {loader.listSheets().map((s) => (
+              <SelectOption
+                key={`s-${s}`}
+                value={`sheet:${s}`}>
+                Sheet: {s}
+              </SelectOption>
+            ))}
+            {loader.listNamedTables().map((t) => (
+              <SelectOption
+                key={`t-${t}`}
+                value={`table:${t}`}>
+                Table: {t}
+              </SelectOption>
+            ))}
+          </InputField>
+          <Button
+            onClick={loadRows}
+            variant='secondary'>
+            Load Rows
+          </Button>
+        </>
+      )}
+      {rows.length > 0 && (
+        <>
+          <InputField
+            label='Template'
+            as={Select}
+            options={{
+              'value': template,
+              'onChange': setTemplate,
+              'aria-label': 'Template',
+            }}>
+            {Object.keys(templateManager.templates).map((tpl) => (
+              <SelectOption
+                key={tpl}
+                value={tpl}>
+                {tpl}
+              </SelectOption>
+            ))}
+          </InputField>
+          <InputField
+            label='Label column'
+            as={Select}
+            options={{
+              'value': labelColumn,
+              'onChange': setLabelColumn,
+              'aria-label': 'Label column',
+            }}>
+            <SelectOption value=''>None</SelectOption>
+            {columns.map((c) => (
+              <SelectOption
+                key={`l-${c}`}
+                value={c}>
+                {c}
+              </SelectOption>
+            ))}
+          </InputField>
+          <InputField
+            label='Template column'
+            as={Select}
+            options={{
+              'value': templateColumn,
+              'onChange': setTemplateColumn,
+              'aria-label': 'Template column',
+            }}>
+            <SelectOption value=''>None</SelectOption>
+            {columns.map((c) => (
+              <SelectOption
+                key={`tcol-${c}`}
+                value={c}>
+                {c}
+              </SelectOption>
+            ))}
+          </InputField>
+          <InputField
+            label='ID column'
+            as={Select}
+            options={{
+              'value': idColumn,
+              'onChange': setIdColumn,
+              'aria-label': 'ID column',
+            }}>
+            <SelectOption value=''>None</SelectOption>
+            {columns.map((c) => (
+              <SelectOption
+                key={`i-${c}`}
+                value={c}>
+                {c}
+              </SelectOption>
+            ))}
+          </InputField>
+          <ul style={{ maxHeight: 160, overflowY: 'auto' }}>
+            {rows.map((r, i) => (
+              <li key={idColumn ? String(r[idColumn]) : JSON.stringify(r)}>
+                <Checkbox
+                  label={`Row ${i + 1}`}
+                  value={selected.has(i)}
+                  onChange={() => toggle(i)}
+                />
+                <Paragraph>{JSON.stringify(r)}</Paragraph>
+              </li>
+            ))}
+          </ul>
+          <div className='buttons'>
             <Button
-              onClick={loadRows}
-              variant='secondary'>
-              Load Rows
+              onClick={handleCreate}
+              variant='primary'>
+              <React.Fragment key='.0'>
+                <Icon name='plus' />
+                <Text>Create Nodes</Text>
+              </React.Fragment>
             </Button>
-          </>
-        )}
-        {rows.length > 0 && (
-          <>
-            <InputField
-              label='Template'
-              as={Select}
-              options={{
-                'value': template,
-                'onChange': setTemplate,
-                'aria-label': 'Template',
-              }}>
-              {Object.keys(templateManager.templates).map((tpl) => (
-                <SelectOption
-                  key={tpl}
-                  value={tpl}>
-                  {tpl}
-                </SelectOption>
-              ))}
-            </InputField>
-            <InputField
-              label='Label column'
-              as={Select}
-              options={{
-                'value': labelColumn,
-                'onChange': setLabelColumn,
-                'aria-label': 'Label column',
-              }}>
-              <SelectOption value=''>None</SelectOption>
-              {columns.map((c) => (
-                <SelectOption
-                  key={`l-${c}`}
-                  value={c}>
-                  {c}
-                </SelectOption>
-              ))}
-            </InputField>
-            <InputField
-              label='Template column'
-              as={Select}
-              options={{
-                'value': templateColumn,
-                'onChange': setTemplateColumn,
-                'aria-label': 'Template column',
-              }}>
-              <SelectOption value=''>None</SelectOption>
-              {columns.map((c) => (
-                <SelectOption
-                  key={`tcol-${c}`}
-                  value={c}>
-                  {c}
-                </SelectOption>
-              ))}
-            </InputField>
-            <InputField
-              label='ID column'
-              as={Select}
-              options={{
-                'value': idColumn,
-                'onChange': setIdColumn,
-                'aria-label': 'ID column',
-              }}>
-              <SelectOption value=''>None</SelectOption>
-              {columns.map((c) => (
-                <SelectOption
-                  key={`i-${c}`}
-                  value={c}>
-                  {c}
-                </SelectOption>
-              ))}
-            </InputField>
-            <ul style={{ maxHeight: 160, overflowY: 'auto' }}>
-              {rows.map((r, i) => (
-                <li key={idColumn ? String(r[idColumn]) : JSON.stringify(r)}>
-                  <Checkbox
-                    label={`Row ${i + 1}`}
-                    value={selected.has(i)}
-                    onChange={() => toggle(i)}
-                  />
-                  <Paragraph>{JSON.stringify(r)}</Paragraph>
-                </li>
-              ))}
-            </ul>
-            <div className='buttons'>
-              <Button
-                onClick={handleCreate}
-                variant='primary'>
-                <React.Fragment key='.0'>
-                  <Icon name='plus' />
-                  <Text>Create Nodes</Text>
-                </React.Fragment>
-              </Button>
-            </div>
-          </>
-        )}
-        <RowInspector
-          rows={rows}
-          idColumn={idColumn || undefined}
-          onUpdate={updateRow}
-        />
-      </Panel>
+          </div>
+        </>
+      )}
+      <RowInspector
+        rows={rows}
+        idColumn={idColumn || undefined}
+        onUpdate={updateRow}
+      />
     </TabPanel>
   );
 };

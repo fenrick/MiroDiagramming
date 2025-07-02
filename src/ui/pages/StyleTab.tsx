@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, InputField, Panel } from '../components';
+import { Button, InputField } from '../components';
 import { Icon, Text } from '../components/legacy';
 import { tweakFillColor, extractFillColor } from '../../board/style-tools';
 import { applyStylePreset, presetStyle } from '../../board/format-tools';
@@ -31,95 +31,93 @@ export const StyleTab: React.FC = () => {
   };
   return (
     <TabPanel tabId='style'>
-      <Panel padding='small'>
-        <TabGrid columns={2}>
-          <InputField label='Adjust fill'>
-            <input
-              data-testid='adjust-slider'
-              type='range'
-              min='-100'
-              max='100'
-              list='adjust-marks'
-              value={adjust}
-              onChange={(e) => setAdjust(Number(e.target.value))}
-            />
-            <datalist id='adjust-marks'>
-              {[-100, -50, 0, 50, 100].map((n) => (
-                <option
-                  key={n}
-                  value={n}
-                />
-              ))}
-            </datalist>
-            <span
-              data-testid='adjust-preview'
-              style={{
-                display: 'inline-block',
-                width: '24px',
-                height: '24px',
-                marginLeft: tokens.space.small,
-                border: `1px solid ${tokens.color.gray[200]}`,
-                backgroundColor: preview,
-              }}
-            />
-            <code
-              data-testid='color-hex'
-              style={{ marginLeft: tokens.space.xxsmall }}>
-              {preview}
-            </code>
-          </InputField>
-          <InputField label='Adjust value'>
-            <input
-              className='input input-small'
-              data-testid='adjust-input'
-              type='number'
-              min='-100'
-              max='100'
-              value={String(adjust)}
-              onChange={(e) => setAdjust(Number(e.target.value))}
-              placeholder='Adjust (-100–100)'
-            />
-          </InputField>
-          <div className='buttons'>
-            <Button
-              onClick={apply}
-              type='button'
-              variant='primary'>
-              <React.Fragment>
-                <Icon name='parameters' />
-                <Text>Apply</Text>
-              </React.Fragment>
-            </Button>
-          </div>
-          <Heading level={2}>Style presets</Heading>
-          <div className='buttons'>
-            {STYLE_PRESET_NAMES.map((name) => {
-              const preset = stylePresets[name];
-              const style = presetStyle(preset);
-              return (
-                <Button
-                  key={name}
-                  onClick={() => applyStylePreset(preset)}
-                  type='button'
-                  variant='secondary'>
-                  <span
-                    style={{
-                      color: style.color,
-                      backgroundColor: style.fillColor,
-                      borderColor: style.borderColor,
-                      borderWidth: style.borderWidth,
-                      borderStyle: 'solid',
-                      display: 'inline-block',
-                      padding: '0 4px',
-                    }}>
-                    {preset.label}
-                  </span>
-                </Button>
-              );
-            })}
-          </div>
-        </TabGrid>
-      </Panel>
+      <TabGrid columns={2}>
+        <InputField label='Adjust fill'>
+          <input
+            data-testid='adjust-slider'
+            type='range'
+            min='-100'
+            max='100'
+            list='adjust-marks'
+            value={adjust}
+            onChange={(e) => setAdjust(Number(e.target.value))}
+          />
+          <datalist id='adjust-marks'>
+            {[-100, -50, 0, 50, 100].map((n) => (
+              <option
+                key={n}
+                value={n}
+              />
+            ))}
+          </datalist>
+          <span
+            data-testid='adjust-preview'
+            style={{
+              display: 'inline-block',
+              width: '24px',
+              height: '24px',
+              marginLeft: tokens.space.small,
+              border: `1px solid ${tokens.color.gray[200]}`,
+              backgroundColor: preview,
+            }}
+          />
+          <code
+            data-testid='color-hex'
+            style={{ marginLeft: tokens.space.xxsmall }}>
+            {preview}
+          </code>
+        </InputField>
+        <InputField label='Adjust value'>
+          <input
+            className='input input-small'
+            data-testid='adjust-input'
+            type='number'
+            min='-100'
+            max='100'
+            value={String(adjust)}
+            onChange={(e) => setAdjust(Number(e.target.value))}
+            placeholder='Adjust (-100–100)'
+          />
+        </InputField>
+        <div className='buttons'>
+          <Button
+            onClick={apply}
+            type='button'
+            variant='primary'>
+            <React.Fragment>
+              <Icon name='parameters' />
+              <Text>Apply</Text>
+            </React.Fragment>
+          </Button>
+        </div>
+        <Heading level={2}>Style presets</Heading>
+        <div className='buttons'>
+          {STYLE_PRESET_NAMES.map((name) => {
+            const preset = stylePresets[name];
+            const style = presetStyle(preset);
+            return (
+              <Button
+                key={name}
+                onClick={() => applyStylePreset(preset)}
+                type='button'
+                variant='secondary'>
+                <span
+                  style={{
+                    color: style.color,
+                    backgroundColor: style.fillColor,
+                    borderColor: style.borderColor,
+                    borderWidth: style.borderWidth,
+                    borderStyle: 'solid',
+                    display: 'inline-block',
+                    padding: '0 4px',
+                  }}>
+                  {preset.label}
+                </span>
+              </Button>
+            );
+          })}
+        </div>
+      </TabGrid>
     </TabPanel>
   );
 };

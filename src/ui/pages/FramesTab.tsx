@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, InputField, Panel } from '../components';
+import { Button, InputField } from '../components';
 import { Icon, Text } from '../components/legacy';
 import {
   lockSelectedFrames,
@@ -22,44 +22,38 @@ export const FramesTab: React.FC = () => {
   };
   return (
     <TabPanel tabId='frames'>
-      <Panel padding='small'>
-        <TabGrid columns={2}>
-          <section>
-            <Heading level={2}>Rename Frames</Heading>
-            <InputField label='Prefix'>
-              <input
-                className='input input-small'
-                value={prefix}
-                onChange={(e) => setPrefix(e.target.value)}
-                placeholder='Prefix'
-              />
-            </InputField>
-            <div className='buttons'>
-              <Button
-                onClick={rename}
-                variant='primary'>
-                <React.Fragment key='.0'>
-                  <Icon name='edit' />
-                  <Text>Rename Frames</Text>
-                </React.Fragment>
-              </Button>
-            </div>
-          </section>
-          <section>
-            <Heading level={2}>Lock Frames</Heading>
-            <div className='buttons'>
-              <Button
-                onClick={lock}
-                variant='secondary'>
-                <React.Fragment key='.1'>
-                  <Icon name='lock' />
-                  <Text>Lock Selected</Text>
-                </React.Fragment>
-              </Button>
-            </div>
-          </section>
-        </TabGrid>
-      </Panel>
+      <TabGrid columns={2}>
+        <Heading level={2}>Rename Frames</Heading>
+        <InputField label='Prefix'>
+          <input
+            className='input input-small'
+            value={prefix}
+            onChange={(e) => setPrefix(e.target.value)}
+            placeholder='Prefix'
+          />
+        </InputField>
+        <div className='buttons'>
+          <Button
+            onClick={rename}
+            variant='primary'>
+            <React.Fragment key='.0'>
+              <Icon name='edit' />
+              <Text>Rename Frames</Text>
+            </React.Fragment>
+          </Button>
+        </div>
+        <Heading level={2}>Lock Frames</Heading>
+        <div className='buttons'>
+          <Button
+            onClick={lock}
+            variant='secondary'>
+            <React.Fragment key='.1'>
+              <Icon name='lock' />
+              <Text>Lock Selected</Text>
+            </React.Fragment>
+          </Button>
+        </div>
+      </TabGrid>
     </TabPanel>
   );
 };
