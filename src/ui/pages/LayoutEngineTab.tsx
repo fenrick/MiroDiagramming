@@ -1,5 +1,5 @@
 import React from 'react';
-import { Paragraph } from '../components/legacy/Paragraph';
+import { Paragraph } from '../components/Paragraph';
 import { tokens } from '../tokens';
 import { Panel } from '../components';
 
