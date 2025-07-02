@@ -1,4 +1,5 @@
 import React from 'react';
+import { Form, Input } from '@mirohq/design-system';
 
 export type InputFieldProps = Readonly<
   Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'> & {
@@ -6,37 +7,26 @@ export type InputFieldProps = Readonly<
     label: React.ReactNode;
     /** Optional custom form control. If omitted, a text input is rendered. */
     children?: React.ReactNode;
-    /** Class applied to the surrounding label element. */
-    wrapperClassName?: string;
     /** Change handler returning the input value. */
     onChange?: (value: string) => void;
   }
 >;
 
 /** Single component combining label and input control. */
-export function InputField({
-  label,
-  children,
-  wrapperClassName = '',
-  className = '',
-  onChange,
-  id,
-  ...props
-}: InputFieldProps): React.JSX.Element {
-  const generatedId = React.useId();
-  const inputId = id ?? generatedId;
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    onChange?.(e.target.value);
-  };
-  let control: React.ReactNode;
-  if (
-    children &&
-    React.isValidElement(children) &&
-    children.type !== React.Fragment
-  ) {
-    control = React.cloneElement(
-      children as React.ReactElement,
-      {
+export const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
+  function InputField({ label, children, onChange, id, ...props }, ref) {
+    const generatedId = React.useId();
+    const inputId = id ?? generatedId;
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+      onChange?.(e.target.value);
+    };
+    let control: React.ReactNode;
+    if (
+      children &&
+      React.isValidElement(children) &&
+      children.type !== React.Fragment
+    ) {
+      control = React.cloneElement(children as React.ReactElement, {
         id: inputId,
         onChange: (e: React.ChangeEvent<HTMLInputElement>): void => {
           (
@@ -46,29 +36,25 @@ export function InputField({
           ).onChange?.(e);
           handleChange(e);
         },
-      } as Partial<React.ComponentProps<'input'>>,
-    );
-  } else if (children) {
-    control = children;
-  } else {
-    control = (
-      <input
-        id={inputId}
-        className={`input ${className}`.trim()}
-        onChange={handleChange}
-        {...props}
-      />
-    );
-  }
+      });
+    } else if (children) {
+      control = children;
+    } else {
+      control = (
+        <Input
+          id={inputId}
+          onChange={handleChange}
+          ref={ref}
+          {...(props as React.ComponentProps<typeof Input>)}
+        />
+      );
+    }
 
-  return (
-    <div className='form-group-small'>
-      <label
-        htmlFor={inputId}
-        className={wrapperClassName}>
-        {label}
-      </label>
-      {control}
-    </div>
-  );
-}
+    return (
+      <Form.Field>
+        <Form.Label htmlFor={inputId}>{label}</Form.Label>
+        {control}
+      </Form.Field>
+    );
+  },
+);
