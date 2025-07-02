@@ -9,6 +9,7 @@ Explains how to:
 
 - Adopt the **@mirohq/design-system** components to ensure 100% alignment with
   Miro visuals.
+- Use **@mirohq/design-system** components directly for new features.
 - Use the lightweight wrapper components in `src/ui/components/legacy` until
   migration completes.
 - Meet the accessibility, performance and quality gates defined in
@@ -37,19 +38,19 @@ import '@mirohq/design-system-themes/light.css';
 Only props that junior devs **must** supply are shown. Use the wrapper
 components or compose using the design system tokens.
 
-| Name           | Core props                 | Variants                  | Default height (px) |
-| -------------- | -------------------------- | ------------------------- | ------------------- |
-| **Button**     | label, onClick, disabled   | primary, secondary, ghost | 32                  |
-| **InputField** | value, onChange            | text, number              | 32                  |
-| **Select**     | options, value, onChange   | single, multi             | 32                  |
-| **Checkbox**   | checked, onChange          | —                         | 20                  |
-| **Modal**      | title, isOpen, onClose     | small, medium             | auto                |
-| _SidebarTab_   | id, icon, title            | persistent, modal         | fill                |
-| _TabBar_       | tabs, tab, onChange, size? | regular, small            | 48                  |
-| **Grid**       | gap, columns               | responsive                | n/a                 |
-| **Stack**      | gap, direction             | vertical, horizontal      | n/a                 |
-| **Cluster**    | gap, align                 | left, right, centre       | n/a                 |
-| **TabGrid**    | columns, className?        | —                         | n/a                 |
+| Name         | Core props                 | Variants                  | Default height (px) |
+| ------------ | -------------------------- | ------------------------- | ------------------- |
+| **Button**   | label, onClick, disabled   | primary, secondary, ghost | 32                  |
+| **Input**    | value, onChange            | text, number              | 32                  |
+| **Select**   | options, value, onChange   | single, multi             | 32                  |
+| **Checkbox** | checked, onChange          | —                         | 20                  |
+| **Modal**    | title, isOpen, onClose     | small, medium             | auto                |
+| _SidebarTab_ | id, icon, title            | persistent, modal         | fill                |
+| _TabBar_     | tabs, tab, onChange, size? | regular, small            | 48                  |
+| **Grid**     | gap, columns               | responsive                | n/a                 |
+| **Stack**    | gap, direction             | vertical, horizontal      | n/a                 |
+| **Cluster**  | gap, align                 | left, right, centre       | n/a                 |
+| **TabGrid**  | columns, className?        | —                         | n/a                 |
 
 The **TabBar** component now covers both sidebar and nested navigation. Pass the
 current tab id via `tab` and handle selection with `onChange`. Use
@@ -88,11 +89,14 @@ current tab id via `tab` and handle selection with `onChange`. Use
 <Stack
   gap='12'
   direction='vertical'>
-  <InputField
-    label='Title'
-    value={title}
-    onChange={setTitle}
-  />
+  <Form.Field>
+    <Form.Label htmlFor='title'>Title</Form.Label>
+    <Input
+      id='title'
+      value={title}
+      onChange={(e) => setTitle(e.target.value)}
+    />
+  </Form.Field>
 </Stack>
 ```
 
@@ -130,13 +134,16 @@ current tab id via `tab` and handle selection with `onChange`. Use
     <Stack
       gap='12'
       direction='vertical'>
-      <InputField
-        label='Title'
-        required
-        placeholder='Title'
-        value={title}
-        onChange={setTitle}
-      />
+      <Form.Field>
+        <Form.Label htmlFor='title2'>Title</Form.Label>
+        <Input
+          id='title2'
+          required
+          placeholder='Title'
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+      </Form.Field>
       <textarea
         className='textarea resize-auto'
         placeholder='Description'
@@ -164,8 +171,8 @@ current tab id via `tab` and handle selection with `onChange`. Use
 
 - First interactive control auto-focuses.
 - `Esc` always triggers `onClose`.
-- Browser validation bubbles up; error text appears via the **InputField**
-  `invalid` state.
+- Browser validation bubbles up; error text appears below the **Input** when
+  marked `invalid`.
 
 ---
 
