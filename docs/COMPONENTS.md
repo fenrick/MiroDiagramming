@@ -35,23 +35,24 @@ import 'mirotone/dist/styles.css';
 Only props that junior devs **must** supply are shown. Use the wrapper
 components or compose manually with Mirotone CSS.
 
-| Name           | Core props                 | Variants                  | Default height (px) |
-| -------------- | -------------------------- | ------------------------- | ------------------- |
-| **Button**     | label, onClick, disabled   | primary, secondary, ghost | 32                  |
-| **InputField** | value, onChange            | text, number              | 32                  |
-| **Select**     | options, value, onChange   | single, multi             | 32                  |
-| **Checkbox**   | checked, onChange          | —                         | 20                  |
-| **Modal**      | title, isOpen, onClose     | small, medium             | auto                |
-| _SidebarTab_   | id, icon, title            | persistent, modal         | fill                |
-| _TabBar_       | tabs, tab, onChange, size? | regular, small            | 48                  |
-| **Grid**       | gap, columns               | responsive                | n/a                 |
-| **Stack**      | gap, direction             | vertical, horizontal      | n/a                 |
-| **Cluster**    | gap, align                 | left, right, centre       | n/a                 |
-| **TabGrid**    | columns, className?        | —                         | n/a                 |
+| Name           | Core props                      | Variants                  | Default height (px) |
+| -------------- | ------------------------------- | ------------------------- | ------------------- |
+| **Button**     | label, onClick, disabled, icon? | primary, secondary, ghost | 32                  |
+| **InputField** | value, onChange                 | text, number              | 32                  |
+| **Select**     | options, value, onChange        | single, multi             | 32                  |
+| **Checkbox**   | checked, onChange               | —                         | 20                  |
+| **Modal**      | title, isOpen, onClose          | small, medium             | auto                |
+| _SidebarTab_   | id, icon, title                 | persistent, modal         | fill                |
+| _TabBar_       | tabs, tab, onChange, size?      | regular, small            | 48                  |
+| **Grid**       | gap, columns                    | responsive                | n/a                 |
+| **Stack**      | gap, direction                  | vertical, horizontal      | n/a                 |
+| **Cluster**    | gap, align                      | left, right, centre       | n/a                 |
+| **TabGrid**    | columns, className?             | —                         | n/a                 |
 
 The **TabBar** component now covers both sidebar and nested navigation. Pass the
 current tab id via `tab` and handle selection with `onChange`. Use
-`size='small'` for compact nested tab sets.
+`size='small'` for compact nested tab sets. Buttons accept an optional `icon`
+prop. Set `iconPosition="end"` to place the icon after the children.
 
 > **When a wrapper is missing**
 >
