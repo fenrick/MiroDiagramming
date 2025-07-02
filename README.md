@@ -167,7 +167,8 @@ older Mirotone wrappers remain under `src/ui/components/legacy`.
 When creating forms use the wrapper components so your inputs and buttons match
 the rest of the UI. These guidelines help keep layouts consistent:
 
-- Use `InputField` to pair labels with their controls.
+- Use `InputField` to pair labels with their controls. Provide the input
+  component via the `as` prop and pass component props through `options`.
 - `Button` and `InputField` wrap the design-system components so events and
   sizing tokens behave consistently.
 - Group related fields using `FormGroup` to maintain spacing and a clear

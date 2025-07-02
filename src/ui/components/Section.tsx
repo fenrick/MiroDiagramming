@@ -31,6 +31,7 @@ export const Section = React.forwardRef<HTMLDivElement, SectionProps>(
       className?: string;
       [key: string]: unknown;
     };
+    /* eslint-enable @typescript-eslint/no-unused-vars */
     return (
       <Primitive.div
         ref={ref}

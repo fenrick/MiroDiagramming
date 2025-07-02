@@ -32,6 +32,7 @@ export const Panel = React.forwardRef<HTMLDivElement, PanelProps>(
       className?: string;
       [key: string]: unknown;
     };
+    /* eslint-enable @typescript-eslint/no-unused-vars */
     return (
       <Primitive.section
         ref={ref}

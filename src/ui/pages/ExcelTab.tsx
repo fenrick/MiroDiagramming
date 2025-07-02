@@ -136,20 +136,25 @@ export const ExcelTab: React.FC = () => {
         <div
           {...dropzone.getRootProps({ style })}
           aria-label='Excel drop area'>
-          <InputField label='Excel file'>
-            <input
-              data-testid='file-input'
-              {...dropzone.getInputProps()}
-            />
-          </InputField>
-        </div>
-        <InputField label='OneDrive/SharePoint file'>
-          <input
-            value={remote}
-            onChange={(e) => setRemote(e.target.value)}
-            aria-label='graph file'
+          <InputField
+            label='Excel file'
+            as='input'
+            options={{
+              'data-testid': 'file-input',
+              ...dropzone.getInputProps(),
+            }}
           />
-        </InputField>
+        </div>
+        <InputField
+          label='OneDrive/SharePoint file'
+          as='input'
+          options={{
+            'value': remote,
+            'onChange': (e: React.ChangeEvent<HTMLInputElement>) =>
+              setRemote(e.target.value),
+            'aria-label': 'graph file',
+          }}
+        />
         <Button
           onClick={fetchRemote}
           variant='secondary'>
@@ -157,27 +162,29 @@ export const ExcelTab: React.FC = () => {
         </Button>
         {loader.listSheets().length > 0 && (
           <>
-            <InputField label='Data source'>
-              <Select
-                value={source}
-                onChange={setSource}
-                aria-label='Data source'>
-                <SelectOption value=''>Select…</SelectOption>
-                {loader.listSheets().map((s) => (
-                  <SelectOption
-                    key={`s-${s}`}
-                    value={`sheet:${s}`}>
-                    Sheet: {s}
-                  </SelectOption>
-                ))}
-                {loader.listNamedTables().map((t) => (
-                  <SelectOption
-                    key={`t-${t}`}
-                    value={`table:${t}`}>
-                    Table: {t}
-                  </SelectOption>
-                ))}
-              </Select>
+            <InputField
+              label='Data source'
+              as={Select}
+              options={{
+                'value': source,
+                'onChange': setSource,
+                'aria-label': 'Data source',
+              }}>
+              <SelectOption value=''>Select…</SelectOption>
+              {loader.listSheets().map((s) => (
+                <SelectOption
+                  key={`s-${s}`}
+                  value={`sheet:${s}`}>
+                  Sheet: {s}
+                </SelectOption>
+              ))}
+              {loader.listNamedTables().map((t) => (
+                <SelectOption
+                  key={`t-${t}`}
+                  value={`table:${t}`}>
+                  Table: {t}
+                </SelectOption>
+              ))}
             </InputField>
             <Button
               onClick={loadRows}
@@ -188,64 +195,72 @@ export const ExcelTab: React.FC = () => {
         )}
         {rows.length > 0 && (
           <>
-            <InputField label='Template'>
-              <Select
-                value={template}
-                onChange={setTemplate}
-                aria-label='Template'>
-                {Object.keys(templateManager.templates).map((tpl) => (
-                  <SelectOption
-                    key={tpl}
-                    value={tpl}>
-                    {tpl}
-                  </SelectOption>
-                ))}
-              </Select>
+            <InputField
+              label='Template'
+              as={Select}
+              options={{
+                'value': template,
+                'onChange': setTemplate,
+                'aria-label': 'Template',
+              }}>
+              {Object.keys(templateManager.templates).map((tpl) => (
+                <SelectOption
+                  key={tpl}
+                  value={tpl}>
+                  {tpl}
+                </SelectOption>
+              ))}
             </InputField>
-            <InputField label='Label column'>
-              <Select
-                value={labelColumn}
-                onChange={setLabelColumn}
-                aria-label='Label column'>
-                <SelectOption value=''>None</SelectOption>
-                {columns.map((c) => (
-                  <SelectOption
-                    key={`l-${c}`}
-                    value={c}>
-                    {c}
-                  </SelectOption>
-                ))}
-              </Select>
+            <InputField
+              label='Label column'
+              as={Select}
+              options={{
+                'value': labelColumn,
+                'onChange': setLabelColumn,
+                'aria-label': 'Label column',
+              }}>
+              <SelectOption value=''>None</SelectOption>
+              {columns.map((c) => (
+                <SelectOption
+                  key={`l-${c}`}
+                  value={c}>
+                  {c}
+                </SelectOption>
+              ))}
             </InputField>
-            <InputField label='Template column'>
-              <Select
-                value={templateColumn}
-                onChange={setTemplateColumn}
-                aria-label='Template column'>
-                <SelectOption value=''>None</SelectOption>
-                {columns.map((c) => (
-                  <SelectOption
-                    key={`tcol-${c}`}
-                    value={c}>
-                    {c}
-                  </SelectOption>
-                ))}
-              </Select>
+            <InputField
+              label='Template column'
+              as={Select}
+              options={{
+                'value': templateColumn,
+                'onChange': setTemplateColumn,
+                'aria-label': 'Template column',
+              }}>
+              <SelectOption value=''>None</SelectOption>
+              {columns.map((c) => (
+                <SelectOption
+                  key={`tcol-${c}`}
+                  value={c}>
+                  {c}
+                </SelectOption>
+              ))}
             </InputField>
-            <InputField label='ID column'>
-              <Select
-                value={idColumn}
-                onChange={setIdColumn}
-                aria-label='ID column'>
-                <SelectOption value=''>None</SelectOption>
-                {columns.map((c) => (
-                  <SelectOption
-                    key={`i-${c}`}
-                    value={c}>
-                    {c}
-                  </SelectOption>
-                ))}
-              </Select>
+            <InputField
+              label='ID column'
+              as={Select}
+              options={{
+                'value': idColumn,
+                'onChange': setIdColumn,
+                'aria-label': 'ID column',
+              }}>
+              <SelectOption value=''>None</SelectOption>
+              {columns.map((c) => (
+                <SelectOption
+                  key={`i-${c}`}
+                  value={c}>
+                  {c}
+                </SelectOption>
+              ))}
             </InputField>
             <ul style={{ maxHeight: 160, overflowY: 'auto' }}>
               {rows.map((r, i) => (
