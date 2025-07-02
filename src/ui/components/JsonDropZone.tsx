@@ -1,6 +1,8 @@
 import React from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Button, Icon, InputField, Paragraph, Text } from './legacy';
+import { Button } from './Button';
+import { InputField } from './InputField';
+import { Icon, Paragraph, Text } from './legacy';
 import { getDropzoneStyle } from '../hooks/ui-utils';
 import { tokens } from '../tokens';
 

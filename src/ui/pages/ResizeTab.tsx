@@ -1,8 +1,7 @@
 import React from 'react';
+import { Button, InputField, Panel, Section } from '../components';
 import {
-  Button,
   FormGroup,
-  InputField,
   Select,
   SelectOption,
   Paragraph,
@@ -30,7 +29,6 @@ import {
 import { TabPanel } from '../components/TabPanel';
 import { TabGrid } from '../components/TabGrid';
 import { Heading } from '@mirohq/design-system';
-import { Panel, Section } from '../components/legacy';
 
 /** Predefined button sizes used by the quick presets. */
 const PRESET_SIZES: Record<'S' | 'M' | 'L', Size> = {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { TabPanel } from '../components/TabPanel';
 import type { TabTuple } from './tab-definitions';
-import { Panel } from '../components/legacy';
+import { Panel } from '../components';
 
 /** Dummy tab for testing auto-registration. */
 export const DummyTab: React.FC = () => (

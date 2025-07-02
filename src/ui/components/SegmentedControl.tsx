@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from './legacy';
+import { Button } from './Button';
 
 export interface SegmentedOption {
   readonly label: string;

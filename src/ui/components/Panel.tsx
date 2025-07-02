@@ -1,10 +1,10 @@
 import React from 'react';
 import { Primitive } from '@mirohq/design-system';
-import { tokens } from '../../tokens';
+import { tokens } from '../tokens';
 
-export interface SectionProps
+export interface PanelProps
   extends Omit<
-    React.ComponentProps<typeof Primitive.div>,
+    React.ComponentProps<typeof Primitive.section>,
     'className' | 'style'
   > {
   /** Padding token defining the inner spacing. */
@@ -12,13 +12,14 @@ export interface SectionProps
 }
 
 /**
- * Lightweight wrapper for subsections inside panels or forms.
+ * Generic container used by tabs and modals.
  *
- * The component exposes a padding prop while ignoring custom class names and
- * inline styles so that spacing decisions remain centralised.
+ * The component sets consistent padding using design-system tokens and
+ * forwards standard HTML attributes. Custom class names and inline styles are
+ * intentionally ignored so that spacing stays consistent across tabs.
  */
-export const Section = React.forwardRef<HTMLDivElement, SectionProps>(
-  function Section({ padding = 'small', ...props }, ref) {
+export const Panel = React.forwardRef<HTMLDivElement, PanelProps>(
+  function Panel({ padding = 'medium', ...props }, ref) {
     const {
       style: _s,
       className: _c,
@@ -31,7 +32,7 @@ export const Section = React.forwardRef<HTMLDivElement, SectionProps>(
     void _s;
     void _c;
     return (
-      <Primitive.div
+      <Primitive.section
         ref={ref}
         style={{ padding: tokens.space[padding] }}
         {...rest}

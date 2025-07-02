@@ -6,7 +6,7 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { Checkbox } from '../src/ui/components/legacy/Checkbox';
+import { Checkbox } from '../src/ui/components/Checkbox';
 
 test('Checkbox renders span for Mirotone styling', () => {
   render(

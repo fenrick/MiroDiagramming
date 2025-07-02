@@ -159,8 +159,8 @@ complete UI flow.
 The CSS for this project imports `@mirohq/design-system-themes/light.css` in
 [`src/assets/style.css`](src/assets/style.css) to match the Miro UI. Components
 are sourced from `@mirohq/design-system`. Avoid custom CSS when a component or
-token already exists. Interactive elements should use the wrapper components
-under `src/ui/components/legacy` until migration is complete.
+token already exists. Use the wrapper components in `src/ui/components` while
+older Mirotone wrappers remain under `src/ui/components/legacy`.
 
 ## Form Design Guidelines
 
