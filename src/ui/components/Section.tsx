@@ -21,9 +21,9 @@ export const Section = React.forwardRef<HTMLDivElement, SectionProps>(
   function Section({ padding = 'small', ...props }, ref) {
     // Remove style and className so callers cannot override layout
     const {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       style: _style,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       className: _className,
       ...rest
     } = props as {
