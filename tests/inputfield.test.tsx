@@ -8,7 +8,7 @@ test('renders label and input', () => {
   render(
     <InputField
       label='Name'
-      value='x'
+      options={{ value: 'x' }}
       onChange={() => {}}
     />,
   );
@@ -31,14 +31,13 @@ test('calls onChange with value', () => {
   expect(handler).toHaveBeenCalledWith('42');
 });
 
-test('supports custom child element', () => {
+test('supports custom component', () => {
   render(
-    <InputField label='File'>
-      <input
-        data-testid='custom'
-        type='file'
-      />
-    </InputField>,
+    <InputField
+      label='File'
+      as='input'
+      options={{ 'data-testid': 'custom', 'type': 'file' }}
+    />,
   );
   const input = screen.getByTestId('custom');
   const label = screen.getByText('File');

@@ -113,22 +113,28 @@ export const SearchTab: React.FC = () => {
     <TabPanel tabId='search'>
       <Panel padding='small'>
         <TabGrid columns={2}>
-          <InputField label='Find'>
-            <input
-              className='input input-small'
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder='Search board text'
-            />
-          </InputField>
-          <InputField label='Replace'>
-            <input
-              className='input input-small'
-              value={replacement}
-              onChange={(e) => setReplacement(e.target.value)}
-              placeholder='Replacement text'
-            />
-          </InputField>
+          <InputField
+            label='Find'
+            as='input'
+            options={{
+              className: 'input input-small',
+              value: query,
+              onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+                setQuery(e.target.value),
+              placeholder: 'Search board text',
+            }}
+          />
+          <InputField
+            label='Replace'
+            as='input'
+            options={{
+              className: 'input input-small',
+              value: replacement,
+              onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+                setReplacement(e.target.value),
+              placeholder: 'Replacement text',
+            }}
+          />
           <div className='form-group-small'>
             <Checkbox
               label='Case sensitive'
@@ -159,46 +165,61 @@ export const SearchTab: React.FC = () => {
               ))}
             </div>
           </div>
-          <InputField label='Tag IDs'>
-            <input
-              className='input input-small'
-              value={tagIds}
-              onChange={(e) => setTagIds(e.target.value)}
-              placeholder='Comma separated'
-            />
-          </InputField>
-          <InputField label='Background colour'>
-            <input
-              className='input input-small'
-              value={backgroundColor}
-              onChange={(e) => setBackgroundColor(e.target.value)}
-              placeholder='CSS colour'
-            />
-          </InputField>
-          <InputField label='Assignee ID'>
-            <input
-              className='input input-small'
-              value={assignee}
-              onChange={(e) => setAssignee(e.target.value)}
-              placeholder='User ID'
-            />
-          </InputField>
-          <InputField label='Creator ID'>
-            <input
-              className='input input-small'
-              value={creator}
-              onChange={(e) => setCreator(e.target.value)}
-              placeholder='User ID'
-            />
-          </InputField>
-          <InputField label='Last modified by'>
-            <input
-              className='input input-small'
-              value={lastModifiedBy}
-              onChange={(e) => setLastModifiedBy(e.target.value)}
-              placeholder='User ID'
-            />
-          </InputField>
+          <InputField
+            label='Tag IDs'
+            as='input'
+            options={{
+              className: 'input input-small',
+              value: tagIds,
+              onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+                setTagIds(e.target.value),
+              placeholder: 'Comma separated',
+            }}
+          />
+          <InputField
+            label='Background colour'
+            as='input'
+            options={{
+              className: 'input input-small',
+              value: backgroundColor,
+              onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+                setBackgroundColor(e.target.value),
+              placeholder: 'CSS colour',
+            }}
+          />
+          <InputField
+            label='Assignee ID'
+            as='input'
+            options={{
+              className: 'input input-small',
+              value: assignee,
+              onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+                setAssignee(e.target.value),
+              placeholder: 'User ID',
+            }}
+          />
+          <InputField
+            label='Creator ID'
+            as='input'
+            options={{
+              className: 'input input-small',
+              value: creator,
+              onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+                setCreator(e.target.value),
+              placeholder: 'User ID',
+            }}
+          />
+          <InputField
+            label='Last modified by'
+            as='input'
+            options={{
+              className: 'input input-small',
+              value: lastModifiedBy,
+              onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+                setLastModifiedBy(e.target.value),
+              placeholder: 'User ID',
+            }}
+          />
           <Paragraph data-testid='match-count'>
             Matches: {results.length}
           </Paragraph>

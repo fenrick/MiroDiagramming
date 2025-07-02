@@ -20,7 +20,7 @@ export interface SectionProps
 export const Section = React.forwardRef<HTMLDivElement, SectionProps>(
   function Section({ padding = 'small', ...props }, ref) {
     // Remove style and className so callers cannot override layout
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    /* eslint-disable @typescript-eslint/no-unused-vars */
     const {
       style: _style,
       className: _className,
@@ -30,6 +30,7 @@ export const Section = React.forwardRef<HTMLDivElement, SectionProps>(
       className?: string;
       [key: string]: unknown;
     };
+    /* eslint-enable @typescript-eslint/no-unused-vars */
     return (
       <Primitive.div
         ref={ref}
