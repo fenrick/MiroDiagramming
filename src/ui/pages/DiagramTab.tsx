@@ -103,6 +103,8 @@ export const DiagramTab: React.FC = () => {
   const [layoutOpts, setLayoutOpts] = React.useState<UserLayoutOptions>(
     DEFAULT_LAYOUT_OPTIONS,
   );
+  const [nestedPadding, setNestedPadding] = React.useState(20);
+  const [nestedTopSpacing, setNestedTopSpacing] = React.useState(50);
   const [progress, setProgress] = React.useState<number>(0);
   const [error, setError] = React.useState<string | null>(null);
   const [lastProc, setLastProc] = React.useState<
@@ -117,7 +119,15 @@ export const DiagramTab: React.FC = () => {
 
   const handleCreate = useDiagramCreate(
     importQueue,
-    { layoutChoice, showAdvanced, withFrame, frameTitle, layoutOpts },
+    {
+      layoutChoice,
+      showAdvanced,
+      withFrame,
+      frameTitle,
+      layoutOpts,
+      nestedPadding,
+      nestedTopSpacing,
+    },
     setImportQueue,
     setProgress,
     setError,
@@ -305,6 +315,26 @@ export const DiagramTab: React.FC = () => {
                     </SelectOption>
                   ))}
                 </Select>
+              </InputField>
+            )}
+            {layoutChoice === 'Nested' && (
+              <InputField label='Padding'>
+                <input
+                  className='input'
+                  type='number'
+                  value={String(nestedPadding)}
+                  onChange={(e) => setNestedPadding(Number(e.target.value))}
+                />
+              </InputField>
+            )}
+            {layoutChoice === 'Nested' && (
+              <InputField label='Top spacing'>
+                <input
+                  className='input'
+                  type='number'
+                  value={String(nestedTopSpacing)}
+                  onChange={(e) => setNestedTopSpacing(Number(e.target.value))}
+                />
               </InputField>
             )}
           </details>

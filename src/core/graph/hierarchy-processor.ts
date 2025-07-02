@@ -22,6 +22,10 @@ export interface HierarchyProcessOptions {
   createFrame?: boolean;
   frameTitle?: string;
   sortKey?: string;
+  /** Spacing between sibling nodes. */
+  padding?: number;
+  /** Height of the invisible spacer inserted above children. */
+  topSpacing?: number;
 }
 
 /**
@@ -67,7 +71,11 @@ export class HierarchyProcessor extends UndoableProcessor<
     const data = Array.isArray(roots) ? roots : edgesToHierarchy(roots);
     if (!Array.isArray(data)) throw new Error('Invalid hierarchy');
     this.lastCreated = [];
-    const result = await layoutHierarchy(data, { sortKey: opts.sortKey });
+    const result = await layoutHierarchy(data, {
+      sortKey: opts.sortKey,
+      padding: opts.padding,
+      topSpacing: opts.topSpacing,
+    });
     const bounds = this.computeBounds(result);
     const margin = 40;
     const width = bounds.maxX - bounds.minX + margin * 2;
