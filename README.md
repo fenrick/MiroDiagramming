@@ -154,15 +154,13 @@ complete UI flow.
 - [TypeScript](https://www.typescriptlang.org/)
 - [Vite](https://vitejs.dev/)
 
-## Styling with Mirotone
+## Styling with the Miro Design System
 
-The CSS for this project imports
-[`mirotone/dist/styles.css`](https://www.mirotone.xyz/css) in
-[`src/assets/style.css`](src/assets/style.css) to match the Miro UI. When adding
-new UI elements reuse the Mirotone utility classes such as `button`,
-`button-primary` and the grid helpers so your components align with existing
-styles. Avoid custom CSS when a utility class exists. Interactive elements
-should use the wrapper components under `src/ui/components/legacy`.
+The CSS for this project imports `@mirohq/design-system-themes/light.css` in
+[`src/assets/style.css`](src/assets/style.css) to match the Miro UI. Components
+are sourced from `@mirohq/design-system`. Avoid custom CSS when a component or
+token already exists. Interactive elements should use the wrapper components
+under `src/ui/components/legacy` until migration is complete.
 
 ## Form Design Guidelines
 
@@ -176,8 +174,8 @@ the rest of the UI. These guidelines help keep layouts consistent:
   responsive.
 - Use values from `src/ui/tokens.ts` for margins and padding instead of
   hard‑coded numbers.
-- When customisation is needed prefer extending Mirotone variables over creating
-  bespoke CSS classes.
+- When customisation is needed prefer extending design-system tokens over
+  creating bespoke CSS classes.
 - Stick to the provided `Button` component and choose the `primary` variant for
   the main action. Place secondary actions on the right using the `buttons`
   wrapper as seen in the tabs.

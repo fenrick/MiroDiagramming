@@ -7,8 +7,10 @@
 Practical, step-by-step reference for junior engineers who build the add-on UI.
 Explains how to:
 
-- Consume the **Mirotone CSS** design language. ([mirotone.xyz][1])
-- Use the lightweight wrapper components in `src/ui/components/legacy`.
+- Adopt the **@mirohq/design-system** components to ensure 100% alignment with
+  Miro visuals.
+- Use the lightweight wrapper components in `src/ui/components/legacy` until
+  migration completes.
 - Meet the accessibility, performance and quality gates defined in
   **ARCHITECTURE.md** and **FOUNDATION.md**.
 
@@ -16,16 +18,16 @@ Explains how to:
 
 ## 1 Installing the design system layers
 
-| Layer               | Package            | Install command  | Notes                                                                        |
-| ------------------- | ------------------ | ---------------- | ---------------------------------------------------------------------------- |
-| Tokens & raw styles | **mirotone** (CSS) | `npm i mirotone` | Adds the `dist/styles.css` file and all utility classes. ([mirotone.xyz][1]) |
+| Layer               | Package                   | Install command               | Notes                                                                    |
+| ------------------- | ------------------------- | ----------------------------- | ------------------------------------------------------------------------ |
+| Tokens & components | **@mirohq/design-system** | `npm i @mirohq/design-system` | Provides React components and design tokens to match the native Miro UI. |
 
 ### 1.1 Bootstrap CSS once
 
 Include the stylesheet exactly once—ideally in `src/app/index.tsx`:
 
 ```tsx
-import 'mirotone/dist/styles.css';
+import '@mirohq/design-system-themes/light.css';
 ```
 
 ---
@@ -33,7 +35,7 @@ import 'mirotone/dist/styles.css';
 ## 2 Component catalogue
 
 Only props that junior devs **must** supply are shown. Use the wrapper
-components or compose manually with Mirotone CSS.
+components or compose using the design system tokens.
 
 | Name           | Core props                 | Variants                  | Default height (px) |
 | -------------- | -------------------------- | ------------------------- | ------------------- |
@@ -56,7 +58,7 @@ current tab id via `tab` and handle selection with `onChange`. Use
 > **When a wrapper is missing**
 >
 > 1. Write semantic HTML (for example `<div class="grid grid-gap-8">`).
-> 2. Apply the documented Mirotone CSS classes.
+> 2. Apply the documented design-system tokens or component styles.
 > 3. Encapsulate in a small local React component under
 >    `src/ui/components/legacy/` so that future upgrades swap the implementation
 >    behind a stable API.
@@ -189,7 +191,7 @@ Failing any item blocks the CI gate.
 - **No extra CSS classes** unless integrating a third-party lib.
 - Inline `style={...}` is disallowed by ESLint rule `no-inline-style`.
 - Dark-mode colours come free from Miro themes; test visually in both themes
-  before merging. ([mirotone.xyz][1])
+  before merging.
 
 ---
 
