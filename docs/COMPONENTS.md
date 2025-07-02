@@ -79,6 +79,19 @@ Common form controls such as `Button` and `InputField` are also provided in the
 `legacy` folder. They pass sizing tokens and `onChange` events through to the
 design-system components so existing code keeps working while the UI migrates.
 
+`InputField` composes a label with a form control. Pass the control component
+via the `as` prop and provide its props through `options`:
+
+```tsx
+<InputField
+  label='Template'
+  as={Select}
+  options={{ value: tpl, onChange: setTpl }}>
+  <SelectOption value='a'>A</SelectOption>
+  <SelectOption value='b'>B</SelectOption>
+</InputField>
+```
+
 > **When a wrapper is missing**
 >
 > 1. Write semantic HTML (for example `<div class="grid grid-gap-8">`).
