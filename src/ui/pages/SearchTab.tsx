@@ -1,6 +1,5 @@
 import React from 'react';
 import { Button, Checkbox, InputField, Paragraph } from '../components';
-import { Icon, Text } from '../components/legacy';
 import { TabGrid } from '../components/TabGrid';
 import type { SearchOptions } from '../../board/search-tools';
 import {
@@ -11,6 +10,12 @@ import {
 } from '../hooks/use-search-handlers';
 import { TabPanel } from '../components/TabPanel';
 import type { TabTuple } from './tab-definitions';
+import {
+  IconArrowRight,
+  IconChevronRight,
+  IconPen,
+  Text,
+} from '@mirohq/design-system';
 
 /**
  * Sidebar tab providing board wide search and replace.
@@ -226,28 +231,25 @@ export const SearchTab: React.FC = () => {
           <Button
             onClick={nextMatch}
             disabled={!results.length}
-            variant='secondary'>
-            <React.Fragment key='.0'>
-              <Icon name='chevron-right' />
-              <Text>Next</Text>
-            </React.Fragment>
+            variant='secondary'
+            icon={<IconChevronRight />}
+            iconPosition='start'>
+            <Text>Next</Text>
           </Button>
           <Button
             onClick={replaceCurrent}
             disabled={!results.length}
-            variant='secondary'>
-            <React.Fragment key='.1'>
-              <Icon name='edit' />
-              <Text>Replace</Text>
-            </React.Fragment>
+            variant='secondary'
+            icon={<IconPen />}
+            iconPosition='start'>
+            <Text>Replace</Text>
           </Button>
           <Button
             onClick={replaceAll}
-            variant='primary'>
-            <React.Fragment key='.2'>
-              <Icon name='arrow-right' />
-              <Text>Replace All</Text>
-            </React.Fragment>
+            variant='primary'
+            icon={<IconArrowRight />}
+            iconPosition='start'>
+            <Text>Replace All</Text>
           </Button>
         </div>
       </TabGrid>

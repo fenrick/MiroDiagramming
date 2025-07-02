@@ -1,6 +1,5 @@
 import React from 'react';
 import { Button, InputField } from '../components';
-import { Icon, Text } from '../components/legacy';
 import { tweakFillColor, extractFillColor } from '../../board/style-tools';
 import { applyStylePreset, presetStyle } from '../../board/format-tools';
 import { STYLE_PRESET_NAMES, stylePresets } from '../style-presets';
@@ -10,7 +9,7 @@ import { tokens } from '../tokens';
 import { TabPanel } from '../components/TabPanel';
 import { TabGrid } from '../components/TabGrid';
 import type { TabTuple } from './tab-definitions';
-import { Heading } from '@mirohq/design-system';
+import { Heading, IconSlidersX, Text } from '@mirohq/design-system';
 
 /** Adjusts the fill colour of selected widgets. */
 export const StyleTab: React.FC = () => {
@@ -83,11 +82,10 @@ export const StyleTab: React.FC = () => {
           <Button
             onClick={apply}
             type='button'
-            variant='primary'>
-            <React.Fragment>
-              <Icon name='parameters' />
-              <Text>Apply</Text>
-            </React.Fragment>
+            variant='primary'
+            icon={<IconSlidersX />}
+            iconPosition='start'>
+            <Text>Apply</Text>
           </Button>
         </div>
         <Heading level={2}>Style presets</Heading>

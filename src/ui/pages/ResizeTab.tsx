@@ -6,7 +6,7 @@ import {
   Select,
   SelectOption,
 } from '../components';
-import { FormGroup, Icon, Text } from '../components/legacy';
+import { FormGroup } from '../components/legacy';
 import {
   applySizeToSelection,
   copySizeFromSelection,
@@ -27,7 +27,13 @@ import {
 } from '../../core/utils/aspect-ratio';
 import { TabPanel } from '../components/TabPanel';
 import { TabGrid } from '../components/TabGrid';
-import { Heading } from '@mirohq/design-system';
+import {
+  Heading,
+  Text,
+  IconChevronRightDouble,
+  IconArrowArcLeft,
+  IconSquaresTwoOverlap,
+} from '@mirohq/design-system';
 
 /** Predefined button sizes used by the quick presets. */
 const PRESET_SIZES: Record<'S' | 'M' | 'L', Size> = {
@@ -205,19 +211,17 @@ export const ResizeTab: React.FC = () => {
       <div className='buttons'>
         <Button
           onClick={apply}
-          variant='primary'>
-          <React.Fragment key='.0'>
-            <Icon name='arrow-right' />
-            <Text>Apply Size</Text>
-          </React.Fragment>
+          variant='primary'
+          iconPosition='start'
+          icon={<IconChevronRightDouble />}>
+          <Text>Apply Size</Text>
         </Button>
         <Button
           onClick={copiedSize ? resetCopy : copy}
-          variant='secondary'>
-          <React.Fragment key='.0'>
-            <Icon name={copiedSize ? 'undo' : 'duplicate'} />
-            <Text>{copiedSize ? 'Reset Copy' : 'Copy Size'}</Text>
-          </React.Fragment>
+          variant='secondary'
+          iconPosition='start'
+          icon={copiedSize ? <IconArrowArcLeft /> : <IconSquaresTwoOverlap />}>
+          <Text>{copiedSize ? 'Reset Copy' : 'Copy Size'}</Text>
         </Button>
       </div>
     </TabPanel>
