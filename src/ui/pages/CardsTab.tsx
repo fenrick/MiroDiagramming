@@ -1,12 +1,12 @@
 import React from 'react';
 import { Button, Checkbox, Paragraph, InputField } from '../components';
-import { Text, Icon } from '../components/legacy';
 import { JsonDropZone } from '../components/JsonDropZone';
 import { TabGrid } from '../components/TabGrid';
 import { CardProcessor } from '../../board/card-processor';
 
 import { showError } from '../hooks/notifications';
 import { undoLastImport } from '../hooks/ui-utils';
+import { IconArrowArcLeft, IconPlus, Text } from '@mirohq/design-system';
 
 /** UI for the Cards tab. */
 export const CardsTab: React.FC = () => {
@@ -92,11 +92,10 @@ export const CardsTab: React.FC = () => {
           <div className='buttons'>
             <Button
               onClick={handleCreate}
-              variant='primary'>
-              <React.Fragment key='.0'>
-                <Icon name='plus' />
-                <Text>Create Cards</Text>
-              </React.Fragment>
+              variant='primary'
+              icon={<IconPlus />}
+              iconPosition='start'>
+              <Text>Create Cards</Text>
             </Button>
             {progress > 0 && progress < 100 && (
               <progress
@@ -119,11 +118,10 @@ export const CardsTab: React.FC = () => {
                 onClick={() => {
                   undoLastImport(lastProc, () => setLastProc(undefined));
                 }}
-                variant='secondary'>
-                <React.Fragment key='.0'>
-                  <Icon name='undo' />
-                  <Text>Undo Last Import</Text>
-                </React.Fragment>
+                variant='secondary'
+                iconPosition='start'
+                icon={<IconArrowArcLeft />}>
+                <Text>Undo Last Import</Text>
               </Button>
             )}
           </div>

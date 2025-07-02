@@ -6,12 +6,12 @@ import {
   Select,
   SelectOption,
 } from '../components';
-import { Icon, Text } from '../components/legacy';
 import { TabGrid } from '../components/TabGrid';
 import { applyGridLayout, GridOptions } from '../../board/grid-tools';
 import { applySpacingLayout, SpacingOptions } from '../../board/spacing-tools';
 import { TabPanel } from '../components/TabPanel';
 import type { TabTuple } from './tab-definitions';
+import { IconChevronRightDouble, IconGrid, Text } from '@mirohq/design-system';
 
 /**
  * Combines grid and spacing tools into a single sidebar tab.
@@ -124,11 +124,10 @@ export const ArrangeTab: React.FC = () => {
         <div className='buttons'>
           <Button
             onClick={applyGrid}
-            variant='primary'>
-            <React.Fragment>
-              <Icon name='grid' />
-              <Text>Arrange Grid</Text>
-            </React.Fragment>
+            variant='primary'
+            iconPosition='start'
+            icon={<IconGrid />}>
+            <Text>Arrange Grid</Text>
           </Button>
         </div>
 
@@ -170,11 +169,10 @@ export const ArrangeTab: React.FC = () => {
           <div className='buttons'>
             <Button
               onClick={applySpacing}
-              variant='primary'>
-              <React.Fragment>
-                <Icon name='arrow-right' />
-                <Text>Distribute</Text>
-              </React.Fragment>
+              variant='primary'
+              iconPosition='start'
+              icon={<IconChevronRightDouble />}>
+              <Text>Distribute</Text>
             </Button>
           </div>
         </div>

@@ -7,7 +7,6 @@ import {
   Select,
   SelectOption,
 } from '../components';
-import { Icon, Text } from '../components/legacy';
 import { JsonDropZone } from '../components/JsonDropZone';
 import { tokens } from '../tokens';
 import { TabGrid } from '../components/TabGrid';
@@ -33,6 +32,7 @@ import {
   useAdvancedToggle,
   LayoutChoice,
 } from '../hooks/use-diagram-create';
+import { IconArrowArcLeft, IconPlus, Text } from '@mirohq/design-system';
 
 /**
  * Queue the first file from a drop event for import.
@@ -340,11 +340,10 @@ export const StructuredTab: React.FC = () => {
           <div className='buttons'>
             <Button
               onClick={handleCreate}
-              variant='primary'>
-              <React.Fragment key='.0'>
-                <Icon name='plus' />
-                <Text>Create Diagram</Text>
-              </React.Fragment>
+              variant='primary'
+              iconPosition='start'
+              icon={<IconPlus />}>
+              <Text>Create Diagram</Text>
             </Button>
             {progress > 0 && progress < 100 && (
               <progress
@@ -358,11 +357,10 @@ export const StructuredTab: React.FC = () => {
                 onClick={() => {
                   undoLastImport(lastProc, () => setLastProc(undefined));
                 }}
-                variant='secondary'>
-                <React.Fragment key='.0'>
-                  <Icon name='undo' />
-                  <Text>Undo Last Import</Text>
-                </React.Fragment>
+                variant='secondary'
+                iconPosition='start'
+                icon={<IconArrowArcLeft />}>
+                <Text>Undo Last Import</Text>
               </Button>
             )}
           </div>

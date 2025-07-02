@@ -2,10 +2,10 @@ import React from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Button } from './Button';
 import { InputField } from './InputField';
-import { Icon, Text } from './legacy';
 import { getDropzoneStyle } from '../hooks/ui-utils';
 import { tokens } from '../tokens';
 import { Paragraph } from './Paragraph';
+import { IconSquareArrowIn, Text } from '@mirohq/design-system';
 
 export type JsonDropZoneProps = Readonly<{
   /** Callback invoked with selected files. */
@@ -50,8 +50,10 @@ export function JsonDropZone({
           <Paragraph className='dnd-text'>Drop your JSON file here</Paragraph>
         ) : (
           <div style={{ padding: tokens.space.small }}>
-            <Button variant='primary'>
-              <Icon name='upload' />
+            <Button
+              variant='primary'
+              iconPosition='start'
+              icon={<IconSquareArrowIn />}>
               <Text>Select JSON file</Text>
             </Button>
             <Paragraph className='dnd-text'>

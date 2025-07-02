@@ -7,7 +7,6 @@ import {
   Select,
   SelectOption,
 } from '../components';
-import { Text, Icon } from '../components/legacy';
 import {
   excelLoader,
   graphExcelLoader,
@@ -28,6 +27,7 @@ import {
   handleLocalDrop,
   fetchRemoteWorkbook,
 } from '../hooks/use-excel-handlers';
+import { IconPlus, Text } from '@mirohq/design-system';
 
 /** Sidebar tab for importing nodes from Excel files. */
 // eslint-disable-next-line complexity
@@ -274,11 +274,10 @@ export const ExcelTab: React.FC = () => {
           <div className='buttons'>
             <Button
               onClick={handleCreate}
-              variant='primary'>
-              <React.Fragment key='.0'>
-                <Icon name='plus' />
-                <Text>Create Nodes</Text>
-              </React.Fragment>
+              variant='primary'
+              iconPosition='start'
+              icon={<IconPlus />}>
+              <Text>Create Nodes</Text>
             </Button>
           </div>
         </>

@@ -35,7 +35,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref,
   ) {
-    const finalSize = size ?? (variant === 'primary' ? 'medium' : 'small');
+    const finalSize = size ?? (variant === 'primary' ? 'large' : 'medium');
     let start: React.ReactNode = null;
     let end: React.ReactNode = null;
     if (icon) {
