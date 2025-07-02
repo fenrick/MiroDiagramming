@@ -3,7 +3,7 @@ import type React from 'react';
 export type TabId =
   | 'create'
   | 'tools'
-  | 'resize'
+  | 'size'
   | 'style'
   | 'arrange'
   | 'frames'

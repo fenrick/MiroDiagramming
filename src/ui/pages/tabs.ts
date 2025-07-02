@@ -14,7 +14,7 @@ export const TAB_DATA: TabTuple[] = Object.values(modules)
     process.env.NODE_ENV === 'test'
       ? true
       : t[1] !== 'dummy' &&
-        !['resize', 'style', 'arrange', 'frames'].includes(t[1]),
+        !['size', 'style', 'arrange', 'frames'].includes(t[1]),
   )
   .sort((a, b) => a[0] - b[0]);
 
