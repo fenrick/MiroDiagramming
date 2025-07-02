@@ -38,7 +38,7 @@ export const ToolsTab: React.FC = () => {
     <TabPanel tabId='tools'>
       <Tabs
         value={sub}
-        variant={'buttons'}
+        variant={'tabs'}
         onChange={(id: React.SetStateAction<string>) => setSub(id)}
         size='medium'>
         <Tabs.List>
