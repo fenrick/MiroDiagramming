@@ -13,10 +13,10 @@ export function Paragraph({
   return (
     <p
       className={`p-medium ${className}`.trim()}
-              style={{
-                fontSize: 'var(--font-sizes-175)',
-                ...(style as React.CSSProperties),
-              }}
+      style={{
+        fontSize: 'var(--font-sizes-175)',
+        ...(style as React.CSSProperties),
+      }}
       {...props}
     />
   );
