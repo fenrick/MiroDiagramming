@@ -1,5 +1,6 @@
 import React from 'react';
-import { Button, Icon, InputField, Text, Heading } from '../components/legacy';
+import { InputField, Text, Heading } from '../components/legacy';
+import { Button } from '../components/Button';
 import {
   lockSelectedFrames,
   renameSelectedFrames,
@@ -33,12 +34,10 @@ export const FramesTab: React.FC = () => {
           </InputField>
           <div className='buttons'>
             <Button
+              icon='edit'
               onClick={rename}
               variant='primary'>
-              <React.Fragment key='.0'>
-                <Icon name='edit' />
-                <Text>Rename Frames</Text>
-              </React.Fragment>
+              <Text>Rename Frames</Text>
             </Button>
           </div>
         </section>
@@ -46,12 +45,10 @@ export const FramesTab: React.FC = () => {
           <Heading level={2}>Lock Frames</Heading>
           <div className='buttons'>
             <Button
+              icon='lock'
               onClick={lock}
               variant='secondary'>
-              <React.Fragment key='.1'>
-                <Icon name='lock' />
-                <Text>Lock Selected</Text>
-              </React.Fragment>
+              <Text>Lock Selected</Text>
             </Button>
           </div>
         </section>

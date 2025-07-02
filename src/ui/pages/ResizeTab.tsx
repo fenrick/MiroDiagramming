@@ -1,15 +1,14 @@
 import React from 'react';
 import {
-  Button,
   FormGroup,
   InputField,
   Select,
   SelectOption,
   Paragraph,
   Heading,
-  Icon,
   Text,
 } from '../components/legacy';
+import { Button } from '../components/Button';
 import {
   applySizeToSelection,
   copySizeFromSelection,
@@ -210,20 +209,16 @@ export const ResizeTab: React.FC = () => {
       </section>
       <div className='buttons'>
         <Button
+          icon='arrow-right'
           onClick={apply}
           variant='primary'>
-          <React.Fragment key='.0'>
-            <Icon name='arrow-right' />
-            <Text>Apply Size</Text>
-          </React.Fragment>
+          <Text>Apply Size</Text>
         </Button>
         <Button
+          icon={copiedSize ? 'undo' : 'duplicate'}
           onClick={copiedSize ? resetCopy : copy}
           variant='secondary'>
-          <React.Fragment key='.0'>
-            <Icon name={copiedSize ? 'undo' : 'duplicate'} />
-            <Text>{copiedSize ? 'Reset Copy' : 'Copy Size'}</Text>
-          </React.Fragment>
+          <Text>{copiedSize ? 'Reset Copy' : 'Copy Size'}</Text>
         </Button>
       </div>
     </TabPanel>

@@ -1,14 +1,13 @@
 import React from 'react';
 import {
-  Button,
   Checkbox,
   InputField,
   Paragraph,
   Select,
   SelectOption,
   Text,
-  Icon,
 } from '../components/legacy';
+import { Button } from '../components/Button';
 import { tokens } from '../tokens';
 import {
   excelLoader,
@@ -264,12 +263,10 @@ export const ExcelTab: React.FC = () => {
             </ul>
             <div className='buttons'>
               <Button
+                icon='plus'
                 onClick={handleCreate}
                 variant='primary'>
-                <React.Fragment key='.0'>
-                  <Icon name='plus' />
-                  <Text>Create Nodes</Text>
-                </React.Fragment>
+                <Text>Create Nodes</Text>
               </Button>
             </div>
           </>

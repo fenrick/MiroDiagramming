@@ -1,12 +1,6 @@
 import React from 'react';
-import {
-  Button,
-  Checkbox,
-  InputField,
-  Paragraph,
-  Icon,
-  Text,
-} from '../components/legacy';
+import { Checkbox, InputField, Paragraph, Text } from '../components/legacy';
+import { Button } from '../components/Button';
 import { TabGrid } from '../components/TabGrid';
 import type { SearchOptions } from '../../board/search-tools';
 import {
@@ -209,30 +203,24 @@ export const SearchTab: React.FC = () => {
         </Paragraph>
         <div className='buttons'>
           <Button
+            icon='chevron-right'
             onClick={nextMatch}
             disabled={!results.length}
             variant='secondary'>
-            <React.Fragment key='.0'>
-              <Icon name='chevron-right' />
-              <Text>Next</Text>
-            </React.Fragment>
+            <Text>Next</Text>
           </Button>
           <Button
+            icon='edit'
             onClick={replaceCurrent}
             disabled={!results.length}
             variant='secondary'>
-            <React.Fragment key='.1'>
-              <Icon name='edit' />
-              <Text>Replace</Text>
-            </React.Fragment>
+            <Text>Replace</Text>
           </Button>
           <Button
+            icon='arrow-right'
             onClick={replaceAll}
             variant='primary'>
-            <React.Fragment key='.2'>
-              <Icon name='arrow-right' />
-              <Text>Replace All</Text>
-            </React.Fragment>
+            <Text>Replace All</Text>
           </Button>
         </div>
       </TabGrid>

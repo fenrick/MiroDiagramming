@@ -1,12 +1,6 @@
 import React from 'react';
-import {
-  Button,
-  Checkbox,
-  InputField,
-  Paragraph,
-  Text,
-  Icon,
-} from '../components/legacy';
+import { Checkbox, InputField, Paragraph, Text } from '../components/legacy';
+import { Button } from '../components/Button';
 import { JsonDropZone } from '../components/JsonDropZone';
 import { tokens } from '../tokens';
 import { TabGrid } from '../components/TabGrid';
@@ -101,12 +95,10 @@ export const CardsTab: React.FC = () => {
           )}
           <div className='buttons'>
             <Button
+              icon='plus'
               onClick={handleCreate}
               variant='primary'>
-              <React.Fragment key='.0'>
-                <Icon name='plus' />
-                <Text>Create Cards</Text>
-              </React.Fragment>
+              <Text>Create Cards</Text>
             </Button>
             {progress > 0 && progress < 100 && (
               <progress
@@ -126,14 +118,12 @@ export const CardsTab: React.FC = () => {
             )}
             {lastProc && (
               <Button
+                icon='undo'
                 onClick={() => {
                   undoLastImport(lastProc, () => setLastProc(undefined));
                 }}
                 variant='secondary'>
-                <React.Fragment key='.0'>
-                  <Icon name='undo' />
-                  <Text>Undo Last Import</Text>
-                </React.Fragment>
+                <Text>Undo Last Import</Text>
               </Button>
             )}
           </div>

@@ -1,14 +1,13 @@
 import React from 'react';
 import {
-  Button,
   Checkbox,
-  Icon,
   InputField,
   Paragraph,
   Select,
   SelectOption,
   Text,
 } from '../components/legacy';
+import { Button } from '../components/Button';
 import { JsonDropZone } from '../components/JsonDropZone';
 import { tokens } from '../tokens';
 import { TabGrid } from '../components/TabGrid';
@@ -340,12 +339,10 @@ export const StructuredTab: React.FC = () => {
           </details>
           <div className='buttons'>
             <Button
+              icon='plus'
               onClick={handleCreate}
               variant='primary'>
-              <React.Fragment key='.0'>
-                <Icon name='plus' />
-                <Text>Create Diagram</Text>
-              </React.Fragment>
+              <Text>Create Diagram</Text>
             </Button>
             {progress > 0 && progress < 100 && (
               <progress
@@ -356,14 +353,12 @@ export const StructuredTab: React.FC = () => {
             {error && <Paragraph className='error'>{error}</Paragraph>}
             {lastProc && (
               <Button
+                icon='undo'
                 onClick={() => {
                   undoLastImport(lastProc, () => setLastProc(undefined));
                 }}
                 variant='secondary'>
-                <React.Fragment key='.0'>
-                  <Icon name='undo' />
-                  <Text>Undo Last Import</Text>
-                </React.Fragment>
+                <Text>Undo Last Import</Text>
               </Button>
             )}
           </div>

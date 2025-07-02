@@ -1,5 +1,6 @@
 import React from 'react';
-import { Button, Icon, InputField, Text, Heading } from '../components/legacy';
+import { InputField, Text, Heading } from '../components/legacy';
+import { Button } from '../components/Button';
 import { tweakFillColor, extractFillColor } from '../../board/style-tools';
 import { applyStylePreset, presetStyle } from '../../board/format-tools';
 import { STYLE_PRESET_NAMES, stylePresets } from '../style-presets';
@@ -82,14 +83,12 @@ export const StyleTab: React.FC = () => {
           </InputField>
           <div className='buttons'>
             <Button
+              icon='parameters'
               onClick={apply}
               type='button'
               variant='primary'
               className='button-small'>
-              <React.Fragment>
-                <Icon name='parameters' />
-                <Text>Apply</Text>
-              </React.Fragment>
+              <Text>Apply</Text>
             </Button>
           </div>
           <Heading level={2}>Style presets</Heading>

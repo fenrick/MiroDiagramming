@@ -53,7 +53,9 @@ components or compose manually with Mirotone CSS.
 The **TabBar** component now covers both sidebar and nested navigation. Pass the
 current tab id via `tab` and handle selection with `onChange`. Use
 `size='small'` for compact nested tab sets. Buttons accept an optional `icon`
-prop. Set `iconPosition="end"` to place the icon after the children.
+prop. Set `iconPosition="end"` to place the icon after the children. Buttons use
+`--space-small` as default padding and you can override colours or borders via
+the `style` prop.
 
 > **When a wrapper is missing**
 >

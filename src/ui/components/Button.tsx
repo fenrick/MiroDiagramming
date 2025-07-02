@@ -1,5 +1,6 @@
 import React from 'react';
 import { Icon } from './legacy/Icon';
+import { tokens } from '../tokens';
 
 export type ButtonProps = Readonly<
   React.ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -17,19 +18,25 @@ export type ButtonProps = Readonly<
      * Defaults to `start`.
      */
     iconPosition?: 'start' | 'end';
+    /** Optional padding override, defaults to tokens.space.small. */
+    padding?: string;
   }
 >;
 
 /**
  * Basic design-system button composed from Mirotone utility classes.
  * Supports optional start or end icons.
+ * Padding defaults to `tokens.space.small`. Supply `style` overrides to
+ * customise colour, font or border.
  */
 export function Button({
   variant = 'primary',
   size,
   icon,
   iconPosition = 'start',
+  padding = tokens.space.small,
   className = '',
+  style,
   children,
   ...props
 }: ButtonProps): React.JSX.Element {
@@ -48,6 +55,7 @@ export function Button({
   return (
     <button
       className={classes}
+      style={{ padding, ...style }}
       {...props}>
       {icons.start}
       {children}

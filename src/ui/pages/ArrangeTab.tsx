@@ -1,13 +1,12 @@
 import React from 'react';
 import {
-  Button,
   Checkbox,
   InputField,
-  Icon,
   Select,
   SelectOption,
   Text,
 } from '../components/legacy';
+import { Button } from '../components/Button';
 import { TabGrid } from '../components/TabGrid';
 import { applyGridLayout, GridOptions } from '../../board/grid-tools';
 import { applySpacingLayout, SpacingOptions } from '../../board/spacing-tools';
@@ -113,12 +112,10 @@ export const ArrangeTab: React.FC = () => {
         )}
         <div className='buttons'>
           <Button
+            icon='grid'
             onClick={applyGrid}
             variant='primary'>
-            <React.Fragment>
-              <Icon name='grid' />
-              <Text>Arrange Grid</Text>
-            </React.Fragment>
+            <Text>Arrange Grid</Text>
           </Button>
         </div>
 
@@ -152,12 +149,10 @@ export const ArrangeTab: React.FC = () => {
           </InputField>
           <div className='buttons'>
             <Button
+              icon='arrow-right'
               onClick={applySpacing}
               variant='primary'>
-              <React.Fragment>
-                <Icon name='arrow-right' />
-                <Text>Distribute</Text>
-              </React.Fragment>
+              <Text>Distribute</Text>
             </Button>
           </div>
         </div>
