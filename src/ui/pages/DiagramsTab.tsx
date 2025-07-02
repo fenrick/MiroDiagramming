@@ -36,7 +36,7 @@ export const DiagramsTab: React.FC = () => {
       <Panel padding='small'>
         <Tabs
           value={sub}
-          variant={'buttons'}
+          variant={'tabs'}
           onChange={(id) => setSub(id as string)}
           size='medium'>
           <Tabs.List>

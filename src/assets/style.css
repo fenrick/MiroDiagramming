@@ -29,7 +29,7 @@ body {
 .scrollable {
   flex: 1;
   overflow-y: auto;
-  padding: var(--space-small);
+  padding-top: var(--space-small);
 }
 
 #root .buttons {
