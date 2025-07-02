@@ -66,11 +66,14 @@ accepts a `padding` prop that maps to the numeric tokens exported from
 `src/ui/tokens.ts`:
 
 ```tsx
-<Panel padding='medium'>{/* content */}</Panel>
+<Panel padding='medium'>
+  <Section padding='small'>Content</Section>
+</Panel>
 ```
 
 Wrappers forward additional props to the underlying design-system primitives so
-layouts remain extensible without leaking styles.
+layouts remain extensible without leaking styles. Keep nesting shallow to avoid
+unnecessary DOM layers.
 
 > **When a wrapper is missing**
 >

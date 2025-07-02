@@ -176,6 +176,7 @@ the rest of the UI. These guidelines help keep layouts consistent:
   hard‑coded numbers.
 - Layout wrappers such as `Panel` or `Section` expose a `padding` prop. Pass a
   token from `src/ui/tokens.ts` so spacing stays consistent.
+- Keep wrapper nesting shallow; avoid unnecessary layers.
 - When customisation is needed prefer extending design-system tokens over
   creating bespoke CSS classes.
 - Stick to the provided `Button` component and choose the `primary` variant for

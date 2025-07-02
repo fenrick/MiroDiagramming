@@ -11,11 +11,8 @@ export type CheckboxProps = Readonly<
 >;
 
 /**
- * Mirotone-styled checkbox component.
- *
- * Mirotone renders the checked state via a sibling `<span>` element. The span
- * also holds the visible label text so that the checkbox remains accessible
- * without additional attributes.
+ * Checkbox wrapper bridging the legacy API to the design-system component.
+ * It exposes a boolean `value` prop and triggers `onChange` when toggled.
  */
 export function Checkbox({
   label,
@@ -23,8 +20,8 @@ export function Checkbox({
   onChange,
   ...props
 }: CheckboxProps): React.JSX.Element {
-  const handleChange = (e: React.FormEvent<HTMLButtonElement>): void => {
-    onChange?.((e.currentTarget as HTMLButtonElement).ariaPressed === 'true');
+  const handleChange = (checked: boolean): void => {
+    onChange?.(checked);
   };
   const generatedId = React.useId();
   const inputId = props.id ?? generatedId;
@@ -34,7 +31,8 @@ export function Checkbox({
       <DSCheckbox
         id={inputId}
         checked={value}
-        onChange={handleChange}
+        onChecked={() => handleChange(true)}
+        onUnchecked={() => handleChange(false)}
       />
       <label htmlFor={inputId}>{label}</label>
     </Flex>
