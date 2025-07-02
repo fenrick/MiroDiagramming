@@ -5,7 +5,13 @@ import { TAB_DATA, Tab } from '../ui/pages/tabs';
 import { EditMetadataModal } from '../ui/components/EditMetadataModal';
 import { ExcelDataProvider } from '../ui/hooks/excel-data-context';
 import type { ExcelRow } from '../core/utils/excel-loader';
-import { createTheme, Paragraph, Tabs, themes } from '@mirohq/design-system';
+import {
+  createTheme,
+  Paragraph,
+  Tabs,
+  themes,
+  Primitive,
+} from '@mirohq/design-system';
 
 const lightThemeClassName = createTheme(themes.light);
 
@@ -71,10 +77,10 @@ export const App: React.FC = () => {
             ))}
           </Tabs.List>
         </Tabs>
-        <div className='scrollable'>
+        <Primitive.div className='scrollable'>
           <Paragraph>{current[3]}</Paragraph>
           <CurrentComp />
-        </div>
+        </Primitive.div>
         <EditMetadataModal
           isOpen={showMeta}
           onClose={() => setShowMeta(false)}
