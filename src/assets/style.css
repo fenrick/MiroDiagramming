@@ -1,5 +1,5 @@
 /* Figma reference: https://figma.com/file/XYZ123 */
-@import 'mirotone/dist/styles.css';
+@import '@mirohq/design-system-themes/light.css';
 
 *,
 *:before,
