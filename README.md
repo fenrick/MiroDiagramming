@@ -263,6 +263,10 @@ npm run stylelint --silent
 npm run prettier --silent
 ```
 
+A Husky pre-commit hook runs these commands automatically. After cloning the
+repository run `npm run prepare` once to activate the hooks so every commit is
+validated.
+
 These commands perform TypeScript type checking, execute the **Vitest** suite
 with coverage enabled, run ESLint and format files with Prettier. Aim for at
 least 90 % line and branch coverage and keep cyclomatic complexity under eight
