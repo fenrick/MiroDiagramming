@@ -38,19 +38,19 @@ import '@mirohq/design-system-themes/light.css';
 Only props that junior devs **must** supply are shown. Use the wrapper
 components or compose using the design system tokens.
 
-| Name                          | Core props                 | Variants                  | Default height (px) |
-| ----------------------------- | -------------------------- | ------------------------- | ------------------- |
-| **Button**                    | label, onClick, disabled   | primary, secondary, ghost | 32                  |
-| **Input**                     | value, onChange            | text, number              | 32                  |
-| **Select**                    | options, value, onChange   | single, multi             | 32                  |
-| **Switch** (Checkbox wrapper) | checked, onChange          | medium, large             | 24                  |
-| **Modal**                     | title, isOpen, onClose     | small, medium             | auto                |
-| _SidebarTab_                  | id, icon, title            | persistent, modal         | fill                |
-| _TabBar_                      | tabs, tab, onChange, size? | regular, small            | 48                  |
-| **Grid**                      | gap, columns               | responsive                | n/a                 |
-| **Stack**                     | gap, direction             | vertical, horizontal      | n/a                 |
-| **Cluster**                   | gap, align                 | left, right, centre       | n/a                 |
-| **TabGrid**                   | columns, className?        | —                         | n/a                 |
+| Name                          | Core props                      | Variants                  | Default height (px) |
+| ----------------------------- | ------------------------------- | ------------------------- | ------------------- |
+| **Button**                    | label, onClick, disabled, icon? | primary, secondary, ghost | 32                  |
+| **Input**                     | value, onChange                 | text, number              | 32                  |
+| **Select**                    | options, value, onChange        | single, multi             | 32                  |
+| **Switch** (Checkbox wrapper) | checked, onChange               | medium, large             | 24                  |
+| **Modal**                     | title, isOpen, onClose          | small, medium             | auto                |
+| _SidebarTab_                  | id, icon, title                 | persistent, modal         | fill                |
+| _TabBar_                      | tabs, tab, onChange, size?      | regular, small            | 48                  |
+| **Grid**                      | gap, columns                    | responsive                | n/a                 |
+| **Stack**                     | gap, direction                  | vertical, horizontal      | n/a                 |
+| **Cluster**                   | gap, align                      | left, right, centre       | n/a                 |
+| **TabGrid**                   | columns, className?             | —                         | n/a                 |
 
 The main navigation now relies on `@mirohq/design-system-tabs`. The custom
 **TabBar** component remains for nested navigation. Pass the current tab id via
@@ -153,6 +153,14 @@ via the `as` prop and provide its props through `options`:
     Save
   </Button>
 </Cluster>
+```
+
+To add an icon use the `icon` prop and optionally `iconPosition='end'`:
+
+```tsx
+import { IconActivity } from '@mirohq/design-system-icons/react';
+
+<Button icon={<IconActivity />}>Activity</Button>;
 ```
 
 ---
