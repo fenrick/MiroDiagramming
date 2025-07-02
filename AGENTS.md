@@ -13,6 +13,9 @@ npm run stylelint --silent
 npm run prettier --silent
 ```
 
+A Husky pre-commit hook now runs these commands automatically when creating a
+commit. Activate the hooks with `npm run prepare` after cloning.
+
 These commands run **ESLint**, **Stylelint** and **Prettier** to ensure a
 consistent codebase.
 
