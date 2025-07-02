@@ -127,49 +127,57 @@ export const ResizeTab: React.FC = () => {
       <div className='custom-centered'>
         <section>
           <Heading level={2}>Manual Resize</Heading>
-          <TabGrid columns={2}>
+          <TabGrid columns={1}>
             <Paragraph data-testid='size-display'>
               {copiedSize
                 ? `Copied: ${copiedSize.width}×${copiedSize.height}`
                 : `Selection: ${size.width}×${size.height}`}
             </Paragraph>
             {warning && <Paragraph className='error'>{warning}</Paragraph>}
-            <FormGroup>
-              <InputField label='Width:'>
-                <input
-                  className='input input-small'
-                  type='number'
-                  value={String(size.width)}
-                  onChange={(e) => update('width')(e.target.value)}
-                  placeholder='Width (board units)'
-                />
-              </InputField>
-              <InputField label='Height:'>
-                <input
-                  className='input input-small'
-                  type='number'
-                  value={String(size.height)}
-                  onChange={(e) => update('height')(e.target.value)}
-                  placeholder='Height (board units)'
-                />
-              </InputField>
-            </FormGroup>
-            <InputField label='Aspect Ratio'>
-              <Select
-                data-testid='ratio-select'
-                className='select-small'
-                value={ratio}
-                onChange={(v) => setRatio(v as AspectRatioId | 'none')}>
-                <SelectOption value='none'>Free</SelectOption>
-                {ASPECT_RATIOS.map((r) => (
-                  <SelectOption
-                    key={r.id}
-                    value={r.id}>
-                    {r.label}
-                  </SelectOption>
-                ))}
-              </Select>
-            </InputField>
+            <TabGrid columns={2}>
+              <FormGroup>
+                <InputField label='Width:'>
+                  <input
+                    className='input input-small'
+                    type='number'
+                    value={String(size.width)}
+                    onChange={(e) => update('width')(e.target.value)}
+                    placeholder='Width (board units)'
+                  />
+                </InputField>
+              </FormGroup>
+              <FormGroup>
+                <InputField label='Height:'>
+                  <input
+                    className='input input-small'
+                    type='number'
+                    value={String(size.height)}
+                    onChange={(e) => update('height')(e.target.value)}
+                    placeholder='Height (board units)'
+                  />
+                </InputField>
+              </FormGroup>
+            </TabGrid>
+            <TabGrid columns={1}>
+              <FormGroup>
+                <InputField label='Aspect Ratio'>
+                  <Select
+                    data-testid='ratio-select'
+                    className='select-small'
+                    value={ratio}
+                    onChange={(v) => setRatio(v as AspectRatioId | 'none')}>
+                    <SelectOption value='none'>Free</SelectOption>
+                    {ASPECT_RATIOS.map((r) => (
+                      <SelectOption
+                        key={r.id}
+                        value={r.id}>
+                        {r.label}
+                      </SelectOption>
+                    ))}
+                  </Select>
+                </InputField>
+              </FormGroup>
+            </TabGrid>
             <div className='buttons'>
               <Button
                 onClick={apply}

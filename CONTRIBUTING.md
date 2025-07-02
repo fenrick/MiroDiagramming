@@ -16,8 +16,9 @@ complexity below eight as described in
 
 ## Commit messages
 
-Verify that your commit message follows the Conventional Commits format by
-running:
+Verify that your commit message follows the Conventional Commits format. A
+`commit-msg` hook runs commitlint automatically, but you can also check the
+latest commit manually by running:
 
 ```bash
 npm run commitlint -- --edit $(git rev-parse --verify HEAD)

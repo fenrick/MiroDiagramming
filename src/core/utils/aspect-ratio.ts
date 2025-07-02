@@ -24,6 +24,7 @@ export const GOLDEN_RATIO = (1 + Math.sqrt(5)) / 2;
 /** List of selectable aspect ratios. */
 export const ASPECT_RATIOS: AspectRatioPreset[] = [
   { id: 'golden', label: 'Golden', ratio: GOLDEN_RATIO },
+  { id: 'square', label: 'Square', ratio: 1 },
   { id: '16:9', label: '16:9', ratio: 16 / 9 },
   { id: '16:10', label: '16:10', ratio: 16 / 10 },
   { id: '4:3', label: '4:3', ratio: 4 / 3 },

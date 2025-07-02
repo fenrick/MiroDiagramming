@@ -277,8 +277,9 @@ everyone uses the exact dependency versions when installing.
 
 ## Commit message checks
 
-Commit messages must follow the Conventional Commits specification. Verify the
-latest commit locally by running:
+Commit messages must follow the Conventional Commits specification. A
+`commit-msg` hook now runs commitlint automatically. Verify the latest commit
+manually by running:
 
 ```bash
 npm run commitlint -- --edit $(git rev-parse --verify HEAD)
@@ -333,6 +334,16 @@ Tagged releases push the image to the GitHub Container Registry automatically.
 The workflow builds a standard `linux/amd64` image via
 `docker/build-push-action@v5`; QEMU is unnecessary as no cross-platform
 emulation is performed.
+
+## Local CI Build
+
+Run the helper script to reproduce the GitHub Actions pipeline locally. It
+executes lint checks, type verification, unit tests, the production build and
+the Storybook build in sequence. Semantic release is intentionally skipped.
+
+```bash
+npm run ci:local
+```
 
 ## Changelog
 
