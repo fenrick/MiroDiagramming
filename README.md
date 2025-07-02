@@ -174,6 +174,8 @@ the rest of the UI. These guidelines help keep layouts consistent:
   responsive.
 - Use values from `src/ui/tokens.ts` for margins and padding instead of
   hard‑coded numbers.
+- Layout wrappers such as `Panel` or `Section` expose a `padding` prop. Pass a
+  token from `src/ui/tokens.ts` so spacing stays consistent.
 - When customisation is needed prefer extending design-system tokens over
   creating bespoke CSS classes.
 - Stick to the provided `Button` component and choose the `primary` variant for
