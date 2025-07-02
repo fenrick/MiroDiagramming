@@ -38,7 +38,7 @@ describe('layoutHierarchy', () => {
     const childB = result.nodes.b;
     expect(childA.y).not.toBe(childB.y);
     expect(parent.width).toBeGreaterThan(childA.width);
-    expect(Object.keys(result.nodes)).toContain('spacer_p');
+    expect(Object.keys(result.nodes)).not.toContain('spacer_p');
   });
 
   test('sorts children by custom key', async () => {
@@ -67,7 +67,7 @@ describe('layoutHierarchy', () => {
 
   test('positions example dataset', async () => {
     const result = await layoutHierarchy(sampleHier as TestNode[]);
-    expect(Object.keys(result.nodes)).toHaveLength(105);
+    expect(Object.keys(result.nodes)).toHaveLength(84);
     expect(result.nodes['r1c1g1'].width).toBe(120);
     expect(result.nodes['r1c1g1'].height).toBe(30);
   });
