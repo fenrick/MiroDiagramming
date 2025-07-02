@@ -1,10 +1,6 @@
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 
-<<<<<<< HEAD
-import { Tabs } from '@mirohq/design-system-tabs';
-=======
->>>>>>> 039606f (feat: replaced tabbar with miro-design-system)
 import { TAB_DATA, Tab } from '../ui/pages/tabs';
 import { EditMetadataModal } from '../ui/components/EditMetadataModal';
 import { ExcelDataProvider } from '../ui/hooks/excel-data-context';
@@ -66,22 +62,22 @@ export const App: React.FC = () => {
           setLabelColumn,
           setTemplateColumn,
         }}>
-          <Primitive.div>
-        <Tabs
-          value='{tab}'
-          onChange={(id) => setTab(id as Tab)}
-          variant={'tabs'}
-          size='medium'>
-          <Tabs.List>
-            {TAB_DATA.map((t) => (
-              <Tabs.Trigger
-                key={t[1]}
-                value={t[1]}>
-                {t[2]}
-              </Tabs.Trigger>
-            ))}
-          </Tabs.List>
-        </Tabs>
+        <Primitive.div>
+          <Tabs
+            value={tab}
+            onChange={(id) => setTab(id as Tab)}
+            variant={'tabs'}
+            size='medium'>
+            <Tabs.List>
+              {TAB_DATA.map((t) => (
+                <Tabs.Trigger
+                  key={t[1]}
+                  value={t[1]}>
+                  {t[2]}
+                </Tabs.Trigger>
+              ))}
+            </Tabs.List>
+          </Tabs>
         </Primitive.div>
         <Primitive.div className='scrollable'>
           <Paragraph>{current[3]}</Paragraph>
