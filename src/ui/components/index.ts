@@ -1,8 +1,6 @@
 export { Button } from './Button';
 export { Checkbox } from './Checkbox';
 export { InputField } from './InputField';
-export { Panel } from './Panel';
-export { Section } from './Section';
 export { EditMetadataModal } from './EditMetadataModal';
 export { JsonDropZone } from './JsonDropZone';
 export { Modal } from './Modal';
@@ -11,3 +9,4 @@ export { SegmentedControl } from './SegmentedControl';
 export { TabGrid } from './TabGrid';
 export { TabPanel } from './TabPanel';
 export { Select, SelectOption } from './Select';
+export { Paragraph } from './Paragraph';
