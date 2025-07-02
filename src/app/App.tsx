@@ -56,7 +56,7 @@ export const App: React.FC = () => {
       }}>
       <div id='root'>
         <Tabs
-          value='{tab}'
+          value={tab}
           onChange={(id) => setTab(id as Tab)}
           size='large'>
           <Tabs.List>
