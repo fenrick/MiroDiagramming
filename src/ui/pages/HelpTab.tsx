@@ -4,11 +4,14 @@ import changelog from '../../../CHANGELOG.md?raw';
 import { TabPanel } from '../components/TabPanel';
 import type { TabTuple } from './tab-definitions';
 import { Heading } from '@mirohq/design-system';
+import { Panel } from '../components';
 
 /** Static help page summarising diagram options and tools. */
 export const HelpTab: React.FC = () => (
   <TabPanel tabId='help'>
-    <div data-testid='help-tab'>
+    <Panel
+      padding='small'
+      data-testid='help-tab'>
       <Heading level={2}>Getting Started</Heading>
       <Paragraph>
         Use the Create tab to import diagrams or cards from a JSON file. Nodes
@@ -47,7 +50,7 @@ export const HelpTab: React.FC = () => (
       </ul>
       <Heading level={2}>Changelog</Heading>
       <pre style={{ whiteSpace: 'pre-wrap' }}>{changelog}</pre>
-    </div>
+    </Panel>
   </TabPanel>
 );
 

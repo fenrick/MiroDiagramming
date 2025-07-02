@@ -2,7 +2,7 @@ import React from 'react';
 import { tokens } from '../tokens';
 import type { ExcelRow } from '../../core/utils/excel-loader';
 import { useRowData } from '../hooks/use-row-data';
-import { InputField } from './legacy';
+import { InputField } from './InputField';
 
 export interface RowInspectorProps {
   /** Rows loaded from the workbook. */

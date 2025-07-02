@@ -1,5 +1,6 @@
 import React from 'react';
-import { Button, Icon, InputField, Text } from '../components/legacy';
+import { Button, InputField, Panel } from '../components';
+import { Icon, Text } from '../components/legacy';
 import { tweakFillColor, extractFillColor } from '../../board/style-tools';
 import { applyStylePreset, presetStyle } from '../../board/format-tools';
 import { STYLE_PRESET_NAMES, stylePresets } from '../style-presets';
@@ -30,10 +31,8 @@ export const StyleTab: React.FC = () => {
   };
   return (
     <TabPanel tabId='style'>
-      <div className='grid form-example'>
-        <TabGrid
-          className='cs1 ce12 form-example-main-content'
-          columns={2}>
+      <Panel padding='small'>
+        <TabGrid columns={2}>
           <InputField label='Adjust fill'>
             <input
               data-testid='adjust-slider'
@@ -85,8 +84,7 @@ export const StyleTab: React.FC = () => {
             <Button
               onClick={apply}
               type='button'
-              variant='primary'
-              className='button-small'>
+              variant='primary'>
               <React.Fragment>
                 <Icon name='parameters' />
                 <Text>Apply</Text>
@@ -103,22 +101,25 @@ export const StyleTab: React.FC = () => {
                   key={name}
                   onClick={() => applyStylePreset(preset)}
                   type='button'
-                  variant='secondary'
-                  className='button-small'
-                  style={{
-                    color: style.color,
-                    backgroundColor: style.fillColor,
-                    borderColor: style.borderColor,
-                    borderWidth: style.borderWidth,
-                    borderStyle: 'solid',
-                  }}>
-                  {preset.label}
+                  variant='secondary'>
+                  <span
+                    style={{
+                      color: style.color,
+                      backgroundColor: style.fillColor,
+                      borderColor: style.borderColor,
+                      borderWidth: style.borderWidth,
+                      borderStyle: 'solid',
+                      display: 'inline-block',
+                      padding: '0 4px',
+                    }}>
+                    {preset.label}
+                  </span>
                 </Button>
               );
             })}
           </div>
         </TabGrid>
-      </div>
+      </Panel>
     </TabPanel>
   );
 };

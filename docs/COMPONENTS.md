@@ -10,8 +10,8 @@ Explains how to:
 - Adopt the **@mirohq/design-system** components to ensure 100% alignment with
   Miro visuals.
 - Use **@mirohq/design-system** components directly for new features.
-- Use the lightweight wrapper components in `src/ui/components/legacy` until
-  migration completes.
+- Use the lightweight wrapper components in `src/ui/components` while older
+  versions remain in `src/ui/components/legacy` until migration completes.
 - Meet the accessibility, performance and quality gates defined in
   **ARCHITECTURE.md** and **FOUNDATION.md**.
 
@@ -38,31 +38,53 @@ import '@mirohq/design-system-themes/light.css';
 Only props that junior devs **must** supply are shown. Use the wrapper
 components or compose using the design system tokens.
 
-| Name         | Core props                 | Variants                  | Default height (px) |
-| ------------ | -------------------------- | ------------------------- | ------------------- |
-| **Button**   | label, onClick, disabled   | primary, secondary, ghost | 32                  |
-| **Input**    | value, onChange            | text, number              | 32                  |
-| **Select**   | options, value, onChange   | single, multi             | 32                  |
-| **Checkbox** | checked, onChange          | —                         | 20                  |
-| **Modal**    | title, isOpen, onClose     | small, medium             | auto                |
-| _SidebarTab_ | id, icon, title            | persistent, modal         | fill                |
-| _TabBar_     | tabs, tab, onChange, size? | regular, small            | 48                  |
-| **Grid**     | gap, columns               | responsive                | n/a                 |
-| **Stack**    | gap, direction             | vertical, horizontal      | n/a                 |
-| **Cluster**  | gap, align                 | left, right, centre       | n/a                 |
-| **TabGrid**  | columns, className?        | —                         | n/a                 |
+| Name                          | Core props                 | Variants                  | Default height (px) |
+| ----------------------------- | -------------------------- | ------------------------- | ------------------- |
+| **Button**                    | label, onClick, disabled   | primary, secondary, ghost | 32                  |
+| **Input**                     | value, onChange            | text, number              | 32                  |
+| **Select**                    | options, value, onChange   | single, multi             | 32                  |
+| **Switch** (Checkbox wrapper) | checked, onChange          | medium, large             | 24                  |
+| **Modal**                     | title, isOpen, onClose     | small, medium             | auto                |
+| _SidebarTab_                  | id, icon, title            | persistent, modal         | fill                |
+| _TabBar_                      | tabs, tab, onChange, size? | regular, small            | 48                  |
+| **Grid**                      | gap, columns               | responsive                | n/a                 |
+| **Stack**                     | gap, direction             | vertical, horizontal      | n/a                 |
+| **Cluster**                   | gap, align                 | left, right, centre       | n/a                 |
+| **TabGrid**                   | columns, className?        | —                         | n/a                 |
 
 The main navigation now relies on `@mirohq/design-system-tabs`. The custom
 **TabBar** component remains for nested navigation. Pass the current tab id via
 `tab` and handle selection with `onChange`. Use `size='small'` for compact
 nested tab sets.
 
+### 2.1 Wrapper components and padding
+
+The design system expects container elements to declare their own padding. To
+preserve the existing API and layering, small wrappers live under
+`src/ui/components` (e.g. `Panel`, `Section`, `ActionBar`). Legacy variants live
+under `src/ui/components/legacy`. Each wrapper accepts a `padding` prop that
+maps to the numeric tokens exported from `src/ui/tokens.ts`:
+
+```tsx
+<Panel padding='medium'>
+  <Section padding='small'>Content</Section>
+</Panel>
+```
+
+Wrappers forward standard HTML attributes—except `className` and `style`—to the
+underlying design-system primitives. This keeps styling decisions inside the
+component. Keep nesting shallow to avoid unnecessary DOM layers.
+
+Common form controls such as `Button` and `InputField` are also provided in the
+`legacy` folder. They pass sizing tokens and `onChange` events through to the
+design-system components so existing code keeps working while the UI migrates.
+
 > **When a wrapper is missing**
 >
 > 1. Write semantic HTML (for example `<div class="grid grid-gap-8">`).
 > 2. Apply the documented design-system tokens or component styles.
-> 3. Encapsulate in a small local React component under
->    `src/ui/components/legacy/` so that future upgrades swap the implementation
+> 3. Encapsulate the markup in a small local React component under
+>    `src/ui/components/legacy/` so future upgrades can swap the implementation
 >    behind a stable API.
 
 ---

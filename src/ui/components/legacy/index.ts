@@ -1,6 +1,3 @@
-export { Button } from './Button';
-export { InputField } from './InputField';
-export { Checkbox } from './Checkbox';
 export { Select, SelectOption } from './Select';
 export { Text } from './Text';
 export { Icon } from './Icon';

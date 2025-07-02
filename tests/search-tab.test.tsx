@@ -51,9 +51,9 @@ describe('SearchTab', () => {
     fireEvent.change(screen.getByPlaceholderText(/search board text/i), {
       target: { value: 'foo' },
     });
-    fireEvent.click(screen.getByRole('checkbox', { name: 'shape' }));
-    fireEvent.click(screen.getByRole('checkbox', { name: /case sensitive/i }));
-    fireEvent.click(screen.getByRole('checkbox', { name: /regex/i }));
+    fireEvent.click(screen.getByRole('switch', { name: 'shape' }));
+    fireEvent.click(screen.getByRole('switch', { name: /case sensitive/i }));
+    fireEvent.click(screen.getByRole('switch', { name: /regex/i }));
     await act(async () => {
       vi.advanceTimersByTime(300);
     });
@@ -85,7 +85,7 @@ describe('SearchTab', () => {
     fireEvent.change(screen.getByPlaceholderText(/search board text/i), {
       target: { value: 'test' },
     });
-    fireEvent.click(screen.getByRole('checkbox', { name: 'shape' }));
+    fireEvent.click(screen.getByRole('switch', { name: 'shape' }));
     fireEvent.change(screen.getByLabelText(/tag ids/i), {
       target: { value: 't1,t2' },
     });
@@ -101,9 +101,9 @@ describe('SearchTab', () => {
     fireEvent.change(screen.getByLabelText(/last modified by/i), {
       target: { value: 'm1' },
     });
-    fireEvent.click(screen.getByRole('checkbox', { name: /case sensitive/i }));
-    fireEvent.click(screen.getByRole('checkbox', { name: /whole word/i }));
-    fireEvent.click(screen.getByRole('checkbox', { name: /regex/i }));
+    fireEvent.click(screen.getByRole('switch', { name: /case sensitive/i }));
+    fireEvent.click(screen.getByRole('switch', { name: /whole word/i }));
+    fireEvent.click(screen.getByRole('switch', { name: /regex/i }));
     await act(async () => {
       vi.advanceTimersByTime(300);
     });
@@ -263,7 +263,7 @@ describe('SearchTab', () => {
       .spyOn(searchTools, 'searchBoardContent')
       .mockResolvedValue([]);
     render(<SearchTab />);
-    const box = screen.getByRole('checkbox', { name: 'shape' });
+    const box = screen.getByRole('switch', { name: 'shape' });
     fireEvent.click(box);
     fireEvent.click(box);
     fireEvent.change(screen.getByPlaceholderText(/search board text/i), {

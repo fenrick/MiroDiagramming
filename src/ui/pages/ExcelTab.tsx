@@ -1,15 +1,12 @@
 import React from 'react';
+import { Button, Checkbox, InputField, Panel } from '../components';
 import {
-  Button,
-  Checkbox,
-  InputField,
   Paragraph,
   Select,
   SelectOption,
   Text,
   Icon,
 } from '../components/legacy';
-import { tokens } from '../tokens';
 import {
   excelLoader,
   graphExcelLoader,
@@ -135,7 +132,7 @@ export const ExcelTab: React.FC = () => {
 
   return (
     <TabPanel tabId='excel'>
-      <div style={{ marginTop: tokens.space.small }}>
+      <Panel padding='small'>
         <div
           {...dropzone.getRootProps({ style })}
           aria-label='Excel drop area'>
@@ -279,7 +276,7 @@ export const ExcelTab: React.FC = () => {
           idColumn={idColumn || undefined}
           onUpdate={updateRow}
         />
-      </div>
+      </Panel>
     </TabPanel>
   );
 };

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Paragraph } from '../components/legacy/Paragraph';
 import { tokens } from '../tokens';
+import { Panel } from '../components';
 
 /** Placeholder for future layout engine options. */
 export const LayoutEngineTab: React.FC = () => (
@@ -9,6 +10,8 @@ export const LayoutEngineTab: React.FC = () => (
     role='tabpanel'
     aria-labelledby='tab-layout'
     style={{ marginTop: tokens.space.small }}>
-    <Paragraph>Layout engine coming soon.</Paragraph>
+    <Panel padding='small'>
+      <Paragraph>Layout engine coming soon.</Paragraph>
+    </Panel>
   </div>
 );

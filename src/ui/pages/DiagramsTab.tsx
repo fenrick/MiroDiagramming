@@ -4,7 +4,8 @@ import { CardsTab } from './CardsTab';
 import { LayoutEngineTab } from './LayoutEngineTab';
 import { TabPanel } from '../components/TabPanel';
 import type { TabTuple } from './tab-definitions';
-import { Tabs, Primitive } from '@mirohq/design-system';
+import { Tabs } from '@mirohq/design-system';
+import { Panel } from '../components';
 
 /**
  * Parent tab hosting diagram-related tools via nested navigation.
@@ -32,7 +33,7 @@ export const DiagramsTab: React.FC = () => {
   }
   return (
     <TabPanel tabId='diagrams'>
-      <Primitive.div>
+      <Panel padding='small'>
         <Tabs
           value={sub}
           variant={'buttons'}
@@ -49,7 +50,7 @@ export const DiagramsTab: React.FC = () => {
           </Tabs.List>
         </Tabs>
         <Current />
-      </Primitive.div>{' '}
+      </Panel>
     </TabPanel>
   );
 };
