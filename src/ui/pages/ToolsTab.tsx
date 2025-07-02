@@ -8,7 +8,7 @@ import { TabPanel } from '../components/TabPanel';
 import type { TabTuple } from './tab-definitions';
 
 const SUB_TABS: TabItem[] = [
-  { id: 'resize', label: 'Resize' },
+  { id: 'size', label: 'Size' },
   { id: 'style', label: 'Colours' },
   { id: 'arrange', label: 'Arrange' },
   { id: 'frames', label: 'Frames' },
@@ -52,6 +52,6 @@ export const tabDef: TabTuple = [
   5,
   'tools',
   'Tools',
-  'Resize, style, arrange and frame utilities',
+  'Adjust size, style, arrange and frame utilities',
   ToolsTab,
 ];
