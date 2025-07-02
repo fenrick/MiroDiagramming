@@ -16,7 +16,7 @@ export interface AspectRatioPreset {
 }
 
 /** Supported preset identifiers. */
-export type AspectRatioId = 'golden' | '16:9' | '16:10' | '4:3';
+export type AspectRatioId = 'golden' | 'square' | '16:9' | '16:10' | '4:3';
 
 /** Golden ratio constant used by presets. */
 export const GOLDEN_RATIO = (1 + Math.sqrt(5)) / 2;
