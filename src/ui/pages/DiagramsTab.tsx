@@ -35,8 +35,9 @@ export const DiagramsTab: React.FC = () => {
       <div>
         <Tabs
           value='{sub}'
-          onChange={(id: React.SetStateAction<string>) => setSub(id)}
-          size='large'>
+          variant={'buttons'}
+          onChange={(id) => setSub(id as string)}
+          size='medium'>
           <Tabs.List>
             {SUB_TABS.map((t) => (
               <Tabs.Trigger
