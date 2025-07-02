@@ -5,13 +5,8 @@ import { TAB_DATA, Tab } from '../ui/pages/tabs';
 import { EditMetadataModal } from '../ui/components/EditMetadataModal';
 import { ExcelDataProvider } from '../ui/hooks/excel-data-context';
 import type { ExcelRow } from '../core/utils/excel-loader';
-import {
-  createTheme,
-  Paragraph,
-  Tabs,
-  themes,
-  Primitive,
-} from '@mirohq/design-system';
+import { createTheme, Tabs, themes, Primitive } from '@mirohq/design-system';
+import { Paragraph } from '../ui/components/Paragraph';
 
 const lightThemeClassName = createTheme(themes.light);
 
