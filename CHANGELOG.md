@@ -1,3 +1,10 @@
+# [1.18.0](https://github.com/fenrick/MiroDiagramming/compare/v1.17.0...v1.18.0) (2025-07-02)
+
+
+### Features
+
+* **ui:** rename create tab to diagrams ([98d607f](https://github.com/fenrick/MiroDiagramming/commit/98d607faf54ba8a1a89696632310927d87a2fddd))
+
 # [1.17.0](https://github.com/fenrick/MiroDiagramming/compare/v1.16.1...v1.17.0) (2025-07-02)
 
 
