@@ -42,8 +42,9 @@ src/ui/
   pages/
     ArrangeTab.tsx
     CardsTab.tsx
-    CreateTab.tsx
-    DiagramTab.tsx
+    DiagramsTab.tsx
+    StructuredTab.tsx
+    LayoutEngineTab.tsx
     DummyTab.tsx
     ExcelTab.tsx
     FramesTab.tsx

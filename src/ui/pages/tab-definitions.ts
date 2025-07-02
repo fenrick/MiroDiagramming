@@ -1,7 +1,7 @@
 import type React from 'react';
 
 export type TabId =
-  | 'create'
+  | 'diagrams'
   | 'tools'
   | 'size'
   | 'style'

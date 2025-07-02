@@ -2,14 +2,14 @@
 import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { CreateTab } from '../src/ui/pages/CreateTab';
+import { DiagramsTab } from '../src/ui/pages/DiagramsTab';
 import { GraphProcessor } from '../src/core/graph/graph-processor';
 import { CardProcessor } from '../src/board/card-processor';
 
 vi.mock('../src/core/graph/graph-processor');
 vi.mock('../src/board/card-processor');
 
-describe('CreateTab', () => {
+describe('DiagramsTab', () => {
   beforeEach(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (globalThis as any).miro = { board: { ui: { on: vi.fn() } } };
@@ -25,7 +25,7 @@ describe('CreateTab', () => {
     const spy = jest
       .spyOn(GraphProcessor.prototype, 'processFile')
       .mockResolvedValue(undefined as unknown as void);
-    render(<CreateTab />);
+    render(<DiagramsTab />);
     const input = screen.getByTestId('file-input');
     const file = new File(['{}'], 'graph.json', { type: 'application/json' });
     await act(async () => {
@@ -41,10 +41,8 @@ describe('CreateTab', () => {
     const spy = jest
       .spyOn(CardProcessor.prototype, 'processFile')
       .mockResolvedValue(undefined as unknown as void);
-    render(<CreateTab />);
-    fireEvent.change(screen.getByRole('combobox'), {
-      target: { value: 'cards' },
-    });
+    render(<DiagramsTab />);
+    fireEvent.click(screen.getByRole('tab', { name: 'Cards' }));
     const input = screen.getByTestId('file-input');
     const file = new File(['{}'], 'cards.json', { type: 'application/json' });
     await act(async () => {

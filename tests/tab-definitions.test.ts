@@ -4,7 +4,7 @@ import type { TabId } from '../src/ui/pages/tab-definitions';
 
 /** Valid TabId values for runtime validation. */
 const VALID_IDS: TabId[] = [
-  'create',
+  'diagrams',
   'tools',
   'size',
   'style',

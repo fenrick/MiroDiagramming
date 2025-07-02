@@ -91,9 +91,9 @@ const LAYOUT_DESCRIPTIONS: Record<LayoutChoice, string> = {
   'Rect Packing': 'Fits rectangles within parents',
 };
 
-/** UI for the Diagram tab. */
+/** UI for the Structured sub-tab. */
 // eslint-disable-next-line complexity
-export const DiagramTab: React.FC = () => {
+export const StructuredTab: React.FC = () => {
   const [importQueue, setImportQueue] = React.useState<File[]>([]);
   const [layoutChoice, setLayoutChoice] =
     React.useState<LayoutChoice>('Layered');
