@@ -127,23 +127,26 @@ export const ResizeTab: React.FC = () => {
       <div className='custom-centered'>
         <section>
           <Heading level={2}>Manual Resize</Heading>
-          <TabGrid columns={2}>
+          <TabGrid columns={1}>
             <Paragraph data-testid='size-display'>
               {copiedSize
                 ? `Copied: ${copiedSize.width}×${copiedSize.height}`
                 : `Selection: ${size.width}×${size.height}`}
             </Paragraph>
             {warning && <Paragraph className='error'>{warning}</Paragraph>}
-            <FormGroup>
-              <InputField label='Width:'>
-                <input
-                  className='input input-small'
-                  type='number'
+            <TabGrid columns={2}>
+              <FormGroup>
+                <InputField label='Width:'>
+                  <input
+                    className='input input-small'
+                    type='number'
                   value={String(size.width)}
                   onChange={(e) => update('width')(e.target.value)}
                   placeholder='Width (board units)'
                 />
               </InputField>
+            </FormGroup>
+            <FormGroup>
               <InputField label='Height:'>
                 <input
                   className='input input-small'
@@ -154,6 +157,9 @@ export const ResizeTab: React.FC = () => {
                 />
               </InputField>
             </FormGroup>
+            </TabGrid>
+            <TabGrid columns={1}>
+              <FormGroup>
             <InputField label='Aspect Ratio'>
               <Select
                 data-testid='ratio-select'
@@ -169,7 +175,7 @@ export const ResizeTab: React.FC = () => {
                   </SelectOption>
                 ))}
               </Select>
-            </InputField>
+            </InputField></FormGroup></TabGrid>
             <div className='buttons'>
               <Button
                 onClick={apply}
