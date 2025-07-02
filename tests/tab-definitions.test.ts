@@ -6,7 +6,7 @@ import type { TabId } from '../src/ui/pages/tab-definitions';
 const VALID_IDS: TabId[] = [
   'create',
   'tools',
-  'resize',
+  'size',
   'style',
   'arrange',
   'frames',
