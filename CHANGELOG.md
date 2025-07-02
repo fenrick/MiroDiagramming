@@ -185,4 +185,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `calculateGridPositions` helper around grid-layout internals.
 - Replace sidebar form fieldsets with `TabGrid` layout and enforce button sizes.
 - Migrate remaining tabs to grid layout with semantic headings and no forms.
+- Add `ci:local` script to replicate CI pipeline locally.
 - Switch TabGrid to apply Mirotone column classes instead of inline styles.
