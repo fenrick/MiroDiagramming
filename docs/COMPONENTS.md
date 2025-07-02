@@ -52,9 +52,10 @@ components or compose using the design system tokens.
 | **Cluster**  | gap, align                 | left, right, centre       | n/a                 |
 | **TabGrid**  | columns, className?        | —                         | n/a                 |
 
-The **TabBar** component now covers both sidebar and nested navigation. Pass the
-current tab id via `tab` and handle selection with `onChange`. Use
-`size='small'` for compact nested tab sets.
+The main navigation now relies on `@mirohq/design-system-tabs`. The custom
+**TabBar** component remains for nested navigation. Pass the current tab id via
+`tab` and handle selection with `onChange`. Use `size='small'` for compact
+nested tab sets.
 
 > **When a wrapper is missing**
 >
