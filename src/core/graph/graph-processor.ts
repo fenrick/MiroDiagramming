@@ -107,6 +107,9 @@ export class GraphProcessor extends UndoableProcessor {
 
     const nodeMap = await this.createNodes(data, layout, offsetX, offsetY);
 
+    // Sync nodes first so connectors can reliably attach to them.
+    await this.syncOrUndo(Object.values(nodeMap));
+
     await this.createConnectorsAndZoom(data, layout, nodeMap, frame);
   }
 
