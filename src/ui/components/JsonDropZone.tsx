@@ -21,7 +21,7 @@ export function JsonDropZone({
     onDrop: onFiles,
   });
 
-  const style = React.useMemo(() => {
+  const dropzoneStyle = React.useMemo(() => {
     let state: Parameters<typeof getDropzoneStyle>[0] = 'base';
     if (dropzone.isDragReject) {
       state = 'reject';
@@ -34,12 +34,13 @@ export function JsonDropZone({
   return (
     <>
       <div
-        {...dropzone.getRootProps({ style })}
+        {...dropzone.getRootProps({ style: dropzoneStyle })}
         aria-label='File drop area'
         aria-describedby='dropzone-instructions'>
         {(() => {
           const { onChange, ...rest } = dropzone.getInputProps();
           return (
+            // Hidden file input so selecting a file triggers drop event
             <input
               className='custom-visually-hidden'
               data-testid='file-input'
