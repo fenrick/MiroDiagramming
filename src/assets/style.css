@@ -13,18 +13,25 @@
 
 html,
 body {
-  height: unset;
+  height: 100%;
   background: none;
 }
 
 #root {
-  padding: var(--space-small);
+  height: 100%;
   display: flex;
-  place-items: stretch center;
   flex-direction: column;
+  align-items: stretch;
+  overflow: hidden;
 }
 
-.scrollable .buttons {
+.scrollable {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-small);
+}
+
+#root .buttons {
   position: sticky;
   bottom: 0;
   padding-block: var(--space-medium);

@@ -45,42 +45,40 @@ export const App: React.FC = () => {
   const CurrentComp = current[4];
 
   return (
-    <Primitive.div>
-      <Primitive.div className='scrollable'>
-        <ExcelDataProvider
-          value={{
-            rows,
-            idColumn,
-            labelColumn,
-            templateColumn,
-            setRows,
-            setIdColumn,
-            setLabelColumn,
-            setTemplateColumn,
-          }}>
-          <Tabs
-            value={tab}
-            onChange={(id) => setTab(id as Tab)}
-            variant={'tabs'}
-            size='medium'>
-            <Tabs.List>
-              {TAB_DATA.map((t) => (
-                <Tabs.Trigger
-                  key={t[1]}
-                  value={t[1]}>
-                  {t[2]}
-                </Tabs.Trigger>
-              ))}
-            </Tabs.List>
-          </Tabs>
-          <Paragraph>{current[3]}</Paragraph>
-          <CurrentComp />
-          <EditMetadataModal
-            isOpen={showMeta}
-            onClose={() => setShowMeta(false)}
-          />
-        </ExcelDataProvider>
-      </Primitive.div>
+    <Primitive.div className='scrollable'>
+      <ExcelDataProvider
+        value={{
+          rows,
+          idColumn,
+          labelColumn,
+          templateColumn,
+          setRows,
+          setIdColumn,
+          setLabelColumn,
+          setTemplateColumn,
+        }}>
+        <Tabs
+          value={tab}
+          onChange={(id) => setTab(id as Tab)}
+          variant={'tabs'}
+          size='medium'>
+          <Tabs.List>
+            {TAB_DATA.map((t) => (
+              <Tabs.Trigger
+                key={t[1]}
+                value={t[1]}>
+                {t[2]}
+              </Tabs.Trigger>
+            ))}
+          </Tabs.List>
+        </Tabs>
+        <Paragraph>{current[3]}</Paragraph>
+        <CurrentComp />
+        <EditMetadataModal
+          isOpen={showMeta}
+          onClose={() => setShowMeta(false)}
+        />
+      </ExcelDataProvider>
     </Primitive.div>
   );
 };
