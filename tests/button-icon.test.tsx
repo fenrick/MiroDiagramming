@@ -11,7 +11,7 @@ describe('Button icon support', () => {
     const button = screen.getByRole('button');
     const icon = button.querySelector('[data-icon-component]');
     expect(icon).toBeInTheDocument();
-    expect(button.firstChild).toBe(icon?.parentElement);
+    expect(button.firstChild).toBe(icon);
   });
 
   test('renders end icon', () => {
@@ -25,6 +25,6 @@ describe('Button icon support', () => {
     const button = screen.getByRole('button');
     const icon = button.querySelector('[data-icon-component]');
     expect(icon).toBeInTheDocument();
-    expect(button.lastChild).toBe(icon?.parentElement);
+    expect(button.lastChild).toBe(icon);
   });
 });
