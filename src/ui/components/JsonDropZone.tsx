@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Button } from './Button';
-import { InputField } from './InputField';
+import { Form, Input } from '@mirohq/design-system';
 import { getDropzoneStyle } from '../hooks/ui-utils';
 import { tokens } from '../tokens';
 import { Paragraph } from './Paragraph';
@@ -42,21 +42,23 @@ export function JsonDropZone({
           const {
             style: _style,
             className: _class,
-            onChange: _on,
             ...inputProps
           } = dropzone.getInputProps({
             'aria-label': 'JSON file input',
           }) as Record<string, unknown>;
           void _style;
           void _class;
-          void _on;
           return (
-            <InputField
-              label='JSON file'
-              type='file'
-              data-testid='file-input'
-              {...inputProps}
-            />
+            <Form.Field>
+              <Form.Label htmlFor={inputProps.id as string}>
+                JSON file
+              </Form.Label>
+              <Input
+                data-testid='file-input'
+                type='file'
+                {...inputProps}
+              />
+            </Form.Field>
           );
         })()}
         {dropzone.isDragAccept ? (
