@@ -2,7 +2,7 @@ import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { TAB_DATA, Tab } from '../ui/pages/tabs';
-import { EditMetadataModal } from '../ui/components/EditMetadataModal';
+import { EditMetadataModal, IntroScreen } from '../ui/components';
 import { ExcelDataProvider } from '../ui/hooks/excel-data-context';
 import type { ExcelRow } from '../core/utils/excel-loader';
 import { createTheme, Tabs, themes, Primitive } from '@mirohq/design-system';
@@ -15,7 +15,7 @@ const lightThemeClassName = createTheme(themes.light);
  * toggling user interface. Extraction as an exported constant allows
  * the component to be reused in tests without side effects.
  */
-export const App: React.FC = () => {
+function AppShell(): React.JSX.Element {
   const [tab, setTab] = React.useState<Tab>(TAB_DATA[0][1]);
   const [rows, setRows] = React.useState<ExcelRow[]>([]);
   const [idColumn, setIdColumn] = React.useState('');
@@ -80,6 +80,20 @@ export const App: React.FC = () => {
         />
       </ExcelDataProvider>
     </Primitive.div>
+  );
+}
+
+/**
+ * Root component that defers loading the main UI until the user
+ * explicitly starts the session. This avoids initial Miro API calls
+ * triggered by various tabs.
+ */
+export const App: React.FC = () => {
+  const [started, setStarted] = React.useState(false);
+  return started ? (
+    <AppShell />
+  ) : (
+    <IntroScreen onStart={() => setStarted(true)} />
   );
 };
 

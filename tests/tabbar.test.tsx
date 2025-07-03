@@ -19,6 +19,7 @@ afterEach(() => {
 
 test('Ctrl+Alt+3 selects Style tab', async () => {
   render(<App />);
+  fireEvent.click(screen.getByTestId('start-button'));
   await act(async () => {
     fireEvent.keyDown(window, { key: '3', ctrlKey: true, altKey: true });
   });
