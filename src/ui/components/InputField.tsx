@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Input } from '@mirohq/design-system';
+import { Form, Input, Primitive } from '@mirohq/design-system';
 
 export type InputFieldProps = Readonly<{
   /** Visible label text. */
@@ -14,6 +14,8 @@ export type InputFieldProps = Readonly<{
   children?: React.ReactNode;
   /** Optional id forwarded to the control and label. */
   id?: string;
+  type?: string;
+  value: string;
 }>;
 
 // Custom class names and inline styles are intentionally excluded so spacing
@@ -22,7 +24,16 @@ export type InputFieldProps = Readonly<{
 /** Single component combining label and input control. */
 export const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
   function InputField(
-    { label, as: Component = Input, options = {}, onChange, children, id },
+    {
+      label,
+      as: Component = Input,
+      options = {},
+      onChange,
+      children,
+      id,
+      type,
+      value,
+    },
     ref,
   ) {
     const generatedId = React.useId();
@@ -46,12 +57,20 @@ export const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
     return (
       <Form.Field>
         <Form.Label htmlFor={inputId}>{label}</Form.Label>
+        <Input
+          id={inputId}
+          onChange={handleChange}
+          type={type}
+          value={value}>
+          {children}
+        </Input>
+      </Form.Field>
+    );
+    /**
         {React.createElement(
           Component,
           { id: inputId, ref, ...options, onChange: handleChange },
           children,
-        )}
-      </Form.Field>
-    );
+        )} */
   },
 );
