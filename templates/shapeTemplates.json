@@ -6,8 +6,10 @@
         "width": 160,
         "height": 100,
         "style": {
-          "fillColor": "tokens.color.lilac[500]",
-          "fontFamily": "Arial"
+          "fillColor": "tokens.color.lilac[350]",
+          "fontFamily": "Arial",
+          "borderColor": "#939598",
+          "borderWidth": "1px"
         },
         "text": "{{label}}"
       }
@@ -33,7 +35,7 @@
         "height": 100,
         "rotation": 0,
         "style": {
-          "fillColor": "tokens.color.yellow[500]",
+          "fillColor": "tokens.color.orange[350]",
           "fontFamily": "Arial"
         },
         "text": "{{label}}"
@@ -49,8 +51,10 @@
         "height": 100,
         "rotation": 0,
         "style": {
-          "fillColor": "tokens.color.yellow[500]",
-          "fontFamily": "Arial"
+          "fillColor": "tokens.color.sunshine[350]",
+          "fontFamily": "Arial",
+          "borderColor": "#939598",
+          "borderWidth": "1px"
         },
         "text": "{{label}}"
       }
@@ -78,8 +82,10 @@
         "width": 160,
         "height": 100,
         "style": {
-          "fillColor": "tokens.color.blue[500]",
-          "fontFamily": "Arial"
+          "fillColor": "tokens.color.blue[350]",
+          "fontFamily": "Arial",
+          "borderColor": "#939598",
+          "borderWidth": "1px"
         },
         "text": "{{label}}"
       }
@@ -103,8 +109,10 @@
         "width": 160,
         "height": 100,
         "style": {
-          "fillColor": "tokens.color.green[500]",
-          "fontFamily": "Arial"
+          "fillColor": "tokens.color.green[350]",
+          "fontFamily": "Arial",
+          "borderColor": "#939598",
+          "borderWidth": "1px"
         },
         "text": "{{label}}"
       }
@@ -122,12 +130,25 @@
       "Artifact",
       "Technolgoy collaboration",
       "Path",
-      "Communication network",
-      "Equipment",
-      "Facility",
-      "Distribution Network",
-      "Material"
+      "Communication network"
     ]
+  },
+  "Physical": {
+    "elements": [
+      {
+        "shape": "round_rectangle",
+        "width": 160,
+        "height": 100,
+        "style": {
+          "fillColor": "tokens.color.moss[350]",
+          "fontFamily": "Arial",
+          "borderColor": "#939598",
+          "borderWidth": "1px"
+        },
+        "text": "{{label}}"
+      }
+    ],
+    "alias": ["Equipment", "Facility", "Distribution Network", "Material"]
   },
   "Composite": {
     "elements": [
@@ -136,8 +157,10 @@
         "width": 160,
         "height": 100,
         "style": {
-          "fillColor": "tokens.color.coral[500]",
-          "fontFamily": "Arial"
+          "fillColor": "tokens.color.coal[350]",
+          "fontFamily": "Arial",
+          "borderColor": "#939598",
+          "borderWidth": "1px"
         },
         "text": "{{label}}"
       }
@@ -151,8 +174,10 @@
         "width": 160,
         "height": 100,
         "style": {
-          "fillColor": "tokens.color.red[500]",
-          "fontFamily": "Arial"
+          "fillColor": "tokens.color.pink[350]",
+          "fontFamily": "Arial",
+          "borderColor": "#939598",
+          "borderWidth": "1px"
         },
         "text": "{{label}}"
       }

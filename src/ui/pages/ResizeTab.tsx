@@ -6,7 +6,6 @@ import {
   Select,
   SelectOption,
 } from '../components';
-import { FormGroup } from '../components/legacy';
 import {
   applySizeToSelection,
   copySizeFromSelection,
@@ -33,6 +32,7 @@ import {
   IconChevronRightDouble,
   IconArrowArcLeft,
   IconSquaresTwoOverlap,
+  Grid,
 } from '@mirohq/design-system';
 
 /** Predefined button sizes used by the quick presets. */
@@ -128,64 +128,64 @@ export const ResizeTab: React.FC = () => {
 
   return (
     <TabPanel tabId='size'>
-      <Heading level={3}>Adjust size</Heading>
-      <TabGrid columns={1}>
-        <Paragraph data-testid='size-display'>
-          {copiedSize
-            ? `Copied: ${copiedSize.width}×${copiedSize.height}`
-            : `Selection: ${size.width}×${size.height}`}
-          <br />
-          {boardUnitsToMm(size.width).toFixed(1)} mm ×{' '}
-          {boardUnitsToMm(size.height).toFixed(1)} mm (
-          {boardUnitsToInches(size.width).toFixed(2)} ×{' '}
-          {boardUnitsToInches(size.height).toFixed(2)} in)
-        </Paragraph>
-        {warning && <Paragraph className='error'>{warning}</Paragraph>}
-        <TabGrid columns={2}>
-          <FormGroup>
-            <InputField label='Width:'>
-              <input
-                className='input input-small'
-                type='number'
-                value={String(size.width)}
-                onChange={(e) => update('width')(e.target.value)}
-                placeholder='Width (board units)'
-              />
-            </InputField>
-          </FormGroup>
-          <FormGroup>
-            <InputField label='Height:'>
-              <input
-                className='input input-small'
-                type='number'
-                value={String(size.height)}
-                onChange={(e) => update('height')(e.target.value)}
-                placeholder='Height (board units)'
-              />
-            </InputField>
-          </FormGroup>
-        </TabGrid>
-        <TabGrid columns={1}>
-          <FormGroup>
-            <InputField label='Aspect Ratio'>
-              <Select
-                data-testid='ratio-select'
-                className='select-small'
-                value={ratio}
-                onChange={(v) => setRatio(v as AspectRatioId | 'none')}>
-                <SelectOption value='none'>Free</SelectOption>
-                {ASPECT_RATIOS.map((r) => (
-                  <SelectOption
-                    key={r.id}
-                    value={r.id}>
-                    {r.label}
-                  </SelectOption>
-                ))}
-              </Select>
-            </InputField>
-          </FormGroup>
-        </TabGrid>
-      </TabGrid>
+      <Paragraph data-testid='size-display'>
+        {copiedSize
+          ? `Copied: ${copiedSize.width}×${copiedSize.height}`
+          : `Selection: ${size.width}×${size.height}`}
+        <br />
+        {boardUnitsToMm(size.width).toFixed(1)} mm ×{' '}
+        {boardUnitsToMm(size.height).toFixed(1)} mm (
+        {boardUnitsToInches(size.width).toFixed(2)} ×{' '}
+        {boardUnitsToInches(size.height).toFixed(2)} in)
+      </Paragraph>
+      {warning && <Paragraph className='error'>{warning}</Paragraph>}
+      <Grid
+        columns={2}
+        gap={200}>
+        <Grid.Item
+          columnStart={1}
+          columnEnd={2}>
+          <InputField
+            label='Width:'
+            type='number'
+            value={String(size.width)}
+            onChange={(e) => update('width')(e.target.value)}
+            placeholder='Width (board units)'></InputField>
+        </Grid.Item>
+        <Grid.Item
+          columnStart={2}
+          columnEnd={3}>
+          <InputField label='Height:'>
+            <input
+              className='input input-small'
+              type='number'
+              value={String(size.height)}
+              onChange={(e) => update('height')(e.target.value)}
+              placeholder='Height (board units)'
+            />
+          </InputField>
+        </Grid.Item>
+        <Grid.Item
+          columnStart={1}
+          columnEnd={5}>
+          <InputField label='Aspect Ratio'>
+            <Select
+              data-testid='ratio-select'
+              className='select-small'
+              value={ratio}
+              onChange={(v) => setRatio(v as AspectRatioId | 'none')}>
+              <SelectOption value='none'>Free</SelectOption>
+              {ASPECT_RATIOS.map((r) => (
+                <SelectOption
+                  key={r.id}
+                  value={r.id}>
+                  {r.label}
+                </SelectOption>
+              ))}
+            </Select>
+          </InputField>
+        </Grid.Item>
+      </Grid>
       <Heading level={3}>Presets</Heading>
       <TabGrid columns={1}>
         <div>
