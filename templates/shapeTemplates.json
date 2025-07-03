@@ -1,199 +1,148 @@
 {
-  "Role": {
+  "Motivation": {
     "elements": [
       {
         "shape": "round_rectangle",
         "width": 160,
-        "height": 60,
+        "height": 100,
+        "style": { "fillColor": "color.lilac-500", "fontFamily": "Arial" },
+        "text": "{{label}}"
+      }
+    ],
+    "alias": [
+      "Stakeholder",
+      "Driver",
+      "Assessment",
+      "Goal",
+      "Outcome",
+      "Principle",
+      "Requirement",
+      "Constraint",
+      "Meaning",
+      "Value"
+    ]
+  },
+  "Strategic": {
+    "elements": [
+      {
+        "shape": "round_rectangle",
+        "width": 160,
+        "height": 100,
         "rotation": 0,
-        "style": {
-          "fillColor": "tokens.color.yellow[150]",
-          "fontFamily": "Arial"
-        },
+        "style": { "fillColor": "color.yellow-500", "fontFamily": "Arial" },
         "text": "{{label}}"
       }
-    ]
+    ],
+    "alias": ["Resource", "Capability", "Course of action", "Value Stream"]
   },
-  "BusinessService": {
+  "Business": {
     "elements": [
       {
         "shape": "round_rectangle",
         "width": 160,
-        "height": 60,
-        "style": {
-          "fillColor": "tokens.color.blue[200]",
-          "fontFamily": "Arial"
-        },
+        "height": 100,
+        "rotation": 0,
+        "style": { "fillColor": "color.yellow-500", "fontFamily": "Arial" },
         "text": "{{label}}"
       }
+    ],
+    "alias": [
+      "Business actor",
+      "Business role",
+      "Business colalboration",
+      "Business interface",
+      "Business process",
+      "Business function",
+      "Business interaction",
+      "Product",
+      "Representation",
+      "Contact",
+      "Business object",
+      "Business service",
+      "Business event"
     ]
   },
-  "BusinessProcess": {
+  "Application": {
     "elements": [
       {
         "shape": "round_rectangle",
         "width": 160,
-        "height": 60,
-        "style": {
-          "fillColor": "tokens.color.green[150]",
-          "fontFamily": "Arial"
-        },
+        "height": 100,
+        "style": { "fillColor": "color.blue-500", "fontFamily": "Arial" },
         "text": "{{label}}"
       }
+    ],
+    "alias": [
+      "Application component",
+      "Application interface",
+      "Application function",
+      "Data object",
+      "Application process",
+      "Application service",
+      "Application interaction",
+      "Application event",
+      "Application collaboration"
     ]
   },
-  "ApplicationComponent": {
+  "Technology": {
     "elements": [
       {
         "shape": "round_rectangle",
         "width": 160,
-        "height": 60,
-        "style": {
-          "fillColor": "tokens.color.blue[100]",
-          "fontFamily": "Arial"
-        },
+        "height": 100,
+        "style": { "fillColor": "coolor.green-500", "fontFamily": "Arial" },
         "text": "{{label}}"
       }
+    ],
+    "alias": [
+      "Device",
+      "System software",
+      "Node",
+      "Technology function",
+      "Technology interface",
+      "Technology service",
+      "Technology interaction",
+      "Technology event",
+      "Technology process",
+      "Artifact",
+      "Technolgoy collaboration",
+      "Path",
+      "Communication network",
+      "Equipment",
+      "Facility",
+      "Distribution Network",
+      "Material"
     ]
   },
-  "DataObject": {
-    "elements": [
-      {
-        "shape": "rectangle",
-        "width": 160,
-        "height": 60,
-        "style": {
-          "fillColor": "tokens.color.yellow[250]",
-          "fontFamily": "Arial"
-        },
-        "text": "{{label}}"
-      }
-    ]
-  },
-  "Device": {
-    "elements": [
-      {
-        "shape": "rectangle",
-        "width": 160,
-        "height": 60,
-        "style": {
-          "fillColor": "tokens.color.gray[200]",
-          "fontFamily": "Arial"
-        },
-        "text": "{{label}}"
-      }
-    ]
-  },
-  "BusinessActor": {
+  "Composite": {
     "elements": [
       {
         "shape": "round_rectangle",
         "width": 160,
-        "height": 60,
-        "style": {
-          "fillColor": "tokens.color.yellow[200]",
-          "fontFamily": "Arial"
-        },
+        "height": 100,
+        "style": { "fillColor": "coolor.coral-500", "fontFamily": "Arial" },
         "text": "{{label}}"
       }
-    ]
+    ],
+    "alias": ["Location", "Grouping"]
   },
-  "ApplicationService": {
+  "Implementation": {
     "elements": [
       {
         "shape": "round_rectangle",
         "width": 160,
-        "height": 60,
-        "style": {
-          "fillColor": "tokens.color.blue[200]",
-          "fontFamily": "Arial"
-        },
+        "height": 100,
+        "style": { "fillColor": "color.red-500", "fontFamily": "Arial" },
         "text": "{{label}}"
       }
-    ]
-  },
-  "Node": {
-    "elements": [
-      {
-        "shape": "rectangle",
-        "width": 160,
-        "height": 60,
-        "style": {
-          "fillColor": "tokens.color.gray[200]",
-          "fontFamily": "Arial"
-        },
-        "text": "{{label}}"
-      }
-    ]
-  },
-  "TechnologyService": {
-    "elements": [
-      {
-        "shape": "round_rectangle",
-        "width": 160,
-        "height": 60,
-        "style": {
-          "fillColor": "tokens.color.blue[150]",
-          "fontFamily": "Arial"
-        },
-        "text": "{{label}}"
-      }
-    ]
-  },
-  "WorkPackage": {
-    "elements": [
-      {
-        "shape": "round_rectangle",
-        "width": 160,
-        "height": 60,
-        "style": {
-          "fillColor": "tokens.color.red[150]",
-          "fontFamily": "Arial"
-        },
-        "text": "{{label}}"
-      }
-    ]
-  },
-  "Goal": {
-    "elements": [
-      {
-        "shape": "round_rectangle",
-        "width": 160,
-        "height": 60,
-        "style": {
-          "fillColor": "tokens.color.red[200]",
-          "fontFamily": "Arial"
-        },
-        "text": "{{label}}"
-      }
-    ]
-  },
-  "Decision": {
-    "elements": [
-      {
-        "shape": "diamond",
-        "width": 80,
-        "height": 80,
-        "style": {
-          "fillColor": "tokens.color.yellow[200]",
-          "fontFamily": "Arial"
-        },
-        "text": "{{label}}"
-      }
-    ]
-  },
-  "StartEnd": {
-    "elements": [
-      {
-        "shape": "ellipse",
-        "width": 100,
-        "height": 60,
-        "style": {
-          "fillColor": "tokens.color.yellow[250]",
-          "fontFamily": "Arial"
-        },
-        "text": "{{label}}"
-      }
+    ],
+    "alias": [
+      "Deliverable",
+      "Implementation event",
+      "Work package",
+      "Plateau",
+      "Outcome",
+      "Gap"
     ]
   }
 }
