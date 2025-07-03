@@ -23,14 +23,12 @@ export const FramesTab: React.FC = () => {
     <TabPanel tabId='frames'>
       <TabGrid columns={2}>
         <Heading level={2}>Rename Frames</Heading>
-        <InputField label='Prefix'>
-          <input
-            className='input input-small'
-            value={prefix}
-            onChange={(e) => setPrefix(e.target.value)}
-            placeholder='Prefix'
-          />
-        </InputField>
+        <InputField
+          label='Prefix'
+          value={prefix}
+          onChange={(v) => setPrefix(v)}
+          placeholder='Prefix'
+        />
         <div className='buttons'>
           <Button
             onClick={rename}
