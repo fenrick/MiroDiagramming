@@ -10,3 +10,4 @@ export { TabGrid } from './TabGrid';
 export { TabPanel } from './TabPanel';
 export { Select, SelectOption } from './Select';
 export { Paragraph } from './Paragraph';
+export { IntroScreen } from './IntroScreen';

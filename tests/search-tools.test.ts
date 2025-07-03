@@ -4,6 +4,11 @@ import {
   getTextFields,
 } from '../src/board/search-tools';
 import { BoardQueryLike } from '../src/board/board';
+import { boardCache } from '../src/board/board-cache';
+
+beforeEach(() => {
+  boardCache.reset();
+});
 
 const makeBoard = () => {
   const items = [
