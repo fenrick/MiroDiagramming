@@ -2,11 +2,10 @@
 
 _Explicit UI + interaction walkthrough for every tab (June 2025)_
 
-This document narrows focus to the **ten sidebar tabs** in the
-Structured Diagramming add‑on. Each tab section specifies panel layout, visible
-controls, states, interaction flows, tool‑tips, keyboard shortcuts, and
-validation rules—so any developer can translate designs into code with zero
-ambiguity.
+This document narrows focus to the **ten sidebar tabs** in the Quick Tools
+add‑on. Each tab section specifies panel layout, visible controls, states,
+interaction flows, tool‑tips, keyboard shortcuts and validation rules—so any
+developer can translate designs into code with zero ambiguity.
 
 ---
 

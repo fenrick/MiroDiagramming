@@ -12,3 +12,4 @@ export { TabPanel } from './TabPanel';
 export { Select, SelectOption } from './Select';
 export { Paragraph } from './Paragraph';
 export { IntroScreen } from './IntroScreen';
+export { Markdown } from './Markdown';
