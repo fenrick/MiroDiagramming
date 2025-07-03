@@ -48,4 +48,13 @@ describe('token resolution', () => {
     const style = templateManager.resolveStyle({ gap: 'tokens.space.small' });
     expect(style.gap).toBe('var(--space-small)');
   });
+
+  test('parses numeric values', () => {
+    const style = templateManager.resolveStyle({
+      borderWidth: '2px',
+      borderColor: '#123456',
+    });
+    expect(style.borderWidth).toBe(2);
+    expect(style.borderColor).toBe('#123456');
+  });
 });

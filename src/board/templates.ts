@@ -119,11 +119,23 @@ export class TemplateManager {
     return token ?? value;
   }
 
-  /** Apply token resolution to all string properties in the provided object. */
+  /**
+   * Convert numeric strings into numbers while leaving other values intact.
+   *
+   * Supports optional `px` units which are stripped off.
+   */
+  private parseNumeric(value: unknown): unknown {
+    if (typeof value !== 'string') return value;
+    const m = value.match(/^(-?\d+(?:\.\d+)?)(px)?$/);
+    return m ? parseFloat(m[1]) : value;
+  }
+
+  /** Apply token and numeric resolution to style values. */
   public resolveStyle(style: Record<string, unknown>): Record<string, unknown> {
     const result: Record<string, unknown> = {};
     Object.entries(style).forEach(([k, v]) => {
-      result[k] = this.resolveToken(v);
+      const token = this.resolveToken(v);
+      result[k] = this.parseNumeric(token);
     });
     return result;
   }
