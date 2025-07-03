@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Input } from '@mirohq/design-system';
+import { Form, Input, styled } from '@mirohq/design-system';
 
 export type InputFieldProps = Readonly<
   Omit<
@@ -17,6 +17,18 @@ export type InputFieldProps = Readonly<
 // and typography remain consistent across the app.
 
 /** Single component combining label and input control. */
+const StyledFormField = styled(Form.Field, {
+  marginBottom: '16px',
+  position: 'relative',
+});
+
+const StyledLabel = styled(Form.Label, { marginBottom: 'var(--space-xsmall)' });
+
+const StyledInput = styled(Input, {
+  paddingLeft: 'var(--space-small)',
+  paddingRight: 'var(--space-small)',
+});
+
 export const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
   function InputField({ label, onChange, id, ...props }, ref) {
     const generatedId = React.useId();
@@ -26,15 +38,15 @@ export const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
     };
 
     return (
-      <Form.Field>
-        <Form.Label htmlFor={inputId}>{label}</Form.Label>
-        <Input
+      <StyledFormField>
+        <StyledLabel htmlFor={inputId}>{label}</StyledLabel>
+        <StyledInput
           id={inputId}
           ref={ref}
           onChange={handleChange}
           {...(props as React.ComponentProps<typeof Input>)}
         />
-      </Form.Field>
+      </StyledFormField>
     );
   },
 );

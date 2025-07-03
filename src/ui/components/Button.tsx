@@ -25,6 +25,10 @@ export type ButtonProps = Readonly<
   }
 >;
 
+const StyledDSButton = styled(DSButton, {
+  margin: '0 var(--space-small) var(--space-small) 0',
+});
+
 function getIconSlots(
   icon: React.ReactNode,
   iconPosition: 'start' | 'end',
@@ -67,6 +71,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
       const CustomButton = styled(BaseButton, {
         ...style,
+        margin: '0 var(--space-small) var(--space-small) 0',
         whitespace: 'nowrap',
         textOverflow: 'ellipsis',
         textAlign: 'center',
@@ -93,7 +98,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     }
 
     return (
-      <DSButton
+      <StyledDSButton
         ref={ref}
         variant={variant}
         size={finalSize}
@@ -101,7 +106,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {start}
         <DSButton.Label>{children}</DSButton.Label>
         {end}
-      </DSButton>
+      </StyledDSButton>
     );
   },
 );
