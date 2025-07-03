@@ -1,5 +1,6 @@
 import React from 'react';
-import { Button as DSButton } from '@mirohq/design-system';
+import { Button as DSButton, styled } from '@mirohq/design-system';
+import { BaseButton } from '@mirohq/design-system-base-button';
 
 export type ButtonProps = Readonly<
   Omit<
@@ -19,10 +20,31 @@ export type ButtonProps = Readonly<
      * @default 'start'
      */
     iconPosition?: 'start' | 'end';
+    /** Optional style override for the button. */
+    style?: React.CSSProperties;
   }
 >;
 
-/** Basic button bridging to the design-system implementation. */
+function getIconSlots(
+  icon: React.ReactNode,
+  iconPosition: 'start' | 'end',
+): { start: React.ReactNode; end: React.ReactNode } {
+  if (!icon) return { start: null, end: null };
+  if (iconPosition === 'start') {
+    return {
+      start: <DSButton.IconSlot key='icon-start'>{icon}</DSButton.IconSlot>,
+      end: null,
+    };
+  }
+  if (iconPosition === 'end') {
+    return {
+      start: null,
+      end: <DSButton.IconSlot key='icon-end'>{icon}</DSButton.IconSlot>,
+    };
+  }
+  return { start: null, end: null };
+}
+
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   function Button(
     {
@@ -30,21 +52,46 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       size,
       icon,
       iconPosition = 'start',
+      style = {},
       children,
       ...props
     },
     ref,
   ) {
     const finalSize = size ?? (variant === 'primary' ? 'large' : 'medium');
-    let start: React.ReactNode = null;
-    let end: React.ReactNode = null;
-    if (icon) {
-      if (iconPosition === 'start') {
-        start = <DSButton.IconSlot key='icon-start'>{icon}</DSButton.IconSlot>;
-      } else if (iconPosition === 'end') {
-        end = <DSButton.IconSlot key='icon-end'>{icon}</DSButton.IconSlot>;
-      }
+
+    const { start, end } = getIconSlots(icon, iconPosition);
+
+    if (style && Object.keys(style).length > 0) {
+      const LABEL_OFFSET = 2;
+
+      const CustomButton = styled(BaseButton, {
+        ...style,
+        whitespace: 'nowrap',
+        textOverflow: 'ellipsis',
+        textAlign: 'center',
+        fontWeight: '$semiBold',
+        position: 'relative',
+        width: 'fit-content',
+        maxWidth: '100%',
+        lineHeight: 1,
+        border: '1px solid transparent',
+        fontSize: '$175',
+        height: '$6',
+        paddingX: 'calc($100 + '.concat(String(LABEL_OFFSET), 'px)'),
+      });
+
+      return (
+        <CustomButton
+          ref={ref}
+          {...props}>
+          {start}
+          <DSButton.Label>{children}</DSButton.Label>
+          {end}
+        </CustomButton>
+      );
     }
+
     return (
       <DSButton
         ref={ref}
