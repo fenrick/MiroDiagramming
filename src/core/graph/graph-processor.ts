@@ -106,7 +106,7 @@ export class GraphProcessor extends UndoableProcessor {
     );
 
     const nodeMap = await this.createNodes(data, layout, offsetX, offsetY);
-
+    // Widgets are created without syncing so we can validate edges first.
     await this.createConnectorsAndZoom(data, layout, nodeMap, frame);
   }
 
