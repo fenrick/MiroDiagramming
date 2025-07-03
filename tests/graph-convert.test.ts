@@ -15,8 +15,8 @@ describe('graph conversion helpers', () => {
   test('edgesToHierarchy builds nested structure', () => {
     const graph = {
       nodes: [
-        { id: 'p', label: 'P', type: 'Role' },
-        { id: 'c', label: 'C', type: 'Role' },
+        { id: 'p', label: 'P', type: 'Motivation' },
+        { id: 'c', label: 'C', type: 'Motivation' },
       ],
       edges: [{ from: 'p', to: 'c' }],
     };
@@ -25,8 +25,8 @@ describe('graph conversion helpers', () => {
       {
         id: 'p',
         label: 'P',
-        type: 'Role',
-        children: [{ id: 'c', label: 'C', type: 'Role' }],
+        type: 'Motivation',
+        children: [{ id: 'c', label: 'C', type: 'Motivation' }],
       },
     ]);
   });
@@ -36,8 +36,8 @@ describe('graph conversion helpers', () => {
       {
         id: 'p',
         label: 'P',
-        type: 'Role',
-        children: [{ id: 'c', label: 'C', type: 'Role' }],
+        type: 'Motivation',
+        children: [{ id: 'c', label: 'C', type: 'Motivation' }],
       },
     ];
     const graph = hierarchyToEdges(roots);
@@ -109,8 +109,8 @@ describe('processor conversions', () => {
       {
         id: 'p',
         label: 'P',
-        type: 'Role',
-        children: [{ id: 'c', label: 'C', type: 'Role' }],
+        type: 'Motivation',
+        children: [{ id: 'c', label: 'C', type: 'Motivation' }],
       },
     ];
     const spy = jest
@@ -186,7 +186,10 @@ describe('processor conversions', () => {
         nodes: { p: { x: 0, y: 0, width: 10, height: 10 } },
       });
     const hierSpy = jest.spyOn(layoutEngine, 'layoutGraph');
-    const graph = { nodes: [{ id: 'p', label: 'P', type: 'Role' }], edges: [] };
+    const graph = {
+      nodes: [{ id: 'p', label: 'P', type: 'Motivation' }],
+      edges: [],
+    };
     await gp.processGraph(graph as Parameters<typeof gp.processGraph>[0], {
       layout: { algorithm: 'box' },
     });
@@ -241,8 +244,8 @@ describe('processor conversions', () => {
     const proc = new HierarchyProcessor();
     const graph = {
       nodes: [
-        { id: 'p', label: 'P', type: 'Role' },
-        { id: 'c', label: 'C', type: 'Role' },
+        { id: 'p', label: 'P', type: 'Motivation' },
+        { id: 'c', label: 'C', type: 'Motivation' },
       ],
       edges: [{ from: 'p', to: 'c' }],
     };

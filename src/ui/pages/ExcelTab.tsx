@@ -43,7 +43,7 @@ export const ExcelTab: React.FC = () => {
   const [templateColumn, setTemplateColumn] = React.useState(
     data?.templateColumn ?? '',
   );
-  const [template, setTemplate] = React.useState('Role');
+  const [template, setTemplate] = React.useState('Motivation');
   const [loader, setLoader] = React.useState<ExcelLoader | GraphExcelLoader>(
     excelLoader,
   );

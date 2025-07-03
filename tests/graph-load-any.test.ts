@@ -34,7 +34,7 @@ describe('loadAnyGraph', () => {
       onerror: (() => void) | null = null;
       readAsText() {
         this.onload?.({
-          target: { result: '[{"id":"n","label":"L","type":"Role"}]' },
+          target: { result: '[{"id":"n","label":"L","type":"Motivation"}]' },
         } as ReaderEvent);
       }
     }
@@ -43,7 +43,11 @@ describe('loadAnyGraph', () => {
     const data = await graphService.loadAnyGraph(file);
     expect(Array.isArray(data)).toBe(true);
     if (Array.isArray(data)) {
-      expect(data[0]).toMatchObject({ id: 'n', label: 'L', type: 'Role' });
+      expect(data[0]).toMatchObject({
+        id: 'n',
+        label: 'L',
+        type: 'Motivation',
+      });
     }
   });
 

@@ -3,21 +3,21 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { Button } from '../src/ui/components/Button';
-import { IconActivity } from '@mirohq/design-system-icons/react';
+const DummyIcon = () => <svg data-icon-component />;
 
 describe('Button icon support', () => {
   test('renders start icon by default', () => {
-    render(<Button icon={<IconActivity />}>Hello</Button>);
+    render(<Button icon={<DummyIcon />}>Hello</Button>);
     const button = screen.getByRole('button');
     const icon = button.querySelector('[data-icon-component]');
     expect(icon).toBeInTheDocument();
-    expect(button.firstChild).toBe(icon?.parentElement);
+    expect(button.firstChild).toBe(icon);
   });
 
   test('renders end icon', () => {
     render(
       <Button
-        icon={<IconActivity />}
+        icon={<DummyIcon />}
         iconPosition='end'>
         Next
       </Button>,
@@ -25,6 +25,6 @@ describe('Button icon support', () => {
     const button = screen.getByRole('button');
     const icon = button.querySelector('[data-icon-component]');
     expect(icon).toBeInTheDocument();
-    expect(button.lastChild).toBe(icon?.parentElement);
+    expect(button.lastChild).toBe(icon);
   });
 });

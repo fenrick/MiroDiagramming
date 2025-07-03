@@ -36,6 +36,8 @@ export interface TemplateDefinition {
    * If omitted, metadata is applied to every element.
    */
   masterElement?: number;
+  /** Alternate names that refer to this template. */
+  alias?: string[];
 }
 
 export interface TemplateCollection {
@@ -60,6 +62,7 @@ export class TemplateManager {
   ) as TemplateCollection;
   public readonly connectorTemplates: ConnectorTemplateCollection =
     connectorJson as ConnectorTemplateCollection;
+  private readonly aliasMap: Record<string, string> = {};
 
   /**
    * Translate `tokens.color.*` references to concrete hex values.
@@ -124,7 +127,13 @@ export class TemplateManager {
     });
     return result;
   }
-  private constructor() {}
+  private constructor() {
+    Object.entries(this.templates).forEach(([key, def]) => {
+      def.alias?.forEach((a) => {
+        this.aliasMap[a] = key;
+      });
+    });
+  }
 
   /** Access the singleton instance. */
   public static getInstance(): TemplateManager {
@@ -136,7 +145,7 @@ export class TemplateManager {
 
   /** Lookup a shape template by name. */
   public getTemplate(name: string): TemplateDefinition | undefined {
-    return this.templates[name];
+    return this.templates[name] ?? this.templates[this.aliasMap[name]];
   }
 
   /** Retrieve a connector styling template by name. */

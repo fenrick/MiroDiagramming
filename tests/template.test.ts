@@ -47,7 +47,7 @@ describe('createFromTemplate', () => {
 
   test('creates a single shape with correct style', async () => {
     const widget = await templateManager.createFromTemplate(
-      'Role',
+      'Motivation',
       'Label',
       0,
       0,
@@ -55,7 +55,7 @@ describe('createFromTemplate', () => {
     expect(widget.type).toBe('shape');
     const args = (global.miro.board.createShape as jest.Mock).mock.calls[0][0];
     expect(args.shape).toBe('round_rectangle');
-    expect(args.style.fillColor).toBe('#fff7d9');
+    expect(args.style.fillColor).toBe('#8F7FEE');
     expect(global.miro.board.group).not.toHaveBeenCalled();
   });
 

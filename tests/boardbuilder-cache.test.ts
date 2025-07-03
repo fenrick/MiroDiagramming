@@ -20,8 +20,8 @@ describe('BoardBuilder lookup and connector updates', () => {
     const shape = { content: 'B' } as Record<string, unknown>;
     global.miro = { board: { get: jest.fn().mockResolvedValue([shape]) } };
     const builder = new BoardBuilder();
-    await builder.findNode('Role', 'B');
-    await builder.findNode('Role', 'B');
+    await builder.findNode('Business', 'B');
+    await builder.findNode('Business', 'B');
     expect((global.miro.board.get as jest.Mock).mock.calls.length).toBe(1);
   });
 
@@ -29,9 +29,9 @@ describe('BoardBuilder lookup and connector updates', () => {
     const shape = { content: 'B' } as Record<string, unknown>;
     global.miro = { board: { get: jest.fn().mockResolvedValue([shape]) } };
     const builder = new BoardBuilder();
-    await builder.findNode('Role', 'B');
+    await builder.findNode('Business', 'B');
     builder.reset();
-    await builder.findNode('Role', 'B');
+    await builder.findNode('Business', 'B');
     expect((global.miro.board.get as jest.Mock).mock.calls.length).toBe(2);
   });
 
@@ -42,7 +42,7 @@ describe('BoardBuilder lookup and connector updates', () => {
     } as Record<string, unknown>;
     global.miro = { board: { get: jest.fn().mockResolvedValue([shape]) } };
     const builder = new BoardBuilder();
-    const result = await builder.findNode('Role', 'A');
+    const result = await builder.findNode('Business', 'A');
     expect(result).toBe(shape);
   });
 
