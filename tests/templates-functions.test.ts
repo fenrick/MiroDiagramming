@@ -4,7 +4,9 @@ import { connectorTemplates, templateManager } from '../src/board/templates';
 
 test('template helpers return values or undefined', () => {
   // Known templates return values
-  expect(templateManager.getTemplate('Role')).toBeDefined();
+  expect(templateManager.getTemplate('Motivation')).toBeDefined();
+  // Alias names also resolve
+  expect(templateManager.getTemplate('Stakeholder')).toBeDefined();
   // Unknown template returns undefined
   expect(templateManager.getTemplate('nope')).toBeUndefined();
   (connectorTemplates as unknown as Record<string, unknown>).extra = {

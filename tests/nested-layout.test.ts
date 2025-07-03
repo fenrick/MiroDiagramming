@@ -25,10 +25,10 @@ describe('layoutHierarchy', () => {
       {
         id: 'p',
         label: 'Parent',
-        type: 'Role',
+        type: 'Motivation',
         children: [
-          { id: 'a', label: 'A', type: 'Role' },
-          { id: 'b', label: 'B', type: 'Role' },
+          { id: 'a', label: 'A', type: 'Motivation' },
+          { id: 'b', label: 'B', type: 'Motivation' },
         ],
       },
     ];
@@ -46,10 +46,10 @@ describe('layoutHierarchy', () => {
       {
         id: 'p',
         label: 'Parent',
-        type: 'Role',
+        type: 'Motivation',
         children: [
-          { id: 'a', label: 'B', type: 'Role', metadata: { id: 2 } },
-          { id: 'b', label: 'A', type: 'Role', metadata: { id: 1 } },
+          { id: 'a', label: 'B', type: 'Motivation', metadata: { id: 2 } },
+          { id: 'b', label: 'A', type: 'Motivation', metadata: { id: 1 } },
         ],
       },
     ];
@@ -59,7 +59,7 @@ describe('layoutHierarchy', () => {
   });
 
   test('assigns fixed leaf size', async () => {
-    const data: TestNode[] = [{ id: 'n', label: 'N', type: 'Role' }];
+    const data: TestNode[] = [{ id: 'n', label: 'N', type: 'Motivation' }];
     const result = await layoutHierarchy(data);
     expect(result.nodes.n.width).toBe(120);
     expect(result.nodes.n.height).toBe(30);
@@ -77,15 +77,15 @@ describe('layoutHierarchy', () => {
       {
         id: 'root',
         label: 'Root',
-        type: 'Role',
+        type: 'Motivation',
         children: [
           {
             id: 'child',
             label: 'Child',
-            type: 'Role',
+            type: 'Motivation',
             children: [
-              { id: 'g1', label: 'G1', type: 'Role' },
-              { id: 'g2', label: 'G2', type: 'Role' },
+              { id: 'g1', label: 'G1', type: 'Motivation' },
+              { id: 'g2', label: 'G2', type: 'Motivation' },
             ],
           },
         ],
@@ -118,8 +118,8 @@ describe('layoutHierarchy', () => {
       {
         id: 'p',
         label: 'P',
-        type: 'Role',
-        children: [{ id: 'c', type: 'Role', label: 'C' }],
+        type: 'Motivation',
+        children: [{ id: 'c', type: 'Motivation', label: 'C' }],
       },
     ];
     const spy = vi

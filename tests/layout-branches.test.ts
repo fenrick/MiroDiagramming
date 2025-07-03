@@ -36,7 +36,7 @@ test('layoutGraph handles metadata and missing sections', async () => {
       {
         id: 'n1',
         label: 'A',
-        type: 'Role',
+        type: 'Motivation',
         metadata: { width: 99, height: 88 },
       },
     ],
@@ -58,7 +58,10 @@ test('layoutGraph uses defaults when layout values missing', async () => {
   const layoutSpy = jest
     .spyOn(ELK.prototype, 'layout')
     .mockResolvedValue({ children: [{ id: 'n2' }], edges: [] } as unknown);
-  const graph = { nodes: [{ id: 'n2', label: 'B', type: 'Role' }], edges: [] };
+  const graph = {
+    nodes: [{ id: 'n2', label: 'B', type: 'Motivation' }],
+    edges: [],
+  };
   const result = await layoutEngine.layoutGraph(
     graph as unknown as Parameters<typeof layoutEngine.layoutGraph>[0],
   );
@@ -73,10 +76,13 @@ test('layoutGraph uses template dimensions when metadata absent', async () => {
     .spyOn(ELK.prototype, 'layout')
     .mockImplementation(async (g: unknown) => {
       expect(g.children[0].width).toBe(160);
-      expect(g.children[0].height).toBe(60);
+      expect(g.children[0].height).toBe(100);
       return { children: [{ id: 'n3', x: 0, y: 0 }], edges: [] } as unknown;
     });
-  const graph = { nodes: [{ id: 'n3', label: 'C', type: 'Role' }], edges: [] };
+  const graph = {
+    nodes: [{ id: 'n3', label: 'C', type: 'Motivation' }],
+    edges: [],
+  };
   await layoutEngine.layoutGraph(
     graph as unknown as Parameters<typeof layoutEngine.layoutGraph>[0],
   );

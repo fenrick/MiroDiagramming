@@ -43,7 +43,7 @@ describe('ExcelSyncService', () => {
     } as never);
     const service = new ExcelSyncService();
     await service.updateShapesFromExcel(
-      [{ ID: '1', Name: 'A', Type: 'Role', Notes: 'meta' }],
+      [{ ID: '1', Name: 'A', Type: 'Motivation', Notes: 'meta' }],
       {
         idColumn: 'ID',
         labelColumn: 'Name',
@@ -192,7 +192,7 @@ describe('ExcelSyncService additional cases', () => {
     );
     const service = new ExcelSyncService();
     await service.updateShapesFromExcel(
-      [{ ID: '1', Name: 'A', Type: 'Role' }],
+      [{ ID: '1', Name: 'A', Type: 'Motivation' }],
       { idColumn: 'ID', labelColumn: 'Name', templateColumn: 'Type' },
     );
     expect(shape.setMetadata).not.toHaveBeenCalled();

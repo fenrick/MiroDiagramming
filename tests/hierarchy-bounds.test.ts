@@ -11,8 +11,8 @@ interface Node {
 describe('HierarchyProcessor computeBounds', () => {
   test('uses center coordinates when calculating bounds', async () => {
     const roots: Node[] = [
-      { id: 'r', label: 'Root', type: 'Role' },
-      { id: 's', label: 'Second', type: 'Role' },
+      { id: 'r', label: 'Root', type: 'Motivation' },
+      { id: 's', label: 'Second', type: 'Motivation' },
     ];
     const layout = await layoutHierarchy(roots);
     const proc = new HierarchyProcessor();

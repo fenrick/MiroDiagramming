@@ -40,7 +40,7 @@ describe('BoardBuilder resizeItem', () => {
       } as unknown as Record<string, unknown>);
     const spy = jest.spyOn(builder, 'resizeItem').mockResolvedValue();
     await builder.createNode(
-      { id: 'n', label: 'L', type: 'Role' } as {
+      { id: 'n', label: 'L', type: 'Motivation' } as {
         id: string;
         label: string;
         type: string;
