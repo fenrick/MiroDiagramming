@@ -52,7 +52,7 @@ export function RowInspector({
           <li key={k}>
             <InputField
               label={<code>{k}</code>}
-              options={{ value: String(v) }}
+              value={String(v)}
               onChange={handleChange(k)}
             />
           </li>

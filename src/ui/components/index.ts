@@ -1,6 +1,7 @@
 export { Button } from './Button';
 export { Checkbox } from './Checkbox';
 export { InputField } from './InputField';
+export { SelectField } from './SelectField';
 export { EditMetadataModal } from './EditMetadataModal';
 export { JsonDropZone } from './JsonDropZone';
 export { Modal } from './Modal';

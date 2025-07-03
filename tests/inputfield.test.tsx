@@ -8,7 +8,7 @@ test('renders label and input', () => {
   render(
     <InputField
       label='Name'
-      options={{ value: 'x' }}
+      value='x'
       onChange={() => {}}
     />,
   );
@@ -31,16 +31,16 @@ test('calls onChange with value', () => {
   expect(handler).toHaveBeenCalledWith('42');
 });
 
-test('supports custom component', () => {
+test('forwards input attributes', () => {
   render(
     <InputField
       label='File'
-      as='input'
-      options={{ 'data-testid': 'custom', 'type': 'file' }}
+      type='file'
+      data-testid='file-input'
     />,
   );
-  const input = screen.getByTestId('custom');
+  const input = screen.getByTestId('file-input');
   const label = screen.getByText('File');
   expect(label).toHaveAttribute('for', input.getAttribute('id'));
-  expect(input).toBeInTheDocument();
+  expect(input).toHaveAttribute('type', 'file');
 });
