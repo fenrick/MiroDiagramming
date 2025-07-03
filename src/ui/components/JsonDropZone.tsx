@@ -11,7 +11,12 @@ export type JsonDropZoneProps = Readonly<{
   onFiles: (files: File[]) => void;
 }>;
 
-/** Dropzone for importing JSON files. */
+/**
+ * Dropzone for importing a single JSON file.
+ *
+ * The hidden input forwards its change event to react-dropzone so both
+ * drag-and-drop and file picker interactions invoke `onFiles` uniformly.
+ */
 export function JsonDropZone({
   onFiles,
 }: JsonDropZoneProps): React.JSX.Element {
