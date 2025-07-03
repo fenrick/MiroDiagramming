@@ -86,12 +86,12 @@ describe('GraphProcessor', () => {
     graphService.resetBoardCache();
   });
 
-  it('processGraph runs without throwing and syncs items progressively', async () => {
+  it('processGraph runs without throwing and syncs items once after validation', async () => {
     const spy = jest
       .spyOn(BoardBuilder.prototype, 'syncAll')
       .mockResolvedValue();
     await processor.processGraph(sample as unknown);
-    expect(spy).toHaveBeenCalledTimes(2);
+    expect(spy).toHaveBeenCalledTimes(1);
   });
 
   it('delegates work to helper methods', async () => {
