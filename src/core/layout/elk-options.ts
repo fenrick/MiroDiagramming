@@ -64,26 +64,26 @@ export const ALGORITHM_DEFAULTS: Record<
 > = {
   mrtree: {
     direction: 'DOWN',
-    spacing: 20,
-    aspectRatio: 1.6,
+    spacing: 50,
+    aspectRatio: 1.616,
     edgeRoutingMode: 'AVOID_OVERLAP',
   },
   layered: {
     direction: 'DOWN',
-    spacing: 20,
-    aspectRatio: 1.6,
+    spacing: 50,
+    aspectRatio: 1.616,
     edgeRouting: 'ORTHOGONAL',
   },
-  force: { direction: 'DOWN', spacing: 80, aspectRatio: 1.6 },
+  force: { direction: 'DOWN', spacing: 160, aspectRatio: 1.6 },
   rectpacking: {
     direction: 'DOWN',
     spacing: 15,
     aspectRatio: 1.3,
     optimizationGoal: 'MAX_SCALE_DRIVEN',
   },
-  rectstacking: { direction: 'DOWN', spacing: 15, aspectRatio: 1.6 },
-  box: { direction: 'DOWN', spacing: 15, aspectRatio: 1.6 },
-  radial: { direction: 'RIGHT', spacing: 30, aspectRatio: 1.6 },
+  rectstacking: { direction: 'DOWN', spacing: 15, aspectRatio: 1.616 },
+  box: { direction: 'DOWN', spacing: 15, aspectRatio: 1.616 },
+  radial: { direction: 'RIGHT', spacing: 30, aspectRatio: 1.616 },
 };
 
 export const DEFAULT_LAYOUT_OPTIONS: UserLayoutOptions = {
