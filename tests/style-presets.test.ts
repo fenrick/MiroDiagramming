@@ -12,11 +12,11 @@ import { StyleTab } from '../src/ui/pages/StyleTab';
 describe('style-presets', () => {
   test('presets derived from templates', () => {
     const tpl = (templatesJson as Record<string, TemplateDefinition>)
-      .BusinessService;
+      .Technology;
     const fill = templateManager.resolveStyle(tpl.elements[0].style)
       .fillColor as string;
-    expect(stylePresets.BusinessService.fillColor).toBe(fill);
-    expect(STYLE_PRESET_NAMES).toContain('BusinessService');
+    expect(stylePresets.Technology.fillColor).toBe(fill);
+    expect(STYLE_PRESET_NAMES).toContain('Technology');
   });
 
   test('StyleTab renders preset buttons', async () => {

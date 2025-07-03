@@ -106,7 +106,7 @@ describe('GraphProcessor', () => {
       });
 
     const simpleGraph = {
-      nodes: [{ id: 'n1', label: 'A', type: 'Role' }],
+      nodes: [{ id: 'n1', label: 'A', type: 'Motivation' }],
       edges: [],
     };
     await gp.processGraph(simpleGraph as unknown);
@@ -137,7 +137,7 @@ describe('GraphProcessor', () => {
 
   it('positions frame at space center', async () => {
     const simpleGraph = {
-      nodes: [{ id: 'n1', label: 'A', type: 'Role' }],
+      nodes: [{ id: 'n1', label: 'A', type: 'Motivation' }],
       edges: [],
     };
     // Mock layout with a single node to make dimensions deterministic
@@ -174,7 +174,7 @@ describe('GraphProcessor', () => {
 
   it('zooms to shapes when no frame created', async () => {
     const simpleGraph = {
-      nodes: [{ id: 'n1', label: 'A', type: 'Role' }],
+      nodes: [{ id: 'n1', label: 'A', type: 'Motivation' }],
       edges: [],
     };
     jest
@@ -196,7 +196,7 @@ describe('GraphProcessor', () => {
   it('records widget ids for rows', async () => {
     const simpleGraph = {
       nodes: [
-        { id: 'n1', label: 'A', type: 'Role', metadata: { rowId: 'r1' } },
+        { id: 'n1', label: 'A', type: 'Motivation', metadata: { rowId: 'r1' } },
       ],
       edges: [],
     };
@@ -214,7 +214,7 @@ describe('GraphProcessor', () => {
 
   it('throws when edge source is missing', async () => {
     const graph = {
-      nodes: [{ id: 'n1', label: 'A', type: 'Role' }],
+      nodes: [{ id: 'n1', label: 'A', type: 'Motivation' }],
       edges: [{ from: 'n2', to: 'n1' }],
     };
     await expect(processor.processGraph(graph as unknown)).rejects.toThrow(
@@ -224,7 +224,7 @@ describe('GraphProcessor', () => {
 
   it('throws when edge target is missing', async () => {
     const graph = {
-      nodes: [{ id: 'n1', label: 'A', type: 'Role' }],
+      nodes: [{ id: 'n1', label: 'A', type: 'Motivation' }],
       edges: [{ from: 'n1', to: 'n2' }],
     };
     await expect(processor.processGraph(graph as unknown)).rejects.toThrow(

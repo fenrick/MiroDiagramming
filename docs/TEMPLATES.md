@@ -19,12 +19,20 @@ Each entry describes one or more elements that make up a widget. The minimal
 form is:
 
 ```json
-"Role": {
+"Motivation": {
   "elements": [
     { "shape": "round_rectangle", "width": 160, "height": 60, "text": "{{label}}" }
-  ]
+  ],
+  "alias": ["Stakeholder", "Driver"]
 }
 ```
+
+Aliases allow templates to be referenced using alternative names. In this
+example both `Stakeholder` and `Driver` resolve to the `Motivation` template.
+
+Colour values must reference the official design tokens using the
+`tokens.color.<name>[shade]` syntax. These are resolved at runtime to CSS
+variables and fallback hex codes.
 
 The `text` field supports the `{{label}}` placeholder which is replaced with the
 node's label. Additional `style` properties use the same keys as the Web SDK

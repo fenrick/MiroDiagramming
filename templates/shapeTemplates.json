@@ -5,7 +5,10 @@
         "shape": "round_rectangle",
         "width": 160,
         "height": 100,
-        "style": { "fillColor": "color.lilac-500", "fontFamily": "Arial" },
+        "style": {
+          "fillColor": "tokens.color.lilac[500]",
+          "fontFamily": "Arial"
+        },
         "text": "{{label}}"
       }
     ],
@@ -29,7 +32,10 @@
         "width": 160,
         "height": 100,
         "rotation": 0,
-        "style": { "fillColor": "color.yellow-500", "fontFamily": "Arial" },
+        "style": {
+          "fillColor": "tokens.color.yellow[500]",
+          "fontFamily": "Arial"
+        },
         "text": "{{label}}"
       }
     ],
@@ -42,7 +48,10 @@
         "width": 160,
         "height": 100,
         "rotation": 0,
-        "style": { "fillColor": "color.yellow-500", "fontFamily": "Arial" },
+        "style": {
+          "fillColor": "tokens.color.yellow[500]",
+          "fontFamily": "Arial"
+        },
         "text": "{{label}}"
       }
     ],
@@ -68,7 +77,10 @@
         "shape": "round_rectangle",
         "width": 160,
         "height": 100,
-        "style": { "fillColor": "color.blue-500", "fontFamily": "Arial" },
+        "style": {
+          "fillColor": "tokens.color.blue[500]",
+          "fontFamily": "Arial"
+        },
         "text": "{{label}}"
       }
     ],
@@ -90,7 +102,10 @@
         "shape": "round_rectangle",
         "width": 160,
         "height": 100,
-        "style": { "fillColor": "coolor.green-500", "fontFamily": "Arial" },
+        "style": {
+          "fillColor": "tokens.color.green[500]",
+          "fontFamily": "Arial"
+        },
         "text": "{{label}}"
       }
     ],
@@ -120,7 +135,10 @@
         "shape": "round_rectangle",
         "width": 160,
         "height": 100,
-        "style": { "fillColor": "coolor.coral-500", "fontFamily": "Arial" },
+        "style": {
+          "fillColor": "tokens.color.coral[500]",
+          "fontFamily": "Arial"
+        },
         "text": "{{label}}"
       }
     ],
@@ -132,7 +150,10 @@
         "shape": "round_rectangle",
         "width": 160,
         "height": 100,
-        "style": { "fillColor": "color.red-500", "fontFamily": "Arial" },
+        "style": {
+          "fillColor": "tokens.color.red[500]",
+          "fontFamily": "Arial"
+        },
         "text": "{{label}}"
       }
     ],

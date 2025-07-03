@@ -68,27 +68,27 @@ describe('searchShapes', () => {
 describe('searchGroups', () => {
   test('locates group containing item with matching metadata', async () => {
     const item = {
-      getMetadata: vi.fn().mockResolvedValue({ type: 'Role', label: 'A' }),
+      getMetadata: vi.fn().mockResolvedValue({ type: 'Business', label: 'A' }),
     };
     const groupA = { getItems: vi.fn().mockResolvedValue([item]) };
     const board: BoardQueryLike = {
       get: vi.fn().mockResolvedValue([groupA]),
       getSelection: vi.fn(),
     } as unknown as BoardQueryLike;
-    const result = await searchGroups(board, 'Role', 'A');
+    const result = await searchGroups(board, 'Business', 'A');
     expect(result).toBe(groupA);
   });
 
   test('returns undefined when no matching group found', async () => {
     const item = {
-      getMetadata: vi.fn().mockResolvedValue({ type: 'Role', label: 'B' }),
+      getMetadata: vi.fn().mockResolvedValue({ type: 'Business', label: 'B' }),
     };
     const group = { getItems: vi.fn().mockResolvedValue([item]) };
     const board: BoardQueryLike = {
       get: vi.fn().mockResolvedValue([group]),
       getSelection: vi.fn(),
     } as unknown as BoardQueryLike;
-    const result = await searchGroups(board, 'Role', 'A');
+    const result = await searchGroups(board, 'Business', 'A');
     expect(result).toBeUndefined();
   });
 });
