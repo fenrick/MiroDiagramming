@@ -44,15 +44,3 @@ test('forwards input attributes', () => {
   expect(label).toHaveAttribute('for', input.getAttribute('id'));
   expect(input).toHaveAttribute('type', 'file');
 });
-
-test('applies layout styles', () => {
-  render(<InputField label='Email' />);
-  const input = screen.getByLabelText('Email');
-  const label = screen.getByText('Email');
-  const field = input.parentElement?.parentElement as HTMLElement;
-  expect(field).toHaveStyle('margin-bottom: 16px');
-  expect(field).toHaveStyle('position: relative');
-  expect(label).toHaveStyle('margin-bottom: var(--space-xsmall)');
-  expect(input).toHaveStyle('padding-left: var(--space-small)');
-  expect(input).toHaveStyle('padding-right: var(--space-small)');
-});

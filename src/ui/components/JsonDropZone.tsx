@@ -48,14 +48,25 @@ export function JsonDropZone({
         {...dropzone.getRootProps({ style: dropzoneStyle })}
         aria-label='File drop area'
         aria-describedby='dropzone-instructions'>
-        {/* hidden input ensures keyboard selection triggers the drop handler */}
-        <input
-          className='custom-visually-hidden'
-          data-testid='file-input'
-          onChange={onChange}
-          aria-label='JSON file input'
-          {...fileInputProps}
-        />
+        {(() => {
+          const {
+            style: _style,
+            className: _class,
+            ...inputProps
+          } = dropzone.getInputProps({
+            'aria-label': 'JSON file input',
+          }) as Record<string, unknown>;
+          void _style;
+          void _class;
+          return (
+            <InputField
+              label='JSON file'
+              type='file'
+              data-testid='file-input'
+              {...inputProps}
+            />
+          );
+        })()}
         {dropzone.isDragAccept ? (
           <Paragraph className='dnd-text'>Drop your JSON file here</Paragraph>
         ) : (
