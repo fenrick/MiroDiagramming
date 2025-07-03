@@ -147,10 +147,16 @@ export const ResizeTab: React.FC = () => {
           columnEnd={2}>
           <InputField
             label='Width:'
-            type='number'
-            value={String(size.width)}
-            onChange={(e) => update('width')(e.target.value)}
-            placeholder='Width (board units)'></InputField>
+            as='input'
+            options={{
+              className: 'input input-small',
+              type: 'number',
+              value: String(size.width),
+              onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
+                update('width')(e.target.value),
+              placeholder: 'Width (board units)',
+            }}
+          />
         </Grid.Item>
         <Grid.Item
           columnStart={2}
