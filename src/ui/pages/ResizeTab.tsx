@@ -149,7 +149,7 @@ export const ResizeTab: React.FC = () => {
             label='Width:'
             type='number'
             value={String(size.width)}
-            onChange={(e) => update('width')(e.target.value)}
+            onChange={(v) => update('width')(v)}
             placeholder='Width (board units)'></InputField>
         </Grid.Item>
         <Grid.Item

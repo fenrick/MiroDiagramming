@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from './Button';
-import { Paragraph } from './Paragraph';
+import { Markdown } from './Markdown';
+import introText from '../intro.md?raw';
 
 export interface IntroScreenProps {
   /** Called when the user chooses to start the app. */
@@ -18,7 +19,7 @@ export function IntroScreen({ onStart }: IntroScreenProps): React.JSX.Element {
     <div
       className='intro-screen'
       data-testid='intro-screen'>
-      <Paragraph>Welcome to Structured Diagram Tools</Paragraph>
+      <Markdown source={introText} />
       <Button
         variant='primary'
         onClick={onStart}
