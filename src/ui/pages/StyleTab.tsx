@@ -98,19 +98,17 @@ export const StyleTab: React.FC = () => {
                 key={name}
                 onClick={() => applyStylePreset(preset)}
                 type='button'
-                variant='secondary'>
-                <span
-                  style={{
-                    color: style.color,
-                    backgroundColor: style.fillColor,
-                    borderColor: style.borderColor,
-                    borderWidth: style.borderWidth,
-                    borderStyle: 'solid',
-                    display: 'inline-block',
-                    padding: '0 4px',
-                  }}>
-                  {preset.label}
-                </span>
+                variant='secondary'
+                style={{
+                  color: style.color,
+                  backgroundColor: style.fillColor,
+                  borderColor: style.borderColor,
+                  borderWidth: style.borderWidth,
+                  borderStyle: 'solid',
+                  display: 'inline-block',
+                  padding: '0 4px',
+                }}>
+                {preset.label}
               </Button>
             );
           })}
