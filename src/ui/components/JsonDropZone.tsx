@@ -1,7 +1,6 @@
 import React from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Button } from './Button';
-import { InputField } from './InputField';
 import { getDropzoneStyle } from '../hooks/ui-utils';
 import { tokens } from '../tokens';
 import { Paragraph } from './Paragraph';
@@ -39,23 +38,14 @@ export function JsonDropZone({
         aria-label='File drop area'
         aria-describedby='dropzone-instructions'>
         {(() => {
-          const {
-            style: _style,
-            className: _class,
-            onChange: _on,
-            ...inputProps
-          } = dropzone.getInputProps({
-            'aria-label': 'JSON file input',
-          }) as Record<string, unknown>;
-          void _style;
-          void _class;
-          void _on;
+          const { onChange, ...rest } = dropzone.getInputProps();
           return (
-            <InputField
-              label='JSON file'
-              type='file'
+            <input
+              className='custom-visually-hidden'
               data-testid='file-input'
-              {...inputProps}
+              onChange={onChange}
+              aria-label='JSON file input'
+              {...rest}
             />
           );
         })()}

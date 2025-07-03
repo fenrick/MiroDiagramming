@@ -8,6 +8,7 @@ test('invokes callback when file selected', async () => {
   const handle = vi.fn();
   render(<JsonDropZone onFiles={handle} />);
   const input = screen.getByTestId('file-input');
+  expect(input).toHaveClass('custom-visually-hidden');
   const file = new File(['{}'], 'test.json', { type: 'application/json' });
   await act(async () => {
     fireEvent.change(input, { target: { files: [file] } });
