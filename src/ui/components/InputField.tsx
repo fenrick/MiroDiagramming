@@ -33,7 +33,10 @@ export const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
   function InputField({ label, onChange, id, ...props }, ref) {
     const generatedId = React.useId();
     const inputId = id ?? generatedId;
+    const { onChange: extraOnChange, ...restProps } =
+      props as React.ComponentProps<typeof Input>;
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+      extraOnChange?.(e);
       onChange?.(e.target.value);
     };
 
@@ -44,7 +47,7 @@ export const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
           id={inputId}
           ref={ref}
           onChange={handleChange}
-          {...(props as React.ComponentProps<typeof Input>)}
+          {...restProps}
         />
       </StyledFormField>
     );

@@ -42,14 +42,12 @@ export function JsonDropZone({
           const {
             style: _style,
             className: _class,
-            onChange: _on,
             ...inputProps
           } = dropzone.getInputProps({
             'aria-label': 'JSON file input',
           }) as Record<string, unknown>;
           void _style;
           void _class;
-          void _on;
           return (
             <InputField
               label='JSON file'

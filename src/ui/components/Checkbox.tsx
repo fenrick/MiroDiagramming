@@ -31,6 +31,7 @@ export function Checkbox({
   };
   const generatedId = React.useId();
   const inputId = id ?? generatedId;
+  const labelId = `${inputId}-label`;
 
   return (
     <Flex gap={200}>
@@ -39,9 +40,14 @@ export function Checkbox({
         checked={value}
         onChecked={() => handleChange(true)}
         onUnchecked={() => handleChange(false)}
+        aria-labelledby={labelId}
         {...props}
       />
-      <label htmlFor={inputId}>{label}</label>
+      <label
+        id={labelId}
+        htmlFor={inputId}>
+        {label}
+      </label>
     </Flex>
   );
 }
