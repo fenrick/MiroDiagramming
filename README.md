@@ -1,10 +1,9 @@
-# Miro JSON Graph Diagram App
+# Quick Tools
 
-This project imports graphs or cards from JSON or Excel files and builds
-diagrams on a Miro board. The application uses the **Eclipse Layout Kernel
-(ELK)** to arrange nodes and edges automatically. Shapes are generated from
-templates and each element can carry metadata that controls its appearance and
-placement.
+Quick Tools imports graphs or cards from JSON or Excel files and builds diagrams
+on a Miro board. The application uses the **Eclipse Layout Kernel (ELK)** to
+arrange nodes and edges automatically. Shapes are generated from templates and
+each element can carry metadata that controls its appearance and placement.
 
 ## Uploading JSON Content
 

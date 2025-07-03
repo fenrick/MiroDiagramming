@@ -66,6 +66,6 @@ see [LAYOUT_OPTIONS.md](LAYOUT_OPTIONS.md).
 
 ---
 
-The UI for template selection is part of the Structured Diagramming add-on
-running on a Miro board. All widgets are created through the Miro Web SDK and
-can be customised by editing the template files.
+The UI for template selection is part of the Quick Tools add-on running on a
+Miro board. All widgets are created through the Miro Web SDK and can be
+customised by editing the template files.

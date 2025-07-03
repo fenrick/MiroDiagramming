@@ -8,6 +8,7 @@ describe('IntroScreen', () => {
   test('calls onStart when button clicked', () => {
     const spy = vi.fn();
     render(<IntroScreen onStart={spy} />);
+    expect(screen.getByText(/Welcome to Quick Tools/i)).toBeInTheDocument();
     fireEvent.click(screen.getByTestId('start-button'));
     expect(spy).toHaveBeenCalled();
   });

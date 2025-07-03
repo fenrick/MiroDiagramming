@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Input, Primitive } from '@mirohq/design-system';
+import { Form, Input } from '@mirohq/design-system';
 
 export type InputFieldProps = Readonly<{
   /** Visible label text. */
@@ -15,7 +15,9 @@ export type InputFieldProps = Readonly<{
   /** Optional id forwarded to the control and label. */
   id?: string;
   type?: string;
-  value: string;
+  value?: string;
+  /** Placeholder text for input elements. */
+  placeholder?: string;
 }>;
 
 // Custom class names and inline styles are intentionally excluded so spacing
@@ -33,6 +35,7 @@ export const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
       id,
       type,
       value,
+      placeholder,
     },
     ref,
   ) {
@@ -54,23 +57,21 @@ export const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
       }
     };
 
+    const Control = Component;
     return (
       <Form.Field>
         <Form.Label htmlFor={inputId}>{label}</Form.Label>
-        <Input
+        <Control
           id={inputId}
+          ref={ref}
+          {...options}
+          placeholder={placeholder}
           onChange={handleChange}
           type={type}
           value={value}>
           {children}
-        </Input>
+        </Control>
       </Form.Field>
     );
-    /**
-        {React.createElement(
-          Component,
-          { id: inputId, ref, ...options, onChange: handleChange },
-          children,
-        )} */
   },
 );
