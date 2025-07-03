@@ -37,6 +37,7 @@ describe('Edit Metadata command', () => {
 
   test('opens modal and updates via service', async () => {
     render(<App />);
+    fireEvent.click(screen.getByTestId('start-button'));
     await act(async () => {
       fireEvent.keyDown(window, { key: 'm', ctrlKey: true, altKey: true });
       await new Promise((r) => setTimeout(r, 0));
@@ -58,6 +59,7 @@ describe('Edit Metadata command', () => {
       search: '?command=edit-metadata',
     } as Location;
     render(<App />);
+    fireEvent.click(screen.getByTestId('start-button'));
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (window as any).location = original;

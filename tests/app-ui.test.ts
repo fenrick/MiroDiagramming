@@ -39,6 +39,7 @@ describe('App UI integration', () => {
       .spyOn(GraphProcessor.prototype, 'processFile')
       .mockResolvedValue(undefined);
     render(React.createElement(App));
+    fireEvent.click(screen.getByTestId('start-button'));
     await act(async () => {
       selectFile();
     });
@@ -54,6 +55,7 @@ describe('App UI integration', () => {
 
   test('dropzone has accessibility attributes', () => {
     render(React.createElement(App));
+    fireEvent.click(screen.getByTestId('start-button'));
     const zone = screen.getByLabelText(/file drop area/i);
     expect(zone).toHaveAttribute('aria-describedby', 'dropzone-instructions');
     const input = screen.getByLabelText(/json file input/i);
@@ -67,6 +69,7 @@ describe('App UI integration', () => {
       .spyOn(GraphProcessor.prototype, 'processFile')
       .mockRejectedValue(error);
     render(React.createElement(App));
+    fireEvent.click(screen.getByTestId('start-button'));
     await act(async () => {
       selectFile();
     });
@@ -85,6 +88,7 @@ describe('App UI integration', () => {
       .spyOn(GraphProcessor.prototype, 'processFile')
       .mockResolvedValue(undefined);
     render(React.createElement(App));
+    fireEvent.click(screen.getByTestId('start-button'));
     await act(async () => {
       selectFile();
     });
