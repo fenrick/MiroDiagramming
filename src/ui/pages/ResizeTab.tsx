@@ -2,8 +2,8 @@ import React from 'react';
 import {
   Button,
   InputField,
+  SelectField,
   Paragraph,
-  Select,
   SelectOption,
 } from '../components';
 import {
@@ -150,40 +150,37 @@ export const ResizeTab: React.FC = () => {
             type='number'
             value={String(size.width)}
             onChange={(v) => update('width')(v)}
-            placeholder='Width (board units)'></InputField>
+            placeholder='Width (board units)'
+          />
         </Grid.Item>
         <Grid.Item
           columnStart={2}
           columnEnd={3}>
-          <InputField label='Height:'>
-            <input
-              className='input input-small'
-              type='number'
-              value={String(size.height)}
-              onChange={(e) => update('height')(e.target.value)}
-              placeholder='Height (board units)'
-            />
-          </InputField>
+          <InputField
+            label='Height:'
+            type='number'
+            value={String(size.height)}
+            onChange={(v) => update('height')(v)}
+            placeholder='Height (board units)'
+          />
         </Grid.Item>
         <Grid.Item
           columnStart={1}
           columnEnd={5}>
-          <InputField label='Aspect Ratio'>
-            <Select
-              data-testid='ratio-select'
-              className='select-small'
-              value={ratio}
-              onChange={(v) => setRatio(v as AspectRatioId | 'none')}>
-              <SelectOption value='none'>Free</SelectOption>
-              {ASPECT_RATIOS.map((r) => (
-                <SelectOption
-                  key={r.id}
-                  value={r.id}>
-                  {r.label}
-                </SelectOption>
-              ))}
-            </Select>
-          </InputField>
+          <SelectField
+            label='Aspect Ratio'
+            value={ratio}
+            onChange={(v) => setRatio(v as AspectRatioId | 'none')}
+            data-testid='ratio-select'>
+            <SelectOption value='none'>Free</SelectOption>
+            {ASPECT_RATIOS.map((r) => (
+              <SelectOption
+                key={r.id}
+                value={r.id}>
+                {r.label}
+              </SelectOption>
+            ))}
+          </SelectField>
         </Grid.Item>
       </Grid>
       <Heading level={3}>Presets</Heading>

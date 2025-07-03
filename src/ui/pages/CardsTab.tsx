@@ -80,14 +80,12 @@ export const CardsTab: React.FC = () => {
             onChange={setWithFrame}
           />
           {withFrame && (
-            <InputField label='Frame title'>
-              <input
-                className='input'
-                placeholder='Frame title'
-                value={frameTitle}
-                onChange={(e) => setFrameTitle(e.target.value)}
-              />
-            </InputField>
+            <InputField
+              label='Frame title'
+              value={frameTitle}
+              onChange={(v) => setFrameTitle(v)}
+              placeholder='Frame title'
+            />
           )}
           <div className='buttons'>
             <Button

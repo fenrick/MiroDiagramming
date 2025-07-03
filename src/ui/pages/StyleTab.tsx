@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button, InputField } from '../components';
+import { Form } from '@mirohq/design-system';
 import { tweakFillColor, extractFillColor } from '../../board/style-tools';
 import { applyStylePreset, presetStyle } from '../../board/format-tools';
 import { STYLE_PRESET_NAMES, stylePresets } from '../style-presets';
@@ -31,53 +32,58 @@ export const StyleTab: React.FC = () => {
   return (
     <TabPanel tabId='style'>
       <TabGrid columns={2}>
-        <InputField label='Adjust fill'>
-          <input
-            data-testid='adjust-slider'
-            type='range'
-            min='-100'
-            max='100'
-            list='adjust-marks'
-            value={adjust}
-            onChange={(e) => setAdjust(Number(e.target.value))}
-          />
-          <datalist id='adjust-marks'>
-            {[-100, -50, 0, 50, 100].map((n) => (
-              <option
-                key={n}
-                value={n}
+        {(() => {
+          const sliderId = React.useId();
+          return (
+            <Form.Field>
+              <Form.Label htmlFor={sliderId}>Adjust fill</Form.Label>
+              <input
+                id={sliderId}
+                data-testid='adjust-slider'
+                type='range'
+                min='-100'
+                max='100'
+                list='adjust-marks'
+                value={adjust}
+                onChange={(e) => setAdjust(Number(e.target.value))}
               />
-            ))}
-          </datalist>
-          <span
-            data-testid='adjust-preview'
-            style={{
-              display: 'inline-block',
-              width: '24px',
-              height: '24px',
-              marginLeft: tokens.space.small,
-              border: `1px solid ${tokens.color.gray[200]}`,
-              backgroundColor: preview,
-            }}
-          />
-          <code
-            data-testid='color-hex'
-            style={{ marginLeft: tokens.space.xxsmall }}>
-            {preview}
-          </code>
-        </InputField>
-        <InputField label='Adjust value'>
-          <input
-            className='input input-small'
-            data-testid='adjust-input'
-            type='number'
-            min='-100'
-            max='100'
-            value={String(adjust)}
-            onChange={(e) => setAdjust(Number(e.target.value))}
-            placeholder='Adjust (-100–100)'
-          />
-        </InputField>
+              <datalist id='adjust-marks'>
+                {[-100, -50, 0, 50, 100].map((n) => (
+                  <option
+                    key={n}
+                    value={n}
+                  />
+                ))}
+              </datalist>
+              <span
+                data-testid='adjust-preview'
+                style={{
+                  display: 'inline-block',
+                  width: '24px',
+                  height: '24px',
+                  marginLeft: tokens.space.small,
+                  border: `1px solid ${tokens.color.gray[200]}`,
+                  backgroundColor: preview,
+                }}
+              />
+              <code
+                data-testid='color-hex'
+                style={{ marginLeft: tokens.space.xxsmall }}>
+                {preview}
+              </code>
+            </Form.Field>
+          );
+        })()}
+        <InputField
+          label='Adjust value'
+          type='number'
+          min={-100}
+          max={100}
+          value={String(adjust)}
+          onChange={(v) => setAdjust(Number(v))}
+          placeholder='Adjust (-100–100)'
+          data-testid='adjust-input'
+        />
         <div className='buttons'>
           <Button
             onClick={apply}
