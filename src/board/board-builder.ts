@@ -264,21 +264,19 @@ export class BoardBuilder {
 
   /**
    * Resize an item if width and height properties are available.
-   * The widget is synchronised when a sync method exists.
+   *
+   * Synchronisation is intentionally deferred so multiple widgets can be
+   * updated before calling {@link syncAll}. This reduces the number of API
+   * calls when creating complex structures.
    */
   public async resizeItem(
     item: BoardItem,
     width: number,
     height: number,
   ): Promise<void> {
-    const target = item as {
-      width?: number;
-      height?: number;
-      sync?: () => Promise<void>;
-    };
+    const target = item as { width?: number; height?: number };
     if (typeof target.width === 'number') target.width = width;
     if (typeof target.height === 'number') target.height = height;
-    await maybeSync(target);
   }
 
   /**

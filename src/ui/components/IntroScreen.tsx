@@ -20,6 +20,7 @@ export function IntroScreen({ onStart }: IntroScreenProps): React.JSX.Element {
       className='intro-screen'
       data-testid='intro-screen'>
       <Markdown source={introText} />
+      <span className='custom-visually-hidden'>Welcome to Quick Tools</span>
       <Button
         variant='primary'
         onClick={onStart}
