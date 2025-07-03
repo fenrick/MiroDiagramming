@@ -1,4 +1,4 @@
 npm run typecheck --silent
 npm run lint --silent
-npm run stylelint --silent
-npm run prettier --silent
+npm run stylelint --silent -- -q
+npm run prettier --silent -- --check

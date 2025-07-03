@@ -25,11 +25,10 @@ export const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
       onChange?.(e.target.value);
     };
 
-    const Control = Component;
     return (
       <Form.Field>
         <Form.Label htmlFor={inputId}>{label}</Form.Label>
-        <Control
+        <Input
           id={inputId}
           ref={ref}
           onChange={handleChange}
