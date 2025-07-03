@@ -9,7 +9,7 @@ interface GlobalWithMiro {
 declare const global: GlobalWithMiro;
 
 describe('BoardBuilder resizeItem', () => {
-  test('updates width and height and syncs', async () => {
+  test('updates width and height without syncing', async () => {
     const builder = new BoardBuilder();
     const item = {
       width: 1,
@@ -19,7 +19,7 @@ describe('BoardBuilder resizeItem', () => {
     await builder.resizeItem(item as unknown as BaseItem, 10, 20);
     expect(item.width).toBe(10);
     expect(item.height).toBe(20);
-    expect(item.sync).toHaveBeenCalled();
+    expect(item.sync).not.toHaveBeenCalled();
   });
 
   test('createNode applies layout size', async () => {
