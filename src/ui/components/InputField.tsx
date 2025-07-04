@@ -8,8 +8,11 @@ export type InputFieldProps = Readonly<
   > & {
     /** Visible label text. */
     label: React.ReactNode;
-    /** Change handler returning the input value. */
-    onChange?: (value: string) => void;
+    /**
+     * Callback fired when the input value changes. This receives the raw
+     * string value extracted from the event.
+     */
+    onValueChange?: (value: string) => void;
   }
 >;
 
@@ -30,14 +33,14 @@ const StyledInput = styled(Input, {
 });
 
 export const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
-  function InputField({ label, onChange, id, ...props }, ref) {
+  function InputField({ label, onValueChange, id, ...props }, ref) {
     const generatedId = React.useId();
     const inputId = id ?? generatedId;
-    const { onChange: extraOnChange, ...restProps } =
+    const { onChange: externalOnChange, ...restProps } =
       props as React.ComponentProps<typeof Input>;
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-      extraOnChange?.(e);
-      onChange?.(e.target.value);
+      externalOnChange?.(e);
+      onValueChange?.(e.target.value);
     };
 
     return (

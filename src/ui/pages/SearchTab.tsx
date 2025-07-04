@@ -133,34 +133,74 @@ export const SearchTab: React.FC = () => {
         <RegexSearchField
           label='Find'
           value={query}
-          onChange={(v) => setQuery(v)}
-          regex={regex}
-          onRegexToggle={setRegex}
+          onValueChange={(v) => setQuery(v)}
           placeholder='Search board text'
         />
         <InputField
           label='Replace'
           value={replacement}
-          onChange={(v) => setReplacement(v)}
+          onValueChange={(v) => setReplacement(v)}
           placeholder='Replacement text'
         />
-        <FilterDropdown
-          widgetTypes={widgetTypes}
-          toggleType={toggleType}
-          tagIds={tagIds}
-          onTagIdsChange={setTagIds}
-          backgroundColor={backgroundColor}
-          onBackgroundColorChange={setBackgroundColor}
-          assignee={assignee}
-          onAssigneeChange={setAssignee}
-          creator={creator}
-          onCreatorChange={setCreator}
-          lastModifiedBy={lastModifiedBy}
-          onLastModifiedByChange={setLastModifiedBy}
-          caseSensitive={caseSensitive}
-          onCaseSensitiveChange={setCaseSensitive}
-          wholeWord={wholeWord}
-          onWholeWordChange={setWholeWord}
+        <div className='form-group-small'>
+          <Checkbox
+            label='Case sensitive'
+            value={caseSensitive}
+            onChange={setCaseSensitive}
+          />
+          <Checkbox
+            label='Whole word'
+            value={wholeWord}
+            onChange={setWholeWord}
+          />
+          <Checkbox
+            label='Regex'
+            value={regex}
+            onChange={setRegex}
+          />
+        </div>
+        <div className='form-group-small'>
+          <legend className='custom-visually-hidden'>Widget Types</legend>
+          <div>
+            {['shape', 'card', 'sticky_note', 'text'].map((t) => (
+              <Checkbox
+                key={t}
+                label={t}
+                value={widgetTypes.includes(t)}
+                onChange={() => toggleType(t)}
+              />
+            ))}
+          </div>
+        </div>
+        <InputField
+          label='Tag IDs'
+          value={tagIds}
+          onValueChange={(v) => setTagIds(v)}
+          placeholder='Comma separated'
+        />
+        <InputField
+          label='Background colour'
+          value={backgroundColor}
+          onValueChange={(v) => setBackgroundColor(v)}
+          placeholder='CSS colour'
+        />
+        <InputField
+          label='Assignee ID'
+          value={assignee}
+          onValueChange={(v) => setAssignee(v)}
+          placeholder='User ID'
+        />
+        <InputField
+          label='Creator ID'
+          value={creator}
+          onValueChange={(v) => setCreator(v)}
+          placeholder='User ID'
+        />
+        <InputField
+          label='Last modified by'
+          value={lastModifiedBy}
+          onValueChange={(v) => setLastModifiedBy(v)}
+          placeholder='User ID'
         />
         <Paragraph data-testid='match-count'>
           Matches: {results.length}

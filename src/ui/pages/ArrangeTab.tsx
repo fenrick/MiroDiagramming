@@ -65,14 +65,14 @@ export const ArrangeTab: React.FC = () => {
           label='Columns'
           type='number'
           value={String(grid.cols)}
-          onChange={(v) => updateNumber('cols')(v)}
+          onValueChange={(v) => updateNumber('cols')(v)}
           placeholder='Columns'
         />
         <InputField
           label='Gap'
           type='number'
           value={String(grid.padding)}
-          onChange={(v) => updateNumber('padding')(v)}
+          onValueChange={(v) => updateNumber('padding')(v)}
           placeholder='Gap'
         />
         <Checkbox
@@ -98,7 +98,7 @@ export const ArrangeTab: React.FC = () => {
           <InputField
             label='Frame Title'
             value={frameTitle}
-            onChange={(v) => setFrameTitle(v)}
+            onValueChange={(v) => setFrameTitle(v)}
             placeholder='Optional'
           />
         )}
@@ -131,7 +131,7 @@ export const ArrangeTab: React.FC = () => {
             label='Spacing'
             type='number'
             value={String(spacing.spacing)}
-            onChange={(v) => updateSpacing(v)}
+            onValueChange={(v) => updateSpacing(v)}
             placeholder='Distance'
           />
           <div className='buttons'>

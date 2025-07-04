@@ -74,12 +74,17 @@ export const CardsTab: React.FC = () => {
               <li key={`${file.name}-${file.lastModified}`}>{file.name}</li>
             ))}
           </ul>
-          <fieldset>
-            <legend className='custom-visually-hidden'>Card options</legend>
-            <Checkbox
-              label='Wrap items in frame'
-              value={withFrame}
-              onChange={setWithFrame}
+          <Checkbox
+            label='Wrap items in frame'
+            value={withFrame}
+            onChange={setWithFrame}
+          />
+          {withFrame && (
+            <InputField
+              label='Frame title'
+              value={frameTitle}
+              onValueChange={(v) => setFrameTitle(v)}
+              placeholder='Frame title'
             />
             {withFrame && (
               <InputField

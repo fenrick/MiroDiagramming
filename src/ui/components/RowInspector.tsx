@@ -53,7 +53,7 @@ export function RowInspector({
             <InputField
               label={<code>{k}</code>}
               value={String(v)}
-              onChange={handleChange(k)}
+              onValueChange={handleChange(k)}
             />
           </li>
         ))}
