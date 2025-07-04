@@ -149,7 +149,7 @@ export const ResizeTab: React.FC = () => {
             label='Width:'
             type='number'
             value={String(size.width)}
-            onChange={(v) => update('width')(v)}
+            onValueChange={(v) => update('width')(v)}
             placeholder='Width (board units)'
           />
         </Grid.Item>
@@ -160,7 +160,7 @@ export const ResizeTab: React.FC = () => {
             label='Height:'
             type='number'
             value={String(size.height)}
-            onChange={(v) => update('height')(v)}
+            onValueChange={(v) => update('height')(v)}
             placeholder='Height (board units)'
           />
         </Grid.Item>

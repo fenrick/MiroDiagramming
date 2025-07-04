@@ -177,7 +177,7 @@ export const StructuredTab: React.FC = () => {
             <InputField
               label='Frame title'
               value={frameTitle}
-              onChange={(v) => setFrameTitle(v)}
+              onValueChange={(v) => setFrameTitle(v)}
               placeholder='Frame title'
             />
           )}
@@ -220,7 +220,7 @@ export const StructuredTab: React.FC = () => {
               label='Spacing'
               type='number'
               value={String(layoutOpts.spacing)}
-              onChange={(v) =>
+              onValueChange={(v) =>
                 setLayoutOpts({ ...layoutOpts, spacing: Number(v) })
               }
             />
@@ -230,7 +230,7 @@ export const StructuredTab: React.FC = () => {
                 type='number'
                 step={0.1}
                 value={String(layoutOpts.aspectRatio)}
-                onChange={(v) =>
+                onValueChange={(v) =>
                   setLayoutOpts({ ...layoutOpts, aspectRatio: Number(v) })
                 }
               />
@@ -297,7 +297,7 @@ export const StructuredTab: React.FC = () => {
                 label='Padding'
                 type='number'
                 value={String(nestedPadding)}
-                onChange={(v) => setNestedPadding(Number(v))}
+                onValueChange={(v) => setNestedPadding(Number(v))}
               />
             )}
             {layoutChoice === 'Nested' && (
@@ -305,7 +305,7 @@ export const StructuredTab: React.FC = () => {
                 label='Top spacing'
                 type='number'
                 value={String(nestedTopSpacing)}
-                onChange={(v) => setNestedTopSpacing(Number(v))}
+                onValueChange={(v) => setNestedTopSpacing(Number(v))}
               />
             )}
           </details>

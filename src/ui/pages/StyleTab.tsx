@@ -80,7 +80,7 @@ export const StyleTab: React.FC = () => {
           min={-100}
           max={100}
           value={String(adjust)}
-          onChange={(v) => setAdjust(Number(v))}
+          onValueChange={(v) => setAdjust(Number(v))}
           placeholder='Adjust (-100–100)'
           data-testid='adjust-input'
         />

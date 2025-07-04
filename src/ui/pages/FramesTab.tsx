@@ -26,7 +26,7 @@ export const FramesTab: React.FC = () => {
         <InputField
           label='Prefix'
           value={prefix}
-          onChange={(v) => setPrefix(v)}
+          onValueChange={(v) => setPrefix(v)}
           placeholder='Prefix'
         />
         <div className='buttons'>
