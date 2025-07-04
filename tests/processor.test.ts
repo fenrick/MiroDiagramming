@@ -1,5 +1,6 @@
 import { GraphProcessor } from '../src/core/graph/graph-processor';
 import { graphService } from '../src/core/graph';
+import { BoardBuilder } from '../src/board/board-builder';
 import { templateManager } from '../src/board/templates';
 import { layoutEngine } from '../src/core/layout/elk-layout';
 import * as frameUtils from '../src/board/frame-utils';
@@ -85,8 +86,12 @@ describe('GraphProcessor', () => {
     graphService.resetBoardCache();
   });
 
-  it('processGraph runs without throwing and syncs items', async () => {
+  it('processGraph runs without throwing and syncs items once after validation', async () => {
+    const spy = jest
+      .spyOn(BoardBuilder.prototype, 'syncAll')
+      .mockResolvedValue();
     await processor.processGraph(sample as unknown);
+    expect(spy).toHaveBeenCalledTimes(1);
   });
 
   it('delegates work to helper methods', async () => {
