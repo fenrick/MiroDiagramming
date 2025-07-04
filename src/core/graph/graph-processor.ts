@@ -5,10 +5,12 @@ import { HierarchyProcessor } from './hierarchy-processor';
 import type { HierNode } from '../layout/nested-layout';
 import { BoardBuilder } from '../../board/board-builder';
 import { clearActiveFrame, registerFrame } from '../../board/frame-utils';
+import { maybeSync } from '../../board/board';
 import { UndoableProcessor } from './undoable-processor';
 import { layoutEngine, LayoutResult } from '../layout/elk-layout';
 import { UserLayoutOptions } from '../layout/elk-options';
 import { fileUtils } from '../utils/file-utils';
+import type { PositionedNode } from '../layout/layout-core';
 import {
   computeEdgeHints,
   boundingBoxFromTopLeft,
@@ -20,7 +22,15 @@ import type { BaseItem, Frame, Group } from '@mirohq/websdk-types';
  * High level orchestrator that loads graph data, runs layout and
  * creates all widgets on the board.
  */
-/** Options controlling how the graph is rendered on the board. */
+/**
+ * Behaviour options for nodes already present on the board.
+ *
+ * - `move`: move widgets into the new layout positions.
+ * - `layout`: keep widgets in selection and feed their coordinates to ELK.
+ * - `ignore`: leave widgets in place and use their existing coordinates.
+ */
+export type ExistingNodeMode = 'move' | 'layout' | 'ignore';
+
 export interface ProcessOptions {
   /** Whether to wrap the diagram in a frame. */
   createFrame?: boolean;
@@ -28,6 +38,8 @@ export interface ProcessOptions {
   frameTitle?: string;
   /** Optional custom layout options. */
   layout?: Partial<UserLayoutOptions>;
+  /** How to treat nodes that already exist on the board. */
+  existingMode?: ExistingNodeMode;
 }
 
 export class GraphProcessor extends UndoableProcessor {
@@ -62,20 +74,17 @@ export class GraphProcessor extends UndoableProcessor {
     options: ProcessOptions = {},
   ): Promise<void> {
     this.nodeIdMap = {};
+    const existingMode: ExistingNodeMode = options.existingMode ?? 'move';
     const alg = options.layout?.algorithm ?? 'mrtree';
     if (isNestedAlgorithm(alg)) {
-      const hp = new HierarchyProcessor(this.builder);
-      const hierarchy = Array.isArray(graph) ? graph : edgesToHierarchy(graph);
-      await hp.processHierarchy(hierarchy, {
-        createFrame: options.createFrame,
-        frameTitle: options.frameTitle,
-      });
-      this.lastCreated = hp.getLastCreated();
+      await this.processNestedGraph(graph, options);
       return;
     }
     const data = Array.isArray(graph) ? hierarchyToEdges(graph) : graph;
     this.validateGraph(data);
-    const layout = await layoutEngine.layoutGraph(data, options.layout);
+    const existing = await this.collectExistingNodes(data);
+    const layoutInput = this.buildLayoutInput(data, existing, existingMode);
+    const layout = await layoutEngine.layoutGraph(layoutInput, options.layout);
 
     const bounds = this.layoutBounds(layout);
     const margin = 100;
@@ -105,9 +114,17 @@ export class GraphProcessor extends UndoableProcessor {
       margin,
     );
 
-    const nodeMap = await this.createNodes(data, layout, offsetX, offsetY);
+    const { map, positions } = await this.createNodes(
+      data,
+      layout,
+      offsetX,
+      offsetY,
+      existingMode,
+      existing,
+    );
     // Widgets are created without syncing so we can validate edges first.
-    await this.createConnectorsAndZoom(data, layout, nodeMap, frame);
+    const finalLayout: LayoutResult = { nodes: positions, edges: layout.edges };
+    await this.createConnectorsAndZoom(data, finalLayout, map, frame);
   }
 
   // undoLast inherited from UndoableProcessor
@@ -133,6 +150,64 @@ export class GraphProcessor extends UndoableProcessor {
   }
 
   /**
+   * Inject coordinates for existing widgets into the layout input when needed.
+   *
+   * @param data - Normalised graph data ready for layout.
+   * @param existing - Map of node IDs to widgets found on the board.
+   * @param mode - Behaviour for existing widgets.
+   * @returns Graph data potentially enriched with node coordinates.
+   */
+  private buildLayoutInput(
+    data: GraphData,
+    existing: Record<string, BaseItem | Group | undefined>,
+    mode: ExistingNodeMode,
+  ): GraphData {
+    if (mode !== 'layout') return data;
+    return {
+      nodes: data.nodes.map((n) => {
+        const w = existing[n.id] as { x?: number; y?: number } | undefined;
+        return w && typeof w.x === 'number' && typeof w.y === 'number'
+          ? { ...n, metadata: { ...(n.metadata ?? {}), x: w.x, y: w.y } }
+          : n;
+      }),
+      edges: data.edges,
+    };
+  }
+
+  /**
+   * Delegate nested layout processing to the dedicated hierarchy processor.
+   *
+   * @param graph - Source graph data or hierarchy.
+   * @param opts - User-specified options for frame creation.
+   */
+  private async processNestedGraph(
+    graph: GraphData | HierNode[],
+    opts: ProcessOptions,
+  ): Promise<void> {
+    const hp = new HierarchyProcessor(this.builder);
+    const hierarchy = Array.isArray(graph) ? graph : edgesToHierarchy(graph);
+    await hp.processHierarchy(hierarchy, {
+      createFrame: opts.createFrame,
+      frameTitle: opts.frameTitle,
+    });
+    this.lastCreated = hp.getLastCreated();
+  }
+
+  /** Collect selected widgets matching graph nodes. */
+  private async collectExistingNodes(
+    graph: GraphData,
+  ): Promise<Record<string, BaseItem | Group | undefined>> {
+    const map: Record<string, BaseItem | Group | undefined> = {};
+    for (const node of graph.nodes) {
+      map[node.id] = await this.builder.findNodeInSelection(
+        node.type,
+        node.label,
+      );
+    }
+    return map;
+  }
+
+  /**
    * Create nodes for the provided graph using the layout offsets.
    */
   private async createNodes(
@@ -140,17 +215,50 @@ export class GraphProcessor extends UndoableProcessor {
     layout: LayoutResult,
     offsetX: number,
     offsetY: number,
-  ): Promise<Record<string, BaseItem | Group>> {
-    const nodeMap: Record<string, BaseItem | Group> = {};
+    mode: ExistingNodeMode,
+    existing: Record<string, BaseItem | Group | undefined>,
+  ): Promise<{
+    map: Record<string, BaseItem | Group>;
+    positions: Record<string, PositionedNode>;
+  }> {
+    const map: Record<string, BaseItem | Group> = {};
+    const positions: Record<string, PositionedNode> = {};
     for (const node of graph.nodes) {
       const pos = layout.nodes[node.id];
-      const adjPos = { ...pos, x: pos.x + offsetX, y: pos.y + offsetY };
-      const widget = await this.builder.createNode(node, adjPos);
-      nodeMap[node.id] = widget;
+      const target = { ...pos, x: pos.x + offsetX, y: pos.y + offsetY };
+      const found = existing[node.id];
+      let widget: BaseItem | Group;
+      if (found) {
+        widget = found;
+        if (mode !== 'ignore') {
+          (widget as { x?: number; y?: number }).x = target.x;
+          (widget as { x?: number; y?: number }).y = target.y;
+          await maybeSync(widget as unknown as { sync?: () => Promise<void> });
+          positions[node.id] = { ...target, id: node.id };
+        } else {
+          const w = widget as {
+            x?: number;
+            y?: number;
+            width?: number;
+            height?: number;
+          };
+          positions[node.id] = {
+            id: node.id,
+            x: w.x ?? target.x,
+            y: w.y ?? target.y,
+            width: w.width ?? target.width,
+            height: w.height ?? target.height,
+          };
+        }
+      } else {
+        widget = await this.builder.createNode(node, target);
+        this.registerCreated(widget);
+        positions[node.id] = { ...target, id: node.id };
+      }
+      map[node.id] = widget;
       this.nodeIdMap[node.id] = widget.id;
-      this.registerCreated(widget);
     }
-    return nodeMap;
+    return { map, positions };
   }
 
   /**

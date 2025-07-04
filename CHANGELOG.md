@@ -223,3 +223,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Migrate remaining tabs to grid layout with semantic headings and no forms.
 - Add `ci:local` script to replicate CI pipeline locally.
 - Switch TabGrid to apply Mirotone column classes instead of inline styles.
+- Allow reusing selected widgets when creating diagrams with options to move, layout or keep their position.
