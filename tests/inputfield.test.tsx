@@ -9,7 +9,7 @@ test('renders label and input', () => {
     <InputField
       label='Name'
       value='x'
-      onChange={() => {}}
+      onValueChange={() => {}}
     />,
   );
   const input = screen.getByLabelText('Name');
@@ -18,12 +18,12 @@ test('renders label and input', () => {
   expect(label).toHaveAttribute('for', input.getAttribute('id'));
 });
 
-test('calls onChange with value', () => {
+test('calls onValueChange with value', () => {
   const handler = jest.fn();
   render(
     <InputField
       label='Age'
-      onChange={handler}
+      onValueChange={handler}
     />,
   );
   const input = screen.getByLabelText('Age');

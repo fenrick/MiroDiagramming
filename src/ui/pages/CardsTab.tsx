@@ -83,7 +83,7 @@ export const CardsTab: React.FC = () => {
             <InputField
               label='Frame title'
               value={frameTitle}
-              onChange={(v) => setFrameTitle(v)}
+              onValueChange={(v) => setFrameTitle(v)}
               placeholder='Frame title'
             />
           )}
