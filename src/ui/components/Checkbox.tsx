@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flex, Switch as DSSwitch } from '@mirohq/design-system';
+import { Flex, Switch as DSSwitch, styled } from '@mirohq/design-system';
 
 export type CheckboxProps = Readonly<
   Omit<
@@ -19,6 +19,11 @@ export type CheckboxProps = Readonly<
  * Checkbox wrapper implemented using the design-system `Switch` component.
  * It exposes a boolean `value` prop and triggers `onChange` when toggled.
  */
+const StyledGroup = styled(Flex, {
+  marginBottom: '16px',
+  position: 'relative',
+});
+
 export function Checkbox({
   label,
   value,
@@ -34,7 +39,7 @@ export function Checkbox({
   const labelId = `${inputId}-label`;
 
   return (
-    <Flex gap={200}>
+    <StyledGroup gap={200}>
       <DSSwitch
         id={inputId}
         checked={value}
@@ -48,6 +53,6 @@ export function Checkbox({
         htmlFor={inputId}>
         {label}
       </label>
-    </Flex>
+    </StyledGroup>
   );
 }

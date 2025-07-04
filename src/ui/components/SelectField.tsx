@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form } from '@mirohq/design-system';
+import { Form, styled } from '@mirohq/design-system';
 import { Select } from './Select';
 
 export type SelectFieldProps = Readonly<
@@ -15,6 +15,18 @@ export type SelectFieldProps = Readonly<
 >;
 
 /** Single component combining label and select control. */
+const StyledFormField = styled(Form.Field, {
+  marginBottom: '16px',
+  position: 'relative',
+});
+
+const StyledLabel = styled(Form.Label, { marginBottom: 'var(--space-xsmall)' });
+
+const StyledSelect = styled(Select, {
+  paddingLeft: 'var(--space-small)',
+  paddingRight: 'var(--space-small)',
+});
+
 export function SelectField({
   label,
   onChange,
@@ -26,13 +38,13 @@ export function SelectField({
   };
 
   return (
-    <Form.Field>
-      <Form.Label>{label}</Form.Label>
-      <Select
+    <StyledFormField>
+      <StyledLabel>{label}</StyledLabel>
+      <StyledSelect
         onChange={handleChange}
         {...props}>
         {children}
-      </Select>
-    </Form.Field>
+      </StyledSelect>
+    </StyledFormField>
   );
 }
