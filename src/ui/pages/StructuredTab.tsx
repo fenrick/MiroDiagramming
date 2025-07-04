@@ -10,7 +10,10 @@ import {
 import { JsonDropZone } from '../components/JsonDropZone';
 import { tokens } from '../tokens';
 import { TabGrid } from '../components/TabGrid';
-import { GraphProcessor } from '../../core/graph/graph-processor';
+import {
+  GraphProcessor,
+  ExistingNodeMode,
+} from '../../core/graph/graph-processor';
 import {
   ALGORITHMS,
   DEFAULT_LAYOUT_OPTIONS,
@@ -104,6 +107,8 @@ export const StructuredTab: React.FC = () => {
   );
   const [nestedPadding, setNestedPadding] = React.useState(20);
   const [nestedTopSpacing, setNestedTopSpacing] = React.useState(50);
+  const [existingMode, setExistingMode] =
+    React.useState<ExistingNodeMode>('move');
   const [progress, setProgress] = React.useState<number>(0);
   const [error, setError] = React.useState<string | null>(null);
   const [lastProc, setLastProc] = React.useState<
@@ -126,6 +131,7 @@ export const StructuredTab: React.FC = () => {
       layoutOpts,
       nestedPadding,
       nestedTopSpacing,
+      existingMode,
     },
     setImportQueue,
     setProgress,
@@ -148,6 +154,8 @@ export const StructuredTab: React.FC = () => {
               <li key={`${file.name}-${file.lastModified}`}>{file.name}</li>
             ))}
           </ul>
+          <fieldset>
+            <legend className='custom-visually-hidden'>Diagram options</legend>
           <SelectField
             label='Layout type'
             value={layoutChoice}
@@ -177,7 +185,7 @@ export const StructuredTab: React.FC = () => {
             <InputField
               label='Frame title'
               value={frameTitle}
-              onChange={(v) => setFrameTitle(v)}
+              onValueChange={(v) => setFrameTitle(v)}
               placeholder='Frame title'
             />
           )}
@@ -189,38 +197,28 @@ export const StructuredTab: React.FC = () => {
             }>
             <summary>Advanced options</summary>
             <SelectField
-              label='Algorithm'
-              value={layoutOpts.algorithm}
-              onChange={(v) =>
-                setLayoutOpts({ ...layoutOpts, algorithm: v as ElkAlgorithm })
-              }>
-              {ALGORITHMS.map((a) => (
+              label='Layout type'
+              value={layoutChoice}
+              onChange={(v) => setLayoutChoice(v as LayoutChoice)}>
+              {LAYOUTS.map((l) => (
                 <SelectOption
-                  key={a}
-                  value={a}>
-                  {a}
+                  key={l}
+                  value={l}>
+                  {l}
                 </SelectOption>
               ))}
             </SelectField>
-            <SelectField
-              label='Direction'
-              value={layoutOpts.direction}
-              onChange={(v) =>
-                setLayoutOpts({ ...layoutOpts, direction: v as ElkDirection })
-              }>
-              {DIRECTIONS.map((d) => (
-                <SelectOption
-                  key={d}
-                  value={d}>
-                  {d}
-                </SelectOption>
+            <Paragraph className='field-help'>Layout options:</Paragraph>
+            <ul className='field-help'>
+              {LAYOUTS.map((l) => (
+                <li key={`desc-${l}`}>{LAYOUT_DESCRIPTIONS[l]}</li>
               ))}
             </SelectField>
             <InputField
               label='Spacing'
               type='number'
               value={String(layoutOpts.spacing)}
-              onChange={(v) =>
+              onValueChange={(v) =>
                 setLayoutOpts({ ...layoutOpts, spacing: Number(v) })
               }
             />
@@ -230,64 +228,51 @@ export const StructuredTab: React.FC = () => {
                 type='number'
                 step={0.1}
                 value={String(layoutOpts.aspectRatio)}
-                onChange={(v) =>
+                onValueChange={(v) =>
                   setLayoutOpts({ ...layoutOpts, aspectRatio: Number(v) })
                 }
               />
             )}
-            {OPTION_VISIBILITY[layoutOpts.algorithm].edgeRouting && (
+            <SelectField
+              label='Existing nodes'
+              value={existingMode}
+              onChange={(v) => setExistingMode(v as ExistingNodeMode)}>
+              <SelectOption value='move'>Move into place</SelectOption>
+              <SelectOption value='layout'>Use for layout</SelectOption>
+              <SelectOption value='ignore'>Keep position</SelectOption>
+            </SelectField>
+            <details
+              open={showAdvanced}
+              aria-label='Advanced options'
+              onToggle={(e) =>
+                setShowAdvanced((e.target as HTMLDetailsElement).open)
+              }>
+              <summary>Advanced options</summary>
               <SelectField
-                label='Edge routing'
-                value={layoutOpts.edgeRouting as ElkEdgeRouting}
+                label='Algorithm'
+                value={layoutOpts.algorithm}
                 onChange={(v) =>
-                  setLayoutOpts({
-                    ...layoutOpts,
-                    edgeRouting: v as ElkEdgeRouting,
-                  })
+                  setLayoutOpts({ ...layoutOpts, algorithm: v as ElkAlgorithm })
                 }>
-                {EDGE_ROUTINGS.map((e) => (
+                {ALGORITHMS.map((a) => (
                   <SelectOption
-                    key={e}
-                    value={e}>
-                    {e}
+                    key={a}
+                    value={a}>
+                    {a}
                   </SelectOption>
                 ))}
               </SelectField>
-            )}
-            {OPTION_VISIBILITY[layoutOpts.algorithm].edgeRoutingMode && (
               <SelectField
-                label='Routing mode'
-                value={layoutOpts.edgeRoutingMode as ElkEdgeRoutingMode}
+                label='Direction'
+                value={layoutOpts.direction}
                 onChange={(v) =>
-                  setLayoutOpts({
-                    ...layoutOpts,
-                    edgeRoutingMode: v as ElkEdgeRoutingMode,
-                  })
+                  setLayoutOpts({ ...layoutOpts, direction: v as ElkDirection })
                 }>
-                {EDGE_ROUTING_MODES.map((m) => (
+                {DIRECTIONS.map((d) => (
                   <SelectOption
-                    key={m}
-                    value={m}>
-                    {m}
-                  </SelectOption>
-                ))}
-              </SelectField>
-            )}
-            {OPTION_VISIBILITY[layoutOpts.algorithm].optimizationGoal && (
-              <SelectField
-                label='Optimisation goal'
-                value={layoutOpts.optimizationGoal as ElkOptimizationGoal}
-                onChange={(v) =>
-                  setLayoutOpts({
-                    ...layoutOpts,
-                    optimizationGoal: v as ElkOptimizationGoal,
-                  })
-                }>
-                {OPTIMIZATION_GOALS.map((o) => (
-                  <SelectOption
-                    key={o}
-                    value={o}>
-                    {o}
+                    key={d}
+                    value={d}>
+                    {d}
                   </SelectOption>
                 ))}
               </SelectField>
@@ -297,18 +282,102 @@ export const StructuredTab: React.FC = () => {
                 label='Padding'
                 type='number'
                 value={String(nestedPadding)}
-                onChange={(v) => setNestedPadding(Number(v))}
+                onValueChange={(v) => setNestedPadding(Number(v))}
               />
             )}
             {layoutChoice === 'Nested' && (
               <InputField
-                label='Top spacing'
+                label='Spacing'
                 type='number'
                 value={String(nestedTopSpacing)}
-                onChange={(v) => setNestedTopSpacing(Number(v))}
+                onValueChange={(v) => setNestedTopSpacing(Number(v))}
               />
-            )}
-          </details>
+              {OPTION_VISIBILITY[layoutOpts.algorithm].aspectRatio && (
+                <InputField
+                  label='Aspect ratio'
+                  type='number'
+                  step={0.1}
+                  value={String(layoutOpts.aspectRatio)}
+                  onChange={(v) =>
+                    setLayoutOpts({ ...layoutOpts, aspectRatio: Number(v) })
+                  }
+                />
+              )}
+              {OPTION_VISIBILITY[layoutOpts.algorithm].edgeRouting && (
+                <SelectField
+                  label='Edge routing'
+                  value={layoutOpts.edgeRouting as ElkEdgeRouting}
+                  onChange={(v) =>
+                    setLayoutOpts({
+                      ...layoutOpts,
+                      edgeRouting: v as ElkEdgeRouting,
+                    })
+                  }>
+                  {EDGE_ROUTINGS.map((e) => (
+                    <SelectOption
+                      key={e}
+                      value={e}>
+                      {e}
+                    </SelectOption>
+                  ))}
+                </SelectField>
+              )}
+              {OPTION_VISIBILITY[layoutOpts.algorithm].edgeRoutingMode && (
+                <SelectField
+                  label='Routing mode'
+                  value={layoutOpts.edgeRoutingMode as ElkEdgeRoutingMode}
+                  onChange={(v) =>
+                    setLayoutOpts({
+                      ...layoutOpts,
+                      edgeRoutingMode: v as ElkEdgeRoutingMode,
+                    })
+                  }>
+                  {EDGE_ROUTING_MODES.map((m) => (
+                    <SelectOption
+                      key={m}
+                      value={m}>
+                      {m}
+                    </SelectOption>
+                  ))}
+                </SelectField>
+              )}
+              {OPTION_VISIBILITY[layoutOpts.algorithm].optimizationGoal && (
+                <SelectField
+                  label='Optimisation goal'
+                  value={layoutOpts.optimizationGoal as ElkOptimizationGoal}
+                  onChange={(v) =>
+                    setLayoutOpts({
+                      ...layoutOpts,
+                      optimizationGoal: v as ElkOptimizationGoal,
+                    })
+                  }>
+                  {OPTIMIZATION_GOALS.map((o) => (
+                    <SelectOption
+                      key={o}
+                      value={o}>
+                      {o}
+                    </SelectOption>
+                  ))}
+                </SelectField>
+              )}
+              {layoutChoice === 'Nested' && (
+                <InputField
+                  label='Padding'
+                  type='number'
+                  value={String(nestedPadding)}
+                  onChange={(v) => setNestedPadding(Number(v))}
+                />
+              )}
+              {layoutChoice === 'Nested' && (
+                <InputField
+                  label='Top spacing'
+                  type='number'
+                  value={String(nestedTopSpacing)}
+                  onChange={(v) => setNestedTopSpacing(Number(v))}
+                />
+              )}
+            </details>
+          </fieldset>
           <div className='buttons'>
             <Button
               onClick={handleCreate}

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Button as DSButton, styled } from '@mirohq/design-system';
-import { BaseButton } from '@mirohq/design-system-base-button';
 
 export type ButtonProps = Readonly<
   Omit<
@@ -24,6 +23,10 @@ export type ButtonProps = Readonly<
     style?: React.CSSProperties;
   }
 >;
+
+const baseMargin = { margin: '0 var(--space-small) var(--space-small) 0' };
+
+const StyledDSButton = styled(DSButton, baseMargin);
 
 function getIconSlots(
   icon: React.ReactNode,
@@ -63,37 +66,23 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const { start, end } = getIconSlots(icon, iconPosition);
 
     if (style && Object.keys(style).length > 0) {
-      const LABEL_OFFSET = 2;
-
-      const CustomButton = styled(BaseButton, {
-        ...style,
-        whitespace: 'nowrap',
-        textOverflow: 'ellipsis',
-        textAlign: 'center',
-        fontWeight: '$semiBold',
-        position: 'relative',
-        width: 'fit-content',
-        maxWidth: '100%',
-        lineHeight: 1,
-        border: '1px solid transparent',
-        fontSize: '$175',
-        height: '$6',
-        paddingX: 'calc($100 + '.concat(String(LABEL_OFFSET), 'px)'),
-      });
+      const Custom = styled(DSButton, { ...baseMargin, ...style });
 
       return (
-        <CustomButton
+        <Custom
           ref={ref}
+          variant={variant}
+          size={finalSize}
           {...props}>
           {start}
           <DSButton.Label>{children}</DSButton.Label>
           {end}
-        </CustomButton>
+        </Custom>
       );
     }
 
     return (
-      <DSButton
+      <StyledDSButton
         ref={ref}
         variant={variant}
         size={finalSize}
@@ -101,7 +90,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {start}
         <DSButton.Label>{children}</DSButton.Label>
         {end}
-      </DSButton>
+      </StyledDSButton>
     );
   },
 );

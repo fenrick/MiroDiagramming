@@ -24,6 +24,7 @@ interface CreateOptions {
   layoutOpts: UserLayoutOptions;
   nestedPadding: number;
   nestedTopSpacing: number;
+  existingMode: import('../../core/graph/graph-processor').ExistingNodeMode;
 }
 
 /**
@@ -79,6 +80,7 @@ export function useDiagramCreate(
             createFrame: opts.withFrame,
             frameTitle: opts.frameTitle || undefined,
             layout: { ...opts.layoutOpts, algorithm: selectedAlg },
+            existingMode: opts.existingMode,
           });
         }
         setProgress(100);

@@ -136,12 +136,13 @@ export const SearchTab: React.FC = () => {
           onChange={(v) => setQuery(v)}
           regex={regex}
           onRegexToggle={setRegex}
+
           placeholder='Search board text'
         />
         <InputField
           label='Replace'
           value={replacement}
-          onChange={(v) => setReplacement(v)}
+          onValueChange={(v) => setReplacement(v)}
           placeholder='Replacement text'
         />
         <FilterDropdown
