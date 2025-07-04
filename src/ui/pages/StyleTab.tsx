@@ -1,7 +1,13 @@
 import React from 'react';
 import { Button, InputField } from '../components';
 import { Form } from '@mirohq/design-system';
-import { tweakFillColor, extractFillColor } from '../../board/style-tools';
+import {
+  tweakFillColor,
+  tweakOpacity,
+  tweakBorderWidth,
+  copyFillFromSelection,
+  extractFillColor,
+} from '../../board/style-tools';
 import { applyStylePreset, presetStyle } from '../../board/format-tools';
 import { STYLE_PRESET_NAMES, stylePresets } from '../style-presets';
 import { adjustColor } from '../../core/utils/color-utils';
@@ -17,6 +23,8 @@ export const StyleTab: React.FC = () => {
   const [adjust, setAdjust] = React.useState(0);
   const selection = useSelection();
   const [baseColor, setBaseColor] = React.useState('#808080');
+  const [opacityDelta, setOpacityDelta] = React.useState(0);
+  const [borderDelta, setBorderDelta] = React.useState(0);
   // Update base colour when the selection changes
   React.useEffect(() => {
     setBaseColor(extractFillColor(selection[0]) ?? '#808080');
@@ -29,6 +37,16 @@ export const StyleTab: React.FC = () => {
   const apply = async (): Promise<void> => {
     await tweakFillColor(adjust / 100);
   };
+  const applyOpacity = React.useCallback(async (): Promise<void> => {
+    await tweakOpacity(opacityDelta);
+  }, [opacityDelta]);
+  const applyBorder = React.useCallback(async (): Promise<void> => {
+    await tweakBorderWidth(borderDelta);
+  }, [borderDelta]);
+  const copyFill = React.useCallback(async (): Promise<void> => {
+    const colour = await copyFillFromSelection();
+    if (colour) setBaseColor(colour);
+  }, []);
   return (
     <TabPanel tabId='style'>
       <TabGrid columns={2}>
@@ -84,6 +102,25 @@ export const StyleTab: React.FC = () => {
           placeholder='Adjust (-100–100)'
           data-testid='adjust-input'
         />
+        <InputField
+          label='Opacity Δ'
+          type='number'
+          step='0.1'
+          min={-1}
+          max={1}
+          value={String(opacityDelta)}
+          onValueChange={(v) => setOpacityDelta(Number(v))}
+          placeholder='Δ opacity (-1–1)'
+          data-testid='opacity-input'
+        />
+        <InputField
+          label='Border Δ'
+          type='number'
+          value={String(borderDelta)}
+          onValueChange={(v) => setBorderDelta(Number(v))}
+          placeholder='Δ width'
+          data-testid='border-input'
+        />
         <div className='buttons'>
           <Button
             onClick={apply}
@@ -92,6 +129,24 @@ export const StyleTab: React.FC = () => {
             icon={<IconSlidersX />}
             iconPosition='start'>
             <Text>Apply</Text>
+          </Button>
+          <Button
+            onClick={applyOpacity}
+            type='button'
+            variant='secondary'>
+            <Text>Opacity</Text>
+          </Button>
+          <Button
+            onClick={applyBorder}
+            type='button'
+            variant='secondary'>
+            <Text>Border</Text>
+          </Button>
+          <Button
+            onClick={copyFill}
+            type='button'
+            variant='ghost'>
+            <Text>Copy Fill</Text>
           </Button>
         </div>
         <Heading level={2}>Style presets</Heading>
