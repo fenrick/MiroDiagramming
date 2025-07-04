@@ -122,27 +122,20 @@ Shortcut: **Shift +C** opens comment editor on current selection.
 
 ## 10  Search Tab
 
-| Control                     | Details                             |
-| --------------------------- | ----------------------------------- |
-| **Find Input**              | Text to locate on the board         |
-| **Replace Input**           | Replacement text applied in bulk    |
-| **Case Sensitive Checkbox** | Match exact letter case             |
-| **Whole Word Checkbox**     | Skip partial-word matches           |
-| **Regex Checkbox**          | Treat query as regular expression   |
-| **Widget Type Checkboxes**  | Filter results by widget type       |
-| **Tag IDs Input**           | Comma separated tags to match       |
-| **Background Colour Input** | Exact fill colour filter            |
-| **Assignee ID Input**       | Filter by assigned user             |
-| **Creator ID Input**        | Filter by creator                   |
-| **Last Modified By Input**  | Filter by last modifier             |
-| **Next Button**             | Scrolls board to next match         |
-| **Replace Button**          | Replace the highlighted match only  |
-| **Replace All**             | Calls `replaceBoardContent` utility |
+| Control            | Details                                            |
+| ------------------ | -------------------------------------------------- |
+| **Find Input**     | Text to locate on the board; regex toggle embedded |
+| **Replace Input**  | Replacement text applied in bulk; respects regex   |
+| **Filters Menu**   | Icon button opens advanced options                 |
+| **Next Button**    | Scrolls board to next match                        |
+| **Replace Button** | Replace the highlighted match only                 |
+| **Replace All**    | Calls `replaceBoardContent` utility                |
 
 Flow: typing in the **Find** field debounces `searchBoardContent` by 300 ms and
 updates the match count. The **Next** button cycles through results and zooms
 the board to each widget. **Replace** updates just the current item via
-`replaceBoardContent` with `inSelection` pointing to that widget.
+`replaceBoardContent` with `inSelection` pointing to that widget. When the regex
+toggle is enabled replacements match the regular expression.
 
 ---
 

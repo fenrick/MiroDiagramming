@@ -1,5 +1,11 @@
 import React from 'react';
-import { Button, Checkbox, InputField, Paragraph } from '../components';
+import {
+  Button,
+  InputField,
+  Paragraph,
+  RegexSearchField,
+  FilterDropdown,
+} from '../components';
 import { TabGrid } from '../components/TabGrid';
 import type { SearchOptions } from '../../board/search-tools';
 import {
@@ -56,23 +62,30 @@ export const SearchTab: React.FC = () => {
     );
   };
 
-  // eslint-disable-next-line complexity
   const buildOptions = React.useCallback((): SearchOptions => {
-    const opts: SearchOptions = { query };
-    if (widgetTypes.length) opts.widgetTypes = widgetTypes;
     const tags = tagIds
       .split(',')
       .map((t) => t.trim())
       .filter(Boolean);
-    if (tags.length) opts.tagIds = tags;
-    if (backgroundColor) opts.backgroundColor = backgroundColor;
-    if (assignee) opts.assignee = assignee;
-    if (creator) opts.creator = creator;
-    if (lastModifiedBy) opts.lastModifiedBy = lastModifiedBy;
-    if (caseSensitive) opts.caseSensitive = true;
-    if (wholeWord) opts.wholeWord = true;
-    if (regex) opts.regex = true;
-    return opts;
+    const pairs: Array<
+      [boolean, keyof SearchOptions, SearchOptions[keyof SearchOptions]]
+    > = [
+      [widgetTypes.length > 0, 'widgetTypes', widgetTypes],
+      [tags.length > 0, 'tagIds', tags],
+      [Boolean(backgroundColor), 'backgroundColor', backgroundColor],
+      [Boolean(assignee), 'assignee', assignee],
+      [Boolean(creator), 'creator', creator],
+      [Boolean(lastModifiedBy), 'lastModifiedBy', lastModifiedBy],
+      [caseSensitive, 'caseSensitive', true],
+      [wholeWord, 'wholeWord', true],
+      [regex, 'regex', true],
+    ];
+    return pairs.reduce<SearchOptions>(
+      (opts, [cond, key, value]) => {
+        return cond ? { ...opts, [key]: value } : opts;
+      },
+      { query },
+    );
   }, [
     query,
     widgetTypes,
@@ -117,10 +130,12 @@ export const SearchTab: React.FC = () => {
   return (
     <TabPanel tabId='search'>
       <TabGrid columns={2}>
-        <InputField
+        <RegexSearchField
           label='Find'
           value={query}
           onChange={(v) => setQuery(v)}
+          regex={regex}
+          onRegexToggle={setRegex}
           placeholder='Search board text'
         />
         <InputField
@@ -129,65 +144,23 @@ export const SearchTab: React.FC = () => {
           onChange={(v) => setReplacement(v)}
           placeholder='Replacement text'
         />
-        <div className='form-group-small'>
-          <Checkbox
-            label='Case sensitive'
-            value={caseSensitive}
-            onChange={setCaseSensitive}
-          />
-          <Checkbox
-            label='Whole word'
-            value={wholeWord}
-            onChange={setWholeWord}
-          />
-          <Checkbox
-            label='Regex'
-            value={regex}
-            onChange={setRegex}
-          />
-        </div>
-        <div className='form-group-small'>
-          <legend className='custom-visually-hidden'>Widget Types</legend>
-          <div>
-            {['shape', 'card', 'sticky_note', 'text'].map((t) => (
-              <Checkbox
-                key={t}
-                label={t}
-                value={widgetTypes.includes(t)}
-                onChange={() => toggleType(t)}
-              />
-            ))}
-          </div>
-        </div>
-        <InputField
-          label='Tag IDs'
-          value={tagIds}
-          onChange={(v) => setTagIds(v)}
-          placeholder='Comma separated'
-        />
-        <InputField
-          label='Background colour'
-          value={backgroundColor}
-          onChange={(v) => setBackgroundColor(v)}
-          placeholder='CSS colour'
-        />
-        <InputField
-          label='Assignee ID'
-          value={assignee}
-          onChange={(v) => setAssignee(v)}
-          placeholder='User ID'
-        />
-        <InputField
-          label='Creator ID'
-          value={creator}
-          onChange={(v) => setCreator(v)}
-          placeholder='User ID'
-        />
-        <InputField
-          label='Last modified by'
-          value={lastModifiedBy}
-          onChange={(v) => setLastModifiedBy(v)}
-          placeholder='User ID'
+        <FilterDropdown
+          widgetTypes={widgetTypes}
+          toggleType={toggleType}
+          tagIds={tagIds}
+          onTagIdsChange={setTagIds}
+          backgroundColor={backgroundColor}
+          onBackgroundColorChange={setBackgroundColor}
+          assignee={assignee}
+          onAssigneeChange={setAssignee}
+          creator={creator}
+          onCreatorChange={setCreator}
+          lastModifiedBy={lastModifiedBy}
+          onLastModifiedByChange={setLastModifiedBy}
+          caseSensitive={caseSensitive}
+          onCaseSensitiveChange={setCaseSensitive}
+          wholeWord={wholeWord}
+          onWholeWordChange={setWholeWord}
         />
         <Paragraph data-testid='match-count'>
           Matches: {results.length}

@@ -201,6 +201,20 @@ describe('search-tools', () => {
     );
   });
 
+  test('regex replacement updates all matching patterns', async () => {
+    const { board, items } = makeBoard();
+    const count = await replaceBoardContent(
+      { query: 'h.llo', replacement: 'hi', regex: true },
+      board,
+    );
+    expect(count).toBe(5);
+    expect(items[0].text).toBe('hi world');
+    expect(items[1].title).toBe('hi there');
+    expect((items[3].text as { plainText: string }).plainText).toBe('hi test');
+    expect(items[4].content).toBe('hi <b>World</b>');
+    expect(items[5].plainText).toBe('ahib');
+  });
+
   test('search utilities throw without board', async () => {
     await expect(searchBoardContent({ query: 'hi' })).rejects.toThrow(
       'Miro board not available',
