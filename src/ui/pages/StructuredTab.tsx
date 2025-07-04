@@ -156,6 +156,46 @@ export const StructuredTab: React.FC = () => {
           </ul>
           <fieldset>
             <legend className='custom-visually-hidden'>Diagram options</legend>
+          <SelectField
+            label='Layout type'
+            value={layoutChoice}
+            onChange={(v) => setLayoutChoice(v as LayoutChoice)}>
+            {LAYOUTS.map((l) => (
+              <SelectOption
+                key={l}
+                value={l}>
+                {l}
+              </SelectOption>
+            ))}
+          </SelectField>
+          <Paragraph className='field-help'>Layout options:</Paragraph>
+          <ul className='field-help'>
+            {LAYOUTS.map((l) => (
+              <li key={`desc-${l}`}>{LAYOUT_DESCRIPTIONS[l]}</li>
+            ))}
+          </ul>
+          <div style={{ marginTop: tokens.space.small }}>
+            <Checkbox
+              label='Wrap items in frame'
+              value={withFrame}
+              onChange={setWithFrame}
+            />
+          </div>
+          {withFrame && (
+            <InputField
+              label='Frame title'
+              value={frameTitle}
+              onValueChange={(v) => setFrameTitle(v)}
+              placeholder='Frame title'
+            />
+          )}
+          <details
+            open={showAdvanced}
+            aria-label='Advanced options'
+            onToggle={(e) =>
+              setShowAdvanced((e.target as HTMLDetailsElement).open)
+            }>
+            <summary>Advanced options</summary>
             <SelectField
               label='Layout type'
               value={layoutChoice}
@@ -173,20 +213,24 @@ export const StructuredTab: React.FC = () => {
               {LAYOUTS.map((l) => (
                 <li key={`desc-${l}`}>{LAYOUT_DESCRIPTIONS[l]}</li>
               ))}
-            </ul>
-            <div style={{ marginTop: tokens.space.small }}>
-              <Checkbox
-                label='Wrap items in frame'
-                value={withFrame}
-                onChange={setWithFrame}
-              />
-            </div>
-            {withFrame && (
+            </SelectField>
+            <InputField
+              label='Spacing'
+              type='number'
+              value={String(layoutOpts.spacing)}
+              onValueChange={(v) =>
+                setLayoutOpts({ ...layoutOpts, spacing: Number(v) })
+              }
+            />
+            {OPTION_VISIBILITY[layoutOpts.algorithm].aspectRatio && (
               <InputField
-                label='Frame title'
-                value={frameTitle}
-                onChange={(v) => setFrameTitle(v)}
-                placeholder='Frame title'
+                label='Aspect ratio'
+                type='number'
+                step={0.1}
+                value={String(layoutOpts.aspectRatio)}
+                onValueChange={(v) =>
+                  setLayoutOpts({ ...layoutOpts, aspectRatio: Number(v) })
+                }
               />
             )}
             <SelectField
@@ -232,13 +276,21 @@ export const StructuredTab: React.FC = () => {
                   </SelectOption>
                 ))}
               </SelectField>
+            )}
+            {layoutChoice === 'Nested' && (
+              <InputField
+                label='Padding'
+                type='number'
+                value={String(nestedPadding)}
+                onValueChange={(v) => setNestedPadding(Number(v))}
+              />
+            )}
+            {layoutChoice === 'Nested' && (
               <InputField
                 label='Spacing'
                 type='number'
-                value={String(layoutOpts.spacing)}
-                onChange={(v) =>
-                  setLayoutOpts({ ...layoutOpts, spacing: Number(v) })
-                }
+                value={String(nestedTopSpacing)}
+                onValueChange={(v) => setNestedTopSpacing(Number(v))}
               />
               {OPTION_VISIBILITY[layoutOpts.algorithm].aspectRatio && (
                 <InputField

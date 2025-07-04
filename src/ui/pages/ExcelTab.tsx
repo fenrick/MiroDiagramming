@@ -159,7 +159,7 @@ export const ExcelTab: React.FC = () => {
       <InputField
         label='OneDrive/SharePoint file'
         value={remote}
-        onChange={(v) => setRemote(v)}
+        onValueChange={(v) => setRemote(v)}
         aria-label='graph file'
       />
       <Button

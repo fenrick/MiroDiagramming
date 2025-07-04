@@ -120,13 +120,13 @@ export const SearchTab: React.FC = () => {
         <InputField
           label='Find'
           value={query}
-          onChange={(v) => setQuery(v)}
+          onValueChange={(v) => setQuery(v)}
           placeholder='Search board text'
         />
         <InputField
           label='Replace'
           value={replacement}
-          onChange={(v) => setReplacement(v)}
+          onValueChange={(v) => setReplacement(v)}
           placeholder='Replacement text'
         />
         <div className='form-group-small'>
@@ -162,31 +162,31 @@ export const SearchTab: React.FC = () => {
         <InputField
           label='Tag IDs'
           value={tagIds}
-          onChange={(v) => setTagIds(v)}
+          onValueChange={(v) => setTagIds(v)}
           placeholder='Comma separated'
         />
         <InputField
           label='Background colour'
           value={backgroundColor}
-          onChange={(v) => setBackgroundColor(v)}
+          onValueChange={(v) => setBackgroundColor(v)}
           placeholder='CSS colour'
         />
         <InputField
           label='Assignee ID'
           value={assignee}
-          onChange={(v) => setAssignee(v)}
+          onValueChange={(v) => setAssignee(v)}
           placeholder='User ID'
         />
         <InputField
           label='Creator ID'
           value={creator}
-          onChange={(v) => setCreator(v)}
+          onValueChange={(v) => setCreator(v)}
           placeholder='User ID'
         />
         <InputField
           label='Last modified by'
           value={lastModifiedBy}
-          onChange={(v) => setLastModifiedBy(v)}
+          onValueChange={(v) => setLastModifiedBy(v)}
           placeholder='User ID'
         />
         <Paragraph data-testid='match-count'>
