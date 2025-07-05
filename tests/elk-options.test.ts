@@ -22,7 +22,7 @@ describe('validateLayoutOptions', () => {
       algorithm: 'force',
       direction: 'LEFT',
       spacing: 50,
-      aspectRatio: 1.6,
+      aspectRatio: '16:10',
       edgeRouting: undefined,
       edgeRoutingMode: undefined,
       optimizationGoal: undefined,

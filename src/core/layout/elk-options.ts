@@ -1,3 +1,5 @@
+import { AspectRatioId, ASPECT_RATIO_IDS } from '../utils/aspect-ratio';
+
 /**
  * Supported ELK layout algorithms. Extend when enabling additional
  * algorithms in the layout engine.
@@ -48,7 +50,7 @@ export interface UserLayoutOptions {
   /** Spacing in pixels between nodes and layers. */
   spacing: number;
   /** Preferred aspect ratio of the drawing. */
-  aspectRatio: number;
+  aspectRatio: AspectRatioId;
   /** Style of edge routing for layered layouts. */
   edgeRouting?: ElkEdgeRouting;
   /** Routing mode used by MrTree. */
@@ -65,25 +67,25 @@ export const ALGORITHM_DEFAULTS: Record<
   mrtree: {
     direction: 'DOWN',
     spacing: 50,
-    aspectRatio: 1.616,
+    aspectRatio: 'golden',
     edgeRoutingMode: 'AVOID_OVERLAP',
   },
   layered: {
     direction: 'DOWN',
     spacing: 50,
-    aspectRatio: 1.616,
+    aspectRatio: 'golden',
     edgeRouting: 'ORTHOGONAL',
   },
-  force: { direction: 'DOWN', spacing: 160, aspectRatio: 1.6 },
+  force: { direction: 'DOWN', spacing: 160, aspectRatio: '16:10' },
   rectpacking: {
     direction: 'DOWN',
     spacing: 15,
-    aspectRatio: 1.3,
+    aspectRatio: '4:3',
     optimizationGoal: 'MAX_SCALE_DRIVEN',
   },
-  rectstacking: { direction: 'DOWN', spacing: 15, aspectRatio: 1.616 },
-  box: { direction: 'DOWN', spacing: 15, aspectRatio: 1.616 },
-  radial: { direction: 'RIGHT', spacing: 30, aspectRatio: 1.616 },
+  rectstacking: { direction: 'DOWN', spacing: 15, aspectRatio: 'golden' },
+  box: { direction: 'DOWN', spacing: 15, aspectRatio: 'golden' },
+  radial: { direction: 'RIGHT', spacing: 30, aspectRatio: 'golden' },
 };
 
 export const DEFAULT_LAYOUT_OPTIONS: UserLayoutOptions = {
@@ -124,10 +126,11 @@ export function validateLayoutOptions(
     typeof opts.spacing === 'number' && opts.spacing > 0
       ? opts.spacing
       : defaults.spacing;
-  const aspectRatio =
-    typeof opts.aspectRatio === 'number' && opts.aspectRatio > 0
-      ? opts.aspectRatio
-      : defaults.aspectRatio;
+  const aspectRatio = validateEnum(
+    opts.aspectRatio,
+    ASPECT_RATIO_IDS,
+    defaults.aspectRatio,
+  );
 
   const edgeRouting = defaults.edgeRouting
     ? validateEnum(opts.edgeRouting, EDGE_ROUTINGS, defaults.edgeRouting)

@@ -3,10 +3,15 @@ import { Paragraph as DSParagraph, styled } from '@mirohq/design-system';
 import { tokens } from '../tokens';
 
 export type ParagraphProps = Readonly<
-  React.HTMLAttributes<HTMLParagraphElement>
+  Omit<React.HTMLAttributes<HTMLParagraphElement>, 'className' | 'style'>
 >;
 
-/** Paragraph element styled using Mirotone classes. */
+/**
+ * Paragraph element styled using Mirotone classes.
+ *
+ * Custom class names and inline styles are intentionally excluded so
+ * typography remains consistent across the app.
+ */
 const StyledParagraph = styled(DSParagraph, {
   marginTop: 0,
   marginBottom: tokens.space.small,

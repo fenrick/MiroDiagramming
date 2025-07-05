@@ -14,8 +14,6 @@ export type SelectProps = Readonly<{
   size?: 'medium' | 'large' | 'x-large';
   /** Additional children, typically `<SelectOption>` elements. */
   children?: React.ReactNode;
-  /** Optional CSS class name, ignored for compatibility. */
-  className?: string;
 }>;
 
 /**
@@ -30,9 +28,8 @@ export function Select({
   size = 'medium',
   disabled,
   children,
-  className: _className, // ignored but accepted for backward compatibility
+  // className intentionally omitted
 }: SelectProps): React.JSX.Element {
-  void _className;
   return (
     <DSSelect
       value={value}

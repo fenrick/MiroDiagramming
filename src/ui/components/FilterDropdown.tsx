@@ -79,31 +79,31 @@ export function FilterDropdown({
         <InputField
           label='Tag IDs'
           value={tagIds}
-          onChange={onTagIdsChange}
+          onValueChange={onTagIdsChange}
           placeholder='Comma separated'
         />
         <InputField
           label='Background colour'
           value={backgroundColor}
-          onChange={onBackgroundColorChange}
+          onValueChange={onBackgroundColorChange}
           placeholder='CSS colour'
         />
         <InputField
           label='Assignee ID'
           value={assignee}
-          onChange={onAssigneeChange}
+          onValueChange={onAssigneeChange}
           placeholder='User ID'
         />
         <InputField
           label='Creator ID'
           value={creator}
-          onChange={onCreatorChange}
+          onValueChange={onCreatorChange}
           placeholder='User ID'
         />
         <InputField
           label='Last modified by'
           value={lastModifiedBy}
-          onChange={onLastModifiedByChange}
+          onValueChange={onLastModifiedByChange}
           placeholder='User ID'
         />
       </DropdownMenu.Content>
