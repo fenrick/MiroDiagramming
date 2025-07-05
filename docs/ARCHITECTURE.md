@@ -53,7 +53,7 @@ Data        → Graph Normalisation → Layout Engine → Board Rendering → UI
 
 - **Pure Core** (src/core) – framework-agnostic logic.
 - **Board Adapter** (src/board) – converts domain objects to Miro widgets.
-- **UI Shell** (src/ui) – React views built with Mirotone CSS wrappers.
+- **UI Shell** (src/ui) – React views built with design-system wrappers.
 - **Infrastructure** (scripts, .github) – build, lint, test, release automation.
 
 ---

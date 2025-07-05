@@ -11,7 +11,8 @@ developer can translate designs into code with zero ambiguity.
 
 ## Legend
 
-- **UI Element** – Visual component to render (exact Mirotone component/class).
+- **UI Element** – Visual component to render (exact design-system
+  component/class).
 - **Copy (EN‑AU)** – Literal text shown to users.
 - **Interaction Flow** – Ordered user actions → system responses.
 - **State Store** – Redux slice / React context field.
