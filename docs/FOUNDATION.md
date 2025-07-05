@@ -17,9 +17,9 @@ For component usage see **COMPONENTS.md**. For linting, testing and CI gates see
 
 ## 1 Token sources & install
 
-| Asset                               | Package                         | Notes                                                                      |
-| ----------------------------------- | ------------------------------- | -------------------------------------------------------------------------- |
-| Raw CSS variables & utility classes | **mirotone** (`npm i mirotone`) | Adds `dist/styles.css` with all variables and helpers. ([mirotone.xyz][1]) |
+| Asset                               | Package                                                   | Notes                                                  |
+| ----------------------------------- | --------------------------------------------------------- | ------------------------------------------------------ |
+| Raw CSS variables & utility classes | **@mirohq/design-system** (`npm i @mirohq/design-system`) | Adds `dist/styles.css` with all variables and helpers. |
 
 ````ts
 
@@ -36,7 +36,7 @@ For component usage see **COMPONENTS.md**. For linting, testing and CI gates see
 | Yellow   | `--yellow100`, `--yellow400`, `--yellow700`            | Warnings                    |
 | Neutrals | `--black`, `--blackAlpha*`, `--white`, `--whiteAlpha*` | Text, surfaces              |
 
-Full list lives in the **Colors** doc on miro tone. ([mirotone.xyz][1])
+Full list lives in the **Colors** documentation in the design system.
 
 ### 2.2 Semantic aliases
 
@@ -58,7 +58,7 @@ design-token verification script.
 
 ## 3 Spacing scale
 
-The Mirotone scale is **base-8 with a 4 px starter**. ([mirotone.xyz][2])
+The design-system spacing scale is **base-8 with a 4 px starter**.
 
 | Token            | px  | Utility class      |
 | ---------------- | --- | ------------------ |
@@ -89,8 +89,8 @@ resolve to these tokens (see **COMPONENTS.md**).
 | `.p-medium` | font-body-m      | 14 / 20     | Default body text     |
 | `.p-small`  | font-body-s      | 12 / 16     | Captions, helper text |
 
-Mirotone exposes header and body fonts via `--header-font` and `--body-font`
-variables. ([mirotone.xyz][3])
+The design system exposes header and body fonts via `--header-font` and
+`--body-font` variables.
 
 ---
 
@@ -105,8 +105,9 @@ variables. ([mirotone.xyz][3])
 | `radius-xxlarge` | 32   |
 | `radius-circle`  | 50 % |
 
-Border-radius variables ship with Mirotone and are re-exported by
+Border-radius variables are defined by the design system and are re-exported by
 
+our token module for easy consumption.
 
 Elevation follows a four-level shadow ramp:
 
@@ -121,11 +122,10 @@ Elevation follows a four-level shadow ramp:
 
 ## 6 Icons
 
-- Use `<span class="icon icon-name">` to embed an icon. ([mirotone.xyz][4])
-- Icon SVGs sit under `node_modules/mirotone/icons`.
+- Use `<span class="icon icon-name">` to embed an icon.
+- Icon SVGs sit under `node_modules/@mirohq/design-system-icons`.
 - Do not recolour icons; prefer multi-tone assets shipped with the library. If
-  recolouring is essential, apply a CSS filter (see Mirotone icon guide).
-  ([mirotone.xyz][4])
+  recolouring is essential, apply a CSS filter (see design-system icon guide).
 
 ---
 
@@ -148,7 +148,7 @@ canvases where it may distract.
 - Custom classes only to integrate third-party libs and must start with `ext-`.
 - ESLint rule `design-tokens/no-raw-values` blocks non-token values.
 - Inline `style` attributes are disallowed (rule `no-inline-style`).
-- Dark-mode styles derive automatically from Mirotone variables; no extra
+- Dark-mode styles derive automatically from design-system variables; no extra
   overrides.
 
 ---
