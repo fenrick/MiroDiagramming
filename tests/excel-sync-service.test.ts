@@ -160,6 +160,10 @@ describe('ExcelSyncService', () => {
 });
 
 describe('ExcelSyncService additional cases', () => {
+  beforeEach(() => {
+    mockBoard({ get: vi.fn().mockResolvedValue([]) });
+  });
+
   test('updateShapesFromExcel skips missing widgets', async () => {
     (global.miro!.board!.get as vi.Mock).mockResolvedValueOnce([]);
     const service = new ExcelSyncService();
