@@ -1,26 +1,7 @@
 @import '@mirohq/design-tokens/tokens.css';
 @import '@mirohq/design-system-themes/base.css';
 @import '@mirohq/design-system-themes/light.css';
-
-:root {
-  /* Mirotone alias variables mapped to design-system tokens */
-  --space-xxsmall: var(--space-50);
-  --space-xsmall: var(--space-100);
-  --space-small: var(--space-200);
-  --space-medium: var(--space-300);
-  --space-large: var(--space-400);
-  --space-xlarge: var(--space-500);
-  --indigoAlpha40: var(--colors-alpha-gray-400);
-  --indigo700: var(--colors-blue-700);
-  --green700: var(--colors-green-700);
-  --red700: var(--colors-red-700);
-  --red600: var(--colors-red-600);
-  --white: var(--white);
-  --black: var(--black);
-  --primary-text-color: var(--colors-gray-900);
-  --font-size-large: var(--fontSize-250);
-  --font-weight-bold: var(--font-weights-semibold);
-}
+**/
 
 *,
 *:before,
