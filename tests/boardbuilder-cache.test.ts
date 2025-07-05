@@ -1,4 +1,5 @@
 import { BoardBuilder, updateConnector } from '../src/board/board-builder';
+import { mockBoard } from './mock-board';
 
 interface GlobalWithMiro {
   miro?: { board: Record<string, unknown> };
@@ -11,14 +12,9 @@ declare const global: GlobalWithMiro;
  */
 
 describe('BoardBuilder lookup and connector updates', () => {
-  afterEach(() => {
-    jest.restoreAllMocks();
-    delete global.miro;
-  });
-
   test('findNode caches shapes by text', async () => {
     const shape = { content: 'B' } as Record<string, unknown>;
-    global.miro = { board: { get: jest.fn().mockResolvedValue([shape]) } };
+    mockBoard({ get: jest.fn().mockResolvedValue([shape]) });
     const builder = new BoardBuilder();
     await builder.findNode('Business', 'B');
     await builder.findNode('Business', 'B');
@@ -27,7 +23,7 @@ describe('BoardBuilder lookup and connector updates', () => {
 
   test('reset clears the shape cache', async () => {
     const shape = { content: 'B' } as Record<string, unknown>;
-    global.miro = { board: { get: jest.fn().mockResolvedValue([shape]) } };
+    mockBoard({ get: jest.fn().mockResolvedValue([shape]) });
     const builder = new BoardBuilder();
     await builder.findNode('Business', 'B');
     builder.reset();
@@ -40,14 +36,14 @@ describe('BoardBuilder lookup and connector updates', () => {
       content: 'A',
       getMetadata: jest.fn().mockResolvedValue({ type: 'X', label: 'Y' }),
     } as Record<string, unknown>;
-    global.miro = { board: { get: jest.fn().mockResolvedValue([shape]) } };
+    mockBoard({ get: jest.fn().mockResolvedValue([shape]) });
     const builder = new BoardBuilder();
     const result = await builder.findNode('Business', 'A');
     expect(result).toBe(shape);
   });
 
   test('createEdges skips connector lookup', async () => {
-    const board = {
+    const board = mockBoard({
       get: jest.fn(),
       createConnector: jest
         .fn()
@@ -57,8 +53,7 @@ describe('BoardBuilder lookup and connector updates', () => {
           sync: jest.fn(),
           id: 'c1',
         }),
-    };
-    global.miro = { board };
+    });
     const builder = new BoardBuilder();
     const edges = [{ from: 'n1', to: 'n2' }];
     const nodeMap = { n1: { id: 'a' }, n2: { id: 'b' } } as Record<

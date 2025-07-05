@@ -4,10 +4,6 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   test: {
-    globals: true,
-    environment: 'node',
-    environmentMatchGlobs: [['**/*.test.tsx', 'jsdom']],
-    setupFiles: './tests/setupTests.ts',
     coverage: { provider: 'v8', reporter: ['text', 'lcov'] },
     reporters: [
       'default',
@@ -15,6 +11,24 @@ export default defineConfig({
         'junit',
         { outputFile: 'coverage/sonar-report.xml', suiteName: 'vitest' },
       ],
+    ],
+    projects: [
+      {
+        test: {
+          globals: true,
+          setupFiles: './tests/setupTests.ts',
+          environment: 'node',
+          include: ['tests/**/*.test.ts'],
+        },
+      },
+      {
+        test: {
+          globals: true,
+          setupFiles: './tests/setupTests.ts',
+          environment: 'jsdom',
+          include: ['tests/**/*.test.tsx'],
+        },
+      },
     ],
   },
 });

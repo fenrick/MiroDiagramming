@@ -1,6 +1,7 @@
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { ExcelSyncService, ContentItem } from '../src/core/excel-sync-service';
 import { templateManager } from '../src/board/templates';
+import { mockBoard } from './mock-board';
 
 interface GlobalWithMiro {
   miro?: { board?: Record<string, unknown> };
@@ -18,7 +19,7 @@ declare const global: GlobalWithMiro;
 
 describe('ExcelSyncService', () => {
   beforeEach(() => {
-    global.miro = { board: { get: vi.fn().mockResolvedValue([]) } };
+    mockBoard({ get: vi.fn().mockResolvedValue([]) });
   });
 
   test('registerMapping and getWidgetId round trip', () => {
