@@ -136,7 +136,6 @@ export const SearchTab: React.FC = () => {
           onChange={(v) => setQuery(v)}
           regex={regex}
           onRegexToggle={setRegex}
-
           placeholder='Search board text'
         />
         <InputField
