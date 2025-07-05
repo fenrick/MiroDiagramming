@@ -30,3 +30,15 @@ it('uses two columns by default', () => {
   expect(items[0]).toHaveClass('cs1', 'ce6');
   expect(items[1]).toHaveClass('cs7', 'ce12');
 });
+
+it('wraps elements lacking className prop', () => {
+  const { container } = render(
+    <TabGrid>
+      <button type='button'>Test</button>
+    </TabGrid>,
+  );
+  const el = container.firstChild as HTMLElement;
+  const wrapper = el.firstChild as HTMLElement;
+  expect(wrapper).toHaveClass('cs1', 'ce6');
+  expect(wrapper.firstChild).toBeInstanceOf(HTMLButtonElement);
+});
