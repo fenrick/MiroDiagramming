@@ -7,7 +7,7 @@ export type ParagraphProps = Readonly<
 >;
 
 /**
- * Paragraph element styled using Mirotone classes.
+ * Paragraph element styled using design-system classes.
  *
  * Custom class names and inline styles are intentionally excluded so
  * typography remains consistent across the app.

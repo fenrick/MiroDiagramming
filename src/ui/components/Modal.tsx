@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from './Button';
 
 export interface ModalProps {
   /** Dialog title displayed in the header. */
@@ -113,12 +114,12 @@ export function Modal({
         ref={ref}>
         <header className='modal-header'>
           <h3>{title}</h3>
-          <button
-            className='button button-secondary'
+          <Button
+            variant='secondary'
             aria-label='Close'
             onClick={onClose}>
             ×
-          </button>
+          </Button>
         </header>
         <div className='modal-content'>{children}</div>
       </dialog>
