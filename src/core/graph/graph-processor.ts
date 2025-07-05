@@ -18,6 +18,9 @@ import {
 } from '../layout/layout-utils';
 import type { BaseItem, Frame, Group } from '@mirohq/websdk-types';
 
+/** Board widget or group item. */
+type BoardItem = BaseItem | Group;
+
 /**
  * High level orchestrator that loads graph data, runs layout and
  * creates all widgets on the board.
@@ -159,7 +162,7 @@ export class GraphProcessor extends UndoableProcessor {
    */
   private buildLayoutInput(
     data: GraphData,
-    existing: Record<string, BaseItem | Group | undefined>,
+    existing: Record<string, BoardItem | undefined>,
     mode: ExistingNodeMode,
   ): GraphData {
     if (mode !== 'layout') return data;
@@ -196,8 +199,8 @@ export class GraphProcessor extends UndoableProcessor {
   /** Collect selected widgets matching graph nodes. */
   private async collectExistingNodes(
     graph: GraphData,
-  ): Promise<Record<string, BaseItem | Group | undefined>> {
-    const map: Record<string, BaseItem | Group | undefined> = {};
+  ): Promise<Record<string, BoardItem | undefined>> {
+    const map: Record<string, BoardItem | undefined> = {};
     for (const node of graph.nodes) {
       map[node.id] = await this.builder.findNodeInSelection(
         node.type,
@@ -216,18 +219,18 @@ export class GraphProcessor extends UndoableProcessor {
     offsetX: number,
     offsetY: number,
     mode: ExistingNodeMode,
-    existing: Record<string, BaseItem | Group | undefined>,
+    existing: Record<string, BoardItem | undefined>,
   ): Promise<{
-    map: Record<string, BaseItem | Group>;
+    map: Record<string, BoardItem>;
     positions: Record<string, PositionedNode>;
   }> {
-    const map: Record<string, BaseItem | Group> = {};
+    const map: Record<string, BoardItem> = {};
     const positions: Record<string, PositionedNode> = {};
     for (const node of graph.nodes) {
       const pos = layout.nodes[node.id];
       const target = { ...pos, x: pos.x + offsetX, y: pos.y + offsetY };
       const found = existing[node.id];
-      let widget: BaseItem | Group;
+      let widget: BoardItem;
       if (found) {
         widget = found;
         if (mode !== 'ignore') {
@@ -267,7 +270,7 @@ export class GraphProcessor extends UndoableProcessor {
   private async createConnectorsAndZoom(
     graph: GraphData,
     layout: LayoutResult,
-    nodeMap: Record<string, BaseItem | Group>,
+    nodeMap: Record<string, BoardItem>,
     frame?: Frame,
   ): Promise<void> {
     const edgeHints = computeEdgeHints(graph, layout);

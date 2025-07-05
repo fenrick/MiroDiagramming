@@ -44,8 +44,9 @@ function AppShell(): React.JSX.Element {
   const current = TAB_DATA.find((t) => t[1] === tab)!;
   const CurrentComp = current[4];
 
+  const PrimitiveDiv = Primitive.div;
   return (
-    <Primitive.div className='scrollable'>
+    <PrimitiveDiv className='scrollable'>
       <ExcelDataProvider
         value={{
           rows,
@@ -79,7 +80,7 @@ function AppShell(): React.JSX.Element {
           onClose={() => setShowMeta(false)}
         />
       </ExcelDataProvider>
-    </Primitive.div>
+    </PrimitiveDiv>
   );
 }
 

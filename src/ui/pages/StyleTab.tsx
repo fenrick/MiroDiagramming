@@ -1,6 +1,5 @@
 import React from 'react';
 import { Button, InputField } from '../components';
-import { Form } from '@mirohq/design-system';
 import {
   tweakFillColor,
   tweakOpacity,
@@ -16,7 +15,7 @@ import { tokens } from '../tokens';
 import { TabPanel } from '../components/TabPanel';
 import { TabGrid } from '../components/TabGrid';
 import type { TabTuple } from './tab-definitions';
-import { Heading, IconSlidersX, Text } from '@mirohq/design-system';
+import { Form, Heading, IconSlidersX, Text } from '@mirohq/design-system';
 
 /** Adjusts the fill colour of selected widgets. */
 export const StyleTab: React.FC = () => {
@@ -47,51 +46,47 @@ export const StyleTab: React.FC = () => {
     const colour = await copyFillFromSelection();
     if (colour) setBaseColor(colour);
   }, []);
+  const sliderId = React.useId();
   return (
     <TabPanel tabId='style'>
       <TabGrid columns={2}>
-        {(() => {
-          const sliderId = React.useId();
-          return (
-            <Form.Field>
-              <Form.Label htmlFor={sliderId}>Adjust fill</Form.Label>
-              <input
-                id={sliderId}
-                data-testid='adjust-slider'
-                type='range'
-                min='-100'
-                max='100'
-                list='adjust-marks'
-                value={adjust}
-                onChange={(e) => setAdjust(Number(e.target.value))}
+        <Form.Field>
+          <Form.Label htmlFor={sliderId}>Adjust fill</Form.Label>
+          <input
+            id={sliderId}
+            data-testid='adjust-slider'
+            type='range'
+            min='-100'
+            max='100'
+            list='adjust-marks'
+            value={adjust}
+            onChange={(e) => setAdjust(Number(e.target.value))}
+          />
+          <datalist id='adjust-marks'>
+            {[-100, -50, 0, 50, 100].map((n) => (
+              <option
+                key={n}
+                value={n}
               />
-              <datalist id='adjust-marks'>
-                {[-100, -50, 0, 50, 100].map((n) => (
-                  <option
-                    key={n}
-                    value={n}
-                  />
-                ))}
-              </datalist>
-              <span
-                data-testid='adjust-preview'
-                style={{
-                  display: 'inline-block',
-                  width: '24px',
-                  height: '24px',
-                  marginLeft: tokens.space.small,
-                  border: `1px solid ${tokens.color.gray[200]}`,
-                  backgroundColor: preview,
-                }}
-              />
-              <code
-                data-testid='color-hex'
-                style={{ marginLeft: tokens.space.xxsmall }}>
-                {preview}
-              </code>
-            </Form.Field>
-          );
-        })()}
+            ))}
+          </datalist>
+          <span
+            data-testid='adjust-preview'
+            style={{
+              display: 'inline-block',
+              width: '24px',
+              height: '24px',
+              marginLeft: tokens.space.small,
+              border: `1px solid ${tokens.color.gray[200]}`,
+              backgroundColor: preview,
+            }}
+          />
+          <code
+            data-testid='color-hex'
+            style={{ marginLeft: tokens.space.xxsmall }}>
+            {preview}
+          </code>
+        </Form.Field>
         <InputField
           label='Adjust value'
           type='number'
