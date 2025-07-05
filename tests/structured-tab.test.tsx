@@ -1,4 +1,5 @@
 /** @vitest-environment jsdom */
+/* eslint-disable no-var */
 import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -14,6 +15,15 @@ vi.mock('../src/core/graph/hierarchy-processor', () => ({
   HierarchyProcessor: class {
     processFile = vi.fn();
   },
+}));
+
+var createSpy: vi.Mock;
+vi.mock('../src/ui/hooks/use-diagram-create', () => ({
+  useDiagramCreate: () => {
+    createSpy = vi.fn();
+    return createSpy;
+  },
+  useAdvancedToggle: () => {},
 }));
 
 // helper to create a dummy file
@@ -56,5 +66,18 @@ describe('StructuredTab', () => {
     const summary = screen.getByText(/advanced options/i);
     fireEvent.click(summary);
     expect(screen.getByLabelText('Algorithm')).toBeInTheDocument();
+  });
+
+  test('lists dropped files and triggers create callback', async () => {
+    render(<StructuredTab />);
+    const input = screen.getByTestId('file-input');
+    await act(async () => {
+      fireEvent.change(input, { target: { files: [makeFile('graph.json')] } });
+    });
+    expect(screen.getByText('graph.json')).toBeInTheDocument();
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: /create diagram/i }));
+    });
+    expect(createSpy).toHaveBeenCalled();
   });
 });
