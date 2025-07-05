@@ -1,5 +1,9 @@
 # [Unreleased]
 
+### Bug Fixes
+
+* fix StructuredTab closing tags preventing parsing
+
 # [1.18.0](https://github.com/fenrick/MiroDiagramming/compare/v1.17.0...v1.18.0) (2025-07-02)
 
 
