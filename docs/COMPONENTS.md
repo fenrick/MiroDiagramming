@@ -62,7 +62,7 @@ The design system expects container elements to declare their own padding. To
 preserve the existing API and layering, small wrappers live under
 `src/ui/components` (e.g. `Panel`, `Section`, `ActionBar`). Legacy variants live
 under `src/ui/components/legacy`. Each wrapper accepts a `padding` prop that
-maps to the numeric tokens exported from `src/ui/tokens.ts`:
+maps to numeric values from `@mirohq/design-tokens`:
 
 ```tsx
 <Panel padding='medium'>
@@ -237,7 +237,7 @@ Failing any item blocks the CI gate.
 ## 6 Styling rules & minimal-CSS policy
 
 - Only Design-System tokens: colours, space, radii, typography (import via
-  `tokens`).
+  `@mirohq/design-tokens`).
 - **No extra CSS classes** unless integrating a third-party lib.
 - Inline `style={...}` is disallowed by ESLint rule `no-inline-style`.
 - Dark-mode colours come free from Miro themes; test visually in both themes

@@ -6,7 +6,7 @@ import { Form, Input } from '@mirohq/design-system';
 =======
 >>>>>>> 3a8fb55 (fix(ui): trigger upload processing)
 import { getDropzoneStyle } from '../hooks/ui-utils';
-import { tokens } from '../tokens';
+import { space } from '@mirohq/design-tokens';
 import { IconSquareArrowIn, Text } from '@mirohq/design-system';
 
 export type JsonDropZoneProps = Readonly<{
@@ -69,7 +69,7 @@ export function JsonDropZone({
         {dropzone.isDragAccept ? (
           <p className='dnd-text'>Drop your JSON file here</p>
         ) : (
-          <div style={{ padding: tokens.space.small }}>
+          <div style={{ padding: space[200] }}>
             <Button
               variant='primary'
               iconPosition='start'

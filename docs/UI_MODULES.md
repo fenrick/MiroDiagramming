@@ -55,7 +55,7 @@ src/ui/
     tab-definitions.ts
     tabs.ts
   style-presets.ts
-  tokens.ts
+  design tokens (from @mirohq/design-tokens)
 ```
 
 ## 2 Module Purpose
@@ -73,6 +73,6 @@ src/ui/
 | hooks/                           | React hooks for state management and board operations. |
 | pages/                           | Individual tabs rendered inside the panel.             |
 | style-presets.ts                 | Named style collections for widgets.                   |
-| tokens.ts                        | Design tokens consumed by components.                  |
+| design tokens                    | Design tokens consumed by components.                  |
 | pages/tabs.ts                    | Tab registration and ordering.                         |
 | pages/tab-definitions.ts         | Mapping of tab identifiers to components.              |

@@ -174,10 +174,10 @@ the rest of the UI. These guidelines help keep layouts consistent:
   vertical rhythm.
 - Arrange elements with the 12‑column grid classes (`cs*`/`ce*`) so forms remain
   responsive.
-- Use values from `src/ui/tokens.ts` for margins and padding instead of
+- Use values from `@mirohq/design-tokens` for margins and padding instead of
   hard‑coded numbers.
 - Layout wrappers such as `Panel` or `Section` expose a `padding` prop. Pass a
-  token from `src/ui/tokens.ts` so spacing stays consistent.
+  token from `@mirohq/design-tokens` so spacing stays consistent.
 - Avoid passing custom `className` or `style` props to these wrappers; spacing
   decisions belong inside the component.
 - Keep wrapper nesting shallow; avoid unnecessary layers.

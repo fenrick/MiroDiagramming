@@ -4,7 +4,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { App } from '../src/app/App';
 import { getDropzoneStyle, undoLastImport } from '../src/ui/hooks/ui-utils';
-import { tokens } from '../src/ui/tokens';
+import { colors } from '@mirohq/design-tokens';
 import { GraphProcessor } from '../src/core/graph/graph-processor';
 
 interface GlobalWithMiro {
@@ -124,10 +124,10 @@ describe('App UI integration', () => {
 
   test('getDropzoneStyle computes colours', () => {
     const base = getDropzoneStyle('base');
-    expect(base.borderColor).toBe(tokens.color.indigoAlpha[40]);
+    expect(base.borderColor).toBe(colors['alpha-black-400']);
     const accept = getDropzoneStyle('accept');
-    expect(accept.borderColor).toBe(tokens.color.green[700]);
+    expect(accept.borderColor).toBe(colors['green-700']);
     const reject = getDropzoneStyle('reject');
-    expect(reject.borderColor).toBe(tokens.color.red[700]);
+    expect(reject.borderColor).toBe(colors['red-700']);
   });
 });

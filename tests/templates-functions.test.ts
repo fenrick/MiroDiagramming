@@ -36,7 +36,7 @@ describe('token resolution', () => {
     const style = templateManager.resolveStyle({
       fillColor: 'tokens.color.red[700]',
     });
-    expect(style.fillColor).toBe('#6b1720');
+    expect(style.fillColor.toLowerCase()).toBe('#6b1720');
   });
 
   test('returns raw value for unknown tokens', () => {
