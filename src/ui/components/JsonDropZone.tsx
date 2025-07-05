@@ -52,7 +52,7 @@ export function JsonDropZone({
           {...fileInputProps}
         />
         {dropzone.isDragAccept ? (
-          <p className='dnd-text'>Drop your JSON file here</p>
+          <p style={{ margin: tokens.space.small }}>Drop your JSON file here</p>
         ) : (
           <div style={{ padding: space[200] }}>
             <Button
@@ -61,7 +61,9 @@ export function JsonDropZone({
               icon={<IconSquareArrowIn />}>
               <Text>Select JSON file</Text>
             </Button>
-            <p className='dnd-text'>Or drop your JSON file here</p>
+            <p style={{ marginTop: tokens.space.small }}>
+              Or drop your JSON file here
+            </p>
           </div>
         )}
       </div>

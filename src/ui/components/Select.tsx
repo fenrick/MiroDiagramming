@@ -19,7 +19,8 @@ export type SelectProps = Readonly<{
 /**
  * Wrapper around the design-system `Select` component.
  *
- * It exposes a simplified API compatible with the old Mirotone-based select.
+ * It exposes a simplified API compatible with the legacy select used in
+ * earlier versions built with Mirotone.
  */
 export function Select({
   value,

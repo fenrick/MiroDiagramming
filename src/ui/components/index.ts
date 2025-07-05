@@ -14,3 +14,4 @@ export { IntroScreen } from './IntroScreen';
 export { Markdown } from './Markdown';
 export { RegexSearchField } from './RegexSearchField';
 export { FilterDropdown } from './FilterDropdown';
+export { FormGroup } from './FormGroup';
