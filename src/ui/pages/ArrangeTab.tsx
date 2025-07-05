@@ -131,7 +131,7 @@ export const ArrangeTab: React.FC = () => {
         </Grid.Item>
 
         <Grid.Item>
-          <div className='form-group-small'>
+          <div className='custom-form-group-small'>
             <SelectField
               label='Axis'
               value={spacing.axis}

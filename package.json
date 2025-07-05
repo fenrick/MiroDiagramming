@@ -36,7 +36,6 @@
     "d3-dsv": "^3.0.1",
     "elkjs": "^0.10.0",
     "exceljs": "^4.4.0",
-    "mirotone": "^5.3.2",
     "react-dropzone": "^14.3.8"
   },
   "devDependencies": {
