@@ -126,7 +126,7 @@ export class TemplateManager {
    */
   private parseNumeric(value: unknown): unknown {
     if (typeof value !== 'string') return value;
-    const m = value.match(/^(-?\d+(?:\.\d+)?)(px)?$/);
+    const m = /^(-?\d+(?:\.\d+)?)(px)?$/.exec(value);
     return m ? parseFloat(m[1]) : value;
   }
 

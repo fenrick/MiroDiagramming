@@ -1,4 +1,9 @@
-import { BoardLike, BoardQueryLike, getBoardWithQuery } from './board';
+import {
+  BoardLike,
+  BoardQueryLike,
+  getBoardWithQuery,
+  getBoard,
+} from './board';
 
 /**
  * Singleton cache for board data.
@@ -16,7 +21,7 @@ export class BoardCache {
     board?: BoardLike,
   ): Promise<Array<Record<string, unknown>>> {
     if (!this.selection) {
-      const b = getBoardWithQuery(board as BoardQueryLike);
+      const b = getBoard(board);
       this.selection = await b.getSelection();
     }
     return this.selection;

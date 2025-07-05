@@ -35,7 +35,7 @@ export const DiagramsTab: React.FC = () => {
       <Tabs
         value={sub}
         variant={'tabs'}
-        onChange={(id) => setSub(id as string)}
+        onChange={(id) => setSub(id)}
         size='medium'>
         <Tabs.List>
           {SUB_TABS.map((t) => (
