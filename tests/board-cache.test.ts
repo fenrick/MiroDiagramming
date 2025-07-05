@@ -1,17 +1,17 @@
+import { describe, expect, test, vi } from 'vitest';
 import { boardCache } from '../src/board/board-cache';
 import type { BoardQueryLike } from '../src/board/board';
 
 describe('BoardCache', () => {
   afterEach(() => {
     boardCache.reset();
-    jest.restoreAllMocks();
   });
 
   test('selection result is cached', async () => {
     const items = [{}];
     const board: BoardQueryLike = {
-      getSelection: jest.fn().mockResolvedValue(items),
-      get: jest.fn(),
+      getSelection: vi.fn().mockResolvedValue(items),
+      get: vi.fn(),
     } as unknown as BoardQueryLike;
     await boardCache.getSelection(board);
     await boardCache.getSelection(board);
@@ -20,11 +20,11 @@ describe('BoardCache', () => {
 
   test('clearSelection invalidates cache', async () => {
     const board: BoardQueryLike = {
-      getSelection: jest
+      getSelection: vi
         .fn()
         .mockResolvedValueOnce([{ a: 1 }])
         .mockResolvedValueOnce([{ b: 2 }]),
-      get: jest.fn(),
+      get: vi.fn(),
     } as unknown as BoardQueryLike;
     const first = await boardCache.getSelection(board);
     boardCache.clearSelection();
@@ -36,8 +36,8 @@ describe('BoardCache', () => {
 
   test('widget queries are cached per type', async () => {
     const board: BoardQueryLike = {
-      getSelection: jest.fn(),
-      get: jest.fn(({ type }) => {
+      getSelection: vi.fn(),
+      get: vi.fn(({ type }) => {
         return type === 'shape'
           ? Promise.resolve([{ s: 1 }])
           : Promise.resolve([{ g: 1 }]);
