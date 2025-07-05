@@ -13,9 +13,8 @@ import { adjustColor } from '../../core/utils/color-utils';
 import { useSelection } from '../hooks/use-selection';
 import { tokens } from '../tokens';
 import { TabPanel } from '../components/TabPanel';
-import { Grid } from '@mirohq/design-system';
 import type { TabTuple } from './tab-definitions';
-import { Form, Heading, IconSlidersX, Text } from '@mirohq/design-system';
+import { Grid, Form, Heading, IconSlidersX, Text } from '@mirohq/design-system';
 
 /** Adjusts the fill colour of selected widgets. */
 export const StyleTab: React.FC = () => {
