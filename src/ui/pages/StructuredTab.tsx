@@ -28,6 +28,7 @@ import {
   ElkOptimizationGoal,
   UserLayoutOptions,
 } from '../../core/layout/elk-options';
+import { ASPECT_RATIOS, AspectRatioId } from '../../core/utils/aspect-ratio';
 import { HierarchyProcessor } from '../../core/graph/hierarchy-processor';
 import { undoLastImport } from '../hooks/ui-utils';
 import {
@@ -205,15 +206,23 @@ export const StructuredTab: React.FC = () => {
                 }
               />
               {OPTION_VISIBILITY[layoutOpts.algorithm].aspectRatio && (
-                <InputField
+                <SelectField
                   label='Aspect ratio'
-                  type='number'
-                  step={0.1}
-                  value={String(layoutOpts.aspectRatio)}
-                  onValueChange={(v) =>
-                    setLayoutOpts({ ...layoutOpts, aspectRatio: Number(v) })
-                  }
-                />
+                  value={layoutOpts.aspectRatio}
+                  onChange={(v) =>
+                    setLayoutOpts({
+                      ...layoutOpts,
+                      aspectRatio: v as AspectRatioId,
+                    })
+                  }>
+                  {ASPECT_RATIOS.map((r) => (
+                    <SelectOption
+                      key={r.id}
+                      value={r.id}>
+                      {r.label}
+                    </SelectOption>
+                  ))}
+                </SelectField>
               )}
               <SelectField
                 label='Existing nodes'
@@ -251,17 +260,6 @@ export const StructuredTab: React.FC = () => {
                   </SelectOption>
                 ))}
               </SelectField>
-              {OPTION_VISIBILITY[layoutOpts.algorithm].aspectRatio && (
-                <InputField
-                  label='Aspect ratio'
-                  type='number'
-                  step={0.1}
-                  value={String(layoutOpts.aspectRatio)}
-                  onValueChange={(v) =>
-                    setLayoutOpts({ ...layoutOpts, aspectRatio: Number(v) })
-                  }
-                />
-              )}
               {OPTION_VISIBILITY[layoutOpts.algorithm].edgeRouting && (
                 <SelectField
                   label='Edge routing'
