@@ -1,4 +1,4 @@
-import { tokens } from '../tokens';
+import { colors, fontSizes, fontWeights } from '@mirohq/design-tokens';
 import { GraphProcessor } from '../../core/graph/graph-processor';
 import { HierarchyProcessor } from '../../core/graph/hierarchy-processor';
 import { CardProcessor } from '../../board/card-processor';
@@ -10,10 +10,10 @@ const dropzoneStyles = {
   flexDirection: 'column',
   justifyContent: 'center',
   textAlign: 'center',
-  border: `3px dashed ${tokens.color.indigoAlpha[40]}`,
-  color: tokens.color.indigo[700],
-  fontWeight: tokens.typography.fontWeight.bold,
-  fontSize: tokens.typography.fontSize.large,
+  border: `3px dashed ${colors['alpha-black-400']}`,
+  color: colors['gray-700'],
+  fontWeight: fontWeights.semibold,
+  fontSize: fontSizes[200],
 } as const;
 
 /** Undo last import and reset state helper. */
@@ -33,12 +33,12 @@ export async function undoLastImport(
 export type DropzoneState = 'base' | 'accept' | 'reject';
 
 export function getDropzoneStyle(state: DropzoneState): React.CSSProperties {
-  let borderColor: string = tokens.color.indigoAlpha[40];
+  let borderColor: string = colors['alpha-black-400'];
   if (state === 'accept') {
-    borderColor = tokens.color.green[700];
+    borderColor = colors['green-700'];
   }
   if (state === 'reject') {
-    borderColor = tokens.color.red[700];
+    borderColor = colors['red-700'];
   }
   return { ...dropzoneStyles, borderColor };
 }

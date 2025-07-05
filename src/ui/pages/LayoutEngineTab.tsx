@@ -1,6 +1,6 @@
 import React from 'react';
 import { Paragraph } from '../components';
-import { tokens } from '../tokens';
+import { space } from '@mirohq/design-tokens';
 
 /** Placeholder for future layout engine options. */
 export const LayoutEngineTab: React.FC = () => (
@@ -8,7 +8,7 @@ export const LayoutEngineTab: React.FC = () => (
     id='panel-layout'
     role='tabpanel'
     aria-labelledby='tab-layout'
-    style={{ marginTop: tokens.space.small }}>
+    style={{ marginTop: space[200] }}>
     <Paragraph>Layout engine coming soon.</Paragraph>
   </div>
 );
