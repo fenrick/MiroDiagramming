@@ -138,7 +138,7 @@ export const ResizeTab: React.FC = () => {
         {boardUnitsToInches(size.width).toFixed(2)} ×{' '}
         {boardUnitsToInches(size.height).toFixed(2)} in)
       </Paragraph>
-      {warning && <Paragraph className='error'>{warning}</Paragraph>}
+      {warning && <p className='error'>{warning}</p>}
       <Grid
         columns={2}
         gap={200}>

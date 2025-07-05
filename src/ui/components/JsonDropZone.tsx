@@ -3,7 +3,6 @@ import { useDropzone } from 'react-dropzone';
 import { Button } from './Button';
 import { getDropzoneStyle } from '../hooks/ui-utils';
 import { tokens } from '../tokens';
-import { Paragraph } from './Paragraph';
 import { IconSquareArrowIn, Text } from '@mirohq/design-system';
 
 export type JsonDropZoneProps = Readonly<{
@@ -53,7 +52,7 @@ export function JsonDropZone({
           {...fileInputProps}
         />
         {dropzone.isDragAccept ? (
-          <Paragraph className='dnd-text'>Drop your JSON file here</Paragraph>
+          <p className='dnd-text'>Drop your JSON file here</p>
         ) : (
           <div style={{ padding: tokens.space.small }}>
             <Button
@@ -62,18 +61,16 @@ export function JsonDropZone({
               icon={<IconSquareArrowIn />}>
               <Text>Select JSON file</Text>
             </Button>
-            <Paragraph className='dnd-text'>
-              Or drop your JSON file here
-            </Paragraph>
+            <p className='dnd-text'>Or drop your JSON file here</p>
           </div>
         )}
       </div>
-      <Paragraph
+      <p
         id='dropzone-instructions'
         className='custom-visually-hidden'>
         Press Enter to open the file picker or drop a JSON file on the area
         above.
-      </Paragraph>
+      </p>
     </>
   );
 }

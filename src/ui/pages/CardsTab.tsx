@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Checkbox, Paragraph, InputField } from '../components';
+import { Button, Checkbox, InputField } from '../components';
 import { JsonDropZone } from '../components/JsonDropZone';
 import { TabGrid } from '../components/TabGrid';
 import { CardProcessor } from '../../board/card-processor';
@@ -104,7 +104,7 @@ export const CardsTab: React.FC = () => {
                 max={100}
               />
             )}
-            {error && <Paragraph className='error'>{error}</Paragraph>}
+            {error && <p className='error'>{error}</p>}
             {showUndo && (
               <Button
                 onClick={() =>

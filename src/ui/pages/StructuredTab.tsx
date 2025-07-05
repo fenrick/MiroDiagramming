@@ -4,7 +4,6 @@ import {
   Checkbox,
   InputField,
   SelectField,
-  Paragraph,
   SelectOption,
 } from '../components';
 import { JsonDropZone } from '../components/JsonDropZone';
@@ -169,7 +168,7 @@ export const StructuredTab: React.FC = () => {
                 </SelectOption>
               ))}
             </SelectField>
-            <Paragraph className='field-help'>Layout options:</Paragraph>
+            <p className='field-help'>Layout options:</p>
             <ul className='field-help'>
               {LAYOUTS.map((l) => (
                 <li key={`desc-${l}`}>{LAYOUT_DESCRIPTIONS[l]}</li>
@@ -349,7 +348,7 @@ export const StructuredTab: React.FC = () => {
                 max={100}
               />
             )}
-            {error && <Paragraph className='error'>{error}</Paragraph>}
+            {error && <p className='error'>{error}</p>}
             {lastProc && (
               <Button
                 onClick={() => {
