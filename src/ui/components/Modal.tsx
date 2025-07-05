@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from './Button';
 
 export interface ModalProps {
   /** Dialog title displayed in the header. */
@@ -86,12 +87,12 @@ export function Modal({
 
   // Close the modal when the backdrop is activated via mouse or keyboard
   return (
-    <div className='modal-container'>
+    <div className='custom-modal-container'>
       <button
         type='button'
         aria-label='Close modal'
         data-testid='modal-backdrop'
-        className='modal-backdrop'
+        className='custom-modal-backdrop'
         onClick={(e) => {
           if (e.target === e.currentTarget) onClose();
         }}
@@ -109,18 +110,18 @@ export function Modal({
         open
         aria-label={title}
         aria-modal='true'
-        className={`modal modal-${size}`}
+        className={`custom-modal custom-modal-${size}`}
         ref={ref}>
-        <header className='modal-header'>
+        <header className='custom-modal-header'>
           <h3>{title}</h3>
-          <button
-            className='button button-secondary'
+          <Button
+            variant='secondary'
             aria-label='Close'
             onClick={onClose}>
             ×
-          </button>
+          </Button>
         </header>
-        <div className='modal-content'>{children}</div>
+        <div className='custom-modal-content'>{children}</div>
       </dialog>
     </div>
   );
