@@ -133,7 +133,9 @@ export const SearchTab: React.FC = () => {
         <RegexSearchField
           label='Find'
           value={query}
-          onValueChange={(v) => setQuery(v)}
+          onChange={(v) => setQuery(v)}
+          regex={regex}
+          onRegexToggle={setRegex}
           placeholder='Search board text'
         />
         <InputField
