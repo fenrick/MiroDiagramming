@@ -7,7 +7,7 @@ import {
   SelectOption,
 } from '../components';
 import { JsonDropZone } from '../components/JsonDropZone';
-import { tokens } from '../tokens';
+import { space } from '@mirohq/design-tokens';
 import {
   GraphProcessor,
   ExistingNodeMode,
@@ -143,7 +143,7 @@ export const StructuredTab: React.FC = () => {
       id='panel-diagram'
       role='tabpanel'
       aria-labelledby='tab-diagram'
-      style={{ marginTop: tokens.space.small }}>
+      style={{ marginTop: space[200] }}>
       <JsonDropZone onFiles={handleFiles} />
 
       {importQueue.length > 0 && (
@@ -178,7 +178,7 @@ export const StructuredTab: React.FC = () => {
                   <li key={`desc-${l}`}>{LAYOUT_DESCRIPTIONS[l]}</li>
                 ))}
               </ul>
-              <div style={{ marginTop: tokens.space.small }}>
+              <div style={{ marginTop: space[200] }}>
                 <Checkbox
                   label='Wrap items in frame'
                   value={withFrame}

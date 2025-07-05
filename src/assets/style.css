@@ -45,27 +45,27 @@ body {
 .scrollable {
   flex: 1;
   overflow-y: auto;
-  padding: var(--space-small);
+  padding: var(--space-200);
 }
 
 #root .buttons {
   position: sticky;
   bottom: 0;
-  padding-block: var(--space-medium);
+  padding-block: var(--space-300);
   background: #fff;
 }
 
 .custom-dropped-files {
   list-style: none;
-  padding: var(--space-xxsmall) var(--space-xsmall);
-  border: 3px dashed var(--indigoAlpha40);
+  padding: var(--space-50) var(--space-100);
+  border: 3px dashed var(--colors-alpha-black-400);
   max-height: 80px;
   overflow-y: auto;
-  font-size: var(--font-size-large);
+  font-size: var(--font-size-200);
 }
 
 .custom-segment button + button {
-  margin-left: var(--space-xxsmall);
+  margin-left: var(--space-50);
 }
 
 .custom-visually-hidden {
@@ -83,7 +83,7 @@ body {
 .search-input {
   display: flex;
   align-items: center;
-  gap: var(--space-xxsmall);
+  gap: var(--space-50);
 }
 
 .search-input input {

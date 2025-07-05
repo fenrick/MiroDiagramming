@@ -11,7 +11,7 @@ import { applyStylePreset, presetStyle } from '../../board/format-tools';
 import { STYLE_PRESET_NAMES, stylePresets } from '../style-presets';
 import { adjustColor } from '../../core/utils/color-utils';
 import { useSelection } from '../hooks/use-selection';
-import { tokens } from '../tokens';
+import { colors, space } from '@mirohq/design-tokens';
 import { TabPanel } from '../components/TabPanel';
 import type { TabTuple } from './tab-definitions';
 import { Grid, Form, Heading, IconSlidersX, Text } from '@mirohq/design-system';
@@ -76,14 +76,14 @@ export const StyleTab: React.FC = () => {
                 display: 'inline-block',
                 width: '24px',
                 height: '24px',
-                marginLeft: tokens.space.small,
-                border: `1px solid ${tokens.color.gray[200]}`,
+                marginLeft: space[200],
+                border: `1px solid ${colors['gray-200']}`,
                 backgroundColor: preview,
               }}
             />
             <code
               data-testid='color-hex'
-              style={{ marginLeft: tokens.space.xxsmall }}>
+              style={{ marginLeft: space[50] }}>
               {preview}
             </code>
           </Form.Field>

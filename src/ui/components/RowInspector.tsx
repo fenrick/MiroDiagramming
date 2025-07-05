@@ -1,5 +1,5 @@
 import React from 'react';
-import { tokens } from '../tokens';
+import { space } from '@mirohq/design-tokens';
 import type { ExcelRow } from '../../core/utils/excel-loader';
 import { useRowData } from '../hooks/use-row-data';
 import { InputField } from './InputField';
@@ -45,7 +45,7 @@ export function RowInspector({
   return (
     <div
       data-testid='row-inspector'
-      style={{ marginTop: tokens.space.small }}>
+      style={{ marginTop: space[200] }}>
       <strong>Row Values</strong>
       <ul style={{ maxHeight: 120, overflowY: 'auto' }}>
         {Object.entries(editRow).map(([k, v]) => (

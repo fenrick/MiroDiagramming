@@ -1,6 +1,6 @@
 import React from 'react';
 import { Paragraph as DSParagraph, styled } from '@mirohq/design-system';
-import { tokens } from '../tokens';
+import { space } from '@mirohq/design-tokens';
 
 export type ParagraphProps = Readonly<
   Omit<React.HTMLAttributes<HTMLParagraphElement>, 'className' | 'style'>
@@ -14,7 +14,7 @@ export type ParagraphProps = Readonly<
  */
 const StyledParagraph = styled(DSParagraph, {
   marginTop: 0,
-  marginBottom: tokens.space.small,
+  marginBottom: space[200],
   position: 'relative',
 });
 

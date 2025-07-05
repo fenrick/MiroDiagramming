@@ -1,8 +1,6 @@
 import templatesJson from '../../templates/shapeTemplates.json';
 import connectorJson from '../../templates/connectorTemplates.json';
-import { tokens } from '../ui/tokens';
 import { colors } from '@mirohq/design-tokens';
-import { resolveColor } from '../core/utils/color-utils';
 import type {
   ConnectorStyle,
   Frame,
@@ -72,17 +70,13 @@ export class TemplateManager {
    *   match the expected pattern.
    */
   private parseColorToken(path: string): string | undefined {
+    if (path === 'color.white') return colors.white;
+    if (path === 'color.black') return colors.black;
     const match = /^color\.([a-zA-Z]+)\[(\d+)\]$/.exec(path);
     if (!match) return undefined;
     const [, name, shade] = match;
-    const palette = tokens as unknown as Record<
-      string,
-      Record<string, Record<string, string>>
-    >;
-    const token = palette.color?.[name]?.[shade];
-    const fallback =
-      (colors as Record<string, string>)[`${name}-${shade}`] ?? colors.white;
-    return typeof token === 'string' ? resolveColor(token, fallback) : fallback;
+    const key = `${name}-${shade}`;
+    return (colors as Record<string, string>)[key];
   }
 
   /**
@@ -91,32 +85,18 @@ export class TemplateManager {
    * @param path - Dot-separated token path without the `tokens.` prefix.
    * @returns The token value or `undefined` if not found.
    */
-  private lookupToken(path: string): unknown {
-    let ref: unknown = tokens;
-    for (const part of path.split('.')) {
-      const m = /^([a-zA-Z]+)(?:\[(\d+)\])?$/.exec(part);
-      if (!m) return undefined;
-      ref = (ref as Record<string, unknown>)[m[1]];
-      if (ref === undefined) return undefined;
-      if (m[2]) ref = (ref as Record<string, unknown>)[m[2]];
-    }
-    return ref;
-  }
 
   /**
    * Resolve design-token identifiers to concrete values.
    *
    * Currently supports `tokens.color.*` paths which are converted to the
-   * corresponding CSS variable and resolved to a hex fallback using
-   * {@link resolveColor}.
+   * corresponding value from the design tokens.
    */
   private resolveToken(value: unknown): unknown {
     if (typeof value !== 'string' || !value.startsWith('tokens.')) return value;
     const path = value.slice('tokens.'.length);
     const color = this.parseColorToken(path);
-    if (color !== undefined) return color;
-    const token = this.lookupToken(path);
-    return token ?? value;
+    return color ?? value;
   }
 
   /**
