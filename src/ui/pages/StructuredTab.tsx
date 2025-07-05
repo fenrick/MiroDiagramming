@@ -44,7 +44,7 @@ import { IconArrowArcLeft, IconPlus, Text } from '@mirohq/design-system';
  * @param setImportQueue - Setter storing files for processing.
  * @param setError - Setter clearing any previous error state.
  */
-function handleFileDrop(
+export function handleFileDrop(
   droppedFiles: File[],
   setImportQueue: React.Dispatch<React.SetStateAction<File[]>>,
   setError: React.Dispatch<React.SetStateAction<string | null>>,
