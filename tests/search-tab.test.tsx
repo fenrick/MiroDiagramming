@@ -1,8 +1,7 @@
 /** @vitest-environment jsdom */
-import React from 'react';
-import { render, fireEvent, screen, act } from '@testing-library/react';
+import { fireEvent, screen, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { SearchTab } from '../src/ui/pages/SearchTab';
+import { renderSearchTab } from './render-utils';
 import * as searchTools from '../src/board/search-tools';
 
 vi.useFakeTimers();
@@ -16,10 +15,8 @@ describe('SearchTab', () => {
     vi.spyOn(searchTools, 'searchBoardContent').mockResolvedValue([
       { item: {}, field: 't' },
     ]);
-    render(<SearchTab />);
-    fireEvent.change(screen.getByPlaceholderText(/search board text/i), {
-      target: { value: 'hello' },
-    });
+    const input = renderSearchTab();
+    fireEvent.change(input, { target: { value: 'hello' } });
     expect(searchTools.searchBoardContent).not.toHaveBeenCalled();
     await act(async () => {
       vi.advanceTimersByTime(300);
@@ -47,10 +44,8 @@ describe('SearchTab', () => {
         await onMatch?.(match.item);
         return 1;
       });
-    render(<SearchTab />);
-    fireEvent.change(screen.getByPlaceholderText(/search board text/i), {
-      target: { value: 'foo' },
-    });
+    const input = renderSearchTab();
+    fireEvent.change(input, { target: { value: 'foo' } });
     fireEvent.click(screen.getByRole('button', { name: /filters/i }));
     fireEvent.click(screen.getByRole('menuitemcheckbox', { name: 'shape' }));
     fireEvent.click(
@@ -84,10 +79,8 @@ describe('SearchTab', () => {
       .spyOn(searchTools, 'searchBoardContent')
       .mockResolvedValue([]);
     vi.spyOn(searchTools, 'replaceBoardContent').mockResolvedValue(0);
-    render(<SearchTab />);
-    fireEvent.change(screen.getByPlaceholderText(/search board text/i), {
-      target: { value: 'test' },
-    });
+    const input = renderSearchTab();
+    fireEvent.change(input, { target: { value: 'test' } });
     fireEvent.click(screen.getByRole('button', { name: /filters/i }));
     fireEvent.click(screen.getByRole('menuitemcheckbox', { name: 'shape' }));
     fireEvent.change(screen.getByLabelText(/tag ids/i), {
@@ -138,10 +131,8 @@ describe('SearchTab', () => {
     global.miro = {
       board: { viewport: { zoomTo: vi.fn(), zoomToObject: vi.fn() } },
     } as unknown as typeof global.miro;
-    render(<SearchTab />);
-    fireEvent.change(screen.getByPlaceholderText(/search board text/i), {
-      target: { value: 'foo' },
-    });
+    const input = renderSearchTab();
+    fireEvent.change(input, { target: { value: 'foo' } });
     await act(async () => {
       vi.advanceTimersByTime(300);
     });
@@ -174,10 +165,8 @@ describe('SearchTab', () => {
         await onMatch?.(result.item);
         return 1;
       });
-    render(<SearchTab />);
-    fireEvent.change(screen.getByPlaceholderText(/search board text/i), {
-      target: { value: 'foo' },
-    });
+    const input = renderSearchTab();
+    fireEvent.change(input, { target: { value: 'foo' } });
     await act(async () => {
       vi.advanceTimersByTime(300);
     });
@@ -205,8 +194,7 @@ describe('SearchTab', () => {
     const spy = vi
       .spyOn(searchTools, 'searchBoardContent')
       .mockResolvedValue([{ item: {}, field: 't' }]);
-    render(<SearchTab />);
-    const input = screen.getByPlaceholderText(/search board text/i);
+    const input = renderSearchTab();
     fireEvent.change(input, { target: { value: 'foo' } });
     await act(async () => {
       vi.advanceTimersByTime(300);
@@ -233,10 +221,8 @@ describe('SearchTab', () => {
     global.miro = {
       board: { viewport: { zoomTo: zoomSpy } },
     } as unknown as typeof global.miro;
-    render(<SearchTab />);
-    fireEvent.change(screen.getByPlaceholderText(/search board text/i), {
-      target: { value: 'foo' },
-    });
+    const input = renderSearchTab();
+    fireEvent.change(input, { target: { value: 'foo' } });
     await act(async () => {
       vi.advanceTimersByTime(300);
     });
@@ -253,10 +239,8 @@ describe('SearchTab', () => {
     ];
     vi.spyOn(searchTools, 'searchBoardContent').mockResolvedValue(results);
     global.miro = {} as unknown as typeof global.miro;
-    render(<SearchTab />);
-    fireEvent.change(screen.getByPlaceholderText(/search board text/i), {
-      target: { value: 'foo' },
-    });
+    const input = renderSearchTab();
+    fireEvent.change(input, { target: { value: 'foo' } });
     await act(async () => {
       vi.advanceTimersByTime(300);
     });
@@ -270,14 +254,12 @@ describe('SearchTab', () => {
     const searchSpy = vi
       .spyOn(searchTools, 'searchBoardContent')
       .mockResolvedValue([]);
-    render(<SearchTab />);
+    const input = renderSearchTab();
     fireEvent.click(screen.getByRole('button', { name: /filters/i }));
     const box = screen.getByRole('menuitemcheckbox', { name: 'shape' });
     fireEvent.click(box);
     fireEvent.click(box);
-    fireEvent.change(screen.getByPlaceholderText(/search board text/i), {
-      target: { value: 'foo' },
-    });
+    fireEvent.change(input, { target: { value: 'foo' } });
     await act(async () => {
       vi.advanceTimersByTime(300);
     });
@@ -287,7 +269,7 @@ describe('SearchTab', () => {
   test('replace all ignored when query is empty', async () => {
     const repSpy = vi.spyOn(searchTools, 'replaceBoardContent');
     const searchSpy = vi.spyOn(searchTools, 'searchBoardContent');
-    render(<SearchTab />);
+    renderSearchTab();
     await act(async () => {
       fireEvent.click(screen.getByText(/replace all/i));
     });
