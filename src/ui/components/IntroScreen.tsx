@@ -2,7 +2,6 @@ import React from 'react';
 import { Button } from './Button';
 import { Markdown } from './Markdown';
 import introText from '../intro.md?raw';
-import { Primitive } from '@mirohq/design-system';
 
 export interface IntroScreenProps {
   /** Called when the user chooses to start the app. */
@@ -17,19 +16,17 @@ export interface IntroScreenProps {
  */
 export function IntroScreen({ onStart }: IntroScreenProps): React.JSX.Element {
   return (
-    <Primitive.div
+    <div
       className='intro-screen scrollable'
       data-testid='intro-screen'>
       <Markdown source={introText} />
-      <Primitive.span className='custom-visually-hidden'>
-        Welcome to Quick Tools
-      </Primitive.span>
+      <span className='custom-visually-hidden'>Welcome to Quick Tools</span>
       <Button
         variant='primary'
         onClick={onStart}
         data-testid='start-button'>
         Start
       </Button>
-    </Primitive.div>
+    </div>
   );
 }
