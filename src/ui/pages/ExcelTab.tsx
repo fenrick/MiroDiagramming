@@ -137,15 +137,10 @@ export const ExcelTab: React.FC = () => {
         {...dropzone.getRootProps({ style })}
         aria-label='Excel drop area'>
         {(() => {
-          const {
-            style: _style,
-            className: _class,
-            onChange: _on,
-            ...fileProps
-          } = dropzone.getInputProps();
-          void _style;
-          void _class;
-          void _on;
+          const fileProps = { ...dropzone.getInputProps() };
+          delete (fileProps as Record<string, unknown>).style;
+          delete (fileProps as Record<string, unknown>).className;
+          delete (fileProps as Record<string, unknown>).onChange;
           return (
             <InputField
               label='Excel file'
