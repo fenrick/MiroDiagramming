@@ -51,7 +51,7 @@ export class BoardCache {
     if (missing.length) {
       const fetched = await Promise.all(missing.map((t) => b.get({ type: t })));
       for (let i = 0; i < missing.length; i += 1) {
-        const list = fetched[i] as Array<Record<string, unknown>>;
+        const list = fetched[i];
         this.widgets.set(missing[i], list);
         results.push(...list);
       }
