@@ -1,6 +1,6 @@
 import templatesJson from '../../templates/shapeTemplates.json';
 import connectorJson from '../../templates/connectorTemplates.json';
-import { colors, fontSizes, fontWeights, space } from '@mirohq/design-tokens';
+import { colors } from '@mirohq/design-tokens';
 import type {
   ConnectorStyle,
   Frame,
@@ -72,18 +72,11 @@ export class TemplateManager {
   private parseColorToken(path: string): string | undefined {
     if (path === 'color.white') return colors.white;
     if (path === 'color.black') return colors.black;
-    if (path === 'color.primaryText') return colors['gray-700'];
     const match = /^color\.([a-zA-Z]+)\[(\d+)\]$/.exec(path);
     if (!match) return undefined;
     const [, name, shade] = match;
-    const prefix =
-      name === 'indigoAlpha'
-        ? 'alpha-black'
-        : name === 'indigo'
-          ? 'gray'
-          : name;
-    const key = `${prefix}-${shade}`;
-    return (colors as Record<string, string>)[key] ?? colors.white;
+    const key = `${name}-${shade}`;
+    return (colors as Record<string, string>)[key];
   }
 
   /**
@@ -92,23 +85,6 @@ export class TemplateManager {
    * @param path - Dot-separated token path without the `tokens.` prefix.
    * @returns The token value or `undefined` if not found.
    */
-  private lookupToken(path: string): unknown {
-    if (path.startsWith('space.')) {
-      const map: Record<string, number> = {
-        xxsmall: 50,
-        xsmall: 100,
-        small: 200,
-        medium: 300,
-        large: 400,
-        xlarge: 500,
-      };
-      const key = path.slice(6);
-      return space[map[key] as keyof typeof space];
-    }
-    if (path === 'typography.fontWeight.bold') return fontWeights.semibold;
-    if (path === 'typography.fontSize.large') return fontSizes[200];
-    return undefined;
-  }
 
   /**
    * Resolve design-token identifiers to concrete values.
@@ -120,9 +96,7 @@ export class TemplateManager {
     if (typeof value !== 'string' || !value.startsWith('tokens.')) return value;
     const path = value.slice('tokens.'.length);
     const color = this.parseColorToken(path);
-    if (color !== undefined) return color;
-    const token = this.lookupToken(path);
-    return token ?? value;
+    return color ?? value;
   }
 
   /**
