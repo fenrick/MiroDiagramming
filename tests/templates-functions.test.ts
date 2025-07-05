@@ -27,7 +27,7 @@ test('resolveStyle substitutes tokens', () => {
     missing: 'tokens.color.nope[999]',
   });
   expect(style.fillColor).toMatch(/^#/);
-  expect(style.fontWeight).toBe('var(--font-weight-bold)');
+  expect(style.fontWeight).toBe(600);
   expect(style.missing).toBeDefined();
 });
 
@@ -46,7 +46,7 @@ describe('token resolution', () => {
 
   test('looks up generic tokens', () => {
     const style = templateManager.resolveStyle({ gap: 'tokens.space.small' });
-    expect(style.gap).toBe('var(--space-small)');
+    expect(style.gap).toBe(16);
   });
 
   test('parses numeric values', () => {

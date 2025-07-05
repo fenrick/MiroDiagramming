@@ -53,10 +53,10 @@ test('drag reject toggles reject style', async () => {
     fireEvent.dragEnter(zone, { dataTransfer: data });
     await Promise.resolve();
   });
-  expect(zone.style.borderColor).toBe('var(--red700)');
+  expect(zone.style.borderColor).toBe('rgb(107, 23, 32)');
   await act(async () => {
     fireEvent.dragLeave(zone, { dataTransfer: data });
     await Promise.resolve();
   });
-  expect(zone.style.borderColor).toBe('var(--indigoAlpha40)');
+  expect(zone.style.borderColor).toBe('rgba(26, 27, 30, 0.4)');
 });
