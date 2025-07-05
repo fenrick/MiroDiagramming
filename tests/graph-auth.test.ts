@@ -1,3 +1,4 @@
+/** @vitest-environment jsdom */
 import { GraphAuth } from '../src/core/utils/graph-auth';
 
 describe('GraphAuth', () => {
