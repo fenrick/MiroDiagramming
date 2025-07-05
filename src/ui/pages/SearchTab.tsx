@@ -67,25 +67,24 @@ export const SearchTab: React.FC = () => {
       .split(',')
       .map((t) => t.trim())
       .filter(Boolean);
-    const pairs: Array<
-      [boolean, keyof SearchOptions, SearchOptions[keyof SearchOptions]]
-    > = [
-      [widgetTypes.length > 0, 'widgetTypes', widgetTypes],
-      [tags.length > 0, 'tagIds', tags],
-      [Boolean(backgroundColor), 'backgroundColor', backgroundColor],
-      [Boolean(assignee), 'assignee', assignee],
-      [Boolean(creator), 'creator', creator],
-      [Boolean(lastModifiedBy), 'lastModifiedBy', lastModifiedBy],
-      [caseSensitive, 'caseSensitive', true],
-      [wholeWord, 'wholeWord', true],
-      [regex, 'regex', true],
-    ];
-    return pairs.reduce<SearchOptions>(
-      (opts, [cond, key, value]) => {
-        return cond ? { ...opts, [key]: value } : opts;
-      },
-      { query },
-    );
+    const opts: SearchOptions = { query };
+    const add = <K extends keyof SearchOptions>(
+      cond: boolean,
+      key: K,
+      value: SearchOptions[K],
+    ): void => {
+      if (cond) opts[key] = value;
+    };
+    add(widgetTypes.length > 0, 'widgetTypes', widgetTypes);
+    add(tags.length > 0, 'tagIds', tags);
+    add(Boolean(backgroundColor), 'backgroundColor', backgroundColor);
+    add(Boolean(assignee), 'assignee', assignee);
+    add(Boolean(creator), 'creator', creator);
+    add(Boolean(lastModifiedBy), 'lastModifiedBy', lastModifiedBy);
+    add(caseSensitive, 'caseSensitive', true);
+    add(wholeWord, 'wholeWord', true);
+    add(regex, 'regex', true);
+    return opts;
   }, [
     query,
     widgetTypes,
