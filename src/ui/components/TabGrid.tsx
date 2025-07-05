@@ -26,12 +26,13 @@ export function TabGrid({
         const element = child as React.ReactElement<{ className?: string }>;
         const start = 1 + (index % columns) * span;
         const endLine = start + span;
-        const wrappedClass =
-          `${element.props.className ?? ''} cs${start} ce${Math.min(
-            endLine - 1,
-            12,
-          )}`.trim();
-        return React.cloneElement(element, { className: wrappedClass });
+        const gridClass = `cs${start} ce${Math.min(endLine - 1, 12)}`;
+        if (Object.prototype.hasOwnProperty.call(element.props, 'className')) {
+          const wrapped =
+            `${element.props.className ?? ''} ${gridClass}`.trim();
+          return React.cloneElement(element, { className: wrapped });
+        }
+        return <div className={gridClass}>{element}</div>;
       })}
     </div>
   );
