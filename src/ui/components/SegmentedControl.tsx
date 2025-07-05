@@ -13,7 +13,7 @@ export type SegmentedControlProps = Readonly<{
 }>;
 
 /**
- * Generic segmented control using Mirotone buttons.
+ * Generic segmented control built with design-system buttons.
  */
 export function SegmentedControl({
   value,
