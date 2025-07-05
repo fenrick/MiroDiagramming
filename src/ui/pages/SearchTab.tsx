@@ -6,7 +6,6 @@ import {
   RegexSearchField,
   FilterDropdown,
 } from '../components';
-import { TabGrid } from '../components/TabGrid';
 import type { SearchOptions } from '../../board/search-tools';
 import {
   useDebouncedSearch,
@@ -21,6 +20,7 @@ import {
   IconChevronRight,
   IconPen,
   Text,
+  Grid,
 } from '@mirohq/design-system';
 
 /**
@@ -128,68 +128,78 @@ export const SearchTab: React.FC = () => {
 
   return (
     <TabPanel tabId='search'>
-      <TabGrid columns={2}>
-        <RegexSearchField
-          label='Find'
-          value={query}
-          onChange={(v) => setQuery(v)}
-          regex={regex}
-          onRegexToggle={setRegex}
-          placeholder='Search board text'
-        />
-        <InputField
-          label='Replace'
-          value={replacement}
-          onValueChange={(v) => setReplacement(v)}
-          placeholder='Replacement text'
-        />
-        <FilterDropdown
-          widgetTypes={widgetTypes}
-          toggleType={toggleType}
-          tagIds={tagIds}
-          onTagIdsChange={setTagIds}
-          backgroundColor={backgroundColor}
-          onBackgroundColorChange={setBackgroundColor}
-          assignee={assignee}
-          onAssigneeChange={setAssignee}
-          creator={creator}
-          onCreatorChange={setCreator}
-          lastModifiedBy={lastModifiedBy}
-          onLastModifiedByChange={setLastModifiedBy}
-          caseSensitive={caseSensitive}
-          onCaseSensitiveChange={setCaseSensitive}
-          wholeWord={wholeWord}
-          onWholeWordChange={setWholeWord}
-        />
-        <Paragraph data-testid='match-count'>
-          Matches: {results.length}
-        </Paragraph>
-        <div className='buttons'>
-          <Button
-            onClick={nextMatch}
-            disabled={!results.length}
-            variant='secondary'
-            icon={<IconChevronRight />}
-            iconPosition='start'>
-            <Text>Next</Text>
-          </Button>
-          <Button
-            onClick={replaceCurrent}
-            disabled={!results.length}
-            variant='secondary'
-            icon={<IconPen />}
-            iconPosition='start'>
-            <Text>Replace</Text>
-          </Button>
-          <Button
-            onClick={replaceAll}
-            variant='primary'
-            icon={<IconArrowRight />}
-            iconPosition='start'>
-            <Text>Replace All</Text>
-          </Button>
-        </div>
-      </TabGrid>
+      <Grid columns={2}>
+        <Grid.Item>
+          <RegexSearchField
+            label='Find'
+            value={query}
+            onChange={(v) => setQuery(v)}
+            regex={regex}
+            onRegexToggle={setRegex}
+            placeholder='Search board text'
+          />
+        </Grid.Item>
+        <Grid.Item>
+          <InputField
+            label='Replace'
+            value={replacement}
+            onValueChange={(v) => setReplacement(v)}
+            placeholder='Replacement text'
+          />
+        </Grid.Item>
+        <Grid.Item>
+          <FilterDropdown
+            widgetTypes={widgetTypes}
+            toggleType={toggleType}
+            tagIds={tagIds}
+            onTagIdsChange={setTagIds}
+            backgroundColor={backgroundColor}
+            onBackgroundColorChange={setBackgroundColor}
+            assignee={assignee}
+            onAssigneeChange={setAssignee}
+            creator={creator}
+            onCreatorChange={setCreator}
+            lastModifiedBy={lastModifiedBy}
+            onLastModifiedByChange={setLastModifiedBy}
+            caseSensitive={caseSensitive}
+            onCaseSensitiveChange={setCaseSensitive}
+            wholeWord={wholeWord}
+            onWholeWordChange={setWholeWord}
+          />
+        </Grid.Item>
+        <Grid.Item>
+          <Paragraph data-testid='match-count'>
+            Matches: {results.length}
+          </Paragraph>
+        </Grid.Item>
+        <Grid.Item>
+          <div className='buttons'>
+            <Button
+              onClick={nextMatch}
+              disabled={!results.length}
+              variant='secondary'
+              icon={<IconChevronRight />}
+              iconPosition='start'>
+              <Text>Next</Text>
+            </Button>
+            <Button
+              onClick={replaceCurrent}
+              disabled={!results.length}
+              variant='secondary'
+              icon={<IconPen />}
+              iconPosition='start'>
+              <Text>Replace</Text>
+            </Button>
+            <Button
+              onClick={replaceAll}
+              variant='primary'
+              icon={<IconArrowRight />}
+              iconPosition='start'>
+              <Text>Replace All</Text>
+            </Button>
+          </div>
+        </Grid.Item>
+      </Grid>
     </TabPanel>
   );
 };

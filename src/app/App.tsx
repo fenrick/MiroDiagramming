@@ -46,7 +46,7 @@ function AppShell(): React.JSX.Element {
 
   const PrimitiveDiv = Primitive.div;
   return (
-    <PrimitiveDiv className='scrollable'>
+    <PrimitiveDiv>
       <ExcelDataProvider
         value={{
           rows,

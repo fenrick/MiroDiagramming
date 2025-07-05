@@ -1,4 +1,6 @@
+import { describe, expect, test, vi } from 'vitest';
 import { BoardBuilder, updateConnector } from '../src/board/board-builder';
+import { mockBoard } from './mock-board';
 
 interface GlobalWithMiro {
   miro?: { board: Record<string, unknown> };
@@ -11,54 +13,48 @@ declare const global: GlobalWithMiro;
  */
 
 describe('BoardBuilder lookup and connector updates', () => {
-  afterEach(() => {
-    jest.restoreAllMocks();
-    delete global.miro;
-  });
-
   test('findNode caches shapes by text', async () => {
     const shape = { content: 'B' } as Record<string, unknown>;
-    global.miro = { board: { get: jest.fn().mockResolvedValue([shape]) } };
+    mockBoard({ get: vi.fn().mockResolvedValue([shape]) });
     const builder = new BoardBuilder();
     await builder.findNode('Business', 'B');
     await builder.findNode('Business', 'B');
-    expect((global.miro.board.get as jest.Mock).mock.calls.length).toBe(1);
+    expect((global.miro.board.get as vi.Mock).mock.calls.length).toBe(1);
   });
 
   test('reset clears the shape cache', async () => {
     const shape = { content: 'B' } as Record<string, unknown>;
-    global.miro = { board: { get: jest.fn().mockResolvedValue([shape]) } };
+    mockBoard({ get: vi.fn().mockResolvedValue([shape]) });
     const builder = new BoardBuilder();
     await builder.findNode('Business', 'B');
     builder.reset();
     await builder.findNode('Business', 'B');
-    expect((global.miro.board.get as jest.Mock).mock.calls.length).toBe(2);
+    expect((global.miro.board.get as vi.Mock).mock.calls.length).toBe(2);
   });
 
   test('lookup matches shape text regardless of metadata', async () => {
     const shape = {
       content: 'A',
-      getMetadata: jest.fn().mockResolvedValue({ type: 'X', label: 'Y' }),
+      getMetadata: vi.fn().mockResolvedValue({ type: 'X', label: 'Y' }),
     } as Record<string, unknown>;
-    global.miro = { board: { get: jest.fn().mockResolvedValue([shape]) } };
+    mockBoard({ get: vi.fn().mockResolvedValue([shape]) });
     const builder = new BoardBuilder();
     const result = await builder.findNode('Business', 'A');
     expect(result).toBe(shape);
   });
 
   test('createEdges skips connector lookup', async () => {
-    const board = {
-      get: jest.fn(),
-      createConnector: jest
+    const board = mockBoard({
+      get: vi.fn(),
+      createConnector: vi
         .fn()
         .mockResolvedValue({
-          setMetadata: jest.fn(),
-          getMetadata: jest.fn(),
-          sync: jest.fn(),
+          setMetadata: vi.fn(),
+          getMetadata: vi.fn(),
+          sync: vi.fn(),
           id: 'c1',
         }),
-    };
-    global.miro = { board };
+    });
     const builder = new BoardBuilder();
     const edges = [{ from: 'n1', to: 'n2' }];
     const nodeMap = { n1: { id: 'a' }, n2: { id: 'b' } } as Record<

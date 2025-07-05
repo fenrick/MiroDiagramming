@@ -6,8 +6,10 @@ import { ArrangeTab } from '../src/ui/pages/ArrangeTab';
 import * as grid from '../src/board/grid-tools';
 import * as spacing from '../src/board/spacing-tools';
 
-vi.spyOn(grid, 'applyGridLayout').mockResolvedValue(undefined);
-vi.spyOn(spacing, 'applySpacingLayout').mockResolvedValue(undefined);
+beforeEach(() => {
+  vi.spyOn(grid, 'applyGridLayout').mockResolvedValue(undefined);
+  vi.spyOn(spacing, 'applySpacingLayout').mockResolvedValue(undefined);
+});
 
 describe('ArrangeTab', () => {
   test('sort by name toggle shows orientation select', () => {

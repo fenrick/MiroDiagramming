@@ -1,21 +1,15 @@
+import { describe, expect, test, vi } from 'vitest';
 import { BoardBuilder } from '../src/board/board-builder';
 import { templateManager } from '../src/board/templates';
+import { mockBoard } from './mock-board';
 import type { BaseItem, GroupableItem } from '@mirohq/websdk-types';
-
-interface GlobalWithMiro {
-  miro?: { board?: Record<string, unknown> };
-}
-
-declare const global: GlobalWithMiro;
 
 describe('BoardBuilder resizeItem', () => {
   test('updates width and height without syncing', async () => {
     const builder = new BoardBuilder();
-    const item = {
-      width: 1,
-      height: 2,
-      sync: jest.fn(),
-    } as Partial<BaseItem> & { sync: jest.Mock };
+    const item = { width: 1, height: 2, sync: vi.fn() } as Partial<BaseItem> & {
+      sync: vi.Mock;
+    };
     await builder.resizeItem(item as unknown as BaseItem, 10, 20);
     expect(item.width).toBe(10);
     expect(item.height).toBe(20);
@@ -24,21 +18,17 @@ describe('BoardBuilder resizeItem', () => {
 
   test('createNode applies layout size', async () => {
     const builder = new BoardBuilder();
-    jest.spyOn(builder, 'findNode').mockResolvedValue(undefined);
-    jest
-      .spyOn(templateManager, 'getTemplate')
-      .mockReturnValue({
-        elements: [{ shape: 'rect', width: 10, height: 10 }],
-      });
-    jest
-      .spyOn(templateManager, 'createFromTemplate')
-      .mockResolvedValue({
-        type: 'shape',
-        setMetadata: jest.fn(),
-        sync: jest.fn(),
-        id: 's',
-      } as unknown as Record<string, unknown>);
-    const spy = jest.spyOn(builder, 'resizeItem').mockResolvedValue();
+    vi.spyOn(builder, 'findNode').mockResolvedValue(undefined);
+    vi.spyOn(templateManager, 'getTemplate').mockReturnValue({
+      elements: [{ shape: 'rect', width: 10, height: 10 }],
+    });
+    vi.spyOn(templateManager, 'createFromTemplate').mockResolvedValue({
+      type: 'shape',
+      setMetadata: vi.fn(),
+      sync: vi.fn(),
+      id: 's',
+    } as unknown as Record<string, unknown>);
+    const spy = vi.spyOn(builder, 'resizeItem').mockResolvedValue();
     await builder.createNode(
       { id: 'n', label: 'L', type: 'Motivation' } as {
         id: string;
@@ -52,21 +42,16 @@ describe('BoardBuilder resizeItem', () => {
 
   test('groupItems groups widgets together', async () => {
     const builder = new BoardBuilder();
-    global.miro = {
-      board: {
-        group: jest.fn().mockResolvedValue({ id: 'g1', type: 'group' }),
-      },
-    } as unknown as GlobalWithMiro;
+    const board = mockBoard({
+      group: vi.fn().mockResolvedValue({ id: 'g1', type: 'group' }),
+    });
     const a = { id: 'a' } as unknown as BaseItem;
     const b = { id: 'b' } as unknown as BaseItem;
     const group = await builder.groupItems([
       a as unknown as GroupableItem,
       b as unknown as GroupableItem,
     ]);
-    expect((global.miro.board.group as jest.Mock).mock.calls[0][0]).toEqual({
-      items: [a, b],
-    });
+    expect(board.group).toHaveBeenCalledWith({ items: [a, b] });
     expect(group.id).toBe('g1');
-    delete global.miro;
   });
 });

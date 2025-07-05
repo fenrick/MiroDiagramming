@@ -1,10 +1,11 @@
 import React from 'react';
+import { CSS } from '@stitches/react';
 import { Button as DSButton, styled } from '@mirohq/design-system';
 
 export type ButtonProps = Readonly<
   Omit<
     React.ComponentProps<typeof DSButton>,
-    'variant' | 'size' | 'className' | 'style'
+    'variant' | 'size' | 'className' | 'style' | 'css'
   > & {
     variant?: 'primary' | 'secondary' | 'tertiary' | 'ghost' | 'danger';
     /**
@@ -19,8 +20,8 @@ export type ButtonProps = Readonly<
      * @default 'start'
      */
     iconPosition?: 'start' | 'end';
-    /** Optional style override for the button. */
-    style?: React.CSSProperties;
+    /** Optional CSS override for the button. */
+    css?: CSS;
   }
 >;
 
@@ -55,7 +56,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       size,
       icon,
       iconPosition = 'start',
-      style = {},
+      css,
       children,
       ...props
     },
@@ -65,27 +66,12 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     const { start, end } = getIconSlots(icon, iconPosition);
 
-    if (style && Object.keys(style).length > 0) {
-      const Custom = styled(DSButton, { ...baseMargin, ...style });
-
-      return (
-        <Custom
-          ref={ref}
-          variant={variant}
-          size={finalSize}
-          {...props}>
-          {start}
-          <DSButton.Label>{children}</DSButton.Label>
-          {end}
-        </Custom>
-      );
-    }
-
     return (
       <StyledDSButton
         ref={ref}
         variant={variant}
         size={finalSize}
+        css={css}
         {...props}>
         {start}
         <DSButton.Label>{children}</DSButton.Label>
