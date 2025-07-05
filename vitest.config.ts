@@ -5,7 +5,8 @@ export default defineConfig({
   plugins: [react()],
   test: {
     globals: true,
-    environment: 'jsdom',
+    environment: 'node',
+    environmentMatchGlobs: [['**/*.test.tsx', 'jsdom']],
     setupFiles: './tests/setupTests.ts',
     coverage: { provider: 'v8', reporter: ['text', 'lcov'] },
     reporters: [
