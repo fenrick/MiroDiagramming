@@ -1,15 +1,11 @@
 import React from 'react';
 import {
   Button,
-  FormGroup,
   InputField,
-  Select,
-  SelectOption,
+  SelectField,
   Paragraph,
-  Heading,
-  Icon,
-  Text,
-} from '../components/legacy';
+  SelectOption,
+} from '../components';
 import {
   applySizeToSelection,
   copySizeFromSelection,
@@ -29,7 +25,14 @@ import {
   AspectRatioId,
 } from '../../core/utils/aspect-ratio';
 import { TabPanel } from '../components/TabPanel';
-import { TabGrid } from '../components/TabGrid';
+import {
+  Heading,
+  Text,
+  IconChevronRightDouble,
+  IconArrowArcLeft,
+  IconSquaresTwoOverlap,
+  Grid,
+} from '@mirohq/design-system';
 
 /** Predefined button sizes used by the quick presets. */
 const PRESET_SIZES: Record<'S' | 'M' | 'L', Size> = {
@@ -124,69 +127,64 @@ export const ResizeTab: React.FC = () => {
 
   return (
     <TabPanel tabId='size'>
-      <section>
-        <Heading level={3}>Adjust size</Heading>
-        <TabGrid columns={1}>
-          <Paragraph data-testid='size-display'>
-            {copiedSize
-              ? `Copied: ${copiedSize.width}×${copiedSize.height}`
-              : `Selection: ${size.width}×${size.height}`}
-            <br />
-            {boardUnitsToMm(size.width).toFixed(1)} mm ×{' '}
-            {boardUnitsToMm(size.height).toFixed(1)} mm (
-            {boardUnitsToInches(size.width).toFixed(2)} ×{' '}
-            {boardUnitsToInches(size.height).toFixed(2)} in)
-          </Paragraph>
-          {warning && <Paragraph className='error'>{warning}</Paragraph>}
-          <TabGrid columns={2}>
-            <FormGroup>
-              <InputField label='Width:'>
-                <input
-                  className='input input-small'
-                  type='number'
-                  value={String(size.width)}
-                  onChange={(e) => update('width')(e.target.value)}
-                  placeholder='Width (board units)'
-                />
-              </InputField>
-            </FormGroup>
-            <FormGroup>
-              <InputField label='Height:'>
-                <input
-                  className='input input-small'
-                  type='number'
-                  value={String(size.height)}
-                  onChange={(e) => update('height')(e.target.value)}
-                  placeholder='Height (board units)'
-                />
-              </InputField>
-            </FormGroup>
-          </TabGrid>
-          <TabGrid columns={1}>
-            <FormGroup>
-              <InputField label='Aspect Ratio'>
-                <Select
-                  data-testid='ratio-select'
-                  className='select-small'
-                  value={ratio}
-                  onChange={(v) => setRatio(v as AspectRatioId | 'none')}>
-                  <SelectOption value='none'>Free</SelectOption>
-                  {ASPECT_RATIOS.map((r) => (
-                    <SelectOption
-                      key={r.id}
-                      value={r.id}>
-                      {r.label}
-                    </SelectOption>
-                  ))}
-                </Select>
-              </InputField>
-            </FormGroup>
-          </TabGrid>
-        </TabGrid>
-      </section>
-      <section>
-        <Heading level={3}>Presets</Heading>
-        <TabGrid columns={1}>
+      <Paragraph data-testid='size-display'>
+        {copiedSize
+          ? `Copied: ${copiedSize.width}×${copiedSize.height}`
+          : `Selection: ${size.width}×${size.height}`}
+        <br />
+        {boardUnitsToMm(size.width).toFixed(1)} mm ×{' '}
+        {boardUnitsToMm(size.height).toFixed(1)} mm (
+        {boardUnitsToInches(size.width).toFixed(2)} ×{' '}
+        {boardUnitsToInches(size.height).toFixed(2)} in)
+      </Paragraph>
+      {warning && <p className='error'>{warning}</p>}
+      <Grid
+        columns={2}
+        gap={200}>
+        <Grid.Item
+          columnStart={1}
+          columnEnd={2}>
+          <InputField
+            label='Width:'
+            type='number'
+            value={String(size.width)}
+            onValueChange={(v) => update('width')(v)}
+            placeholder='Width (board units)'
+          />
+        </Grid.Item>
+        <Grid.Item
+          columnStart={2}
+          columnEnd={3}>
+          <InputField
+            label='Height:'
+            type='number'
+            value={String(size.height)}
+            onValueChange={(v) => update('height')(v)}
+            placeholder='Height (board units)'
+          />
+        </Grid.Item>
+        <Grid.Item
+          columnStart={1}
+          columnEnd={5}>
+          <SelectField
+            label='Aspect Ratio'
+            value={ratio}
+            onChange={(v) => setRatio(v as AspectRatioId | 'none')}
+            data-testid='ratio-select'>
+            <SelectOption value='none'>Free</SelectOption>
+            {ASPECT_RATIOS.map((r) => (
+              <SelectOption
+                key={r.id}
+                value={r.id}>
+                {r.label}
+              </SelectOption>
+            ))}
+          </SelectField>
+        </Grid.Item>
+      </Grid>
+      <Heading level={3}>Presets</Heading>
+      <Grid columns={1}>
+        <Grid.Item>
           <div>
             {(['S', 'M', 'L'] as const).map((p) => (
               <Button
@@ -206,24 +204,22 @@ export const ResizeTab: React.FC = () => {
               </Button>
             ))}
           </div>
-        </TabGrid>
-      </section>
+        </Grid.Item>
+      </Grid>
       <div className='buttons'>
         <Button
           onClick={apply}
-          variant='primary'>
-          <React.Fragment key='.0'>
-            <Icon name='arrow-right' />
-            <Text>Apply Size</Text>
-          </React.Fragment>
+          variant='primary'
+          iconPosition='start'
+          icon={<IconChevronRightDouble />}>
+          <Text>Apply Size</Text>
         </Button>
         <Button
           onClick={copiedSize ? resetCopy : copy}
-          variant='secondary'>
-          <React.Fragment key='.0'>
-            <Icon name={copiedSize ? 'undo' : 'duplicate'} />
-            <Text>{copiedSize ? 'Reset Copy' : 'Copy Size'}</Text>
-          </React.Fragment>
+          variant='secondary'
+          iconPosition='start'
+          icon={copiedSize ? <IconArrowArcLeft /> : <IconSquaresTwoOverlap />}>
+          <Text>{copiedSize ? 'Reset Copy' : 'Copy Size'}</Text>
         </Button>
       </div>
     </TabPanel>

@@ -4,6 +4,11 @@ import {
   getTextFields,
 } from '../src/board/search-tools';
 import { BoardQueryLike } from '../src/board/board';
+import { boardCache } from '../src/board/board-cache';
+
+beforeEach(() => {
+  boardCache.reset();
+});
 
 const makeBoard = () => {
   const items = [
@@ -194,6 +199,20 @@ describe('search-tools', () => {
     expect(seen).toEqual(
       expect.arrayContaining([items[0], items[1], items[4], items[5]]),
     );
+  });
+
+  test('regex replacement updates all matching patterns', async () => {
+    const { board, items } = makeBoard();
+    const count = await replaceBoardContent(
+      { query: 'h.llo', replacement: 'hi', regex: true },
+      board,
+    );
+    expect(count).toBe(5);
+    expect(items[0].text).toBe('hi world');
+    expect(items[1].title).toBe('hi there');
+    expect((items[3].text as { plainText: string }).plainText).toBe('hi test');
+    expect(items[4].content).toBe('hi <b>World</b>');
+    expect(items[5].plainText).toBe('ahib');
   });
 
   test('search utilities throw without board', async () => {

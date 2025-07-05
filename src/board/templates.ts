@@ -1,8 +1,6 @@
 import templatesJson from '../../templates/shapeTemplates.json';
 import connectorJson from '../../templates/connectorTemplates.json';
-import { tokens } from '../ui/tokens';
 import { colors } from '@mirohq/design-tokens';
-import { resolveColor } from '../core/utils/color-utils';
 import type {
   ConnectorStyle,
   Frame,
@@ -36,6 +34,8 @@ export interface TemplateDefinition {
    * If omitted, metadata is applied to every element.
    */
   masterElement?: number;
+  /** Alternate names that refer to this template. */
+  alias?: string[];
 }
 
 export interface TemplateCollection {
@@ -60,6 +60,7 @@ export class TemplateManager {
   ) as TemplateCollection;
   public readonly connectorTemplates: ConnectorTemplateCollection =
     connectorJson as ConnectorTemplateCollection;
+  private readonly aliasMap: Record<string, string> = {};
 
   /**
    * Translate `tokens.color.*` references to concrete hex values.
@@ -69,17 +70,13 @@ export class TemplateManager {
    *   match the expected pattern.
    */
   private parseColorToken(path: string): string | undefined {
+    if (path === 'color.white') return colors.white;
+    if (path === 'color.black') return colors.black;
     const match = /^color\.([a-zA-Z]+)\[(\d+)\]$/.exec(path);
     if (!match) return undefined;
     const [, name, shade] = match;
-    const palette = tokens as unknown as Record<
-      string,
-      Record<string, Record<string, string>>
-    >;
-    const token = palette.color?.[name]?.[shade];
-    const fallback =
-      (colors as Record<string, string>)[`${name}-${shade}`] ?? colors.white;
-    return typeof token === 'string' ? resolveColor(token, fallback) : fallback;
+    const key = `${name}-${shade}`;
+    return (colors as Record<string, string>)[key];
   }
 
   /**
@@ -88,43 +85,47 @@ export class TemplateManager {
    * @param path - Dot-separated token path without the `tokens.` prefix.
    * @returns The token value or `undefined` if not found.
    */
-  private lookupToken(path: string): unknown {
-    let ref: unknown = tokens;
-    for (const part of path.split('.')) {
-      const m = /^([a-zA-Z]+)(?:\[(\d+)\])?$/.exec(part);
-      if (!m) return undefined;
-      ref = (ref as Record<string, unknown>)[m[1]];
-      if (ref === undefined) return undefined;
-      if (m[2]) ref = (ref as Record<string, unknown>)[m[2]];
-    }
-    return ref;
-  }
 
   /**
    * Resolve design-token identifiers to concrete values.
    *
    * Currently supports `tokens.color.*` paths which are converted to the
-   * corresponding CSS variable and resolved to a hex fallback using
-   * {@link resolveColor}.
+   * corresponding value from the design tokens.
    */
   private resolveToken(value: unknown): unknown {
     if (typeof value !== 'string' || !value.startsWith('tokens.')) return value;
     const path = value.slice('tokens.'.length);
     const color = this.parseColorToken(path);
-    if (color !== undefined) return color;
-    const token = this.lookupToken(path);
-    return token ?? value;
+    return color ?? value;
   }
 
-  /** Apply token resolution to all string properties in the provided object. */
+  /**
+   * Convert numeric strings into numbers while leaving other values intact.
+   *
+   * Supports optional `px` units which are stripped off.
+   */
+  private parseNumeric(value: unknown): unknown {
+    if (typeof value !== 'string') return value;
+    const m = /^(-?\d+(?:\.\d+)?)(px)?$/.exec(value);
+    return m ? parseFloat(m[1]) : value;
+  }
+
+  /** Apply token and numeric resolution to style values. */
   public resolveStyle(style: Record<string, unknown>): Record<string, unknown> {
     const result: Record<string, unknown> = {};
     Object.entries(style).forEach(([k, v]) => {
-      result[k] = this.resolveToken(v);
+      const token = this.resolveToken(v);
+      result[k] = this.parseNumeric(token);
     });
     return result;
   }
-  private constructor() {}
+  private constructor() {
+    Object.entries(this.templates).forEach(([key, def]) => {
+      def.alias?.forEach((a) => {
+        this.aliasMap[a] = key;
+      });
+    });
+  }
 
   /** Access the singleton instance. */
   public static getInstance(): TemplateManager {
@@ -136,7 +137,7 @@ export class TemplateManager {
 
   /** Lookup a shape template by name. */
   public getTemplate(name: string): TemplateDefinition | undefined {
-    return this.templates[name];
+    return this.templates[name] ?? this.templates[this.aliasMap[name]];
   }
 
   /** Retrieve a connector styling template by name. */

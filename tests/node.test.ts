@@ -30,7 +30,7 @@ describe('createNode', () => {
     graphService.resetBoardCache();
   });
 
-  const node = { id: 'n1', label: 'L', type: 'Role' } as Record<
+  const node = { id: 'n1', label: 'L', type: 'Motivation' } as Record<
     string,
     unknown
   >;
@@ -46,7 +46,9 @@ describe('createNode', () => {
       type: 'shape',
       style: {},
       setMetadata: jest.fn(),
-      getMetadata: jest.fn().mockResolvedValue({ type: 'Role', label: 'L' }),
+      getMetadata: jest
+        .fn()
+        .mockResolvedValue({ type: 'Motivation', label: 'L' }),
       sync: jest.fn(),
       id: 'sExisting',
     } as Record<string, unknown>;

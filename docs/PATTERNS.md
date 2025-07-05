@@ -11,7 +11,7 @@
 | **Label above field**     | Labels are left-aligned, 4 px from the top of the control.                                        | Works in narrow sidebars and wide modals without horizontal eye-scanning.                        |
 | **One column by default** | Use a two-column **Grid** only when all fields are short and the dialog is ≥ 640 px.              | Prevents unpredictable tab order on small widths.                                                |
 | **Group related fields**  | Wrap each logical group in **fieldset** and render the **legend** visually hidden but accessible. | Screen-reader users announce group purpose before individual controls. ([universaldesign.ie][1]) |
-| **Vertical rhythm**       | Between controls = space-small (16 px). Between groups = space-medium (24 px).                    | Matches Mirotone 8-pt grid.                                                                      |
+| **Vertical rhythm**       | Between controls = space-small (16 px). Between groups = space-medium (24 px).                    | Matches the design-system 8‑pt grid.                                                             |
 | **Help text**             | Place below the control in font-body-s neutral-600. Max 80 characters.                            | Maintains consistent scan path.                                                                  |
 
 ### 1.2 Required, optional and disabled

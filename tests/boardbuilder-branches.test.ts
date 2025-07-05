@@ -28,7 +28,9 @@ describe('BoardBuilder branch coverage', () => {
   test('findNode searches groups', async () => {
     // Mock a group containing an item whose metadata matches the search
     const item = {
-      getMetadata: jest.fn().mockResolvedValue({ type: 'Role', label: 'A' }),
+      getMetadata: jest
+        .fn()
+        .mockResolvedValue({ type: 'Business', label: 'A' }),
     } as Record<string, unknown>;
     const group = { getItems: jest.fn().mockResolvedValue([item]) } as Record<
       string,
@@ -42,7 +44,7 @@ describe('BoardBuilder branch coverage', () => {
     };
     const builder = new BoardBuilder();
     // Expect the builder to return the matching group
-    const result = await builder.findNode('Role', 'A');
+    const result = await builder.findNode('Business', 'A');
     expect(result).toBe(group);
   });
 
@@ -126,7 +128,7 @@ describe('BoardBuilder branch coverage', () => {
     const result = await searchGroups(
       global.miro
         .board as unknown as import('../src/board/board').BoardQueryLike,
-      'Role',
+      'Business',
       'A',
     );
     expect(result).toBeUndefined();

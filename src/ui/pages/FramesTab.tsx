@@ -1,12 +1,18 @@
 import React from 'react';
-import { Button, Icon, InputField, Text, Heading } from '../components/legacy';
+import { Button, InputField } from '../components';
 import {
   lockSelectedFrames,
   renameSelectedFrames,
 } from '../../board/frame-tools';
 import { TabPanel } from '../components/TabPanel';
-import { TabGrid } from '../components/TabGrid';
 import type { TabTuple } from './tab-definitions';
+import {
+  Grid,
+  Heading,
+  IconLockClosed,
+  IconPen,
+  Text,
+} from '@mirohq/design-system';
 
 /** UI for renaming or locking selected frames. */
 export const FramesTab: React.FC = () => {
@@ -20,42 +26,44 @@ export const FramesTab: React.FC = () => {
   };
   return (
     <TabPanel tabId='frames'>
-      <TabGrid columns={2}>
-        <section>
+      <Grid columns={2}>
+        <Grid.Item>
           <Heading level={2}>Rename Frames</Heading>
-          <InputField label='Prefix'>
-            <input
-              className='input input-small'
-              value={prefix}
-              onChange={(e) => setPrefix(e.target.value)}
-              placeholder='Prefix'
-            />
-          </InputField>
+        </Grid.Item>
+        <Grid.Item>
+          <InputField
+            label='Prefix'
+            value={prefix}
+            onValueChange={(v) => setPrefix(v)}
+            placeholder='Prefix'
+          />
+        </Grid.Item>
+        <Grid.Item>
           <div className='buttons'>
             <Button
               onClick={rename}
-              variant='primary'>
-              <React.Fragment key='.0'>
-                <Icon name='edit' />
-                <Text>Rename Frames</Text>
-              </React.Fragment>
+              variant='primary'
+              iconPosition='start'
+              icon={<IconPen />}>
+              <Text>Rename Frames</Text>
             </Button>
           </div>
-        </section>
-        <section>
+        </Grid.Item>
+        <Grid.Item>
           <Heading level={2}>Lock Frames</Heading>
+        </Grid.Item>
+        <Grid.Item>
           <div className='buttons'>
             <Button
               onClick={lock}
-              variant='secondary'>
-              <React.Fragment key='.1'>
-                <Icon name='lock' />
-                <Text>Lock Selected</Text>
-              </React.Fragment>
+              variant='secondary'
+              iconPosition='start'
+              icon={<IconLockClosed />}>
+              <Text>Lock Selected</Text>
             </Button>
           </div>
-        </section>
-      </TabGrid>
+        </Grid.Item>
+      </Grid>
     </TabPanel>
   );
 };

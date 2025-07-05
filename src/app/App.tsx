@@ -1,20 +1,21 @@
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 
-import { TabBar } from '../ui/components/TabBar';
 import { TAB_DATA, Tab } from '../ui/pages/tabs';
-import { Paragraph } from '../ui/components/legacy/Paragraph';
-import { EditMetadataModal } from '../ui/components/EditMetadataModal';
+import { EditMetadataModal, IntroScreen } from '../ui/components';
 import { ExcelDataProvider } from '../ui/hooks/excel-data-context';
 import type { ExcelRow } from '../core/utils/excel-loader';
-import { Heading } from '../ui/components/legacy';
+import { createTheme, Tabs, themes, Primitive } from '@mirohq/design-system';
+import { Paragraph } from '../ui/components/Paragraph';
+
+const lightThemeClassName = createTheme(themes.light);
 
 /**
  * React entry component that renders the file selection and mode
  * toggling user interface. Extraction as an exported constant allows
  * the component to be reused in tests without side effects.
  */
-export const App: React.FC = () => {
+function AppShell(): React.JSX.Element {
   const [tab, setTab] = React.useState<Tab>(TAB_DATA[0][1]);
   const [rows, setRows] = React.useState<ExcelRow[]>([]);
   const [idColumn, setIdColumn] = React.useState('');
@@ -42,40 +43,64 @@ export const App: React.FC = () => {
   }, [tabIds]);
   const current = TAB_DATA.find((t) => t[1] === tab)!;
   const CurrentComp = current[4];
+
+  const PrimitiveDiv = Primitive.div;
   return (
-    <ExcelDataProvider
-      value={{
-        rows,
-        idColumn,
-        labelColumn,
-        templateColumn,
-        setRows,
-        setIdColumn,
-        setLabelColumn,
-        setTemplateColumn,
-      }}>
-      <div id='root'>
-        <TabBar
-          tabs={TAB_DATA}
-          tab={tab}
+    <PrimitiveDiv>
+      <ExcelDataProvider
+        value={{
+          rows,
+          idColumn,
+          labelColumn,
+          templateColumn,
+          setRows,
+          setIdColumn,
+          setLabelColumn,
+          setTemplateColumn,
+        }}>
+        <Tabs
+          value={tab}
           onChange={(id) => setTab(id as Tab)}
-        />
-        <div className='scrollable'>
-          <Heading level={2}>{current[2]}</Heading>
-          <Paragraph>{current[3]}</Paragraph>
-          <CurrentComp />
-        </div>
+          variant={'tabs'}
+          size='medium'>
+          <Tabs.List>
+            {TAB_DATA.map((t) => (
+              <Tabs.Trigger
+                key={t[1]}
+                value={t[1]}>
+                {t[2]}
+              </Tabs.Trigger>
+            ))}
+          </Tabs.List>
+        </Tabs>
+        <Paragraph>{current[3]}</Paragraph>
+        <CurrentComp />
         <EditMetadataModal
           isOpen={showMeta}
           onClose={() => setShowMeta(false)}
         />
-      </div>
-    </ExcelDataProvider>
+      </ExcelDataProvider>
+    </PrimitiveDiv>
+  );
+}
+
+/**
+ * Root component that defers loading the main UI until the user
+ * explicitly starts the session. This avoids initial Miro API calls
+ * triggered by various tabs.
+ */
+export const App: React.FC = () => {
+  const [started, setStarted] = React.useState(false);
+  return started ? (
+    <AppShell />
+  ) : (
+    <IntroScreen onStart={() => setStarted(true)} />
   );
 };
 
 const container = document.getElementById('root');
 if (container) {
+  container.classList += lightThemeClassName;
   const root = createRoot(container);
   root.render(<App />);
 }

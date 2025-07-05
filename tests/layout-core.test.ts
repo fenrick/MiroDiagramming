@@ -57,11 +57,11 @@ describe('buildElkGraphOptions', () => {
       algorithm: 'layered',
       direction: 'DOWN',
       spacing: 30,
-      aspectRatio: 2,
+      aspectRatio: '16:9' as const,
       edgeRouting: 'SPLINES',
     } as const;
     const result = buildElkGraphOptions(opts);
     expect(result['elk.edgeRouting']).toBe('SPLINES');
-    expect(result['elk.aspectRatio']).toBe('2');
+    expect(result['elk.aspectRatio']).toBe(String(16 / 9));
   });
 });

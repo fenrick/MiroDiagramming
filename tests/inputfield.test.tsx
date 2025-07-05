@@ -2,14 +2,14 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { InputField } from '../src/ui/components/legacy/InputField';
+import { InputField } from '../src/ui/components/InputField';
 
 test('renders label and input', () => {
   render(
     <InputField
       label='Name'
       value='x'
-      onChange={() => {}}
+      onValueChange={() => {}}
     />,
   );
   const input = screen.getByLabelText('Name');
@@ -18,12 +18,12 @@ test('renders label and input', () => {
   expect(label).toHaveAttribute('for', input.getAttribute('id'));
 });
 
-test('calls onChange with value', () => {
+test('calls onValueChange with value', () => {
   const handler = jest.fn();
   render(
     <InputField
       label='Age'
-      onChange={handler}
+      onValueChange={handler}
     />,
   );
   const input = screen.getByLabelText('Age');
@@ -31,17 +31,16 @@ test('calls onChange with value', () => {
   expect(handler).toHaveBeenCalledWith('42');
 });
 
-test('supports custom child element', () => {
+test('forwards input attributes', () => {
   render(
-    <InputField label='File'>
-      <input
-        data-testid='custom'
-        type='file'
-      />
-    </InputField>,
+    <InputField
+      label='File'
+      type='file'
+      data-testid='file-input'
+    />,
   );
-  const input = screen.getByTestId('custom');
+  const input = screen.getByTestId('file-input');
   const label = screen.getByText('File');
   expect(label).toHaveAttribute('for', input.getAttribute('id'));
-  expect(input).toBeInTheDocument();
+  expect(input).toHaveAttribute('type', 'file');
 });

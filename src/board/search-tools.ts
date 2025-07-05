@@ -4,6 +4,7 @@ import {
   maybeSync,
   Syncable,
 } from './board';
+import { boardCache } from './board-cache';
 
 /** Search configuration. */
 export interface SearchOptions {
@@ -166,11 +167,9 @@ async function queryBoardItems(
   opts: SearchOptions,
   board: BoardQueryLike,
 ): Promise<Record<string, unknown>[]> {
-  if (opts.inSelection) return board.getSelection();
+  if (opts.inSelection) return boardCache.getSelection(board);
   const types = opts.widgetTypes?.length ? opts.widgetTypes : ['widget'];
-  const items: Record<string, unknown>[] = [];
-  for (const t of types) items.push(...(await board.get({ type: t })));
-  return items;
+  return boardCache.getWidgets(types, board);
 }
 
 /**

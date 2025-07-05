@@ -1,3 +1,4 @@
+/** @vitest-environment jsdom */
 import { applyStylePreset, presetStyle } from '../src/board/format-tools';
 import type { StylePreset } from '../src/ui/style-presets';
 

@@ -1,11 +1,21 @@
 import React from 'react';
-import { TabBar, TabItem } from '../components/TabBar';
 import { ResizeTab } from './ResizeTab';
 import { StyleTab } from './StyleTab';
 import { ArrangeTab } from './ArrangeTab';
 import { FramesTab } from './FramesTab';
 import { TabPanel } from '../components/TabPanel';
 import type { TabTuple } from './tab-definitions';
+import { Tabs } from '@mirohq/design-system';
+
+/**
+ * Identifier string for each sub-tab.
+ */
+type SubTabId = 'size' | 'style' | 'arrange' | 'frames';
+
+/**
+ * Configuration object for rendering sub-tab triggers.
+ */
+type TabItem = { id: SubTabId; label: string };
 
 const SUB_TABS: TabItem[] = [
   { id: 'size', label: 'Size' },
@@ -15,35 +25,39 @@ const SUB_TABS: TabItem[] = [
 ];
 
 /**
+ * Maps sub-tab identifiers to their respective tab components.
+ */
+const SUB_TAB_COMPONENTS: Record<SubTabId, React.FC> = {
+  size: ResizeTab,
+  style: StyleTab,
+  arrange: ArrangeTab,
+  frames: FramesTab,
+};
+
+/**
  * Combines editing tools into a single tab with sub navigation.
  */
 export const ToolsTab: React.FC = () => {
-  const [sub, setSub] = React.useState<string>('resize');
-  let Current: React.FC;
-  switch (sub) {
-    case 'style':
-      Current = StyleTab;
-      break;
-    case 'arrange':
-      Current = ArrangeTab;
-      break;
-    case 'frames':
-      Current = FramesTab;
-      break;
-    default:
-      Current = ResizeTab;
-  }
+  const [sub, setSub] = React.useState<SubTabId>('size');
+  const Current = SUB_TAB_COMPONENTS[sub];
   return (
     <TabPanel tabId='tools'>
-      <div>
-        <TabBar
-          tabs={SUB_TABS}
-          tab={sub}
-          onChange={setSub}
-          size='small'
-        />
-        <Current />
-      </div>
+      <Tabs
+        value={sub}
+        variant={'tabs'}
+        onChange={(id: string) => setSub(id as SubTabId)}
+        size='medium'>
+        <Tabs.List>
+          {SUB_TABS.map((t) => (
+            <Tabs.Trigger
+              key={t.id}
+              value={t.id}>
+              {t.label}
+            </Tabs.Trigger>
+          ))}
+        </Tabs.List>
+      </Tabs>
+      <Current />
     </TabPanel>
   );
 };

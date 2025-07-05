@@ -5,7 +5,6 @@
  * contrast calculations so fill and font colours remain readable.
  */
 
-import { tokens } from '../../ui/tokens';
 import { colors } from '@mirohq/design-tokens';
 
 /** Convert a token reference to its hex value. */
@@ -90,17 +89,11 @@ export function contrastRatio(a: string, b: string): number {
  */
 export function ensureContrast(bg: string, fg: string): string {
   if (contrastRatio(bg, fg) >= 4.5) return fg;
-  const black = contrastRatio(
-    bg,
-    resolveColor(tokens.color.black, colors.black),
-  );
-  const white = contrastRatio(
-    bg,
-    resolveColor(tokens.color.white, colors.white),
-  );
+  const black = contrastRatio(bg, resolveColor(colors.black, colors.black));
+  const white = contrastRatio(bg, resolveColor(colors.white, colors.white));
   return black >= white
-    ? resolveColor(tokens.color.black, colors.black)
-    : resolveColor(tokens.color.white, colors.white);
+    ? resolveColor(colors.black, colors.black)
+    : resolveColor(colors.white, colors.white);
 }
 
 /**

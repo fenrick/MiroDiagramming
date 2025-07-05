@@ -1,6 +1,7 @@
 import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { ExcelSyncService, ContentItem } from '../src/core/excel-sync-service';
 import { templateManager } from '../src/board/templates';
+import { mockBoard } from './mock-board';
 
 interface GlobalWithMiro {
   miro?: { board?: Record<string, unknown> };
@@ -18,7 +19,7 @@ declare const global: GlobalWithMiro;
 
 describe('ExcelSyncService', () => {
   beforeEach(() => {
-    global.miro = { board: { get: vi.fn().mockResolvedValue([]) } };
+    mockBoard({ get: vi.fn().mockResolvedValue([]) });
   });
 
   test('registerMapping and getWidgetId round trip', () => {
@@ -43,7 +44,7 @@ describe('ExcelSyncService', () => {
     } as never);
     const service = new ExcelSyncService();
     await service.updateShapesFromExcel(
-      [{ ID: '1', Name: 'A', Type: 'Role', Notes: 'meta' }],
+      [{ ID: '1', Name: 'A', Type: 'Motivation', Notes: 'meta' }],
       {
         idColumn: 'ID',
         labelColumn: 'Name',
@@ -159,6 +160,10 @@ describe('ExcelSyncService', () => {
 });
 
 describe('ExcelSyncService additional cases', () => {
+  beforeEach(() => {
+    mockBoard({ get: vi.fn().mockResolvedValue([]) });
+  });
+
   test('updateShapesFromExcel skips missing widgets', async () => {
     (global.miro!.board!.get as vi.Mock).mockResolvedValueOnce([]);
     const service = new ExcelSyncService();
@@ -192,7 +197,7 @@ describe('ExcelSyncService additional cases', () => {
     );
     const service = new ExcelSyncService();
     await service.updateShapesFromExcel(
-      [{ ID: '1', Name: 'A', Type: 'Role' }],
+      [{ ID: '1', Name: 'A', Type: 'Motivation' }],
       { idColumn: 'ID', labelColumn: 'Name', templateColumn: 'Type' },
     );
     expect(shape.setMetadata).not.toHaveBeenCalled();

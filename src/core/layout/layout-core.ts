@@ -3,6 +3,7 @@ import type { ElkNode } from 'elkjs/lib/elk-api';
 import { GraphData } from '../graph';
 import { templateManager } from '../../board/templates';
 import { UserLayoutOptions, validateLayoutOptions } from './elk-options';
+import { aspectRatioValue } from '../utils/aspect-ratio';
 
 export interface PositionedNode {
   id: string;
@@ -75,7 +76,9 @@ export function buildElkGraphOptions(
     'elk.spacing.nodeNode': String(opts.spacing),
     'elk.layered.unnecessaryBendpoints': 'true',
     'elk.layered.cycleBreaking.strategy': 'GREEDY',
-    ...(opts.aspectRatio && { 'elk.aspectRatio': String(opts.aspectRatio) }),
+    ...(opts.aspectRatio && {
+      'elk.aspectRatio': String(aspectRatioValue(opts.aspectRatio)),
+    }),
     ...(opts.edgeRouting && { 'elk.edgeRouting': opts.edgeRouting }),
     ...(opts.edgeRoutingMode && {
       'elk.mrtree.edgeRoutingMode': opts.edgeRoutingMode,

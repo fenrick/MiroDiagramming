@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from './legacy';
+import { Button } from './Button';
 
 export interface SegmentedOption {
   readonly label: string;
@@ -13,7 +13,7 @@ export type SegmentedControlProps = Readonly<{
 }>;
 
 /**
- * Generic segmented control using Mirotone buttons.
+ * Generic segmented control built with design-system buttons.
  */
 export function SegmentedControl({
   value,
@@ -21,7 +21,7 @@ export function SegmentedControl({
   options,
 }: SegmentedControlProps): React.JSX.Element {
   return (
-    <fieldset className='segmented-control'>
+    <fieldset className='custom-segment'>
       <legend className='custom-visually-hidden'>Layout type</legend>
       {options.map((opt) => (
         <Button

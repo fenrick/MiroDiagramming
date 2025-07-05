@@ -1,13 +1,11 @@
 import React from 'react';
 import {
   Button,
-  Checkbox,
   InputField,
   Paragraph,
-  Icon,
-  Text,
-} from '../components/legacy';
-import { TabGrid } from '../components/TabGrid';
+  RegexSearchField,
+  FilterDropdown,
+} from '../components';
 import type { SearchOptions } from '../../board/search-tools';
 import {
   useDebouncedSearch,
@@ -17,6 +15,13 @@ import {
 } from '../hooks/use-search-handlers';
 import { TabPanel } from '../components/TabPanel';
 import type { TabTuple } from './tab-definitions';
+import {
+  IconArrowRight,
+  IconChevronRight,
+  IconPen,
+  Text,
+  Grid,
+} from '@mirohq/design-system';
 
 /**
  * Sidebar tab providing board wide search and replace.
@@ -57,22 +62,28 @@ export const SearchTab: React.FC = () => {
     );
   };
 
-  // eslint-disable-next-line complexity
   const buildOptions = React.useCallback((): SearchOptions => {
-    const opts: SearchOptions = { query };
-    if (widgetTypes.length) opts.widgetTypes = widgetTypes;
     const tags = tagIds
       .split(',')
       .map((t) => t.trim())
       .filter(Boolean);
-    if (tags.length) opts.tagIds = tags;
-    if (backgroundColor) opts.backgroundColor = backgroundColor;
-    if (assignee) opts.assignee = assignee;
-    if (creator) opts.creator = creator;
-    if (lastModifiedBy) opts.lastModifiedBy = lastModifiedBy;
-    if (caseSensitive) opts.caseSensitive = true;
-    if (wholeWord) opts.wholeWord = true;
-    if (regex) opts.regex = true;
+    const opts: SearchOptions = { query };
+    const add = <K extends keyof SearchOptions>(
+      cond: boolean,
+      key: K,
+      value: SearchOptions[K],
+    ): void => {
+      if (cond) opts[key] = value;
+    };
+    add(widgetTypes.length > 0, 'widgetTypes', widgetTypes);
+    add(tags.length > 0, 'tagIds', tags);
+    add(Boolean(backgroundColor), 'backgroundColor', backgroundColor);
+    add(Boolean(assignee), 'assignee', assignee);
+    add(Boolean(creator), 'creator', creator);
+    add(Boolean(lastModifiedBy), 'lastModifiedBy', lastModifiedBy);
+    add(caseSensitive, 'caseSensitive', true);
+    add(wholeWord, 'wholeWord', true);
+    add(regex, 'regex', true);
     return opts;
   }, [
     query,
@@ -117,125 +128,78 @@ export const SearchTab: React.FC = () => {
 
   return (
     <TabPanel tabId='search'>
-      <TabGrid columns={2}>
-        <InputField label='Find'>
-          <input
-            className='input input-small'
+      <Grid columns={2}>
+        <Grid.Item>
+          <RegexSearchField
+            label='Find'
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(v) => setQuery(v)}
+            regex={regex}
+            onRegexToggle={setRegex}
             placeholder='Search board text'
           />
-        </InputField>
-        <InputField label='Replace'>
-          <input
-            className='input input-small'
+        </Grid.Item>
+        <Grid.Item>
+          <InputField
+            label='Replace'
             value={replacement}
-            onChange={(e) => setReplacement(e.target.value)}
+            onValueChange={(v) => setReplacement(v)}
             placeholder='Replacement text'
           />
-        </InputField>
-        <div className='form-group-small'>
-          <Checkbox
-            label='Case sensitive'
-            value={caseSensitive}
-            onChange={setCaseSensitive}
+        </Grid.Item>
+        <Grid.Item>
+          <FilterDropdown
+            widgetTypes={widgetTypes}
+            toggleType={toggleType}
+            tagIds={tagIds}
+            onTagIdsChange={setTagIds}
+            backgroundColor={backgroundColor}
+            onBackgroundColorChange={setBackgroundColor}
+            assignee={assignee}
+            onAssigneeChange={setAssignee}
+            creator={creator}
+            onCreatorChange={setCreator}
+            lastModifiedBy={lastModifiedBy}
+            onLastModifiedByChange={setLastModifiedBy}
+            caseSensitive={caseSensitive}
+            onCaseSensitiveChange={setCaseSensitive}
+            wholeWord={wholeWord}
+            onWholeWordChange={setWholeWord}
           />
-          <Checkbox
-            label='Whole word'
-            value={wholeWord}
-            onChange={setWholeWord}
-          />
-          <Checkbox
-            label='Regex'
-            value={regex}
-            onChange={setRegex}
-          />
-        </div>
-        <div className='form-group-small'>
-          <legend className='custom-visually-hidden'>Widget Types</legend>
-          <div>
-            {['shape', 'card', 'sticky_note', 'text'].map((t) => (
-              <Checkbox
-                key={t}
-                label={t}
-                value={widgetTypes.includes(t)}
-                onChange={() => toggleType(t)}
-              />
-            ))}
-          </div>
-        </div>
-        <InputField label='Tag IDs'>
-          <input
-            className='input input-small'
-            value={tagIds}
-            onChange={(e) => setTagIds(e.target.value)}
-            placeholder='Comma separated'
-          />
-        </InputField>
-        <InputField label='Background colour'>
-          <input
-            className='input input-small'
-            value={backgroundColor}
-            onChange={(e) => setBackgroundColor(e.target.value)}
-            placeholder='CSS colour'
-          />
-        </InputField>
-        <InputField label='Assignee ID'>
-          <input
-            className='input input-small'
-            value={assignee}
-            onChange={(e) => setAssignee(e.target.value)}
-            placeholder='User ID'
-          />
-        </InputField>
-        <InputField label='Creator ID'>
-          <input
-            className='input input-small'
-            value={creator}
-            onChange={(e) => setCreator(e.target.value)}
-            placeholder='User ID'
-          />
-        </InputField>
-        <InputField label='Last modified by'>
-          <input
-            className='input input-small'
-            value={lastModifiedBy}
-            onChange={(e) => setLastModifiedBy(e.target.value)}
-            placeholder='User ID'
-          />
-        </InputField>
-        <Paragraph data-testid='match-count'>
-          Matches: {results.length}
-        </Paragraph>
-        <div className='buttons'>
-          <Button
-            onClick={nextMatch}
-            disabled={!results.length}
-            variant='secondary'>
-            <React.Fragment key='.0'>
-              <Icon name='chevron-right' />
+        </Grid.Item>
+        <Grid.Item>
+          <Paragraph data-testid='match-count'>
+            Matches: {results.length}
+          </Paragraph>
+        </Grid.Item>
+        <Grid.Item>
+          <div className='buttons'>
+            <Button
+              onClick={nextMatch}
+              disabled={!results.length}
+              variant='secondary'
+              icon={<IconChevronRight />}
+              iconPosition='start'>
               <Text>Next</Text>
-            </React.Fragment>
-          </Button>
-          <Button
-            onClick={replaceCurrent}
-            disabled={!results.length}
-            variant='secondary'>
-            <React.Fragment key='.1'>
-              <Icon name='edit' />
+            </Button>
+            <Button
+              onClick={replaceCurrent}
+              disabled={!results.length}
+              variant='secondary'
+              icon={<IconPen />}
+              iconPosition='start'>
               <Text>Replace</Text>
-            </React.Fragment>
-          </Button>
-          <Button
-            onClick={replaceAll}
-            variant='primary'>
-            <React.Fragment key='.2'>
-              <Icon name='arrow-right' />
+            </Button>
+            <Button
+              onClick={replaceAll}
+              variant='primary'
+              icon={<IconArrowRight />}
+              iconPosition='start'>
               <Text>Replace All</Text>
-            </React.Fragment>
-          </Button>
-        </div>
-      </TabGrid>
+            </Button>
+          </div>
+        </Grid.Item>
+      </Grid>
     </TabPanel>
   );
 };

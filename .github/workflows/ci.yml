@@ -68,12 +68,21 @@ jobs:
           cache: 'npm'
       - run: corepack enable
       - run: npm install --frozen-lockfile || npm install
+      - name: Cache Storybook
+        uses: actions/cache@v4
+        with:
+          path: node_modules/.cache/storybook
+          key: ${{ runner.os }}-storybook-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-storybook-
       - name: Audit dependencies
         run: npm audit --omit=dev --audit-level=moderate
       - name: Build
         run: npm run build
       - name: Build Storybook
         run: npm run build-storybook
+      - name: Verify Storybook
+        run: test -d storybook-static
       - name: Upload artefact
         uses: actions/upload-artifact@v4
         with:

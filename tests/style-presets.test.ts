@@ -1,3 +1,4 @@
+/** @vitest-environment jsdom */
 import { describe, test, expect } from 'vitest';
 import '@testing-library/jest-dom';
 import templatesJson from '../templates/shapeTemplates.json';
@@ -12,11 +13,12 @@ import { StyleTab } from '../src/ui/pages/StyleTab';
 describe('style-presets', () => {
   test('presets derived from templates', () => {
     const tpl = (templatesJson as Record<string, TemplateDefinition>)
-      .BusinessService;
-    const fill = templateManager.resolveStyle(tpl.elements[0].style)
-      .fillColor as string;
-    expect(stylePresets.BusinessService.fillColor).toBe(fill);
-    expect(STYLE_PRESET_NAMES).toContain('BusinessService');
+      .Technology;
+    const style = templateManager.resolveStyle(tpl.elements[0].style);
+    expect(stylePresets.Technology.fillColor).toBe(style.fillColor);
+    expect(stylePresets.Technology.borderColor).toBe(style.borderColor);
+    expect(stylePresets.Technology.borderWidth).toBe(style.borderWidth);
+    expect(STYLE_PRESET_NAMES).toContain('Technology');
   });
 
   test('StyleTab renders preset buttons', async () => {

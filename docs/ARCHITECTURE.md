@@ -53,7 +53,7 @@ Data        → Graph Normalisation → Layout Engine → Board Rendering → UI
 
 - **Pure Core** (src/core) – framework-agnostic logic.
 - **Board Adapter** (src/board) – converts domain objects to Miro widgets.
-- **UI Shell** (src/ui) – React views built with Mirotone CSS wrappers.
+- **UI Shell** (src/ui) – React views built with design-system wrappers.
 - **Infrastructure** (scripts, .github) – build, lint, test, release automation.
 
 ---
@@ -227,6 +227,4 @@ See [CODE_STYLE.md](CODE_STYLE.md) for detailed style rules.
 - File names: PascalCase.tsx for React, kebab-case.ts for util.
 - Import order: std → vendor → local, alphabetical within group.
 - No raw grid-column in style blocks (enforced by custom ESLint rule).
-- PR template checklist: coverage, complexity, a11y, dark-mode snapshot,
-  CHANGELOG entry. Add a bullet under the `Unreleased` heading when submitting a
-  pull request.
+- PR template checklist: coverage, complexity, a11y, dark-mode snapshot.
