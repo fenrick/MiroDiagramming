@@ -1,3 +1,5 @@
+# [Unreleased]
+
 # [1.18.0](https://github.com/fenrick/MiroDiagramming/compare/v1.17.0...v1.18.0) (2025-07-02)
 
 
