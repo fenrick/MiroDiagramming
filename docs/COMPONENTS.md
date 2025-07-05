@@ -50,7 +50,6 @@ components or compose using the design system tokens.
 | **Grid**                      | gap, columns                    | responsive                | n/a                 |
 | **Stack**                     | gap, direction                  | vertical, horizontal      | n/a                 |
 | **Cluster**                   | gap, align                      | left, right, centre       | n/a                 |
-| **TabGrid**                   | columns, className?             | —                         | n/a                 |
 
 The main navigation now relies on `@mirohq/design-system-tabs`. The custom
 **TabBar** component remains for nested navigation. Pass the current tab id via

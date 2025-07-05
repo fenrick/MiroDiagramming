@@ -6,7 +6,6 @@ import {
   RegexSearchField,
   FilterDropdown,
 } from '../components';
-import { TabGrid } from '../components/TabGrid';
 import type { SearchOptions } from '../../board/search-tools';
 import {
   useDebouncedSearch,
@@ -21,6 +20,7 @@ import {
   IconChevronRight,
   IconPen,
   Text,
+  Grid,
 } from '@mirohq/design-system';
 
 /**
@@ -128,110 +128,78 @@ export const SearchTab: React.FC = () => {
 
   return (
     <TabPanel tabId='search'>
-      <TabGrid columns={2}>
-        <RegexSearchField
-          label='Find'
-          value={query}
-          onChange={(v) => setQuery(v)}
-          regex={regex}
-          onRegexToggle={setRegex}
-          placeholder='Search board text'
-        />
-        <InputField
-          label='Replace'
-          value={replacement}
-          onValueChange={(v) => setReplacement(v)}
-          placeholder='Replacement text'
-        />
-        <div className='form-group-small'>
-          <Checkbox
-            label='Case sensitive'
-            value={caseSensitive}
-            onChange={setCaseSensitive}
+      <Grid columns={2}>
+        <Grid.Item>
+          <RegexSearchField
+            label='Find'
+            value={query}
+            onChange={(v) => setQuery(v)}
+            regex={regex}
+            onRegexToggle={setRegex}
+            placeholder='Search board text'
           />
-          <Checkbox
-            label='Whole word'
-            value={wholeWord}
-            onChange={setWholeWord}
+        </Grid.Item>
+        <Grid.Item>
+          <InputField
+            label='Replace'
+            value={replacement}
+            onValueChange={(v) => setReplacement(v)}
+            placeholder='Replacement text'
           />
-          <Checkbox
-            label='Regex'
-            value={regex}
-            onChange={setRegex}
+        </Grid.Item>
+        <Grid.Item>
+          <FilterDropdown
+            widgetTypes={widgetTypes}
+            toggleType={toggleType}
+            tagIds={tagIds}
+            onTagIdsChange={setTagIds}
+            backgroundColor={backgroundColor}
+            onBackgroundColorChange={setBackgroundColor}
+            assignee={assignee}
+            onAssigneeChange={setAssignee}
+            creator={creator}
+            onCreatorChange={setCreator}
+            lastModifiedBy={lastModifiedBy}
+            onLastModifiedByChange={setLastModifiedBy}
+            caseSensitive={caseSensitive}
+            onCaseSensitiveChange={setCaseSensitive}
+            wholeWord={wholeWord}
+            onWholeWordChange={setWholeWord}
           />
-        </div>
-        <div className='form-group-small'>
-          <legend className='custom-visually-hidden'>Widget Types</legend>
-          <div>
-            {['shape', 'card', 'sticky_note', 'text'].map((t) => (
-              <Checkbox
-                key={t}
-                label={t}
-                value={widgetTypes.includes(t)}
-                onChange={() => toggleType(t)}
-              />
-            ))}
+        </Grid.Item>
+        <Grid.Item>
+          <Paragraph data-testid='match-count'>
+            Matches: {results.length}
+          </Paragraph>
+        </Grid.Item>
+        <Grid.Item>
+          <div className='buttons'>
+            <Button
+              onClick={nextMatch}
+              disabled={!results.length}
+              variant='secondary'
+              icon={<IconChevronRight />}
+              iconPosition='start'>
+              <Text>Next</Text>
+            </Button>
+            <Button
+              onClick={replaceCurrent}
+              disabled={!results.length}
+              variant='secondary'
+              icon={<IconPen />}
+              iconPosition='start'>
+              <Text>Replace</Text>
+            </Button>
+            <Button
+              onClick={replaceAll}
+              variant='primary'
+              icon={<IconArrowRight />}
+              iconPosition='start'>
+              <Text>Replace All</Text>
+            </Button>
           </div>
-        </div>
-        <InputField
-          label='Tag IDs'
-          value={tagIds}
-          onValueChange={(v) => setTagIds(v)}
-          placeholder='Comma separated'
-        />
-        <InputField
-          label='Background colour'
-          value={backgroundColor}
-          onValueChange={(v) => setBackgroundColor(v)}
-          placeholder='CSS colour'
-        />
-        <InputField
-          label='Assignee ID'
-          value={assignee}
-          onValueChange={(v) => setAssignee(v)}
-          placeholder='User ID'
-        />
-        <InputField
-          label='Creator ID'
-          value={creator}
-          onValueChange={(v) => setCreator(v)}
-          placeholder='User ID'
-        />
-        <InputField
-          label='Last modified by'
-          value={lastModifiedBy}
-          onValueChange={(v) => setLastModifiedBy(v)}
-          placeholder='User ID'
-        />
-        <Paragraph data-testid='match-count'>
-          Matches: {results.length}
-        </Paragraph>
-        <div className='buttons'>
-          <Button
-            onClick={nextMatch}
-            disabled={!results.length}
-            variant='secondary'
-            icon={<IconChevronRight />}
-            iconPosition='start'>
-            <Text>Next</Text>
-          </Button>
-          <Button
-            onClick={replaceCurrent}
-            disabled={!results.length}
-            variant='secondary'
-            icon={<IconPen />}
-            iconPosition='start'>
-            <Text>Replace</Text>
-          </Button>
-          <Button
-            onClick={replaceAll}
-            variant='primary'
-            icon={<IconArrowRight />}
-            iconPosition='start'>
-            <Text>Replace All</Text>
-          </Button>
-        </div>
-      </TabGrid>
+        </Grid.Item>
+      </Grid>
     </TabPanel>
   );
 };

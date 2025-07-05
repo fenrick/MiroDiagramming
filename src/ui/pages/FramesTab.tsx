@@ -5,9 +5,14 @@ import {
   renameSelectedFrames,
 } from '../../board/frame-tools';
 import { TabPanel } from '../components/TabPanel';
-import { TabGrid } from '../components/TabGrid';
 import type { TabTuple } from './tab-definitions';
-import { Heading, IconLockClosed, IconPen, Text } from '@mirohq/design-system';
+import {
+  Grid,
+  Heading,
+  IconLockClosed,
+  IconPen,
+  Text,
+} from '@mirohq/design-system';
 
 /** UI for renaming or locking selected frames. */
 export const FramesTab: React.FC = () => {
@@ -21,34 +26,44 @@ export const FramesTab: React.FC = () => {
   };
   return (
     <TabPanel tabId='frames'>
-      <TabGrid columns={2}>
-        <Heading level={2}>Rename Frames</Heading>
-        <InputField
-          label='Prefix'
-          value={prefix}
-          onValueChange={(v) => setPrefix(v)}
-          placeholder='Prefix'
-        />
-        <div className='buttons'>
-          <Button
-            onClick={rename}
-            variant='primary'
-            iconPosition='start'
-            icon={<IconPen />}>
-            <Text>Rename Frames</Text>
-          </Button>
-        </div>
-        <Heading level={2}>Lock Frames</Heading>
-        <div className='buttons'>
-          <Button
-            onClick={lock}
-            variant='secondary'
-            iconPosition='start'
-            icon={<IconLockClosed />}>
-            <Text>Lock Selected</Text>
-          </Button>
-        </div>
-      </TabGrid>
+      <Grid columns={2}>
+        <Grid.Item>
+          <Heading level={2}>Rename Frames</Heading>
+        </Grid.Item>
+        <Grid.Item>
+          <InputField
+            label='Prefix'
+            value={prefix}
+            onValueChange={(v) => setPrefix(v)}
+            placeholder='Prefix'
+          />
+        </Grid.Item>
+        <Grid.Item>
+          <div className='buttons'>
+            <Button
+              onClick={rename}
+              variant='primary'
+              iconPosition='start'
+              icon={<IconPen />}>
+              <Text>Rename Frames</Text>
+            </Button>
+          </div>
+        </Grid.Item>
+        <Grid.Item>
+          <Heading level={2}>Lock Frames</Heading>
+        </Grid.Item>
+        <Grid.Item>
+          <div className='buttons'>
+            <Button
+              onClick={lock}
+              variant='secondary'
+              iconPosition='start'
+              icon={<IconLockClosed />}>
+              <Text>Lock Selected</Text>
+            </Button>
+          </div>
+        </Grid.Item>
+      </Grid>
     </TabPanel>
   );
 };
