@@ -21,7 +21,7 @@ export function SegmentedControl({
   options,
 }: SegmentedControlProps): React.JSX.Element {
   return (
-    <fieldset className='segmented-control'>
+    <fieldset className='custom-segment'>
       <legend className='custom-visually-hidden'>Layout type</legend>
       {options.map((opt) => (
         <Button

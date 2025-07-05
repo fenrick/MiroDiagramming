@@ -63,7 +63,7 @@ export function FilterDropdown({
           Whole word
         </DropdownMenu.SwitchItem>
         <DropdownMenu.Separator />
-        <div className='form-group-small'>
+        <div className='custom-form-group-small'>
           <legend className='custom-visually-hidden'>Widget Types</legend>
           <div>
             {['shape', 'card', 'sticky_note', 'text'].map((t) => (
