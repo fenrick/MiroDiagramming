@@ -6,12 +6,16 @@ import {
   SelectField,
   SelectOption,
 } from '../components';
-import { TabGrid } from '../components/TabGrid';
 import { applyGridLayout, GridOptions } from '../../board/grid-tools';
 import { applySpacingLayout, SpacingOptions } from '../../board/spacing-tools';
 import { TabPanel } from '../components/TabPanel';
 import type { TabTuple } from './tab-definitions';
-import { IconChevronRightDouble, IconGrid, Text } from '@mirohq/design-system';
+import {
+  Grid,
+  IconChevronRightDouble,
+  IconGrid,
+  Text,
+} from '@mirohq/design-system';
 
 /**
  * Combines grid and spacing tools into a single sidebar tab.
@@ -60,91 +64,107 @@ export const ArrangeTab: React.FC = () => {
 
   return (
     <TabPanel tabId='arrange'>
-      <TabGrid columns={2}>
-        <InputField
-          label='Columns'
-          type='number'
-          value={String(grid.cols)}
-          onValueChange={(v) => updateNumber('cols')(v)}
-          placeholder='Columns'
-        />
-        <InputField
-          label='Gap'
-          type='number'
-          value={String(grid.padding)}
-          onValueChange={(v) => updateNumber('padding')(v)}
-          placeholder='Gap'
-        />
-        <Checkbox
-          label='Sort by name'
-          value={Boolean(grid.sortByName)}
-          onChange={toggle('sortByName')}
-        />
-        {grid.sortByName && (
-          <SelectField
-            label='Order'
-            value={grid.sortOrientation}
-            onChange={setOrientation}>
-            <SelectOption value='horizontal'>Horizontally</SelectOption>
-            <SelectOption value='vertical'>Vertically</SelectOption>
-          </SelectField>
-        )}
-        <Checkbox
-          label='Group items into Frame'
-          value={Boolean(grid.groupResult)}
-          onChange={toggle('groupResult')}
-        />
-        {grid.groupResult && (
+      <Grid columns={2}>
+        <Grid.Item>
           <InputField
-            label='Frame Title'
-            value={frameTitle}
-            onValueChange={(v) => setFrameTitle(v)}
-            placeholder='Optional'
-          />
-        )}
-        <div className='buttons'>
-          <Button
-            onClick={applyGrid}
-            variant='primary'
-            iconPosition='start'
-            icon={<IconGrid />}>
-            <Text>Arrange Grid</Text>
-          </Button>
-        </div>
-
-        <div className='form-group-small'>
-          <SelectField
-            label='Axis'
-            value={spacing.axis}
-            onChange={updateAxis}>
-            <SelectOption value='x'>Horizontal</SelectOption>
-            <SelectOption value='y'>Vertical</SelectOption>
-          </SelectField>
-          <SelectField
-            label='Mode'
-            value={spacing.mode ?? 'move'}
-            onChange={updateMode}>
-            <SelectOption value='move'>Move</SelectOption>
-            <SelectOption value='grow'>Expand</SelectOption>
-          </SelectField>
-          <InputField
-            label='Spacing'
+            label='Columns'
             type='number'
-            value={String(spacing.spacing)}
-            onValueChange={(v) => updateSpacing(v)}
-            placeholder='Distance'
+            value={String(grid.cols)}
+            onValueChange={(v) => updateNumber('cols')(v)}
+            placeholder='Columns'
           />
+        </Grid.Item>
+        <Grid.Item>
+          <InputField
+            label='Gap'
+            type='number'
+            value={String(grid.padding)}
+            onValueChange={(v) => updateNumber('padding')(v)}
+            placeholder='Gap'
+          />
+        </Grid.Item>
+        <Grid.Item>
+          <Checkbox
+            label='Sort by name'
+            value={Boolean(grid.sortByName)}
+            onChange={toggle('sortByName')}
+          />
+        </Grid.Item>
+        {grid.sortByName && (
+          <Grid.Item>
+            <SelectField
+              label='Order'
+              value={grid.sortOrientation}
+              onChange={setOrientation}>
+              <SelectOption value='horizontal'>Horizontally</SelectOption>
+              <SelectOption value='vertical'>Vertically</SelectOption>
+            </SelectField>
+          </Grid.Item>
+        )}
+        <Grid.Item>
+          <Checkbox
+            label='Group items into Frame'
+            value={Boolean(grid.groupResult)}
+            onChange={toggle('groupResult')}
+          />
+        </Grid.Item>
+        {grid.groupResult && (
+          <Grid.Item>
+            <InputField
+              label='Frame Title'
+              value={frameTitle}
+              onValueChange={(v) => setFrameTitle(v)}
+              placeholder='Optional'
+            />
+          </Grid.Item>
+        )}
+        <Grid.Item>
           <div className='buttons'>
             <Button
-              onClick={applySpacing}
+              onClick={applyGrid}
               variant='primary'
               iconPosition='start'
-              icon={<IconChevronRightDouble />}>
-              <Text>Distribute</Text>
+              icon={<IconGrid />}>
+              <Text>Arrange Grid</Text>
             </Button>
           </div>
-        </div>
-      </TabGrid>
+        </Grid.Item>
+
+        <Grid.Item>
+          <div className='form-group-small'>
+            <SelectField
+              label='Axis'
+              value={spacing.axis}
+              onChange={updateAxis}>
+              <SelectOption value='x'>Horizontal</SelectOption>
+              <SelectOption value='y'>Vertical</SelectOption>
+            </SelectField>
+            <SelectField
+              label='Mode'
+              value={spacing.mode ?? 'move'}
+              onChange={updateMode}>
+              <SelectOption value='move'>Move</SelectOption>
+              <SelectOption value='grow'>Expand</SelectOption>
+            </SelectField>
+            <InputField
+              label='Spacing'
+              type='number'
+              value={String(spacing.spacing)}
+              onValueChange={(v) => updateSpacing(v)}
+              placeholder='Distance'
+            />
+            <div className='buttons'>
+              <Button
+                onClick={applySpacing}
+                variant='primary'
+                iconPosition='start'
+                icon={<IconChevronRightDouble />}>
+                <Text>Distribute</Text>
+              </Button>
+            </div>
+          </div>
+        </Grid.Item>
+      </Grid>
     </TabPanel>
   );
 };

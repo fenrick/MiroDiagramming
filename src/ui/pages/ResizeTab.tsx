@@ -25,7 +25,6 @@ import {
   AspectRatioId,
 } from '../../core/utils/aspect-ratio';
 import { TabPanel } from '../components/TabPanel';
-import { TabGrid } from '../components/TabGrid';
 import {
   Heading,
   Text,
@@ -184,27 +183,29 @@ export const ResizeTab: React.FC = () => {
         </Grid.Item>
       </Grid>
       <Heading level={3}>Presets</Heading>
-      <TabGrid columns={1}>
-        <div>
-          {(['S', 'M', 'L'] as const).map((p) => (
-            <Button
-              key={p}
-              onClick={() => setSize(PRESET_SIZES[p])}
-              variant='secondary'>
-              {p}
-            </Button>
-          ))}
-          <br />
-          {SCALE_OPTIONS.map((s) => (
-            <Button
-              key={s.label}
-              onClick={() => scale(s.factor)}
-              variant='secondary'>
-              {s.label}
-            </Button>
-          ))}
-        </div>
-      </TabGrid>
+      <Grid columns={1}>
+        <Grid.Item>
+          <div>
+            {(['S', 'M', 'L'] as const).map((p) => (
+              <Button
+                key={p}
+                onClick={() => setSize(PRESET_SIZES[p])}
+                variant='secondary'>
+                {p}
+              </Button>
+            ))}
+            <br />
+            {SCALE_OPTIONS.map((s) => (
+              <Button
+                key={s.label}
+                onClick={() => scale(s.factor)}
+                variant='secondary'>
+                {s.label}
+              </Button>
+            ))}
+          </div>
+        </Grid.Item>
+      </Grid>
       <div className='buttons'>
         <Button
           onClick={apply}
