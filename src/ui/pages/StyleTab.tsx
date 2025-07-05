@@ -155,7 +155,7 @@ export const StyleTab: React.FC = () => {
                 onClick={() => applyStylePreset(preset)}
                 type='button'
                 variant='secondary'
-                style={{
+                css={{
                   color: style.color,
                   backgroundColor: style.fillColor,
                   borderColor: style.borderColor,
