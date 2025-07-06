@@ -268,7 +268,7 @@ Failing any item blocks the CI gate.
 - Design tokens and minimal-CSS policy – **FOUNDATION.md**
 - Deployment guidance – **DEPLOYMENT.md**
 - Sidebar behaviour and validation flows – **TABS.md**
-- Storybook playground – run `npm start`, open `http://localhost:6006`
+- Storybook playground – run `npm run storybook`, open `http://localhost:6006`
 
 ---
 
