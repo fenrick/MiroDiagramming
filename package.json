@@ -47,6 +47,7 @@
     "@storybook/addon-docs": "^9.0.0-alpha.12",
     "@storybook/addon-essentials": "^9.0.0-alpha.12",
     "@storybook/addon-links": "^9.0.0-alpha.12",
+    "@storybook/addon-viewport": "^9.0.0-alpha.12",
     "@storybook/react-vite": "^9.0.0-alpha.12",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
