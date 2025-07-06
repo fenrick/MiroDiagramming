@@ -330,6 +330,22 @@ The CI pipeline also enforces commitlint via
 - [UI Patterns](docs/PATTERNS.md) shows common layouts and best practices.
 - [Excel Import](docs/EXCEL_IMPORT.md) details workbook loading and sync.
 
+## Storybook
+
+Run the component explorer to preview the UI library. Storybook exposes
+interactive examples for each component and supports the design-system light and
+dark themes.
+
+```bash
+npm run storybook
+```
+
+Generate a static Storybook site for publishing with:
+
+```bash
+npm run build-storybook
+```
+
 ## Docker Image
 
 The project can be packaged as a container image. Build and run using:
