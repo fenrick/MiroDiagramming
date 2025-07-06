@@ -333,8 +333,9 @@ The CI pipeline also enforces commitlint via
 ## Storybook
 
 Run the component explorer to preview the UI library. Storybook exposes
-interactive examples for each component and supports the design-system light and
-dark themes.
+interactive examples for each component and includes a toolbar toggle for the
+design-system light and dark themes. Add stories for any new UI element so
+reviewers can verify visuals.
 
 ```bash
 npm run storybook
