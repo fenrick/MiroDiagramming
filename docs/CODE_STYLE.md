@@ -43,3 +43,22 @@ This project enforces consistent formatting with
 - Event handlers should not return Promises; use `void` to fire-and-forget.
 
 For additional architectural guidelines see [ARCHITECTURE.md](ARCHITECTURE.md).
+
+## Storybook
+
+Run the Storybook dev server during component development to preview UI changes.
+Execute:
+
+```bash
+npm run storybook
+```
+
+This command launches Storybook on `http://localhost:6006`. Generate a static
+version with:
+
+```bash
+npm run build-storybook
+```
+
+The CI workflow defined in `.github/workflows/ci.yml` also builds Storybook to
+verify component integrity as part of each pull request.
