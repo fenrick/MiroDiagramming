@@ -207,26 +207,3 @@
   ([60d4d7f](https://github.com/fenrick/MiroDiagramming/commit/60d4d7f0fe504f5d35ca745b2a03ceeebfdc309b))
 - **ui:** merge arrange tools and changelog
   ([50a3d34](https://github.com/fenrick/MiroDiagramming/commit/50a3d348f003cc4fb6a579b4fa861d5cff1b9f62))
-
-# Changelog
-
-All notable changes to this project will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
-
-## [Unreleased]
-
-- Initial creation of changelog.
-- Automatically convert hierarchical and flat graph files when imported.
-- Refactor tab pages to use dedicated hooks for diagram, Excel and search logic.
-- Consolidate row mapping into `mapRowsWith` utility.
-- Document purposes of all modules under `src/core`, `src/board`, `src/ui` and
-  `src/app`.
-- Extract pure spacing functions into `spacing-layout.ts` and refactor board
-  tools.
-- Add `calculateGridPositions` helper around grid-layout internals.
-- Replace sidebar form fieldsets with `TabGrid` layout and enforce button sizes.
-- Migrate remaining tabs to grid layout with semantic headings and no forms.
-- Add `ci:local` script to replicate CI pipeline locally.
-- Switch TabGrid to apply Mirotone column classes instead of inline styles.
-- Allow reusing selected widgets when creating diagrams with options to move, layout or keep their position.

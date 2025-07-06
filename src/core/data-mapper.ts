@@ -29,8 +29,38 @@ export interface CardDefinition {
 }
 
 /**
- * Build a metadata object for the provided row. Always includes a `rowId`
- * derived from either the `idColumn` or the row index.
+ * Add a property to the target object when the provided value is defined.
+ *
+ * @param target - Object to modify.
+ * @param key - Property key.
+ * @param value - Value to assign if defined.
+ */
+function assignIfDefined<T extends object, K extends PropertyKey, V>(
+  target: T,
+  key: K,
+  value: V | undefined,
+): void {
+  if (value != null) {
+    (target as Record<PropertyKey, V>)[key] = value;
+  }
+}
+
+/**
+ * Retrieve a cell value from a row based on the provided column header.
+ *
+ * @param row - Data row parsed from Excel.
+ * @param column - Column header to read.
+ * @returns The cell value or `undefined` when no column is mapped.
+ */
+function readColumn(row: Record<string, unknown>, column?: string): unknown {
+  return column ? row[column] : undefined;
+}
+
+/**
+ * Convert an array of Excel rows into {@link NodeDefinition} objects.
+ *
+ * @param rows - Parsed rows from {@link ExcelLoader}.
+ * @param mapping - Column mapping configuration.
  */
 export function buildMetadata(
   row: Record<string, unknown>,
@@ -104,19 +134,25 @@ export function mapRowToCard(
   row: Record<string, unknown>,
   mapping: ColumnMapping,
 ): CardDefinition {
-  const card: CardDefinition = { title: '' };
-  if (mapping.labelColumn && row[mapping.labelColumn] != null) {
-    card.title = String(row[mapping.labelColumn]);
-  }
-  if (mapping.idColumn && row[mapping.idColumn] != null) {
-    card.id = String(row[mapping.idColumn]);
-  }
-  if (mapping.textColumn && row[mapping.textColumn] != null) {
-    card.description = String(row[mapping.textColumn]);
-  }
-  if (mapping.templateColumn && row[mapping.templateColumn] != null) {
-    card.style = { cardTheme: String(row[mapping.templateColumn]) };
-  }
+  const idVal = readColumn(row, mapping.idColumn);
+  const titleVal = readColumn(row, mapping.labelColumn);
+  const descVal = readColumn(row, mapping.textColumn);
+  const themeVal = readColumn(row, mapping.templateColumn);
+  const card: CardDefinition = {
+    title: titleVal != null ? String(titleVal) : '',
+  };
+  assignIfDefined(card, 'id', idVal != null ? String(idVal) : undefined);
+  assignIfDefined(
+    card,
+    'description',
+    descVal != null ? String(descVal) : undefined,
+  );
+  assignIfDefined(
+    card,
+    'style',
+    themeVal != null ? { cardTheme: String(themeVal) } : undefined,
+  );
+  
   return card;
 }
 

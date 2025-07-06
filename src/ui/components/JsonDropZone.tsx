@@ -1,10 +1,7 @@
 import React from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Button } from './Button';
-<<<<<<< HEAD
 import { Form, Input } from '@mirohq/design-system';
-=======
->>>>>>> 3a8fb55 (fix(ui): trigger upload processing)
 import { getDropzoneStyle } from '../hooks/ui-utils';
 import { space as dsSpace } from '@mirohq/design-tokens';
 
@@ -50,25 +47,14 @@ export function JsonDropZone({
         {...dropzone.getRootProps({ style: dropzoneStyle })}
         aria-label='File drop area'
         aria-describedby='dropzone-instructions'>
-        {(() => {
-          const {
-            style: _style,
-            className: _class,
-            ...inputProps
-          } = dropzone.getInputProps({
-            'aria-label': 'JSON file input',
-          }) as Record<string, unknown>;
-          void _style;
-          void _class;
-          return (
-            <InputField
-              label='JSON file'
-              type='file'
-              data-testid='file-input'
-              {...inputProps}
-            />
-          );
-        })()}
+        {/* hidden input ensures keyboard selection triggers the drop handler */}
+        <input
+          className='custom-visually-hidden'
+          data-testid='file-input'
+          onChange={onChange}
+          aria-label='JSON file input'
+          {...fileInputProps}
+        />
         {dropzone.isDragAccept ? (
           <p style={{ margin: space.small }}>Drop your JSON file here</p>
         ) : (
