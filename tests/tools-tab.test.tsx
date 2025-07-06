@@ -50,7 +50,36 @@ vi.mock('@mirohq/design-system', async () => {
   Tabs.displayName = 'TabsMock';
   Tabs.List.displayName = 'TabsListMock';
   Tabs.Trigger.displayName = 'TabsTriggerMock';
-  return { Tabs };
+  const IconButton = ({
+    children,
+    ...props
+  }: {
+    children: React.ReactNode;
+  }) => <button {...props}>{children}</button>;
+  const IconQuestionMarkCircle = () => <svg data-testid='icon' />;
+  const Tooltip = ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  );
+  Tooltip.Provider = ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  );
+  Tooltip.Trigger = ({ children }: { children: React.ReactNode }) => (
+    <span>{children}</span>
+  );
+  Tooltip.Content = ({ children }: { children: React.ReactNode }) => (
+    <div role='tooltip'>{children}</div>
+  );
+  Tooltip.Portal = ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  );
+  IconButton.displayName = 'IconButtonMock';
+  IconQuestionMarkCircle.displayName = 'IconQuestionMarkCircleMock';
+  Tooltip.displayName = 'TooltipMock';
+  Tooltip.Provider.displayName = 'TooltipProviderMock';
+  Tooltip.Trigger.displayName = 'TooltipTriggerMock';
+  Tooltip.Content.displayName = 'TooltipContentMock';
+  Tooltip.Portal.displayName = 'TooltipPortalMock';
+  return { Tabs, IconButton, IconQuestionMarkCircle, Tooltip };
 });
 
 vi.mock('../src/ui/pages/ResizeTab', () => {

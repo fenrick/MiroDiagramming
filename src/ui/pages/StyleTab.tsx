@@ -13,6 +13,7 @@ import { adjustColor } from '../../core/utils/color-utils';
 import { useSelection } from '../hooks/use-selection';
 import { colors, space } from '@mirohq/design-tokens';
 import { TabPanel } from '../components/TabPanel';
+import { PageHelp } from '../components/PageHelp';
 import type { TabTuple } from './tab-definitions';
 import { Grid, Form, Heading, IconSlidersX, Text } from '@mirohq/design-system';
 
@@ -48,6 +49,7 @@ export const StyleTab: React.FC = () => {
   const sliderId = React.useId();
   return (
     <TabPanel tabId='style'>
+      <PageHelp content='Lighten or darken the fill colour of selected shapes' />
       <Grid columns={2}>
         <Grid.Item>
           <Form.Field>

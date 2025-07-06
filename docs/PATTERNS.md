@@ -168,12 +168,12 @@ Review these points manually during pull requests (see **ARCHITECTURE.md**).
 
 ## 7 Additional Patterns (brief stubs)
 
-| Name                   | Purpose                                   | Status              |
-| ---------------------- | ----------------------------------------- | ------------------- |
-| Accordion              | Progressive disclosure in forms           | Implemented         |
-| Tooltip                | Contextual help on icon buttons           | Needs React wrapper |
-| Data table (read-only) | Present static tabular info; no sorting   | Planned Q4-2025     |
-| Card list              | Board-linked items with thumbnail + title | Implemented         |
+| Name                   | Purpose                                   | Status          |
+| ---------------------- | ----------------------------------------- | --------------- |
+| Accordion              | Progressive disclosure in forms           | Implemented     |
+| Tooltip                | Contextual help on icon buttons           | Implemented     |
+| Data table (read-only) | Present static tabular info; no sorting   | Planned Q4-2025 |
+| Card list              | Board-linked items with thumbnail + title | Implemented     |
 
 Detailed specs will be added as these patterns stabilise.
 
