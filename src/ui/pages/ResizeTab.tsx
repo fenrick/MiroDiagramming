@@ -25,6 +25,7 @@ import {
   AspectRatioId,
 } from '../../core/utils/aspect-ratio';
 import { TabPanel } from '../components/TabPanel';
+import { PageHelp } from '../components/PageHelp';
 import {
   Heading,
   Text,
@@ -127,6 +128,7 @@ export const ResizeTab: React.FC = () => {
 
   return (
     <TabPanel tabId='size'>
+      <PageHelp content='Adjust size manually or copy from selection' />
       <Paragraph data-testid='size-display'>
         {copiedSize
           ? `Copied: ${copiedSize.width}×${copiedSize.height}`

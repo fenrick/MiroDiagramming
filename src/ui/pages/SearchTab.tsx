@@ -14,6 +14,7 @@ import {
   useReplaceCurrent,
 } from '../hooks/use-search-handlers';
 import { TabPanel } from '../components/TabPanel';
+import { PageHelp } from '../components/PageHelp';
 import type { TabTuple } from './tab-definitions';
 import {
   IconArrowRight,
@@ -128,6 +129,7 @@ export const SearchTab: React.FC = () => {
 
   return (
     <TabPanel tabId='search'>
+      <PageHelp content='Find and replace text on the board' />
       <Grid columns={2}>
         <Grid.Item>
           <RegexSearchField

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Paragraph, Button, Markdown } from '../components';
 import changelog from '../../../CHANGELOG.md?raw';
 import { TabPanel } from '../components/TabPanel';
+import { PageHelp } from '../components/PageHelp';
 import type { TabTuple } from './tab-definitions';
 import { Heading } from '@mirohq/design-system';
 
@@ -11,6 +12,7 @@ export const HelpTab: React.FC = () => {
 
   return (
     <TabPanel tabId='help'>
+      <PageHelp content='Overview of diagram options and tools' />
       <Heading level={2}>Getting Started</Heading>
       <Paragraph>
         Use the Create tab to import diagrams or cards from a JSON file. Nodes

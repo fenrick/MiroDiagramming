@@ -17,12 +17,14 @@ export interface TabPanelProps extends React.ComponentPropsWithoutRef<'div'> {
 export const TabPanel: React.FC<TabPanelProps> = ({
   tabId,
   children,
+  style,
   ...props
 }) => (
   <div
     id={`panel-${tabId}`}
     role='tabpanel'
     aria-labelledby={`tab-${tabId}`}
+    style={{ position: 'relative', ...style }}
     {...props}>
     {children}
   </div>

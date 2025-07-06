@@ -7,6 +7,7 @@ import { showError } from '../hooks/notifications';
 import { undoLastImport } from '../hooks/ui-utils';
 import { Grid, IconArrowArcLeft, IconPlus, Text } from '@mirohq/design-system';
 import { TabPanel } from '../components/TabPanel';
+import { PageHelp } from '../components/PageHelp';
 
 /** UI for the Cards tab. */
 export const CardsTab: React.FC = () => {
@@ -62,6 +63,7 @@ export const CardsTab: React.FC = () => {
 
   return (
     <TabPanel tabId='cards'>
+      <PageHelp content='Board-linked items with thumbnail and title' />
       <JsonDropZone onFiles={handleFiles} />
 
       {files.length > 0 && (
