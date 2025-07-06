@@ -15,3 +15,5 @@ export { Markdown } from './Markdown';
 export { RegexSearchField } from './RegexSearchField';
 export { FilterDropdown } from './FilterDropdown';
 export { FormGroup } from './FormGroup';
+export { Tooltip } from './Tooltip';
+export { PageHelp } from './PageHelp';

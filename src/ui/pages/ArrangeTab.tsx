@@ -9,6 +9,7 @@ import {
 import { applyGridLayout, GridOptions } from '../../board/grid-tools';
 import { applySpacingLayout, SpacingOptions } from '../../board/spacing-tools';
 import { TabPanel } from '../components/TabPanel';
+import { PageHelp } from '../components/PageHelp';
 import type { TabTuple } from './tab-definitions';
 import {
   Grid,
@@ -64,6 +65,7 @@ export const ArrangeTab: React.FC = () => {
 
   return (
     <TabPanel tabId='arrange'>
+      <PageHelp content='Grid and spacing tools' />
       <Grid columns={2}>
         <Grid.Item>
           <InputField

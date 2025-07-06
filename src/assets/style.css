@@ -139,3 +139,9 @@ body {
 .custom-modal-content {
   overflow-y: auto;
 }
+
+.page-help {
+  position: absolute;
+  top: var(--space-100);
+  right: var(--space-100);
+}

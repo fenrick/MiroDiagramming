@@ -16,6 +16,7 @@ import {
 } from '../../core/utils/excel-loader';
 import { templateManager } from '../../board/templates';
 import { TabPanel } from '../components/TabPanel';
+import { PageHelp } from '../components/PageHelp';
 import { showError } from '../hooks/notifications';
 import { RowInspector } from '../components/RowInspector';
 import type { TabTuple } from './tab-definitions';
@@ -133,6 +134,7 @@ export const ExcelTab: React.FC = () => {
 
   return (
     <TabPanel tabId='excel'>
+      <PageHelp content='Import nodes from Excel workbooks' />
       <div
         {...dropzone.getRootProps({ style })}
         aria-label='Excel drop area'>

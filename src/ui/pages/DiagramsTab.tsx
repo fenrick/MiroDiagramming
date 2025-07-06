@@ -3,6 +3,7 @@ import { StructuredTab } from './StructuredTab';
 import { CardsTab } from './CardsTab';
 import { LayoutEngineTab } from './LayoutEngineTab';
 import { TabPanel } from '../components/TabPanel';
+import { PageHelp } from '../components/PageHelp';
 import type { TabTuple } from './tab-definitions';
 import { Tabs } from '@mirohq/design-system';
 
@@ -32,6 +33,7 @@ export const DiagramsTab: React.FC = () => {
   }
   return (
     <TabPanel tabId='diagrams'>
+      <PageHelp content='Import data or experiment with the layout engine' />
       <Tabs
         value={sub}
         variant={'tabs'}

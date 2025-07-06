@@ -4,6 +4,7 @@ import { StyleTab } from './StyleTab';
 import { ArrangeTab } from './ArrangeTab';
 import { FramesTab } from './FramesTab';
 import { TabPanel } from '../components/TabPanel';
+import { PageHelp } from '../components/PageHelp';
 import type { TabTuple } from './tab-definitions';
 import { Tabs } from '@mirohq/design-system';
 
@@ -42,6 +43,7 @@ export const ToolsTab: React.FC = () => {
   const Current = SUB_TAB_COMPONENTS[sub];
   return (
     <TabPanel tabId='tools'>
+      <PageHelp content='Adjust size, style, arrange and frame utilities' />
       <Tabs
         value={sub}
         variant={'tabs'}

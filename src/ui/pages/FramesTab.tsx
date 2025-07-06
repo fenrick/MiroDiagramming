@@ -5,6 +5,7 @@ import {
   renameSelectedFrames,
 } from '../../board/frame-tools';
 import { TabPanel } from '../components/TabPanel';
+import { PageHelp } from '../components/PageHelp';
 import type { TabTuple } from './tab-definitions';
 import {
   Grid,
@@ -26,6 +27,7 @@ export const FramesTab: React.FC = () => {
   };
   return (
     <TabPanel tabId='frames'>
+      <PageHelp content='Rename or lock selected frames' />
       <Grid columns={2}>
         <Grid.Item>
           <Heading level={2}>Rename Frames</Heading>

@@ -6,6 +6,15 @@ import { ArrangeTab } from '../src/ui/pages/ArrangeTab';
 import * as grid from '../src/board/grid-tools';
 import * as spacing from '../src/board/spacing-tools';
 
+class ResizeObserverMock {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+(
+  global as unknown as { ResizeObserver: typeof ResizeObserver }
+).ResizeObserver = ResizeObserverMock as unknown as typeof ResizeObserver;
+
 beforeEach(() => {
   vi.spyOn(grid, 'applyGridLayout').mockResolvedValue(undefined);
   vi.spyOn(spacing, 'applySpacingLayout').mockResolvedValue(undefined);
@@ -36,5 +45,13 @@ describe('ArrangeTab', () => {
     render(<ArrangeTab />);
     fireEvent.click(screen.getByRole('button', { name: 'Distribute' }));
     expect(spy).toHaveBeenCalled();
+  });
+
+  test('shows page help tooltip', async () => {
+    render(<ArrangeTab />);
+    const helpButton = screen.getByRole('button', { name: 'Help' });
+    fireEvent.focus(helpButton);
+    const tip = await screen.findByRole('tooltip');
+    expect(tip).toHaveTextContent('Grid and spacing tools');
   });
 });

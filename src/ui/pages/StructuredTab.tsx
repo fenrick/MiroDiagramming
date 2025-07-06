@@ -8,6 +8,7 @@ import {
 } from '../components';
 import { JsonDropZone } from '../components/JsonDropZone';
 import { TabPanel } from '../components/TabPanel';
+import { PageHelp } from '../components/PageHelp';
 import { space } from '@mirohq/design-tokens';
 import {
   GraphProcessor,
@@ -143,6 +144,7 @@ export const StructuredTab: React.FC = () => {
     <TabPanel
       tabId='structured'
       style={{ marginTop: space[200] }}>
+      <PageHelp content='Flow or tree diagrams with advanced options' />
       <JsonDropZone onFiles={handleFiles} />
 
       {importQueue.length > 0 && (
