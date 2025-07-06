@@ -152,6 +152,7 @@ export function mapRowToCard(
     'style',
     themeVal != null ? { cardTheme: String(themeVal) } : undefined,
   );
+  
   return card;
 }
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Button } from './Button';
+import { Form, Input } from '@mirohq/design-system';
 import { getDropzoneStyle } from '../hooks/ui-utils';
 import { space as dsSpace } from '@mirohq/design-tokens';
 
