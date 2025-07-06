@@ -5,7 +5,7 @@ import { TAB_DATA, Tab } from '../ui/pages/tabs';
 import { EditMetadataModal, IntroScreen } from '../ui/components';
 import { ExcelDataProvider } from '../ui/hooks/excel-data-context';
 import type { ExcelRow } from '../core/utils/excel-loader';
-import { createTheme, Tabs, themes, Primitive } from '@mirohq/design-system';
+import { createTheme, Tabs, themes } from '@mirohq/design-system';
 import { Paragraph } from '../ui/components/Paragraph';
 
 const lightThemeClassName = createTheme(themes.light);
@@ -44,9 +44,8 @@ function AppShell(): React.JSX.Element {
   const current = TAB_DATA.find((t) => t[1] === tab)!;
   const CurrentComp = current[4];
 
-  const PrimitiveDiv = Primitive.div;
   return (
-    <PrimitiveDiv>
+    <div className='scrollable'>
       <ExcelDataProvider
         value={{
           rows,
@@ -80,7 +79,7 @@ function AppShell(): React.JSX.Element {
           onClose={() => setShowMeta(false)}
         />
       </ExcelDataProvider>
-    </PrimitiveDiv>
+    </div>
   );
 }
 
