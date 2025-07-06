@@ -1,14 +1,17 @@
 import { Meta, Story, Canvas } from '@storybook/blocks';
 import { CardProcessor } from '../board/card-processor';
 
-<Meta title="Core/CardProcessor" />
+<Meta
+  title='Core/CardProcessor'
+  of={CardProcessor}
+/>
 
 # CardProcessor
 
 Places card widgets in a grid layout and attaches metadata for undo.
 
 <Canvas>
-  <Story name="usage">
+  <Story name='usage'>
     {() => {
       const processor = new CardProcessor();
       processor.processFile(new File([], 'cards.csv'));
