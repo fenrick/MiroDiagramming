@@ -3,7 +3,7 @@
 @import '@mirohq/design-system-themes/light.css';
 
 :root {
-  /* Mirotone alias variables mapped to design-system tokens */
+  /* Design-system token variables */
   --space-xxsmall: var(--space-50);
   --space-xsmall: var(--space-100);
   --space-small: var(--space-200);

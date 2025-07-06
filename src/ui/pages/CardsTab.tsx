@@ -6,6 +6,7 @@ import { CardProcessor } from '../../board/card-processor';
 import { showError } from '../hooks/notifications';
 import { undoLastImport } from '../hooks/ui-utils';
 import { Grid, IconArrowArcLeft, IconPlus, Text } from '@mirohq/design-system';
+import { TabPanel } from '../components/TabPanel';
 
 /** UI for the Cards tab. */
 export const CardsTab: React.FC = () => {
@@ -60,10 +61,7 @@ export const CardsTab: React.FC = () => {
   };
 
   return (
-    <div
-      id='panel-cards'
-      role='tabpanel'
-      aria-labelledby='tab-cards'>
+    <TabPanel tabId='cards'>
       <JsonDropZone onFiles={handleFiles} />
 
       {files.length > 0 && (
@@ -133,6 +131,6 @@ export const CardsTab: React.FC = () => {
           </Grid.Item>
         </Grid>
       )}
-    </div>
+    </TabPanel>
   );
 };

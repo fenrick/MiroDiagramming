@@ -7,6 +7,7 @@ import {
   SelectOption,
 } from '../components';
 import { JsonDropZone } from '../components/JsonDropZone';
+import { TabPanel } from '../components/TabPanel';
 import { space } from '@mirohq/design-tokens';
 import {
   GraphProcessor,
@@ -139,10 +140,8 @@ export const StructuredTab: React.FC = () => {
   );
 
   return (
-    <div
-      id='panel-diagram'
-      role='tabpanel'
-      aria-labelledby='tab-diagram'
+    <TabPanel
+      tabId='structured'
       style={{ marginTop: space[200] }}>
       <JsonDropZone onFiles={handleFiles} />
 
@@ -376,6 +375,6 @@ export const StructuredTab: React.FC = () => {
           </Grid.Item>
         </Grid>
       )}
-    </div>
+    </TabPanel>
   );
 };

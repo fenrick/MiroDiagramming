@@ -1,19 +1,29 @@
 import React from 'react';
-import type { TabId } from '../pages/tab-definitions';
 
 /**
  * Wraps tab content with appropriate ARIA attributes.
  */
-export const TabPanel: React.FC<{
+export interface TabPanelProps extends React.ComponentPropsWithoutRef<'div'> {
   /** Identifier of the tab controlling this panel. */
-  tabId: TabId;
+  readonly tabId: string;
   /** Panel content. */
-  children: React.ReactNode;
-}> = ({ tabId, children }) => (
+  readonly children: React.ReactNode;
+}
+
+/**
+ * Wraps tab content with appropriate ARIA attributes while forwarding
+ * remaining props to the underlying container.
+ */
+export const TabPanel: React.FC<TabPanelProps> = ({
+  tabId,
+  children,
+  ...props
+}) => (
   <div
     id={`panel-${tabId}`}
     role='tabpanel'
-    aria-labelledby={`tab-${tabId}`}>
+    aria-labelledby={`tab-${tabId}`}
+    {...props}>
     {children}
   </div>
 );
