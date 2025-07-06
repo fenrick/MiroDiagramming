@@ -47,6 +47,7 @@ components or compose using the design system tokens.
 | **Modal**                     | title, isOpen, onClose          | small, medium             | auto                |
 | _SidebarTab_                  | id, icon, title                 | persistent, modal         | fill                |
 | _TabBar_                      | tabs, tab, onChange, size?      | regular, small            | 48                  |
+| **TabPanel**                  | tabId                           | –                         | fill                |
 | **Grid**                      | gap, columns                    | responsive                | n/a                 |
 | **Stack**                     | gap, direction                  | vertical, horizontal      | n/a                 |
 | **Cluster**                   | gap, align                      | left, right, centre       | n/a                 |

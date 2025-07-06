@@ -20,6 +20,10 @@ developer can translate designs into code with zero ambiguity.
 
 ---
 
+Each page component wraps its content in a `TabPanel` wrapper which sets
+`role="tabpanel"` and links the panel to its controlling tab. Preview the tab
+layouts under **Pages/Tabs** in Storybook.
+
 ## 1  Diagrams Tab
 
 | Step | UI Element         | Copy (EN‑AU)                           | Interaction Flow                               | State Store   |
