@@ -18,17 +18,6 @@ src/ui/
     RowInspector.tsx
     SegmentedControl.tsx
     TabBar.tsx
-    legacy/
-      Button.tsx
-      Checkbox.tsx
-      FormGroup.tsx
-      Heading.tsx
-      Icon.tsx
-      InputField.tsx
-      Paragraph.tsx
-      Select.tsx
-      Text.tsx
-      index.ts
   hooks/
     excel-data-context.tsx
     notifications.ts
@@ -69,7 +58,6 @@ src/ui/
 | components/RowInspector.tsx      | Displays row details in side panel.                    |
 | components/SegmentedControl.tsx  | Simple segmented switch for small options.             |
 | components/TabBar.tsx            | Horizontal list of available tabs.                     |
-| components/legacy/               | Legacy folder; all wrappers have been migrated.        |
 | hooks/                           | React hooks for state management and board operations. |
 | pages/                           | Individual tabs rendered inside the panel.             |
 | style-presets.ts                 | Named style collections for widgets.                   |

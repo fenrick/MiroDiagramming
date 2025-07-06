@@ -2,7 +2,10 @@ import React from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Button } from './Button';
 import { getDropzoneStyle } from '../hooks/ui-utils';
-import { space } from '@mirohq/design-tokens';
+import { space as dsSpace } from '@mirohq/design-tokens';
+
+// Provide semantic spacing aliases until the design tokens include them.
+const space = { ...dsSpace, small: dsSpace[200] } as const;
 import { IconSquareArrowIn, Text } from '@mirohq/design-system';
 
 export type JsonDropZoneProps = Readonly<{
@@ -52,7 +55,7 @@ export function JsonDropZone({
           {...fileInputProps}
         />
         {dropzone.isDragAccept ? (
-          <p style={{ margin: tokens.space.small }}>Drop your JSON file here</p>
+          <p style={{ margin: space.small }}>Drop your JSON file here</p>
         ) : (
           <div style={{ padding: space[200] }}>
             <Button
@@ -61,7 +64,7 @@ export function JsonDropZone({
               icon={<IconSquareArrowIn />}>
               <Text>Select JSON file</Text>
             </Button>
-            <p style={{ marginTop: tokens.space.small }}>
+            <p style={{ marginTop: space.small }}>
               Or drop your JSON file here
             </p>
           </div>
