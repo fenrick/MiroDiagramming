@@ -1,6 +1,7 @@
 import type { Decorator, Preview } from '@storybook/react';
 import '@mirohq/design-system-themes/base.css';
 import '@mirohq/design-system-themes/light.css';
+import '../src/assets/style.css';
 
 /**
  * Custom viewport definitions for Storybook. Miro restricts embedded
