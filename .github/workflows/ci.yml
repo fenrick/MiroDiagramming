@@ -115,6 +115,7 @@ jobs:
           merge-multiple: true
       - name: Merge coverage
         run: |
+          mkdir -p coverage
           npx lcov-result-merger "coverage-*/lcov.info" coverage/lcov.info
           cat coverage-*/sonar-report.xml > coverage/sonar-report.xml
       - name: Upload coverage
