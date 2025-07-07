@@ -8,32 +8,7 @@ on:
 permissions: write-all
 
 jobs:
-  static-analysis:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [24]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-      - run: corepack enable
-      - run: npm install --frozen-lockfile || npm install
-      - name: Audit dependencies
-        run: npm audit --omit=dev --audit-level=moderate
-      - name: Prettier
-        run: npm run prettier:check
-      - name: ESLint
-        run: npm run lint
-      - name: Stylelint
-        run: npm run stylelint
-      - name: Typecheck
-        run: npm run typecheck
-
-  unit-tests:
-    needs: static-analysis
+  prettier:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -45,8 +20,99 @@ jobs:
       - run: npm install --frozen-lockfile || npm install
       - name: Audit dependencies
         run: npm audit --omit=dev --audit-level=moderate
+      - name: Prettier
+        run: npm run prettier:check
+
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'npm'
+      - run: corepack enable
+      - run: npm install --frozen-lockfile || npm install
+      - name: Audit dependencies
+        run: npm audit --omit=dev --audit-level=moderate
+      - name: ESLint
+        run: npm run lint
+
+  stylelint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'npm'
+      - run: corepack enable
+      - run: npm install --frozen-lockfile || npm install
+      - name: Audit dependencies
+        run: npm audit --omit=dev --audit-level=moderate
+      - name: Stylelint
+        run: npm run stylelint
+
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'npm'
+      - run: corepack enable
+      - run: npm install --frozen-lockfile || npm install
+      - name: Audit dependencies
+        run: npm audit --omit=dev --audit-level=moderate
+      - name: Typecheck
+        run: npm run typecheck
+
+  unit-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'npm'
+      - run: corepack enable
+      - run: npm install --frozen-lockfile || npm install
+      - name: Audit dependencies
+        run: npm audit --omit=dev --audit-level=moderate
       - name: Unit tests
-        run: npm test
+        run: npm test -- --shard=${{ matrix.shard }}/2
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ matrix.shard }}
+          path: coverage
+
+  merge-coverage:
+    if: always()
+    needs: unit-tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'npm'
+      - run: corepack enable
+      - name: Download coverage shards
+        uses: actions/download-artifact@v4
+        with:
+          pattern: coverage-*
+          path: .
+          merge-multiple: true
+      - name: Merge coverage
+        run: |
+          npx lcov-result-merger "coverage-*/lcov.info" coverage/lcov.info
+          cat coverage-*/sonar-report.xml > coverage/sonar-report.xml
       - name: Upload coverage
         uses: actions/upload-artifact@v4
         with:
@@ -54,7 +120,8 @@ jobs:
           path: coverage
 
   sonar:
-    needs: unit-tests
+    if: always()
+    needs: merge-coverage
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -114,7 +181,14 @@ jobs:
 
   release:
     if: github.event_name == 'push'
-    needs: build
+    needs:
+      - prettier
+      - eslint
+      - stylelint
+      - typecheck
+      - unit-tests
+      - sonar
+      - build
     runs-on: ubuntu-latest
     outputs:
       tag: ${{ steps.release_tag.outputs.tag }}

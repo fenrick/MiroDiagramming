@@ -144,7 +144,10 @@ If any step fails, do not promote to production.
 
 ```
 Push → GitHub Action
-        ├─ Lint, unit, Sonar
+        ├─ Prettier, ESLint, Stylelint, Typecheck
+        ├─ Unit tests (parallel shards)
+        ├─ Merge coverage
+        ├─ Sonar analysis
         ├─ Build Storybook
         ├─ Build add-on bundle
         ├─ Upload artefact
