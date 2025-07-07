@@ -30,9 +30,143 @@ import {
 } from '../hooks/use-excel-handlers';
 import { IconPlus, Text } from '@mirohq/design-system';
 
+/**
+ * Remote workbook loader with error handling.
+ */
+async function handleRemote(
+  remote: string,
+  setLoader: React.Dispatch<
+    React.SetStateAction<ExcelLoader | GraphExcelLoader>
+  >,
+  setFile: React.Dispatch<React.SetStateAction<File | null>>,
+  setSource: React.Dispatch<React.SetStateAction<string>>,
+  setRows: React.Dispatch<React.SetStateAction<ExcelRow[]>>,
+  setSelected: React.Dispatch<React.SetStateAction<Set<number>>>,
+): Promise<void> {
+  try {
+    await fetchRemoteWorkbook(remote);
+    setLoader(graphExcelLoader);
+    setFile(null);
+    setSource('');
+    setRows([]);
+    setSelected(new Set());
+  } catch (e) {
+    await showError(String(e));
+  }
+}
+
+function loadRowsFromSource(
+  loader: ExcelLoader | GraphExcelLoader,
+  source: string,
+  setRows: React.Dispatch<React.SetStateAction<ExcelRow[]>>,
+  setSelected: React.Dispatch<React.SetStateAction<Set<number>>>,
+): void {
+  try {
+    if (source.startsWith('sheet:')) {
+      setRows(loader.loadSheet(source.slice(6)));
+    } else if (source.startsWith('table:')) {
+      setRows(loader.loadNamedTable(source.slice(6)));
+    }
+    setSelected(new Set());
+  } catch (e) {
+    void showError(String(e));
+  }
+}
+
+function toggleSelection(prev: Set<number>, idx: number): Set<number> {
+  const next = new Set(prev);
+  if (next.has(idx)) next.delete(idx);
+  /* istanbul ignore next */ else next.add(idx);
+  return next;
+}
+
+function useExcelDataSync(
+  data: ReturnType<typeof useExcelData> | null,
+  rows: ExcelRow[],
+  idColumn: string,
+  labelColumn: string,
+  templateColumn: string,
+): void {
+  React.useEffect(() => {
+    data?.setRows(rows);
+    data?.setIdColumn(idColumn);
+    data?.setLabelColumn(labelColumn);
+    data?.setTemplateColumn(templateColumn);
+  }, [rows, idColumn, labelColumn, templateColumn, data]);
+}
+
+function useDropHandler(
+  setLoader: React.Dispatch<
+    React.SetStateAction<ExcelLoader | GraphExcelLoader>
+  >,
+  setFile: React.Dispatch<React.SetStateAction<File | null>>,
+  setSource: React.Dispatch<React.SetStateAction<string>>,
+  setRows: React.Dispatch<React.SetStateAction<ExcelRow[]>>,
+  setSelected: React.Dispatch<React.SetStateAction<Set<number>>>,
+) {
+  return useExcelDrop((files) =>
+    handleDrop(files, setLoader, setFile, setSource, setRows, setSelected),
+  );
+}
+
+async function handleDrop(
+  files: File[],
+  setLoader: React.Dispatch<
+    React.SetStateAction<ExcelLoader | GraphExcelLoader>
+  >,
+  setFile: React.Dispatch<React.SetStateAction<File | null>>,
+  setSource: React.Dispatch<React.SetStateAction<string>>,
+  setRows: React.Dispatch<React.SetStateAction<ExcelRow[]>>,
+  setSelected: React.Dispatch<React.SetStateAction<Set<number>>>,
+): Promise<void> {
+  try {
+    await handleLocalDrop(files);
+    const f = files[0];
+    setLoader(excelLoader);
+    setFile(f);
+    setSource('');
+    setRows([]);
+    setSelected(new Set());
+  } catch (e) {
+    await showError(String(e));
+  }
+}
+
 /** Sidebar tab for importing nodes from Excel files. */
-// eslint-disable-next-line complexity
 export const ExcelTab: React.FC = () => {
+  const state = useExcelTabState();
+  return <ExcelTabView {...state} />;
+};
+
+interface ExcelTabState {
+  file: File | null;
+  remote: string;
+  source: string;
+  rows: ExcelRow[];
+  selected: Set<number>;
+  idColumn: string;
+  labelColumn: string;
+  templateColumn: string;
+  template: string;
+  loader: ExcelLoader | GraphExcelLoader;
+  dropzone: ReturnType<typeof useExcelDrop>['dropzone'];
+  style: React.CSSProperties;
+  columns: string[];
+  fetchRemote: () => Promise<void>;
+  loadRows: () => void;
+  toggle: (idx: number) => void;
+  handleCreate: () => void;
+  updateRow: (index: number, updated: ExcelRow) => void;
+  setRemote: (v: string) => void;
+  setSource: (v: string) => void;
+  setTemplate: (v: string) => void;
+  setLabelColumn: (v: string) => void;
+  setTemplateColumn: (v: string) => void;
+  setIdColumn: (v: string) => void;
+}
+
+// eslint-disable-next-line complexity
+function useExcelTabData() {
   const data = useExcelData();
   const [file, setFile] = React.useState<File | null>(null);
   const [remote, setRemote] = React.useState('');
@@ -49,55 +183,69 @@ export const ExcelTab: React.FC = () => {
     excelLoader,
   );
 
-  React.useEffect(() => {
-    data?.setRows(rows);
-  }, [rows, data]);
-  React.useEffect(() => {
-    data?.setIdColumn(idColumn);
-  }, [idColumn, data]);
-  React.useEffect(() => {
-    data?.setLabelColumn(labelColumn);
-  }, [labelColumn, data]);
-  React.useEffect(() => {
-    data?.setTemplateColumn(templateColumn);
-  }, [templateColumn, data]);
+  useExcelDataSync(data, rows, idColumn, labelColumn, templateColumn);
 
-  const fetchRemote = async (): Promise<void> => {
-    try {
-      await fetchRemoteWorkbook(remote);
-      setLoader(graphExcelLoader);
-      setFile(null);
-      setSource('');
-      setRows([]);
-      setSelected(new Set());
-    } catch (e) {
-      await showError(String(e));
-    }
+  return {
+    data,
+    file,
+    setFile,
+    remote,
+    setRemote,
+    source,
+    setSource,
+    rows,
+    setRows,
+    selected,
+    setSelected,
+    idColumn,
+    setIdColumn,
+    labelColumn,
+    setLabelColumn,
+    templateColumn,
+    setTemplateColumn,
+    template,
+    setTemplate,
+    loader,
+    setLoader,
   };
+}
+
+function useExcelTabHandlers(state: ReturnType<typeof useExcelTabData>) {
+  const {
+    remote,
+    setLoader,
+    setFile,
+    setSource,
+    setRows,
+    setSelected,
+    loader,
+    source,
+    rows,
+    selected,
+    template,
+    templateColumn,
+    idColumn,
+    labelColumn,
+    file,
+    setRows: updateRows,
+  } = state;
+
+  const fetchRemote = React.useCallback(
+    (): Promise<void> =>
+      handleRemote(remote, setLoader, setFile, setSource, setRows, setSelected),
+    [remote],
+  );
 
   const columns = React.useMemo(() => Object.keys(rows[0] ?? {}), [rows]);
 
-  const loadRows = (): void => {
-    try {
-      if (source.startsWith('sheet:')) {
-        setRows(loader.loadSheet(source.slice(6)));
-      } else if (source.startsWith('table:')) {
-        setRows(loader.loadNamedTable(source.slice(6)));
-      }
-      setSelected(new Set());
-    } catch (e) {
-      void showError(String(e));
-    }
-  };
+  const loadRows = React.useCallback(
+    (): void => loadRowsFromSource(loader, source, setRows, setSelected),
+    [loader, source],
+  );
 
-  const toggle = (idx: number): void => {
-    setSelected((prev) => {
-      const next = new Set(prev);
-      if (next.has(idx)) next.delete(idx);
-      /* istanbul ignore next */ else next.add(idx);
-      return next;
-    });
-  };
+  const toggle = React.useCallback((idx: number): void => {
+    setSelected((prev) => toggleSelection(prev, idx));
+  }, []);
 
   const syncUpdate = useExcelSync();
   const updateRow = React.useCallback(
@@ -115,23 +263,73 @@ export const ExcelTab: React.FC = () => {
     idColumn,
     labelColumn,
     file,
+    setRows: updateRows,
+  });
+
+  const { dropzone, style } = useDropHandler(
+    setLoader,
+    setFile,
+    setSource,
     setRows,
-  });
+    setSelected,
+  );
 
-  const { dropzone, style } = useExcelDrop(async (files) => {
-    try {
-      await handleLocalDrop(files);
-      const f = files[0];
-      setLoader(excelLoader);
-      setFile(f);
-      setSource('');
-      setRows([]);
-      setSelected(new Set());
-    } catch (e) {
-      await showError(String(e));
-    }
-  });
+  return {
+    columns,
+    fetchRemote,
+    loadRows,
+    toggle,
+    updateRow,
+    handleCreate,
+    dropzone,
+    style,
+  };
+}
 
+/**
+ * Manage all state and handlers for {@link ExcelTab}.
+ */
+function useExcelTabState(): ExcelTabState {
+  const dataState = useExcelTabData();
+  const handlerState = useExcelTabHandlers(dataState);
+  return { ...dataState, ...handlerState } as ExcelTabState;
+}
+
+/**
+ * Present the Excel import UI using provided state handlers.
+ */
+function ExcelTabView({
+  remote,
+  dropzone,
+  style,
+  fetchRemote,
+  loader,
+  source,
+  setSource,
+  setRemote,
+  loadRows,
+  rows,
+  template,
+  setTemplate,
+  labelColumn,
+  setLabelColumn,
+  templateColumn,
+  setTemplateColumn,
+  idColumn,
+  setIdColumn,
+  columns,
+  selected,
+  toggle,
+  handleCreate,
+  updateRow,
+}: ExcelTabState & {
+  setSource: (s: string) => void;
+  setRemote: (s: string) => void;
+  setTemplate: (s: string) => void;
+  setLabelColumn: (s: string) => void;
+  setTemplateColumn: (s: string) => void;
+  setIdColumn: (s: string) => void;
+}): React.JSX.Element {
   return (
     <TabPanel tabId='excel'>
       <PageHelp content='Import nodes from Excel workbooks' />
@@ -281,7 +479,7 @@ export const ExcelTab: React.FC = () => {
       />
     </TabPanel>
   );
-};
+}
 
 export const tabDef: TabTuple = [
   6,

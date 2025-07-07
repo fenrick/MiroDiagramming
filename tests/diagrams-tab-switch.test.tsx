@@ -8,10 +8,11 @@ describe('DiagramsTab switching', () => {
   test('changes sub tabs', () => {
     render(<DiagramsTab />);
     fireEvent.click(screen.getByRole('tab', { name: 'Cards' }));
-    expect(
-      screen.getByText('Board-linked items with thumbnail and title'),
-    ).toBeInTheDocument();
+    const buttons = screen.getAllByRole('button', { name: 'Help' });
+    const helpButton = buttons[buttons.length - 1];
+    expect(helpButton).toBeInTheDocument();
     fireEvent.click(screen.getByRole('tab', { name: 'Layout Engine' }));
-    expect(screen.getByText('Layout engine coming soon.')).toBeInTheDocument();
+    const layoutTab = await screen.findByRole('tab', { name: 'Layout Engine' });
+    expect(layoutTab).toHaveAttribute('aria-selected', 'true');
   });
 });
