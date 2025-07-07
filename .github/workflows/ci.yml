@@ -86,6 +86,8 @@ jobs:
         run: npm audit --omit=dev --audit-level=moderate
       - name: Unit tests
         run: npm test -- --shard=${{ matrix.shard }}/2
+      - name: Debug coverage files
+        run: ls -R coverage
       - name: Rename coverage folder
         if: always()
         run: mv coverage "coverage-${{ matrix.shard }}"
@@ -107,12 +109,18 @@ jobs:
           node-version: 24
           cache: 'npm'
       - run: corepack enable
-      - name: Download coverage shards
+      - name: Download coverage shard 1
         uses: actions/download-artifact@v4
         with:
-          pattern: coverage-*
-          path: .
-          merge-multiple: true
+          name: coverage-1
+          path: coverage-1
+      - name: Download coverage shard 2
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage-2
+          path: coverage-2
+      - name: Debug downloaded coverage files
+        run: ls -R .
       - name: Merge coverage
         run: |
           mkdir -p coverage
