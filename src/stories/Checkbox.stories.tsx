@@ -10,17 +10,9 @@ export default meta;
 type Story = StoryObj<typeof Checkbox>;
 
 export const Unchecked: Story = {
-  args: {
-    label: 'Option',
-    value: false,
-    onChange: (v: boolean) => console.log('changed', v),
-  },
+  args: { label: 'Option', value: false, onChange: () => {} },
 };
 
 export const Checked: Story = {
-  args: {
-    label: 'Option',
-    value: true,
-    onChange: (v: boolean) => console.log('changed', v),
-  },
+  args: { label: 'Option', value: true, onChange: () => {} },
 };

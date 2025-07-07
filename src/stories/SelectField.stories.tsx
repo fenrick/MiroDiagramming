@@ -17,5 +17,5 @@ export const Default: Story = {
       <SelectOption value='banana'>Banana</SelectOption>
     </SelectField>
   ),
-  args: { label: 'Fruit', onChange: (v: string) => console.log(v) },
+  args: { label: 'Fruit', onChange: () => {} },
 };

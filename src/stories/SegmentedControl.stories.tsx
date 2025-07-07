@@ -16,6 +16,6 @@ export const Default: Story = {
       { label: 'A', value: 'a' },
       { label: 'B', value: 'b' },
     ],
-    onChange: (v: string) => console.log(v),
+    onChange: () => {},
   },
 };

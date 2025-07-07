@@ -1,18 +1,21 @@
 /** @vitest-environment jsdom */
 import React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
 import { DiagramsTab } from '../src/ui/pages/DiagramsTab';
 
 describe('DiagramsTab switching', () => {
-  test('changes sub tabs', () => {
+  test('changes sub tabs', async () => {
     render(<DiagramsTab />);
     fireEvent.click(screen.getByRole('tab', { name: 'Cards' }));
     const buttons = screen.getAllByRole('button', { name: 'Help' });
     const helpButton = buttons[buttons.length - 1];
     expect(helpButton).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('tab', { name: 'Layout Engine' }));
-    const layoutTab = await screen.findByRole('tab', { name: 'Layout Engine' });
-    expect(layoutTab).toHaveAttribute('aria-selected', 'true');
+    const user = userEvent.setup();
+    await act(async () => {
+      await user.click(screen.getByRole('tab', { name: 'Layout Engine' }));
+    });
+    await screen.findByText('Layout engine coming soon.');
   });
 });
