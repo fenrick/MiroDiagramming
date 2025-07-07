@@ -122,8 +122,8 @@ Complexity limits enforced automatically by **SonarQube** gate.
   short.
 - **Conventional Commits** enforced by commit-lint.
 - Every PR must pass all CI gates; manual reviewers are optional.
-- **CodeQL** scan adds static-analysis findings to the check suite (workflow:
-  [.github/workflows/codeql.yml](../.github/workflows/codeql.yml)).
+- **CodeQL** scan adds static-analysis findings to the check suite (job `codeql`
+  in [.github/workflows/ci.yml](../.github/workflows/ci.yml)).
 
 ---
 
