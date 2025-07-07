@@ -16,5 +16,5 @@ export const Default: Story = {
       <SelectOption value='two'>Two</SelectOption>
     </Select>
   ),
-  args: { placeholder: 'Choose', onChange: (v: string) => console.log(v) },
+  args: { placeholder: 'Choose', onChange: () => {} },
 };

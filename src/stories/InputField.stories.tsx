@@ -10,9 +10,5 @@ export default meta;
 type Story = StoryObj<typeof InputField>;
 
 export const Default: Story = {
-  args: {
-    label: 'Name',
-    placeholder: 'Enter text',
-    onValueChange: (v: string) => console.log(v),
-  },
+  args: { label: 'Name', placeholder: 'Enter text', onValueChange: () => {} },
 };
