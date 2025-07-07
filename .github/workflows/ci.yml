@@ -8,7 +8,7 @@ on:
 permissions: write-all
 
 jobs:
-  lint-test:
+  static-analysis:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -31,11 +31,30 @@ jobs:
         run: npm run stylelint
       - name: Typecheck
         run: npm run typecheck
+
+  unit-tests:
+    needs: static-analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'npm'
+      - run: corepack enable
+      - run: npm install --frozen-lockfile || npm install
+      - name: Audit dependencies
+        run: npm audit --omit=dev --audit-level=moderate
       - name: Unit tests
         run: npm test
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage
 
   sonar:
-    needs: lint-test
+    needs: unit-tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -49,7 +68,11 @@ jobs:
       - run: npm install --frozen-lockfile || npm install
       - name: Audit dependencies
         run: npm audit --omit=dev --audit-level=moderate
-      - run: npm test
+      - name: Download coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage
+          path: coverage
       - name: SonarCloud Scan
         uses: sonarsource/sonarqube-scan-action@v5
         with:
