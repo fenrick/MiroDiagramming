@@ -147,6 +147,30 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
+  codeql:
+    if: always()
+    needs: unit-tests
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: actions
+            build-mode: none
+          - language: javascript-typescript
+            build-mode: none
+    steps:
+      - uses: actions/checkout@v4
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+
   build:
     needs: sonar
     runs-on: ubuntu-latest
@@ -188,6 +212,7 @@ jobs:
       - typecheck
       - unit-tests
       - sonar
+      - codeql
       - build
     runs-on: ubuntu-latest
     outputs:

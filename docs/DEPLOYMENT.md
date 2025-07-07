@@ -148,6 +148,7 @@ Push → GitHub Action
         ├─ Unit tests (parallel shards)
         ├─ Merge coverage
         ├─ Sonar analysis
+        ├─ CodeQL scan
         ├─ Build Storybook
         ├─ Build add-on bundle
         ├─ Upload artefact
