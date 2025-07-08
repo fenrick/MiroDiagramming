@@ -40,7 +40,8 @@ widgets and support design tokens such as `"tokens.color.yellow[150]"`.
 
 Connector styling is defined in
 [`templates/connectorTemplates.json`](../templates/connectorTemplates.json) and
-follows the same pattern.
+follows the same pattern. Connector definitions may also include an `alias`
+array to provide alternative names.
 
 ---
 

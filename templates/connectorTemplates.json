@@ -33,7 +33,8 @@
       "textOrientation": "horizontal"
     },
     "shape": "curved",
-    "caption": { "position": 0.5, "textAlignVertical": "middle" }
+    "caption": { "position": 0.5, "textAlignVertical": "middle" },
+    "alias": ["deploy"]
   },
   "realization": {
     "style": {
