@@ -9,7 +9,8 @@
       "textOrientation": "horizontal"
     },
     "shape": "curved",
-    "caption": { "position": 0.5, "textAlignVertical": "middle" }
+    "caption": { "position": 0.5, "textAlignVertical": "middle" },
+    "alias": []
   },
   "flow": {
     "style": {
@@ -21,7 +22,8 @@
       "textOrientation": "horizontal"
     },
     "shape": "curved",
-    "caption": { "position": 0.5, "textAlignVertical": "middle" }
+    "caption": { "position": 0.5, "textAlignVertical": "middle" },
+    "alias": ["flows"]
   },
   "assignment": {
     "style": {
@@ -34,7 +36,7 @@
     },
     "shape": "curved",
     "caption": { "position": 0.5, "textAlignVertical": "middle" },
-    "alias": ["deploy"]
+    "alias": ["deploy", "assigns"]
   },
   "realization": {
     "style": {
@@ -46,7 +48,8 @@
       "textOrientation": "horizontal"
     },
     "shape": "curved",
-    "caption": { "position": 0.5, "textAlignVertical": "middle" }
+    "caption": { "position": 0.5, "textAlignVertical": "middle" },
+    "alias": ["realizes", "realises", "realisation"]
   },
   "access": {
     "style": {
@@ -58,7 +61,8 @@
       "textOrientation": "horizontal"
     },
     "shape": "curved",
-    "caption": { "position": 0.5, "textAlignVertical": "middle" }
+    "caption": { "position": 0.5, "textAlignVertical": "middle" },
+    "alias": ["accesses"]
   },
   "influence": {
     "style": {
@@ -70,7 +74,8 @@
       "textOrientation": "horizontal"
     },
     "shape": "curved",
-    "caption": { "position": 0.5, "textAlignVertical": "middle" }
+    "caption": { "position": 0.5, "textAlignVertical": "middle" },
+    "alias": ["influences"]
   },
   "association": {
     "style": {
@@ -82,6 +87,7 @@
       "textOrientation": "horizontal"
     },
     "shape": "curved",
-    "caption": { "position": 0.5, "textAlignVertical": "middle" }
+    "caption": { "position": 0.5, "textAlignVertical": "middle" },
+    "alias": ["associates"]
   }
 }
