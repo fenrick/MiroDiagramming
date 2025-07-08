@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import type { JSX } from 'react';
 import React from 'react';
 import { EditMetadataModal } from '../ui/components/EditMetadataModal';
 import { ExcelDataProvider } from '../ui/hooks/excel-data-context';
