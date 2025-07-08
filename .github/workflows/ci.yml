@@ -216,6 +216,72 @@ jobs:
           name: build
           path: dist
 
+  tokens-verify:
+    needs: typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'npm'
+      - run: corepack enable
+      - run: npm install --frozen-lockfile || npm install
+      - name: Audit dependencies
+        run: npm audit --omit=dev --audit-level=moderate
+      - name: Verify design tokens
+        run: npm run tokens:verify
+
+  visual-diff:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'npm'
+      - run: corepack enable
+      - run: npm install --frozen-lockfile || npm install
+      - name: Audit dependencies
+        run: npm audit --omit=dev --audit-level=moderate
+      - name: Dark-mode screenshot diff
+        run: npm run visual:diff
+
+  bundle-size:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'npm'
+      - run: corepack enable
+      - run: npm install --frozen-lockfile || npm install
+      - name: Audit dependencies
+        run: npm audit --omit=dev --audit-level=moderate
+      - name: Check bundle size
+        run: npm run budget:check
+
+  cypress-smoke:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: 'npm'
+      - run: corepack enable
+      - run: npm install --frozen-lockfile || npm install
+      - name: Audit dependencies
+        run: npm audit --omit=dev --audit-level=moderate
+      - name: Run Cypress smoke tests
+        run: npm run cypress:smoke
+      - name: Run accessibility checks
+        run: npm run a11y:e2e
+
   release:
     if: github.event_name == 'push'
     needs:
@@ -227,6 +293,10 @@ jobs:
       - sonar
       - codeql
       - build
+      - tokens-verify
+      - visual-diff
+      - bundle-size
+      - cypress-smoke
     runs-on: ubuntu-latest
     outputs:
       tag: ${{ steps.release_tag.outputs.tag }}

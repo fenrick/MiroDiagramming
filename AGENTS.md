@@ -34,3 +34,12 @@ documented in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 Per [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) §6, maintain **90 % line and
 branch coverage** and keep **cyclomatic complexity ≤ 8**. New or updated
 features must include unit tests and documentation comments.
+
+Additional CI checks run automatically:
+
+1. **Dark-mode screenshot diffs** via `npm run visual:diff`. Storybook builds
+   both themes and `jest-image-snapshot` fails the merge if the visual diff
+   exceeds 0.1 %.
+2. **Design token verification** via `npm run tokens:verify`.
+3. **Bundle size budget** via `npm run budget:check` (≤ 300 KB gzipped).
+4. **Cypress smoke tests** via `npm run cypress:smoke` after the staging deploy.
