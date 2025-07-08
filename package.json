@@ -29,7 +29,12 @@
     "semantic-release": "semantic-release",
     "commitlint": "commitlint --color",
     "ci:local": "node scripts/local-ci.mjs",
-    "storybook": "storybook dev -p 6006"
+    "storybook": "storybook dev -p 6006",
+    "tokens:verify": "node src/ci/tokenVerify.js",
+    "visual:diff": "node src/ci/visualDiff.js",
+    "budget:check": "node src/ci/bundleBudget.js",
+    "cypress:smoke": "node src/ci/cypressSmoke.js",
+    "a11y:e2e": "node src/ci/a11yE2E.js"
   },
   "dependencies": {
     "@mirohq/design-system": "^1.0.15",
@@ -71,7 +76,9 @@
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.35.1",
     "vite": "^7.0.2",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "cypress": "^14.5.1",
+    "cypress-axe": "^1.6.0"
   },
   "commitlint": {
     "extends": [
