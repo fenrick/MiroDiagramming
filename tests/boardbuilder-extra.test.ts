@@ -120,13 +120,13 @@ describe('BoardBuilder additional cases', () => {
       {
         id: 'n1',
         label: 'A',
-        type: 'Role',
+        type: 'Motivation',
         metadata: { rowId: '42' },
       } as Record<string, unknown>,
       { x: 0, y: 0, width: 1, height: 1 },
     );
     expect(shape.setMetadata).toHaveBeenCalledWith(STRUCT_GRAPH_KEY, {
-      type: 'Role',
+      type: 'Motivation',
       label: 'A',
       rowId: '42',
     });
@@ -153,7 +153,7 @@ describe('BoardBuilder additional cases', () => {
         type: 'group',
         getItems: jest.fn().mockResolvedValue(itemMocks),
       } as unknown as { type: string; getItems: () => Promise<unknown[]> });
-    const node = { id: 'n', label: 'L', type: 'Role' } as Record<
+    const node = { id: 'n', label: 'L', type: 'Motivation' } as Record<
       string,
       unknown
     >;

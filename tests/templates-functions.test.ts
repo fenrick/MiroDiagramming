@@ -4,7 +4,9 @@ import { connectorTemplates, templateManager } from '../src/board/templates';
 
 test('template helpers return values or undefined', () => {
   // Known templates return values
-  expect(templateManager.getTemplate('Role')).toBeDefined();
+  expect(templateManager.getTemplate('Motivation')).toBeDefined();
+  // Alias names also resolve
+  expect(templateManager.getTemplate('Stakeholder')).toBeDefined();
   // Unknown template returns undefined
   expect(templateManager.getTemplate('nope')).toBeUndefined();
   (connectorTemplates as unknown as Record<string, unknown>).extra = {
@@ -18,14 +20,16 @@ test('template helpers return values or undefined', () => {
   delete (connectorTemplates as unknown as Record<string, unknown>).extra;
 });
 
+test('connector aliases resolve correctly', () => {
+  expect(templateManager.getConnectorTemplate('deploy')).toBeDefined();
+});
+
 test('resolveStyle substitutes tokens', () => {
   const style = templateManager.resolveStyle({
     fillColor: 'tokens.color.yellow[150]',
-    fontWeight: 'tokens.typography.fontWeight.bold',
     missing: 'tokens.color.nope[999]',
   });
   expect(style.fillColor).toMatch(/^#/);
-  expect(style.fontWeight).toBe('var(--font-weight-bold)');
   expect(style.missing).toBeDefined();
 });
 
@@ -34,7 +38,7 @@ describe('token resolution', () => {
     const style = templateManager.resolveStyle({
       fillColor: 'tokens.color.red[700]',
     });
-    expect(style.fillColor).toBe('#6b1720');
+    expect(style.fillColor.toLowerCase()).toBe('#6b1720');
   });
 
   test('returns raw value for unknown tokens', () => {
@@ -42,8 +46,12 @@ describe('token resolution', () => {
     expect(style.something).toBe('tokens.foo.bar');
   });
 
-  test('looks up generic tokens', () => {
-    const style = templateManager.resolveStyle({ gap: 'tokens.space.small' });
-    expect(style.gap).toBe('var(--space-small)');
+  test('parses numeric values', () => {
+    const style = templateManager.resolveStyle({
+      borderWidth: '2px',
+      borderColor: '#123456',
+    });
+    expect(style.borderWidth).toBe(2);
+    expect(style.borderColor).toBe('#123456');
   });
 });

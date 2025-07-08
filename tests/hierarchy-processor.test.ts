@@ -27,11 +27,11 @@ describe('HierarchyProcessor', () => {
       name: 'h.json',
       text: jest
         .fn()
-        .mockResolvedValue('[{"id":"n","label":"L","type":"Role"}]'),
+        .mockResolvedValue('[{"id":"n","label":"L","type":"Motivation"}]'),
     } as unknown as File;
     await proc.processFile(file);
     expect(spy).toHaveBeenCalledWith(
-      [{ id: 'n', label: 'L', type: 'Role' }],
+      [{ id: 'n', label: 'L', type: 'Motivation' }],
       {},
     );
   });
@@ -62,7 +62,7 @@ describe('HierarchyProcessor', () => {
         id: 's1',
       } as unknown);
     const proc = new HierarchyProcessor();
-    await proc.processHierarchy([{ id: 'n', label: 'L', type: 'Role' }]);
+    await proc.processHierarchy([{ id: 'n', label: 'L', type: 'Motivation' }]);
     expect(global.miro.board.viewport.zoomTo).toHaveBeenCalled();
   });
 
@@ -97,8 +97,8 @@ describe('HierarchyProcessor', () => {
       {
         id: 'p',
         label: 'Parent',
-        type: 'Role',
-        children: [{ id: 'c', label: 'Child', type: 'Role' }],
+        type: 'Motivation',
+        children: [{ id: 'c', label: 'Child', type: 'Motivation' }],
       },
     ]);
     expect(

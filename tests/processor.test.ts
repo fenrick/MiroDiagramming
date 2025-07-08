@@ -1,5 +1,6 @@
 import { GraphProcessor } from '../src/core/graph/graph-processor';
 import { graphService } from '../src/core/graph';
+import { BoardBuilder } from '../src/board/board-builder';
 import { templateManager } from '../src/board/templates';
 import { layoutEngine } from '../src/core/layout/elk-layout';
 import * as frameUtils from '../src/board/frame-utils';
@@ -85,8 +86,12 @@ describe('GraphProcessor', () => {
     graphService.resetBoardCache();
   });
 
-  it('processGraph runs without throwing and syncs items', async () => {
+  it('processGraph runs without throwing and syncs items once after validation', async () => {
+    const spy = jest
+      .spyOn(BoardBuilder.prototype, 'syncAll')
+      .mockResolvedValue();
     await processor.processGraph(sample as unknown);
+    expect(spy).toHaveBeenCalledTimes(1);
   });
 
   it('delegates work to helper methods', async () => {
@@ -106,7 +111,7 @@ describe('GraphProcessor', () => {
       });
 
     const simpleGraph = {
-      nodes: [{ id: 'n1', label: 'A', type: 'Role' }],
+      nodes: [{ id: 'n1', label: 'A', type: 'Motivation' }],
       edges: [],
     };
     await gp.processGraph(simpleGraph as unknown);
@@ -137,7 +142,7 @@ describe('GraphProcessor', () => {
 
   it('positions frame at space center', async () => {
     const simpleGraph = {
-      nodes: [{ id: 'n1', label: 'A', type: 'Role' }],
+      nodes: [{ id: 'n1', label: 'A', type: 'Motivation' }],
       edges: [],
     };
     // Mock layout with a single node to make dimensions deterministic
@@ -174,7 +179,7 @@ describe('GraphProcessor', () => {
 
   it('zooms to shapes when no frame created', async () => {
     const simpleGraph = {
-      nodes: [{ id: 'n1', label: 'A', type: 'Role' }],
+      nodes: [{ id: 'n1', label: 'A', type: 'Motivation' }],
       edges: [],
     };
     jest
@@ -196,7 +201,7 @@ describe('GraphProcessor', () => {
   it('records widget ids for rows', async () => {
     const simpleGraph = {
       nodes: [
-        { id: 'n1', label: 'A', type: 'Role', metadata: { rowId: 'r1' } },
+        { id: 'n1', label: 'A', type: 'Motivation', metadata: { rowId: 'r1' } },
       ],
       edges: [],
     };
@@ -214,7 +219,7 @@ describe('GraphProcessor', () => {
 
   it('throws when edge source is missing', async () => {
     const graph = {
-      nodes: [{ id: 'n1', label: 'A', type: 'Role' }],
+      nodes: [{ id: 'n1', label: 'A', type: 'Motivation' }],
       edges: [{ from: 'n2', to: 'n1' }],
     };
     await expect(processor.processGraph(graph as unknown)).rejects.toThrow(
@@ -224,7 +229,7 @@ describe('GraphProcessor', () => {
 
   it('throws when edge target is missing', async () => {
     const graph = {
-      nodes: [{ id: 'n1', label: 'A', type: 'Role' }],
+      nodes: [{ id: 'n1', label: 'A', type: 'Motivation' }],
       edges: [{ from: 'n1', to: 'n2' }],
     };
     await expect(processor.processGraph(graph as unknown)).rejects.toThrow(

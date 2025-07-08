@@ -11,7 +11,10 @@ describe('LayoutEngine', () => {
   });
 
   test('layoutGraph handles graphs without edges', async () => {
-    const graph = { nodes: [{ id: 'n', label: 'A', type: 'Role' }], edges: [] };
+    const graph = {
+      nodes: [{ id: 'n', label: 'A', type: 'Motivation' }],
+      edges: [],
+    };
     const result = await layoutEngine.layoutGraph(
       graph as Parameters<typeof layoutEngine.layoutGraph>[0],
     );

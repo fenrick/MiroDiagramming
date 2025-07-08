@@ -1,5 +1,6 @@
 import React from 'react';
 import { BoardLike, getBoard } from '../../board/board';
+import { boardCache } from '../../board/board-cache';
 
 /**
  * React hook returning the current board selection.
@@ -20,7 +21,8 @@ export function useSelection(
     }
     let active = true;
     const update = (): void => {
-      b.getSelection().then((s) => {
+      boardCache.clearSelection();
+      boardCache.getSelection(b).then((s) => {
         if (active) setSel(s);
       });
     };

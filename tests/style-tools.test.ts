@@ -20,7 +20,7 @@ describe('style-tools', () => {
     const board = { getSelection: jest.fn().mockResolvedValue([item]) };
     await tweakFillColor(0.5, board);
     expect(item.style.fillColor).toBe('#c0c0c0');
-    expect(item.style.color).toMatch(/^#(fff|000)/i);
+    expect(item.style.color).toMatch(/^#(fff|000|1c1c1e)/i);
     expect(item.sync).toHaveBeenCalled();
   });
 

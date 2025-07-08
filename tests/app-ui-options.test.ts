@@ -18,6 +18,7 @@ describe('App layout options and undo button', () => {
       .spyOn(GraphProcessor.prototype, 'processFile')
       .mockResolvedValue(undefined);
     render(React.createElement(App));
+    fireEvent.click(screen.getByTestId('start-button'));
     await act(async () => {
       selectFile();
     });
@@ -47,6 +48,7 @@ describe('App layout options and undo button', () => {
 
   test('hides layout options in cards mode', () => {
     render(React.createElement(App));
+    fireEvent.click(screen.getByTestId('start-button'));
     fireEvent.click(screen.getByRole('tab', { name: 'Cards' }));
     expect(screen.queryByLabelText('Algorithm')).toBeNull();
     expect(screen.queryByLabelText('Direction')).toBeNull();

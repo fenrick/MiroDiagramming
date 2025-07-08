@@ -1,7 +1,6 @@
 /**
  * Colour manipulation utilities for the currently selected widgets.
  */
-import { tokens } from '../ui/tokens';
 import { colors } from '@mirohq/design-tokens';
 import {
   adjustColor,
@@ -95,11 +94,11 @@ export async function tweakFillColor(
     const fill =
       typeof style[fillKey] === 'string'
         ? style[fillKey]
-        : resolveColor(tokens.color.white, colors.white);
+        : resolveColor(colors.white, colors.white);
     const font =
       fontKey && typeof style[fontKey] === 'string'
         ? style[fontKey]
-        : resolveColor(tokens.color.primaryText, colors['gray-700']);
+        : resolveColor(colors['gray-700'], colors['gray-700']);
     const newFill = adjustColor(fill, delta);
     style[fillKey] = newFill;
     if (fontKey) {

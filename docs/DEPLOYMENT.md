@@ -144,7 +144,11 @@ If any step fails, do not promote to production.
 
 ```
 Push → GitHub Action
-        ├─ Lint, unit, Sonar
+        ├─ Prettier, ESLint, Stylelint, Typecheck
+        ├─ Unit tests (parallel shards)
+        ├─ Merge coverage
+        ├─ Sonar analysis
+        ├─ CodeQL scan
         ├─ Build Storybook
         ├─ Build add-on bundle
         ├─ Upload artefact
@@ -155,6 +159,13 @@ Push → GitHub Action
 
 All gates and complexity budgets are defined in **ARCHITECTURE.md** (sections
 4–6).
+
+The pipeline is orchestrated by the GitHub Actions workflow in
+`.github/workflows/ci.yml`. Every push or pull request triggers the jobs listed
+above using Node 24. Artefacts from the build and Storybook steps are uploaded
+as workflow artefacts so deployment jobs can promote the exact output. Run
+`npm run ci:local` to replicate the pipeline on your machine before opening a
+pull request.
 
 ---
 

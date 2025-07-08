@@ -11,7 +11,9 @@ import {
 
 describe('data mapper', () => {
   test('maps rows to nodes with metadata', () => {
-    const rows = [{ ID: '1', Type: 'Role', Name: 'A', Note: 'n', Extra: 'x' }];
+    const rows = [
+      { ID: '1', Type: 'Motivation', Name: 'A', Note: 'n', Extra: 'x' },
+    ];
     const opts = {
       idColumn: 'ID',
       templateColumn: 'Type',
@@ -24,7 +26,7 @@ describe('data mapper', () => {
       {
         id: '1',
         label: 'A',
-        type: 'Role',
+        type: 'Motivation',
         metadata: { text: 'n', extra: 'x', rowId: '1' },
       },
     ]);

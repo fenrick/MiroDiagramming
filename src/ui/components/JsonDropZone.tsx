@@ -1,15 +1,24 @@
 import React from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Button, Icon, InputField, Paragraph, Text } from './legacy';
+import { Button } from './Button';
 import { getDropzoneStyle } from '../hooks/ui-utils';
-import { tokens } from '../tokens';
+import { space as dsSpace } from '@mirohq/design-tokens';
+
+// Provide semantic spacing aliases until the design tokens include them.
+const space = { ...dsSpace, small: dsSpace[200] } as const;
+import { IconSquareArrowIn, Text } from '@mirohq/design-system';
 
 export type JsonDropZoneProps = Readonly<{
   /** Callback invoked with selected files. */
   onFiles: (files: File[]) => void;
 }>;
 
-/** Dropzone for importing JSON files. */
+/**
+ * Dropzone for importing a single JSON file.
+ *
+ * The hidden input forwards its change event to react-dropzone so both
+ * drag-and-drop and file picker interactions invoke `onFiles` uniformly.
+ */
 export function JsonDropZone({
   onFiles,
 }: JsonDropZoneProps): React.JSX.Element {
@@ -19,7 +28,7 @@ export function JsonDropZone({
     onDrop: onFiles,
   });
 
-  const style = React.useMemo(() => {
+  const dropzoneStyle = React.useMemo(() => {
     let state: Parameters<typeof getDropzoneStyle>[0] = 'base';
     if (dropzone.isDragReject) {
       state = 'reject';
@@ -29,38 +38,44 @@ export function JsonDropZone({
     return getDropzoneStyle(state);
   }, [dropzone.isDragAccept, dropzone.isDragReject]);
 
+  const { onChange, ...fileInputProps } = dropzone.getInputProps();
+
   return (
     <>
       <div
-        {...dropzone.getRootProps({ style })}
+        {...dropzone.getRootProps({ style: dropzoneStyle })}
         aria-label='File drop area'
         aria-describedby='dropzone-instructions'>
-        <InputField label='JSON file'>
-          <input
-            data-testid='file-input'
-            {...dropzone.getInputProps({ 'aria-label': 'JSON file input' })}
-          />
-        </InputField>
+        {/* hidden input ensures keyboard selection triggers the drop handler */}
+        <input
+          className='custom-visually-hidden'
+          data-testid='file-input'
+          onChange={onChange}
+          aria-label='JSON file input'
+          {...fileInputProps}
+        />
         {dropzone.isDragAccept ? (
-          <Paragraph className='dnd-text'>Drop your JSON file here</Paragraph>
+          <p style={{ margin: space.small }}>Drop your JSON file here</p>
         ) : (
-          <div style={{ padding: tokens.space.small }}>
-            <Button variant='primary'>
-              <Icon name='upload' />
+          <div style={{ padding: space[200] }}>
+            <Button
+              variant='primary'
+              iconPosition='start'
+              icon={<IconSquareArrowIn />}>
               <Text>Select JSON file</Text>
             </Button>
-            <Paragraph className='dnd-text'>
+            <p style={{ marginTop: space.small }}>
               Or drop your JSON file here
-            </Paragraph>
+            </p>
           </div>
         )}
       </div>
-      <Paragraph
+      <p
         id='dropzone-instructions'
         className='custom-visually-hidden'>
         Press Enter to open the file picker or drop a JSON file on the area
         above.
-      </Paragraph>
+      </p>
     </>
   );
 }

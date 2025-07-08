@@ -1,3 +1,4 @@
+/** @vitest-environment jsdom */
 import { GraphClient } from '../src/core/utils/graph-client';
 import { GraphAuth } from '../src/core/utils/graph-auth';
 

@@ -1,6 +1,6 @@
 /** @vitest-environment jsdom */
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { HelpTab } from '../src/ui/pages/HelpTab';
 
@@ -12,7 +12,10 @@ describe('HelpTab', () => {
     ).toBeInTheDocument();
     expect(screen.getByText(/compact hierarchical tree/i)).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: /changelog/i }),
+      screen.getByRole('button', { name: /show changelog/i }),
     ).toBeInTheDocument();
+    expect(screen.queryByText(/unreleased/i)).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /show changelog/i }));
+    expect(screen.getByText(/unreleased/i)).toBeInTheDocument();
   });
 });

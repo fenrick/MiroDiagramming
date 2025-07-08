@@ -118,6 +118,34 @@ export class BoardBuilder {
     );
   }
 
+  /**
+   * Search only the currently selected widgets for one matching the node
+   * metadata. Falling back to shapes and groups mirrors {@link findNode} but
+   * avoids querying the entire board.
+   */
+  public async findNodeInSelection(
+    type: unknown,
+    label: unknown,
+  ): Promise<BoardItem | undefined> {
+    if (typeof type !== 'string' || typeof label !== 'string') {
+      throw new Error('Invalid search parameters');
+    }
+    this.ensureBoard();
+    const sel =
+      typeof miro.board.getSelection === 'function'
+        ? await miro.board.getSelection()
+        : [];
+    const selection = sel as unknown as Array<Record<string, unknown>>;
+    const board: import('./board').BoardQueryLike = {
+      get: async ({ type: t }) =>
+        selection.filter((i) => (i as { type?: string }).type === t),
+      getSelection: async () => selection,
+    };
+    const shape = await searchShapes(board, undefined, label);
+    if (shape) return shape;
+    return searchGroups(board, type, label);
+  }
+
   /** Create or update a node widget from a template. */
   public async createNode(
     node: unknown,
@@ -264,21 +292,19 @@ export class BoardBuilder {
 
   /**
    * Resize an item if width and height properties are available.
-   * The widget is synchronised when a sync method exists.
+   *
+   * Synchronisation is intentionally deferred so multiple widgets can be
+   * updated before calling {@link syncAll}. This reduces the number of API
+   * calls when creating complex structures.
    */
   public async resizeItem(
     item: BoardItem,
     width: number,
     height: number,
   ): Promise<void> {
-    const target = item as {
-      width?: number;
-      height?: number;
-      sync?: () => Promise<void>;
-    };
+    const target = item as { width?: number; height?: number };
     if (typeof target.width === 'number') target.width = width;
     if (typeof target.height === 'number') target.height = height;
-    await maybeSync(target);
   }
 
   /**

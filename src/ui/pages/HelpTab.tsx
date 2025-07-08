@@ -1,13 +1,18 @@
-import React from 'react';
-import { Heading, Paragraph } from '../components/legacy';
+import React, { useState } from 'react';
+import { Paragraph, Button, Markdown } from '../components';
 import changelog from '../../../CHANGELOG.md?raw';
 import { TabPanel } from '../components/TabPanel';
+import { PageHelp } from '../components/PageHelp';
 import type { TabTuple } from './tab-definitions';
+import { Heading } from '@mirohq/design-system';
 
 /** Static help page summarising diagram options and tools. */
-export const HelpTab: React.FC = () => (
-  <TabPanel tabId='help'>
-    <div data-testid='help-tab'>
+export const HelpTab: React.FC = () => {
+  const [showLog, setShowLog] = useState(false);
+
+  return (
+    <TabPanel tabId='help'>
+      <PageHelp content='Overview of diagram options and tools' />
       <Heading level={2}>Getting Started</Heading>
       <Paragraph>
         Use the Create tab to import diagrams or cards from a JSON file. Nodes
@@ -45,10 +50,16 @@ export const HelpTab: React.FC = () => (
         <li>Arrange – grid and spacing tools.</li>
       </ul>
       <Heading level={2}>Changelog</Heading>
-      <pre style={{ whiteSpace: 'pre-wrap' }}>{changelog}</pre>
-    </div>
-  </TabPanel>
-);
+      <Button
+        variant='secondary'
+        onClick={() => setShowLog((v) => !v)}
+        data-testid='toggle-changelog'>
+        {showLog ? 'Hide' : 'Show'} Changelog
+      </Button>
+      {showLog && <Markdown source={changelog} />}
+    </TabPanel>
+  );
+};
 
 export const tabDef: TabTuple = [
   99,
