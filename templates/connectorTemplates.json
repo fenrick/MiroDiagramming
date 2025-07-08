@@ -70,5 +70,17 @@
     },
     "shape": "curved",
     "caption": { "position": 0.5, "textAlignVertical": "middle" }
+  },
+  "association": {
+    "style": {
+      "strokeColor": "tokens.color.black",
+      "strokeStyle": "normal",
+      "startStrokeCap": "none",
+      "endStrokeCap": "none",
+      "color": "tokens.color.black",
+      "textOrientation": "horizontal"
+    },
+    "shape": "curved",
+    "caption": { "position": 0.5, "textAlignVertical": "middle" }
   }
 }
