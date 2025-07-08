@@ -20,6 +20,10 @@ test('template helpers return values or undefined', () => {
   delete (connectorTemplates as unknown as Record<string, unknown>).extra;
 });
 
+test('connector aliases resolve correctly', () => {
+  expect(templateManager.getConnectorTemplate('deploy')).toBeDefined();
+});
+
 test('resolveStyle substitutes tokens', () => {
   const style = templateManager.resolveStyle({
     fillColor: 'tokens.color.yellow[150]',

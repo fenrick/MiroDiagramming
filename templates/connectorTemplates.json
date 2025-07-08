@@ -36,7 +36,7 @@
     },
     "shape": "curved",
     "caption": { "position": 0.5, "textAlignVertical": "middle" },
-    "alias": ["assigns"]
+    "alias": ["deploy", "assigns"]
   },
   "realization": {
     "style": {

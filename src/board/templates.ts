@@ -47,6 +47,8 @@ export interface ConnectorTemplate {
   style?: ConnectorStyle & Record<string, unknown>;
   shape?: 'straight' | 'elbowed' | 'curved';
   caption?: { position?: number; textAlignVertical?: string };
+  /** Alternative names referring to this template. */
+  alias?: string[];
 }
 
 export interface ConnectorTemplateCollection {
@@ -61,6 +63,7 @@ export class TemplateManager {
   public readonly connectorTemplates: ConnectorTemplateCollection =
     connectorJson as ConnectorTemplateCollection;
   private readonly aliasMap: Record<string, string> = {};
+  private readonly connectorAliasMap: Record<string, string> = {};
 
   /**
    * Translate `tokens.color.*` references to concrete hex values.
@@ -125,6 +128,11 @@ export class TemplateManager {
         this.aliasMap[a] = key;
       });
     });
+    Object.entries(this.connectorTemplates).forEach(([key, def]) => {
+      def.alias?.forEach((a) => {
+        this.connectorAliasMap[a] = key;
+      });
+    });
   }
 
   /** Access the singleton instance. */
@@ -142,7 +150,9 @@ export class TemplateManager {
 
   /** Retrieve a connector styling template by name. */
   public getConnectorTemplate(name: string): ConnectorTemplate | undefined {
-    const tpl = this.connectorTemplates[name];
+    const key =
+      name in this.connectorTemplates ? name : this.connectorAliasMap[name];
+    const tpl = key ? this.connectorTemplates[key] : undefined;
     if (!tpl) return undefined;
     const style = tpl.style ? this.resolveStyle(tpl.style) : undefined;
     return { shape: 'curved', ...tpl, style };
