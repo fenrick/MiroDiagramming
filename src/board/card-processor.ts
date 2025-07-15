@@ -19,8 +19,8 @@ export interface CardProcessOptions {
  * Helper that places cards from a data set onto the board.
  */
 export class CardProcessor extends UndoableProcessor<Card | Frame> {
-  /** Metadata key used to store card identifiers. */
-  private static readonly META_KEY = 'app.miro.cards';
+  /** Prefix used to embed identifiers in descriptions. */
+  private static readonly ID_PREFIX = 'ID:';
   /** Default width used for card widgets. */
   private static readonly CARD_WIDTH = 320;
   /** Default height used for card widgets. */
@@ -126,16 +126,10 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
   private async loadCardMap(): Promise<Map<string, Card>> {
     if (!this.cardMap) {
       const cards = await this.getBoardCards();
-      const metas = await Promise.all(
-        cards.map((c) => c.getMetadata(CardProcessor.META_KEY)),
-      );
       this.cardMap = new Map();
-      for (let i = 0; i < cards.length; i++) {
-        const meta = metas[i] as Record<string, unknown> | undefined;
-        const id = typeof meta?.id === 'string' ? meta.id : undefined;
-        if (id) {
-          this.cardMap.set(id, cards[i]);
-        }
+      for (const c of cards) {
+        const id = this.extractId(c.description);
+        if (id) this.cardMap.set(id, c);
       }
     }
     return this.cardMap;
@@ -197,7 +191,7 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
     const tagIds = await this.ensureTagIds(def.tags, tagMap);
     const createOpts: Record<string, unknown> = {
       title: def.title,
-      description: def.description ?? '',
+      description: this.encodeDescription(def.description, def.id),
       tagIds,
       style: def.style as CardStyle,
       taskStatus: def.taskStatus,
@@ -206,9 +200,6 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
     };
     if (def.fields) createOpts.fields = def.fields;
     const card = await miro.board.createCard(createOpts);
-    if (def.id) {
-      await card.setMetadata(CardProcessor.META_KEY, { id: def.id });
-    }
     this.registerCreated(card);
     return card;
   }
@@ -221,14 +212,11 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
   ): Promise<Card> {
     const tagIds = await this.ensureTagIds(def.tags, tagMap);
     card.title = def.title;
-    card.description = def.description ?? '';
+    card.description = this.encodeDescription(def.description, def.id);
     card.tagIds = tagIds;
     if (def.fields) card.fields = def.fields;
     card.style = def.style as CardStyle;
     if (def.taskStatus) card.taskStatus = def.taskStatus;
-    if (def.id) {
-      await card.setMetadata(CardProcessor.META_KEY, { id: def.id });
-    }
     return card;
   }
 
@@ -283,6 +271,23 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
     itemSize: number,
   ): number {
     return center - total / 2 + CardProcessor.CARD_MARGIN + itemSize / 2;
+  }
+
+  /** Extract identifier from the description text. */
+  private extractId(desc: string | undefined): string | undefined {
+    const match = desc?.match(new RegExp(`${CardProcessor.ID_PREFIX}(\S+)`));
+    return match ? match[1] : undefined;
+  }
+
+  /** Embed the identifier inside the description. */
+  private encodeDescription(desc: string | undefined, id?: string): string {
+    const base = (desc ?? '').replace(
+      new RegExp(`\n?${CardProcessor.ID_PREFIX}[^\n]*`),
+      '',
+    );
+    if (!id) return base.trim();
+    const trimmed = base.trimEnd();
+    return `${trimmed}${trimmed ? '\n' : ''}${CardProcessor.ID_PREFIX}${id}`;
   }
 
   /**

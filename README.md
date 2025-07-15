@@ -60,20 +60,12 @@ When **Use existing widgets** is enabled the importer caches all basic shapes on
 the board and matches them by their text content. The cache prevents duplicates
 during placement and is cleared once processing finishes.
 
-## Metadata Usage
+## Identification
 
-Nodes may include a `metadata` object with any additional information. Typical
-fields are:
-
-- `template`: name of the shape template to use.
-- `label`: text displayed on the shape.
-- `elk`: optional layout properties passed directly to the ELK engine.
-- `width` and `height`: optional dimensions overriding the template values.
-- `connectorTemplate`: template name for edge styling.
-- Connector endpoints snap to the sides suggested by the ELK layout.
-- Note: groups cannot store metadata. When a template does create a group the
-  metadata is applied to each element within the group instead. Simple templates
-  set the label directly on the shape to avoid grouping.
+Widgets no longer rely on metadata. Shapes and groups are matched purely by
+their text content. When updating a diagram the importer searches for a shape
+whose content matches the node label. Cards continue to encode their identifier
+in the description using the `ID:` prefix.
 
 ## Sample Graph
 

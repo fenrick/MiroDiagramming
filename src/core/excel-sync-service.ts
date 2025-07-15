@@ -2,16 +2,15 @@ import { mapRowsToNodes, ColumnMapping } from './data-mapper';
 import type { ExcelRow } from './utils/excel-loader';
 import { templateManager } from '../board/templates';
 import { applyElementToItem } from '../board/element-utils';
-import type { BaseItem, Group, Json } from '@mirohq/websdk-types';
+import { searchGroups, searchShapes } from '../board/node-search';
+import type { BaseItem, Group } from '@mirohq/websdk-types';
+import type { BoardQueryLike } from '../board/board';
 
 /** Item supporting text content on the board. */
 export interface ContentItem extends BaseItem {
   /** Text value of the widget. */
   content?: string;
 }
-
-/** Metadata key used to store Excel row identifiers. */
-const META_KEY = 'app.miro.excel';
 
 /**
  * Service providing two-way synchronisation between Excel workbooks
@@ -57,19 +56,16 @@ export class ExcelSyncService {
       const rowId = def.metadata?.rowId;
       if (!rowId) continue;
       const idStr = String(rowId);
-      const widget = await this.findWidget(idStr);
+      const widget = await this.findWidget(idStr, def.label);
       if (!widget) continue;
-      await this.applyTemplate(widget, def.label, def.type, {
-        ...(def.metadata ?? {}),
-        rowId: idStr,
-      });
+      await this.applyTemplate(widget, def.label, def.type);
       this.registerMapping(idStr, widget.id ?? '');
     }
   }
 
   /**
    * Extract widget values and write them back to Excel rows.
-   * Any metadata stored under {@link META_KEY} is copied according to the
+   * Embedded metadata is copied according to the
    * {@link ColumnMapping.metadataColumns} configuration.
    *
    * @param rows - Workbook rows to update.
@@ -84,7 +80,8 @@ export class ExcelSyncService {
     for (const [i, r] of rows.entries()) {
       const rowId = mapping.idColumn ? r[mapping.idColumn] : undefined;
       const idStr = String(rowId ?? i);
-      const widget = await this.lookupWidget(idStr);
+      const label = mapping.labelColumn ? String(r[mapping.labelColumn]) : '';
+      const widget = await this.lookupWidget(idStr, label);
       let row = { ...r };
       if (widget) {
         const data = await this.extractWidgetData(widget);
@@ -99,8 +96,9 @@ export class ExcelSyncService {
   /** Retrieve the widget corresponding to the given identifier. */
   private async lookupWidget(
     idStr: string,
+    label: string,
   ): Promise<BaseItem | Group | undefined> {
-    return this.findWidget(idStr);
+    return this.findWidget(idStr, label);
   }
 
   /**
@@ -113,11 +111,8 @@ export class ExcelSyncService {
     widget: BaseItem | Group,
   ): Promise<{ content?: string; meta?: Record<string, unknown> }> {
     const item = (await this.extractItem(widget)) as ContentItem;
-    const content = item.content;
-    const meta = (await item.getMetadata(META_KEY)) as
-      | Record<string, unknown>
-      | undefined;
-    return { content, meta };
+    const content = item.content ?? '';
+    return { content };
   }
 
   /**
@@ -131,52 +126,43 @@ export class ExcelSyncService {
   private updateRowFromWidget(
     row: ExcelRow,
     mapping: ColumnMapping,
-    data: { content?: string; meta?: Record<string, unknown> },
+    data: { content?: string },
   ): ExcelRow {
     const updated = { ...row };
-    const metaCols = mapping.metadataColumns ?? {};
     if (mapping.labelColumn && data.content) {
       updated[mapping.labelColumn] = data.content;
     }
-    if (mapping.textColumn && data.meta?.text != null) {
-      updated[mapping.textColumn] = data.meta.text;
-    }
-    Object.keys(metaCols).forEach((key) => {
-      if (data.meta?.[key] != null) {
-        updated[metaCols[key]] = data.meta[key];
-      }
-    });
     return updated;
   }
 
-  /** Locate a widget by rowId using board metadata. */
+  /** Locate a widget by row identifier or label text. */
   private async findWidget(
     rowId: string,
+    label: string,
   ): Promise<BaseItem | Group | undefined> {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const board: any = miro.board;
-    const shapes = (await board.get({ type: 'shape' })) as BaseItem[];
-    const foundShape = await this.findByMetadata(shapes, rowId);
-    if (foundShape) return foundShape;
-    const groups = (await board.get({ type: 'group' })) as Group[];
-    for (const group of groups) {
-      const items = await (group as unknown as Group).getItems();
-      if (!Array.isArray(items)) continue;
-      const found = await this.findByMetadata(items as BaseItem[], rowId);
-      if (found) return group;
+    const byId = this.rowMap[rowId];
+    if (byId) {
+      try {
+        const item = (await miro.board.getById(byId)) as BaseItem | Group;
+        if (item) return item;
+      } catch {
+        // ignore stale mapping
+      }
     }
-    return undefined;
+    const board = miro.board as unknown as BoardQueryLike;
+    const shape = await searchShapes(board, undefined, label);
+    if (shape) return shape;
+    return searchGroups(board, '', label);
   }
 
   /**
    * Update widget content and style based on the provided template.
-   * The metadata object is written to the widget using {@link META_KEY}.
+   * Metadata is embedded in the widget text.
    */
   private async applyTemplate(
     widget: BaseItem | Group,
     label: string,
     templateName: string,
-    metadata: Record<string, unknown>,
   ): Promise<void> {
     const template = templateManager.getTemplate(templateName);
     if (!template) return;
@@ -189,20 +175,10 @@ export class ExcelSyncService {
         applyElementToItem(items[idx] as BaseItem, el, label);
       }
     });
-    const meta = { ...metadata };
-    if (metadata.rowId != null) meta.rowId = String(metadata.rowId);
-    const master = template.masterElement;
-    if (widget.type === 'group') {
-      const groupItems = items as BaseItem[];
-      if (master !== undefined && groupItems[master]) {
-        await groupItems[master].setMetadata(META_KEY, meta as Json);
-      } else {
-        await Promise.all(
-          groupItems.map((i) => i.setMetadata(META_KEY, meta as Json)),
-        );
-      }
-    } else {
-      await (widget as BaseItem).setMetadata(META_KEY, meta as Json);
+    const master = template.masterElement ?? 0;
+    const target = items[master] as ContentItem | undefined;
+    if (target) {
+      target.content = label;
     }
   }
 
@@ -216,16 +192,4 @@ export class ExcelSyncService {
   }
 
   /** Search an item list for matching metadata. */
-  private async findByMetadata<
-    T extends { getMetadata: (k: string) => Promise<unknown> },
-  >(items: T[], rowId: string): Promise<T | undefined> {
-    const metas = await Promise.all(items.map((i) => i.getMetadata(META_KEY)));
-    for (const [i, metaVal] of metas.entries()) {
-      const meta = metaVal as { rowId?: string };
-      if (meta?.rowId === rowId) {
-        return items[i];
-      }
-    }
-    return undefined;
-  }
 }
