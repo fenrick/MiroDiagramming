@@ -1,11 +1,13 @@
 import type { BaseItem, Group, Shape } from '@mirohq/websdk-types';
 import type { BoardQueryLike } from './board';
+import { boardCache } from './board-cache';
+import { log } from '../logger';
 
 /**
  * Search the board for a shape matching the provided label.
  *
- * The `cache` map is populated on demand using `board.get`. Subsequent calls
- * reuse the map to avoid repeated network requests.
+ * The `cache` map is populated on demand using {@link boardCache.getWidgets}.
+ * Subsequent calls reuse the map to avoid repeated network requests.
  *
  * @param board - Board API used to query widgets.
  * @param cache - Map keyed by shape text content.
@@ -17,15 +19,22 @@ export async function searchShapes(
   cache: Map<string, BaseItem> | undefined,
   label: string,
 ): Promise<BaseItem | undefined> {
+  log.trace({ label }, 'Searching shapes');
   let map = cache;
   if (!map) {
-    const shapes = (await board.get({ type: 'shape' })) as unknown as Shape[];
+    log.debug('Shape cache miss');
+    const shapes = (await boardCache.getWidgets(
+      ['shape'],
+      board,
+    )) as unknown as Shape[];
     map = new Map<string, BaseItem>();
     shapes
       .filter((s) => typeof s.content === 'string' && s.content.trim())
       .forEach((s) => map!.set(s.content, s as BaseItem));
   }
-  return map.get(label);
+  const result = map.get(label);
+  log.debug({ found: Boolean(result) }, 'Shape search complete');
+  return result;
 }
 
 /**
@@ -41,7 +50,11 @@ export async function searchGroups(
   _type: string,
   label: string,
 ): Promise<Group | undefined> {
-  const groups = (await board.get({ type: 'group' })) as unknown as Group[];
+  log.trace({ label }, 'Searching groups');
+  const groups = (await boardCache.getWidgets(
+    ['group'],
+    board,
+  )) as unknown as Group[];
   for (const group of groups) {
     const items = await group.getItems();
     if (!Array.isArray(items)) continue;
@@ -50,7 +63,11 @@ export async function searchGroups(
         typeof (i as { content?: string }).content === 'string' &&
         (i as { content?: string }).content === label,
     );
-    if (found) return group;
+    if (found) {
+      log.debug('Group found via child content');
+      return group;
+    }
   }
+  log.debug('Group not found');
   return undefined;
 }

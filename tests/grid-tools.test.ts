@@ -4,6 +4,11 @@ import {
   calculateGridPositions,
 } from '../src/board/grid-layout';
 import { BoardLike } from '../src/board/board';
+import { boardCache } from '../src/board/board-cache';
+
+beforeEach(() => {
+  boardCache.reset();
+});
 
 describe('grid-tools', () => {
   test('calculateGrid computes grid positions', () => {

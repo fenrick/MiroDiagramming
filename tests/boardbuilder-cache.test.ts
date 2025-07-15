@@ -1,5 +1,6 @@
 import { describe, expect, test, vi } from 'vitest';
 import { BoardBuilder, updateConnector } from '../src/board/board-builder';
+import { boardCache } from '../src/board/board-cache';
 import { mockBoard } from './mock-board';
 
 interface GlobalWithMiro {
@@ -13,6 +14,10 @@ declare const global: GlobalWithMiro;
  */
 
 describe('BoardBuilder lookup and connector updates', () => {
+  afterEach(() => {
+    boardCache.reset();
+    vi.clearAllMocks();
+  });
   test('findNode caches shapes by text', async () => {
     const shape = { content: 'B' } as Record<string, unknown>;
     mockBoard({ get: vi.fn().mockResolvedValue([shape]) });
@@ -29,13 +34,14 @@ describe('BoardBuilder lookup and connector updates', () => {
     await builder.findNode('Business', 'B');
     builder.reset();
     await builder.findNode('Business', 'B');
-    expect((global.miro.board.get as vi.Mock).mock.calls.length).toBe(2);
+    expect((global.miro.board.get as vi.Mock).mock.calls.length).toBe(1);
   });
 
   test('lookup matches shape text regardless of metadata', async () => {
     const shape = {
       content: 'A',
       getMetadata: vi.fn().mockResolvedValue({ type: 'X', label: 'Y' }),
+      getItems: vi.fn().mockResolvedValue([]),
     } as Record<string, unknown>;
     mockBoard({ get: vi.fn().mockResolvedValue([shape]) });
     const builder = new BoardBuilder();

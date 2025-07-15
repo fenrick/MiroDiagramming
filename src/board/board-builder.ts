@@ -2,6 +2,7 @@ import { templateManager } from './templates';
 import { searchGroups, searchShapes } from './node-search';
 import { createConnector } from './connector-utils';
 import { log } from '../logger';
+import { boardCache } from './board-cache';
 export { updateConnector } from './connector-utils';
 import type {
   BaseItem,
@@ -233,16 +234,26 @@ export class BoardBuilder {
    * Find an item whose metadata satisfies the provided predicate.
    * Metadata for all items is loaded concurrently for efficiency.
    */
-  /** Populate the shape cache when not yet loaded. */
+  /**
+   * Populate the shape cache when not yet loaded.
+   *
+   * Widgets are fetched via {@link boardCache.getWidgets} so repeated lookups
+   * avoid additional network requests.
+   */
   private async loadShapeMap(): Promise<void> {
     if (!this.shapeMap) {
       this.ensureBoard();
-      const shapes = (await miro.board.get({ type: 'shape' })) as Shape[];
+      log.trace('Populating shape cache');
+      const shapes = (await boardCache.getWidgets(
+        ['shape'],
+        miro.board as unknown as import('./board').BoardQueryLike,
+      )) as unknown as Shape[];
       const map = new Map<string, BaseItem>();
       shapes
         .filter((s) => typeof s.content === 'string' && s.content.trim())
         .forEach((s) => map.set(s.content, s as BaseItem));
       this.shapeMap = map;
+      log.debug({ count: map.size }, 'Shape cache ready');
     }
   }
 
