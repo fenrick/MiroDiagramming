@@ -12,12 +12,16 @@ import { STRUCT_GRAPH_KEY } from './meta-constants';
 const META_KEY = STRUCT_GRAPH_KEY;
 
 /**
- * Update an existing connector with style, label and hint data.
+ * Build caption objects for a connector label.
  *
- * @param connector - The connector widget to update.
- * @param edge - Edge data providing label and metadata.
- * @param template - Connector template describing style defaults.
- * @param hint - Optional hint for start and end positions.
+ * When an edge provides a label the template caption settings are applied
+ * to the returned object. The position and vertical alignment values are
+ * optional and omitted when not present on the template.
+ *
+ * @param edge - Edge data potentially containing a `label`.
+ * @param template - Connector template describing caption defaults.
+ * @returns The caption array expected by the Miro SDK or `undefined` when
+ *   the edge has no label.
  */
 function buildCaptions(
   edge: EdgeData,
@@ -59,6 +63,18 @@ function applyHint(connector: Connector, hint?: EdgeHint): void {
   }
 }
 
+/**
+ * Update an existing connector with style, label and positional data.
+ *
+ * The connector's current style is merged with the template while label
+ * captions are created when the edge specifies one. Start and end positions
+ * are adjusted using the optional hint parameter.
+ *
+ * @param connector - The connector widget to update in place.
+ * @param edge - Edge data providing label and metadata.
+ * @param template - Connector template describing style defaults.
+ * @param hint - Optional hint for start and end positions.
+ */
 export function updateConnector(
   connector: Connector,
   edge: EdgeData,
