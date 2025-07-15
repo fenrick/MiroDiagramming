@@ -16,5 +16,9 @@ export async function showError(message: string): Promise<void> {
   // Log the original message for troubleshooting and pass the trimmed version
   // to the Miro notification API.
   log.error(message);
+  if (trimmed !== message) {
+    log.debug('Trimmed long error message');
+  }
+  log.info('Showing error notification');
   await miro.board.notifications.showError(trimmed);
 }

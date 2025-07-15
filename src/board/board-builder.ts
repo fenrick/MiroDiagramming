@@ -1,6 +1,7 @@
 import { templateManager } from './templates';
 import { searchGroups, searchShapes } from './node-search';
 import { createConnector } from './connector-utils';
+import { log } from '../logger';
 export { updateConnector } from './connector-utils';
 import { STRUCT_GRAPH_KEY } from './meta-constants';
 import type {
@@ -151,6 +152,7 @@ export class BoardBuilder {
     node: unknown,
     pos: PositionedNode,
   ): Promise<BoardItem> {
+    log.info({ type: (node as NodeData)?.type }, 'Creating node');
     if (!pos || typeof pos.x !== 'number' || typeof pos.y !== 'number') {
       throw new Error('Invalid position');
     }
@@ -164,6 +166,7 @@ export class BoardBuilder {
     }
     const widget = await this.createNewNode(nodeData, pos);
     await this.resizeItem(widget, pos.width, pos.height);
+    log.debug('Node widget created');
     return widget;
   }
 
@@ -179,6 +182,7 @@ export class BoardBuilder {
     if (!Array.isArray(edges)) {
       throw new Error('Invalid edges');
     }
+    log.info({ count: edges.length }, 'Creating edges');
     if (!nodeMap || typeof nodeMap !== 'object') {
       throw new Error('Invalid node map');
     }
@@ -195,11 +199,14 @@ export class BoardBuilder {
         return createConnector(edge, from, to, hints?.[i], template);
       }),
     );
-    return created.filter(Boolean) as Connector[];
+    const filtered = created.filter(Boolean) as Connector[];
+    log.debug({ created: filtered.length }, 'Edges created');
+    return filtered;
   }
 
   /** Call `.sync()` on each widget if the method exists. */
   public async syncAll(items: Array<BoardItem | Connector>): Promise<void> {
+    log.trace({ count: items.length }, 'Syncing widgets');
     await Promise.all(items.map((i) => maybeSync(i)));
   }
 
@@ -208,12 +215,14 @@ export class BoardBuilder {
     items: Array<BoardItem | Connector | Frame>,
   ): Promise<void> {
     this.ensureBoard();
+    log.debug({ count: items.length }, 'Removing items');
     await Promise.all(items.map((item) => miro.board.remove(item)));
   }
 
   /** Group multiple widgets together on the board. */
   public async groupItems(items: GroupableItem[]): Promise<Group> {
     this.ensureBoard();
+    log.trace({ count: items.length }, 'Grouping items');
     return miro.board.group({ items });
   }
 
