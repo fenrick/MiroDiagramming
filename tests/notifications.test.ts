@@ -1,4 +1,5 @@
 import { showError } from '../src/ui/hooks/notifications';
+import { log } from '../src/logger';
 
 interface GlobalWithMiro {
   miro?: { board?: Record<string, unknown> };
@@ -13,7 +14,7 @@ describe('showError', () => {
         notifications: { showError: jest.fn().mockResolvedValue(undefined) },
       },
     };
-    jest.spyOn(console, 'error').mockImplementation(() => {});
+    jest.spyOn(log, 'error').mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -23,7 +24,7 @@ describe('showError', () => {
 
   test('passes through short messages', async () => {
     await showError('fail');
-    expect(console.error).toHaveBeenCalledWith('fail');
+    expect(log.error).toHaveBeenCalledWith('fail');
     expect(global.miro.board.notifications.showError).toHaveBeenCalledWith(
       'fail',
     );
@@ -32,7 +33,7 @@ describe('showError', () => {
   test('truncates long messages', async () => {
     const long = 'a'.repeat(90);
     await showError(long);
-    expect(console.error).toHaveBeenCalledWith(long);
+    expect(log.error).toHaveBeenCalledWith(long);
     const arg = (global.miro.board.notifications.showError as jest.Mock).mock
       .calls[0][0];
     expect(arg.length).toBeLessThanOrEqual(80);
