@@ -4,6 +4,7 @@ import {
   getBoardWithQuery,
   getBoard,
 } from './board';
+import { log } from '../logger';
 
 /**
  * Singleton cache for board data.
@@ -21,14 +22,17 @@ export class BoardCache {
     board?: BoardLike,
   ): Promise<Array<Record<string, unknown>>> {
     if (!this.selection) {
+      log.trace('Fetching selection from board');
       const b = getBoard(board);
       this.selection = await b.getSelection();
+      log.debug({ count: this.selection.length }, 'Selection cached');
     }
     return this.selection;
   }
 
   /** Clear the cached selection. */
   public clearSelection(): void {
+    log.info('Clearing selection cache');
     this.selection = undefined;
   }
 
@@ -49,18 +53,21 @@ export class BoardCache {
       else missing.push(t);
     }
     if (missing.length) {
+      log.trace({ missing }, 'Fetching uncached widget types');
       const fetched = await Promise.all(missing.map((t) => b.get({ type: t })));
       for (let i = 0; i < missing.length; i += 1) {
         const list = fetched[i];
         this.widgets.set(missing[i], list);
         results.push(...list);
       }
+      log.info({ types: missing.length }, 'Cached widget query results');
     }
     return results;
   }
 
   /** Reset all cached data. */
   public reset(): void {
+    log.info('Resetting board cache');
     this.selection = undefined;
     this.widgets.clear();
   }
