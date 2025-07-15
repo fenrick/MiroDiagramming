@@ -143,6 +143,12 @@ describe('CardProcessor', () => {
     expect(args.tagIds).toEqual(['t1']);
   });
 
+  test('new tags update cache', async () => {
+    await processor.processCards([{ title: 'A', tags: ['gamma'] }]);
+    const cache = (processor as unknown as { tagsCache: unknown[] }).tagsCache;
+    expect(cache).toHaveLength(1);
+  });
+
   test('updates card when id matches', async () => {
     const existing = {
       id: 'c2',

@@ -181,10 +181,9 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
       if (!tag) {
         tag = await miro.board.createTag({ title: name });
         tagMap.set(name, tag);
+        this.tagsCache?.push(tag);
       }
-      if (tag.id) {
-        ids.push(tag.id);
-      }
+      if (tag.id) ids.push(tag.id);
     }
     return ids;
   }
