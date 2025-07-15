@@ -2,7 +2,7 @@
 
 _Explicit UI + interaction walkthrough for every tab (June 2025)_
 
-This document narrows focus to the **ten sidebar tabs** in the Quick Tools
+This document narrows focus to the **five sidebar tabs** in the Quick Tools
 add‑on. Each tab section specifies panel layout, visible controls, states,
 interaction flows, tool‑tips, keyboard shortcuts and validation rules—so any
 developer can translate designs into code with zero ambiguity.
@@ -63,69 +63,12 @@ Prefix rename and locking options from the old **Frames Tab**.
 
 ---
 
-## 6  Templates Tab
+## 3  Excel Tab
 
-Two‑pane Flex (`SidebarList` categories + `MasonryGrid` templates).
+Allows importing nodes from Excel workbooks. Choose a sheet, map columns and
+create widgets. Edits on the board sync back via `ExcelSyncService`.
 
-| Category List Item | Copy                         | Keyboard Nav                   |
-| ------------------ | ---------------------------- | ------------------------------ |
-| List button        | “Flowcharts”, “AWS”, “BPMN”… | Up/Down to move; Enter selects |
-
-Template Card shows:
-
-- Thumbnail 160×100
-- Node count badge
-- “Insert” button
-
-Insert Flow: click → loads JSON → `GraphProcessor` → `BoardBuilder.sync` → opens
-Rename modal.
-
----
-
-## 7  Export Tab
-
-| Export Type            | Fields                                                      | Default Values      |
-| ---------------------- | ----------------------------------------------------------- | ------------------- |
-| **PNG**                | Resolution dropdown (1×/2×), Background: Transparent toggle | 1×, Transparent OFF |
-| **SVG**                | Include Comments checkbox                                   | OFF                 |
-| **BPMN XML**           | Version dropdown (2.0/2.1)                                  | 2.0                 |
-| **Markdown (Mermaid)** | Copy to clipboard only                                      | –                   |
-
-Progress Bar: shows %; disable sidebar during export.
-
-Error: if PNG > 16 k × 16 k px → show modal “Canvas too large; zoom or frame to
-export.”
-
----
-
-## 8  Data Tab (Live Bindings)
-
-Wizard (Stepper):
-
-1. **Select Source** – REST / CSV / WebSocket; URL/file input.
-2. **Test Connection** – Ping and show latency badge (green < 200 ms, yellow
-   < 500 ms, red otherwise).
-3. **Field Mapping** – Drag API fields → node properties list.
-4. **Activation** – Toggle “Live Update”; snackbar shows success.
-
-Polling interval slider (2 – 300 s). State `dataBindings[{boardId}]`.
-
----
-
-## 9  Comment Tab
-
-- **Thread List** – Sidebar list grouped by widget.
-- **Editor** – RichTextInput supports `@mention`; autocomplete list uses
-  `miro.board.getUsers()`.
-- **Resolve Toggle** – Checkbox; resolved threads greyed out, filtered when view
-  = “Unresolved”.
-- **Filter Tabs** – All / Mine / Unresolved (Tertiary buttons).
-
-Shortcut: **Shift +C** opens comment editor on current selection.
-
----
-
-## 10  Search Tab
+## 4  Search Tab
 
 | Control            | Details                                            |
 | ------------------ | -------------------------------------------------- |
@@ -142,19 +85,20 @@ the board to each widget. **Replace** updates just the current item via
 `replaceBoardContent` with `inSelection` pointing to that widget. When the regex
 toggle is enabled replacements match the regular expression.
 
+## 5  Help Tab
+
+Shows a getting started guide and a collapsible changelog.
+
 ---
 
 ## Global Keyboard Shortcuts
 
-| Action       | Mac | Win/Linux |
-| ------------ | --- | --------- |
-| Undo         | ⌘Z  | CtrlZ     |
-| Redo         | ⌘⇧Z | Ctrl⇧Z    |
-| Copy Size    | ⌥C  | AltC      |
-| Apply Size   | ⌥V  | AltV      |
-| Open Comment | ⇧C  | ShiftC    |
-
----
+| Action     | Mac | Win/Linux |
+| ---------- | --- | --------- |
+| Undo       | ⌘Z  | CtrlZ     |
+| Redo       | ⌘⇧Z | Ctrl⇧Z    |
+| Copy Size  | ⌥C  | AltC      |
+| Apply Size | ⌥V  | AltV      |
 
 ## Board Actions
 
