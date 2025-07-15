@@ -7,9 +7,6 @@ import type {
 } from '@mirohq/websdk-types';
 import type { ConnectorTemplate } from './templates';
 import type { EdgeData, EdgeHint } from '../core/graph';
-import { STRUCT_GRAPH_KEY } from './meta-constants';
-
-const META_KEY = STRUCT_GRAPH_KEY;
 
 /**
  * Build caption objects for a connector label.
@@ -111,6 +108,5 @@ export async function createConnector(
     captions: buildCaptions(edge, template),
     style: template?.style as ConnectorStyle | undefined,
   });
-  await connector.setMetadata(META_KEY, { from: edge.from, to: edge.to });
   return connector;
 }

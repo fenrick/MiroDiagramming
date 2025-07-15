@@ -3,8 +3,6 @@ import type { ExcelRow } from '../../core/utils/excel-loader';
 import { useSelection } from './use-selection';
 import type { BaseItem, Group } from '@mirohq/websdk-types';
 
-const META_KEY = 'app.miro.excel';
-
 /**
  * Narrow a board item to the Group type.
  *
@@ -21,12 +19,8 @@ function isGroup(item: BaseItem | Group): item is Group {
  * @param meta - Metadata value retrieved from a board item.
  * @returns The row identifier as a string or `undefined`.
  */
-function parseRowId(meta: unknown): string | undefined {
-  if (meta && typeof meta === 'object' && 'rowId' in meta) {
-    const value = (meta as { rowId?: unknown }).rowId;
-    return value != null ? String(value) : undefined;
-  }
-  return undefined;
+function decode(content: string | undefined): string | undefined {
+  return content?.trim();
 }
 
 /**
@@ -41,15 +35,13 @@ async function extractRowId(
   if (isGroup(item)) {
     const items = await item.getItems();
     for (const child of items) {
-      const meta = await child.getMetadata(META_KEY);
-      const rowId = parseRowId(meta);
+      const rowId = decode((child as { content?: string }).content);
       if (rowId) return rowId;
     }
     /* c8 ignore next */
     return undefined;
   }
-  const meta = await item.getMetadata(META_KEY);
-  return parseRowId(meta);
+  return decode((item as { content?: string }).content);
 }
 
 /**
@@ -58,12 +50,12 @@ async function extractRowId(
 function findRow(
   rows: ExcelRow[],
   idColumn: string | undefined,
-  id: string,
+  label: string,
 ): ExcelRow | null {
   if (idColumn) {
-    return rows.find((r) => String(r[idColumn]) === id) ?? null;
+    return rows.find((r) => String(r[idColumn]) === label) ?? null;
   }
-  const idx = Number(id);
+  const idx = Number(label);
   return Number.isFinite(idx) ? (rows[idx] ?? null) : null;
 }
 

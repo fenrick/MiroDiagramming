@@ -3,7 +3,6 @@ import { searchGroups, searchShapes } from './node-search';
 import { createConnector } from './connector-utils';
 import { log } from '../logger';
 export { updateConnector } from './connector-utils';
-import { STRUCT_GRAPH_KEY } from './meta-constants';
 import type {
   BaseItem,
   Connector,
@@ -22,8 +21,6 @@ import { maybeSync } from './board';
 
 /** Union type representing a single widget or a group of widgets. */
 export type BoardItem = BaseItem | Group;
-
-const META_KEY = STRUCT_GRAPH_KEY;
 
 /**
  * Helper responsible for finding, creating and updating widgets on the board.
@@ -268,35 +265,7 @@ export class BoardBuilder {
       pos.y,
       this.frame,
     )) as BoardItem;
-    const meta = this.buildMeta(node);
-    await this.applyMetadata(widget, meta);
     return widget;
-  }
-
-  private buildMeta(node: NodeData): Record<string, string> {
-    const meta: Record<string, string> = { type: node.type, label: node.label };
-    if (node.metadata?.rowId != null) {
-      meta.rowId = String(node.metadata.rowId);
-    }
-    return meta;
-  }
-
-  private async applyMetadata(
-    item: BoardItem,
-    meta: Record<string, string>,
-  ): Promise<void> {
-    if ((item as Group).type === 'group') {
-      const group = item as Group;
-      const items = await group.getItems();
-      const master = templateManager.getTemplate(meta.type)?.masterElement;
-      if (master !== undefined && items[master]) {
-        await items[master].setMetadata(META_KEY, meta);
-      } else {
-        await Promise.all(items.map((i) => i.setMetadata(META_KEY, meta)));
-      }
-    } else {
-      await (item as BaseItem).setMetadata(META_KEY, meta);
-    }
   }
 
   /**
