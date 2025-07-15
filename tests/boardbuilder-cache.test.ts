@@ -37,6 +37,17 @@ describe('BoardBuilder lookup and connector updates', () => {
     expect((global.miro.board.get as vi.Mock).mock.calls.length).toBe(1);
   });
 
+  test('findNodeInSelection uses cached selection', async () => {
+    const selection = [{ type: 'shape', content: 'B' }];
+    mockBoard({ getSelection: vi.fn().mockResolvedValue(selection) });
+    const builder = new BoardBuilder();
+    await builder.findNodeInSelection('Business', 'B');
+    await builder.findNodeInSelection('Business', 'B');
+    expect((global.miro.board.getSelection as vi.Mock).mock.calls.length).toBe(
+      1,
+    );
+  });
+
   test('lookup matches shape text regardless of metadata', async () => {
     const shape = {
       content: 'A',

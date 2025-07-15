@@ -130,11 +130,9 @@ export class BoardBuilder {
       throw new Error('Invalid search parameters');
     }
     this.ensureBoard();
-    const sel =
-      typeof miro.board.getSelection === 'function'
-        ? await miro.board.getSelection()
-        : [];
-    const selection = sel as unknown as Array<Record<string, unknown>>;
+    const selection = await boardCache.getSelection(
+      miro.board as unknown as import('./board').BoardLike,
+    );
     const board: import('./board').BoardQueryLike = {
       get: async ({ type: t }) =>
         selection.filter((i) => (i as { type?: string }).type === t),
