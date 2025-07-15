@@ -36,6 +36,7 @@
     "d3-dsv": "^3.0.1",
     "elkjs": "^0.10.0",
     "exceljs": "^4.4.0",
+    "pino": "^8.21.0",
     "react-dropzone": "^14.3.8"
   },
   "devDependencies": {

@@ -280,6 +280,19 @@ With `package-lock.json` checked in you can run `npm audit` after each install
 to scan dependencies for vulnerabilities. Include the lock file in commits so
 everyone uses the exact dependency versions when installing.
 
+## Logging
+
+All runtime messages are emitted through a shared logger defined in
+[`src/logger.ts`](src/logger.ts). Set the `LOG_LEVEL` environment variable to
+`trace`, `debug`, `info`, `warn`, `error` or `silent` to control verbosity. It
+defaults to `info`.
+
+Example:
+
+```bash
+LOG_LEVEL=debug npm start
+```
+
 ## Commit message checks
 
 Commit messages must follow the Conventional Commits specification. A

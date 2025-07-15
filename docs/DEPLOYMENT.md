@@ -55,6 +55,7 @@ Define variables in the host’s dashboard (or `vercel env`).
 | **FEATURE_FLAG_SDK_KEY** | LaunchDarkly SDK key (client-side)                 |
 | **SENTRY_DSN**           | Error-reporting endpoint                           |
 | **NODE_ENV**             | build-time optimisation flag (production, staging) |
+| **LOG_LEVEL**            | runtime log verbosity (`info`, `debug`, `trace`)   |
 
 Variables are injected at build time—no runtime secrets are required because the
 add-on is client-only.

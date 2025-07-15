@@ -1,10 +1,10 @@
 import { DiagramApp } from './app/diagram-app';
+import { log } from './logger';
 
 DiagramApp.getInstance()
   .init()
   .catch((err) => {
-    // eslint-disable-next-line no-console
-    console.error(err);
+    log.error(err);
   });
 
 export {};
