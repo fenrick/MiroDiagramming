@@ -1,3 +1,5 @@
+import { log } from '../../logger';
+
 /**
  * Read the contents of a `File` as UTF-8 text.
  *
@@ -22,11 +24,15 @@ export class FileUtils {
    * a `FileReader` when `file.text()` is unavailable.
    */
   public async readFileAsText(file: File): Promise<string> {
+    log.debug({ name: file.name }, 'Reading file');
     if (
       'text' in file &&
       typeof (file as { text: () => Promise<string> }).text === 'function'
     ) {
-      return (file as { text: () => Promise<string> }).text();
+      log.trace('Using File.text API');
+      const data = await (file as { text: () => Promise<string> }).text();
+      log.info('File read via text API');
+      return data;
     }
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -35,6 +41,7 @@ export class FileUtils {
           reject(new Error('Failed to load file'));
           return;
         }
+        log.info('File loaded via FileReader');
         resolve(e.target.result as string);
       };
       reader.onerror = () => reject(new Error('Failed to load file'));

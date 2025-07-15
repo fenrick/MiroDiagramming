@@ -1,3 +1,5 @@
+import { log } from '../logger';
+
 export interface BoardUILike {
   on(
     event: 'selection:update',
@@ -36,10 +38,12 @@ export interface BoardQueryLike extends BoardLike {
  * @returns The board API instance.
  */
 export function getBoard(board?: BoardLike): BoardLike {
+  log.trace('Resolving board instance');
   const b =
     board ??
     (globalThis as unknown as { miro?: { board?: BoardLike } }).miro?.board;
   if (!b) throw new Error('Miro board not available');
+  log.debug('Board resolved');
   return b;
 }
 
@@ -53,6 +57,7 @@ export function getBoard(board?: BoardLike): BoardLike {
  * @returns Board API exposing query capabilities.
  */
 export function getBoardWithQuery(board?: BoardQueryLike): BoardQueryLike {
+  log.trace('Casting board with query capabilities');
   return getBoard(board) as BoardQueryLike;
 }
 
@@ -70,6 +75,7 @@ export async function getFirstSelection(
 ): Promise<Record<string, unknown> | undefined> {
   const b = getBoard(board);
   const selection = await b.getSelection();
+  log.debug({ count: selection.length }, 'Fetched first selection');
   return selection[0] as Record<string, unknown> | undefined;
 }
 
@@ -88,6 +94,7 @@ export async function forEachSelection(
 ): Promise<void> {
   const b = getBoard(board);
   const selection = await b.getSelection();
+  log.info({ count: selection.length }, 'Processing selection');
   await Promise.all(selection.map((item) => cb(item)));
 }
 
@@ -111,6 +118,7 @@ export interface Syncable {
  */
 export async function maybeSync(item: Syncable): Promise<void> {
   if (typeof item.sync === 'function') {
+    log.trace('Syncing widget');
     await item.sync();
   }
 }
