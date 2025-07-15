@@ -16,6 +16,9 @@ export interface BoardLike {
   getSelection(): Promise<Array<Record<string, unknown>>>;
   group?(opts: { items: Array<Record<string, unknown>> }): Promise<unknown>;
   ui?: BoardUILike;
+  startBatch?(): Promise<void>;
+  endBatch?(): Promise<void>;
+  abortBatch?(): Promise<void>;
 }
 
 /**

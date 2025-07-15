@@ -182,37 +182,43 @@ export class BoardBuilder {
     if (!nodeMap || typeof nodeMap !== 'object') {
       throw new Error('Invalid node map');
     }
-    const created = await Promise.all(
-      edges.map(async (edge, i) => {
-        const from = nodeMap[edge.from];
-        const to = nodeMap[edge.to];
-        if (!from || !to) return undefined;
-        const templateName =
-          typeof edge.metadata?.template === 'string'
-            ? edge.metadata.template
-            : 'default';
-        const template = templateManager.getConnectorTemplate(templateName);
-        return createConnector(edge, from, to, hints?.[i], template);
-      }),
-    );
-    const filtered = created.filter(Boolean) as Connector[];
-    log.debug({ created: filtered.length }, 'Edges created');
-    return filtered;
+    const created = await this.runBatch(async () => {
+      const connectors = await Promise.all(
+        edges.map(async (edge, i) => {
+          const from = nodeMap[edge.from];
+          const to = nodeMap[edge.to];
+          if (!from || !to) return undefined;
+          const templateName =
+            typeof edge.metadata?.template === 'string'
+              ? edge.metadata.template
+              : 'default';
+          const template = templateManager.getConnectorTemplate(templateName);
+          return createConnector(edge, from, to, hints?.[i], template);
+        }),
+      );
+      return connectors.filter(Boolean) as Connector[];
+    });
+    log.debug({ created: created.length }, 'Edges created');
+    return created;
   }
 
   /** Call `.sync()` on each widget if the method exists. */
   public async syncAll(items: Array<BoardItem | Connector>): Promise<void> {
-    log.trace({ count: items.length }, 'Syncing widgets');
-    await Promise.all(items.map((i) => maybeSync(i)));
+    await this.runBatch(async () => {
+      log.trace({ count: items.length }, 'Syncing widgets');
+      await Promise.all(items.map((i) => maybeSync(i)));
+    });
   }
 
   /** Remove the provided widgets from the board. */
   public async removeItems(
     items: Array<BoardItem | Connector | Frame>,
   ): Promise<void> {
-    this.ensureBoard();
-    log.debug({ count: items.length }, 'Removing items');
-    await Promise.all(items.map((item) => miro.board.remove(item)));
+    await this.runBatch(async () => {
+      this.ensureBoard();
+      log.debug({ count: items.length }, 'Removing items');
+      await Promise.all(items.map((item) => miro.board.remove(item)));
+    });
   }
 
   /** Group multiple widgets together on the board. */
@@ -226,6 +232,31 @@ export class BoardBuilder {
     if (typeof miro === 'undefined' || !miro?.board) {
       throw new Error('Miro board not initialized');
     }
+  }
+
+  /**
+   * Execute multiple board operations within a batch transaction when
+   * supported by the API. Falls back to sequential execution if the
+   * transactional methods are unavailable.
+   *
+   * @param fn - Callback containing board operations to perform.
+   * @returns Result of the callback.
+   */
+  private async runBatch<T>(fn: () => Promise<T>): Promise<T> {
+    this.ensureBoard();
+    const board = miro.board as unknown as import('./board').BoardLike;
+    if (typeof board.startBatch === 'function') {
+      await board.startBatch();
+      try {
+        const result = await fn();
+        await board.endBatch?.();
+        return result;
+      } catch (err) {
+        await board.abortBatch?.();
+        throw err;
+      }
+    }
+    return fn();
   }
 
   /**
