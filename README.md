@@ -251,6 +251,7 @@ Then validate the codebase with:
 ```bash
 npm run typecheck --silent
 npm test --silent
+dotnet test --no-build
 npm run lint --silent
 npm run stylelint --silent
 npm run prettier --silent
@@ -258,15 +259,14 @@ npm run prettier --silent
 
 A Husky pre-commit hook runs these commands automatically. After cloning the
 repository run `npx husky install` once to activate the hooks so every commit is
-validated.
-
-These commands perform TypeScript type checking, execute the **Vitest** suite
-with coverage enabled, run ESLint and format files with Prettier. Aim for at
-least 90 % line and branch coverage and keep cyclomatic complexity under eight
-(see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)). ESLint enforces additional
-Sonar rules such as using `readonly` class fields, optional chaining, semantic
-HTML tags and stable React keys. Run these checks before committing so code
-conforms to the repository guidelines.
+validated. These commands perform TypeScript type checking, execute the
+**Vitest** suite and the `.NET` test runner with coverage enabled, run ESLint
+and format files with Prettier. Aim for at least 90 % line and branch coverage
+in both codebases and keep cyclomatic complexity under eight (see
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)). Sonar rules such as using
+`readonly` class fields, optional chaining, semantic HTML tags and stable React
+keys. Run these checks before committing so code conforms to the repository
+guidelines.
 
 With `package-lock.json` checked in you can run `npm audit` after each install
 to scan dependencies for vulnerabilities. Include the lock file in commits so
