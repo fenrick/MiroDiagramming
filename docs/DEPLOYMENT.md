@@ -4,7 +4,7 @@
 
 ## 0 Purpose
 
-Step-by-step instructions for packaging, hosting and operating the client-only
+Step-by-step instructions for packaging, hosting and operating the browser-based
 add-on. Aimed at junior engineers; every step is explicit.
 
 ---
@@ -58,7 +58,7 @@ Define variables in the host’s dashboard (or `vercel env`).
 | **LOG_LEVEL**            | runtime log verbosity (`info`, `debug`, `trace`)   |
 
 Variables are injected at build time—no runtime secrets are required because the
-add-on is client-only.
+add-on runs entirely in the browser.
 
 ---
 
@@ -146,8 +146,8 @@ If any step fails, do not promote to production.
 ```
 Push → GitHub Action
         ├─ Prettier, ESLint, Stylelint, Typecheck
-        ├─ Unit tests (parallel shards)
-        ├─ Merge coverage
+        ├─ Unit tests (`npm test`, `dotnet test`, parallel shards)
+        ├─ Merge coverage from both suites
         ├─ Sonar analysis
         ├─ CodeQL scan
         ├─ Build Storybook
@@ -193,6 +193,53 @@ Tagged releases on GitHub automatically push the built image to GHCR via the
 release job publishes a tag. The workflow targets `linux/amd64` only, so
 emulation via QEMU is skipped and `docker/build-push-action@v5` sets up Buildx
 automatically.
+
+---
+
+## 12 .NET server integration
+
+Some teams host the React bundle alongside an ASP.NET Core API. The backend
+publishes to a `publish/` directory and serves static files from the `wwwroot`
+folder. The `dist/` bundle can be copied into `wwwroot` during the publish step
+so front-end assets and API endpoints share the same origin.
+
+### 12.1 Environment variables
+
+Define these variables in the hosting environment:
+
+| Variable                           | Purpose                                 |
+| ---------------------------------- | --------------------------------------- |
+| **ConnectionStrings\_\_Default**   | Database connection string              |
+| **ASPNETCORE_URLS**                | HTTP bind address, e.g. `http://*:5000` |
+| **APPINSIGHTS_INSTRUMENTATIONKEY** | Azure Application Insights key          |
+| **JWT\_\_Issuer**                  | Token issuer for API auth               |
+
+### 12.2 Build & publish
+
+```bash
+dotnet restore
+dotnet publish -c Release -o publish --nologo
+```
+
+The `publish/` folder then contains the compiled API along with the React
+`dist/` assets. Copy the directory into a container image or deploy it straight
+to a platform like **Azure App Service**.
+
+### 12.3 Containerisation and hosting
+
+**Docker**
+
+```bash
+docker build -t miro-backend .
+docker run --rm -p 5000:80 miro-backend
+```
+
+**Azure App Service**
+
+Upload the `publish/` folder or push the container image to Azure Container
+Registry and create an App Service using the **Web App for Containers** option.
+Set environment variables via the Azure portal. The React bundle automatically
+serves from `/wwwroot` alongside the API endpoints.
 
 ---
 
