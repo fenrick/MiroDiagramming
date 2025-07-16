@@ -281,7 +281,8 @@ All runtime messages are emitted through a shared logger defined in
 defaults to `info`.
 
 The .NET server uses **Serilog** for structured logging. Client log entries are
-forwarded via `POST /api/logs` so both sides share the same log stream.
+automatically batched by `HttpLogSink` and forwarded via `POST /api/logs` so
+both sides share the same log stream.
 
 Example:
 
