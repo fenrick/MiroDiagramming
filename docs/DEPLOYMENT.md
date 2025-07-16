@@ -4,7 +4,7 @@
 
 ## 0 Purpose
 
-Step-by-step instructions for packaging, hosting and operating the client-only
+Step-by-step instructions for packaging, hosting and operating the browser-based
 add-on. Aimed at junior engineers; every step is explicit.
 
 ---
@@ -58,7 +58,7 @@ Define variables in the host’s dashboard (or `vercel env`).
 | **LOG_LEVEL**            | runtime log verbosity (`info`, `debug`, `trace`)   |
 
 Variables are injected at build time—no runtime secrets are required because the
-add-on is client-only.
+add-on runs entirely in the browser.
 
 ---
 
@@ -146,8 +146,8 @@ If any step fails, do not promote to production.
 ```
 Push → GitHub Action
         ├─ Prettier, ESLint, Stylelint, Typecheck
-        ├─ Unit tests (parallel shards)
-        ├─ Merge coverage
+        ├─ Unit tests (`npm test`, `dotnet test`, parallel shards)
+        ├─ Merge coverage from both suites
         ├─ Sonar analysis
         ├─ CodeQL scan
         ├─ Build Storybook

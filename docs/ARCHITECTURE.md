@@ -38,8 +38,8 @@ Browser
                          └── OAuth tokens via browser
 ```
 
-The add-on is **client-only**. All persistence is handled by Miro boards.
-Loading Excel workbooks from Microsoft Graph uses a client-side OAuth flow that
+The add-on runs entirely in the browser. All persistence is handled by Miro
+boards. Loading Excel workbooks from Microsoft Graph uses an OAuth flow that
 acquires tokens in the browser—no server component stores credentials.
 
 ---
@@ -96,17 +96,17 @@ Complexity limits enforced automatically by **SonarQube** gate.
 
 ## 6 Quality, Testing & CI/CD
 
-| Stage      | Gate                        | Threshold          |
-| ---------- | --------------------------- | ------------------ |
-| Pre-commit | ESLint, Stylelint, Prettier | zero errors        |
-| Unit       | Vitest (coverage v8)        | 90 % line & branch |
-| UI         | manual visual & a11y review | no critical issues |
-| Metrics    | SonarQube                   | cyclomatic ≤ 8     |
+| Stage      | Gate                        | Threshold            |
+| ---------- | --------------------------- | -------------------- |
+| Pre-commit | ESLint, Stylelint, Prettier | zero errors          |
+| Unit       | `npm test`, `dotnet test`   | ≥ 90 % line & branch |
+| UI         | manual visual & a11y review | no critical issues   |
+| Metrics    | SonarQube                   | cyclomatic ≤ 8       |
 
 **Workflow** (GitHub Actions)
 
-1. Restore Node dependencies from cache.
-2. Lint, type-check, unit tests (Node 24).
+1. Restore Node and .NET dependencies from cache.
+2. Lint, type-check and unit tests for both codebases (Node 24, .NET 8).
 3. Build Storybook and a feature-flagged bundle for staging.
 4. SonarQube analysis and budget checks (configured by
    [sonar-project.properties](../sonar-project.properties)).
@@ -117,6 +117,9 @@ Complexity limits enforced automatically by **SonarQube** gate.
 ---
 
 ## 7 Automated Code Review & Enforcement
+
+- Both the Node and .NET code must maintain ≥ 90 % coverage with cyclomatic
+  complexity under eight.
 
 - CI checks fail pull requests if complexity, coverage or lint targets fall
   short.
