@@ -1,4 +1,6 @@
 import { BoardLike, getBoard, maybeSync, Syncable } from './board';
+import { boardCache } from './board-cache';
+import { log } from '../logger';
 
 /** Options for renaming selected frames. */
 export interface RenameOptions {
@@ -17,7 +19,8 @@ export async function renameSelectedFrames(
   board?: BoardLike,
 ): Promise<void> {
   const b = getBoard(board);
-  const selection = await b.getSelection();
+  log.info('Renaming selected frames');
+  const selection = await boardCache.getSelection(b);
   const frames = selection.filter(
     (
       i,
@@ -44,6 +47,7 @@ export async function renameSelectedFrames(
       await maybeSync(frame as Syncable);
     }),
   );
+  log.debug({ count: frames.length }, 'Frames renamed');
 }
 
 /**
@@ -105,7 +109,9 @@ async function lockFrame(frame: FrameLike): Promise<void> {
  */
 export async function lockSelectedFrames(board?: BoardLike): Promise<void> {
   const b = getBoard(board);
-  const selection = await b.getSelection();
+  log.info('Locking selected frames');
+  const selection = await boardCache.getSelection(b);
   const frames = selection.filter(isFrame);
   await Promise.all(frames.map((frame) => lockFrame(frame)));
+  log.debug({ count: frames.length }, 'Frames locked');
 }

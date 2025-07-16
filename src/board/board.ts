@@ -1,3 +1,4 @@
+import { boardCache } from './board-cache';
 import { log } from '../logger';
 
 export interface BoardUILike {
@@ -15,6 +16,9 @@ export interface BoardLike {
   getSelection(): Promise<Array<Record<string, unknown>>>;
   group?(opts: { items: Array<Record<string, unknown>> }): Promise<unknown>;
   ui?: BoardUILike;
+  startBatch?(): Promise<void>;
+  endBatch?(): Promise<void>;
+  abortBatch?(): Promise<void>;
 }
 
 /**
@@ -74,7 +78,7 @@ export async function getFirstSelection(
   board?: BoardLike,
 ): Promise<Record<string, unknown> | undefined> {
   const b = getBoard(board);
-  const selection = await b.getSelection();
+  const selection = await boardCache.getSelection(b);
   log.debug({ count: selection.length }, 'Fetched first selection');
   return selection[0] as Record<string, unknown> | undefined;
 }
@@ -93,7 +97,7 @@ export async function forEachSelection(
   board?: BoardLike,
 ): Promise<void> {
   const b = getBoard(board);
-  const selection = await b.getSelection();
+  const selection = await boardCache.getSelection(b);
   log.info({ count: selection.length }, 'Processing selection');
   await Promise.all(selection.map((item) => cb(item)));
 }

@@ -21,6 +21,8 @@ export interface GridOptions {
  * Allows injection of a mock implementation in tests.
  */
 import { BoardLike, getBoard, maybeSync, Syncable } from './board';
+import { boardCache } from './board-cache';
+import { log } from '../logger';
 import { getTextFields } from './search-tools';
 import { calculateGridPositions } from './grid-layout';
 
@@ -40,7 +42,8 @@ export async function applyGridLayout(
   board?: BoardLike,
 ): Promise<void> {
   const b = getBoard(board);
-  const selection = await b.getSelection();
+  log.info('Applying grid layout');
+  const selection = await boardCache.getSelection(b);
   let items = opts.sortByName
     ? [...selection].sort((a, b) => getName(a).localeCompare(getName(b)))
     : selection;
@@ -72,6 +75,8 @@ export async function applyGridLayout(
     }),
   );
   if (opts.groupResult && typeof b.group === 'function') {
+    log.debug('Grouping laid out items');
     await b.group({ items });
   }
+  log.debug({ count: items.length }, 'Grid layout complete');
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import { BoardLike, getBoard } from '../../board/board';
 import { boardCache } from '../../board/board-cache';
+import { log } from '../../logger';
 
 /**
  * React hook returning the current board selection.
@@ -20,7 +21,15 @@ export function useSelection(
       return;
     }
     let active = true;
-    const update = (): void => {
+    const update = (ev?: { items: unknown[] }): void => {
+      if (ev && Array.isArray(ev.items)) {
+        const items = ev.items as Array<Record<string, unknown>>;
+        log.trace({ count: items.length }, 'Selection event received');
+        boardCache.setSelection(items);
+        if (active) setSel(items);
+        return;
+      }
+      log.trace('Fetching selection due to missing event payload');
       boardCache.clearSelection();
       boardCache.getSelection(b).then((s) => {
         if (active) setSel(s);

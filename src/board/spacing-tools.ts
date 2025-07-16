@@ -4,6 +4,8 @@
  * Located in `src/board` alongside other widget manipulation helpers.
  */
 import { BoardLike, getBoard, maybeSync, Syncable } from './board';
+import { boardCache } from './board-cache';
+import { log } from '../logger';
 import { calculateGrowthPlan, getDimension } from './spacing-layout';
 
 /** Options for spacing layout. */
@@ -33,7 +35,8 @@ export async function applySpacingLayout(
   board?: BoardLike,
 ): Promise<void> {
   const b = getBoard(board);
-  const selection = await b.getSelection();
+  log.info('Applying spacing layout');
+  const selection = await boardCache.getSelection(b);
   if (!selection.length) return;
 
   const axis = opts.axis;
@@ -68,6 +71,7 @@ export async function applySpacingLayout(
     await moveWidget(curr, axis, position);
     prev = curr;
   }
+  log.debug({ count: items.length }, 'Spacing layout complete');
 }
 
 /**

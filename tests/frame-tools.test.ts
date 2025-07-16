@@ -3,8 +3,12 @@ import {
   lockSelectedFrames,
 } from '../src/board/frame-tools';
 import { BoardLike } from '../src/board/board';
+import { boardCache } from '../src/board/board-cache';
 
 describe('frame-tools', () => {
+  beforeEach(() => {
+    boardCache.reset();
+  });
   test('renameSelectedFrames updates titles in order', async () => {
     const frames = [
       { x: 20, y: 0, title: 'old', sync: jest.fn(), type: 'frame' },

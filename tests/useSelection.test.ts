@@ -17,7 +17,7 @@ describe('useSelection', () => {
   });
 
   test('updates when event fires', async () => {
-    let cb: () => void = () => {};
+    let cb: (ev: { items: unknown[] }) => void = () => {};
     const board: BoardLike = {
       getSelection: jest
         .fn()
@@ -36,7 +36,7 @@ describe('useSelection', () => {
     });
     expect(result.current).toEqual([]);
     await act(async () => {
-      await cb();
+      await cb({ items: [{ id: 2 }] });
     });
     expect(result.current).toEqual([{ id: 2 }]);
     unmount();

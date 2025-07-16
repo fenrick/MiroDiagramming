@@ -3,6 +3,11 @@ import {
   getFirstSelection,
   maybeSync,
 } from '../src/board/board';
+import { boardCache } from '../src/board/board-cache';
+
+beforeEach(() => {
+  boardCache.reset();
+});
 
 describe('forEachSelection', () => {
   describe('callback invocation', () => {

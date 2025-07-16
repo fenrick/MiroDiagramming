@@ -17,6 +17,12 @@ export class BoardCache {
   private selection: Array<Record<string, unknown>> | undefined;
   private readonly widgets = new Map<string, Array<Record<string, unknown>>>();
 
+  /** Store the current selection in the cache. */
+  public setSelection(items: Array<Record<string, unknown>>): void {
+    log.debug({ count: items.length }, 'Selection updated from event');
+    this.selection = items;
+  }
+
   /** Retrieve and cache the current selection. */
   public async getSelection(
     board?: BoardLike,
@@ -26,6 +32,8 @@ export class BoardCache {
       const b = getBoard(board);
       this.selection = await b.getSelection();
       log.debug({ count: this.selection.length }, 'Selection cached');
+    } else {
+      log.trace('Selection cache hit');
     }
     return this.selection;
   }
@@ -49,8 +57,10 @@ export class BoardCache {
     const missing: string[] = [];
     for (const t of types) {
       const cached = this.widgets.get(t);
-      if (cached) results.push(...cached);
-      else missing.push(t);
+      if (cached) {
+        log.trace({ type: t, count: cached.length }, 'Widget cache hit');
+        results.push(...cached);
+      } else missing.push(t);
     }
     if (missing.length) {
       log.trace({ missing }, 'Fetching uncached widget types');

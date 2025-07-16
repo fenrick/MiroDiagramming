@@ -3,8 +3,12 @@ import {
   copySizeFromSelection,
   scaleSelection,
 } from '../src/board/resize-tools';
+import { boardCache } from '../src/board/board-cache';
 
 describe('resize-tools', () => {
+  beforeEach(() => {
+    boardCache.reset();
+  });
   test('copySizeFromSelection returns size', async () => {
     const board = {
       getSelection: jest.fn().mockResolvedValue([{ width: 5, height: 6 }]),

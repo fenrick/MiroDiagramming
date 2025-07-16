@@ -1,6 +1,11 @@
 import { applySpacingLayout } from '../src/board/spacing-tools';
 import { calculateSpacingOffsets } from '../src/board/spacing-layout';
 import { BoardLike } from '../src/board/board';
+import { boardCache } from '../src/board/board-cache';
+
+beforeEach(() => {
+  boardCache.reset();
+});
 
 describe('spacing-tools', () => {
   test('calculateSpacingOffsets computes positions', () => {

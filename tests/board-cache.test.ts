@@ -34,6 +34,17 @@ describe('BoardCache', () => {
     expect(board.getSelection).toHaveBeenCalledTimes(2);
   });
 
+  test('setSelection stores selection from event', async () => {
+    const board: BoardQueryLike = {
+      getSelection: vi.fn().mockResolvedValue([{ id: 1 }]),
+      get: vi.fn(),
+    } as unknown as BoardQueryLike;
+    boardCache.setSelection([{ id: 2 }]);
+    const result = await boardCache.getSelection(board);
+    expect(result).toEqual([{ id: 2 }]);
+    expect(board.getSelection).not.toHaveBeenCalled();
+  });
+
   test('widget queries are cached per type', async () => {
     const board: BoardQueryLike = {
       getSelection: vi.fn(),

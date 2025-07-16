@@ -1,8 +1,12 @@
 /** @vitest-environment jsdom */
 import { applyStylePreset, presetStyle } from '../src/board/format-tools';
 import type { StylePreset } from '../src/ui/style-presets';
+import { boardCache } from '../src/board/board-cache';
 
 describe('format-tools', () => {
+  beforeEach(() => {
+    boardCache.reset();
+  });
   const preset: StylePreset = {
     label: 'Test',
     fontColor: '#ffffff',
