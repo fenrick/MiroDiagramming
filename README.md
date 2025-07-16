@@ -324,6 +324,7 @@ The CI pipeline also enforces commitlint via
 - [Tab Overview](docs/TABS.md) describes the sidebar tabs and their purpose.
 - [Deployment & Build Guide](docs/DEPLOYMENT.md) explains how to build and host
   the bundle.
+- [Server Modules](docs/SERVER_MODULES.md) details the planned .NET API layout.
 - [Components Catalogue](docs/COMPONENTS.md) documents reusable React
   components.
 - [Design Foundation](docs/FOUNDATION.md) explains tokens and theming rules.

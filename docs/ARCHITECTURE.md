@@ -69,7 +69,10 @@ Data        → Graph Normalisation → Layout Engine → Board Rendering → UI
 ## 4 Repository Map
 
 ```
+.net/         *.csproj and solution files
 src/
+  server/      Api/, Services/, Domain/
+  ux/          app/, board/, core/, ui/
   core/        graph/, layout/, utils/
   board/       BoardBuilder, CardProcessor
   # Detailed per-file descriptions:
@@ -77,9 +80,9 @@ src/
   # - [BOARD_MODULES.md](BOARD_MODULES.md)
   # - [UI_MODULES.md](UI_MODULES.md)
   # - [APP_MODULES.md](APP_MODULES.md)
-  ui/          components/, hooks/, pages/
+  # - [SERVER_MODULES.md](SERVER_MODULES.md)
   app/         entry + routing
-tests/         mirrors src
+tests/         server/, ux/
 .storybook/    MDX docs & live examples
 public/        icons, i18n JSON
 scripts/       build helpers
