@@ -14,6 +14,15 @@ afterEach(() => {
   delete (globalThis as { miro?: unknown }).miro;
 });
 
+// Provide a minimal PointerEvent implementation for jsdom
+if (typeof window !== 'undefined' && !('PointerEvent' in window)) {
+  class PointerEvent extends MouseEvent {}
+  window.PointerEvent = PointerEvent as typeof globalThis.PointerEvent;
+  (
+    globalThis as unknown as { PointerEvent: typeof window.PointerEvent }
+  ).PointerEvent = PointerEvent as unknown as typeof window.PointerEvent;
+}
+
 afterAll(() => {
   logSpy.mockRestore();
   errorSpy.mockRestore();
