@@ -5,6 +5,7 @@ import { applyElementToItem } from '../board/element-utils';
 import { searchGroups, searchShapes } from '../board/node-search';
 import type { BaseItem, Group } from '@mirohq/websdk-types';
 import type { BoardQueryLike } from '../board/board';
+import { toSafeString } from './utils/string-utils';
 
 /** Item supporting text content on the board. */
 export interface ContentItem extends BaseItem {
@@ -55,7 +56,7 @@ export class ExcelSyncService {
     for (const def of nodes) {
       const rowId = def.metadata?.rowId;
       if (!rowId) continue;
-      const idStr = String(rowId);
+      const idStr = toSafeString(rowId);
       const widget = await this.findWidget(idStr, def.label);
       if (!widget) continue;
       await this.applyTemplate(widget, def.label, def.type);
@@ -79,8 +80,10 @@ export class ExcelSyncService {
     const updated: ExcelRow[] = [];
     for (const [i, r] of rows.entries()) {
       const rowId = mapping.idColumn ? r[mapping.idColumn] : undefined;
-      const idStr = String(rowId ?? i);
-      const label = mapping.labelColumn ? String(r[mapping.labelColumn]) : '';
+      const idStr = toSafeString(rowId ?? i);
+      const label = mapping.labelColumn
+        ? toSafeString(r[mapping.labelColumn])
+        : '';
       const widget = await this.lookupWidget(idStr, label);
       let row = { ...r };
       if (widget) {

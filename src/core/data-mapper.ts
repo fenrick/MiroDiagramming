@@ -1,6 +1,7 @@
 /**
  * Mapping configuration describing column headers for various fields.
  */
+
 export interface ColumnMapping {
   /** Column used for the optional unique identifier. */
   idColumn?: string;
@@ -27,6 +28,8 @@ export interface CardDefinition {
   description?: string;
   style?: { cardTheme?: string };
 }
+
+import { toSafeString } from './utils/string-utils';
 
 /**
  * Add a property to the target object when the provided value is defined.
@@ -77,7 +80,7 @@ export function buildMetadata(
     if (value != null) metadata[key] = value;
   });
   const idVal = mapping.idColumn ? row[mapping.idColumn] : undefined;
-  metadata.rowId = idVal != null ? String(idVal) : String(index);
+  metadata.rowId = idVal != null ? toSafeString(idVal) : String(index);
   return metadata;
 }
 
@@ -95,9 +98,9 @@ export function resolveIdLabelType(
     ? row[mapping.templateColumn]
     : undefined;
   return {
-    id: idVal != null ? String(idVal) : String(index),
-    label: labelVal != null ? String(labelVal) : '',
-    type: typeVal != null ? String(typeVal) : 'default',
+    id: idVal != null ? toSafeString(idVal) : String(index),
+    label: labelVal != null ? toSafeString(labelVal) : '',
+    type: typeVal != null ? toSafeString(typeVal) : 'default',
   };
 }
 
@@ -139,18 +142,18 @@ export function mapRowToCard(
   const descVal = readColumn(row, mapping.textColumn);
   const themeVal = readColumn(row, mapping.templateColumn);
   const card: CardDefinition = {
-    title: titleVal != null ? String(titleVal) : '',
+    title: titleVal != null ? toSafeString(titleVal) : '',
   };
-  assignIfDefined(card, 'id', idVal != null ? String(idVal) : undefined);
+  assignIfDefined(card, 'id', idVal != null ? toSafeString(idVal) : undefined);
   assignIfDefined(
     card,
     'description',
-    descVal != null ? String(descVal) : undefined,
+    descVal != null ? toSafeString(descVal) : undefined,
   );
   assignIfDefined(
     card,
     'style',
-    themeVal != null ? { cardTheme: String(themeVal) } : undefined,
+    themeVal != null ? { cardTheme: toSafeString(themeVal) } : undefined,
   );
 
   return card;

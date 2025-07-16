@@ -1,10 +1,17 @@
-import {
-  BoardLike,
-  BoardQueryLike,
-  getBoardWithQuery,
-  getBoard,
-} from './board';
+import type { BoardLike, BoardQueryLike } from './types';
 import { log } from '../logger';
+
+function resolveBoard(board?: BoardLike): BoardLike {
+  const b =
+    board ??
+    (globalThis as unknown as { miro?: { board?: BoardLike } }).miro?.board;
+  if (!b) throw new Error('Miro board not available');
+  return b;
+}
+
+function resolveBoardWithQuery(board?: BoardQueryLike): BoardQueryLike {
+  return resolveBoard(board) as BoardQueryLike;
+}
 
 /**
  * Singleton cache for board data.
@@ -29,7 +36,7 @@ export class BoardCache {
   ): Promise<Array<Record<string, unknown>>> {
     if (!this.selection) {
       log.trace('Fetching selection from board');
-      const b = getBoard(board);
+      const b = resolveBoard(board);
       this.selection = await b.getSelection();
       log.debug({ count: this.selection.length }, 'Selection cached');
     } else {
@@ -52,7 +59,7 @@ export class BoardCache {
     types: string[],
     board?: BoardQueryLike,
   ): Promise<Array<Record<string, unknown>>> {
-    const b = getBoardWithQuery(board);
+    const b = resolveBoardWithQuery(board);
     const results: Array<Record<string, unknown>> = [];
     const missing: string[] = [];
     for (const t of types) {
