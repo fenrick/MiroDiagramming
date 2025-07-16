@@ -16,11 +16,11 @@ export interface ExcelStoryWrapperProps {
   /**
    * Initial rows to expose via {@link ExcelDataProvider}.
    */
-  rows: ExcelRow[];
+  readonly rows: readonly ExcelRow[];
   /**
    * React nodes to render within the provider.
    */
-  children: React.ReactNode;
+  readonly children: React.ReactNode;
 }
 
 /**
@@ -33,9 +33,11 @@ export function ExcelStoryWrapper({
   rows,
   children,
 }: ExcelStoryWrapperProps): JSX.Element {
-  const memoRows = React.useMemo(() => rows, [rows]);
+  const memoRows = React.useMemo(() => [...rows], [rows]);
   React.useEffect(() => {
-    const rowId = String(memoRows[0]?.ID ?? '1');
+    const id = memoRows[0]?.ID;
+    const rowId =
+      typeof id === 'string' || typeof id === 'number' ? String(id) : '1';
     (globalThis as unknown as { miro?: { board?: StubBoard } }).miro = {
       board: {
         getSelection: async () => [{ getMetadata: async () => ({ rowId }) }],
