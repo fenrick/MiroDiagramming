@@ -217,6 +217,7 @@ server encrypts tokens at rest and attaches them to API requests._
 | JS errors     | Sentry       | Error rate, stack trace     |
 | Performance   | Datadog RUM  | Layout time, FPS            |
 | Feature flags | LaunchDarkly | Error delta versus baseline |
+| Client logs   | Serilog      | `/api/logs` entries         |
 | Accessibility | manual QA    | Issues logged per build     |
 
 Deployment, rollback and monitoring hooks are documented in **DEPLOYMENT.md**.

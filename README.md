@@ -280,6 +280,9 @@ All runtime messages are emitted through a shared logger defined in
 `trace`, `debug`, `info`, `warn`, `error` or `silent` to control verbosity. It
 defaults to `info`.
 
+The .NET server uses **Serilog** for structured logging. Client log entries are
+forwarded via `POST /api/logs` so both sides share the same log stream.
+
 Example:
 
 ```bash

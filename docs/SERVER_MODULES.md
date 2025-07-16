@@ -42,7 +42,7 @@ to end using the shared `npm` and `dotnet` commands.
 
 ## 3 Controllers
 
-The API exposes three controller types:
+The API exposes four controller types:
 
 1. **BatchController** – accepts an array of REST requests and forwards them to
    the Miro API using a single authenticated client. Responses are returned in
@@ -51,6 +51,8 @@ The API exposes three controller types:
    and queued for processing so the webhook endpoint stays lightweight.
 3. **CacheController** – returns board ids and other metadata stored in the
    server cache. This minimises round trips when rendering existing diagrams.
+4. **LogsController** – accepts client log entries and writes them to the server
+   log via Serilog.
 
 Each controller resides under `src/server/Api/` and is covered by dedicated unit
 tests.
