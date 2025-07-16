@@ -34,13 +34,21 @@ Browser
           ▲                 │
           │                 ▼
         Graph Processor  ◄─ Data Sources (REST/CSV/Graph)
-                         ▲
-                         └── OAuth tokens via browser
+                         │
+                         └─► Data store (Miro item ids)
 ```
 
-The add-on is **client-only**. All persistence is handled by Miro boards.
-Loading Excel workbooks from Microsoft Graph uses a client-side OAuth flow that
-acquires tokens in the browser—no server component stores credentials.
+The React GUI communicates with a **.NET 9** server for all Miro REST API calls.
+OAuth tokens are obtained during browser login, then stored securely by the
+server and retrieved for each request. The existing web API embedded in the GUI
+continues to handle UX events and simple actions. The server also persists the
+ids of created Miro items so they can be synchronised or referenced later.
+
+```
+React GUI ──► .NET 9 Server ──► Miro REST API
+                   │
+                   └─► Data store (Miro item ids)
+```
 
 ---
 
@@ -129,15 +137,16 @@ Complexity limits enforced automatically by **SonarQube** gate.
 
 ## 8 Security & Threat Model (summary)
 
-| Asset         | Threat                           | Mitigation                                                        |
-| ------------- | -------------------------------- | ----------------------------------------------------------------- |
-| Board content | Malicious SVG / script injection | Deep schema validation, CSP sandbox in iframe                     |
-| Layout Worker | DOS via oversized graphs         | Node cap 5 000, timeout 5 s                                       |
-| Supply-chain  | Malicious dependency             | SLSA-compliant provenance, `npm audit` blocks build               |
-| User data     | Privacy breach                   | No external storage; all data stays on Miro board                 |
-| OAuth tokens  | Leakage or misuse                | Tokens held in browser memory only, scope limited to `Files.Read` |
+| Asset         | Threat                           | Mitigation                                                                          |
+| ------------- | -------------------------------- | ----------------------------------------------------------------------------------- |
+| Board content | Malicious SVG / script injection | Deep schema validation, CSP sandbox in iframe                                       |
+| Layout Worker | DOS via oversized graphs         | Node cap 5 000, timeout 5 s                                                         |
+| Supply-chain  | Malicious dependency             | SLSA-compliant provenance, `npm audit` blocks build                                 |
+| User data     | Privacy breach                   | No external storage; all data stays on Miro board                                   |
+| OAuth tokens  | Leakage or misuse                | Tokens stored on the server in an encrypted data store; the GUI never persists them |
 
-_Tokens are acquired via browser OAuth; no server stores credentials._
+_Tokens are acquired via browser OAuth and forwarded to the .NET 9 server. The
+server encrypts tokens at rest and attaches them to API requests._
 
 ---
 
