@@ -1,36 +1,8 @@
 import { boardCache } from './board-cache';
 import { log } from '../logger';
+import type { BoardLike, BoardQueryLike } from './types';
 
-export interface BoardUILike {
-  on(
-    event: 'selection:update',
-    handler: (ev: { items: unknown[] }) => void,
-  ): void;
-  off?(
-    event: 'selection:update',
-    handler: (ev: { items: unknown[] }) => void,
-  ): void;
-}
-
-export interface BoardLike {
-  getSelection(): Promise<Array<Record<string, unknown>>>;
-  group?(opts: { items: Array<Record<string, unknown>> }): Promise<unknown>;
-  ui?: BoardUILike;
-  startBatch?(): Promise<void>;
-  endBatch?(): Promise<void>;
-  abortBatch?(): Promise<void>;
-}
-
-/**
- * Board API that supports querying widgets by type.
- *
- * This extends {@link BoardLike} with a `get` method, mirroring the
- * `miro.board.get()` call. Search utilities rely on this method to gather
- * candidate widgets when scanning the board.
- */
-export interface BoardQueryLike extends BoardLike {
-  get(opts: { type: string }): Promise<Array<Record<string, unknown>>>;
-}
+export type { BoardUILike, BoardLike, BoardQueryLike } from './types';
 
 /**
  * Resolve the active board instance.

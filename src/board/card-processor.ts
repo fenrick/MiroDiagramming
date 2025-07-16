@@ -21,6 +21,10 @@ export interface CardProcessOptions {
 export class CardProcessor extends UndoableProcessor<Card | Frame> {
   /** Prefix used to embed identifiers in descriptions. */
   private static readonly ID_PREFIX = 'ID:';
+  /** Regex capturing an embedded identifier. */
+  private static readonly ID_REGEX = /ID:(\S+)/;
+  /** Regex removing any embedded identifier from text. */
+  private static readonly ID_REMOVE_REGEX = /\n?ID:[^\n]*/;
   /** Default width used for card widgets. */
   private static readonly CARD_WIDTH = 320;
   /** Default height used for card widgets. */
@@ -275,16 +279,13 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
 
   /** Extract identifier from the description text. */
   private extractId(desc: string | undefined): string | undefined {
-    const match = desc?.match(new RegExp(`${CardProcessor.ID_PREFIX}(\S+)`));
+    const match = desc?.match(CardProcessor.ID_REGEX);
     return match ? match[1] : undefined;
   }
 
   /** Embed the identifier inside the description. */
   private encodeDescription(desc: string | undefined, id?: string): string {
-    const base = (desc ?? '').replace(
-      new RegExp(`\n?${CardProcessor.ID_PREFIX}[^\n]*`),
-      '',
-    );
+    const base = (desc ?? '').replace(CardProcessor.ID_REMOVE_REGEX, '');
     if (!id) return base.trim();
     const trimmed = base.trimEnd();
     return `${trimmed}${trimmed ? '\n' : ''}${CardProcessor.ID_PREFIX}${id}`;
