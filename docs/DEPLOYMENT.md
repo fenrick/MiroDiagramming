@@ -196,4 +196,51 @@ automatically.
 
 ---
 
+## 12 .NET server integration
+
+Some teams host the React bundle alongside an ASP.NET Core API. The backend
+publishes to a `publish/` directory and serves static files from the `wwwroot`
+folder. The `dist/` bundle can be copied into `wwwroot` during the publish step
+so front-end assets and API endpoints share the same origin.
+
+### 12.1 Environment variables
+
+Define these variables in the hosting environment:
+
+| Variable                           | Purpose                                 |
+| ---------------------------------- | --------------------------------------- |
+| **ConnectionStrings\_\_Default**   | Database connection string              |
+| **ASPNETCORE_URLS**                | HTTP bind address, e.g. `http://*:5000` |
+| **APPINSIGHTS_INSTRUMENTATIONKEY** | Azure Application Insights key          |
+| **JWT\_\_Issuer**                  | Token issuer for API auth               |
+
+### 12.2 Build & publish
+
+```bash
+dotnet restore
+dotnet publish -c Release -o publish --nologo
+```
+
+The `publish/` folder then contains the compiled API along with the React
+`dist/` assets. Copy the directory into a container image or deploy it straight
+to a platform like **Azure App Service**.
+
+### 12.3 Containerisation and hosting
+
+**Docker**
+
+```bash
+docker build -t miro-backend .
+docker run --rm -p 5000:80 miro-backend
+```
+
+**Azure App Service**
+
+Upload the `publish/` folder or push the container image to Azure Container
+Registry and create an App Service using the **Web App for Containers** option.
+Set environment variables via the Azure portal. The React bundle automatically
+serves from `/wwwroot` alongside the API endpoints.
+
+---
+
 _End of file._
