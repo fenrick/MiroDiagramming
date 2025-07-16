@@ -68,6 +68,37 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+  dotnet-format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Format check
+        run:
+          dotnet format --no-restore --verify-no-changes
+          src/server/Server.csproj
+
+  dotnet-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Restore
+        run: dotnet restore
+      - name: Test
+        run:
+          dotnet test tests/server/Server.Tests.csproj --logger
+          "trx;LogFileName=results.trx" --collect:"XPlat Code Coverage"
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: dotnet-coverage
+          path: tests/server/TestResults
+
   unit-tests:
     runs-on: ubuntu-latest
     strategy:
@@ -100,7 +131,9 @@ jobs:
 
   merge-coverage:
     if: always()
-    needs: unit-tests
+    needs:
+      - unit-tests
+      - dotnet-tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -119,6 +152,11 @@ jobs:
         with:
           name: coverage-2
           path: coverage-2
+      - name: Download dotnet coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: dotnet-coverage
+          path: dotnet-coverage
       - name: Debug downloaded coverage files
         run: ls -R .
       - name: Merge coverage
@@ -126,6 +164,7 @@ jobs:
           mkdir -p coverage
           npx lcov-result-merger "coverage-*/lcov.info" coverage/lcov.info
           cat coverage-*/sonar-report.xml > coverage/sonar-report.xml
+          cp dotnet-coverage/**/coverage.cobertura.xml coverage/coverage.cobertura.xml
       - name: Upload coverage
         uses: actions/upload-artifact@v4
         with:
@@ -223,6 +262,8 @@ jobs:
       - eslint
       - stylelint
       - typecheck
+      - dotnet-format
+      - dotnet-tests
       - unit-tests
       - sonar
       - codeql

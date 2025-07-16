@@ -252,6 +252,7 @@ Then validate the codebase with:
 npm run typecheck --silent
 npm test --silent
 dotnet test --no-build
+npx dotnet-format --verify-no-changes src/server/Server.csproj
 npm run lint --silent
 npm run stylelint --silent
 npm run prettier --silent

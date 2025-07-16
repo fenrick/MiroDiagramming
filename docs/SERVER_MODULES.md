@@ -4,7 +4,7 @@
 
 ## 0 Purpose
 
-Outline the planned .NET 9 server layout that complements the existing React
+Outline the planned .NET 8 server layout that complements the existing React
 client. The server exposes REST endpoints and a webhook listener, caches board
 ids and acts as the authoritative API entry point. This document defines the
 project structure and main controllers.
@@ -13,7 +13,7 @@ project structure and main controllers.
 
 ```
 src/
-  server/              .NET 9 API project
+  server/              .NET 8 API project
     Api/               controllers and middleware
     Domain/            entities and data models
     Services/          business logic and caching
@@ -34,9 +34,7 @@ front‑end role.
 
 ## 2 IDE Configuration
 
-Two project files allow easy loading in either VS Code or JetBrains Rider:
-
-- `src/server/Server.csproj` – .NET 9 Web API project.
+- `src/server/Server.csproj` – .NET 8 Web API project.
 - `package.json` in `src/ux/` – Node workspace for the React client.
 
 Each tool can open only its relevant folder, but the repository still builds end

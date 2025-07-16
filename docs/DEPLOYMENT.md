@@ -146,6 +146,7 @@ If any step fails, do not promote to production.
 ```
 Push → GitHub Action
         ├─ Prettier, ESLint, Stylelint, Typecheck
+        ├─ dotnet format check
         ├─ Unit tests (`npm test`, `dotnet test`, parallel shards)
         ├─ Merge coverage from both suites
         ├─ Sonar analysis
@@ -164,7 +165,8 @@ All gates and complexity budgets are defined in **ARCHITECTURE.md** (sections
 The pipeline is orchestrated by the GitHub Actions workflow in
 `.github/workflows/ci.yml`. Every push or pull request triggers the jobs listed
 above using Node 24. Artefacts from the build and Storybook steps are uploaded
-as workflow artefacts so deployment jobs can promote the exact output. Run
+as workflow artefacts so deployment jobs can promote the exact output. The
+server pipeline uses .NET 8 for restoration, formatting and tests. Run
 `npm run ci:local` to replicate the pipeline on your machine before opening a
 pull request.
 
