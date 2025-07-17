@@ -1,6 +1,7 @@
 # Development Notes
 
-All source files live in `src/**` with accompanying tests in `tests/**`.
+Each project resides in its own `fenrick.miro.*` folder containing `src/` and
+`tests/` subdirectories. Place code under `src/` and tests under `tests/`.
 
 Before committing changes run `npm install` to ensure dependencies are up to
 date and then:
