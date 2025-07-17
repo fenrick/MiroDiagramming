@@ -19,11 +19,11 @@ export function createLogger(sink?: LogSink) {
           logMethod(args, method, lvl) {
             method.apply(this, args);
             const [msg, ctx] = args;
-            const labels = (this as pino.Logger).levels.labels;
-            const name = labels[lvl as number] ?? 'info';
+            const labels = this.levels.labels;
+            const name = labels[lvl] ?? 'info';
             const entry: ClientLogEntry = {
               timestamp: new Date().toISOString(),
-              level: name as pino.Level,
+              level: name,
               message: String(msg),
               context: ctx as Record<string, string> | undefined,
             };
