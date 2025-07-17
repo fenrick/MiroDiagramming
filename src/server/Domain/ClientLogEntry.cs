@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Miro.Server.Domain;
 
 /// <summary>
@@ -7,4 +9,8 @@ namespace Miro.Server.Domain;
 /// <param name="Level">Log severity (info, warn, error).</param>
 /// <param name="Message">Message text.</param>
 /// <param name="Context">Optional structured context data.</param>
-public record ClientLogEntry(DateTime Timestamp, string Level, string Message, Dictionary<string, string>? Context);
+public record ClientLogEntry(
+    [property: Required] DateTime Timestamp,
+    [property: Required] string Level,
+    [property: Required] string Message,
+    Dictionary<string, string>? Context);

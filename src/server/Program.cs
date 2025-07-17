@@ -1,6 +1,7 @@
 using Miro.Server.Api;
 using Miro.Server.Services;
 using Serilog;
+using System.Diagnostics.CodeAnalysis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,4 +18,7 @@ builder.Services.AddSingleton<ILogSink, SerilogSink>();
 
 var app = builder.Build();
 app.MapControllers();
-app.Run();
+await app.RunAsync();
+
+[ExcludeFromCodeCoverage]
+public partial class Program { }
