@@ -12,30 +12,30 @@ project structure and main controllers.
 ## 1 Proposed Repository Layout
 
 ```
-src/
-  server/              .NET 9 API project
-    Api/               controllers and middleware
-    Domain/            entities and data models
-    Services/          business logic and caching
-    Server.csproj      project file
-  ux/                  existing Node/React client
-    app/               entry and routing
-    board/             board adapter utilities
-    core/              domain logic used by the client
-    ui/                React components
-  tests/
-    server/            unit tests for .NET code
-    ux/                existing Node tests
+fenrick.miro.server/
+  src/server/         .NET 9 API project
+    Api/              controllers and middleware
+    Domain/           entities and data models
+    Services/         business logic and caching
+    Server.csproj     project file
+fenrick.miro.ux/
+  src/                React client
+    app/              entry and routing
+    board/            board adapter utilities
+    core/             domain logic used by the client
+    ui/               React components
+fenrick.miro.server.tests/   unit tests for .NET code
+fenrick.miro.ux.tests/       Node tests
 ```
 
-All server modules live under `src/server/` with matching tests under
-`tests/server/`. The Node code migrates into `src/ux/` to emphasise the
-front‑end role.
+All server modules live under `fenrick.miro.server/src/server/` with matching
+tests under `fenrick.miro.server.tests/`. The Node code resides in
+`fenrick.miro.ux/src/` to emphasise the front‑end role.
 
 ## 2 IDE Configuration
 
-- `src/server/Server.csproj` – .NET 9 Web API project.
-- `package.json` in `src/ux/` – Node workspace for the React client.
+- `fenrick.miro.server/src/server/Server.csproj` – .NET 9 Web API project.
+- `package.json` in `fenrick.miro.ux/` – Node workspace for the React client.
 
 Each tool can open only its relevant folder, but the repository still builds end
 to end using the shared `npm` and `dotnet` commands.
@@ -54,15 +54,16 @@ The API exposes four controller types:
 4. **LogsController** – accepts client log entries and writes them to the server
    log via Serilog.
 
-Each controller resides under `src/server/Api/` and is covered by dedicated unit
-tests.
+Each controller resides under `fenrick.miro.server/src/server/Api/` and is
+covered by dedicated unit tests.
 
 ## 4 Shared Contracts
 
-Models used by both the server and client live in `src/server/Domain/`. These
-include board metadata, webhook payloads and diagram definitions. The React code
-imports the TypeScript declarations generated from the C# records, ensuring a
-single source of truth for all data shapes.
+Models used by both the server and client live in
+`fenrick.miro.server/src/server/Domain/`. These include board metadata, webhook
+payloads and diagram definitions. The React code imports the TypeScript
+declarations generated from the C# records, ensuring a single source of truth
+for all data shapes.
 
 ---
 

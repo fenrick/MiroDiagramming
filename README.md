@@ -144,10 +144,11 @@ complete UI flow.
 ## Styling with the Miro Design System
 
 The CSS for this project imports `@mirohq/design-system-themes/light.css` in
-[`src/assets/style.css`](src/assets/style.css) to match the Miro UI. Components
-are sourced from `@mirohq/design-system`. Avoid custom CSS when a component or
-token already exists. Wrapper components in `src/ui/components` abstract the
-design-system primitives so upgrades happen in one place.
+[`fenrick.miro.ux/src/assets/style.css`](fenrick.miro.ux/src/assets/style.css)
+to match the Miro UI. Components are sourced from `@mirohq/design-system`. Avoid
+custom CSS when a component or token already exists. Wrapper components in
+`fenrick.miro.ux/src/ui/components` abstract the design-system primitives so
+upgrades happen in one place.
 
 ## Form Design Guidelines
 
@@ -252,7 +253,7 @@ Then validate the codebase with:
 npm run typecheck --silent
 npm test --silent
 dotnet test --no-build
-npx dotnet-format --verify-no-changes src/server/Server.csproj
+npx dotnet-format --verify-no-changes fenrick.miro.server/src/server/Server.csproj
 npm run lint --silent
 npm run stylelint --silent
 npm run prettier --silent
@@ -276,9 +277,9 @@ everyone uses the exact dependency versions when installing.
 ## Logging
 
 All runtime messages are emitted through a shared logger defined in
-[`src/logger.ts`](src/logger.ts). Set the `LOG_LEVEL` environment variable to
-`trace`, `debug`, `info`, `warn`, `error` or `silent` to control verbosity. It
-defaults to `info`.
+[`fenrick.miro.ux/src/logger.ts`](fenrick.miro.ux/src/logger.ts). Set the
+`LOG_LEVEL` environment variable to `trace`, `debug`, `info`, `warn`, `error` or
+`silent` to control verbosity. It defaults to `info`.
 
 The .NET server uses **Serilog** for structured logging. Client log entries are
 automatically batched by `HttpLogSink` and forwarded via `POST /api/logs` so
@@ -307,16 +308,20 @@ The CI pipeline also enforces commitlint via
 
 ```
 .
-├── src
-│   ├── core
-│   │   ├── graph
-│   │   ├── layout
-│   │   └── utils
-│   ├── ui
-│   │   ├── components
-│   │   ├── hooks
-│   │   └── pages
-│   └── app
+├── fenrick.miro.server/
+│   └── src/server
+│       ├── Api
+│       ├── Domain
+│       └── Services
+├── fenrick.miro.ux/
+│   └── src
+│       ├── app
+│       ├── board
+│       ├── core
+│       ├── ui
+│       └── assets
+├── fenrick.miro.api/
+├── fenrick.miro.services/
 ├── public         // icons and i18n JSON
 ├── scripts        // build helpers
 └── index.html     // entry point specified as App URL
