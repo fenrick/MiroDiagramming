@@ -54,14 +54,15 @@ React GUI ──► .NET 9 Server ──► Miro REST API
 
 ## 3 Layering
 
-```
-Data        → Graph Normalisation → Layout Engine → Board Rendering → UI Orchestration
-(src/core)     (src/core)            (src/core)      (src/board)       (src/ui)
+-``` Data → Graph Normalisation → Layout Engine → Board Rendering → UI
+Orchestration (fenrick.miro.ux/src/core) (fenrick.miro.ux/src/core)
+(fenrick.miro.ux/src/core) (fenrick.miro.ux/src/board) (fenrick.miro.ux/src/ui)
+
 ```
 
-- **Pure Core** (src/core) – framework-agnostic logic.
-- **Board Adapter** (src/board) – converts domain objects to Miro widgets.
-- **UI Shell** (src/ui) – React views built with design-system wrappers.
+- **Pure Core** (`fenrick.miro.ux/src/core`) – framework-agnostic logic.
+- **Board Adapter** (`fenrick.miro.ux/src/board`) – converts domain objects to Miro widgets.
+- **UI Shell** (`fenrick.miro.ux/src/ui`) – React views built with design-system wrappers.
 - **Infrastructure** (scripts, .github) – build, lint, test, release automation.
 
 ---
@@ -69,24 +70,14 @@ Data        → Graph Normalisation → Layout Engine → Board Rendering → UI
 ## 4 Repository Map
 
 ```
-.net/         *.csproj and solution files
-src/
-  server/      Api/, Services/, Domain/
-  ux/          app/, board/, core/, ui/
-  core/        graph/, layout/, utils/
-  board/       BoardBuilder, CardProcessor
-  # Detailed per-file descriptions:
-  # - [CORE_MODULES.md](CORE_MODULES.md)
-  # - [BOARD_MODULES.md](BOARD_MODULES.md)
-  # - [UI_MODULES.md](UI_MODULES.md)
-  # - [APP_MODULES.md](APP_MODULES.md)
-  # - [SERVER_MODULES.md](SERVER_MODULES.md)
-  app/         entry + routing
-tests/         server/, ux/
-.storybook/    MDX docs & live examples
-public/        icons, i18n JSON
-scripts/       build helpers
-docs/          *.md (this file, components, foundation …)
+
+fenrick.miro.server/ src/server/{Api,Domain,Services} fenrick.miro.ux/
+src/{app,board,core,ui,assets} fenrick.miro.api/ src/ (future public API)
+fenrick.miro.services/ src/ (shared cross-cutting services)
+fenrick.miro.server.tests/ .NET unit tests fenrick.miro.ux.tests/ Node/React
+tests docs/ \*.md (this file, components, foundation …) scripts/ build helpers
+public/ icons, i18n JSON templates/ default widget templates
+
 ```
 
 ---
@@ -247,3 +238,4 @@ See [CODE_STYLE.md](CODE_STYLE.md) for detailed style rules.
 - Import order: std → vendor → local, alphabetical within group.
 - No raw grid-column in style blocks (enforced by custom ESLint rule).
 - PR template checklist: coverage, complexity, a11y, dark-mode snapshot.
+```

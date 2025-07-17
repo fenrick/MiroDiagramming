@@ -122,8 +122,8 @@ Rollback takes < 30 seconds and never breaks active boards.
 | Bundle size               | CI budget check       | ≤ 300 KB gzipped            |
 
 Alerts route to the **#miro-addon-alerts** Slack channel. Instrumentation is
-wired in `src/infrastructure/telemetry.ts`. Details on metrics collection sit in
-**ARCHITECTURE.md** (section 13).
+wired in `fenrick.miro.ux/src/infrastructure/telemetry.ts`. Details on metrics
+collection sit in **ARCHITECTURE.md** (section 13).
 
 ---
 

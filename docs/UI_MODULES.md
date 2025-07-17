@@ -4,13 +4,14 @@
 
 ## 0 Purpose
 
-This document describes the React-based UI modules under `src/ui/`. Components,
-hooks and pages form the add-on interface.
+This document describes the React-based UI modules under
+`fenrick.miro.ux/src/ui/`. Components, hooks and pages form the add-on
+interface.
 
 ## 1 Directory Overview
 
 ```
-src/ui/
+fenrick.miro.ux/src/ui/
   components/
     EditMetadataModal.tsx
     JsonDropZone.tsx
