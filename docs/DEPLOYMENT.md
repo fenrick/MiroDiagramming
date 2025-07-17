@@ -149,7 +149,7 @@ Push → GitHub Action
         ├─ dotnet format check
         ├─ Unit tests (`npm test`, `dotnet test`, parallel shards)
         ├─ Merge coverage from both suites
-        ├─ Sonar analysis
+        ├─ Sonar build scan
         ├─ CodeQL scan
         ├─ Build Storybook
         ├─ Build add-on bundle
