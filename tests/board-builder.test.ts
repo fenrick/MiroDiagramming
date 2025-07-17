@@ -3,7 +3,7 @@ import { BoardBuilder } from '../src/board/board-builder';
 
 test('stores and retrieves frame', () => {
   const builder = new BoardBuilder();
-  const frame = { id: '1' } as any;
+  const frame: { id: string } = { id: '1' };
   builder.setFrame(frame);
   expect(builder.getFrame()).toBe(frame);
   builder.reset();

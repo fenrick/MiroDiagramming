@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Miro.Server.Domain;
 using Miro.Server.Services;
 using Xunit;
@@ -9,12 +7,12 @@ namespace Miro.Server.Tests;
 public class InMemoryCacheServiceTests
 {
     [Fact]
-    public void StoreAndGet_ReturnsCachedItem()
+    public void Get_ReturnsValueWhenPresentOtherwiseNull()
     {
         var service = new InMemoryCacheService();
+        Assert.Null(service.Get("1"));
         var meta = new BoardMetadata("1", "Board");
         service.Store(meta);
-        var result = service.Get("1");
-        Assert.Equal(meta, result);
+        Assert.Equal(meta, service.Get("1"));
     }
 }
