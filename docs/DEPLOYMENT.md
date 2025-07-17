@@ -150,7 +150,7 @@ Push → GitHub Action
         ├─ Unit tests (`npm test`, `dotnet test`, parallel shards)
         ├─ Merge coverage from both suites
         ├─ Sonar build scan (dotnet-sonarscanner with dotnet test)
-        ├─ CodeQL scan
+        ├─ CodeQL scan (JavaScript, Actions and C#)
         ├─ Build Storybook
         ├─ Build add-on bundle
         ├─ Upload artefact
