@@ -1,13 +1,14 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
+node_modules
+fenrick.miro.ux/node_modules
 /.pnp
 .pnp.js
 .next
 
 # testing
-/coverage
+fenrick.miro.ux/coverage
 
 # misc
 .DS_Store

@@ -15,7 +15,7 @@ each element can carry metadata that controls its appearance and placement.
    Cards are automatically arranged in a grid with a calculated number of
    columns. Pass `columns` when invoking the importer to override this value.
 5. See
-   [`fenrick.miro.ux.tests/fixtures/sample-cards.json`](fenrick.miro.ux.tests/fixtures/sample-cards.json)
+   [`fenrick.miro.ux/tests/fixtures/sample-cards.json`](fenrick.miro.ux/tests/fixtures/sample-cards.json)
    for a cards format example.
 
 ### Card JSON Format
@@ -71,7 +71,7 @@ in the description using the `ID:` prefix.
 ## Sample Graph
 
 A small example is provided in
-[fenrick.miro.ux.tests/fixtures/sample-graph.json](fenrick.miro.ux.tests/fixtures/sample-graph.json):
+[fenrick.miro.ux/tests/fixtures/sample-graph.json](fenrick.miro.ux/tests/fixtures/sample-graph.json):
 
 ```json
 {
@@ -90,7 +90,7 @@ visualised using the **Nested** layout option in the Diagram tab. Positions and
 container sizes are computed entirely by the ELK engine for consistent spacing.
 Nodes are sorted alphabetically by default or via a custom metadata key. A
 three‑level sample dataset is available at
-[fenrick.miro.ux.tests/fixtures/sample-hier.json](fenrick.miro.ux.tests/fixtures/sample-hier.json).
+[fenrick.miro.ux/tests/fixtures/sample-hier.json](fenrick.miro.ux/tests/fixtures/sample-hier.json).
 Simply select **Nested** and import this file to see parent widgets sized to fit
 their children. Flat graph data is automatically converted when necessary.
 
@@ -197,9 +197,9 @@ the rest of the UI. These guidelines help keep layouts consistent:
 
 ## 🏃🏽‍♂️ Run the app locally <a name="run"></a>
 
-1. Run `npm install` to install dependencies. The project includes a
-   `package-lock.json` file so everyone installs the same versions.
-2. Run `npm start` to start the development server. \
+1. Run `npm install` inside `fenrick.miro.ux` to install dependencies. The
+   `package-lock.json` file ensures everyone installs the same versions.
+2. Run `npm start` from `fenrick.miro.ux` to start the development server. \
    Your URL should be similar to this example:
 
 ```
@@ -245,19 +245,19 @@ The root `AGENTS.md` lists the commands to run before committing. Be sure to
 install dependencies first:
 
 ```bash
-npm install
+npm install --prefix fenrick.miro.ux
 ```
 
 Then validate the codebase with:
 
 ```bash
-npm run typecheck --silent
-npm test --silent
+npm --prefix fenrick.miro.ux run typecheck --silent
+npm --prefix fenrick.miro.ux run test --silent
 dotnet test --no-build
 npx dotnet-format --verify-no-changes fenrick.miro.server/fenrick.miro.server.csproj
-npm run lint --silent
-npm run stylelint --silent
-npm run prettier --silent
+npm --prefix fenrick.miro.ux run lint --silent
+npm --prefix fenrick.miro.ux run stylelint --silent
+npm --prefix fenrick.miro.ux run prettier --silent
 ```
 
 A Husky pre-commit hook runs these commands automatically. After cloning the
@@ -289,7 +289,7 @@ both sides share the same log stream.
 Example:
 
 ```bash
-LOG_LEVEL=debug npm start
+LOG_LEVEL=debug npm --prefix fenrick.miro.ux start
 ```
 
 ## Commit message checks
@@ -315,17 +315,18 @@ The CI pipeline also enforces commitlint via
 │       ├── Domain
 │       └── Services
 ├── fenrick.miro.ux/
-│   └── src
-│       ├── app
-│       ├── board
-│       ├── core
-│       ├── ui
-│       └── assets
+│   ├── src
+│   │   ├── app
+│   │   ├── board
+│   │   ├── core
+│   │   ├── ui
+│   │   └── assets
+│   ├── index.html // entry point specified as App URL
+│   └── app.html   // panel view loaded by the SDK
 ├── fenrick.miro.api/
 ├── fenrick.miro.services/
 ├── public         // icons and i18n JSON
-├── scripts        // build helpers
-└── index.html     // entry point specified as App URL
+└── scripts        // build helpers
 ```
 
 ## 📚 Additional Design Docs
