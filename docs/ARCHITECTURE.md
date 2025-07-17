@@ -117,7 +117,7 @@ Complexity limits enforced automatically by **SonarQube** gate.
 **Workflow** (GitHub Actions)
 
 1. Restore Node and .NET dependencies from cache.
-2. Lint, type-check and unit tests for both codebases (Node 24, .NET 8).
+2. Lint, type-check and unit tests for both codebases (Node 24, .NET 9).
 3. Build Storybook and a feature-flagged bundle for staging.
 4. SonarQube analysis and budget checks (configured by
    [sonar-project.properties](../sonar-project.properties)).
