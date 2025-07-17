@@ -1,4 +1,5 @@
-import React from 'react';
+import React from 'react'; // eslint-disable-line @typescript-eslint/no-unused-vars
+void React;
 import type { Meta, StoryObj } from '@storybook/react';
 import { Select, SelectOption } from '../ui/components/Select';
 

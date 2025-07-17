@@ -26,7 +26,7 @@ async function createFile(): Promise<File> {
 }
 
 function readFixtureFile(): File {
-  const buf = readFileSync('tests/fixtures/sample.xlsx');
+  const buf = readFileSync('fenrick.miro.ux/tests/fixtures/sample.xlsx');
   return {
     name: 'sample.xlsx',
     async arrayBuffer() {
