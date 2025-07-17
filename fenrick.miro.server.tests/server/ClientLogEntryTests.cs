@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Miro.Server.Domain;
+using Fenrick.Miro.Server.Domain;
 using Xunit;
 
-namespace Miro.Server.Tests;
+namespace Fenrick.Miro.Server.Tests;
 
 public class ClientLogEntryTests
 {

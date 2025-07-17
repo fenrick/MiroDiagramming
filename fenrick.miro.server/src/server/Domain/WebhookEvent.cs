@@ -1,4 +1,4 @@
-namespace Miro.Server.Domain;
+namespace Fenrick.Miro.Server.Domain;
 
 /// <summary>
 /// Simplified representation of a webhook event sent by Miro.

@@ -1,6 +1,6 @@
-using Miro.Server.Domain;
+using Fenrick.Miro.Server.Domain;
 
-namespace Miro.Server.Services;
+namespace Fenrick.Miro.Server.Services;
 
 /// <summary>
 /// Provides board metadata caching for quick lookup.

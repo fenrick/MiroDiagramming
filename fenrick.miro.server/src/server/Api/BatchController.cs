@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using Miro.Server.Domain;
+using Fenrick.Miro.Server.Domain;
 
-namespace Miro.Server.Api;
+namespace Fenrick.Miro.Server.Api;
 
 /// <summary>
 /// Aggregates REST calls so the client can send them in one request.

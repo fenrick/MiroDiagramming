@@ -1,4 +1,4 @@
-namespace Miro.Server.Domain;
+namespace Fenrick.Miro.Server.Domain;
 
 /// <summary>
 /// Basic information about a Miro board used by caching.

@@ -1,14 +1,14 @@
 using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
-using Miro.Server.Api;
-using Miro.Server.Domain;
+using Fenrick.Miro.Server.Api;
+using Fenrick.Miro.Server.Domain;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
 #nullable enable
 
-namespace Miro.Server.Tests;
+namespace Fenrick.Miro.Server.Tests;
 
 public class BatchControllerTests
 {

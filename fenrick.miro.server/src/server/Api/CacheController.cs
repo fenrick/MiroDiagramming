@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using Miro.Server.Domain;
-using Miro.Server.Services;
+using Fenrick.Miro.Server.Domain;
+using Fenrick.Miro.Server.Services;
 
-namespace Miro.Server.Api;
+namespace Fenrick.Miro.Server.Api;
 
 /// <summary>
 /// Provides cached board metadata used by the React app.
