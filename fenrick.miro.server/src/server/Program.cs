@@ -1,5 +1,5 @@
-using Miro.Server.Api;
-using Miro.Server.Services;
+using Fenrick.Miro.Server.Api;
+using Fenrick.Miro.Server.Services;
 using Serilog;
 using System.Diagnostics.CodeAnalysis;
 

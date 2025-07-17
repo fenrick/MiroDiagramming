@@ -1,4 +1,4 @@
-namespace Miro.Server.Domain;
+namespace Fenrick.Miro.Server.Domain;
 
 /// <summary>
 /// Lightweight description of a REST request sent to the Miro API.

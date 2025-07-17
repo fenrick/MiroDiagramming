@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace Miro.Server.Domain;
+namespace Fenrick.Miro.Server.Domain;
 
 /// <summary>
 /// Log entry forwarded from the client application.

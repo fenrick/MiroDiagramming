@@ -1,6 +1,6 @@
-using Miro.Server.Domain;
+using Fenrick.Miro.Server.Domain;
 
-namespace Miro.Server.Services;
+namespace Fenrick.Miro.Server.Services;
 
 /// <summary>
 /// Stores log entries sent by the client.

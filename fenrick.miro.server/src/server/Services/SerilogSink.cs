@@ -1,8 +1,8 @@
-using Miro.Server.Domain;
+using Fenrick.Miro.Server.Domain;
 using Serilog;
 using ILogger = Serilog.ILogger;
 
-namespace Miro.Server.Services;
+namespace Fenrick.Miro.Server.Services;
 
 /// <summary>
 /// Writes client logs to the server log via Serilog.

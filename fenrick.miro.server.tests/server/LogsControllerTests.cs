@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
-using Miro.Server.Api;
-using Miro.Server.Domain;
-using Miro.Server.Services;
+using Fenrick.Miro.Server.Api;
+using Fenrick.Miro.Server.Domain;
+using Fenrick.Miro.Server.Services;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
-namespace Miro.Server.Tests;
+namespace Fenrick.Miro.Server.Tests;
 
 public class LogsControllerTests
 {
