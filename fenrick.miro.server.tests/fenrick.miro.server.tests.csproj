@@ -5,7 +5,7 @@
     <RootNamespace>Fenrick.Miro.Server.Tests</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="../../fenrick.miro.server/src/server/Server.csproj" />
+    <ProjectReference Include="../fenrick.miro.server/fenrick.miro.server.csproj" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
     <PackageReference Include="xunit" Version="2.5.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.5.1" />

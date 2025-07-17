@@ -71,7 +71,7 @@ Orchestration (fenrick.miro.ux/src/core) (fenrick.miro.ux/src/core)
 
 ```
 
-fenrick.miro.server/ src/server/{Api,Domain,Services} fenrick.miro.ux/
+fenrick.miro.server/ src/{Api,Domain,Services} fenrick.miro.ux/
 src/{app,board,core,ui,assets} fenrick.miro.api/ src/ (future public API)
 fenrick.miro.services/ src/ (shared cross-cutting services)
 fenrick.miro.server.tests/ .NET unit tests fenrick.miro.ux.tests/ Node/React
