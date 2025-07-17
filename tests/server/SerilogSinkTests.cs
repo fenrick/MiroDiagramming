@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Miro.Server.Domain;
 using Miro.Server.Services;
 using Serilog;
@@ -22,7 +24,8 @@ public class SerilogSinkTests
         sink.Store(new[] { entry });
 
         Assert.Single(events);
-        Assert.Contains("hello", events[0].MessageTemplate.Text);
+        var message = events[0].Properties["Message"].ToString().Trim('"');
+        Assert.Equal("hello", message);
     }
 
     private sealed class DelegatingSink : ILogEventSink

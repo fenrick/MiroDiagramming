@@ -88,7 +88,7 @@ jobs:
         with:
           dotnet-version: '9.0.x'
       - name: Restore
-        run: dotnet restore
+        run: dotnet restore tests/server/Server.Tests.csproj
       - name: Test
         run:
           dotnet test tests/server/Server.Tests.csproj --logger

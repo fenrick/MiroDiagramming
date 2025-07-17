@@ -1,5 +1,6 @@
 using Miro.Server.Domain;
 using Serilog;
+using ILogger = Serilog.ILogger;
 
 namespace Miro.Server.Services;
 
