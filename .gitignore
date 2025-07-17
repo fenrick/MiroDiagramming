@@ -34,3 +34,8 @@ dist
 #!.yarn/cache
 .pnp.*
 tsconfig.tsbuildinfo
+# dotnet build artifacts
+/src/**/bin/
+/src/**/obj/
+/tests/**/bin/
+/tests/**/obj/
