@@ -8,6 +8,16 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'lcov'],
       reportsDirectory: 'coverage',
+      exclude: [
+        'commitlint.config.cjs',
+        'scripts/**',
+        'vitest.config.ts',
+        'vite.config.ts',
+        'eslint.config.js',
+        'vite-env.d.ts',
+        '.storybook/**',
+        '**/*.d.ts',
+      ],
     },
     reporters: [
       'default',
