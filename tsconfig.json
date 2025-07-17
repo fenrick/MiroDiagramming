@@ -19,8 +19,10 @@
     "typeRoots": ["./node_modules/@types", "./node_modules/@mirohq"],
     "allowJs": true,
     "incremental": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "baseUrl": ".",
+    "paths": { "fenrick.miro.ux/*": ["fenrick.miro.ux/src/*"] }
   },
-  "include": ["fenrick.miro.ux/src", "*.ts", "vite-env.d.ts"],
+  "include": ["fenrick.miro.ux/src/**/*", "*.ts", "vite-env.d.ts"],
   "exclude": ["node_modules"]
 }
