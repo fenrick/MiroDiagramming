@@ -38,9 +38,6 @@ tsconfig.tsbuildinfo
 # dotnet installer
 dotnet-install.sh
 # dotnet build artifacts
-**/src/**/bin/
-**/src/**/obj/
-**/tests/**/bin/
-**/tests/**/obj/
-**/tests/**/TestResults/
+**/bin/
+**/obj/
 /coverage
