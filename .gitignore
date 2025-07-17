@@ -34,3 +34,9 @@ dist
 #!.yarn/cache
 .pnp.*
 tsconfig.tsbuildinfo
+# dotnet build artifacts
+/fenrick.miro.*/**/bin/
+/fenrick.miro.*/**/obj/
+/fenrick.miro.*tests/**/bin/
+/fenrick.miro.*tests/**/obj/
+/fenrick.miro.*tests/**/TestResults/

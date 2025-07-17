@@ -1,4 +1,4 @@
-import templatesJson from '../../templates/shapeTemplates.json';
+import templatesJson from '../../../templates/shapeTemplates.json';
 import { templateManager } from '../board/templates';
 import type { TemplateElement } from '../board/templates';
 

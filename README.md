@@ -252,6 +252,7 @@ Then validate the codebase with:
 npm run typecheck --silent
 npm test --silent
 dotnet test --no-build
+npx dotnet-format --verify-no-changes fenrick.miro.server/src/Server.csproj
 npm run lint --silent
 npm run stylelint --silent
 npm run prettier --silent
@@ -278,6 +279,10 @@ All runtime messages are emitted through a shared logger defined in
 [`src/logger.ts`](src/logger.ts). Set the `LOG_LEVEL` environment variable to
 `trace`, `debug`, `info`, `warn`, `error` or `silent` to control verbosity. It
 defaults to `info`.
+
+The .NET server uses **Serilog** for structured logging. Client log entries are
+automatically batched by `HttpLogSink` and forwarded via `POST /api/logs` so
+both sides share the same log stream.
 
 Example:
 
@@ -324,6 +329,7 @@ The CI pipeline also enforces commitlint via
 - [Tab Overview](docs/TABS.md) describes the sidebar tabs and their purpose.
 - [Deployment & Build Guide](docs/DEPLOYMENT.md) explains how to build and host
   the bundle.
+- [Server Modules](docs/SERVER_MODULES.md) details the planned .NET API layout.
 - [Components Catalogue](docs/COMPONENTS.md) documents reusable React
   components.
 - [Design Foundation](docs/FOUNDATION.md) explains tokens and theming rules.

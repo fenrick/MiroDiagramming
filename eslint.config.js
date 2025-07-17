@@ -25,7 +25,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ['tests/**/*.{ts,tsx}'],
+    files: ['fenrick.miro.ux/tests/**/*.{ts,tsx}'],
     languageOptions: {
       parser: tseslint.parser,
       ecmaVersion: 'latest',

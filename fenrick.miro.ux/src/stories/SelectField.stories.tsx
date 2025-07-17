@@ -1,3 +1,4 @@
+import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { SelectField } from '../ui/components/SelectField';
 import { SelectOption } from '../ui/components';

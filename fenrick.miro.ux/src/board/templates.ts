@@ -1,5 +1,5 @@
-import templatesJson from '../../templates/shapeTemplates.json';
-import connectorJson from '../../templates/connectorTemplates.json';
+import templatesJson from '../../../templates/shapeTemplates.json';
+import connectorJson from '../../../templates/connectorTemplates.json';
 import { colors } from '@mirohq/design-tokens';
 import type {
   ConnectorStyle,

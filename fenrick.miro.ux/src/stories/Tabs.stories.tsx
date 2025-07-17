@@ -1,3 +1,4 @@
+import React from 'react';
 /**
  * Storybook entries demonstrating each sidebar tab component.
  * Parent tabs such as Tools and Diagrams host their own sub-navigation
