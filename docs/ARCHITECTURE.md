@@ -119,9 +119,10 @@ Complexity limits enforced automatically by **SonarQube** gate.
 1. Restore Node and .NET dependencies from cache.
 2. Lint, type-check and unit tests for both codebases (Node 24, .NET 9).
 3. Build Storybook and a feature-flagged bundle for staging.
-4. SonarQube build scan and budget checks using
+4. SonarQube build scan using
    [dotnet-sonarscanner](https://docs.sonarsource.com/sonarqube/latest/analyzing-source-code/scanners/sonarscanner-for-msbuild/)
-   passing coverage reports directly on the command line.
+   with the `dotnet test` run between the `begin` and `end` steps so coverage
+   reports are uploaded automatically.
 5. Semantic-release creates Git tag, changelog and Chrome-Store zip.
 6. Automatic rollback uses the previously published artefact (see
    **DEPLOYMENT.md** for details).
