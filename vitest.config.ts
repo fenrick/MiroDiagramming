@@ -30,17 +30,17 @@ export default defineConfig({
       {
         test: {
           globals: true,
-          setupFiles: './tests/setupTests.ts',
+          setupFiles: './fenrick.miro.ux.tests/setupTests.ts',
           environment: 'node',
-          include: ['tests/**/*.test.ts'],
+          include: ['fenrick.miro.ux.tests/**/*.test.ts'],
         },
       },
       {
         test: {
           globals: true,
-          setupFiles: './tests/setupTests.ts',
+          setupFiles: './fenrick.miro.ux.tests/setupTests.ts',
           environment: 'jsdom',
-          include: ['tests/**/*.test.tsx'],
+          include: ['fenrick.miro.ux.tests/**/*.test.tsx'],
         },
       },
     ],

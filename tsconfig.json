@@ -21,6 +21,6 @@
     "incremental": true,
     "isolatedModules": true
   },
-  "include": ["src", "*.ts", "vite-env.d.ts"],
+  "include": ["fenrick.miro.ux/src", "*.ts", "vite-env.d.ts"],
   "exclude": ["node_modules"]
 }
