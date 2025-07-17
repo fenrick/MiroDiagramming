@@ -253,7 +253,7 @@ Then validate the codebase with:
 npm run typecheck --silent
 npm test --silent
 dotnet test --no-build
-npx dotnet-format --verify-no-changes fenrick.miro.server/src/server/Server.csproj
+npx dotnet-format --verify-no-changes fenrick.miro.server/fenrick.miro.server.csproj
 npm run lint --silent
 npm run stylelint --silent
 npm run prettier --silent
@@ -309,7 +309,7 @@ The CI pipeline also enforces commitlint via
 ```
 .
 ├── fenrick.miro.server/
-│   └── src/server
+│   └── src
 │       ├── Api
 │       ├── Domain
 │       └── Services

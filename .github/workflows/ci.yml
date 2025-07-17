@@ -82,7 +82,7 @@ jobs:
       - name: Format check
         run:
           dotnet format --no-restore --verify-no-changes
-          fenrick.miro.server/src/server/Server.csproj
+          fenrick.miro.server/fenrick.miro.server.csproj
 
   dotnet-tests:
     runs-on: ubuntu-latest
@@ -92,10 +92,12 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - name: Restore
-        run: dotnet restore fenrick.miro.server.tests/server/Server.Tests.csproj
+        run:
+          dotnet restore
+          fenrick.miro.server.tests/fenrick.miro.server.tests.csproj
       - name: Test
         run: |
-          dotnet test fenrick.miro.server.tests/server/Server.Tests.csproj \
+          dotnet test fenrick.miro.server.tests/fenrick.miro.server.tests.csproj \
             --logger "trx;LogFileName=results.trx" \
             /p:CollectCoverage=true \
             /p:CoverletOutputFormat=cobertura \
@@ -107,7 +109,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dotnet-coverage
-          path: fenrick.miro.server.tests/server/TestResults
+          path: fenrick.miro.server.tests/TestResults
 
   unit-tests:
     runs-on: ubuntu-latest
@@ -238,12 +240,12 @@ jobs:
             /k:"fenrick_MiroDiagraming" /o:"fenrick" `
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
             /d:sonar.host.url="https://sonarcloud.io" `
-            /d:sonar.sources="fenrick.miro.server/src/server;fenrick.miro.ux/src" `
+            /d:sonar.sources="fenrick.miro.server/src;fenrick.miro.ux/src" `
             /d:sonar.exclusions="**/node_modules/**,**/obj/**" `
             /d:sonar.cs.opencover.reportsPaths="coverage\coverage.opencover.xml" `
             /d:sonar.javascript.lcov.reportPaths="coverage\lcov.info"
-          dotnet build fenrick.miro.server/src/server/Server.csproj
-          dotnet test fenrick.miro.server.tests/server/Server.Tests.csproj --no-build `
+          dotnet build fenrick.miro.server/fenrick.miro.server.csproj
+          dotnet test fenrick.miro.server.tests/fenrick.miro.server.tests.csproj --no-build `
             /p:CollectCoverage=true `
             /p:CoverletOutputFormat=opencover `
             /p:CoverletOutput="coverage/coverage.opencover.xml" `
@@ -283,7 +285,7 @@ jobs:
           build-mode: ${{ matrix.build-mode }}
       - if: matrix.language == 'csharp'
         run:
-          dotnet build fenrick.miro.server/src/server/Server.csproj
+          dotnet build fenrick.miro.server/fenrick.miro.server.csproj
           --configuration Release
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
