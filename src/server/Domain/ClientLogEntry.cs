@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Miro.Server.Domain;
 
@@ -10,7 +11,7 @@ namespace Miro.Server.Domain;
 /// <param name="Message">Message text.</param>
 /// <param name="Context">Optional structured context data.</param>
 public record ClientLogEntry(
-    [property: Required] DateTime Timestamp,
+    [property: Required, JsonRequired] DateTime Timestamp,
     [property: Required] string Level,
     [property: Required] string Message,
     Dictionary<string, string>? Context);
