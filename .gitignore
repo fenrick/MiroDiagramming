@@ -43,3 +43,4 @@ dotnet-install.sh
 **/tests/**/bin/
 **/tests/**/obj/
 **/tests/**/TestResults/
+/coverage
