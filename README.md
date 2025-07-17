@@ -14,7 +14,8 @@ each element can carry metadata that controls its appearance and placement.
 4. Once processed, widgets are placed on the board using the selected mode.
    Cards are automatically arranged in a grid with a calculated number of
    columns. Pass `columns` when invoking the importer to override this value.
-5. See [`tests/fixtures/sample-cards.json`](tests/fixtures/sample-cards.json)
+5. See
+   [`fenrick.miro.ux.tests/fixtures/sample-cards.json`](fenrick.miro.ux.tests/fixtures/sample-cards.json)
    for a cards format example.
 
 ### Card JSON Format
@@ -70,7 +71,7 @@ in the description using the `ID:` prefix.
 ## Sample Graph
 
 A small example is provided in
-[tests/fixtures/sample-graph.json](tests/fixtures/sample-graph.json):
+[fenrick.miro.ux.tests/fixtures/sample-graph.json](fenrick.miro.ux.tests/fixtures/sample-graph.json):
 
 ```json
 {
@@ -89,9 +90,9 @@ visualised using the **Nested** layout option in the Diagram tab. Positions and
 container sizes are computed entirely by the ELK engine for consistent spacing.
 Nodes are sorted alphabetically by default or via a custom metadata key. A
 three‑level sample dataset is available at
-[tests/fixtures/sample-hier.json](tests/fixtures/sample-hier.json). Simply
-select **Nested** and import this file to see parent widgets sized to fit their
-children. Flat graph data is automatically converted when necessary.
+[fenrick.miro.ux.tests/fixtures/sample-hier.json](fenrick.miro.ux.tests/fixtures/sample-hier.json).
+Simply select **Nested** and import this file to see parent widgets sized to fit
+their children. Flat graph data is automatically converted when necessary.
 
 ## Accessibility
 
