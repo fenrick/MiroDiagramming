@@ -11,7 +11,7 @@ export default tseslint.config(
     settings: { react: { version: '18.2' } },
   },
   {
-    files: ['src/**/*.{ts,tsx}'],
+    files: ['fenrick.miro.ux/src/**/*.{ts,tsx}'],
     languageOptions: {
       parser: tseslint.parser,
       ecmaVersion: 'latest',
@@ -25,7 +25,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ['tests/**/*.{ts,tsx}'],
+    files: ['fenrick.miro.ux.tests/**/*.{ts,tsx}'],
     languageOptions: {
       parser: tseslint.parser,
       ecmaVersion: 'latest',

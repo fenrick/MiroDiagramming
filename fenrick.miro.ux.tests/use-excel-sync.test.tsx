@@ -1,0 +1,55 @@
+import React from 'react';
+import { renderHook, act } from '@testing-library/react';
+import { ExcelDataProvider } from '../fenrick.miro.ux/src/ui/hooks/excel-data-context';
+import { useExcelSync } from '../fenrick.miro.ux/src/ui/hooks/use-excel-sync';
+import { ExcelSyncService } from '../fenrick.miro.ux/src/core/excel-sync-service';
+
+vi.mock('../fenrick.miro.ux/src/core/excel-sync-service');
+
+const rows = [{ ID: '1', Name: 'A' }];
+
+function wrapper({ children }: { children: React.ReactNode }) {
+  return (
+    <ExcelDataProvider
+      value={{
+        rows,
+        idColumn: 'ID',
+        labelColumn: 'Name',
+        templateColumn: undefined,
+        setRows: vi.fn(),
+        setIdColumn: vi.fn(),
+        setLabelColumn: vi.fn(),
+        setTemplateColumn: vi.fn(),
+      }}>
+      {children}
+    </ExcelDataProvider>
+  );
+}
+
+describe('useExcelSync', () => {
+  beforeEach(() => {
+    (ExcelSyncService as unknown as vi.Mock).mockImplementation(() => ({
+      updateShapesFromExcel: vi.fn().mockResolvedValue(undefined),
+    }));
+  });
+
+  test('updates rows and widgets', async () => {
+    const { result } = renderHook(() => useExcelSync(), { wrapper });
+    await act(async () => {
+      await result.current(0, { ID: '1', Name: 'B' });
+    });
+    const svc = (ExcelSyncService as unknown as vi.Mock).mock.results.at(-1)
+      ?.value as { updateShapesFromExcel: vi.Mock };
+    expect(svc.updateShapesFromExcel).toHaveBeenCalled();
+  });
+
+  test('returns early when context missing', async () => {
+    const { result } = renderHook(() => useExcelSync());
+    await act(async () => {
+      await result.current(0, { ID: '1', Name: 'B' });
+    });
+    const svc = (ExcelSyncService as unknown as vi.Mock).mock.results.at(-1)
+      ?.value as { updateShapesFromExcel: vi.Mock };
+    expect(svc.updateShapesFromExcel).not.toHaveBeenCalled();
+  });
+});
