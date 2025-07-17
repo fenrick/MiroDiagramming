@@ -25,7 +25,7 @@ fenrick.miro.ux/
     core/             domain logic used by the client
     ui/               React components
 fenrick.miro.server.tests/   unit tests for .NET code
-fenrick.miro.ux.tests/       Node tests
+fenrick.miro.ux/tests/       Node tests
 ```
 
 All server modules live under `fenrick.miro.server/src/` with matching tests

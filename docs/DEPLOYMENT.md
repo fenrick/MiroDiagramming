@@ -131,7 +131,7 @@ collection sit in **ARCHITECTURE.md** (section 13).
 
 ```
 ▢ Load a fresh board; sidebar icon appears.
-▢ Import a sample data file (fenrick.miro.ux.tests/fixtures/kanban.csv).
+▢ Import a sample data file (fenrick.miro.ux/tests/fixtures/kanban.csv).
 ▢ Verify widgets render and undo works.
 ▢ Switch to Dark theme; no colour regressions.
 ▢ Run npm run a11y:e2e – all critical checks pass.
