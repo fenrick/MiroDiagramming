@@ -2,7 +2,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { TabPanel } from '../fenrick.miro.ux/src/ui/components/TabPanel';
+import { TabPanel } from 'fenrick.miro.ux/ui/components/TabPanel';
 
 test('renders with correct aria attributes', () => {
   render(<TabPanel tabId='test'>Content</TabPanel>);

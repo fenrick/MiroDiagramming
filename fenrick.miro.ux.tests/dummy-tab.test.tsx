@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { DummyTab, tabDef } from '../fenrick.miro.ux/src/ui/pages/DummyTab';
+import { DummyTab, tabDef } from 'fenrick.miro.ux/ui/pages/DummyTab';
 
 /**
  * Renders DummyTab and asserts accessible role and text label.

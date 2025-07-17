@@ -4,7 +4,7 @@ import {
   boundingBoxFromCenter,
   boundingBoxFromTopLeft,
   frameOffset,
-} from '../fenrick.miro.ux/src/core/layout/layout-utils';
+} from 'fenrick.miro.ux/core/layout/layout-utils';
 
 describe('layout-utils', () => {
   test('relativePosition computes fractions', () => {

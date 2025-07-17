@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 import {
   mapRowsToNodes,
   mapRowsToCards,
-} from '../fenrick.miro.ux/src/core/data-mapper';
+} from 'fenrick.miro.ux/core/data-mapper';
 
 describe('data-mapper branches', () => {
   test('mapRowsToNodes uses defaults when mapping is empty', () => {

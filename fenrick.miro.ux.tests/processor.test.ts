@@ -1,9 +1,9 @@
-import { GraphProcessor } from '../fenrick.miro.ux/src/core/graph/graph-processor';
-import { graphService } from '../fenrick.miro.ux/src/core/graph';
-import { BoardBuilder } from '../fenrick.miro.ux/src/board/board-builder';
-import { templateManager } from '../fenrick.miro.ux/src/board/templates';
-import { layoutEngine } from '../fenrick.miro.ux/src/core/layout/elk-layout';
-import * as frameUtils from '../fenrick.miro.ux/src/board/frame-utils';
+import { GraphProcessor } from 'fenrick.miro.ux/core/graph/graph-processor';
+import { graphService } from 'fenrick.miro.ux/core/graph';
+import { BoardBuilder } from 'fenrick.miro.ux/board/board-builder';
+import { templateManager } from 'fenrick.miro.ux/board/templates';
+import { layoutEngine } from 'fenrick.miro.ux/core/layout/elk-layout';
+import * as frameUtils from 'fenrick.miro.ux/board/frame-utils';
 import type { Frame } from '@mirohq/websdk-types';
 import sample from './fixtures/sample-graph.json';
 

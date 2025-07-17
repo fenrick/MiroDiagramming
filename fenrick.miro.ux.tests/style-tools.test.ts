@@ -9,8 +9,8 @@ import {
   // but tests rely on it to validate key detection
   // coverage of this utility supports maintainability
   findStyleKey,
-} from '../fenrick.miro.ux/src/board/style-tools';
-import { boardCache } from '../fenrick.miro.ux/src/board/board-cache';
+} from 'fenrick.miro.ux/board/style-tools';
+import { boardCache } from 'fenrick.miro.ux/board/board-cache';
 
 describe('style-tools', () => {
   beforeEach(() => {

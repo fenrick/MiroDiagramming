@@ -1,5 +1,5 @@
-import { HierarchyProcessor } from '../fenrick.miro.ux/src/core/graph/hierarchy-processor';
-import { layoutHierarchy } from '../fenrick.miro.ux/src/core/layout/nested-layout';
+import { HierarchyProcessor } from 'fenrick.miro.ux/core/graph/hierarchy-processor';
+import { layoutHierarchy } from 'fenrick.miro.ux/core/layout/nested-layout';
 
 interface Node {
   id: string;

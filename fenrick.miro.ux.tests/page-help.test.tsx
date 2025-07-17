@@ -2,7 +2,7 @@
 import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { PageHelp } from '../fenrick.miro.ux/src/ui/components/PageHelp';
+import { PageHelp } from 'fenrick.miro.ux/ui/components/PageHelp';
 
 class ResizeObserverMock {
   observe() {}

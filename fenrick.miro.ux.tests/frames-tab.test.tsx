@@ -3,11 +3,11 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { FramesTab } from '../fenrick.miro.ux/src/ui/pages/FramesTab';
+import { FramesTab } from 'fenrick.miro.ux/ui/pages/FramesTab';
 
 var renameMock: vi.Mock;
 var lockMock: vi.Mock;
-vi.mock('../fenrick.miro.ux/src/board/frame-tools', () => {
+vi.mock('fenrick.miro.ux/board/frame-tools', () => {
   renameMock = vi.fn();
   lockMock = vi.fn();
   return { renameSelectedFrames: renameMock, lockSelectedFrames: lockMock };

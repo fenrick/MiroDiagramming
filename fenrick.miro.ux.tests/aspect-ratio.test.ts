@@ -1,7 +1,7 @@
 import {
   aspectRatioValue,
   ratioHeight,
-} from '../fenrick.miro.ux/src/core/utils/aspect-ratio';
+} from 'fenrick.miro.ux/core/utils/aspect-ratio';
 
 describe('aspect-ratio utilities', () => {
   test('aspectRatioValue returns numeric ratios', () => {

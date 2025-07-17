@@ -1,7 +1,7 @@
 import {
   defaultBuilder,
   graphService,
-} from '../fenrick.miro.ux/src/core/graph';
+} from 'fenrick.miro.ux/core/graph';
 
 /**
  * Verify that service methods delegate to the default BoardBuilder instance.

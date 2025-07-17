@@ -1,5 +1,5 @@
 import { expect, test } from 'vitest';
-import { BoardBuilder } from '../fenrick.miro.ux/src/board/board-builder';
+import { BoardBuilder } from 'fenrick.miro.ux/board/board-builder';
 
 test('stores and retrieves frame', () => {
   const builder = new BoardBuilder();

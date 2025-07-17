@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from 'vitest';
-import { boardCache } from '../fenrick.miro.ux/src/board/board-cache';
-import type { BoardQueryLike } from '../fenrick.miro.ux/src/board/board';
+import { boardCache } from 'fenrick.miro.ux/board/board-cache';
+import type { BoardQueryLike } from 'fenrick.miro.ux/board/board';
 
 describe('BoardCache', () => {
   afterEach(() => {

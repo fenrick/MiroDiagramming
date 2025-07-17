@@ -1,5 +1,5 @@
-import { graphService } from '../fenrick.miro.ux/src/core/graph';
-import { templateManager } from '../fenrick.miro.ux/src/board/templates';
+import { graphService } from 'fenrick.miro.ux/core/graph';
+import { templateManager } from 'fenrick.miro.ux/board/templates';
 
 interface GlobalWithMiro {
   miro?: { board?: Record<string, unknown> };

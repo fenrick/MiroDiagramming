@@ -5,12 +5,12 @@ import templatesJson from '../templates/shapeTemplates.json';
 import {
   stylePresets,
   STYLE_PRESET_NAMES,
-} from '../fenrick.miro.ux/src/ui/style-presets';
-import { templateManager } from '../fenrick.miro.ux/src/board/templates';
-import type { TemplateDefinition } from '../fenrick.miro.ux/src/board/templates';
+} from 'fenrick.miro.ux/ui/style-presets';
+import { templateManager } from 'fenrick.miro.ux/board/templates';
+import type { TemplateDefinition } from 'fenrick.miro.ux/board/templates';
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { StyleTab } from '../fenrick.miro.ux/src/ui/pages/StyleTab';
+import { StyleTab } from 'fenrick.miro.ux/ui/pages/StyleTab';
 
 // Ensure presets derive from templates
 describe('style-presets', () => {

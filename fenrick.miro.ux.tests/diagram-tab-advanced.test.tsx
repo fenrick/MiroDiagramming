@@ -1,7 +1,7 @@
 import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { StructuredTab } from '../fenrick.miro.ux/src/ui/pages/StructuredTab';
+import { StructuredTab } from 'fenrick.miro.ux/ui/pages/StructuredTab';
 
 /** Ensure advanced options panel can be toggled via details element. */
 

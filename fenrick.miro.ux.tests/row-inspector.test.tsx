@@ -2,10 +2,10 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { RowInspector } from '../fenrick.miro.ux/src/ui/components/RowInspector';
-import { useRowData } from '../fenrick.miro.ux/src/ui/hooks/use-row-data';
+import { RowInspector } from 'fenrick.miro.ux/ui/components/RowInspector';
+import { useRowData } from 'fenrick.miro.ux/ui/hooks/use-row-data';
 
-vi.mock('../fenrick.miro.ux/src/ui/hooks/use-row-data');
+vi.mock('fenrick.miro.ux/ui/hooks/use-row-data');
 
 describe('RowInspector', () => {
   test('renders list of row values', () => {

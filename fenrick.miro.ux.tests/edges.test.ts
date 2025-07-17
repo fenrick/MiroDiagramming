@@ -1,4 +1,4 @@
-import { graphService } from '../fenrick.miro.ux/src/core/graph';
+import { graphService } from 'fenrick.miro.ux/core/graph';
 
 // Tests for the createEdges helper covering edge reuse and hints
 

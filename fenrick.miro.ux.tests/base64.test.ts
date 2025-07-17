@@ -1,7 +1,7 @@
 import {
   encodeBase64,
   decodeBase64,
-} from '../fenrick.miro.ux/src/core/utils/base64';
+} from 'fenrick.miro.ux/core/utils/base64';
 
 function expected(input: string): string {
   return Buffer.from(input, 'utf8')

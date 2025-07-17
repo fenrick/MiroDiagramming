@@ -3,8 +3,8 @@ import {
   performLayout,
   getNodeDimensions,
   buildElkGraphOptions,
-} from '../fenrick.miro.ux/src/core/layout/layout-core';
-import { templateManager } from '../fenrick.miro.ux/src/board/templates';
+} from 'fenrick.miro.ux/core/layout/layout-core';
+import { templateManager } from 'fenrick.miro.ux/board/templates';
 import ELK from 'elkjs/lib/elk.bundled.js';
 
 /** Branch coverage tests for performLayout. */

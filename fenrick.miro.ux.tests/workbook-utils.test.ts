@@ -3,7 +3,7 @@ import { describe, test, expect, vi } from 'vitest';
 import {
   addMiroIds,
   downloadWorkbook,
-} from '../fenrick.miro.ux/src/core/utils/workbook-writer';
+} from 'fenrick.miro.ux/core/utils/workbook-writer';
 
 describe('workbook writer', () => {
   test('adds ids to rows', () => {

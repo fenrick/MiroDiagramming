@@ -1,4 +1,4 @@
-import { STRUCT_GRAPH_KEY } from '../fenrick.miro.ux/src/board/meta-constants';
+import { STRUCT_GRAPH_KEY } from 'fenrick.miro.ux/board/meta-constants';
 
 describe('meta-constants', () => {
   test('STRUCT_GRAPH_KEY has expected value', () => {

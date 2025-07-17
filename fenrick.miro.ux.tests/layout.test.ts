@@ -1,4 +1,4 @@
-import { layoutEngine } from '../fenrick.miro.ux/src/core/layout/elk-layout';
+import { layoutEngine } from 'fenrick.miro.ux/core/layout/elk-layout';
 
 const graph = {
   nodes: [

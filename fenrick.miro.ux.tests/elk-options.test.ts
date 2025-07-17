@@ -1,7 +1,7 @@
 import {
   DEFAULT_LAYOUT_OPTIONS,
   validateLayoutOptions,
-} from '../fenrick.miro.ux/src/core/layout/elk-options';
+} from 'fenrick.miro.ux/core/layout/elk-options';
 
 describe('validateLayoutOptions', () => {
   test('returns defaults for invalid options', () => {

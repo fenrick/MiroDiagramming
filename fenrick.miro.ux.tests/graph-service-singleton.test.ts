@@ -1,4 +1,4 @@
-import { GraphService } from '../fenrick.miro.ux/src/core/graph';
+import { GraphService } from 'fenrick.miro.ux/core/graph';
 
 describe('GraphService singleton', () => {
   test('getInstance returns the same object', () => {

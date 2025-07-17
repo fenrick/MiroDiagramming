@@ -6,7 +6,7 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { Checkbox } from '../fenrick.miro.ux/src/ui/components/Checkbox';
+import { Checkbox } from 'fenrick.miro.ux/ui/components/Checkbox';
 
 test('renders label connected via htmlFor', () => {
   render(

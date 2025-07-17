@@ -1,8 +1,8 @@
-import { GraphExcelLoader } from '../fenrick.miro.ux/src/core/utils/excel-loader';
-import { GraphClient } from '../fenrick.miro.ux/src/core/utils/graph-client';
+import { GraphExcelLoader } from 'fenrick.miro.ux/core/utils/excel-loader';
+import { GraphClient } from 'fenrick.miro.ux/core/utils/graph-client';
 import ExcelJS from 'exceljs';
 
-vi.mock('../fenrick.miro.ux/src/core/utils/graph-client');
+vi.mock('fenrick.miro.ux/core/utils/graph-client');
 
 let buf: ArrayBuffer;
 beforeAll(async () => {

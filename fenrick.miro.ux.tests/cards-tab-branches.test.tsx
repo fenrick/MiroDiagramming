@@ -2,10 +2,10 @@
 import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { CardsTab } from '../fenrick.miro.ux/src/ui/pages/CardsTab';
-import { CardProcessor } from '../fenrick.miro.ux/src/board/card-processor';
+import { CardsTab } from 'fenrick.miro.ux/ui/pages/CardsTab';
+import { CardProcessor } from 'fenrick.miro.ux/board/card-processor';
 
-vi.mock('../fenrick.miro.ux/src/board/card-processor');
+vi.mock('fenrick.miro.ux/board/card-processor');
 
 describe('CardsTab extra paths', () => {
   beforeEach(() => {

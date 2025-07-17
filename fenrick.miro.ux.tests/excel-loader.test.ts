@@ -1,7 +1,7 @@
 /** @vitest-environment jsdom */
 import ExcelJS from 'exceljs';
 import { readFileSync } from 'fs';
-import { ExcelLoader } from '../fenrick.miro.ux/src/core/utils/excel-loader';
+import { ExcelLoader } from 'fenrick.miro.ux/core/utils/excel-loader';
 
 async function createFile(): Promise<File> {
   const wb = new ExcelJS.Workbook();

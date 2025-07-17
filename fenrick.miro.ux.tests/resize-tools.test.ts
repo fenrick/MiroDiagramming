@@ -2,8 +2,8 @@ import {
   applySizeToSelection,
   copySizeFromSelection,
   scaleSelection,
-} from '../fenrick.miro.ux/src/board/resize-tools';
-import { boardCache } from '../fenrick.miro.ux/src/board/board-cache';
+} from 'fenrick.miro.ux/board/resize-tools';
+import { boardCache } from 'fenrick.miro.ux/board/board-cache';
 
 describe('resize-tools', () => {
   beforeEach(() => {

@@ -2,7 +2,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { Button } from '../fenrick.miro.ux/src/ui/components/Button';
+import { Button } from 'fenrick.miro.ux/ui/components/Button';
 
 it('defaults to large size for primary', () => {
   const { getByRole } = render(<Button variant='primary'>Ok</Button>);

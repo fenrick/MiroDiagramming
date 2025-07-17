@@ -2,7 +2,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { HelpTab } from '../fenrick.miro.ux/src/ui/pages/HelpTab';
+import { HelpTab } from 'fenrick.miro.ux/ui/pages/HelpTab';
 
 describe('HelpTab', () => {
   test('lists diagram options', () => {

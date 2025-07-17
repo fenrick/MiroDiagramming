@@ -7,7 +7,7 @@ import {
   hexToRgb,
   rgbToHex,
   mixColors,
-} from '../fenrick.miro.ux/src/core/utils/color-utils';
+} from 'fenrick.miro.ux/core/utils/color-utils';
 
 describe('color-utils', () => {
   test('adjustColor lightens and darkens', () => {

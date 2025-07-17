@@ -2,8 +2,8 @@
 import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { Tooltip } from '../fenrick.miro.ux/src/ui/components/Tooltip';
-import { Button } from '../fenrick.miro.ux/src/ui/components/Button';
+import { Tooltip } from 'fenrick.miro.ux/ui/components/Tooltip';
+import { Button } from 'fenrick.miro.ux/ui/components/Button';
 
 class ResizeObserverMock {
   observe() {}

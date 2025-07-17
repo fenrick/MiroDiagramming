@@ -2,10 +2,10 @@
 import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { App } from '../fenrick.miro.ux/src/app/App';
-import { EditMetadataModal } from '../fenrick.miro.ux/src/ui/components/EditMetadataModal';
-import { useRowData } from '../fenrick.miro.ux/src/ui/hooks/use-row-data';
-import { ExcelSyncService } from '../fenrick.miro.ux/src/core/excel-sync-service';
+import { App } from 'fenrick.miro.ux/app/App';
+import { EditMetadataModal } from 'fenrick.miro.ux/ui/components/EditMetadataModal';
+import { useRowData } from 'fenrick.miro.ux/ui/hooks/use-row-data';
+import { ExcelSyncService } from 'fenrick.miro.ux/core/excel-sync-service';
 
 interface GlobalWithMiro {
   miro?: { board?: Record<string, unknown> };
@@ -13,8 +13,8 @@ interface GlobalWithMiro {
 
 declare const global: GlobalWithMiro;
 
-vi.mock('../fenrick.miro.ux/src/ui/hooks/use-row-data');
-vi.mock('../fenrick.miro.ux/src/core/excel-sync-service');
+vi.mock('fenrick.miro.ux/ui/hooks/use-row-data');
+vi.mock('fenrick.miro.ux/core/excel-sync-service');
 
 describe('Edit Metadata command', () => {
   beforeEach(() => {

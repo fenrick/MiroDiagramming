@@ -1,5 +1,5 @@
 /** Entry index tests */
-vi.mock('../fenrick.miro.ux/src/app/diagram-app', () => {
+vi.mock('fenrick.miro.ux/app/diagram-app', () => {
   return {
     DiagramApp: {
       getInstance: vi.fn(() => ({
@@ -11,9 +11,9 @@ vi.mock('../fenrick.miro.ux/src/app/diagram-app', () => {
 
 describe('index entrypoint', () => {
   test('initializes DiagramApp on import', async () => {
-    await import('../fenrick.miro.ux/src/index');
+    await import('fenrick.miro.ux/index');
     const { DiagramApp } = await import(
-      '../fenrick.miro.ux/src/app/diagram-app'
+      'fenrick.miro.ux/app/diagram-app'
     );
     expect(DiagramApp.getInstance).toHaveBeenCalled();
     const instance = (DiagramApp.getInstance as jest.Mock).mock.results[0]

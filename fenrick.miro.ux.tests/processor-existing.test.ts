@@ -1,6 +1,6 @@
-import { GraphProcessor } from '../fenrick.miro.ux/src/core/graph/graph-processor';
-import { layoutEngine } from '../fenrick.miro.ux/src/core/layout/elk-layout';
-import { BoardBuilder } from '../fenrick.miro.ux/src/board/board-builder';
+import { GraphProcessor } from 'fenrick.miro.ux/core/graph/graph-processor';
+import { layoutEngine } from 'fenrick.miro.ux/core/layout/elk-layout';
+import { BoardBuilder } from 'fenrick.miro.ux/board/board-builder';
 
 interface GlobalWithMiro {
   miro?: { board?: Record<string, unknown> };

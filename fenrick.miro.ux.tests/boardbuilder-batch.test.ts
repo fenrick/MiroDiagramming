@@ -1,7 +1,7 @@
 import { describe, expect, test, vi, beforeEach } from 'vitest';
-import { BoardBuilder } from '../fenrick.miro.ux/src/board/board-builder';
+import { BoardBuilder } from 'fenrick.miro.ux/board/board-builder';
 import { mockBoard } from './mock-board';
-import { boardCache } from '../fenrick.miro.ux/src/board/board-cache';
+import { boardCache } from 'fenrick.miro.ux/board/board-cache';
 
 beforeEach(() => {
   boardCache.reset();

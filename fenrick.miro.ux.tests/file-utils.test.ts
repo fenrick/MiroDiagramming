@@ -1,4 +1,4 @@
-import { fileUtils } from '../fenrick.miro.ux/src/core/utils/file-utils';
+import { fileUtils } from 'fenrick.miro.ux/core/utils/file-utils';
 
 interface ReaderEvent {
   target: { result?: string | null } | null;

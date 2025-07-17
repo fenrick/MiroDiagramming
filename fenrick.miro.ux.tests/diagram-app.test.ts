@@ -1,4 +1,4 @@
-import { DiagramApp } from '../fenrick.miro.ux/src/app/diagram-app';
+import { DiagramApp } from 'fenrick.miro.ux/app/diagram-app';
 
 interface GlobalWithMiro {
   miro?: { board?: Record<string, unknown> };

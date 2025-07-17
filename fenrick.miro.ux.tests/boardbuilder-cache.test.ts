@@ -2,8 +2,8 @@ import { describe, expect, test, vi } from 'vitest';
 import {
   BoardBuilder,
   updateConnector,
-} from '../fenrick.miro.ux/src/board/board-builder';
-import { boardCache } from '../fenrick.miro.ux/src/board/board-cache';
+} from 'fenrick.miro.ux/board/board-builder';
+import { boardCache } from 'fenrick.miro.ux/board/board-cache';
 import { mockBoard } from './mock-board';
 
 interface GlobalWithMiro {
@@ -96,7 +96,7 @@ describe('BoardBuilder lookup and connector updates', () => {
       {
         from: 'n1',
         to: 'n2',
-      } as unknown as import('../fenrick.miro.ux/src/core/graph').EdgeData,
+      } as unknown as import('fenrick.miro.ux/core/graph').EdgeData,
       { shape: 'curved', style: { strokeStyle: 'dashed' } },
       undefined,
     );

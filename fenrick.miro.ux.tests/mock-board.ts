@@ -1,5 +1,5 @@
 import { vi } from 'vitest';
-import type { BoardLike } from '../fenrick.miro.ux/src/board/board';
+import type { BoardLike } from 'fenrick.miro.ux/board/board';
 
 /**
  * Provide a basic Miro board mock for tests.

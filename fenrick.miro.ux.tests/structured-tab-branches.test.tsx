@@ -3,13 +3,13 @@
 import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { StructuredTab } from '../fenrick.miro.ux/src/ui/pages/StructuredTab';
+import { StructuredTab } from 'fenrick.miro.ux/ui/pages/StructuredTab';
 
 var createSpy: vi.Mock;
 var undoSpy: vi.Mock;
 var lastProc: { undoLast: vi.Mock };
 
-vi.mock('../fenrick.miro.ux/src/ui/hooks/use-diagram-create', () => ({
+vi.mock('fenrick.miro.ux/ui/hooks/use-diagram-create', () => ({
   useDiagramCreate: (
     _queue: File[],
     _opts: unknown,
@@ -28,10 +28,10 @@ vi.mock('../fenrick.miro.ux/src/ui/hooks/use-diagram-create', () => ({
   },
   useAdvancedToggle: () => {},
 }));
-vi.mock('../fenrick.miro.ux/src/ui/hooks/ui-utils', async () => {
+vi.mock('fenrick.miro.ux/ui/hooks/ui-utils', async () => {
   const actual = await vi.importActual<
-    typeof import('../fenrick.miro.ux/src/ui/hooks/ui-utils')
-  >('../fenrick.miro.ux/src/ui/hooks/ui-utils');
+    typeof import('fenrick.miro.ux/ui/hooks/ui-utils')
+  >('fenrick.miro.ux/ui/hooks/ui-utils');
   undoSpy = vi.fn(async (proc: { undoLast: () => void }, clear: () => void) => {
     proc.undoLast();
     clear();

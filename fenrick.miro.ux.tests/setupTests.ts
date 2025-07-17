@@ -1,3 +1,4 @@
+import 'tsconfig-paths/register';
 import { vi, afterEach } from 'vitest';
 
 // alias jest global to vitest for compatibility

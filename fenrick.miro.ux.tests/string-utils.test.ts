@@ -1,4 +1,4 @@
-import { toSafeString } from '../fenrick.miro.ux/src/core/utils/string-utils';
+import { toSafeString } from 'fenrick.miro.ux/core/utils/string-utils';
 
 describe('toSafeString', () => {
   test('returns empty string for null or undefined', () => {

@@ -1,4 +1,4 @@
-import { loadExcelJS } from '../fenrick.miro.ux/src/core/utils/exceljs-loader';
+import { loadExcelJS } from 'fenrick.miro.ux/core/utils/exceljs-loader';
 import ExcelJS from 'exceljs';
 
 describe('loadExcelJS', () => {

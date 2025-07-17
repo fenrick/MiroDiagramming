@@ -2,8 +2,8 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { ExcelStoryWrapper } from '../fenrick.miro.ux/src/stories/ExcelStoryWrapper';
-import { useExcelData } from '../fenrick.miro.ux/src/ui/hooks/excel-data-context';
+import { ExcelStoryWrapper } from 'fenrick.miro.ux/stories/ExcelStoryWrapper';
+import { useExcelData } from 'fenrick.miro.ux/ui/hooks/excel-data-context';
 
 declare const global: {
   miro?: { board?: { getSelection: () => Promise<unknown> } };

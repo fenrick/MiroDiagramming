@@ -1,5 +1,5 @@
 /** @vitest-environment jsdom */
-import { GraphAuth } from '../fenrick.miro.ux/src/core/utils/graph-auth';
+import { GraphAuth } from 'fenrick.miro.ux/core/utils/graph-auth';
 
 describe('GraphAuth', () => {
   test('set, get and clear token', () => {

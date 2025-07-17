@@ -2,7 +2,7 @@
 import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { JsonDropZone } from '../fenrick.miro.ux/src/ui/components/JsonDropZone';
+import { JsonDropZone } from 'fenrick.miro.ux/ui/components/JsonDropZone';
 
 test('invokes callback when file selected', async () => {
   const handle = vi.fn();
