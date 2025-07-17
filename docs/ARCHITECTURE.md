@@ -69,7 +69,10 @@ Data        → Graph Normalisation → Layout Engine → Board Rendering → UI
 ## 4 Repository Map
 
 ```
+.net/         *.csproj and solution files
 src/
+  server/      Api/, Services/, Domain/
+  ux/          app/, board/, core/, ui/
   core/        graph/, layout/, utils/
   board/       BoardBuilder, CardProcessor
   # Detailed per-file descriptions:
@@ -77,9 +80,9 @@ src/
   # - [BOARD_MODULES.md](BOARD_MODULES.md)
   # - [UI_MODULES.md](UI_MODULES.md)
   # - [APP_MODULES.md](APP_MODULES.md)
-  ui/          components/, hooks/, pages/
+  # - [SERVER_MODULES.md](SERVER_MODULES.md)
   app/         entry + routing
-tests/         mirrors src
+tests/         server/, ux/
 .storybook/    MDX docs & live examples
 public/        icons, i18n JSON
 scripts/       build helpers
@@ -114,10 +117,12 @@ Complexity limits enforced automatically by **SonarQube** gate.
 **Workflow** (GitHub Actions)
 
 1. Restore Node and .NET dependencies from cache.
-2. Lint, type-check and unit tests for both codebases (Node 24, .NET 8).
+2. Lint, type-check and unit tests for both codebases (Node 24, .NET 9).
 3. Build Storybook and a feature-flagged bundle for staging.
-4. SonarQube analysis and budget checks (configured by
-   [sonar-project.properties](../sonar-project.properties)).
+4. SonarQube build scan using
+   [dotnet-sonarscanner](https://docs.sonarsource.com/sonarqube/latest/analyzing-source-code/scanners/sonarscanner-for-msbuild/)
+   with the `dotnet test` run between the `begin` and `end` steps so coverage
+   reports are uploaded automatically.
 5. Semantic-release creates Git tag, changelog and Chrome-Store zip.
 6. Automatic rollback uses the previously published artefact (see
    **DEPLOYMENT.md** for details).
@@ -133,8 +138,9 @@ Complexity limits enforced automatically by **SonarQube** gate.
   short.
 - **Conventional Commits** enforced by commit-lint.
 - Every PR must pass all CI gates; manual reviewers are optional.
-- **CodeQL** scan adds static-analysis findings to the check suite (job `codeql`
-  in [.github/workflows/ci.yml](../.github/workflows/ci.yml)).
+- **CodeQL** scan adds static-analysis findings to the check suite for
+  JavaScript, GitHub Actions and C# projects (job `codeql` in
+  [.github/workflows/ci.yml](../.github/workflows/ci.yml)).
 
 ---
 
@@ -209,12 +215,13 @@ server encrypts tokens at rest and attaches them to API requests._
 
 ## 13 Observability & Monitoring
 
-| Concern       | Tool         | Signal                      |
-| ------------- | ------------ | --------------------------- |
-| JS errors     | Sentry       | Error rate, stack trace     |
-| Performance   | Datadog RUM  | Layout time, FPS            |
-| Feature flags | LaunchDarkly | Error delta versus baseline |
-| Accessibility | manual QA    | Issues logged per build     |
+| Concern       | Tool         | Signal                          |
+| ------------- | ------------ | ------------------------------- |
+| JS errors     | Sentry       | Error rate, stack trace         |
+| Performance   | Datadog RUM  | Layout time, FPS                |
+| Feature flags | LaunchDarkly | Error delta versus baseline     |
+| Client logs   | Serilog      | `HttpLogSink` posts `/api/logs` |
+| Accessibility | manual QA    | Issues logged per build         |
 
 Deployment, rollback and monitoring hooks are documented in **DEPLOYMENT.md**.
 
