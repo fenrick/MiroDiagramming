@@ -1,7 +1,7 @@
 import {
   connectorTemplates,
   templateManager,
-} from '../fenrick.miro.ux/src/board/templates';
+} from 'fenrick.miro.ux/board/templates';
 
 // Simple tests for template helper functions
 

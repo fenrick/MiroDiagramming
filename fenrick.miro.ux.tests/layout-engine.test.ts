@@ -1,7 +1,7 @@
 import {
   LayoutEngine,
   layoutEngine,
-} from '../fenrick.miro.ux/src/core/layout/elk-layout';
+} from 'fenrick.miro.ux/core/layout/elk-layout';
 import ELK from 'elkjs/lib/elk.bundled.js';
 
 /** Verify singleton behaviour and minimal layout handling. */

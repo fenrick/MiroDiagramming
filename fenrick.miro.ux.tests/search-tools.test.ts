@@ -2,9 +2,9 @@ import {
   searchBoardContent,
   replaceBoardContent,
   getTextFields,
-} from '../fenrick.miro.ux/src/board/search-tools';
-import { BoardQueryLike } from '../fenrick.miro.ux/src/board/board';
-import { boardCache } from '../fenrick.miro.ux/src/board/board-cache';
+} from 'fenrick.miro.ux/board/search-tools';
+import { BoardQueryLike } from 'fenrick.miro.ux/board/board';
+import { boardCache } from 'fenrick.miro.ux/board/board-cache';
 
 beforeEach(() => {
   boardCache.reset();
@@ -244,7 +244,7 @@ describe('search-tools', () => {
 
   test('setStringAtPath guards prototype pollution', async () => {
     const { _setStringAtPath: fn } = (await import(
-      '../fenrick.miro.ux/src/board/search-tools'
+      'fenrick.miro.ux/board/search-tools'
     )) as {
       _setStringAtPath: (
         o: Record<string, unknown>,

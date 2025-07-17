@@ -2,7 +2,7 @@
 import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { RegexSearchField } from '../fenrick.miro.ux/src/ui/components/RegexSearchField';
+import { RegexSearchField } from 'fenrick.miro.ux/ui/components/RegexSearchField';
 
 test('input and toggle trigger callbacks', () => {
   const onChange = vi.fn();

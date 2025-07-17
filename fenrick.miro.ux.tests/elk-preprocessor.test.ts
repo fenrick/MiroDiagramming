@@ -1,5 +1,5 @@
-import type { LayoutNode } from '../fenrick.miro.ux/src/core/layout/elk-preprocessor';
-import { prepareForElk } from '../fenrick.miro.ux/src/core/layout/elk-preprocessor';
+import type { LayoutNode } from 'fenrick.miro.ux/core/layout/elk-preprocessor';
+import { prepareForElk } from 'fenrick.miro.ux/core/layout/elk-preprocessor';
 
 describe('prepareForElk', () => {
   test('assigns algorithm and inserts spacer', () => {

@@ -1,5 +1,5 @@
-import { showError } from '../fenrick.miro.ux/src/ui/hooks/notifications';
-import { log } from '../fenrick.miro.ux/src/logger';
+import { showError } from 'fenrick.miro.ux/ui/hooks/notifications';
+import { log } from 'fenrick.miro.ux/logger';
 
 interface GlobalWithMiro {
   miro?: { board?: Record<string, unknown> };

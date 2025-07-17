@@ -2,8 +2,8 @@
 import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { ResizeTab } from '../fenrick.miro.ux/src/ui/pages/ResizeTab';
-import * as resizeTools from '../fenrick.miro.ux/src/board/resize-tools';
+import { ResizeTab } from 'fenrick.miro.ux/ui/pages/ResizeTab';
+import * as resizeTools from 'fenrick.miro.ux/board/resize-tools';
 
 // Helper to provide a mock Miro board API
 function setupBoard(): void {

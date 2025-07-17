@@ -6,22 +6,22 @@ import '@testing-library/jest-dom';
 import {
   StructuredTab,
   handleFileDrop,
-} from '../fenrick.miro.ux/src/ui/pages/StructuredTab';
+} from 'fenrick.miro.ux/ui/pages/StructuredTab';
 
-vi.mock('../fenrick.miro.ux/src/core/graph/graph-processor', () => ({
+vi.mock('fenrick.miro.ux/core/graph/graph-processor', () => ({
   GraphProcessor: class {
     processFile = vi.fn();
   },
   ExistingNodeMode: { move: 'move' },
 }));
-vi.mock('../fenrick.miro.ux/src/core/graph/hierarchy-processor', () => ({
+vi.mock('fenrick.miro.ux/core/graph/hierarchy-processor', () => ({
   HierarchyProcessor: class {
     processFile = vi.fn();
   },
 }));
 
 var createSpy: vi.Mock;
-vi.mock('../fenrick.miro.ux/src/ui/hooks/use-diagram-create', () => ({
+vi.mock('fenrick.miro.ux/ui/hooks/use-diagram-create', () => ({
   useDiagramCreate: () => {
     createSpy = vi.fn();
     return createSpy;

@@ -3,7 +3,7 @@ import {
   boardUnitsToInches,
   mmToBoardUnits,
   inchesToBoardUnits,
-} from '../fenrick.miro.ux/src/core/utils/unit-utils';
+} from 'fenrick.miro.ux/core/utils/unit-utils';
 
 describe('unit-utils', () => {
   test('boardUnitsToMm converts units', () => {

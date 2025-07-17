@@ -1,6 +1,6 @@
 import { vi } from 'vitest';
-import { LayoutEngine } from '../fenrick.miro.ux/src/core/layout/elk-layout';
-import * as layoutCore from '../fenrick.miro.ux/src/core/layout/layout-core';
+import { LayoutEngine } from 'fenrick.miro.ux/core/layout/elk-layout';
+import * as layoutCore from 'fenrick.miro.ux/core/layout/layout-core';
 
 /** Ensure layout runs inline even when Web Worker exists. */
 test('layoutGraph runs without Web Worker', async () => {

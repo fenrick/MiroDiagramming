@@ -1,4 +1,4 @@
-import { FileUtils } from '../fenrick.miro.ux/src/core/utils/file-utils';
+import { FileUtils } from 'fenrick.miro.ux/core/utils/file-utils';
 
 describe('FileUtils singleton', () => {
   test('getInstance returns same instance', () => {

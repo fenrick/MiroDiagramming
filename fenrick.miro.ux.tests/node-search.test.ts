@@ -2,9 +2,9 @@ import { describe, expect, test, vi } from 'vitest';
 import {
   searchShapes,
   searchGroups,
-} from '../fenrick.miro.ux/src/board/node-search';
-import { boardCache } from '../fenrick.miro.ux/src/board/board-cache';
-import type { BoardQueryLike } from '../fenrick.miro.ux/src/board/board';
+} from 'fenrick.miro.ux/board/node-search';
+import { boardCache } from 'fenrick.miro.ux/board/board-cache';
+import type { BoardQueryLike } from 'fenrick.miro.ux/board/board';
 
 const board: BoardQueryLike = {
   get: vi.fn(({ type }) => {

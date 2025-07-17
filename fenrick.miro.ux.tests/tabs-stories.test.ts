@@ -1,4 +1,4 @@
-import * as stories from '../fenrick.miro.ux/src/stories/Tabs.stories';
+import * as stories from 'fenrick.miro.ux/stories/Tabs.stories';
 
 describe('Tabs stories', () => {
   test('provides parent tab examples', () => {

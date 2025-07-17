@@ -2,7 +2,7 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { ToolsTab } from '../fenrick.miro.ux/src/ui/pages/ToolsTab';
+import { ToolsTab } from 'fenrick.miro.ux/ui/pages/ToolsTab';
 
 vi.mock('@mirohq/design-system', async () => {
   const React = await import('react');
@@ -82,23 +82,23 @@ vi.mock('@mirohq/design-system', async () => {
   return { Tabs, IconButton, IconQuestionMarkCircle, Tooltip };
 });
 
-vi.mock('../fenrick.miro.ux/src/ui/pages/ResizeTab', () => {
+vi.mock('fenrick.miro.ux/ui/pages/ResizeTab', () => {
   const ResizeTabMock: React.FC = () => (
     <div data-testid='resize-tab'>Resize</div>
   );
   return { ResizeTab: ResizeTabMock };
 });
-vi.mock('../fenrick.miro.ux/src/ui/pages/StyleTab', () => {
+vi.mock('fenrick.miro.ux/ui/pages/StyleTab', () => {
   const StyleTabMock: React.FC = () => <div data-testid='style-tab'>Style</div>;
   return { StyleTab: StyleTabMock };
 });
-vi.mock('../fenrick.miro.ux/src/ui/pages/ArrangeTab', () => {
+vi.mock('fenrick.miro.ux/ui/pages/ArrangeTab', () => {
   const ArrangeTabMock: React.FC = () => (
     <div data-testid='arrange-tab'>Arrange</div>
   );
   return { ArrangeTab: ArrangeTabMock };
 });
-vi.mock('../fenrick.miro.ux/src/ui/pages/FramesTab', () => {
+vi.mock('fenrick.miro.ux/ui/pages/FramesTab', () => {
   const FramesTabMock: React.FC = () => (
     <div data-testid='frames-tab'>Frames</div>
   );

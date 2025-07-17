@@ -2,9 +2,9 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { ArrangeTab } from '../fenrick.miro.ux/src/ui/pages/ArrangeTab';
-import * as grid from '../fenrick.miro.ux/src/board/grid-tools';
-import * as spacing from '../fenrick.miro.ux/src/board/spacing-tools';
+import { ArrangeTab } from 'fenrick.miro.ux/ui/pages/ArrangeTab';
+import * as grid from 'fenrick.miro.ux/board/grid-tools';
+import * as spacing from 'fenrick.miro.ux/board/spacing-tools';
 
 class ResizeObserverMock {
   observe() {}

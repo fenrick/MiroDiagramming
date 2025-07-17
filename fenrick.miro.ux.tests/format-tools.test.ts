@@ -2,9 +2,9 @@
 import {
   applyStylePreset,
   presetStyle,
-} from '../fenrick.miro.ux/src/board/format-tools';
-import type { StylePreset } from '../fenrick.miro.ux/src/ui/style-presets';
-import { boardCache } from '../fenrick.miro.ux/src/board/board-cache';
+} from 'fenrick.miro.ux/board/format-tools';
+import type { StylePreset } from 'fenrick.miro.ux/ui/style-presets';
+import { boardCache } from 'fenrick.miro.ux/board/board-cache';
 
 describe('format-tools', () => {
   beforeEach(() => {

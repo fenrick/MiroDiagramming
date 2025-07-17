@@ -1,7 +1,7 @@
 import {
   NESTED_ALGORITHMS,
   isNestedAlgorithm,
-} from '../fenrick.miro.ux/src/core/graph/layout-modes';
+} from 'fenrick.miro.ux/core/graph/layout-modes';
 
 describe('layout-modes', () => {
   test('NESTED_ALGORITHMS lists supported algorithms', () => {

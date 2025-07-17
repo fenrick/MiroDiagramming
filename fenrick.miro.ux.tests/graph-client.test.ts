@@ -1,6 +1,6 @@
 /** @vitest-environment jsdom */
-import { GraphClient } from '../fenrick.miro.ux/src/core/utils/graph-client';
-import { GraphAuth } from '../fenrick.miro.ux/src/core/utils/graph-auth';
+import { GraphClient } from 'fenrick.miro.ux/core/utils/graph-client';
+import { GraphAuth } from 'fenrick.miro.ux/core/utils/graph-auth';
 
 vi.stubGlobal('fetch', vi.fn());
 

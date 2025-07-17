@@ -2,7 +2,7 @@ import {
   layoutHierarchy,
   NestedLayouter,
   nestedLayouter,
-} from '../fenrick.miro.ux/src/core/layout/nested-layout';
+} from 'fenrick.miro.ux/core/layout/nested-layout';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import type { ElkNode } from 'elkjs/lib/elk-api';
 import sampleHier from './fixtures/sample-hier.json';

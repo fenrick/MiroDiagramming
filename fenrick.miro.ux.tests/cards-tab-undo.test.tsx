@@ -2,11 +2,11 @@
 import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { CardsTab } from '../fenrick.miro.ux/src/ui/pages/CardsTab';
-import { CardProcessor } from '../fenrick.miro.ux/src/board/card-processor';
-import * as uiUtils from '../fenrick.miro.ux/src/ui/hooks/ui-utils';
+import { CardsTab } from 'fenrick.miro.ux/ui/pages/CardsTab';
+import { CardProcessor } from 'fenrick.miro.ux/board/card-processor';
+import * as uiUtils from 'fenrick.miro.ux/ui/hooks/ui-utils';
 
-vi.mock('../fenrick.miro.ux/src/board/card-processor');
+vi.mock('fenrick.miro.ux/board/card-processor');
 
 describe('CardsTab undo paths', () => {
   beforeEach(() => {

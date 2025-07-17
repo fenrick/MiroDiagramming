@@ -3,7 +3,7 @@
 import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { ExcelTab } from '../fenrick.miro.ux/src/ui/pages/ExcelTab';
+import { ExcelTab } from 'fenrick.miro.ux/ui/pages/ExcelTab';
 
 var localDropMock: vi.Mock;
 var remoteFetchMock: vi.Mock;
@@ -11,13 +11,13 @@ var showErrorMock: vi.Mock;
 var excelLoaderMock: Record<string, unknown>;
 var graphLoaderMock: Record<string, unknown>;
 
-vi.mock('../fenrick.miro.ux/src/ui/hooks/use-excel-sync', () => ({
+vi.mock('fenrick.miro.ux/ui/hooks/use-excel-sync', () => ({
   useExcelSync: () => vi.fn(),
 }));
-vi.mock('../fenrick.miro.ux/src/ui/hooks/excel-data-context', () => ({
+vi.mock('fenrick.miro.ux/ui/hooks/excel-data-context', () => ({
   useExcelData: () => null,
 }));
-vi.mock('../fenrick.miro.ux/src/ui/components/Select', () => ({
+vi.mock('fenrick.miro.ux/ui/components/Select', () => ({
   Select: ({
     value,
     onChange,
@@ -41,7 +41,7 @@ vi.mock('../fenrick.miro.ux/src/ui/components/Select', () => ({
     children: React.ReactNode;
   }) => <option value={value}>{children}</option>,
 }));
-vi.mock('../fenrick.miro.ux/src/ui/hooks/use-excel-handlers', () => {
+vi.mock('fenrick.miro.ux/ui/hooks/use-excel-handlers', () => {
   localDropMock = vi.fn();
   remoteFetchMock = vi.fn();
   return {
@@ -54,7 +54,7 @@ vi.mock('../fenrick.miro.ux/src/ui/hooks/use-excel-handlers', () => {
     fetchRemoteWorkbook: (url: string) => remoteFetchMock(url),
   };
 });
-vi.mock('../fenrick.miro.ux/src/core/utils/excel-loader', () => {
+vi.mock('fenrick.miro.ux/core/utils/excel-loader', () => {
   excelLoaderMock = {
     listSheets: vi.fn(() => ['Sheet1']),
     listNamedTables: vi.fn(() => ['Table1']),
@@ -74,7 +74,7 @@ vi.mock('../fenrick.miro.ux/src/core/utils/excel-loader', () => {
     GraphExcelLoader: class {},
   };
 });
-vi.mock('../fenrick.miro.ux/src/ui/hooks/notifications', () => {
+vi.mock('fenrick.miro.ux/ui/hooks/notifications', () => {
   showErrorMock = vi.fn();
   return { showError: showErrorMock };
 });

@@ -1,10 +1,10 @@
 import React from 'react';
 import { renderHook, act } from '@testing-library/react';
-import { ExcelDataProvider } from '../fenrick.miro.ux/src/ui/hooks/excel-data-context';
-import { useExcelSync } from '../fenrick.miro.ux/src/ui/hooks/use-excel-sync';
-import { ExcelSyncService } from '../fenrick.miro.ux/src/core/excel-sync-service';
+import { ExcelDataProvider } from 'fenrick.miro.ux/ui/hooks/excel-data-context';
+import { useExcelSync } from 'fenrick.miro.ux/ui/hooks/use-excel-sync';
+import { ExcelSyncService } from 'fenrick.miro.ux/core/excel-sync-service';
 
-vi.mock('../fenrick.miro.ux/src/core/excel-sync-service');
+vi.mock('fenrick.miro.ux/core/excel-sync-service');
 
 const rows = [{ ID: '1', Name: 'A' }];
 

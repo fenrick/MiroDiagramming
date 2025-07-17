@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { SearchTab } from '../fenrick.miro.ux/src/ui/pages/SearchTab';
+import { SearchTab } from 'fenrick.miro.ux/ui/pages/SearchTab';
 
 /**
  * Helper to render the SearchTab and return the search input element.

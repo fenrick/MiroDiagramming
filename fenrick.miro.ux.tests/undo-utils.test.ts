@@ -1,8 +1,8 @@
 import {
   undoWidgets,
   syncOrUndo,
-} from '../fenrick.miro.ux/src/board/undo-utils';
-import { BoardBuilder } from '../fenrick.miro.ux/src/board/board-builder';
+} from 'fenrick.miro.ux/board/undo-utils';
+import { BoardBuilder } from 'fenrick.miro.ux/board/board-builder';
 import type { Frame } from '@mirohq/websdk-types';
 
 describe('undoWidgets', () => {

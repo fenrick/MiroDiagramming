@@ -1,5 +1,5 @@
-import { UndoableProcessor } from '../fenrick.miro.ux/src/core/graph/undoable-processor';
-import { BoardBuilder } from '../fenrick.miro.ux/src/board/board-builder';
+import { UndoableProcessor } from 'fenrick.miro.ux/core/graph/undoable-processor';
+import { BoardBuilder } from 'fenrick.miro.ux/board/board-builder';
 import type { BaseItem } from '@mirohq/websdk-types';
 
 class Dummy extends UndoableProcessor<BaseItem> {

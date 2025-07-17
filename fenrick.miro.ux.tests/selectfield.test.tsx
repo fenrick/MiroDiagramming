@@ -2,8 +2,8 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { SelectField } from '../fenrick.miro.ux/src/ui/components/SelectField';
-import { SelectOption } from '../fenrick.miro.ux/src/ui/components';
+import { SelectField } from 'fenrick.miro.ux/ui/components/SelectField';
+import { SelectOption } from 'fenrick.miro.ux/ui/components';
 
 test('renders label and select', () => {
   render(

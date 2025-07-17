@@ -2,13 +2,13 @@
 import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { App } from '../fenrick.miro.ux/src/app/App';
+import { App } from 'fenrick.miro.ux/app/App';
 import {
   getDropzoneStyle,
   undoLastImport,
-} from '../fenrick.miro.ux/src/ui/hooks/ui-utils';
+} from 'fenrick.miro.ux/ui/hooks/ui-utils';
 import { colors } from '@mirohq/design-tokens';
-import { GraphProcessor } from '../fenrick.miro.ux/src/core/graph/graph-processor';
+import { GraphProcessor } from 'fenrick.miro.ux/core/graph/graph-processor';
 
 interface GlobalWithMiro {
   miro?: { board?: Record<string, unknown> };

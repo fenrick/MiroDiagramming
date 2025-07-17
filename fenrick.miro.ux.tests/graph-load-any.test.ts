@@ -1,7 +1,7 @@
 import {
   defaultBuilder,
   graphService,
-} from '../fenrick.miro.ux/src/core/graph';
+} from 'fenrick.miro.ux/core/graph';
 
 interface ReaderEvent {
   target: { result?: string | null } | null;

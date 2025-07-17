@@ -2,7 +2,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { Button } from '../fenrick.miro.ux/src/ui/components/Button';
+import { Button } from 'fenrick.miro.ux/ui/components/Button';
 const DummyIcon = () => <svg data-icon-component />;
 
 describe('Button icon support', () => {

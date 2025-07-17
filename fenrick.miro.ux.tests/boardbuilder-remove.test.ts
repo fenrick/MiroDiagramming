@@ -1,4 +1,4 @@
-import { BoardBuilder } from '../fenrick.miro.ux/src/board/board-builder';
+import { BoardBuilder } from 'fenrick.miro.ux/board/board-builder';
 
 interface GlobalWithMiro {
   miro?: { board?: Record<string, unknown> };

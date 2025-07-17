@@ -2,15 +2,15 @@
 import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { StyleTab } from '../fenrick.miro.ux/src/ui/pages/StyleTab';
-import * as styleTools from '../fenrick.miro.ux/src/board/style-tools';
+import { StyleTab } from 'fenrick.miro.ux/ui/pages/StyleTab';
+import * as styleTools from 'fenrick.miro.ux/board/style-tools';
 import {
   stylePresets,
   STYLE_PRESET_NAMES,
-} from '../fenrick.miro.ux/src/ui/style-presets';
-import * as formatTools from '../fenrick.miro.ux/src/board/format-tools';
+} from 'fenrick.miro.ux/ui/style-presets';
+import * as formatTools from 'fenrick.miro.ux/board/format-tools';
 
-vi.mock('../fenrick.miro.ux/src/board/style-tools');
+vi.mock('fenrick.miro.ux/board/style-tools');
 
 describe('StyleTab extra features', () => {
   beforeEach(() => {

@@ -2,11 +2,11 @@
 import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { DiagramsTab } from '../fenrick.miro.ux/src/ui/pages/DiagramsTab';
-import { GraphProcessor } from '../fenrick.miro.ux/src/core/graph/graph-processor';
+import { DiagramsTab } from 'fenrick.miro.ux/ui/pages/DiagramsTab';
+import { GraphProcessor } from 'fenrick.miro.ux/core/graph/graph-processor';
 
-vi.mock('../fenrick.miro.ux/src/core/graph/graph-processor');
-vi.mock('../fenrick.miro.ux/src/board/card-processor');
+vi.mock('fenrick.miro.ux/core/graph/graph-processor');
+vi.mock('fenrick.miro.ux/board/card-processor');
 
 describe('DiagramsTab', () => {
   beforeEach(() => {

@@ -2,8 +2,8 @@ import {
   forEachSelection,
   getFirstSelection,
   maybeSync,
-} from '../fenrick.miro.ux/src/board/board';
-import { boardCache } from '../fenrick.miro.ux/src/board/board-cache';
+} from 'fenrick.miro.ux/board/board';
+import { boardCache } from 'fenrick.miro.ux/board/board-cache';
 
 beforeEach(() => {
   boardCache.reset();

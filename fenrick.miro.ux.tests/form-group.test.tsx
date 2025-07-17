@@ -2,7 +2,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { FormGroup } from '../fenrick.miro.ux/src/ui/components/FormGroup';
+import { FormGroup } from 'fenrick.miro.ux/ui/components/FormGroup';
 
 test('renders child content', () => {
   render(<FormGroup>Text</FormGroup>);

@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { LayoutEngineTab } from '../fenrick.miro.ux/src/ui/pages/LayoutEngineTab';
+import { LayoutEngineTab } from 'fenrick.miro.ux/ui/pages/LayoutEngineTab';
 
 describe('LayoutEngineTab', () => {
   test('renders placeholder message', () => {

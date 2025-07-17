@@ -1,10 +1,10 @@
-import { applyGridLayout } from '../fenrick.miro.ux/src/board/grid-tools';
+import { applyGridLayout } from 'fenrick.miro.ux/board/grid-tools';
 import {
   calculateGrid,
   calculateGridPositions,
-} from '../fenrick.miro.ux/src/board/grid-layout';
-import { BoardLike } from '../fenrick.miro.ux/src/board/board';
-import { boardCache } from '../fenrick.miro.ux/src/board/board-cache';
+} from 'fenrick.miro.ux/board/grid-layout';
+import { BoardLike } from 'fenrick.miro.ux/board/board';
+import { boardCache } from 'fenrick.miro.ux/board/board-cache';
 
 beforeEach(() => {
   boardCache.reset();

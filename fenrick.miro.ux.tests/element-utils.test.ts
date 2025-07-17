@@ -1,5 +1,5 @@
-import { buildShapeStyle } from '../fenrick.miro.ux/src/board/element-utils';
-import { templateManager } from '../fenrick.miro.ux/src/board/templates';
+import { buildShapeStyle } from 'fenrick.miro.ux/board/element-utils';
+import { templateManager } from 'fenrick.miro.ux/board/templates';
 
 describe('buildShapeStyle', () => {
   afterEach(() => {

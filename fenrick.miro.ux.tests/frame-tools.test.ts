@@ -1,9 +1,9 @@
 import {
   renameSelectedFrames,
   lockSelectedFrames,
-} from '../fenrick.miro.ux/src/board/frame-tools';
-import { BoardLike } from '../fenrick.miro.ux/src/board/board';
-import { boardCache } from '../fenrick.miro.ux/src/board/board-cache';
+} from 'fenrick.miro.ux/board/frame-tools';
+import { BoardLike } from 'fenrick.miro.ux/board/board';
+import { boardCache } from 'fenrick.miro.ux/board/board-cache';
 
 describe('frame-tools', () => {
   beforeEach(() => {

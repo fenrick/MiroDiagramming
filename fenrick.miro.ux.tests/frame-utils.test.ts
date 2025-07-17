@@ -1,9 +1,9 @@
 import {
   registerFrame,
   clearActiveFrame,
-} from '../fenrick.miro.ux/src/board/frame-utils';
+} from 'fenrick.miro.ux/board/frame-utils';
 import type { Frame } from '@mirohq/websdk-types';
-import { BoardBuilder } from '../fenrick.miro.ux/src/board/board-builder';
+import { BoardBuilder } from 'fenrick.miro.ux/board/board-builder';
 
 describe('frame-utils', () => {
   test('registerFrame creates frame and records it', async () => {

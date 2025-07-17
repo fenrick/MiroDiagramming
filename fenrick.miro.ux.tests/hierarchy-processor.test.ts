@@ -1,5 +1,5 @@
-import { HierarchyProcessor } from '../fenrick.miro.ux/src/core/graph/hierarchy-processor';
-import { templateManager } from '../fenrick.miro.ux/src/board/templates';
+import { HierarchyProcessor } from 'fenrick.miro.ux/core/graph/hierarchy-processor';
+import { templateManager } from 'fenrick.miro.ux/board/templates';
 
 interface GlobalWithMiro {
   miro?: { board?: Record<string, unknown> };

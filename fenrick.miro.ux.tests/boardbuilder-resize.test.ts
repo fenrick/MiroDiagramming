@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from 'vitest';
-import { BoardBuilder } from '../fenrick.miro.ux/src/board/board-builder';
-import { templateManager } from '../fenrick.miro.ux/src/board/templates';
+import { BoardBuilder } from 'fenrick.miro.ux/board/board-builder';
+import { templateManager } from 'fenrick.miro.ux/board/templates';
 import { mockBoard } from './mock-board';
 import type { BaseItem, GroupableItem } from '@mirohq/websdk-types';
 

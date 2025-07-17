@@ -1,7 +1,7 @@
-import { applySpacingLayout } from '../fenrick.miro.ux/src/board/spacing-tools';
-import { calculateSpacingOffsets } from '../fenrick.miro.ux/src/board/spacing-layout';
-import { BoardLike } from '../fenrick.miro.ux/src/board/board';
-import { boardCache } from '../fenrick.miro.ux/src/board/board-cache';
+import { applySpacingLayout } from 'fenrick.miro.ux/board/spacing-tools';
+import { calculateSpacingOffsets } from 'fenrick.miro.ux/board/spacing-layout';
+import { BoardLike } from 'fenrick.miro.ux/board/board';
+import { boardCache } from 'fenrick.miro.ux/board/board-cache';
 
 beforeEach(() => {
   boardCache.reset();

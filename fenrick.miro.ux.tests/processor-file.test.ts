@@ -1,5 +1,5 @@
-import { GraphProcessor } from '../fenrick.miro.ux/src/core/graph/graph-processor';
-import { graphService } from '../fenrick.miro.ux/src/core/graph';
+import { GraphProcessor } from 'fenrick.miro.ux/core/graph/graph-processor';
+import { graphService } from 'fenrick.miro.ux/core/graph';
 
 /**
  * Tests for the processFile helper method which loads a graph

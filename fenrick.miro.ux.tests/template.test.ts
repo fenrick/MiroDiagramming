@@ -1,4 +1,4 @@
-import { templateManager } from '../fenrick.miro.ux/src/board/templates';
+import { templateManager } from 'fenrick.miro.ux/board/templates';
 
 interface GlobalWithMiro {
   miro?: { board?: Record<string, unknown> };

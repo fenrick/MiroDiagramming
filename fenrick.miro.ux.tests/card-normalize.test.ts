@@ -2,7 +2,7 @@ import {
   cardLoader,
   CardLoader,
   parseCardStyle,
-} from '../fenrick.miro.ux/src/core/utils/cards';
+} from 'fenrick.miro.ux/core/utils/cards';
 
 interface ReaderEvent {
   target: { result?: string | null } | null;

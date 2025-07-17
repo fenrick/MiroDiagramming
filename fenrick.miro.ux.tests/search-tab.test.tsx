@@ -2,7 +2,7 @@
 import { fireEvent, screen, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { renderSearchTab } from './render-utils';
-import * as searchTools from '../fenrick.miro.ux/src/board/search-tools';
+import * as searchTools from 'fenrick.miro.ux/board/search-tools';
 
 vi.useFakeTimers();
 

@@ -1,4 +1,4 @@
-import { loadElk } from '../fenrick.miro.ux/src/core/layout/elk-loader';
+import { loadElk } from 'fenrick.miro.ux/core/layout/elk-loader';
 import ELK from 'elkjs/lib/elk.bundled.js';
 
 /** Tests for the dynamic ELK loader. */

@@ -1,5 +1,5 @@
 import { afterEach, expect, test, vi } from 'vitest';
-import { HttpLogSink } from '../fenrick.miro.ux/src/log-sink';
+import { HttpLogSink } from 'fenrick.miro.ux/log-sink';
 
 const ORIG_LEVEL = process.env.LOG_LEVEL;
 const ORIG_ENV = process.env.NODE_ENV;
@@ -13,13 +13,13 @@ afterEach(() => {
 
 test('defaults to info level', async () => {
   delete process.env.LOG_LEVEL;
-  const { log } = await import('../fenrick.miro.ux/src/logger');
+  const { log } = await import('fenrick.miro.ux/logger');
   expect(log.level).toBe('info');
 });
 
 test('respects LOG_LEVEL environment variable', async () => {
   process.env.LOG_LEVEL = 'trace';
-  const { log } = await import('../fenrick.miro.ux/src/logger');
+  const { log } = await import('fenrick.miro.ux/logger');
   expect(log.level).toBe('trace');
 });
 
@@ -28,7 +28,7 @@ test('forwards log entries to sink', async () => {
   process.env.NODE_ENV = 'development';
   global.fetch = vi.fn().mockResolvedValue({ ok: true });
   const sink = new HttpLogSink('/test');
-  const { createLogger } = await import('../fenrick.miro.ux/src/logger');
+  const { createLogger } = await import('fenrick.miro.ux/logger');
   const logger = createLogger(sink);
   logger.info('hello');
   expect(global.fetch).toHaveBeenCalledWith(

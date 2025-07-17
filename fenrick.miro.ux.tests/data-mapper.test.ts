@@ -7,7 +7,7 @@ import {
   mapRowsWith,
   buildMetadata,
   resolveIdLabelType,
-} from '../fenrick.miro.ux/src/core/data-mapper';
+} from 'fenrick.miro.ux/core/data-mapper';
 
 describe('data mapper', () => {
   test('maps rows to nodes with metadata', () => {

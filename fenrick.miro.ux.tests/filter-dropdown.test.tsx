@@ -2,7 +2,7 @@
 import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { FilterDropdown } from '../fenrick.miro.ux/src/ui/components/FilterDropdown';
+import { FilterDropdown } from 'fenrick.miro.ux/ui/components/FilterDropdown';
 
 test('handlers fire when filters change', () => {
   const onCase = vi.fn();

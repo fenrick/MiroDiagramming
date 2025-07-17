@@ -1,12 +1,12 @@
 import {
   edgesToHierarchy,
   hierarchyToEdges,
-} from '../fenrick.miro.ux/src/core/graph/convert';
-import { GraphProcessor } from '../fenrick.miro.ux/src/core/graph/graph-processor';
-import { HierarchyProcessor } from '../fenrick.miro.ux/src/core/graph/hierarchy-processor';
-import { layoutEngine } from '../fenrick.miro.ux/src/core/layout/elk-layout';
-import * as nestedLayout from '../fenrick.miro.ux/src/core/layout/nested-layout';
-import { templateManager } from '../fenrick.miro.ux/src/board/templates';
+} from 'fenrick.miro.ux/core/graph/convert';
+import { GraphProcessor } from 'fenrick.miro.ux/core/graph/graph-processor';
+import { HierarchyProcessor } from 'fenrick.miro.ux/core/graph/hierarchy-processor';
+import { layoutEngine } from 'fenrick.miro.ux/core/layout/elk-layout';
+import * as nestedLayout from 'fenrick.miro.ux/core/layout/nested-layout';
+import { templateManager } from 'fenrick.miro.ux/board/templates';
 
 interface GlobalWithMiro {
   miro?: { board?: Record<string, unknown> };

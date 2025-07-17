@@ -2,7 +2,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { IntroScreen } from '../fenrick.miro.ux/src/ui/components/IntroScreen';
+import { IntroScreen } from 'fenrick.miro.ux/ui/components/IntroScreen';
 
 describe('IntroScreen', () => {
   test('calls onStart when button clicked', () => {

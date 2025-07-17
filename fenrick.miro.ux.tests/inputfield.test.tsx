@@ -2,7 +2,7 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { InputField } from '../fenrick.miro.ux/src/ui/components/InputField';
+import { InputField } from 'fenrick.miro.ux/ui/components/InputField';
 
 test('renders label and input', () => {
   render(

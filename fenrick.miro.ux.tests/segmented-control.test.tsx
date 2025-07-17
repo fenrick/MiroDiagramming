@@ -1,7 +1,7 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { SegmentedControl } from '../fenrick.miro.ux/src/ui/components/SegmentedControl';
+import { SegmentedControl } from 'fenrick.miro.ux/ui/components/SegmentedControl';
 
 describe('SegmentedControl', () => {
   test('click triggers onChange with value', () => {
