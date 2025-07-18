@@ -202,8 +202,9 @@ automatically.
 
 Some teams host the React bundle alongside an ASP.NET Core API. The backend
 publishes to a `publish/` directory and serves static files from the `wwwroot`
-folder. The `dist/` bundle can be copied into `wwwroot` during the publish step
-so front-end assets and API endpoints share the same origin.
+folder. When `dotnet publish` runs the front‑end build output is copied from
+`fenrick.miro.ux/dist` into `fenrick.miro.server/wwwroot` so front-end assets
+and API endpoints share the same origin.
 
 ### 12.1 Environment variables
 
@@ -215,6 +216,7 @@ Define these variables in the hosting environment:
 | **ASPNETCORE_URLS**                | HTTP bind address, e.g. `http://*:5000` |
 | **APPINSIGHTS_INSTRUMENTATIONKEY** | Azure Application Insights key          |
 | **JWT\_\_Issuer**                  | Token issuer for API auth               |
+| **APPHOST_PORT**                   | Port used when running the AppHost      |
 
 ### 12.2 Build & publish
 
@@ -230,11 +232,22 @@ Run the app locally with:
 dotnet run --project fenrick.miro.apphost/Fenrick.Miro.AppHost.AppHost
 ```
 
-The `publish/` folder then contains the compiled API along with the React
-`dist/` assets. Copy the directory into a container image or deploy it straight
-to a platform like **Azure App Service**.
+The front-end build creates `fenrick.miro.ux/dist`. During `dotnet publish`
+those files are copied into `publish/wwwroot` so the compiled API and static
+assets ship together. Deploy the `publish/` directory or copy it into a
+container image.
 
-### 12.3 Containerisation and hosting
+### 12.3 Run the AppHost
+
+Execute the compiled server from the `publish/` folder. The `ASPNETCORE_URLS`
+value decides the bind address while `APPHOST_PORT` overrides the default port.
+
+```bash
+cd publish
+ASPNETCORE_URLS="http://*:5000" dotnet fenrick.miro.server.dll
+```
+
+### 12.4 Containerisation and hosting
 
 **Docker**
 
