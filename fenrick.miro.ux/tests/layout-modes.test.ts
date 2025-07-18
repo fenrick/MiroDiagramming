@@ -4,9 +4,8 @@ import {
 } from '../src/core/graph/layout-modes';
 
 describe('layout-modes', () => {
-  test('NESTED_ALGORITHMS lists supported algorithms', () => {
-    expect(NESTED_ALGORITHMS).toEqual(['box', 'rectstacking']);
-  });
+  test('NESTED_ALGORITHMS lists supported algorithms', () =>
+    expect(NESTED_ALGORITHMS).toEqual(['box', 'rectstacking']));
 
   test('isNestedAlgorithm validates algorithm names', () => {
     expect(isNestedAlgorithm('box')).toBe(true);

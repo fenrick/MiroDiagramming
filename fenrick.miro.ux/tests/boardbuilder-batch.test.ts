@@ -3,9 +3,7 @@ import { BoardBuilder } from '../src/board/board-builder';
 import { mockBoard } from './mock-board';
 import { boardCache } from '../src/board/board-cache';
 
-beforeEach(() => {
-  boardCache.reset();
-});
+beforeEach(() => boardCache.reset());
 
 describe('BoardBuilder batch operations', () => {
   test('createEdges uses board batch methods', async () => {

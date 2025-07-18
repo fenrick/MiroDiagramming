@@ -13,15 +13,13 @@ beforeEach(() => {
   };
 });
 
-afterEach(() => {
-  delete (globalThis as { miro?: unknown }).miro;
-});
+afterEach(() => delete (globalThis as { miro?: unknown }).miro);
 
 test('Ctrl+Alt+3 selects Style tab', async () => {
   render(<App />);
   fireEvent.click(screen.getByTestId('start-button'));
-  await act(async () => {
-    fireEvent.keyDown(window, { key: '3', ctrlKey: true, altKey: true });
-  });
+  await act(async () =>
+    fireEvent.keyDown(window, { key: '3', ctrlKey: true, altKey: true }),
+  );
   expect(screen.getByRole('button', { name: /apply/i })).toBeInTheDocument();
 });

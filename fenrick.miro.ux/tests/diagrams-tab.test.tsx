@@ -27,12 +27,12 @@ describe('DiagramsTab', () => {
     render(<DiagramsTab />);
     const input = screen.getByTestId('file-input');
     const file = new File(['{}'], 'graph.json', { type: 'application/json' });
-    await act(async () => {
-      fireEvent.change(input, { target: { files: [file] } });
-    });
-    await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: /create diagram/i }));
-    });
+    await act(async () =>
+      fireEvent.change(input, { target: { files: [file] } }),
+    );
+    await act(async () =>
+      fireEvent.click(screen.getByRole('button', { name: /create diagram/i })),
+    );
     expect(spy).toHaveBeenCalled();
   });
 });

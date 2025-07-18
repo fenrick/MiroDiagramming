@@ -57,11 +57,10 @@ describe('loadCards', () => {
     (CardLoader as unknown as { instance?: CardLoader }).instance = original;
   });
 
-  test('throws on invalid file object', async () => {
+  test('throws on invalid file object', async () =>
     await expect(cardLoader.loadCards(null as unknown as File)).rejects.toThrow(
       'Invalid file',
-    );
-  });
+    ));
 
   test('throws on invalid data', async () => {
     class FR {

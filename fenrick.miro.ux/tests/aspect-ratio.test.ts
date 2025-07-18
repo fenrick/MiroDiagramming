@@ -16,8 +16,7 @@ describe('aspect-ratio utilities', () => {
   });
 });
 
-test('aspectRatioValue throws on unknown preset', () => {
+test('aspectRatioValue throws on unknown preset', () =>
   expect(() => aspectRatioValue('1:1' as never)).toThrow(
     'Unknown aspect ratio',
-  );
-});
+  ));

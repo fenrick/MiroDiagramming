@@ -4,9 +4,7 @@ import type { StylePreset } from '../src/ui/style-presets';
 import { boardCache } from '../src/board/board-cache';
 
 describe('format-tools', () => {
-  beforeEach(() => {
-    boardCache.reset();
-  });
+  beforeEach(() => boardCache.reset());
   const preset: StylePreset = {
     label: 'Test',
     fontColor: '#ffffff',
@@ -40,11 +38,10 @@ describe('format-tools', () => {
     });
   });
 
-  test('applyStylePreset throws without board', async () => {
+  test('applyStylePreset throws without board', async () =>
     await expect(applyStylePreset(preset)).rejects.toThrow(
       'Miro board not available',
-    );
-  });
+    ));
 
   test('presetStyle resolves colours', () => {
     const style = document.documentElement.style;

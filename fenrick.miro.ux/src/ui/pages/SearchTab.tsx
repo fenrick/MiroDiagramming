@@ -57,11 +57,10 @@ export const SearchTab: React.FC = () => {
     [],
   );
 
-  const toggleType = (type: string): void => {
+  const toggleType = (type: string): void =>
     setWidgetTypes((prev) =>
       prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type],
     );
-  };
 
   const buildOptions = React.useCallback((): SearchOptions => {
     const tags = tagIds

@@ -27,17 +27,15 @@ function wrapper({ children }: { children: React.ReactNode }) {
 }
 
 describe('useExcelSync', () => {
-  beforeEach(() => {
+  beforeEach(() =>
     (ExcelSyncService as unknown as vi.Mock).mockImplementation(() => ({
       updateShapesFromExcel: vi.fn().mockResolvedValue(undefined),
-    }));
-  });
+    })),
+  );
 
   test('updates rows and widgets', async () => {
     const { result } = renderHook(() => useExcelSync(), { wrapper });
-    await act(async () => {
-      await result.current(0, { ID: '1', Name: 'B' });
-    });
+    await act(async () => await result.current(0, { ID: '1', Name: 'B' }));
     const svc = (ExcelSyncService as unknown as vi.Mock).mock.results.at(-1)
       ?.value as { updateShapesFromExcel: vi.Mock };
     expect(svc.updateShapesFromExcel).toHaveBeenCalled();
@@ -45,9 +43,7 @@ describe('useExcelSync', () => {
 
   test('returns early when context missing', async () => {
     const { result } = renderHook(() => useExcelSync());
-    await act(async () => {
-      await result.current(0, { ID: '1', Name: 'B' });
-    });
+    await act(async () => await result.current(0, { ID: '1', Name: 'B' }));
     const svc = (ExcelSyncService as unknown as vi.Mock).mock.results.at(-1)
       ?.value as { updateShapesFromExcel: vi.Mock };
     expect(svc.updateShapesFromExcel).not.toHaveBeenCalled();

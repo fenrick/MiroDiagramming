@@ -6,9 +6,7 @@ import {
 import { BoardLike } from '../src/board/board';
 import { boardCache } from '../src/board/board-cache';
 
-beforeEach(() => {
-  boardCache.reset();
-});
+beforeEach(() => boardCache.reset());
 
 describe('grid-tools', () => {
   test('calculateGrid computes grid positions', () => {
@@ -160,9 +158,8 @@ describe('grid-tools', () => {
     expect(items[0].y).toBe(0);
   });
 
-  test('applyGridLayout throws without board', async () => {
+  test('applyGridLayout throws without board', async () =>
     await expect(applyGridLayout({ cols: 1, padding: 0 })).rejects.toThrow(
       'Miro board not available',
-    );
-  });
+    ));
 });

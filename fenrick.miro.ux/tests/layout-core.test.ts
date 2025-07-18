@@ -8,7 +8,7 @@ import { templateManager } from '../src/board/templates';
 import ELK from 'elkjs/lib/elk.bundled.js';
 
 /** Branch coverage tests for performLayout. */
-describe('performLayout', () => {
+describe('performLayout', () =>
   test('falls back to defaults when template missing', async () => {
     vi.spyOn(templateManager, 'getTemplate').mockReturnValue(
       undefined as unknown as ReturnType<typeof templateManager.getTemplate>,
@@ -25,8 +25,7 @@ describe('performLayout', () => {
     expect(result.nodes.a.width).toBeGreaterThan(0);
     (templateManager.getTemplate as vi.Mock).mockRestore();
     (ELK.prototype.layout as vi.Mock).mockRestore();
-  });
-});
+  }));
 
 describe('getNodeDimensions', () => {
   test('uses metadata when present', () => {
@@ -51,7 +50,7 @@ describe('getNodeDimensions', () => {
   });
 });
 
-describe('buildElkGraphOptions', () => {
+describe('buildElkGraphOptions', () =>
   test('includes optional values when present', () => {
     const opts = {
       algorithm: 'layered',
@@ -63,5 +62,4 @@ describe('buildElkGraphOptions', () => {
     const result = buildElkGraphOptions(opts);
     expect(result['elk.edgeRouting']).toBe('SPLINES');
     expect(result['elk.aspectRatio']).toBe(String(16 / 9));
-  });
-});
+  }));

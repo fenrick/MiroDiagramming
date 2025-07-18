@@ -4,7 +4,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { HelpTab } from '../src/ui/pages/HelpTab';
 
-describe('HelpTab', () => {
+describe('HelpTab', () =>
   test('lists diagram options', () => {
     render(<HelpTab />);
     expect(
@@ -17,5 +17,4 @@ describe('HelpTab', () => {
     expect(screen.queryByText(/unreleased/i)).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: /show changelog/i }));
     expect(screen.getByText(/unreleased/i)).toBeInTheDocument();
-  });
-});
+  }));

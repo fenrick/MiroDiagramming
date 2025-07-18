@@ -40,9 +40,9 @@ describe('StyleTab extra features', () => {
 
   test('copy fill button updates preview', async () => {
     render(React.createElement(StyleTab));
-    await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: /copy fill/i }));
-    });
+    await act(async () =>
+      fireEvent.click(screen.getByRole('button', { name: /copy fill/i })),
+    );
     expect(screen.getByTestId('color-hex')).toHaveTextContent('#123456');
   });
 
@@ -54,9 +54,9 @@ describe('StyleTab extra features', () => {
     fireEvent.change(screen.getByTestId('adjust-input'), {
       target: { value: '50' },
     });
-    await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: /apply/i }));
-    });
+    await act(async () =>
+      fireEvent.click(screen.getByRole('button', { name: /apply/i })),
+    );
     expect(styleTools.tweakFillColor).toHaveBeenCalledWith(0.5);
   });
 
@@ -64,11 +64,11 @@ describe('StyleTab extra features', () => {
     vi.spyOn(formatTools, 'applyStylePreset').mockResolvedValue(undefined);
     render(React.createElement(StyleTab));
     const name = STYLE_PRESET_NAMES[0];
-    await act(async () => {
+    await act(async () =>
       fireEvent.click(
         screen.getByRole('button', { name: new RegExp(name, 'i') }),
-      );
-    });
+      ),
+    );
     expect(formatTools.applyStylePreset).toHaveBeenCalledWith(
       stylePresets[name],
     );

@@ -120,9 +120,9 @@ export const CardsTab: React.FC = () => {
               )}
               {lastProc && (
                 <Button
-                  onClick={() => {
-                    undoLastImport(lastProc, () => setLastProc(undefined));
-                  }}
+                  onClick={() =>
+                    undoLastImport(lastProc, () => setLastProc(undefined))
+                  }
                   variant='secondary'
                   iconPosition='start'
                   icon={<IconArrowArcLeft />}>

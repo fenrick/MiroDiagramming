@@ -2,9 +2,7 @@ import { buildShapeStyle } from '../src/board/element-utils';
 import { templateManager } from '../src/board/templates';
 
 describe('buildShapeStyle', () => {
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
+  afterEach(() => jest.restoreAllMocks());
 
   test('merges existing style with template style', () => {
     jest

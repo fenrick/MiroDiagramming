@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { SegmentedControl } from '../src/ui/components/SegmentedControl';
 
-describe('SegmentedControl', () => {
+describe('SegmentedControl', () =>
   test('click triggers onChange with value', () => {
     const handler = jest.fn();
     const options = [
@@ -20,5 +20,4 @@ describe('SegmentedControl', () => {
     const btn = screen.getByRole('button', { name: 'Two' });
     fireEvent.click(btn);
     expect(handler).toHaveBeenCalledWith('2');
-  });
-});
+  }));

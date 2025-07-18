@@ -40,13 +40,9 @@ describe('App UI integration', () => {
       .mockResolvedValue(undefined);
     render(React.createElement(App));
     fireEvent.click(screen.getByTestId('start-button'));
-    await act(async () => {
-      selectFile();
-    });
+    await act(async () => selectFile());
     const button = screen.getByRole('button', { name: /create diagram/i });
-    await act(async () => {
-      fireEvent.click(button);
-    });
+    await act(async () => fireEvent.click(button));
     expect(spy).toHaveBeenCalledWith(
       expect.any(File),
       expect.objectContaining({ layout: expect.any(Object) }),
@@ -70,13 +66,9 @@ describe('App UI integration', () => {
       .mockRejectedValue(error);
     render(React.createElement(App));
     fireEvent.click(screen.getByTestId('start-button'));
-    await act(async () => {
-      selectFile();
-    });
+    await act(async () => selectFile());
     const button = screen.getByRole('button', { name: /create diagram/i });
-    await act(async () => {
-      fireEvent.click(button);
-    });
+    await act(async () => fireEvent.click(button));
     expect(spy).toHaveBeenCalled();
     expect(global.miro.board.notifications.showError).toHaveBeenCalledWith(
       'Error: fail',
@@ -89,17 +81,13 @@ describe('App UI integration', () => {
       .mockResolvedValue(undefined);
     render(React.createElement(App));
     fireEvent.click(screen.getByTestId('start-button'));
-    await act(async () => {
-      selectFile();
-    });
+    await act(async () => selectFile());
     fireEvent.click(screen.getByLabelText(/wrap items in frame/i));
     fireEvent.change(screen.getByPlaceholderText(/frame title/i), {
       target: { value: 'Frame A' },
     });
     const button = screen.getByRole('button', { name: /create diagram/i });
-    await act(async () => {
-      fireEvent.click(button);
-    });
+    await act(async () => fireEvent.click(button));
     expect(spy).toHaveBeenCalledWith(
       expect.any(File),
       expect.objectContaining({

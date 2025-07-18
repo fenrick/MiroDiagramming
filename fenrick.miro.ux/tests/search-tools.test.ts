@@ -6,9 +6,7 @@ import {
 import { BoardQueryLike } from '../src/board/board';
 import { boardCache } from '../src/board/board-cache';
 
-beforeEach(() => {
-  boardCache.reset();
-});
+beforeEach(() => boardCache.reset());
 
 const makeBoard = () => {
   const items = [
@@ -70,9 +68,9 @@ const makeBoard = () => {
   ];
   const board: BoardQueryLike = {
     getSelection: jest.fn().mockResolvedValue(items.slice(0, 2)),
-    get: jest.fn(async ({ type }) => {
-      return type === 'widget' ? items : items.filter((i) => i.type === type);
-    }),
+    get: jest.fn(async ({ type }) =>
+      type === 'widget' ? items : items.filter((i) => i.type === type),
+    ),
   } as unknown as BoardQueryLike;
   return { board, items };
 };
@@ -191,9 +189,7 @@ describe('search-tools', () => {
     const count = await replaceBoardContent(
       { query: 'hello', replacement: 'hi' },
       board,
-      (i) => {
-        seen.push(i);
-      },
+      (i) => seen.push(i),
     );
     expect(count).toBe(4);
     expect(seen).toEqual(

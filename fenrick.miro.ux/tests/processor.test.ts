@@ -135,11 +135,10 @@ describe('GraphProcessor', () => {
     });
   });
 
-  it('throws on invalid graph', async () => {
+  it('throws on invalid graph', async () =>
     await expect(processor.processGraph({} as unknown)).rejects.toThrow(
       'Invalid graph format',
-    );
-  });
+    ));
 
   it('positions frame at space center', async () => {
     const simpleGraph = {

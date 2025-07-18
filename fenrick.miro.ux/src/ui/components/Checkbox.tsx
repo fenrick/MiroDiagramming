@@ -31,9 +31,7 @@ export function Checkbox({
   id,
   ...props
 }: CheckboxProps): React.JSX.Element {
-  const handleChange = (checked: boolean): void => {
-    onChange?.(checked);
-  };
+  const handleChange = (checked: boolean): void => onChange?.(checked);
   const generatedId = React.useId();
   const inputId = id ?? generatedId;
   const labelId = `${inputId}-label`;

@@ -243,15 +243,14 @@ function useExcelTabHandlers(state: ReturnType<typeof useExcelTabData>) {
     [loader, source],
   );
 
-  const toggle = React.useCallback((idx: number): void => {
-    setSelected((prev) => toggleSelection(prev, idx));
-  }, []);
+  const toggle = React.useCallback(
+    (idx: number): void => setSelected((prev) => toggleSelection(prev, idx)),
+    [],
+  );
 
   const syncUpdate = useExcelSync();
   const updateRow = React.useCallback(
-    (index: number, updated: ExcelRow): void => {
-      void syncUpdate(index, updated);
-    },
+    (index: number, updated: ExcelRow): void => void syncUpdate(index, updated),
     [syncUpdate],
   );
 

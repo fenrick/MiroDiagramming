@@ -43,16 +43,14 @@ function makeFile(name: string): File {
   return new File(['{}'], name, { type: 'application/json' });
 }
 
-describe('StructuredTab branches', () => {
+describe('StructuredTab branches', () =>
   test('shows progress, error and undo workflow', async () => {
     render(<StructuredTab />);
     const input = screen.getByTestId('file-input');
-    await act(async () => {
-      fireEvent.change(input, { target: { files: [makeFile('graph.json')] } });
-    });
-    await act(async () => {
-      await createSpy();
-    });
+    await act(async () =>
+      fireEvent.change(input, { target: { files: [makeFile('graph.json')] } }),
+    );
+    await act(async () => await createSpy());
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
     expect(screen.getByText('boom')).toBeInTheDocument();
     const undo = screen.getByRole('button', { name: /undo last import/i });
@@ -62,5 +60,4 @@ describe('StructuredTab branches', () => {
     expect(
       screen.queryByRole('button', { name: /undo last import/i }),
     ).not.toBeInTheDocument();
-  });
-});
+  }));

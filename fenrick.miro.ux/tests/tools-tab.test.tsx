@@ -105,7 +105,7 @@ vi.mock('../src/ui/pages/FramesTab', () => {
   return { FramesTab: FramesTabMock };
 });
 
-describe('ToolsTab', () => {
+describe('ToolsTab', () =>
   test('sub-tab switching renders correct panel', () => {
     render(<ToolsTab />);
     expect(screen.getByTestId('resize-tab')).toBeInTheDocument();
@@ -118,5 +118,4 @@ describe('ToolsTab', () => {
 
     fireEvent.click(screen.getByRole('tab', { name: 'Frames' }));
     expect(screen.getByTestId('frames-tab')).toBeInTheDocument();
-  });
-});
+  }));

@@ -10,9 +10,7 @@ describe('useSelection', () => {
       ui: { on: jest.fn(), off: jest.fn() },
     };
     const { result } = renderHook(() => useSelection(board));
-    await act(async () => {
-      await Promise.resolve();
-    });
+    await act(async () => await Promise.resolve());
     expect(result.current).toEqual([{ id: 1 }]);
   });
 
@@ -31,13 +29,9 @@ describe('useSelection', () => {
       },
     };
     const { result, unmount } = renderHook(() => useSelection(board));
-    await act(async () => {
-      await Promise.resolve();
-    });
+    await act(async () => await Promise.resolve());
     expect(result.current).toEqual([]);
-    await act(async () => {
-      await cb({ items: [{ id: 2 }] });
-    });
+    await act(async () => await cb({ items: [{ id: 2 }] }));
     expect(result.current).toEqual([{ id: 2 }]);
     unmount();
     expect(board.ui.off).toHaveBeenCalledWith('selection:update', cb);
@@ -45,9 +39,7 @@ describe('useSelection', () => {
 
   test('returns empty array when board missing', async () => {
     const { result } = renderHook(() => useSelection());
-    await act(async () => {
-      await Promise.resolve();
-    });
+    await act(async () => await Promise.resolve());
     expect(result.current).toEqual([]);
   });
 
@@ -56,9 +48,7 @@ describe('useSelection', () => {
       getSelection: jest.fn().mockResolvedValue([{ id: 3 }]),
     };
     const { result } = renderHook(() => useSelection(board));
-    await act(async () => {
-      await Promise.resolve();
-    });
+    await act(async () => await Promise.resolve());
     expect(result.current).toEqual([{ id: 3 }]);
   });
 });

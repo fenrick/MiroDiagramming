@@ -25,14 +25,14 @@ describe('DiagramsTab existing node option', () => {
       .mockResolvedValue(undefined as unknown as void);
     render(<DiagramsTab />);
     const file = new File(['{}'], 'graph.json', { type: 'application/json' });
-    await act(async () => {
+    await act(async () =>
       fireEvent.change(screen.getByTestId('file-input'), {
         target: { files: [file] },
-      });
-    });
-    await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: /create diagram/i }));
-    });
+      }),
+    );
+    await act(async () =>
+      fireEvent.click(screen.getByRole('button', { name: /create diagram/i })),
+    );
     expect(spy).toHaveBeenCalledWith(
       file,
       expect.objectContaining({ existingMode: 'move' }),

@@ -82,9 +82,7 @@ describe('ExcelTab', () => {
   test('handles local file drop', async () => {
     render(<ExcelTab />);
     const file = new File(['a'], 'a.xlsx');
-    await act(async () => {
-      await dropHandler([file]);
-    });
+    await act(async () => await dropHandler([file]));
     expect(localDropMock).toHaveBeenCalledWith([file]);
   });
 
@@ -93,9 +91,9 @@ describe('ExcelTab', () => {
     fireEvent.change(screen.getByLabelText('graph file'), {
       target: { value: 'url' },
     });
-    await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: 'Fetch File' }));
-    });
+    await act(async () =>
+      fireEvent.click(screen.getByRole('button', { name: 'Fetch File' })),
+    );
     expect(remoteFetchMock).toHaveBeenCalledWith('url');
   });
 });

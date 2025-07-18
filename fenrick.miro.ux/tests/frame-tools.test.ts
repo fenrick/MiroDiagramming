@@ -6,9 +6,7 @@ import { BoardLike } from '../src/board/board';
 import { boardCache } from '../src/board/board-cache';
 
 describe('frame-tools', () => {
-  beforeEach(() => {
-    boardCache.reset();
-  });
+  beforeEach(() => boardCache.reset());
   test('renameSelectedFrames updates titles in order', async () => {
     const frames = [
       { x: 20, y: 0, title: 'old', sync: jest.fn(), type: 'frame' },
@@ -109,11 +107,10 @@ describe('frame-tools', () => {
     expect(frames[1].title).toBe('D1');
   });
 
-  test('renameSelectedFrames throws without board', async () => {
+  test('renameSelectedFrames throws without board', async () =>
     await expect(renameSelectedFrames({ prefix: 'P' })).rejects.toThrow(
       'Miro board not available',
-    );
-  });
+    ));
 
   describe('lockSelectedFrames', () => {
     test('locks frames and children', async () => {
@@ -176,10 +173,9 @@ describe('frame-tools', () => {
       expect(item.sync).not.toHaveBeenCalled();
     });
 
-    test('throws without board', async () => {
+    test('throws without board', async () =>
       await expect(lockSelectedFrames()).rejects.toThrow(
         'Miro board not available',
-      );
-    });
+      ));
   });
 });

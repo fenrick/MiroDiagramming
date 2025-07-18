@@ -33,14 +33,14 @@ describe('CardsTab undo paths', () => {
       .mockResolvedValue(undefined as unknown as void);
     render(<CardsTab />);
     const file = new File(['{}'], 'cards.json', { type: 'application/json' });
-    await act(async () => {
+    await act(async () =>
       fireEvent.change(screen.getByTestId('file-input'), {
         target: { files: [file] },
-      });
-    });
-    await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: /create cards/i }));
-    });
+      }),
+    );
+    await act(async () =>
+      fireEvent.click(screen.getByRole('button', { name: /create cards/i })),
+    );
     fireEvent.keyDown(window, { key: 'z', metaKey: true });
     expect(undoSpy).toHaveBeenCalled();
   });

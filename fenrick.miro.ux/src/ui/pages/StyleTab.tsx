@@ -25,23 +25,24 @@ export const StyleTab: React.FC = () => {
   const [opacityDelta, setOpacityDelta] = React.useState(0);
   const [borderDelta, setBorderDelta] = React.useState(0);
   // Update base colour when the selection changes
-  React.useEffect(() => {
-    setBaseColor(extractFillColor(selection[0]) ?? '#808080');
-  }, [selection]);
+  React.useEffect(
+    () => setBaseColor(extractFillColor(selection[0]) ?? '#808080'),
+    [selection],
+  );
   // Preview colour updated live as the user tweaks the slider
   const preview = React.useMemo(
     () => adjustColor(baseColor, adjust / 100),
     [baseColor, adjust],
   );
-  const apply = async (): Promise<void> => {
-    await tweakFillColor(adjust / 100);
-  };
-  const applyOpacity = React.useCallback(async (): Promise<void> => {
-    await tweakOpacity(opacityDelta);
-  }, [opacityDelta]);
-  const applyBorder = React.useCallback(async (): Promise<void> => {
-    await tweakBorderWidth(borderDelta);
-  }, [borderDelta]);
+  const apply = async (): Promise<void> => await tweakFillColor(adjust / 100);
+  const applyOpacity = React.useCallback(
+    async (): Promise<void> => await tweakOpacity(opacityDelta),
+    [opacityDelta],
+  );
+  const applyBorder = React.useCallback(
+    async (): Promise<void> => await tweakBorderWidth(borderDelta),
+    [borderDelta],
+  );
   const copyFill = React.useCallback(async (): Promise<void> => {
     const colour = await copyFillFromSelection();
     if (colour) setBaseColor(colour);

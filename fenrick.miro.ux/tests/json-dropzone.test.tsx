@@ -10,9 +10,7 @@ test('invokes callback when file selected', async () => {
   const input = screen.getByTestId('file-input');
   expect(input).toHaveClass('custom-visually-hidden');
   const file = new File(['{}'], 'test.json', { type: 'application/json' });
-  await act(async () => {
-    fireEvent.change(input, { target: { files: [file] } });
-  });
+  await act(async () => fireEvent.change(input, { target: { files: [file] } }));
   expect(handle).toHaveBeenCalled();
   expect(handle.mock.calls[0][0]).toEqual([file]);
 });

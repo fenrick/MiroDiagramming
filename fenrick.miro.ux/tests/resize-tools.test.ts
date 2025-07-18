@@ -6,9 +6,7 @@ import {
 import { boardCache } from '../src/board/board-cache';
 
 describe('resize-tools', () => {
-  beforeEach(() => {
-    boardCache.reset();
-  });
+  beforeEach(() => boardCache.reset());
   test('copySizeFromSelection returns size', async () => {
     const board = {
       getSelection: jest.fn().mockResolvedValue([{ width: 5, height: 6 }]),
@@ -48,11 +46,10 @@ describe('resize-tools', () => {
     expect(size).toBeNull();
   });
 
-  test('applySizeToSelection throws without board', async () => {
+  test('applySizeToSelection throws without board', async () =>
     await expect(applySizeToSelection({ width: 1, height: 1 })).rejects.toThrow(
       'Miro board not available',
-    );
-  });
+    ));
 
   test('scaleSelection multiplies widget dimensions', async () => {
     const item = { width: 10, height: 5, sync: jest.fn() };

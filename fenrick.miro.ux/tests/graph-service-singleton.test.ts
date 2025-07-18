@@ -1,6 +1,6 @@
 import { GraphService } from '../src/core/graph';
 
-describe('GraphService singleton', () => {
+describe('GraphService singleton', () =>
   test('getInstance returns the same object', () => {
     const original = (
       GraphService as unknown as { instance: GraphService | undefined }
@@ -14,5 +14,4 @@ describe('GraphService singleton', () => {
     (
       GraphService as unknown as { instance: GraphService | undefined }
     ).instance = original;
-  });
-});
+  }));

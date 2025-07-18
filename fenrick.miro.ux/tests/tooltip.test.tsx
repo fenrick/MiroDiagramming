@@ -17,7 +17,7 @@ class ResizeObserverMock {
   global as unknown as { ResizeObserver: typeof ResizeObserver }
 ).ResizeObserver = ResizeObserverMock as unknown as typeof ResizeObserver;
 
-describe('Tooltip', () => {
+describe('Tooltip', () =>
   test('renders when focusing trigger', async () => {
     render(
       <Tooltip
@@ -31,5 +31,4 @@ describe('Tooltip', () => {
     fireEvent.focus(button);
     const tooltip = await screen.findByRole('tooltip');
     expect(tooltip).toHaveTextContent('Focus text');
-  });
-});
+  }));

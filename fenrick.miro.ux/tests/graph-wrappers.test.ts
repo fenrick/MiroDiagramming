@@ -5,9 +5,7 @@ import { defaultBuilder, graphService } from '../src/core/graph';
  */
 
 describe('graph service methods', () => {
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
+  afterEach(() => jest.restoreAllMocks());
 
   test('findNode delegates to default builder', async () => {
     const spy = jest

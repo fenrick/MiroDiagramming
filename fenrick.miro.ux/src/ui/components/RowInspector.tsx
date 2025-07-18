@@ -24,23 +24,20 @@ export function RowInspector({
   const row = useRowData(rows, idColumn);
   const [editRow, setEditRow] = React.useState<ExcelRow | null>(row);
 
-  React.useEffect(() => {
-    setEditRow(row);
-  }, [row]);
+  React.useEffect(() => setEditRow(row), [row]);
 
   const index = row ? rows.indexOf(row) : -1;
   if (!editRow) return null;
 
   const handleChange =
     (key: string) =>
-    (value: string): void => {
+    (value: string): void =>
       setEditRow((prev) => {
         if (!prev) return prev;
         const next = { ...prev, [key]: value };
         onUpdate?.(index >= 0 ? index : 0, next);
         return next;
       });
-    };
 
   return (
     <div

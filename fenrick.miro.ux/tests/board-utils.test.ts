@@ -5,12 +5,10 @@ import {
 } from '../src/board/board';
 import { boardCache } from '../src/board/board-cache';
 
-beforeEach(() => {
-  boardCache.reset();
-});
+beforeEach(() => boardCache.reset());
 
 describe('forEachSelection', () => {
-  describe('callback invocation', () => {
+  describe('callback invocation', () =>
     test('invokes callback once per item', async () => {
       const items = [{ a: 1 }, { b: 2 }];
       const board = { getSelection: jest.fn().mockResolvedValue(items) };
@@ -19,10 +17,9 @@ describe('forEachSelection', () => {
       expect(cb).toHaveBeenCalledTimes(items.length);
       expect(cb).toHaveBeenNthCalledWith(1, items[0]);
       expect(cb).toHaveBeenNthCalledWith(2, items[1]);
-    });
-  });
+    }));
 
-  describe('error propagation', () => {
+  describe('error propagation', () =>
     test('rejects when callback throws', async () => {
       const board = { getSelection: jest.fn().mockResolvedValue([{}]) };
       await expect(
@@ -30,8 +27,7 @@ describe('forEachSelection', () => {
           throw new Error('fail');
         }, board),
       ).rejects.toThrow('fail');
-    });
-  });
+    }));
 });
 
 describe('maybeSync', () => {
@@ -41,9 +37,8 @@ describe('maybeSync', () => {
     expect(item.sync).toHaveBeenCalled();
   });
 
-  test('resolves when sync missing', async () => {
-    await expect(maybeSync({})).resolves.toBeUndefined();
-  });
+  test('resolves when sync missing', async () =>
+    await expect(maybeSync({})).resolves.toBeUndefined());
 });
 
 describe('getFirstSelection', () => {

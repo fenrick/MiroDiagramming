@@ -38,30 +38,23 @@ export const ArrangeTab: React.FC = () => {
 
   const updateNumber =
     (key: 'cols' | 'padding') =>
-    (value: string): void => {
+    (value: string): void =>
       setGrid({ ...grid, [key]: Number(value) });
-    };
-  const toggle = (key: 'groupResult' | 'sortByName') => (): void => {
+  const toggle = (key: 'groupResult' | 'sortByName') => (): void =>
     setGrid({ ...grid, [key]: !grid[key] });
-  };
-  const setOrientation = (value: string): void => {
+  const setOrientation = (value: string): void =>
     setGrid({ ...grid, sortOrientation: value as 'horizontal' | 'vertical' });
-  };
   const updateAxis = (axis: string): void => {
     if (axis === 'x' || axis === 'y') setSpacing({ ...spacing, axis });
   };
-  const updateSpacing = (value: string): void => {
+  const updateSpacing = (value: string): void =>
     setSpacing({ ...spacing, spacing: Number(value) });
-  };
   const updateMode = (mode: string): void => {
     if (mode === 'move' || mode === 'grow') setSpacing({ ...spacing, mode });
   };
-  const applyGrid = async (): Promise<void> => {
-    await applyGridLayout(grid);
-  };
-  const applySpacing = async (): Promise<void> => {
+  const applyGrid = async (): Promise<void> => await applyGridLayout(grid);
+  const applySpacing = async (): Promise<void> =>
     await applySpacingLayout(spacing);
-  };
 
   return (
     <TabPanel tabId='arrange'>

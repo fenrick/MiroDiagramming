@@ -124,16 +124,16 @@ export class TemplateManager {
   }
 
   private constructor() {
-    Object.entries(this.templates).forEach(([key, def]) => {
+    Object.entries(this.templates).forEach(([key, def]) =>
       def.alias?.forEach((a) => {
         this.aliasMap[a] = key;
-      });
-    });
-    Object.entries(this.connectorTemplates).forEach(([key, def]) => {
+      }),
+    );
+    Object.entries(this.connectorTemplates).forEach(([key, def]) =>
       def.alias?.forEach((a) => {
         this.connectorAliasMap[a] = key;
-      });
-    });
+      }),
+    );
   }
 
   /** Access the singleton instance. */

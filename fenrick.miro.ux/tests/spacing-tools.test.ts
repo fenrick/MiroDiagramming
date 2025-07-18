@@ -3,14 +3,11 @@ import { calculateSpacingOffsets } from '../src/board/spacing-layout';
 import { BoardLike } from '../src/board/board';
 import { boardCache } from '../src/board/board-cache';
 
-beforeEach(() => {
-  boardCache.reset();
-});
+beforeEach(() => boardCache.reset());
 
 describe('spacing-tools', () => {
-  test('calculateSpacingOffsets computes positions', () => {
-    expect(calculateSpacingOffsets(3, 5)).toEqual([0, 5, 10]);
-  });
+  test('calculateSpacingOffsets computes positions', () =>
+    expect(calculateSpacingOffsets(3, 5)).toEqual([0, 5, 10]));
 
   test('applySpacingLayout spaces widgets horizontally by edges', async () => {
     const items = [
@@ -94,9 +91,8 @@ describe('spacing-tools', () => {
     expect(board.getSelection).toHaveBeenCalled();
   });
 
-  test('applySpacingLayout throws without board', async () => {
+  test('applySpacingLayout throws without board', async () =>
     await expect(applySpacingLayout({ axis: 'x', spacing: 1 })).rejects.toThrow(
       'Miro board not available',
-    );
-  });
+    ));
 });

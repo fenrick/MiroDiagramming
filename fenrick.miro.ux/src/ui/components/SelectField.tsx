@@ -33,9 +33,7 @@ export function SelectField({
   children,
   ...props
 }: SelectFieldProps): React.JSX.Element {
-  const handleChange = (value: string): void => {
-    onChange?.(value);
-  };
+  const handleChange = (value: string): void => onChange?.(value);
 
   return (
     <StyledFormField>

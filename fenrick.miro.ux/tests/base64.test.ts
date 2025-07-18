@@ -8,19 +8,17 @@ function expected(input: string): string {
     .replace(/\//g, '_');
 }
 
-describe('encodeBase64', () => {
+describe('encodeBase64', () =>
   test.each([
     'hello',
     'https://миру',
     'https://example.com/тест+file/?q=a/b+c',
-  ])('encodes %s', (value) => {
-    expect(encodeBase64(value)).toBe(expected(value));
-  });
-});
+  ])('encodes %s', (value) =>
+    expect(encodeBase64(value)).toBe(expected(value)),
+  ));
 
-describe('decodeBase64', () => {
+describe('decodeBase64', () =>
   test.each(['hello', 'привет'])('round trip %s', (value) => {
     const encoded = encodeBase64(value);
     expect(decodeBase64(encoded)).toBe(value);
-  });
-});
+  }));

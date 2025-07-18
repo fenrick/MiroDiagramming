@@ -6,7 +6,7 @@ import { DummyTab, tabDef } from '../src/ui/pages/DummyTab';
 /**
  * Renders DummyTab and asserts accessible role and text label.
  */
-describe('DummyTab', () => {
+describe('DummyTab', () =>
   test('renders tab panel with label', () => {
     render(<DummyTab />);
     const panel = screen.getByRole('tabpanel');
@@ -14,5 +14,4 @@ describe('DummyTab', () => {
     expect(screen.getByTestId('dummy')).toHaveTextContent('Dummy');
     expect(tabDef[1]).toBe('dummy');
     expect(tabDef[2]).toBe('Dummy');
-  });
-});
+  }));

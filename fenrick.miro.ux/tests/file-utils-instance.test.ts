@@ -1,6 +1,6 @@
 import { FileUtils } from '../src/core/utils/file-utils';
 
-describe('FileUtils singleton', () => {
+describe('FileUtils singleton', () =>
   test('getInstance returns same instance', () => {
     const original = (
       FileUtils as unknown as { instance: FileUtils | undefined }
@@ -12,5 +12,4 @@ describe('FileUtils singleton', () => {
     expect(second).toBe(first);
     (FileUtils as unknown as { instance: FileUtils | undefined }).instance =
       original;
-  });
-});
+  }));

@@ -33,9 +33,7 @@ export function useExcelDrop(
       ],
     },
     maxFiles: 1,
-    onDrop: (files: File[]) => {
-      void onDrop(files);
-    },
+    onDrop: (files: File[]) => void onDrop(files),
   });
 
   const style = React.useMemo(() => {

@@ -86,9 +86,9 @@ describe('ExcelTab branches', () => {
     fireEvent.change(screen.getByLabelText('graph file'), {
       target: { value: 'bad' },
     });
-    await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: 'Fetch File' }));
-    });
+    await act(async () =>
+      fireEvent.click(screen.getByRole('button', { name: 'Fetch File' })),
+    );
     expect(showErrorMock).toHaveBeenCalledWith('Error: fail');
   });
 
@@ -124,9 +124,9 @@ describe('ExcelTab branches', () => {
     fireEvent.change(screen.getByLabelText('graph file'), {
       target: { value: 'url' },
     });
-    await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: 'Fetch File' }));
-    });
+    await act(async () =>
+      fireEvent.click(screen.getByRole('button', { name: 'Fetch File' })),
+    );
     const select = screen
       .getByText('Data source')
       .parentElement!.querySelector('select') as HTMLSelectElement;

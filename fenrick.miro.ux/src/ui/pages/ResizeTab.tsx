@@ -72,9 +72,7 @@ export const ResizeTab: React.FC = () => {
     }
   }, []);
 
-  const resetCopy = (): void => {
-    setCopiedSize(null);
-  };
+  const resetCopy = (): void => setCopiedSize(null);
 
   const apply = React.useCallback(async (): Promise<void> => {
     const target = copiedSize ?? size;

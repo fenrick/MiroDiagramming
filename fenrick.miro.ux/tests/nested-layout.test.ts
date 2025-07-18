@@ -16,9 +16,7 @@ interface TestNode {
 }
 
 describe('layoutHierarchy', () => {
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
+  afterEach(() => vi.restoreAllMocks());
 
   test('creates positions for nested nodes', async () => {
     const data: TestNode[] = [

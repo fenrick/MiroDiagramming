@@ -3,9 +3,7 @@ import { boardCache } from '../src/board/board-cache';
 import type { BoardQueryLike } from '../src/board/board';
 
 describe('BoardCache', () => {
-  afterEach(() => {
-    boardCache.reset();
-  });
+  afterEach(() => boardCache.reset());
 
   test('selection result is cached', async () => {
     const items = [{}];
@@ -48,11 +46,11 @@ describe('BoardCache', () => {
   test('widget queries are cached per type', async () => {
     const board: BoardQueryLike = {
       getSelection: vi.fn(),
-      get: vi.fn(({ type }) => {
-        return type === 'shape'
+      get: vi.fn(({ type }) =>
+        type === 'shape'
           ? Promise.resolve([{ s: 1 }])
-          : Promise.resolve([{ g: 1 }]);
-      }),
+          : Promise.resolve([{ g: 1 }]),
+      ),
     } as unknown as BoardQueryLike;
     const first = await boardCache.getWidgets(['shape', 'group'], board);
     const second = await boardCache.getWidgets(['shape', 'group'], board);

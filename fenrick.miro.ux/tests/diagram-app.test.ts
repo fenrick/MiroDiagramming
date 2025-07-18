@@ -39,9 +39,8 @@ describe('DiagramApp', () => {
     });
   });
 
-  test('init throws when miro is undefined', async () => {
+  test('init throws when miro is undefined', async () =>
     await expect(DiagramApp.getInstance().init()).rejects.toThrow(
       'Miro SDK not available',
-    );
-  });
+    ));
 });

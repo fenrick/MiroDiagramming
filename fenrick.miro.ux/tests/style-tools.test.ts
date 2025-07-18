@@ -9,9 +9,7 @@ import {
 import { boardCache } from '../src/board/board-cache';
 
 describe('style-tools', () => {
-  beforeEach(() => {
-    boardCache.reset();
-  });
+  beforeEach(() => boardCache.reset());
   test('tweakFillColor adjusts fill and font', async () => {
     const item = {
       style: { fillColor: '#808080', color: '#808080' },
@@ -69,11 +67,10 @@ describe('style-tools', () => {
     expect(items[1]).toEqual({ foo: 1 });
   });
 
-  test('tweakFillColor throws without board', async () => {
+  test('tweakFillColor throws without board', async () =>
     await expect(tweakFillColor(0.1)).rejects.toThrow(
       'Miro board not available',
-    );
-  });
+    ));
 
   test('copyFillFromSelection returns colour', async () => {
     const board = {

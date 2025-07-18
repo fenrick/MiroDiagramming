@@ -31,7 +31,7 @@ function makeFile(name: string): File {
   return new File(['{}'], name, { type: 'application/json' });
 }
 
-describe('handleFileDrop', () => {
+describe('handleFileDrop', () =>
   test('queues the first file and clears errors', () => {
     const setQueue = vi.fn();
     const setError = vi.fn();
@@ -40,16 +40,15 @@ describe('handleFileDrop', () => {
     handleFileDrop([fileA, fileB], setQueue, setError);
     expect(setQueue).toHaveBeenCalledWith([fileA]);
     expect(setError).toHaveBeenCalledWith(null);
-  });
-});
+  }));
 
 describe('StructuredTab', () => {
   test('frame title field toggles with checkbox', async () => {
     render(<StructuredTab />);
     const input = screen.getByTestId('file-input');
-    await act(async () => {
-      fireEvent.change(input, { target: { files: [makeFile('graph.json')] } });
-    });
+    await act(async () =>
+      fireEvent.change(input, { target: { files: [makeFile('graph.json')] } }),
+    );
     expect(
       screen.queryByPlaceholderText('Frame title'),
     ).not.toBeInTheDocument();
@@ -60,9 +59,9 @@ describe('StructuredTab', () => {
   test('advanced options reveal algorithm select', async () => {
     render(<StructuredTab />);
     const input = screen.getByTestId('file-input');
-    await act(async () => {
-      fireEvent.change(input, { target: { files: [makeFile('graph.json')] } });
-    });
+    await act(async () =>
+      fireEvent.change(input, { target: { files: [makeFile('graph.json')] } }),
+    );
     const summary = screen.getByText(/advanced options/i);
     fireEvent.click(summary);
     expect(screen.getByLabelText('Algorithm')).toBeInTheDocument();
@@ -71,13 +70,13 @@ describe('StructuredTab', () => {
   test('lists dropped files and triggers create callback', async () => {
     render(<StructuredTab />);
     const input = screen.getByTestId('file-input');
-    await act(async () => {
-      fireEvent.change(input, { target: { files: [makeFile('graph.json')] } });
-    });
+    await act(async () =>
+      fireEvent.change(input, { target: { files: [makeFile('graph.json')] } }),
+    );
     expect(screen.getByText('graph.json')).toBeInTheDocument();
-    await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: /create diagram/i }));
-    });
+    await act(async () =>
+      fireEvent.click(screen.getByRole('button', { name: /create diagram/i })),
+    );
     expect(createSpy).toHaveBeenCalled();
   });
 });

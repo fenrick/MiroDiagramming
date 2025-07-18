@@ -7,9 +7,7 @@ import { graphService } from '../src/core/graph';
  */
 
 describe('GraphProcessor.processFile', () => {
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
+  afterEach(() => jest.restoreAllMocks());
 
   test('throws on invalid file', async () => {
     const gp = new GraphProcessor();

@@ -118,9 +118,11 @@ export const StructuredTab: React.FC = () => {
 
   useAdvancedToggle(setShowAdvanced);
 
-  const handleFiles = React.useCallback((droppedFiles: File[]): void => {
-    handleFileDrop(droppedFiles, setImportQueue, setError);
-  }, []);
+  const handleFiles = React.useCallback(
+    (droppedFiles: File[]): void =>
+      handleFileDrop(droppedFiles, setImportQueue, setError),
+    [],
+  );
 
   const handleCreate = useDiagramCreate(
     importQueue,
@@ -364,9 +366,9 @@ export const StructuredTab: React.FC = () => {
               {error && <p className='error'>{error}</p>}
               {lastProc && (
                 <Button
-                  onClick={() => {
-                    undoLastImport(lastProc, () => setLastProc(undefined));
-                  }}
+                  onClick={() =>
+                    undoLastImport(lastProc, () => setLastProc(undefined))
+                  }
                   variant='secondary'
                   iconPosition='start'
                   icon={<IconArrowArcLeft />}>

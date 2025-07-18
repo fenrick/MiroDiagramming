@@ -1,13 +1,11 @@
 /** Entry index error handling */
-vi.mock('../src/app/diagram-app', () => {
-  return {
-    DiagramApp: {
-      getInstance: vi.fn(() => ({
-        init: vi.fn().mockRejectedValue(new Error('fail')),
-      })),
-    },
-  };
-});
+vi.mock('../src/app/diagram-app', () => ({
+  DiagramApp: {
+    getInstance: vi.fn(() => ({
+      init: vi.fn().mockRejectedValue(new Error('fail')),
+    })),
+  },
+}));
 
 import { log } from '../src/logger';
 

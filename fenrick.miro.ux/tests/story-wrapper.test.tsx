@@ -14,7 +14,7 @@ function ShowFirstName(): JSX.Element {
   return <span>{String(ctx?.rows[0]?.Name)}</span>;
 }
 
-describe('ExcelStoryWrapper', () => {
+describe('ExcelStoryWrapper', () =>
   test('provides context and stubs miro board', async () => {
     render(
       <ExcelStoryWrapper rows={[{ ID: '1', Name: 'Bob' }]}>
@@ -26,5 +26,4 @@ describe('ExcelStoryWrapper', () => {
     // @ts-expect-error testing stub
     const meta = await items[0].getMetadata();
     expect(meta.rowId).toBe('1');
-  });
-});
+  }));

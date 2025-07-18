@@ -8,7 +8,7 @@ interface Node {
   children?: Node[];
 }
 
-describe('HierarchyProcessor computeBounds', () => {
+describe('HierarchyProcessor computeBounds', () =>
   test('uses center coordinates when calculating bounds', async () => {
     const roots: Node[] = [
       { id: 'r', label: 'Root', type: 'Motivation' },
@@ -29,5 +29,4 @@ describe('HierarchyProcessor computeBounds', () => {
     const r = layout.nodes.r;
     expect(bounds.minX).toBeCloseTo(r.x - r.width / 2);
     expect(bounds.maxX).toBeCloseTo(r.x + r.width / 2);
-  });
-});
+  }));

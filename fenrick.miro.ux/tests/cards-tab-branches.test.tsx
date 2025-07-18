@@ -30,18 +30,18 @@ describe('CardsTab extra paths', () => {
       .mockResolvedValue(undefined as unknown as void);
     render(<CardsTab />);
     const file = new File(['{}'], 'cards.json', { type: 'application/json' });
-    await act(async () => {
+    await act(async () =>
       fireEvent.change(screen.getByTestId('file-input'), {
         target: { files: [file] },
-      });
-    });
+      }),
+    );
     fireEvent.click(screen.getByLabelText('Wrap items in frame'));
     fireEvent.change(screen.getByPlaceholderText('Frame title'), {
       target: { value: 'T' },
     });
-    await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: /create cards/i }));
-    });
+    await act(async () =>
+      fireEvent.click(screen.getByRole('button', { name: /create cards/i })),
+    );
     expect(spy).toHaveBeenCalledWith(file, {
       createFrame: true,
       frameTitle: 'T',
@@ -54,14 +54,14 @@ describe('CardsTab extra paths', () => {
     );
     render(<CardsTab />);
     const file = new File(['{}'], 'cards.json', { type: 'application/json' });
-    await act(async () => {
+    await act(async () =>
       fireEvent.change(screen.getByTestId('file-input'), {
         target: { files: [file] },
-      });
-    });
-    await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: /create cards/i }));
-    });
+      }),
+    );
+    await act(async () =>
+      fireEvent.click(screen.getByRole('button', { name: /create cards/i })),
+    );
     expect(
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (globalThis as any).miro.board.notifications.showError,

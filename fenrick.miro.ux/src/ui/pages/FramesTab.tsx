@@ -18,13 +18,10 @@ import {
 /** UI for renaming or locking selected frames. */
 export const FramesTab: React.FC = () => {
   const [prefix, setPrefix] = React.useState('Frame-');
-  const rename = async (): Promise<void> => {
+  const rename = async (): Promise<void> =>
     await renameSelectedFrames({ prefix });
-  };
   /** Lock selected frames and their contents. */
-  const lock = async (): Promise<void> => {
-    await lockSelectedFrames();
-  };
+  const lock = async (): Promise<void> => await lockSelectedFrames();
   return (
     <TabPanel tabId='frames'>
       <PageHelp content='Rename or lock selected frames' />

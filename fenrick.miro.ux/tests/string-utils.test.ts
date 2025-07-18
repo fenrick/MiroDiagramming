@@ -13,9 +13,8 @@ describe('toSafeString', () => {
     expect(toSafeString(BigInt(10))).toBe('10');
   });
 
-  test('stringifies objects using JSON', () => {
-    expect(toSafeString({ a: 1 })).toBe('{"a":1}');
-  });
+  test('stringifies objects using JSON', () =>
+    expect(toSafeString({ a: 1 })).toBe('{"a":1}'));
 
   test('falls back when JSON.stringify throws', () => {
     const a: { self?: unknown } = {};

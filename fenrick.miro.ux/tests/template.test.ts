@@ -41,9 +41,7 @@ describe('createFromTemplate', () => {
     };
   });
 
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
+  afterEach(() => jest.restoreAllMocks());
 
   test('creates a single shape with correct style', async () => {
     const widget = await templateManager.createFromTemplate(
@@ -170,9 +168,8 @@ describe('createFromTemplate', () => {
     expect(widget).toBeUndefined();
   });
 
-  test('throws when template missing', async () => {
+  test('throws when template missing', async () =>
     await expect(
       templateManager.createFromTemplate('missing', 'L', 0, 0),
-    ).rejects.toThrow("Template 'missing' not found");
-  });
+    ).rejects.toThrow("Template 'missing' not found"));
 });

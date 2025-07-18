@@ -27,12 +27,9 @@ export const RegexSearchField = React.forwardRef<
 ) {
   const generatedId = React.useId();
   const inputId = id ?? generatedId;
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void =>
     onChange?.(e.target.value);
-  };
-  const toggle = (checked: boolean): void => {
-    onRegexToggle(checked);
-  };
+  const toggle = (checked: boolean): void => onRegexToggle(checked);
   return (
     <Form.Field>
       <Form.Label htmlFor={inputId}>{label}</Form.Label>

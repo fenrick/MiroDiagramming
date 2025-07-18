@@ -7,9 +7,7 @@ import * as searchTools from '../src/board/search-tools';
 vi.useFakeTimers();
 
 describe('SearchTab', () => {
-  beforeEach(() => {
-    vi.clearAllTimers();
-  });
+  beforeEach(() => vi.clearAllTimers());
 
   test('debounced search updates match count', async () => {
     vi.spyOn(searchTools, 'searchBoardContent').mockResolvedValue([
@@ -18,9 +16,7 @@ describe('SearchTab', () => {
     const input = renderSearchTab();
     fireEvent.change(input, { target: { value: 'hello' } });
     expect(searchTools.searchBoardContent).not.toHaveBeenCalled();
-    await act(async () => {
-      vi.advanceTimersByTime(300);
-    });
+    await act(async () => vi.advanceTimersByTime(300));
     expect(searchTools.searchBoardContent).toHaveBeenCalledWith({
       query: 'hello',
     });
@@ -52,15 +48,11 @@ describe('SearchTab', () => {
       screen.getByRole('menuitemcheckbox', { name: /case sensitive/i }),
     );
     fireEvent.click(screen.getByRole('switch', { name: /regex/i }));
-    await act(async () => {
-      vi.advanceTimersByTime(300);
-    });
+    await act(async () => vi.advanceTimersByTime(300));
     fireEvent.change(screen.getByPlaceholderText(/replacement text/i), {
       target: { value: 'bar' },
     });
-    await act(async () => {
-      fireEvent.click(screen.getByText(/replace all/i));
-    });
+    await act(async () => fireEvent.click(screen.getByText(/replace all/i)));
     const [optsArg] = repSpy.mock.calls[0];
     expect(optsArg).toEqual({
       query: 'foo',
@@ -105,9 +97,7 @@ describe('SearchTab', () => {
       screen.getByRole('menuitemcheckbox', { name: /whole word/i }),
     );
     fireEvent.click(screen.getByRole('switch', { name: /regex/i }));
-    await act(async () => {
-      vi.advanceTimersByTime(300);
-    });
+    await act(async () => vi.advanceTimersByTime(300));
     expect(searchSpy).toHaveBeenCalledWith({
       query: 'test',
       widgetTypes: ['shape'],
@@ -133,18 +123,12 @@ describe('SearchTab', () => {
     } as unknown as typeof global.miro;
     const input = renderSearchTab();
     fireEvent.change(input, { target: { value: 'foo' } });
-    await act(async () => {
-      vi.advanceTimersByTime(300);
-    });
-    await act(async () => {
-      fireEvent.click(screen.getByText(/next/i));
-    });
+    await act(async () => vi.advanceTimersByTime(300));
+    await act(async () => fireEvent.click(screen.getByText(/next/i)));
     expect(global.miro.board.viewport.zoomToObject).toHaveBeenCalledWith(
       results[1].item,
     );
-    await act(async () => {
-      fireEvent.click(screen.getByText(/next/i));
-    });
+    await act(async () => fireEvent.click(screen.getByText(/next/i)));
     expect(global.miro.board.viewport.zoomToObject).toHaveBeenLastCalledWith(
       results[0].item,
     );
@@ -167,15 +151,13 @@ describe('SearchTab', () => {
       });
     const input = renderSearchTab();
     fireEvent.change(input, { target: { value: 'foo' } });
-    await act(async () => {
-      vi.advanceTimersByTime(300);
-    });
+    await act(async () => vi.advanceTimersByTime(300));
     fireEvent.change(screen.getByPlaceholderText(/replacement text/i), {
       target: { value: 'bar' },
     });
-    await act(async () => {
-      fireEvent.click(screen.getByRole('button', { name: /^replace$/i }));
-    });
+    await act(async () =>
+      fireEvent.click(screen.getByRole('button', { name: /^replace$/i })),
+    );
     expect(repSpy).toHaveBeenCalled();
     const [optsArg2] = repSpy.mock.calls[0];
     expect(optsArg2).toEqual({
@@ -196,17 +178,13 @@ describe('SearchTab', () => {
       .mockResolvedValue([{ item: {}, field: 't' }]);
     const input = renderSearchTab();
     fireEvent.change(input, { target: { value: 'foo' } });
-    await act(async () => {
-      vi.advanceTimersByTime(300);
-    });
+    await act(async () => vi.advanceTimersByTime(300));
     expect(spy).toHaveBeenCalledTimes(1);
     expect(await screen.findByTestId('match-count')).toHaveTextContent(
       'Matches: 1',
     );
     fireEvent.change(input, { target: { value: '' } });
-    await act(async () => {
-      vi.advanceTimersByTime(300);
-    });
+    await act(async () => vi.advanceTimersByTime(300));
     expect(spy).toHaveBeenCalledTimes(1);
     expect(screen.getByTestId('match-count')).toHaveTextContent('Matches: 0');
   });
@@ -223,12 +201,8 @@ describe('SearchTab', () => {
     } as unknown as typeof global.miro;
     const input = renderSearchTab();
     fireEvent.change(input, { target: { value: 'foo' } });
-    await act(async () => {
-      vi.advanceTimersByTime(300);
-    });
-    await act(async () => {
-      fireEvent.click(screen.getByText(/next/i));
-    });
+    await act(async () => vi.advanceTimersByTime(300));
+    await act(async () => fireEvent.click(screen.getByText(/next/i)));
     expect(zoomSpy).toHaveBeenCalledWith([results[1].item]);
   });
 
@@ -241,12 +215,8 @@ describe('SearchTab', () => {
     global.miro = {} as unknown as typeof global.miro;
     const input = renderSearchTab();
     fireEvent.change(input, { target: { value: 'foo' } });
-    await act(async () => {
-      vi.advanceTimersByTime(300);
-    });
-    await act(async () => {
-      fireEvent.click(screen.getByText(/next/i));
-    });
+    await act(async () => vi.advanceTimersByTime(300));
+    await act(async () => fireEvent.click(screen.getByText(/next/i)));
     expect(screen.getByTestId('match-count')).toHaveTextContent('Matches: 2');
   });
 
@@ -260,9 +230,7 @@ describe('SearchTab', () => {
     fireEvent.click(box);
     fireEvent.click(box);
     fireEvent.change(input, { target: { value: 'foo' } });
-    await act(async () => {
-      vi.advanceTimersByTime(300);
-    });
+    await act(async () => vi.advanceTimersByTime(300));
     expect(searchSpy).toHaveBeenCalledWith({ query: 'foo' });
   });
 
@@ -270,9 +238,7 @@ describe('SearchTab', () => {
     const repSpy = vi.spyOn(searchTools, 'replaceBoardContent');
     const searchSpy = vi.spyOn(searchTools, 'searchBoardContent');
     renderSearchTab();
-    await act(async () => {
-      fireEvent.click(screen.getByText(/replace all/i));
-    });
+    await act(async () => fireEvent.click(screen.getByText(/replace all/i)));
     expect(repSpy).not.toHaveBeenCalled();
     expect(searchSpy).not.toHaveBeenCalled();
   });

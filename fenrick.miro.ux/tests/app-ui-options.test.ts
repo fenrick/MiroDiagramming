@@ -19,30 +19,26 @@ describe('App layout options and undo button', () => {
       .mockResolvedValue(undefined);
     render(React.createElement(App));
     fireEvent.click(screen.getByTestId('start-button'));
-    await act(async () => {
-      selectFile();
-    });
+    await act(async () => selectFile());
     fireEvent.keyDown(window, { key: '/', metaKey: true });
     fireEvent.click(screen.getByRole('tab', { name: 'Diagrams' }));
-    await act(async () => {
+    await act(async () =>
       fireEvent.change(screen.getByLabelText('Algorithm'), {
         target: { value: 'force' },
-      });
-    });
-    await act(async () => {
+      }),
+    );
+    await act(async () =>
       fireEvent.change(screen.getByLabelText('Direction'), {
         target: { value: 'LEFT' },
-      });
-    });
-    await act(async () => {
+      }),
+    );
+    await act(async () =>
       fireEvent.change(screen.getByLabelText('Spacing'), {
         target: { value: '50' },
-      });
-    });
+      }),
+    );
     const button = screen.getByRole('button', { name: /create diagram/i });
-    await act(async () => {
-      fireEvent.click(button);
-    });
+    await act(async () => fireEvent.click(button));
     expect(procSpy).toHaveBeenCalled();
   });
 

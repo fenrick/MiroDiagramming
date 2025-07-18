@@ -13,9 +13,7 @@ function setupBoard(): void {
 }
 
 describe('ResizeTab extra coverage', () => {
-  beforeEach(() => {
-    setupBoard();
-  });
+  beforeEach(() => setupBoard());
   afterEach(() => {
     jest.restoreAllMocks();
     delete (globalThis as { miro?: unknown }).miro;
@@ -26,14 +24,12 @@ describe('ResizeTab extra coverage', () => {
       .spyOn(resizeTools, 'applySizeToSelection')
       .mockResolvedValue(undefined as unknown as void);
     render(React.createElement(ResizeTab));
-    await act(async () => {
+    await act(async () =>
       fireEvent.change(screen.getByPlaceholderText(/width/i), {
         target: { value: '15000' },
-      });
-    });
-    await act(async () => {
-      fireEvent.click(screen.getByText(/apply size/i));
-    });
+      }),
+    );
+    await act(async () => fireEvent.click(screen.getByText(/apply size/i)));
     expect(spy).not.toHaveBeenCalled();
     expect(
       screen.getByText(/bigger than your board viewport/i),
@@ -48,12 +44,12 @@ describe('ResizeTab extra coverage', () => {
       .spyOn(resizeTools, 'applySizeToSelection')
       .mockResolvedValue(undefined as unknown as void);
     render(React.createElement(ResizeTab));
-    await act(async () => {
-      fireEvent.keyDown(window, { key: 'c', altKey: true });
-    });
-    await act(async () => {
-      fireEvent.keyDown(window, { key: 'v', altKey: true });
-    });
+    await act(async () =>
+      fireEvent.keyDown(window, { key: 'c', altKey: true }),
+    );
+    await act(async () =>
+      fireEvent.keyDown(window, { key: 'v', altKey: true }),
+    );
     expect(applySpy).toHaveBeenCalledWith({ width: 20, height: 30 });
   });
 });

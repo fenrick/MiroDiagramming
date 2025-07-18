@@ -40,9 +40,8 @@ describe('file utils', () => {
     expect(result).toBe('def');
   });
 
-  test('validateFile throws on invalid object', () => {
+  test('validateFile throws on invalid object', () =>
     expect(() => fileUtils.validateFile(null as unknown as File)).toThrow(
       'Invalid file',
-    );
-  });
+    ));
 });
