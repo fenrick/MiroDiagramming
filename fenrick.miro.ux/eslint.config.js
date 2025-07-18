@@ -16,7 +16,6 @@ export default tseslint.config(
       parser: tseslint.parser,
       ecmaVersion: 'latest',
       sourceType: 'module',
-      parserOptions: { project: './tsconfig.json' },
     },
     rules: {
       'no-console': 'warn',
