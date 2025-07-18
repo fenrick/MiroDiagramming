@@ -1,4 +1,4 @@
-import type { BaseItem, Group, Connector } from '@mirohq/websdk-types';
+import type { BaseItem, Connector, Group } from '@mirohq/websdk-types';
 import { BoardBuilder } from '../../board/board-builder';
 import { fileUtils } from '../utils/file-utils';
 import type { HierNode } from '../layout/nested-layout';

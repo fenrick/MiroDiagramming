@@ -1,5 +1,5 @@
 import React from 'react';
-import { renderHook, act } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { ExcelDataProvider } from '../src/ui/hooks/excel-data-context';
 import { useExcelSync } from '../src/ui/hooks/use-excel-sync';
 import { ExcelSyncService } from '../src/core/excel-sync-service';

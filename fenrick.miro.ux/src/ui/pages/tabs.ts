@@ -1,4 +1,5 @@
-import type { TabTuple, TabId } from './tab-definitions';
+import type { TabId, TabTuple } from './tab-definitions';
+
 const modules = import.meta.glob<{ tabDef: TabTuple }>('./*Tab.tsx', {
   eager: true,
 });

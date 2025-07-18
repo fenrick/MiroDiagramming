@@ -1,4 +1,4 @@
-import { performLayout, LayoutResult } from './layout-core';
+import { LayoutResult, performLayout } from './layout-core';
 import { GraphData } from '../graph';
 import { UserLayoutOptions } from './elk-options';
 
@@ -7,6 +7,7 @@ import { UserLayoutOptions } from './elk-options';
  */
 export class LayoutEngine {
   private static instance: LayoutEngine;
+
   private constructor() {}
 
   /** Access the shared layout engine instance. */

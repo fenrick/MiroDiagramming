@@ -1,5 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
-import { searchShapes, searchGroups } from '../src/board/node-search';
+import { searchGroups, searchShapes } from '../src/board/node-search';
 import { boardCache } from '../src/board/board-cache';
 import type { BoardQueryLike } from '../src/board/board';
 

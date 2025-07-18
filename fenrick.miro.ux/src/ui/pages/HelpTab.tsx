@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Paragraph, Button, Markdown } from '../components';
+import { Button, Markdown, Paragraph } from '../components';
 import changelog from '../../../../CHANGELOG.md?raw';
 import { TabPanel } from '../components/TabPanel';
 import { PageHelp } from '../components/PageHelp';

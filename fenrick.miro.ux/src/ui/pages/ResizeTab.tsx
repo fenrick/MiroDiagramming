@@ -2,8 +2,8 @@ import React from 'react';
 import {
   Button,
   InputField,
-  SelectField,
   Paragraph,
+  SelectField,
   SelectOption,
 } from '../components';
 import {
@@ -15,24 +15,24 @@ import {
 import { useSelection } from '../hooks/use-selection';
 import type { TabTuple } from './tab-definitions';
 import {
-  boardUnitsToMm,
   boardUnitsToInches,
+  boardUnitsToMm,
 } from '../../core/utils/unit-utils';
 import {
   ASPECT_RATIOS,
+  AspectRatioId,
   aspectRatioValue,
   ratioHeight,
-  AspectRatioId,
 } from '../../core/utils/aspect-ratio';
 import { TabPanel } from '../components/TabPanel';
 import { PageHelp } from '../components/PageHelp';
 import {
-  Heading,
-  Text,
-  IconChevronRightDouble,
-  IconArrowArcLeft,
-  IconSquaresTwoOverlap,
   Grid,
+  Heading,
+  IconArrowArcLeft,
+  IconChevronRightDouble,
+  IconSquaresTwoOverlap,
+  Text,
 } from '@mirohq/design-system';
 
 /** Predefined button sizes used by the quick presets. */

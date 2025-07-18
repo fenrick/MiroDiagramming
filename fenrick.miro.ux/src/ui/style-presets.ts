@@ -1,6 +1,6 @@
 import templatesJson from '../../../templates/shapeTemplates.json';
-import { templateManager } from '../board/templates';
 import type { TemplateElement } from '../board/templates';
+import { templateManager } from '../board/templates';
 
 /** Definition of a named style preset. */
 export interface StylePreset {

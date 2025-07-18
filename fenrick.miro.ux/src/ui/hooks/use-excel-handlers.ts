@@ -2,11 +2,11 @@ import React from 'react';
 import { useDropzone } from 'react-dropzone';
 import {
   excelLoader,
-  graphExcelLoader,
   ExcelRow,
+  graphExcelLoader,
 } from '../../core/utils/excel-loader';
 import { GraphProcessor } from '../../core/graph/graph-processor';
-import { mapRowsToNodes, ColumnMapping } from '../../core/data-mapper';
+import { ColumnMapping, mapRowsToNodes } from '../../core/data-mapper';
 import { addMiroIds, downloadWorkbook } from '../../core/utils/workbook-writer';
 import { getDropzoneStyle } from './ui-utils';
 import { showError } from './notifications';

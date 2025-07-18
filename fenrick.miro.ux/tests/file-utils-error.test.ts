@@ -10,10 +10,12 @@ describe('FileUtils error handling', () => {
     class FR {
       onload: (() => void) | null = null;
       onerror: (() => void) | null = null;
+
       readAsText() {
         if (this.onerror) this.onerror();
       }
     }
+
     (global as { FileReader?: unknown }).FileReader = FR;
     await expect(
       fileUtils.readFileAsText({ name: 'file.txt' } as unknown as File),
@@ -23,10 +25,12 @@ describe('FileUtils error handling', () => {
     class FR {
       onload: ((e: unknown) => void) | null = null;
       onerror: (() => void) | null = null;
+
       readAsText() {
         if (this.onload) this.onload({ target: null });
       }
     }
+
     (global as { FileReader?: unknown }).FileReader = FR;
     await expect(
       fileUtils.readFileAsText({ name: 'file.txt' } as unknown as File),

@@ -1,4 +1,4 @@
-import { undoWidgets, syncOrUndo } from '../src/board/undo-utils';
+import { syncOrUndo, undoWidgets } from '../src/board/undo-utils';
 import { BoardBuilder } from '../src/board/board-builder';
 import type { Frame } from '@mirohq/websdk-types';
 

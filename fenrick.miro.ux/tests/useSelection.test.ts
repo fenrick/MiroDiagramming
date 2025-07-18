@@ -1,5 +1,5 @@
 /** @vitest-environment jsdom */
-import { renderHook, act } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { useSelection } from '../src/ui/hooks/use-selection';
 import { BoardLike } from '../src/board/board';
 

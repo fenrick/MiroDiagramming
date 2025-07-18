@@ -8,9 +8,12 @@ import * as spacing from '../src/board/spacing-tools';
 
 class ResizeObserverMock {
   observe() {}
+
   unobserve() {}
+
   disconnect() {}
 }
+
 (
   global as unknown as { ResizeObserver: typeof ResizeObserver }
 ).ResizeObserver = ResizeObserverMock as unknown as typeof ResizeObserver;

@@ -1,4 +1,4 @@
-import { encodeBase64, decodeBase64 } from '../src/core/utils/base64';
+import { decodeBase64, encodeBase64 } from '../src/core/utils/base64';
 
 function expected(input: string): string {
   return Buffer.from(input, 'utf8')

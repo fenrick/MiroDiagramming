@@ -3,7 +3,7 @@
 import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { StructuredTab, handleFileDrop } from '../src/ui/pages/StructuredTab';
+import { handleFileDrop, StructuredTab } from '../src/ui/pages/StructuredTab';
 
 vi.mock('../src/core/graph/graph-processor', () => ({
   GraphProcessor: class {

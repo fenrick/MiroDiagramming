@@ -3,15 +3,15 @@ import {
   Button,
   Checkbox,
   InputField,
-  SelectField,
   Paragraph,
+  SelectField,
   SelectOption,
 } from '../components';
 import {
   excelLoader,
-  graphExcelLoader,
-  ExcelRow,
   ExcelLoader,
+  ExcelRow,
+  graphExcelLoader,
   GraphExcelLoader,
 } from '../../core/utils/excel-loader';
 import { templateManager } from '../../board/templates';
@@ -23,10 +23,10 @@ import type { TabTuple } from './tab-definitions';
 import { useExcelData } from '../hooks/excel-data-context';
 import { useExcelSync } from '../hooks/use-excel-sync';
 import {
-  useExcelDrop,
-  useExcelCreate,
-  handleLocalDrop,
   fetchRemoteWorkbook,
+  handleLocalDrop,
+  useExcelCreate,
+  useExcelDrop,
 } from '../hooks/use-excel-handlers';
 import { IconPlus, Text } from '@mirohq/design-system';
 

@@ -1,4 +1,4 @@
-import { mapRowsToNodes, ColumnMapping } from './data-mapper';
+import { ColumnMapping, mapRowsToNodes } from './data-mapper';
 import type { ExcelRow } from './utils/excel-loader';
 import { templateManager } from '../board/templates';
 import { applyElementToItem } from '../board/element-utils';

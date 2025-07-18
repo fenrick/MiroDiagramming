@@ -1,8 +1,8 @@
 import { vi } from 'vitest';
 import {
-  performLayout,
-  getNodeDimensions,
   buildElkGraphOptions,
+  getNodeDimensions,
+  performLayout,
 } from '../src/core/layout/layout-core';
 import { templateManager } from '../src/board/templates';
 import ELK from 'elkjs/lib/elk.bundled.js';

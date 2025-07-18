@@ -1,5 +1,5 @@
 import pino from 'pino';
-import type { LogSink, ClientLogEntry } from './log-sink';
+import type { ClientLogEntry, LogSink } from './log-sink';
 import { HttpLogSink } from './log-sink';
 
 /**

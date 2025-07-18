@@ -88,6 +88,7 @@ export function useRowData(
         setRow(null);
       }
     }
+
     void update();
   }, [selection, rows, idColumn]);
 

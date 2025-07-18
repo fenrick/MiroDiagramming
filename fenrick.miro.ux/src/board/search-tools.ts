@@ -1,6 +1,6 @@
 import {
-  getBoardWithQuery,
   BoardQueryLike,
+  getBoardWithQuery,
   maybeSync,
   Syncable,
 } from './board';

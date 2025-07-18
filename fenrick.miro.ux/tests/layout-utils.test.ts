@@ -1,9 +1,9 @@
 import {
-  computeEdgeHints,
-  relativePosition,
   boundingBoxFromCenter,
   boundingBoxFromTopLeft,
+  computeEdgeHints,
   frameOffset,
+  relativePosition,
 } from '../src/core/layout/layout-utils';
 
 describe('layout-utils', () => {

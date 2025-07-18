@@ -1,11 +1,11 @@
-import { describe, test, expect } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import {
-  mapRowsToNodes,
-  mapRowsToCards,
-  mapRowToNode,
-  mapRowToCard,
-  mapRowsWith,
   buildMetadata,
+  mapRowsToCards,
+  mapRowsToNodes,
+  mapRowsWith,
+  mapRowToCard,
+  mapRowToNode,
   resolveIdLabelType,
 } from '../src/core/data-mapper';
 

@@ -1,14 +1,17 @@
 /** @vitest-environment jsdom */
 import React from 'react';
-import { render, fireEvent, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { PageHelp } from '../src/ui/components/PageHelp';
 
 class ResizeObserverMock {
   observe() {}
+
   unobserve() {}
+
   disconnect() {}
 }
+
 (
   global as unknown as { ResizeObserver: typeof ResizeObserver }
 ).ResizeObserver = ResizeObserverMock as unknown as typeof ResizeObserver;

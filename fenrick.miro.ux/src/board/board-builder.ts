@@ -3,7 +3,6 @@ import { searchGroups, searchShapes } from './node-search';
 import { createConnector } from './connector-utils';
 import { log } from '../logger';
 import { boardCache } from './board-cache';
-export { updateConnector } from './connector-utils';
 import type {
   BaseItem,
   Connector,
@@ -19,6 +18,8 @@ import type {
   PositionedNode,
 } from '../core/graph';
 import { maybeSync } from './board';
+
+export { updateConnector } from './connector-utils';
 
 /** Union type representing a single widget or a group of widgets. */
 export type BoardItem = BaseItem | Group;

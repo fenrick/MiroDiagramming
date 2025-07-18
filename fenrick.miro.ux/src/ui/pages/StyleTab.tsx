@@ -1,11 +1,11 @@
 import React from 'react';
 import { Button, InputField } from '../components';
 import {
-  tweakFillColor,
-  tweakOpacity,
-  tweakBorderWidth,
   copyFillFromSelection,
   extractFillColor,
+  tweakBorderWidth,
+  tweakFillColor,
+  tweakOpacity,
 } from '../../board/style-tools';
 import { applyStylePreset, presetStyle } from '../../board/format-tools';
 import { STYLE_PRESET_NAMES, stylePresets } from '../style-presets';
@@ -15,7 +15,7 @@ import { colors, space } from '@mirohq/design-tokens';
 import { TabPanel } from '../components/TabPanel';
 import { PageHelp } from '../components/PageHelp';
 import type { TabTuple } from './tab-definitions';
-import { Grid, Form, Heading, IconSlidersX, Text } from '@mirohq/design-system';
+import { Form, Grid, Heading, IconSlidersX, Text } from '@mirohq/design-system';
 
 /** Adjusts the fill colour of selected widgets. */
 export const StyleTab: React.FC = () => {

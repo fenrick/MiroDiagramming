@@ -3,10 +3,10 @@ import {
   adjustColor,
   contrastRatio,
   ensureContrast,
-  resolveColor,
   hexToRgb,
-  rgbToHex,
   mixColors,
+  resolveColor,
+  rgbToHex,
 } from '../src/core/utils/color-utils';
 
 describe('color-utils', () => {

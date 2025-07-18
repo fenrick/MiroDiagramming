@@ -1,8 +1,8 @@
 import {
-  boardUnitsToMm,
   boardUnitsToInches,
-  mmToBoardUnits,
+  boardUnitsToMm,
   inchesToBoardUnits,
+  mmToBoardUnits,
 } from '../src/core/utils/unit-utils';
 
 describe('unit-utils', () => {

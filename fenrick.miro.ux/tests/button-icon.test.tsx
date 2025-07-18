@@ -3,6 +3,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { Button } from '../src/ui/components/Button';
+
 const DummyIcon = () => <svg data-icon-component />;
 
 describe('Button icon support', () => {

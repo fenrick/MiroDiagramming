@@ -12,15 +12,18 @@ describe('loadAnyGraph', () => {
 
   test('parses graph data and resets cache', async () => {
     const resetSpy = jest.spyOn(defaultBuilder, 'reset');
+
     class FR {
       onload: ((e: ReaderEvent) => void) | null = null;
       onerror: (() => void) | null = null;
+
       readAsText() {
         this.onload?.({
           target: { result: '{"nodes":[],"edges":[]}' },
         } as ReaderEvent);
       }
     }
+
     (global as { FileReader?: unknown }).FileReader = FR;
     const file = { name: 'g.json' } as unknown as File;
     const data = await graphService.loadAnyGraph(file);
@@ -32,12 +35,14 @@ describe('loadAnyGraph', () => {
     class FR {
       onload: ((e: ReaderEvent) => void) | null = null;
       onerror: (() => void) | null = null;
+
       readAsText() {
         this.onload?.({
           target: { result: '[{"id":"n","label":"L","type":"Motivation"}]' },
         } as ReaderEvent);
       }
     }
+
     (global as { FileReader?: unknown }).FileReader = FR;
     const file = { name: 'h.json' } as unknown as File;
     const data = await graphService.loadAnyGraph(file);
@@ -54,10 +59,12 @@ describe('loadAnyGraph', () => {
   test('throws on malformed JSON', async () => {
     class FR {
       onload: ((e: ReaderEvent) => void) | null = null;
+
       readAsText() {
         this.onload?.({ target: { result: 'null' } } as ReaderEvent);
       }
     }
+
     (global as { FileReader?: unknown }).FileReader = FR;
     await expect(
       graphService.loadAnyGraph({ name: 'bad.json' } as unknown as File),

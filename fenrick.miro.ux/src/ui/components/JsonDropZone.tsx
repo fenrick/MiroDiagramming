@@ -3,10 +3,10 @@ import { useDropzone } from 'react-dropzone';
 import { Button } from './Button';
 import { getDropzoneStyle } from '../hooks/ui-utils';
 import { space as dsSpace } from '@mirohq/design-tokens';
+import { IconSquareArrowIn, Text } from '@mirohq/design-system';
 
 // Provide semantic spacing aliases until the design tokens include them.
 const space = { ...dsSpace, small: dsSpace[200] } as const;
-import { IconSquareArrowIn, Text } from '@mirohq/design-system';
 
 export type JsonDropZoneProps = Readonly<{
   /** Callback invoked with selected files. */

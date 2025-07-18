@@ -1,7 +1,7 @@
 import React from 'react';
 import {
-  searchBoardContent,
   replaceBoardContent,
+  searchBoardContent,
   SearchOptions,
   SearchResult,
 } from '../../board/search-tools';

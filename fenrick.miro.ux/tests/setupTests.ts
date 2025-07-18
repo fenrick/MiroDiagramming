@@ -1,4 +1,4 @@
-import { vi, afterEach } from 'vitest';
+import { afterEach, vi } from 'vitest';
 
 // alias jest global to vitest for compatibility
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -17,6 +17,7 @@ afterEach(() => {
 // Provide a minimal PointerEvent implementation for jsdom
 if (typeof window !== 'undefined' && !('PointerEvent' in window)) {
   class PointerEvent extends MouseEvent {}
+
   window.PointerEvent = PointerEvent as typeof globalThis.PointerEvent;
   (
     globalThis as unknown as { PointerEvent: typeof window.PointerEvent }

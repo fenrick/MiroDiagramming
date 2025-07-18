@@ -1,14 +1,10 @@
 import {
-  tweakFillColor,
-  tweakOpacity,
-  tweakBorderWidth,
   copyFillFromSelection,
   extractFillColor,
-  // internal helper used for verification only
-  // findStyleKey is not part of the public API
-  // but tests rely on it to validate key detection
-  // coverage of this utility supports maintainability
   findStyleKey,
+  tweakBorderWidth,
+  tweakFillColor,
+  tweakOpacity,
 } from '../src/board/style-tools';
 import { boardCache } from '../src/board/board-cache';
 

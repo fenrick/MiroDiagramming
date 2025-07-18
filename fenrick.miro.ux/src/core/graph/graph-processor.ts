@@ -12,8 +12,8 @@ import { UserLayoutOptions } from '../layout/elk-options';
 import { fileUtils } from '../utils/file-utils';
 import type { PositionedNode } from '../layout/layout-core';
 import {
-  computeEdgeHints,
   boundingBoxFromTopLeft,
+  computeEdgeHints,
   frameOffset,
 } from '../layout/layout-utils';
 import type { BaseItem, Frame, Group } from '@mirohq/websdk-types';
@@ -48,6 +48,7 @@ export interface ProcessOptions {
 export class GraphProcessor extends UndoableProcessor {
   /** Map of processed node IDs to created widget IDs. */
   private nodeIdMap: Record<string, string> = {};
+
   constructor(builder: BoardBuilder = graphService.getBuilder()) {
     super(builder);
   }

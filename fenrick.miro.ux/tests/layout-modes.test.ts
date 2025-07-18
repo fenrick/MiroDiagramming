@@ -1,6 +1,6 @@
 import {
-  NESTED_ALGORITHMS,
   isNestedAlgorithm,
+  NESTED_ALGORITHMS,
 } from '../src/core/graph/layout-modes';
 
 describe('layout-modes', () => {

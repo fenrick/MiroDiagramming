@@ -3,6 +3,7 @@ export interface BoardUILike {
     event: 'selection:update',
     handler: (ev: { items: unknown[] }) => void,
   ): void;
+
   off?(
     event: 'selection:update',
     handler: (ev: { items: unknown[] }) => void,
@@ -10,11 +11,16 @@ export interface BoardUILike {
 }
 
 export interface BoardLike {
-  getSelection(): Promise<Array<Record<string, unknown>>>;
-  group?(opts: { items: Array<Record<string, unknown>> }): Promise<unknown>;
   ui?: BoardUILike;
+
+  getSelection(): Promise<Array<Record<string, unknown>>>;
+
+  group?(opts: { items: Array<Record<string, unknown>> }): Promise<unknown>;
+
   startBatch?(): Promise<void>;
+
   endBatch?(): Promise<void>;
+
   abortBatch?(): Promise<void>;
 }
 

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { mapRowsToNodes, mapRowsToCards } from '../src/core/data-mapper';
+import { mapRowsToCards, mapRowsToNodes } from '../src/core/data-mapper';
 
 describe('data-mapper branches', () => {
   test('mapRowsToNodes uses defaults when mapping is empty', () => {

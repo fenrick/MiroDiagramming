@@ -12,10 +12,10 @@ import { edgesToHierarchy } from './convert';
 import type { GraphData } from './graph-service';
 import type {
   BaseItem,
-  Group,
-  Frame,
-  GroupableItem,
   Connector,
+  Frame,
+  Group,
+  GroupableItem,
 } from '@mirohq/websdk-types';
 
 export interface HierarchyProcessOptions {

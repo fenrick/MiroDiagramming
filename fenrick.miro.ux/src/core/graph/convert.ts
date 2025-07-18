@@ -1,4 +1,4 @@
-import { GraphData, NodeData, EdgeData } from './graph-service';
+import { EdgeData, GraphData, NodeData } from './graph-service';
 import { HierNode } from '../layout/nested-layout';
 
 /**

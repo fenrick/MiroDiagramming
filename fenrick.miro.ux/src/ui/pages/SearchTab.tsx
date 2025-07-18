@@ -1,27 +1,27 @@
 import React from 'react';
 import {
   Button,
+  FilterDropdown,
   InputField,
   Paragraph,
   RegexSearchField,
-  FilterDropdown,
 } from '../components';
 import type { SearchOptions } from '../../board/search-tools';
 import {
   useDebouncedSearch,
-  useReplaceAll,
   useNextMatch,
+  useReplaceAll,
   useReplaceCurrent,
 } from '../hooks/use-search-handlers';
 import { TabPanel } from '../components/TabPanel';
 import { PageHelp } from '../components/PageHelp';
 import type { TabTuple } from './tab-definitions';
 import {
+  Grid,
   IconArrowRight,
   IconChevronRight,
   IconPen,
   Text,
-  Grid,
 } from '@mirohq/design-system';
 
 /**

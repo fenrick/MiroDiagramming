@@ -1,3 +1,4 @@
+import type { TemplateElement } from './templates';
 import { templateManager } from './templates';
 import type {
   BaseItem,
@@ -6,7 +7,6 @@ import type {
   Text,
   TextStyle,
 } from '@mirohq/websdk-types';
-import type { TemplateElement } from './templates';
 
 /**
  * Combine an item's current style with values from a template element.

@@ -4,7 +4,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { StyleTab } from '../src/ui/pages/StyleTab';
 import * as styleTools from '../src/board/style-tools';
-import { stylePresets, STYLE_PRESET_NAMES } from '../src/ui/style-presets';
+import { STYLE_PRESET_NAMES, stylePresets } from '../src/ui/style-presets';
 import * as formatTools from '../src/board/format-tools';
 
 vi.mock('../src/board/style-tools');

@@ -122,6 +122,7 @@ export class TemplateManager {
     });
     return result;
   }
+
   private constructor() {
     Object.entries(this.templates).forEach(([key, def]) => {
       def.alias?.forEach((a) => {

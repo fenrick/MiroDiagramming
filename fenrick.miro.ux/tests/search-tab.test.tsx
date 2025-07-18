@@ -1,5 +1,5 @@
 /** @vitest-environment jsdom */
-import { fireEvent, screen, act } from '@testing-library/react';
+import { act, fireEvent, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { renderSearchTab } from './render-utils';
 import * as searchTools from '../src/board/search-tools';
