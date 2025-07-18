@@ -22,7 +22,7 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
   /** Prefix used to embed identifiers in descriptions. */
   private static readonly ID_PREFIX = 'ID:';
   /** Regex capturing an embedded identifier. */
-  private static readonly ID_REGEX = /ID:(\S+)/;
+  private static readonly ID_REGEX = /ID:(\s+)/;
   /** Regex removing any embedded identifier from text. */
   private static readonly ID_REMOVE_REGEX = /\n?ID:[^\n]*/;
   /** Default width used for card widgets. */
