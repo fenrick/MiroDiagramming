@@ -221,8 +221,15 @@ Define these variables in the hosting environment:
 ### 12.2 Build & publish
 
 ```bash
-npm --prefix fenrick.miro.ux run build
-dotnet publish fenrick.miro.server -c Release -o publish --nologo
+dotnet restore
+npm --prefix ../fenrick.miro.ux run build
+dotnet publish -c Release -o publish --nologo
+```
+
+Run the app locally with:
+
+```bash
+dotnet run --project fenrick.miro.apphost/Fenrick.Miro.AppHost.AppHost
 ```
 
 The front-end build creates `fenrick.miro.ux/dist`. During `dotnet publish`
