@@ -5,6 +5,7 @@
     <Platform Name="x86" />
   </Configurations>
   <Project Path="fenrick.miro.server/fenrick.miro.server.csproj" />
+  <Project Path="fenrick.miro.server.tests/fenrick.miro.server.tests.csproj" />
   <Project Path="fenrick.miro.ux/fenrick.miro.ux.njsproj">
     <Platform Project="AnyCPU" />
   </Project>
