@@ -220,7 +220,14 @@ Define these variables in the hosting environment:
 
 ```bash
 dotnet restore
+npm --prefix ../fenrick.miro.ux run build
 dotnet publish -c Release -o publish --nologo
+```
+
+Run the app locally with:
+
+```bash
+dotnet run --project fenrick.miro.apphost/Fenrick.Miro.AppHost.AppHost
 ```
 
 The `publish/` folder then contains the compiled API along with the React

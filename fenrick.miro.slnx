@@ -4,4 +4,5 @@
   </Project>
   <Project Path="fenrick.miro.server/fenrick.miro.server.csproj" />
   <Project Path="fenrick.miro.server.tests/fenrick.miro.server.tests.csproj" />
+  <Project Path="fenrick.miro.apphost/Fenrick.Miro.AppHost.AppHost/Fenrick.Miro.AppHost.AppHost.csproj" />
 </Solution>
