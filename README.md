@@ -305,6 +305,8 @@ npm run commitlint -- --edit $(git rev-parse --verify HEAD)
 
 The CI pipeline also enforces commitlint via
 [`\.github/workflows/commitlint.yml`](.github/workflows/commitlint.yml).
+All Node jobs point to `fenrick.miro.client/package.json` so caching and
+dependency installs run from that directory.
 
 ## 🗂️ Folder structure <a name="folder"></a>
 
