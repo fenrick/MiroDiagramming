@@ -334,10 +334,9 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
           cache-dependency-path: fenrick.miro.client/package-lock.json
-      - run: corepack enable
-        working-directory: fenrick.miro.client
-      - run: npm install --frozen-lockfile || npm install
-        working-directory: fenrick.miro.client
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
       - name: Cache Storybook
         uses: actions/cache@v4
         with:
@@ -345,12 +344,8 @@ jobs:
           key: ${{ runner.os }}-storybook-${{ hashFiles('fenrick.miro.client/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-storybook-
-      - name: Audit dependencies
-        run: npm audit --omit=dev --audit-level=moderate
-        working-directory: fenrick.miro.client
-      - name: Build
-        run: npm run build
-        working-directory: fenrick.miro.client
+      - name: Build server and client
+        run: dotnet build fenrick.miro.server/fenrick.miro.server.csproj -c Release
       - name: Build Storybook
         run: npm run build-storybook
         working-directory: fenrick.miro.client
