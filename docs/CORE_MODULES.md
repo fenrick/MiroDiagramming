@@ -4,14 +4,14 @@
 
 ## 0 Purpose
 
-This document summarises TypeScript modules under `src/core/`. It complements
-the repository map in `ARCHITECTURE.md` and explains the responsibility of each
-file.
+This document summarises TypeScript modules under `fenrick.miro.client/src/core/`.
+It complements the repository map in `ARCHITECTURE.md` and explains the
+responsibility of each file.
 
 ## 1 Directory Overview
 
 ```
-src/core/
+fenrick.miro.client/src/core/
   data-mapper.ts
   excel-sync-service.ts
   graph/

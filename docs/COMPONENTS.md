@@ -7,8 +7,11 @@
 Practical, step-by-step reference for junior engineers who build the add-on UI.
 Explains how to:
 
-- Consume the **Mirotone CSS** design language. ([mirotone.xyz][1])
-- Use the lightweight wrapper components in `src/ui/components/legacy`.
+- Adopt the **@mirohq/design-system** components to ensure 100% alignment with
+  Miro visuals.
+- Use **@mirohq/design-system** components directly for new features.
+- Use the lightweight wrapper components in `fenrick.miro.client/src/ui/components`
+  for simplified markup.
 - Meet the accessibility, performance and quality gates defined in
   **ARCHITECTURE.md** and **FOUNDATION.md**.
 
@@ -16,16 +19,17 @@ Explains how to:
 
 ## 1 Installing the design system layers
 
-| Layer               | Package            | Install command  | Notes                                                                        |
-| ------------------- | ------------------ | ---------------- | ---------------------------------------------------------------------------- |
-| Tokens & raw styles | **mirotone** (CSS) | `npm i mirotone` | Adds the `dist/styles.css` file and all utility classes. ([mirotone.xyz][1]) |
+| Layer               | Package                   | Install command               | Notes                                                                    |
+| ------------------- | ------------------------- | ----------------------------- | ------------------------------------------------------------------------ |
+| Tokens & components | **@mirohq/design-system** | `npm i @mirohq/design-system` | Provides React components and design tokens to match the native Miro UI. |
 
 ### 1.1 Bootstrap CSS once
 
-Include the stylesheet exactly once—ideally in `src/app/index.tsx`:
+Include the stylesheet exactly once—ideally in
+`fenrick.miro.client/src/app/index.tsx`:
 
 ```tsx
-import 'mirotone/dist/styles.css';
+import '@mirohq/design-system-themes/light.css';
 ```
 
 ---
@@ -33,33 +37,67 @@ import 'mirotone/dist/styles.css';
 ## 2 Component catalogue
 
 Only props that junior devs **must** supply are shown. Use the wrapper
-components or compose manually with Mirotone CSS.
+components or compose using the design system tokens.
 
-| Name           | Core props                 | Variants                  | Default height (px) |
-| -------------- | -------------------------- | ------------------------- | ------------------- |
-| **Button**     | label, onClick, disabled   | primary, secondary, ghost | 32                  |
-| **InputField** | value, onChange            | text, number              | 32                  |
-| **Select**     | options, value, onChange   | single, multi             | 32                  |
-| **Checkbox**   | checked, onChange          | —                         | 20                  |
-| **Modal**      | title, isOpen, onClose     | small, medium             | auto                |
-| _SidebarTab_   | id, icon, title            | persistent, modal         | fill                |
-| _TabBar_       | tabs, tab, onChange, size? | regular, small            | 48                  |
-| **Grid**       | gap, columns               | responsive                | n/a                 |
-| **Stack**      | gap, direction             | vertical, horizontal      | n/a                 |
-| **Cluster**    | gap, align                 | left, right, centre       | n/a                 |
-| **TabGrid**    | columns, className?        | —                         | n/a                 |
+| Name                          | Core props                      | Variants                  | Default height (px) |
+| ----------------------------- | ------------------------------- | ------------------------- | ------------------- |
+| **Button**                    | label, onClick, disabled, icon? | primary, secondary, ghost | 32                  |
+| **Input**                     | value, onChange                 | text, number              | 32                  |
+| **Select**                    | options, value, onChange        | single, multi             | 32                  |
+| **Switch** (Checkbox wrapper) | checked, onChange               | medium, large             | 24                  |
+| **Modal**                     | title, isOpen, onClose          | small, medium             | auto                |
+| _SidebarTab_                  | id, icon, title                 | persistent, modal         | fill                |
+| _TabBar_                      | tabs, tab, onChange, size?      | regular, small            | 48                  |
+| **TabPanel**                  | tabId                           | –                         | fill                |
+| **Grid**                      | gap, columns                    | responsive                | n/a                 |
+| **Stack**                     | gap, direction                  | vertical, horizontal      | n/a                 |
+| **Cluster**                   | gap, align                      | left, right, centre       | n/a                 |
 
-The **TabBar** component now covers both sidebar and nested navigation. Pass the
-current tab id via `tab` and handle selection with `onChange`. Use
-`size='small'` for compact nested tab sets.
+The main navigation now relies on `@mirohq/design-system-tabs`. The custom
+**TabBar** component remains for nested navigation. Pass the current tab id via
+`tab` and handle selection with `onChange`. Use `size='small'` for compact
+nested tab sets.
+
+### 2.1 Wrapper components and padding
+
+The design system expects container elements to declare their own padding. To
+preserve the existing API and layering, small wrappers live under
+`fenrick.miro.client/src/ui/components` (e.g. `Panel`, `Section`, `ActionBar`). Each
+wrapper accepts a `padding` prop that maps to numeric values from
+`@mirohq/design-tokens`:
+
+```tsx
+<Panel padding='medium'>
+  <Section padding='small'>Content</Section>
+</Panel>
+```
+
+Wrappers forward standard HTML attributes—except `className` and `style`—to the
+underlying design-system primitives. This keeps styling decisions inside the
+component. Keep nesting shallow to avoid unnecessary DOM layers.
+
+Common form controls such as `Button`, `InputField` and `Select` are provided
+under `fenrick.miro.client/src/ui/components`.
+
+`InputField` composes a label with a form control. Pass the control component
+via the `as` prop and provide its props through `options`:
+
+```tsx
+<InputField
+  label='Template'
+  as={Select}
+  options={{ value: tpl, onChange: setTpl }}>
+  <SelectOption value='a'>A</SelectOption>
+  <SelectOption value='b'>B</SelectOption>
+</InputField>
+```
 
 > **When a wrapper is missing**
 >
 > 1. Write semantic HTML (for example `<div class="grid grid-gap-8">`).
-> 2. Apply the documented Mirotone CSS classes.
-> 3. Encapsulate in a small local React component under
->    `src/ui/components/legacy/` so that future upgrades swap the implementation
->    behind a stable API.
+> 2. Apply the documented design-system tokens or component styles.
+> 3. Encapsulate the markup in a small local React component so future upgrades
+>    can swap the implementation behind a stable API.
 
 ---
 
@@ -86,11 +124,14 @@ current tab id via `tab` and handle selection with `onChange`. Use
 <Stack
   gap='12'
   direction='vertical'>
-  <InputField
-    label='Title'
-    value={title}
-    onChange={setTitle}
-  />
+  <Form.Field>
+    <Form.Label htmlFor='title'>Title</Form.Label>
+    <Input
+      id='title'
+      value={title}
+      onChange={(e) => setTitle(e.target.value)}
+    />
+  </Form.Field>
 </Stack>
 ```
 
@@ -113,6 +154,14 @@ current tab id via `tab` and handle selection with `onChange`. Use
 </Cluster>
 ```
 
+To add an icon use the `icon` prop and optionally `iconPosition='end'`:
+
+```tsx
+import { IconActivity } from '@mirohq/design-system-icons/react';
+
+<Button icon={<IconActivity />}>Activity</Button>;
+```
+
 ---
 
 ## 4 Sample pattern – Modal form with validation
@@ -128,13 +177,16 @@ current tab id via `tab` and handle selection with `onChange`. Use
     <Stack
       gap='12'
       direction='vertical'>
-      <InputField
-        label='Title'
-        required
-        placeholder='Title'
-        value={title}
-        onChange={setTitle}
-      />
+      <Form.Field>
+        <Form.Label htmlFor='title2'>Title</Form.Label>
+        <Input
+          id='title2'
+          required
+          placeholder='Title'
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+      </Form.Field>
       <textarea
         className='textarea resize-auto'
         placeholder='Description'
@@ -162,8 +214,8 @@ current tab id via `tab` and handle selection with `onChange`. Use
 
 - First interactive control auto-focuses.
 - `Esc` always triggers `onClose`.
-- Browser validation bubbles up; error text appears via the **InputField**
-  `invalid` state.
+- Browser validation bubbles up; error text appears below the **Input** when
+  marked `invalid`.
 
 ---
 
@@ -185,11 +237,11 @@ Failing any item blocks the CI gate.
 ## 6 Styling rules & minimal-CSS policy
 
 - Only Design-System tokens: colours, space, radii, typography (import via
-  `tokens`).
+  `@mirohq/design-tokens`).
 - **No extra CSS classes** unless integrating a third-party lib.
 - Inline `style={...}` is disallowed by ESLint rule `no-inline-style`.
 - Dark-mode colours come free from Miro themes; test visually in both themes
-  before merging. ([mirotone.xyz][1])
+  before merging.
 
 ---
 
@@ -203,12 +255,12 @@ Failing any item blocks the CI gate.
 
 ## 8 Quality gates (automated in GitHub Actions)
 
-| Stage             | Tool                     | Pass threshold          |
-| ----------------- | ------------------------ | ----------------------- |
-| Lint              | ESLint + Stylelint       | 0 errors                |
-| Unit tests        | Vitest                   | ≥ 90 % lines & branches |
-| Visual regression | manual screenshot review | no visual diffs         |
-| Accessibility     | manual a11y review       | 0 critical              |
+| Stage             | Tool                      | Pass threshold          |
+| ----------------- | ------------------------- | ----------------------- |
+| Lint              | ESLint + Stylelint        | 0 errors                |
+| Unit tests        | `npm test`, `dotnet test` | ≥ 90 % lines & branches |
+| Visual regression | manual screenshot review  | no visual diffs         |
+| Accessibility     | manual a11y review        | 0 critical              |
 
 ---
 
@@ -218,7 +270,7 @@ Failing any item blocks the CI gate.
 - Design tokens and minimal-CSS policy – **FOUNDATION.md**
 - Deployment guidance – **DEPLOYMENT.md**
 - Sidebar behaviour and validation flows – **TABS.md**
-- Storybook playground – run `npm start`, open `http://localhost:6006`
+- Storybook playground – run `npm run storybook`, open `http://localhost:6006`
 
 ---
 

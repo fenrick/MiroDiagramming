@@ -1,20 +1,25 @@
 # Development Notes
 
-All source files live in `src/**` with accompanying tests in `tests/**`.
+Each project resides in its own `fenrick.miro.*` folder containing `src/` and
+`tests/` subdirectories. Place code under `src/` and tests under `tests/`.
 
 Before committing changes run `npm install` to ensure dependencies are up to
 date and then:
 
-```
-npm run typecheck --silent
-npm test --silent
-npm run lint --silent
-npm run stylelint --silent
-npm run prettier --silent
+```bash
+npm --prefix fenrick.miro.client run typecheck --silent
+npm --prefix fenrick.miro.client run test --silent
+npm --prefix fenrick.miro.client run lint --silent
+npm --prefix fenrick.miro.client run stylelint --silent
+npm --prefix fenrick.miro.client run prettier --silent
+dotnet restore
+dotnet test fenrick.miro.tests/fenrick.miro.tests.csproj -v minimal
 ```
 
-A Husky pre-commit hook now runs these commands automatically when creating a
-commit. Activate the hooks with `npm run prepare` after cloning.
+The `.husky/` folder stores Git hooks. Run `npx husky install` once after
+cloning to activate them. The `pre-commit` hook runs the lint and formatting
+commands above but intentionally skips the test suite so commits remain fast.
+Run the tests yourself before committing to ensure nothing breaks.
 
 These commands run **ESLint**, **Stylelint** and **Prettier** to ensure a
 consistent codebase.
