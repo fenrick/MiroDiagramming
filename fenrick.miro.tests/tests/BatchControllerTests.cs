@@ -41,4 +41,18 @@ public class BatchControllerTests
         public StubClient(Func<MiroRequest, Task<MiroResponse>> cb) => _cb = cb;
         public Task<MiroResponse> SendAsync(MiroRequest request) => _cb(request);
     }
+
+    /// <summary>
+    /// An empty batch should still produce an OK result with an empty array.
+    /// </summary>
+    [Fact]
+    public async Task ForwardAsync_WithNoRequests_ReturnsEmptyList()
+    {
+        var controller = new BatchController(new StubClient(_ => Task.FromResult(new MiroResponse(200, ""))));
+
+        var result = await controller.ForwardAsync(Array.Empty<MiroRequest>()) as OkObjectResult;
+
+        var data = Assert.IsType<List<MiroResponse>>(result!.Value);
+        Assert.Empty(data);
+    }
 }

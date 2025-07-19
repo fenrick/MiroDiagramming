@@ -15,4 +15,17 @@ public class InMemoryCacheServiceTests
         service.Store(meta);
         Assert.Equal(meta, service.Get("1"));
     }
+
+    /// <summary>
+    /// Storing the same board twice should override the previous value.
+    /// </summary>
+    [Fact]
+    public void Store_OverridesExistingMetadata()
+    {
+        var service = new InMemoryCacheService();
+        service.Store(new BoardMetadata("1", "Old"));
+        service.Store(new BoardMetadata("1", "New"));
+
+        Assert.Equal("New", service.Get("1")?.Name);
+    }
 }
