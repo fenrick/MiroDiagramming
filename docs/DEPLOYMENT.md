@@ -122,7 +122,7 @@ Rollback takes < 30 seconds and never breaks active boards.
 | Bundle size               | CI budget check       | ≤ 300 KB gzipped            |
 
 Alerts route to the **#miro-addon-alerts** Slack channel. Instrumentation is
-wired in `fenrick.miro.ux/src/infrastructure/telemetry.ts`. Details on metrics
+wired in `fenrick.miro.client/src/infrastructure/telemetry.ts`. Details on metrics
 collection sit in **ARCHITECTURE.md** (section 13).
 
 ---
@@ -131,7 +131,7 @@ collection sit in **ARCHITECTURE.md** (section 13).
 
 ```
 ▢ Load a fresh board; sidebar icon appears.
-▢ Import a sample data file (fenrick.miro.ux/tests/fixtures/kanban.csv).
+▢ Import a sample data file (fenrick.miro.client/tests/fixtures/kanban.csv).
 ▢ Verify widgets render and undo works.
 ▢ Switch to Dark theme; no colour regressions.
 ▢ Run npm run a11y:e2e – all critical checks pass.
@@ -203,7 +203,7 @@ automatically.
 Some teams host the React bundle alongside an ASP.NET Core API. The backend
 publishes to a `publish/` directory and serves static files from the `wwwroot`
 folder. When `dotnet publish` runs the front‑end build output is copied from
-`fenrick.miro.ux/dist` into `fenrick.miro.server/wwwroot` so front-end assets
+`fenrick.miro.client/dist` into `fenrick.miro.server/wwwroot` so front-end assets
 and API endpoints share the same origin.
 
 ### 12.1 Environment variables
@@ -222,7 +222,7 @@ Define these variables in the hosting environment:
 
 ```bash
 dotnet restore
-npm --prefix ../fenrick.miro.ux run build
+npm --prefix ../fenrick.miro.client run build
 dotnet publish -c Release -o publish --nologo
 ```
 
@@ -232,7 +232,7 @@ Run the app locally with:
 dotnet run --project fenrick.miro.apphost/Fenrick.Miro.AppHost.AppHost
 ```
 
-The front-end build creates `fenrick.miro.ux/dist`. During `dotnet publish`
+The front-end build creates `fenrick.miro.client/dist`. During `dotnet publish`
 those files are copied into `publish/wwwroot` so the compiled API and static
 assets ship together. Deploy the `publish/` directory or copy it into a
 container image.

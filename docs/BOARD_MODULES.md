@@ -5,13 +5,13 @@
 ## 0 Purpose
 
 This document summarises the individual TypeScript modules located under
-`fenrick.miro.ux/src/board/`. It complements the repository map in
+`fenrick.miro.client/src/board/`. It complements the repository map in
 `ARCHITECTURE.md` and clarifies what each file is responsible for.
 
 ## 1 Directory Overview
 
 ```
-fenrick.miro.ux/src/board/
+fenrick.miro.client/src/board/
 ```
 
 - board-builder.ts

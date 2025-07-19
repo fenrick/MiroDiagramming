@@ -6,7 +6,7 @@ Each project resides in its own `fenrick.miro.*` folder containing `src/` and
 Before committing changes run `npm install` to ensure dependencies are up to
 date and then:
 
-```
+```bash
 npm run typecheck --silent
 npm test --silent
 npm run lint --silent

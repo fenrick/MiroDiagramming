@@ -1,8 +1,9 @@
 <Solution>
-  <Project Path="fenrick.miro.ux/fenrick.miro.ux.esproj">
+  <Project Path="fenrick.miro.apphost/fenrick.miro.apphost.csproj" />
+  <Project Path="fenrick.miro.client/fenrick.miro.client.esproj">
     <Build />
   </Project>
   <Project Path="fenrick.miro.server/fenrick.miro.server.csproj" />
-  <Project Path="fenrick.miro.server.tests/fenrick.miro.server.tests.csproj" />
-  <Project Path="fenrick.miro.apphost/Fenrick.Miro.AppHost.AppHost/Fenrick.Miro.AppHost.AppHost.csproj" />
+  <Project Path="fenrick.miro.servicedefaults/fenrick.miro.servicedefaults.csproj" />
+  <Project Path="fenrick.miro.tests/fenrick.miro.tests.csproj" />
 </Solution>

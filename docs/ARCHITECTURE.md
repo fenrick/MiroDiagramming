@@ -55,14 +55,14 @@ React GUI ──► .NET 9 Server ──► Miro REST API
 ## 3 Layering
 
 -``` Data → Graph Normalisation → Layout Engine → Board Rendering → UI
-Orchestration (fenrick.miro.ux/src/core) (fenrick.miro.ux/src/core)
-(fenrick.miro.ux/src/core) (fenrick.miro.ux/src/board) (fenrick.miro.ux/src/ui)
+Orchestration (fenrick.miro.client/src/core) (fenrick.miro.client/src/core)
+(fenrick.miro.client/src/core) (fenrick.miro.client/src/board) (fenrick.miro.client/src/ui)
 
 ```
 
-- **Pure Core** (`fenrick.miro.ux/src/core`) – framework-agnostic logic.
-- **Board Adapter** (`fenrick.miro.ux/src/board`) – converts domain objects to Miro widgets.
-- **UI Shell** (`fenrick.miro.ux/src/ui`) – React views built with design-system wrappers.
+- **Pure Core** (`fenrick.miro.client/src/core`) – framework-agnostic logic.
+- **Board Adapter** (`fenrick.miro.client/src/board`) – converts domain objects to Miro widgets.
+- **UI Shell** (`fenrick.miro.client/src/ui`) – React views built with design-system wrappers.
 - **Infrastructure** (scripts, .github) – build, lint, test, release automation.
 
 ---
@@ -71,10 +71,10 @@ Orchestration (fenrick.miro.ux/src/core) (fenrick.miro.ux/src/core)
 
 ```
 
-fenrick.miro.server/ src/{Api,Domain,Services} fenrick.miro.ux/
+fenrick.miro.server/ src/{Api,Domain,Services} fenrick.miro.client/
 src/{app,board,core,ui,assets} fenrick.miro.api/ src/ (future public API)
 fenrick.miro.services/ src/ (shared cross-cutting services)
-fenrick.miro.server.tests/ .NET unit tests fenrick.miro.ux/tests/ Node/React
+fenrick.miro.tests/ .NET unit tests fenrick.miro.client/tests/ Node/React
 tests docs/ \*.md (this file, components, foundation …) scripts/ build helpers
 public/ icons, i18n JSON templates/ default widget templates
 

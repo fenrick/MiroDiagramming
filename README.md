@@ -15,7 +15,7 @@ each element can carry metadata that controls its appearance and placement.
    Cards are automatically arranged in a grid with a calculated number of
    columns. Pass `columns` when invoking the importer to override this value.
 5. See
-   [`fenrick.miro.ux/tests/fixtures/sample-cards.json`](fenrick.miro.ux/tests/fixtures/sample-cards.json)
+   [`fenrick.miro.client/tests/fixtures/sample-cards.json`](fenrick.miro.client/tests/fixtures/sample-cards.json)
    for a cards format example.
 
 ### Card JSON Format
@@ -71,7 +71,7 @@ in the description using the `ID:` prefix.
 ## Sample Graph
 
 A small example is provided in
-[fenrick.miro.ux/tests/fixtures/sample-graph.json](fenrick.miro.ux/tests/fixtures/sample-graph.json):
+[fenrick.miro.client/tests/fixtures/sample-graph.json](fenrick.miro.client/tests/fixtures/sample-graph.json):
 
 ```json
 {
@@ -90,7 +90,7 @@ visualised using the **Nested** layout option in the Diagram tab. Positions and
 container sizes are computed entirely by the ELK engine for consistent spacing.
 Nodes are sorted alphabetically by default or via a custom metadata key. A
 three‑level sample dataset is available at
-[fenrick.miro.ux/tests/fixtures/sample-hier.json](fenrick.miro.ux/tests/fixtures/sample-hier.json).
+[fenrick.miro.client/tests/fixtures/sample-hier.json](fenrick.miro.client/tests/fixtures/sample-hier.json).
 Simply select **Nested** and import this file to see parent widgets sized to fit
 their children. Flat graph data is automatically converted when necessary.
 
@@ -145,10 +145,10 @@ complete UI flow.
 ## Styling with the Miro Design System
 
 The CSS for this project imports `@mirohq/design-system-themes/light.css` in
-[`fenrick.miro.ux/src/assets/style.css`](fenrick.miro.ux/src/assets/style.css)
+[`fenrick.miro.client/src/assets/style.css`](fenrick.miro.client/src/assets/style.css)
 to match the Miro UI. Components are sourced from `@mirohq/design-system`. Avoid
 custom CSS when a component or token already exists. Wrapper components in
-`fenrick.miro.ux/src/ui/components` abstract the design-system primitives so
+`fenrick.miro.client/src/ui/components` abstract the design-system primitives so
 upgrades happen in one place.
 
 ## Form Design Guidelines
@@ -197,9 +197,9 @@ the rest of the UI. These guidelines help keep layouts consistent:
 
 ## 🏃🏽‍♂️ Run the app locally <a name="run"></a>
 
-1. Run `npm install` inside `fenrick.miro.ux` to install dependencies. The
+1. Run `npm install` inside `fenrick.miro.client` to install dependencies. The
    `package-lock.json` file ensures everyone installs the same versions.
-2. Run `npm start` from `fenrick.miro.ux` to start the development server. \
+2. Run `npm start` from `fenrick.miro.client` to start the development server. \
    Your URL should be similar to this example:
 
 ```
@@ -245,19 +245,19 @@ The root `AGENTS.md` lists the commands to run before committing. Be sure to
 install dependencies first:
 
 ```bash
-npm install --prefix fenrick.miro.ux
+npm install --prefix fenrick.miro.client
 ```
 
 Then validate the codebase with:
 
 ```bash
-npm --prefix fenrick.miro.ux run typecheck --silent
-npm --prefix fenrick.miro.ux run test --silent
+npm --prefix fenrick.miro.client run typecheck --silent
+npm --prefix fenrick.miro.client run test --silent
 dotnet test --no-build
 npx dotnet-format --verify-no-changes fenrick.miro.server/fenrick.miro.server.csproj
-npm --prefix fenrick.miro.ux run lint --silent
-npm --prefix fenrick.miro.ux run stylelint --silent
-npm --prefix fenrick.miro.ux run prettier --silent
+npm --prefix fenrick.miro.client run lint --silent
+npm --prefix fenrick.miro.client run stylelint --silent
+npm --prefix fenrick.miro.client run prettier --silent
 ```
 
 A Husky pre-commit hook runs these commands automatically. After cloning the
@@ -278,7 +278,7 @@ everyone uses the exact dependency versions when installing.
 ## Logging
 
 All runtime messages are emitted through a shared logger defined in
-[`fenrick.miro.ux/src/logger.ts`](fenrick.miro.ux/src/logger.ts). Set the
+[`fenrick.miro.client/src/logger.ts`](fenrick.miro.client/src/logger.ts). Set the
 `LOG_LEVEL` environment variable to `trace`, `debug`, `info`, `warn`, `error` or
 `silent` to control verbosity. It defaults to `info`.
 
@@ -289,7 +289,7 @@ both sides share the same log stream.
 Example:
 
 ```bash
-LOG_LEVEL=debug npm --prefix fenrick.miro.ux start
+LOG_LEVEL=debug npm --prefix fenrick.miro.client start
 ```
 
 ## Commit message checks
@@ -314,7 +314,7 @@ The CI pipeline also enforces commitlint via
 │       ├── Api
 │       ├── Domain
 │       └── Services
-├── fenrick.miro.ux/
+├── fenrick.miro.client/
 │   ├── src
 │   │   ├── app
 │   │   ├── board

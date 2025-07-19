@@ -4,13 +4,13 @@
 
 ## 0 Purpose
 
-This document summarises the files under `fenrick.miro.ux/src/app/`. These
+This document summarises the files under `fenrick.miro.client/src/app/`. These
 modules initialise the React UI and integrate with the Miro Web SDK.
 
 ## 1 Directory Overview
 
 ```
-fenrick.miro.ux/src/app/
+fenrick.miro.client/src/app/
 ```
 
 - App.tsx

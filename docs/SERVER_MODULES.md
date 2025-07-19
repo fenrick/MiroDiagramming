@@ -18,24 +18,24 @@ fenrick.miro.server/
     Domain/           entities and data models
     Services/         business logic and caching
   fenrick.miro.server.csproj  project file
-fenrick.miro.ux/
+fenrick.miro.client/
   src/                React client
     app/              entry and routing
     board/            board adapter utilities
     core/             domain logic used by the client
     ui/               React components
-fenrick.miro.server.tests/   unit tests for .NET code
-fenrick.miro.ux/tests/       Node tests
+fenrick.miro.tests/   unit tests for .NET code
+fenrick.miro.client/tests/       Node tests
 ```
 
 All server modules live under `fenrick.miro.server/src/` with matching tests
-under `fenrick.miro.server.tests/`. The Node code resides in
-`fenrick.miro.ux/src/` to emphasise the front‑end role.
+under `fenrick.miro.tests/`. The Node code resides in
+`fenrick.miro.client/src/` to emphasise the front‑end role.
 
 ## 2 IDE Configuration
 
 - `fenrick.miro.server/fenrick.miro.server.csproj` – .NET 9 Web API project.
-- `package.json` in `fenrick.miro.ux/` – Node workspace for the React client.
+- `package.json` in `fenrick.miro.client/` – Node workspace for the React client.
 
 Each tool can open only its relevant folder, but the repository still builds end
 to end using the shared `npm` and `dotnet` commands.

@@ -57,7 +57,7 @@ value.
 ## 3 Sample Data
 
 A three-level hierarchical dataset can be found in
-[`fenrick.miro.ux/tests/fixtures/sample-hier.json`](../fenrick.miro.ux/tests/fixtures/sample-hier.json).
+[`fenrick.miro.client/tests/fixtures/sample-hier.json`](../fenrick.miro.client/tests/fixtures/sample-hier.json).
 It contains four top-level groups, each with four subgroups and four items per
 subgroup. This is useful when experimenting with the ELK-based nested layout
 algorithm. Import the JSON in the **Create** tab and choose the **Nested**

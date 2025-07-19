@@ -94,10 +94,10 @@ jobs:
       - name: Restore
         run:
           dotnet restore
-          fenrick.miro.server.tests/fenrick.miro.server.tests.csproj
+          fenrick.miro.tests/fenrick.miro.tests.csproj
       - name: Test
         run: |
-          dotnet test fenrick.miro.server.tests/fenrick.miro.server.tests.csproj \
+          dotnet test fenrick.miro.tests/fenrick.miro.tests.csproj \
             --logger "trx;LogFileName=results.trx" \
             /p:CollectCoverage=true \
             /p:CoverletOutputFormat=cobertura \
@@ -109,7 +109,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dotnet-coverage
-          path: fenrick.miro.server.tests/TestResults
+          path: fenrick.miro.tests/TestResults
 
   unit-tests:
     runs-on: ubuntu-latest
@@ -202,7 +202,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
       - run: corepack enable && npm ci
-        working-directory: fenrick.miro.ux
+        working-directory: fenrick.miro.client
 
       - name: Download coverage
         uses: actions/download-artifact@v4
@@ -240,12 +240,12 @@ jobs:
             /k:"fenrick_MiroDiagraming" /o:"fenrick" `
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
             /d:sonar.host.url="https://sonarcloud.io" `
-            /d:sonar.sources="fenrick.miro.server/src;fenrick.miro.ux/src" `
+            /d:sonar.sources="fenrick.miro.server/src;fenrick.miro.client/src" `
             /d:sonar.exclusions="**/node_modules/**,**/obj/**" `
             /d:sonar.cs.opencover.reportsPaths="coverage\coverage.opencover.xml" `
             /d:sonar.javascript.lcov.reportPaths="coverage\lcov.info"
           dotnet build fenrick.miro.server/fenrick.miro.server.csproj
-          dotnet test fenrick.miro.server.tests/fenrick.miro.server.tests.csproj --no-build `
+          dotnet test fenrick.miro.tests/fenrick.miro.tests.csproj --no-build `
             /p:CollectCoverage=true `
             /p:CoverletOutputFormat=opencover `
             /p:CoverletOutput="coverage/coverage.opencover.xml" `
