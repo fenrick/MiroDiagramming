@@ -272,8 +272,8 @@ in both codebases and keep cyclomatic complexity under eight (see
 keys. Run these checks before committing so code conforms to the repository
 guidelines.
 
-CI merges coverage from all test shards and fails the build when line or branch coverage falls below 90 % across either codebase
-codebases.
+CI merges coverage from all test shards. The build doesn't fail based on coverage
+numbers, so developers must keep both codebases above 90 % coverage
 
 With `package-lock.json` checked in you can run `npm audit` after each install
 to scan dependencies for vulnerabilities. Include the lock file in commits so
