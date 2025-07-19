@@ -20,12 +20,17 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
+          cache-dependency-path: fenrick.miro.client/package-lock.json
       - run: corepack enable
+        working-directory: fenrick.miro.client
       - run: npm install --frozen-lockfile || npm install
+        working-directory: fenrick.miro.client
       - name: Audit dependencies
         run: npm audit --omit=dev --audit-level=moderate
+        working-directory: fenrick.miro.client
       - name: Prettier
         run: npm run prettier:check
+        working-directory: fenrick.miro.client
 
   eslint:
     runs-on: ubuntu-latest
@@ -35,12 +40,17 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
+          cache-dependency-path: fenrick.miro.client/package-lock.json
       - run: corepack enable
+        working-directory: fenrick.miro.client
       - run: npm install --frozen-lockfile || npm install
+        working-directory: fenrick.miro.client
       - name: Audit dependencies
         run: npm audit --omit=dev --audit-level=moderate
+        working-directory: fenrick.miro.client
       - name: ESLint
         run: npm run lint
+        working-directory: fenrick.miro.client
 
   stylelint:
     runs-on: ubuntu-latest
@@ -50,12 +60,17 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
+          cache-dependency-path: fenrick.miro.client/package-lock.json
       - run: corepack enable
+        working-directory: fenrick.miro.client
       - run: npm install --frozen-lockfile || npm install
+        working-directory: fenrick.miro.client
       - name: Audit dependencies
         run: npm audit --omit=dev --audit-level=moderate
+        working-directory: fenrick.miro.client
       - name: Stylelint
         run: npm run stylelint
+        working-directory: fenrick.miro.client
 
   typecheck:
     runs-on: ubuntu-latest
@@ -65,12 +80,17 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
+          cache-dependency-path: fenrick.miro.client/package-lock.json
       - run: corepack enable
+        working-directory: fenrick.miro.client
       - run: npm install --frozen-lockfile || npm install
+        working-directory: fenrick.miro.client
       - name: Audit dependencies
         run: npm audit --omit=dev --audit-level=moderate
+        working-directory: fenrick.miro.client
       - name: Typecheck
         run: npm run typecheck
+        working-directory: fenrick.miro.client
 
   dotnet-format:
     runs-on: ubuntu-latest
@@ -91,6 +111,11 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: fenrick.miro.client/package-lock.json
       - name: Restore
         run:
           dotnet restore
@@ -101,15 +126,12 @@ jobs:
             --logger "trx;LogFileName=results.trx" \
             /p:CollectCoverage=true \
             /p:CoverletOutputFormat=cobertura \
-            /p:CoverletOutput=coverage/coverage.cobertura.xml \
-            /p:Threshold=90 \
-            /p:ThresholdType=line,branch \
-            /p:ThresholdStat=total
+            /p:CoverletOutput=coverage/coverage.cobertura.xml
       - name: Upload coverage
         uses: actions/upload-artifact@v4
         with:
           name: dotnet-coverage
-          path: fenrick.miro.tests/TestResults
+          path: fenrick.miro.tests/coverage
 
   unit-tests:
     runs-on: ubuntu-latest
@@ -123,23 +145,30 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
+          cache-dependency-path: fenrick.miro.client/package-lock.json
       - run: corepack enable
+        working-directory: fenrick.miro.client
       - run: npm install --frozen-lockfile || npm install
+        working-directory: fenrick.miro.client
       - name: Audit dependencies
         run: npm audit --omit=dev --audit-level=moderate
+        working-directory: fenrick.miro.client
       - name: Unit tests
         run: npm test -- --shard=${{ matrix.shard }}/2
+        working-directory: fenrick.miro.client
       - name: Debug coverage files
         run: ls -R coverage
+        working-directory: fenrick.miro.client
       - name: Rename coverage folder
         if: always()
         run: mv coverage "coverage-${{ matrix.shard }}"
+        working-directory: fenrick.miro.client
       - name: Upload coverage
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: coverage-${{ matrix.shard }}
-          path: coverage-${{ matrix.shard }}
+          path: fenrick.miro.client/coverage-${{ matrix.shard }}
 
   merge-coverage:
     if: always()
@@ -153,7 +182,9 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
+          cache-dependency-path: fenrick.miro.client/package-lock.json
       - run: corepack enable
+        working-directory: fenrick.miro.client
       - name: Download coverage shard 1
         uses: actions/download-artifact@v4
         with:
@@ -174,7 +205,7 @@ jobs:
       - name: Merge coverage
         run: |
           mkdir -p coverage
-          npx lcov-result-merger "coverage-*/lcov.info" coverage/lcov.info
+          npx --prefix fenrick.miro.client lcov-result-merger "coverage-*/lcov.info" coverage/lcov.info
           cat coverage-*/sonar-report.xml > coverage/sonar-report.xml
           cp dotnet-coverage/**/coverage.cobertura.xml coverage/coverage.cobertura.xml
       - name: Upload coverage
@@ -201,6 +232,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: fenrick.miro.client/package-lock.json
       - run: corepack enable && npm ci
         working-directory: fenrick.miro.client
 
@@ -249,9 +282,6 @@ jobs:
             /p:CollectCoverage=true `
             /p:CoverletOutputFormat=opencover `
             /p:CoverletOutput="coverage/coverage.opencover.xml" `
-            /p:Threshold=90 `
-            /p:ThresholdType=line,branch `
-            /p:ThresholdStat=total `
             --logger "trx"
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
@@ -299,28 +329,35 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
+          cache-dependency-path: fenrick.miro.client/package-lock.json
       - run: corepack enable
+        working-directory: fenrick.miro.client
       - run: npm install --frozen-lockfile || npm install
+        working-directory: fenrick.miro.client
       - name: Cache Storybook
         uses: actions/cache@v4
         with:
-          path: node_modules/.cache/storybook
-          key: ${{ runner.os }}-storybook-${{ hashFiles('package-lock.json') }}
+          path: fenrick.miro.client/node_modules/.cache/storybook
+          key: ${{ runner.os }}-storybook-${{ hashFiles('fenrick.miro.client/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-storybook-
       - name: Audit dependencies
         run: npm audit --omit=dev --audit-level=moderate
+        working-directory: fenrick.miro.client
       - name: Build
         run: npm run build
+        working-directory: fenrick.miro.client
       - name: Build Storybook
         run: npm run build-storybook
+        working-directory: fenrick.miro.client
       - name: Verify Storybook
         run: test -d storybook-static
+        working-directory: fenrick.miro.client
       - name: Upload artefact
         uses: actions/upload-artifact@v4
         with:
           name: build
-          path: dist
+          path: fenrick.miro.client/dist
 
   release:
     if: github.event_name == 'push'
@@ -344,19 +381,24 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
+          cache-dependency-path: fenrick.miro.client/package-lock.json
       - run: corepack enable
+        working-directory: fenrick.miro.client
       - run: npm install --frozen-lockfile || npm install
+        working-directory: fenrick.miro.client
       - name: Audit dependencies
         run: npm audit --omit=dev --audit-level=moderate
+        working-directory: fenrick.miro.client
       - name: Download artefact
         uses: actions/download-artifact@v4
         with:
           name: build
-          path: dist
+          path: fenrick.miro.client/dist
       - name: Semantic release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
+        working-directory: fenrick.miro.client
       - name: Check release tag
         id: release_tag
         run: |

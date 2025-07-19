@@ -8,7 +8,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <UserSecretsId>a9d2fbb4-2324-4ad7-aa90-24ffc7940a31</UserSecretsId>
-    <RootNamespace>fenrick.miro.apphost</RootNamespace>
+    <RootNamespace>Fenrick.Miro.AppHost</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

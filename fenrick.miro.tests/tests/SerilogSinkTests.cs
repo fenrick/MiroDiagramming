@@ -7,7 +7,7 @@ using Serilog.Core;
 using Serilog.Events;
 using Xunit;
 
-namespace fenrick.miro.tests;
+namespace Fenrick.Miro.Tests;
 
 public class SerilogSinkTests
 {
@@ -26,6 +26,27 @@ public class SerilogSinkTests
         Assert.Single(events);
         var message = events[0].Properties["Message"].ToString().Trim('"');
         Assert.Equal("hello", message);
+    }
+
+    /// <summary>
+    /// The sink should enrich log events with custom properties so the server
+    /// can filter on the log level and source.
+    /// </summary>
+    [Fact]
+    public void Store_AddsContextProperties()
+    {
+        var events = new List<LogEvent>();
+        var logger = new LoggerConfiguration()
+            .WriteTo.Sink(new DelegatingSink(e => events.Add(e)))
+            .CreateLogger();
+        var sink = new SerilogSink(logger);
+
+        var entry = new ClientLogEntry(DateTime.UnixEpoch, "warn", "hello", null);
+        sink.Store(new[] { entry });
+
+        var log = events[0];
+        Assert.Equal("Client", log.Properties["Source"].ToString().Trim('"'));
+        Assert.Equal("warn", log.Properties["Level"].ToString().Trim('"'));
     }
 
     private sealed class DelegatingSink : ILogEventSink
