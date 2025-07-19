@@ -1,3 +1,4 @@
+namespace Fenrick.Miro.Tests;
 using System;
 using System.Collections.Generic;
 using Fenrick.Miro.Server.Domain;
@@ -7,21 +8,19 @@ using Serilog.Core;
 using Serilog.Events;
 using Xunit;
 
-namespace Fenrick.Miro.Tests;
-
 public class SerilogSinkTests
 {
     [Fact]
-    public void Store_WritesEntriesToLogger()
+    public void StoreWritesEntriesToLogger()
     {
         var events = new List<LogEvent>();
         var logger = new LoggerConfiguration()
-            .WriteTo.Sink(new DelegatingSink(e => events.Add(e)))
+            .WriteTo.Sink(new DelegatingSink(events.Add))
             .CreateLogger();
         var sink = new SerilogSink(logger);
 
         var entry = new ClientLogEntry(DateTime.UnixEpoch, "info", "hello", null);
-        sink.Store(new[] { entry });
+        sink.Store([entry]);
 
         Assert.Single(events);
         var message = events[0].Properties["Message"].ToString().Trim('"');
@@ -33,26 +32,26 @@ public class SerilogSinkTests
     /// can filter on the log level and source.
     /// </summary>
     [Fact]
-    public void Store_AddsContextProperties()
+    public void StoreAddsContextProperties()
     {
         var events = new List<LogEvent>();
         var logger = new LoggerConfiguration()
-            .WriteTo.Sink(new DelegatingSink(e => events.Add(e)))
+            .WriteTo.Sink(new DelegatingSink(events.Add))
             .CreateLogger();
         var sink = new SerilogSink(logger);
 
         var entry = new ClientLogEntry(DateTime.UnixEpoch, "warn", "hello", null);
-        sink.Store(new[] { entry });
+        sink.Store([entry]);
 
         var log = events[0];
         Assert.Equal("Client", log.Properties["Source"].ToString().Trim('"'));
         Assert.Equal("warn", log.Properties["Level"].ToString().Trim('"'));
     }
 
-    private sealed class DelegatingSink : ILogEventSink
+    private sealed class DelegatingSink(Action<LogEvent> write) : ILogEventSink
     {
-        private readonly Action<LogEvent> _write;
-        public DelegatingSink(Action<LogEvent> write) => _write = write;
-        public void Emit(LogEvent logEvent) => _write(logEvent);
+        private readonly Action<LogEvent> _write = write;
+
+        public void Emit(LogEvent logEvent) => this._write(logEvent);
     }
 }

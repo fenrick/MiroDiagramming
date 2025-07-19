@@ -1,29 +1,25 @@
-using Microsoft.AspNetCore.Mvc;
-using Fenrick.Miro.Server.Domain;
-using Fenrick.Miro.Server.Services;
-
 namespace Fenrick.Miro.Server.Api;
+using Fenrick.Miro.Server.Domain;
+using Microsoft.AspNetCore.Mvc;
 
 /// <summary>
 /// Receives webhook events and queues them for processing.
 /// </summary>
 [ApiController]
 [Route("api/webhook")]
-public class WebhookController : ControllerBase
+public class WebhookController(IEventQueue queue) : ControllerBase
 {
-    private readonly IEventQueue _queue;
-
-    public WebhookController(IEventQueue queue) => _queue = queue;
+    private readonly IEventQueue _queue = queue;
 
     [HttpPost]
     public IActionResult Handle([FromBody] WebhookEvent evt)
     {
-        _queue.Enqueue(evt);
-        return Accepted();
+        this._queue.Enqueue(evt);
+        return this.Accepted();
     }
 }
 
 public interface IEventQueue
 {
-    void Enqueue(WebhookEvent evt);
+    public void Enqueue(WebhookEvent evt);
 }

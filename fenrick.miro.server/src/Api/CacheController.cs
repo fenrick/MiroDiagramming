@@ -1,20 +1,17 @@
-using Microsoft.AspNetCore.Mvc;
+namespace Fenrick.Miro.Server.Api;
 using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
-
-namespace Fenrick.Miro.Server.Api;
+using Microsoft.AspNetCore.Mvc;
 
 /// <summary>
 /// Provides cached board metadata used by the React app.
 /// </summary>
 [ApiController]
 [Route("api/cache")]
-public class CacheController : ControllerBase
+public class CacheController(ICacheService cache) : ControllerBase
 {
-    private readonly ICacheService _cache;
-
-    public CacheController(ICacheService cache) => _cache = cache;
+    private readonly ICacheService _cache = cache;
 
     [HttpGet("{boardId}")]
-    public ActionResult<BoardMetadata?> Get(string boardId) => Ok(_cache.Get(boardId));
+    public ActionResult<BoardMetadata?> Get(string boardId) => this.Ok(this._cache.Get(boardId));
 }

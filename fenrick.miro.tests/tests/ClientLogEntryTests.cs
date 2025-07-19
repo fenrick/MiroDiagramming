@@ -1,15 +1,14 @@
+namespace Fenrick.Miro.Tests;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Fenrick.Miro.Server.Domain;
 using Xunit;
 
-namespace Fenrick.Miro.Tests;
-
 public class ClientLogEntryTests
 {
     [Fact]
-    public void Validation_Fails_WhenMissingRequiredFields()
+    public void ValidationFailsWhenMissingRequiredFields()
     {
         var entry = new ClientLogEntry(DateTime.UtcNow, null!, "msg", null);
         var ctx = new ValidationContext(entry);
@@ -22,7 +21,7 @@ public class ClientLogEntryTests
     }
 
     [Fact]
-    public void Validation_Succeeds_WithAllFields()
+    public void ValidationSucceedsWithAllFields()
     {
         var entry = new ClientLogEntry(DateTime.UtcNow, "info", "msg", null);
         var ctx = new ValidationContext(entry);

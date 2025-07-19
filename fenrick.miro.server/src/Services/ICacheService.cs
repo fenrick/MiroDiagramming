@@ -1,12 +1,11 @@
-using Fenrick.Miro.Server.Domain;
-
 namespace Fenrick.Miro.Server.Services;
+using Fenrick.Miro.Server.Domain;
 
 /// <summary>
 /// Provides board metadata caching for quick lookup.
 /// </summary>
 public interface ICacheService
 {
-    BoardMetadata? Get(string boardId);
-    void Store(BoardMetadata metadata);
+    public BoardMetadata? Get(string boardId);
+    public void Store(BoardMetadata metadata);
 }

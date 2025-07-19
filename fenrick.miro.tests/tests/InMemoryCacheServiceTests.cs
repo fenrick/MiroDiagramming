@@ -1,13 +1,12 @@
+namespace Fenrick.Miro.Tests;
 using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
 using Xunit;
 
-namespace Fenrick.Miro.Tests;
-
 public class InMemoryCacheServiceTests
 {
     [Fact]
-    public void Get_ReturnsValueWhenPresentOtherwiseNull()
+    public void GetReturnsValueWhenPresentOtherwiseNull()
     {
         var service = new InMemoryCacheService();
         Assert.Null(service.Get("1"));
@@ -20,7 +19,7 @@ public class InMemoryCacheServiceTests
     /// Storing the same board twice should override the previous value.
     /// </summary>
     [Fact]
-    public void Store_OverridesExistingMetadata()
+    public void StoreOverridesExistingMetadata()
     {
         var service = new InMemoryCacheService();
         service.Store(new BoardMetadata("1", "Old"));

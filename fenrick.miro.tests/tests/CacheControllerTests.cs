@@ -1,18 +1,16 @@
-using System;
+#nullable enable
+
+namespace Fenrick.Miro.Tests;
 using Fenrick.Miro.Server.Api;
 using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
-#nullable enable
-
-namespace Fenrick.Miro.Tests;
-
 public class CacheControllerTests
 {
     [Fact]
-    public void Get_ReturnsCachedItem()
+    public void GetReturnsCachedItem()
     {
         var service = new StubCache(new BoardMetadata("1", "Board"));
         var controller = new CacheController(service);
@@ -24,11 +22,11 @@ public class CacheControllerTests
         Assert.Equal("1", data.Id);
     }
 
-    private sealed class StubCache : ICacheService
+    private sealed class StubCache(BoardMetadata value) : ICacheService
     {
-        private readonly BoardMetadata _value;
-        public StubCache(BoardMetadata value) => _value = value;
-        public BoardMetadata? Get(string boardId) => _value;
+        private readonly BoardMetadata _value = value;
+
+        public BoardMetadata? Get(string boardId) => this._value;
         public void Store(BoardMetadata metadata) { }
     }
 
@@ -37,7 +35,7 @@ public class CacheControllerTests
     /// a null payload so the client can fetch directly from Miro.
     /// </summary>
     [Fact]
-    public void Get_ReturnsNullWhenNotFound()
+    public void GetReturnsNullWhenNotFound()
     {
         var controller = new CacheController(new NullCache());
 
