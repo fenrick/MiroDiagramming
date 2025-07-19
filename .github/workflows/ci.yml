@@ -121,7 +121,10 @@ jobs:
             --logger "trx;LogFileName=results.trx" \
             /p:CollectCoverage=true \
             /p:CoverletOutputFormat=cobertura \
-            /p:CoverletOutput=coverage/coverage.cobertura.xml
+            /p:CoverletOutput=coverage/coverage.cobertura.xml \
+            /p:Threshold=90 \
+            /p:ThresholdType="line,branch" \
+            /p:ThresholdStat=total
       - name: Upload coverage
         uses: actions/upload-artifact@v4
         with:
@@ -208,6 +211,8 @@ jobs:
         with:
           name: coverage
           path: coverage
+      - name: Check coverage
+        run: node scripts/checkCoverage.mjs coverage/lcov.info
 
   sonar:
     if: always()

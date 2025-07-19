@@ -272,8 +272,7 @@ in both codebases and keep cyclomatic complexity under eight (see
 keys. Run these checks before committing so code conforms to the repository
 guidelines.
 
-CI collects coverage reports but no longer fails the build if they dip below
-90 %. Developers remain responsible for maintaining that target across both
+CI merges coverage from all test shards and fails the build when line or branch coverage falls below 90 % across either codebase
 codebases.
 
 With `package-lock.json` checked in you can run `npm audit` after each install
