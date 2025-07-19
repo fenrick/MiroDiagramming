@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsAspireSharedProject>true</IsAspireSharedProject>
-    <RootNamespace>fenrick.miro.servicedefaults</RootNamespace>
+    <RootNamespace>Fenrick.Miro.ServiceDefaults</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

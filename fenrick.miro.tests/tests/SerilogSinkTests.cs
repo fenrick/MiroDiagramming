@@ -7,7 +7,7 @@ using Serilog.Core;
 using Serilog.Events;
 using Xunit;
 
-namespace fenrick.miro.tests;
+namespace Fenrick.Miro.Tests;
 
 public class SerilogSinkTests
 {

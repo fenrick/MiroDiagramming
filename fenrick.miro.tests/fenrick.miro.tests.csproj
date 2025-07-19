@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <IsPackable>false</IsPackable>
-    <RootNamespace>fenrick.miro.tests</RootNamespace>
+    <RootNamespace>Fenrick.Miro.Tests</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../fenrick.miro.server/fenrick.miro.server.csproj" />

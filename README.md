@@ -246,6 +246,7 @@ install dependencies first:
 
 ```bash
 npm install --prefix fenrick.miro.client
+dotnet restore
 ```
 
 Then validate the codebase with:
@@ -253,18 +254,18 @@ Then validate the codebase with:
 ```bash
 npm --prefix fenrick.miro.client run typecheck --silent
 npm --prefix fenrick.miro.client run test --silent
-dotnet test --no-build
+dotnet test fenrick.miro.tests/fenrick.miro.tests.csproj -v minimal
 npx dotnet-format --verify-no-changes fenrick.miro.server/fenrick.miro.server.csproj
 npm --prefix fenrick.miro.client run lint --silent
 npm --prefix fenrick.miro.client run stylelint --silent
 npm --prefix fenrick.miro.client run prettier --silent
 ```
 
-A Husky pre-commit hook runs these commands automatically. After cloning the
-repository run `npx husky install` once to activate the hooks so every commit is
-validated. These commands perform TypeScript type checking, execute the
-**Vitest** suite and the `.NET` test runner with coverage enabled, run ESLint
-and format files with Prettier. Aim for at least 90 % line and branch coverage
+The Husky hooks live under the repository's `.husky/` folder. After cloning the
+repo run `npx husky install` from the project root to activate them so every
+commit is validated automatically. These commands perform TypeScript type
+checking, run ESLint and format files with Prettier. Execute the Vitest suite and
+`.NET` tests yourself before committing. Aim for at least 90 % line and branch coverage
 in both codebases and keep cyclomatic complexity under eight (see
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)). Sonar rules such as using
 `readonly` class fields, optional chaining, semantic HTML tags and stable React

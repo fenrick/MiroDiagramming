@@ -6,7 +6,7 @@ using Fenrick.Miro.Server.Services;
 using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
-namespace fenrick.miro.tests;
+namespace Fenrick.Miro.Tests;
 
 public class LogsControllerTests
 {

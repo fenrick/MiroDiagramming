@@ -6,7 +6,7 @@ using Xunit;
 
 #nullable enable
 
-namespace fenrick.miro.tests;
+namespace Fenrick.Miro.Tests;
 
 public class WebhookControllerTests
 {

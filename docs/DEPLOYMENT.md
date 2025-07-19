@@ -229,7 +229,7 @@ dotnet publish -c Release -o publish --nologo
 Run the app locally with:
 
 ```bash
-dotnet run --project fenrick.miro.apphost/Fenrick.Miro.AppHost.AppHost
+dotnet run --project fenrick.miro.apphost/fenrick.miro.apphost.csproj
 ```
 
 The front-end build creates `fenrick.miro.client/dist`. During `dotnet publish`
@@ -244,7 +244,7 @@ value decides the bind address while `APPHOST_PORT` overrides the default port.
 
 ```bash
 cd publish
-ASPNETCORE_URLS="http://*:5000" dotnet fenrick.miro.server.dll
+ASPNETCORE_URLS="http://*:5000" dotnet Fenrick.Miro.Server.dll
 ```
 
 ### 12.4 Containerisation and hosting

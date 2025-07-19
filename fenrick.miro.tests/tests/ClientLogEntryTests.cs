@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using Fenrick.Miro.Server.Domain;
 using Xunit;
 
-namespace fenrick.miro.tests;
+namespace Fenrick.Miro.Tests;
 
 public class ClientLogEntryTests
 {

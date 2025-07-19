@@ -26,3 +26,11 @@ npm run commitlint -- --edit $(git rev-parse --verify HEAD)
 
 Our CI also checks commit messages in
 [`\.github/workflows/commitlint.yml`](.github/workflows/commitlint.yml).
+
+## Pre-commit checks
+
+Run the validation commands listed in [AGENTS.md](AGENTS.md) before committing
+any changes. They lint, format and test both the Node and .NET codebases.
+Husky's `pre-commit` hook under `.husky/pre-commit` runs only the lint and
+formatting steps so commits stay quick. Execute the tests manually before
+committing to catch regressions.
