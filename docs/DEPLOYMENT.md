@@ -67,8 +67,7 @@ add-on runs entirely in the browser.
 ### 5.1 Local production build
 
 ```bash
-npm ci
-npm run build        # outputs dist/
+dotnet build fenrick.miro.server/fenrick.miro.server.csproj -c Release
 ```
 
 ### 5.2 First-time deploy to Vercel
@@ -88,7 +87,7 @@ base URL**.
 ### 5.3 Subsequent deploys (CI)
 
 ```bash
-npm run build
+dotnet build fenrick.miro.server/fenrick.miro.server.csproj -c Release
 vercel deploy --prod --confirm
 ```
 
