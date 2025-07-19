@@ -126,7 +126,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: dotnet-coverage
-          path: fenrick.miro.tests/TestResults
+          path: fenrick.miro.tests/coverage
 
   unit-tests:
     runs-on: ubuntu-latest
