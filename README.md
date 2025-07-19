@@ -272,6 +272,10 @@ in both codebases and keep cyclomatic complexity under eight (see
 keys. Run these checks before committing so code conforms to the repository
 guidelines.
 
+CI collects coverage reports but no longer fails the build if they dip below
+90 %. Developers remain responsible for maintaining that target across both
+codebases.
+
 With `package-lock.json` checked in you can run `npm audit` after each install
 to scan dependencies for vulnerabilities. Include the lock file in commits so
 everyone uses the exact dependency versions when installing.

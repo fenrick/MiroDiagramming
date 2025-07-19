@@ -125,8 +125,9 @@ Complexity limits enforced automatically by **SonarQube** gate.
 - Both the Node and .NET code must maintain ≥ 90 % coverage with cyclomatic
   complexity under eight.
 
-- CI checks fail pull requests if complexity, coverage or lint targets fall
-  short.
+- CI checks fail pull requests if complexity or lint targets fall short. Coverage
+  reports are generated but no longer gate merges, so maintain the 90 % target
+  manually.
 - **Conventional Commits** enforced by commit-lint.
 - Every PR must pass all CI gates; manual reviewers are optional.
 - **CodeQL** scan adds static-analysis findings to the check suite for
