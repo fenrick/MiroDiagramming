@@ -273,10 +273,6 @@ jobs:
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
   codeql:
-    if: always()
-    needs:
-      - unit-tests
-      - dotnet-tests
     runs-on: ubuntu-latest
     permissions:
       security-events: write
