@@ -1,4 +1,8 @@
+using Fenrick.Miro.Server.Services;
+using Serilog;
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseSerilog((_, cfg) => cfg.WriteTo.Console());
 
 builder.AddServiceDefaults();
 
@@ -7,6 +11,7 @@ builder.AddServiceDefaults();
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+builder.Services.AddSingleton<ILogSink, SerilogSink>();
 
 var app = builder.Build();
 
@@ -21,7 +26,10 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseAuthorization();
 
