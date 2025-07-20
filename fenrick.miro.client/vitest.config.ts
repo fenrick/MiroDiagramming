@@ -10,7 +10,7 @@ export default defineConfig({
       provider: 'istanbul',
       reporter: [
         'text',
-        ['lcov', { projectRoot: '../../' }],
+        ['lcov', { projectRoot: path.resolve(__dirname, '..') }],
         'json',
         'cobertura',
       ],
