@@ -146,6 +146,7 @@ jobs:
         working-directory: fenrick.miro.client
       - name: Unit tests
         run: npm test -- --shard=${{ matrix.shard }}/2
+        working-directory: fenrick.miro.client
 
   sonar:
     if: always()
@@ -211,7 +212,7 @@ jobs:
             /k:"fenrick_MiroDiagraming" /o:"fenrick" `
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
             /d:sonar.host.url="https://sonarcloud.io" `
-            /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml"
+            /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
 
       - name: Build
         shell: powershell
