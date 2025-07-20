@@ -128,8 +128,6 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        shard: [1, 2]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -145,8 +143,17 @@ jobs:
         run: npm audit --omit=dev --audit-level=moderate
         working-directory: fenrick.miro.client
       - name: Unit tests
-        run: npm test -- --shard=${{ matrix.shard }}/2
+        run: npm test
         working-directory: fenrick.miro.client
+      - name: Debug coverage files
+        run: ls -R coverage
+        working-directory: fenrick.miro.client
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: fenrick.miro.client/coverage
 
   sonar:
     if: always()
@@ -174,6 +181,12 @@ jobs:
           
       - run: corepack enable && npm ci
         working-directory: fenrick.miro.client
+        
+      - name: Download coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage
+          path: coverage
 
       - name: Cache SonarQube Cloud packages
         uses: actions/cache@v4
@@ -212,7 +225,8 @@ jobs:
             /k:"fenrick_MiroDiagraming" /o:"fenrick" `
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
             /d:sonar.host.url="https://sonarcloud.io" `
-            /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
+            /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml `
+            /d:sonar.javascript.lcov.reportPaths="coverage\lcov.info"
 
       - name: Build
         shell: powershell
