@@ -37,10 +37,10 @@ export const DiagramsTab: React.FC = () => {
       <Tabs
         value={sub}
         variant={'tabs'}
-        onChange={(id) => setSub(id)}
+        onChange={id => setSub(id)}
         size='medium'>
         <Tabs.List>
-          {SUB_TABS.map((t) => (
+          {SUB_TABS.map(t => (
             <Tabs.Trigger
               key={t.id}
               value={t.id}>

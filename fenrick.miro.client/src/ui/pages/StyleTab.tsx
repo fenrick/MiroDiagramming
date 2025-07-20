@@ -63,10 +63,10 @@ export const StyleTab: React.FC = () => {
               max='100'
               list='adjust-marks'
               value={adjust}
-              onChange={(e) => setAdjust(Number(e.target.value))}
+              onChange={e => setAdjust(Number(e.target.value))}
             />
             <datalist id='adjust-marks'>
-              {[-100, -50, 0, 50, 100].map((n) => (
+              {[-100, -50, 0, 50, 100].map(n => (
                 <option
                   key={n}
                   value={n}
@@ -98,7 +98,7 @@ export const StyleTab: React.FC = () => {
             min={-100}
             max={100}
             value={String(adjust)}
-            onValueChange={(v) => setAdjust(Number(v))}
+            onValueChange={v => setAdjust(Number(v))}
             placeholder='Adjust (-100–100)'
             data-testid='adjust-input'
           />
@@ -111,7 +111,7 @@ export const StyleTab: React.FC = () => {
             min={-1}
             max={1}
             value={String(opacityDelta)}
-            onValueChange={(v) => setOpacityDelta(Number(v))}
+            onValueChange={v => setOpacityDelta(Number(v))}
             placeholder='Δ opacity (-1–1)'
             data-testid='opacity-input'
           />
@@ -121,7 +121,7 @@ export const StyleTab: React.FC = () => {
             label='Border Δ'
             type='number'
             value={String(borderDelta)}
-            onValueChange={(v) => setBorderDelta(Number(v))}
+            onValueChange={v => setBorderDelta(Number(v))}
             placeholder='Δ width'
             data-testid='border-input'
           />
@@ -161,7 +161,7 @@ export const StyleTab: React.FC = () => {
         </Grid.Item>
         <Grid.Item>
           <div className='buttons'>
-            {STYLE_PRESET_NAMES.map((name) => {
+            {STYLE_PRESET_NAMES.map(name => {
               const preset = stylePresets[name];
               const style = presetStyle(preset);
               return (

@@ -52,7 +52,7 @@ export const HelpTab: React.FC = () => {
       <Heading level={2}>Changelog</Heading>
       <Button
         variant='secondary'
-        onClick={() => setShowLog((v) => !v)}
+        onClick={() => setShowLog(v => !v)}
         data-testid='toggle-changelog'>
         {showLog ? 'Hide' : 'Show'} Changelog
       </Button>

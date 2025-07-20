@@ -29,8 +29,8 @@ export async function searchShapes(
     )) as unknown as Shape[];
     map = new Map<string, BaseItem>();
     shapes
-      .filter((s) => typeof s.content === 'string' && s.content.trim())
-      .forEach((s) => map!.set(s.content, s as BaseItem));
+      .filter(s => typeof s.content === 'string' && s.content.trim())
+      .forEach(s => map!.set(s.content, s as BaseItem));
   }
   const result = map.get(label);
   log.debug({ found: Boolean(result) }, 'Shape search complete');
@@ -59,7 +59,7 @@ export async function searchGroups(
     const items = await group.getItems();
     if (!Array.isArray(items)) continue;
     const found = items.find(
-      (i) =>
+      i =>
         typeof (i as { content?: string }).content === 'string' &&
         (i as { content?: string }).content === label,
     );

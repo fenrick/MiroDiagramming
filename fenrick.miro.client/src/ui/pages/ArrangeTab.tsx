@@ -65,7 +65,7 @@ export const ArrangeTab: React.FC = () => {
             label='Columns'
             type='number'
             value={String(grid.cols)}
-            onValueChange={(v) => updateNumber('cols')(v)}
+            onValueChange={v => updateNumber('cols')(v)}
             placeholder='Columns'
           />
         </Grid.Item>
@@ -74,7 +74,7 @@ export const ArrangeTab: React.FC = () => {
             label='Gap'
             type='number'
             value={String(grid.padding)}
-            onValueChange={(v) => updateNumber('padding')(v)}
+            onValueChange={v => updateNumber('padding')(v)}
             placeholder='Gap'
           />
         </Grid.Item>
@@ -108,7 +108,7 @@ export const ArrangeTab: React.FC = () => {
             <InputField
               label='Frame Title'
               value={frameTitle}
-              onValueChange={(v) => setFrameTitle(v)}
+              onValueChange={v => setFrameTitle(v)}
               placeholder='Optional'
             />
           </Grid.Item>
@@ -145,7 +145,7 @@ export const ArrangeTab: React.FC = () => {
               label='Spacing'
               type='number'
               value={String(spacing.spacing)}
-              onValueChange={(v) => updateSpacing(v)}
+              onValueChange={v => updateSpacing(v)}
               placeholder='Distance'
             />
             <div className='buttons'>

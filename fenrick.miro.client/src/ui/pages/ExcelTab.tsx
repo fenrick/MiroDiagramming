@@ -104,7 +104,7 @@ function useDropHandler(
   setRows: React.Dispatch<React.SetStateAction<ExcelRow[]>>,
   setSelected: React.Dispatch<React.SetStateAction<Set<number>>>,
 ) {
-  return useExcelDrop((files) =>
+  return useExcelDrop(files =>
     handleDrop(files, setLoader, setFile, setSource, setRows, setSelected),
   );
 }
@@ -244,7 +244,7 @@ function useExcelTabHandlers(state: ReturnType<typeof useExcelTabData>) {
   );
 
   const toggle = React.useCallback(
-    (idx: number): void => setSelected((prev) => toggleSelection(prev, idx)),
+    (idx: number): void => setSelected(prev => toggleSelection(prev, idx)),
     [],
   );
 
@@ -353,7 +353,7 @@ function ExcelTabView({
       <InputField
         label='OneDrive/SharePoint file'
         value={remote}
-        onValueChange={(v) => setRemote(v)}
+        onValueChange={v => setRemote(v)}
         aria-label='graph file'
       />
       <Button
@@ -369,14 +369,14 @@ function ExcelTabView({
             onChange={setSource}
             aria-label='Data source'>
             <SelectOption value=''>Select…</SelectOption>
-            {loader.listSheets().map((s) => (
+            {loader.listSheets().map(s => (
               <SelectOption
                 key={`s-${s}`}
                 value={`sheet:${s}`}>
                 Sheet: {s}
               </SelectOption>
             ))}
-            {loader.listNamedTables().map((t) => (
+            {loader.listNamedTables().map(t => (
               <SelectOption
                 key={`t-${t}`}
                 value={`table:${t}`}>
@@ -398,7 +398,7 @@ function ExcelTabView({
             value={template}
             onChange={setTemplate}
             aria-label='Template'>
-            {Object.keys(templateManager.templates).map((tpl) => (
+            {Object.keys(templateManager.templates).map(tpl => (
               <SelectOption
                 key={tpl}
                 value={tpl}>
@@ -412,7 +412,7 @@ function ExcelTabView({
             onChange={setLabelColumn}
             aria-label='Label column'>
             <SelectOption value=''>None</SelectOption>
-            {columns.map((c) => (
+            {columns.map(c => (
               <SelectOption
                 key={`l-${c}`}
                 value={c}>
@@ -426,7 +426,7 @@ function ExcelTabView({
             onChange={setTemplateColumn}
             aria-label='Template column'>
             <SelectOption value=''>None</SelectOption>
-            {columns.map((c) => (
+            {columns.map(c => (
               <SelectOption
                 key={`tcol-${c}`}
                 value={c}>
@@ -440,7 +440,7 @@ function ExcelTabView({
             onChange={setIdColumn}
             aria-label='ID column'>
             <SelectOption value=''>None</SelectOption>
-            {columns.map((c) => (
+            {columns.map(c => (
               <SelectOption
                 key={`i-${c}`}
                 value={c}>

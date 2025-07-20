@@ -26,9 +26,7 @@ describe('prepareForElk', () => {
       ],
     };
     prepareForElk(root, 10, 50);
-    const spacerCount = root.children?.filter(
-      (n) => n.id === 'spacer_r',
-    ).length;
+    const spacerCount = root.children?.filter(n => n.id === 'spacer_r').length;
     expect(spacerCount).toBe(1);
   });
 
@@ -38,7 +36,7 @@ describe('prepareForElk', () => {
       children: [{ id: 'p', children: [{ id: 'c' }] }],
     };
     prepareForElk(root);
-    const parent = root.children?.find((n) => n.id === 'p') as LayoutNode;
+    const parent = root.children?.find(n => n.id === 'p') as LayoutNode;
     expect(parent.layoutOptions?.['elk.algorithm']).toBe(
       'org.eclipse.elk.rectpacking',
     );

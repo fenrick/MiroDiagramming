@@ -7,7 +7,7 @@ describe('buildShapeStyle', () => {
   test('merges existing style with template style', () => {
     jest
       .spyOn(templateManager, 'resolveStyle')
-      .mockImplementation((style) => style);
+      .mockImplementation(style => style);
     const result = buildShapeStyle(
       { borderWidth: 1 },
       { style: { fillColor: '#fff' } },
@@ -19,7 +19,7 @@ describe('buildShapeStyle', () => {
   test('applies fill when fillColor missing', () => {
     jest
       .spyOn(templateManager, 'resolveStyle')
-      .mockImplementation((style) => style);
+      .mockImplementation(style => style);
     const result = buildShapeStyle(undefined, { fill: '#abc', style: {} });
     expect(result.fillColor).toBe('#abc');
   });

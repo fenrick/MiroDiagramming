@@ -71,7 +71,7 @@ export class BoardCache {
     }
     if (missing.length) {
       log.trace({ missing }, 'Fetching uncached widget types');
-      const fetched = await Promise.all(missing.map((t) => b.get({ type: t })));
+      const fetched = await Promise.all(missing.map(t => b.get({ type: t })));
       for (let i = 0; i < missing.length; i += 1) {
         const list = fetched[i];
         this.widgets.set(missing[i], list);

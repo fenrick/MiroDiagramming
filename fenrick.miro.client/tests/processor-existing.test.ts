@@ -128,7 +128,7 @@ describe('GraphProcessor with existing nodes', () => {
       .mockResolvedValue(shape as unknown);
     const spy = jest
       .spyOn(layoutEngine, 'layoutGraph')
-      .mockImplementation(async (g) => {
+      .mockImplementation(async g => {
         expect((g as { nodes: unknown[] }).nodes[0]).toHaveProperty('metadata');
         return {
           nodes: { n1: { x: 0, y: 0, width: 10, height: 10 } },

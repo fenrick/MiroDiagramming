@@ -59,7 +59,7 @@ export class CardLoader {
     ) {
       throw new Error('Invalid card data');
     }
-    return (data as CardFile).cards.map((card) =>
+    return (data as CardFile).cards.map(card =>
       this.normalizeCard(card as unknown as Record<string, unknown>),
     );
   }

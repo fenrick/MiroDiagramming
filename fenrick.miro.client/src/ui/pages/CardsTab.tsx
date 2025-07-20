@@ -70,7 +70,7 @@ export const CardsTab: React.FC = () => {
         <Grid columns={2}>
           <Grid.Item>
             <ul className='custom-dropped-files'>
-              {files.map((file) => (
+              {files.map(file => (
                 <li key={`${file.name}-${file.lastModified}`}>{file.name}</li>
               ))}
             </ul>
@@ -87,7 +87,7 @@ export const CardsTab: React.FC = () => {
                 <InputField
                   label='Frame title'
                   value={frameTitle}
-                  onValueChange={(v) => setFrameTitle(v)}
+                  onValueChange={v => setFrameTitle(v)}
                   placeholder='Frame title'
                 />
               )}

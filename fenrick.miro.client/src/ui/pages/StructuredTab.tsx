@@ -153,7 +153,7 @@ export const StructuredTab: React.FC = () => {
         <Grid columns={2}>
           <Grid.Item>
             <ul className='custom-dropped-files'>
-              {importQueue.map((file) => (
+              {importQueue.map(file => (
                 <li key={`${file.name}-${file.lastModified}`}>{file.name}</li>
               ))}
             </ul>
@@ -166,8 +166,8 @@ export const StructuredTab: React.FC = () => {
               <SelectField
                 label='Layout type'
                 value={layoutChoice}
-                onChange={(v) => setLayoutChoice(v as LayoutChoice)}>
-                {LAYOUTS.map((l) => (
+                onChange={v => setLayoutChoice(v as LayoutChoice)}>
+                {LAYOUTS.map(l => (
                   <SelectOption
                     key={l}
                     value={l}>
@@ -177,7 +177,7 @@ export const StructuredTab: React.FC = () => {
               </SelectField>
               <p className='field-help'>Layout options:</p>
               <ul className='field-help'>
-                {LAYOUTS.map((l) => (
+                {LAYOUTS.map(l => (
                   <li key={`desc-${l}`}>{LAYOUT_DESCRIPTIONS[l]}</li>
                 ))}
               </ul>
@@ -192,14 +192,14 @@ export const StructuredTab: React.FC = () => {
                 <InputField
                   label='Frame title'
                   value={frameTitle}
-                  onValueChange={(v) => setFrameTitle(v)}
+                  onValueChange={v => setFrameTitle(v)}
                   placeholder='Frame title'
                 />
               )}
               <details
                 open={showAdvanced}
                 aria-label='Advanced options'
-                onToggle={(e) =>
+                onToggle={e =>
                   setShowAdvanced((e.target as HTMLDetailsElement).open)
                 }>
                 <summary>Advanced options</summary>
@@ -207,7 +207,7 @@ export const StructuredTab: React.FC = () => {
                   label='Spacing'
                   type='number'
                   value={String(layoutOpts.spacing)}
-                  onValueChange={(v) =>
+                  onValueChange={v =>
                     setLayoutOpts({ ...layoutOpts, spacing: Number(v) })
                   }
                 />
@@ -215,13 +215,13 @@ export const StructuredTab: React.FC = () => {
                   <SelectField
                     label='Aspect ratio'
                     value={layoutOpts.aspectRatio}
-                    onChange={(v) =>
+                    onChange={v =>
                       setLayoutOpts({
                         ...layoutOpts,
                         aspectRatio: v as AspectRatioId,
                       })
                     }>
-                    {ASPECT_RATIOS.map((r) => (
+                    {ASPECT_RATIOS.map(r => (
                       <SelectOption
                         key={r.id}
                         value={r.id}>
@@ -233,7 +233,7 @@ export const StructuredTab: React.FC = () => {
                 <SelectField
                   label='Existing nodes'
                   value={existingMode}
-                  onChange={(v) => setExistingMode(v as ExistingNodeMode)}>
+                  onChange={v => setExistingMode(v as ExistingNodeMode)}>
                   <SelectOption value='move'>Move into place</SelectOption>
                   <SelectOption value='layout'>Use for layout</SelectOption>
                   <SelectOption value='ignore'>Keep position</SelectOption>
@@ -241,13 +241,13 @@ export const StructuredTab: React.FC = () => {
                 <SelectField
                   label='Algorithm'
                   value={layoutOpts.algorithm}
-                  onChange={(v) =>
+                  onChange={v =>
                     setLayoutOpts({
                       ...layoutOpts,
                       algorithm: v as ElkAlgorithm,
                     })
                   }>
-                  {ALGORITHMS.map((a) => (
+                  {ALGORITHMS.map(a => (
                     <SelectOption
                       key={a}
                       value={a}>
@@ -258,13 +258,13 @@ export const StructuredTab: React.FC = () => {
                 <SelectField
                   label='Direction'
                   value={layoutOpts.direction}
-                  onChange={(v) =>
+                  onChange={v =>
                     setLayoutOpts({
                       ...layoutOpts,
                       direction: v as ElkDirection,
                     })
                   }>
-                  {DIRECTIONS.map((d) => (
+                  {DIRECTIONS.map(d => (
                     <SelectOption
                       key={d}
                       value={d}>
@@ -276,13 +276,13 @@ export const StructuredTab: React.FC = () => {
                   <SelectField
                     label='Edge routing'
                     value={layoutOpts.edgeRouting as ElkEdgeRouting}
-                    onChange={(v) =>
+                    onChange={v =>
                       setLayoutOpts({
                         ...layoutOpts,
                         edgeRouting: v as ElkEdgeRouting,
                       })
                     }>
-                    {EDGE_ROUTINGS.map((e) => (
+                    {EDGE_ROUTINGS.map(e => (
                       <SelectOption
                         key={e}
                         value={e}>
@@ -295,13 +295,13 @@ export const StructuredTab: React.FC = () => {
                   <SelectField
                     label='Routing mode'
                     value={layoutOpts.edgeRoutingMode as ElkEdgeRoutingMode}
-                    onChange={(v) =>
+                    onChange={v =>
                       setLayoutOpts({
                         ...layoutOpts,
                         edgeRoutingMode: v as ElkEdgeRoutingMode,
                       })
                     }>
-                    {EDGE_ROUTING_MODES.map((m) => (
+                    {EDGE_ROUTING_MODES.map(m => (
                       <SelectOption
                         key={m}
                         value={m}>
@@ -314,13 +314,13 @@ export const StructuredTab: React.FC = () => {
                   <SelectField
                     label='Optimisation goal'
                     value={layoutOpts.optimizationGoal as ElkOptimizationGoal}
-                    onChange={(v) =>
+                    onChange={v =>
                       setLayoutOpts({
                         ...layoutOpts,
                         optimizationGoal: v as ElkOptimizationGoal,
                       })
                     }>
-                    {OPTIMIZATION_GOALS.map((o) => (
+                    {OPTIMIZATION_GOALS.map(o => (
                       <SelectOption
                         key={o}
                         value={o}>
@@ -334,7 +334,7 @@ export const StructuredTab: React.FC = () => {
                     label='Padding'
                     type='number'
                     value={String(nestedPadding)}
-                    onValueChange={(v) => setNestedPadding(Number(v))}
+                    onValueChange={v => setNestedPadding(Number(v))}
                   />
                 )}
                 {layoutChoice === 'Nested' && (
@@ -342,7 +342,7 @@ export const StructuredTab: React.FC = () => {
                     label='Top spacing'
                     type='number'
                     value={String(nestedTopSpacing)}
-                    onValueChange={(v) => setNestedTopSpacing(Number(v))}
+                    onValueChange={v => setNestedTopSpacing(Number(v))}
                   />
                 )}
               </details>

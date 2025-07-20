@@ -102,7 +102,7 @@ export class HierarchyProcessor extends UndoableProcessor<
       clearActiveFrame(this.builder);
     }
     await this.createWidgets(data, result.nodes, offsetX, offsetY);
-    const syncItems = this.lastCreated.filter((i) => i !== frame);
+    const syncItems = this.lastCreated.filter(i => i !== frame);
     await this.syncOrUndo(syncItems as Array<BaseItem | Group | Connector>);
     const target = frame ?? (this.lastCreated as Array<BaseItem | Group>);
     await this.builder.zoomTo(target);
@@ -160,7 +160,7 @@ export class HierarchyProcessor extends UndoableProcessor<
 
     // Remove children from undo list; they will be represented by the group.
     this.lastCreated = this.lastCreated.filter(
-      (i) => !childWidgets.includes(i as unknown as GroupableItem),
+      i => !childWidgets.includes(i as unknown as GroupableItem),
     );
     const group = await this.builder.groupItems([
       widget as unknown as GroupableItem,

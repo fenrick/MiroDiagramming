@@ -53,7 +53,7 @@ const rootDir = __dirname;
 // make sure vite picks up all html files in rootDir, needed for vite build
 const allHtmlEntries = fs
   .readdirSync(rootDir)
-  .filter((file) => path.extname(file) === '.html')
+  .filter(file => path.extname(file) === '.html')
   .reduce((acc: Record<string, string>, file) => {
     acc[path.basename(file, '.html')] = path.resolve(rootDir, file);
 

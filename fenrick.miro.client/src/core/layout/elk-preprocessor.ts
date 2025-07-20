@@ -63,7 +63,5 @@ export function prepareForElk(
 
   applyAlgorithm(node);
   insertSpacer(node, { topMargin, defaultWidth });
-  node.children.forEach((child) =>
-    prepareForElk(child, topMargin, defaultWidth),
-  );
+  node.children.forEach(child => prepareForElk(child, topMargin, defaultWidth));
 }

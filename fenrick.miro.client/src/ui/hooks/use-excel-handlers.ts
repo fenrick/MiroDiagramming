@@ -92,7 +92,7 @@ export function useExcelCreate({
       };
       const indices = [...selected];
       const chosen = rows.filter((_, i) => selected.has(i));
-      const nodes = mapRowsToNodes(chosen, mapping).map((n) => ({
+      const nodes = mapRowsToNodes(chosen, mapping).map(n => ({
         ...n,
         type: templateColumn ? n.type : template,
       }));

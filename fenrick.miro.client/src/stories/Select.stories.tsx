@@ -10,7 +10,7 @@ export default meta;
 type Story = StoryObj<typeof Select>;
 
 export const Default: Story = {
-  render: (args) => (
+  render: args => (
     <Select {...args}>
       <SelectOption value='one'>One</SelectOption>
       <SelectOption value='two'>Two</SelectOption>

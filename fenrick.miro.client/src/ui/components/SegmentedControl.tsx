@@ -23,7 +23,7 @@ export function SegmentedControl({
   return (
     <fieldset className='custom-segment'>
       <legend className='custom-visually-hidden'>Layout type</legend>
-      {options.map((opt) => (
+      {options.map(opt => (
         <Button
           key={opt.value}
           onClick={() => onChange(opt.value)}

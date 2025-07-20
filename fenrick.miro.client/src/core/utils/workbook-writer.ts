@@ -37,7 +37,7 @@ export async function downloadWorkbook(
   if (rows.length) {
     ws.addRow(Object.keys(rows[0]));
   }
-  rows.forEach((r) => ws.addRow(Object.values(r)));
+  rows.forEach(r => ws.addRow(Object.values(r)));
   const data = await wb.xlsx.writeBuffer();
   const blob = new Blob([data], {
     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',

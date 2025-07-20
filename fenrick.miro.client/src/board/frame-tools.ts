@@ -99,7 +99,7 @@ async function lockItem(item: LockableItem): Promise<void> {
 async function lockFrame(frame: FrameLike): Promise<void> {
   await lockItem(frame);
   const children = (await frame.getChildren?.()) ?? [];
-  await Promise.all(children.map((child) => lockItem(child)));
+  await Promise.all(children.map(child => lockItem(child)));
 }
 
 /**
@@ -112,6 +112,6 @@ export async function lockSelectedFrames(board?: BoardLike): Promise<void> {
   log.info('Locking selected frames');
   const selection = await boardCache.getSelection(b);
   const frames = selection.filter(isFrame);
-  await Promise.all(frames.map((frame) => lockFrame(frame)));
+  await Promise.all(frames.map(frame => lockFrame(frame)));
   log.debug({ count: frames.length }, 'Frames locked');
 }

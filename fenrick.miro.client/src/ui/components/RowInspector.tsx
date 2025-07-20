@@ -32,7 +32,7 @@ export function RowInspector({
   const handleChange =
     (key: string) =>
     (value: string): void =>
-      setEditRow((prev) => {
+      setEditRow(prev => {
         if (!prev) return prev;
         const next = { ...prev, [key]: value };
         onUpdate?.(index >= 0 ? index : 0, next);

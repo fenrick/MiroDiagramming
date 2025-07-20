@@ -168,7 +168,7 @@ export class GraphProcessor extends UndoableProcessor {
   ): GraphData {
     if (mode !== 'layout') return data;
     return {
-      nodes: data.nodes.map((n) => {
+      nodes: data.nodes.map(n => {
         const w = existing[n.id] as { x?: number; y?: number } | undefined;
         return w && typeof w.x === 'number' && typeof w.y === 'number'
           ? { ...n, metadata: { ...(n.metadata ?? {}), x: w.x, y: w.y } }
@@ -301,7 +301,7 @@ export class GraphProcessor extends UndoableProcessor {
       throw new Error('Invalid graph format');
     }
 
-    const nodeIds = new Set(graph.nodes.map((n) => n.id));
+    const nodeIds = new Set(graph.nodes.map(n => n.id));
     for (const edge of graph.edges) {
       if (!nodeIds.has(edge.from)) {
         throw new Error(`Edge references missing node: ${edge.from}`);

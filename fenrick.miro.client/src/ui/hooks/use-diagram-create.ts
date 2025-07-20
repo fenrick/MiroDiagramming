@@ -115,7 +115,7 @@ export function useAdvancedToggle(
     const handler = (e: KeyboardEvent): void => {
       if ((e.metaKey || e.ctrlKey) && e.key === '/') {
         e.preventDefault();
-        setShow((v) => !v);
+        setShow(v => !v);
       }
     };
     window.addEventListener('keydown', handler);

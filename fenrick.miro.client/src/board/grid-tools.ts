@@ -48,7 +48,7 @@ export async function applyGridLayout(
     ? [...selection].sort((a, b) => getName(a).localeCompare(getName(b)))
     : selection;
   items = items.filter(
-    (i) =>
+    i =>
       typeof (i as { width?: number }).width === 'number' &&
       typeof (i as { height?: number }).height === 'number' &&
       typeof (i as { x?: number }).x === 'number' &&

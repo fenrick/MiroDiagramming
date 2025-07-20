@@ -40,7 +40,7 @@ describe('Edit Metadata command', () => {
     fireEvent.click(screen.getByTestId('start-button'));
     await act(async () => {
       fireEvent.keyDown(window, { key: 'm', ctrlKey: true, altKey: true });
-      await new Promise((r) => setTimeout(r, 0));
+      await new Promise(r => setTimeout(r, 0));
     });
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     fireEvent.change(screen.getByDisplayValue('A'), { target: { value: 'B' } });

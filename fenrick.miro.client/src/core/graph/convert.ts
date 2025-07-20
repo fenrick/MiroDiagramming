@@ -8,7 +8,7 @@ import { EdgeData, GraphData, NodeData } from './graph-service';
  * @returns An array of root hierarchy nodes with nested children.
  */
 export function edgesToHierarchy(graph: GraphData): HierNode[] {
-  const nodeMap = new Map(graph.nodes.map((n) => [n.id, n]));
+  const nodeMap = new Map(graph.nodes.map(n => [n.id, n]));
   const children: Record<string, string[]> = {};
   const childSet = new Set<string>();
   for (const edge of graph.edges) {
@@ -28,8 +28,8 @@ export function edgesToHierarchy(graph: GraphData): HierNode[] {
     } as HierNode;
   };
   const roots = graph.nodes
-    .filter((n) => !childSet.has(n.id))
-    .map((n) => build(n.id));
+    .filter(n => !childSet.has(n.id))
+    .map(n => build(n.id));
   return roots;
 }
 

@@ -13,12 +13,10 @@ describe('encodeBase64', () =>
     'hello',
     'https://миру',
     'https://example.com/тест+file/?q=a/b+c',
-  ])('encodes %s', (value) =>
-    expect(encodeBase64(value)).toBe(expected(value)),
-  ));
+  ])('encodes %s', value => expect(encodeBase64(value)).toBe(expected(value))));
 
 describe('decodeBase64', () =>
-  test.each(['hello', 'привет'])('round trip %s', (value) => {
+  test.each(['hello', 'привет'])('round trip %s', value => {
     const encoded = encodeBase64(value);
     expect(decodeBase64(encoded)).toBe(value);
   }));

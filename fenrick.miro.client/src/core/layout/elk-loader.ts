@@ -21,7 +21,7 @@ export async function loadElk(): Promise<typeof ELK> {
   const dynamic = (p: string) => import(/* @vite-ignore */ p);
 
   elkPromise = isNode
-    ? dynamic('elkjs/lib/elk.bundled.js').then((m) => m.default)
+    ? dynamic('elkjs/lib/elk.bundled.js').then(m => m.default)
     : (async () => {
         const url =
           'https://cdn.jsdelivr.net/npm/elkjs@0.10.0/lib/elk.bundled.js';

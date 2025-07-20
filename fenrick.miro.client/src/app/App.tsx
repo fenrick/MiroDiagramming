@@ -25,7 +25,7 @@ function AppShell(): React.JSX.Element {
     const params = new URLSearchParams(window.location.search);
     return params.get('command') === 'edit-metadata';
   });
-  const tabIds = React.useMemo(() => TAB_DATA.map((t) => t[1]), []);
+  const tabIds = React.useMemo(() => TAB_DATA.map(t => t[1]), []);
   React.useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.ctrlKey && e.altKey) {
@@ -41,7 +41,7 @@ function AppShell(): React.JSX.Element {
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
   }, [tabIds]);
-  const current = TAB_DATA.find((t) => t[1] === tab)!;
+  const current = TAB_DATA.find(t => t[1] === tab)!;
   const CurrentComp = current[4];
 
   return (
@@ -59,11 +59,11 @@ function AppShell(): React.JSX.Element {
         }}>
         <Tabs
           value={tab}
-          onChange={(id) => setTab(id as Tab)}
+          onChange={id => setTab(id as Tab)}
           variant={'tabs'}
           size='medium'>
           <Tabs.List>
-            {TAB_DATA.map((t) => (
+            {TAB_DATA.map(t => (
               <Tabs.Trigger
                 key={t[1]}
                 value={t[1]}>

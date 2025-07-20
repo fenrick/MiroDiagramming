@@ -31,7 +31,7 @@ export function useSelection(
       }
       log.trace('Fetching selection due to missing event payload');
       boardCache.clearSelection();
-      boardCache.getSelection(b).then((s) => {
+      boardCache.getSelection(b).then(s => {
         if (active) setSel(s);
       });
     };

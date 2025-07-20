@@ -17,9 +17,9 @@ export async function loadExcelJS(): Promise<typeof ExcelJS> {
   const dynamic = (p: string) => import(/* @vite-ignore */ p);
 
   excelPromise = isNode
-    ? dynamic('exceljs').then((m) => (m.default ?? m) as typeof ExcelJS)
+    ? dynamic('exceljs').then(m => (m.default ?? m) as typeof ExcelJS)
     : dynamic('https://cdn.jsdelivr.net/npm/exceljs@4.4.0/+esm').then(
-        (m) => (m.default ?? m) as typeof ExcelJS,
+        m => (m.default ?? m) as typeof ExcelJS,
       );
 
   return excelPromise;

@@ -50,7 +50,7 @@ export const ToolsTab: React.FC = () => {
         onChange={(id: string) => setSub(id as SubTabId)}
         size='medium'>
         <Tabs.List>
-          {SUB_TABS.map((t) => (
+          {SUB_TABS.map(t => (
             <Tabs.Trigger
               key={t.id}
               value={t.id}>

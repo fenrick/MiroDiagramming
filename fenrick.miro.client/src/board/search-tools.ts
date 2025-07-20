@@ -185,20 +185,20 @@ function buildFilter(
 
   if (opts.widgetTypes) {
     const types = new Set(opts.widgetTypes);
-    checks.push((i) => types.has((i as { type?: string }).type ?? ''));
+    checks.push(i => types.has((i as { type?: string }).type ?? ''));
   }
 
   if (opts.tagIds) {
     const tagsWanted = new Set(opts.tagIds);
-    checks.push((i) => {
+    checks.push(i => {
       const tags = (i as { tagIds?: string[] }).tagIds;
-      return Array.isArray(tags) && tags.some((id) => tagsWanted.has(id));
+      return Array.isArray(tags) && tags.some(id => tagsWanted.has(id));
     });
   }
 
   if (opts.backgroundColor) {
     const colour = opts.backgroundColor.toLowerCase();
-    checks.push((i) => {
+    checks.push(i => {
       const style = (i.style ?? {}) as Record<string, unknown>;
       const fill = (style.fillColor ?? style.backgroundColor) as
         | string
@@ -209,7 +209,7 @@ function buildFilter(
 
   if (opts.assignee) {
     const assigneeId = opts.assignee;
-    checks.push((i) => {
+    checks.push(i => {
       const assignee =
         (i as { assignee?: string; assigneeId?: string }).assignee ??
         (i as { assigneeId?: string }).assigneeId;
@@ -219,16 +219,16 @@ function buildFilter(
 
   if (opts.creator) {
     const creator = opts.creator;
-    checks.push((i) => (i as { createdBy?: string }).createdBy === creator);
+    checks.push(i => (i as { createdBy?: string }).createdBy === creator);
   }
 
   if (opts.lastModifiedBy) {
     const modifier = opts.lastModifiedBy;
     checks.push(
-      (i) => (i as { lastModifiedBy?: string }).lastModifiedBy === modifier,
+      i => (i as { lastModifiedBy?: string }).lastModifiedBy === modifier,
     );
   }
-  return (item: Record<string, unknown>) => checks.every((fn) => fn(item));
+  return (item: Record<string, unknown>) => checks.every(fn => fn(item));
 }
 
 /**

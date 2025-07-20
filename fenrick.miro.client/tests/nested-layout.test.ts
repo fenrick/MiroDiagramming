@@ -127,7 +127,7 @@ describe('layoutHierarchy', () => {
     const arg = spy.mock.calls[0][0] as ElkNode;
     expect(arg.layoutOptions?.['elk.spacing.nodeNode']).toBe('42');
     const parent = (arg.children as ElkNode[]).find(
-      (n) => n.id === 'p',
+      n => n.id === 'p',
     ) as ElkNode;
     expect(parent.children?.[0].id).toBe('spacer_p');
     expect(parent.children?.[0].height).toBe(30);

@@ -70,16 +70,14 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
     this.tagsCache = undefined;
 
     const boardTags = await this.getBoardTags();
-    const tagMap = new Map(boardTags.map((t) => [t.title, t]));
+    const tagMap = new Map(boardTags.map(t => [t.title, t]));
 
     const map = await this.loadCardMap();
 
     const { toCreate, toUpdate } = this.partitionCards(cards, map);
 
     const updated = await Promise.all(
-      toUpdate.map((item) =>
-        this.updateCardWidget(item.card, item.def, tagMap),
-      ),
+      toUpdate.map(item => this.updateCardWidget(item.card, item.def, tagMap)),
     );
 
     let created: Card[] = [];
@@ -339,7 +337,7 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
         ),
       ),
     );
-    cards.forEach((c) => frame?.add(c));
+    cards.forEach(c => frame?.add(c));
     return cards;
   }
 }

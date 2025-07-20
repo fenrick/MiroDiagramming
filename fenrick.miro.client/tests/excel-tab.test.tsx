@@ -29,7 +29,7 @@ vi.mock('../src/ui/components/Select', () => ({
   }) => (
     <select
       value={value}
-      onChange={(e) => onChange?.(e.target.value)}>
+      onChange={e => onChange?.(e.target.value)}>
       {children}
     </select>
   ),

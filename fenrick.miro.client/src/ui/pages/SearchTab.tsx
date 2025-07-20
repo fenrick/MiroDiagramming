@@ -58,14 +58,14 @@ export const SearchTab: React.FC = () => {
   );
 
   const toggleType = (type: string): void =>
-    setWidgetTypes((prev) =>
-      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type],
+    setWidgetTypes(prev =>
+      prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type],
     );
 
   const buildOptions = React.useCallback((): SearchOptions => {
     const tags = tagIds
       .split(',')
-      .map((t) => t.trim())
+      .map(t => t.trim())
       .filter(Boolean);
     const opts: SearchOptions = { query };
     const add = <K extends keyof SearchOptions>(
@@ -134,7 +134,7 @@ export const SearchTab: React.FC = () => {
           <RegexSearchField
             label='Find'
             value={query}
-            onChange={(v) => setQuery(v)}
+            onChange={v => setQuery(v)}
             regex={regex}
             onRegexToggle={setRegex}
             placeholder='Search board text'
@@ -144,7 +144,7 @@ export const SearchTab: React.FC = () => {
           <InputField
             label='Replace'
             value={replacement}
-            onValueChange={(v) => setReplacement(v)}
+            onValueChange={v => setReplacement(v)}
             placeholder='Replacement text'
           />
         </Grid.Item>

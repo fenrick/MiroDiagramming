@@ -43,7 +43,7 @@ export function getNodeDimensions(node: {
   metadata?: { width?: number; height?: number };
 }): { width: number; height: number } {
   const tpl = templateManager.getTemplate(node.type);
-  const dims = tpl?.elements.find((e) => e.width && e.height);
+  const dims = tpl?.elements.find(e => e.width && e.height);
   const width = resolveDimension(
     node.metadata?.width,
     dims?.width,
@@ -126,7 +126,7 @@ function buildElkGraph(data: GraphData, opts: UserLayoutOptions): ElkNode {
   return {
     id: 'root',
     layoutOptions: buildElkGraphOptions(opts),
-    children: data.nodes.map((n) => ({ id: n.id, ...getNodeDimensions(n) })),
+    children: data.nodes.map(n => ({ id: n.id, ...getNodeDimensions(n) })),
     edges: data.edges.map((e, idx) => ({
       id: `e${idx}`,
       sources: [e.from],

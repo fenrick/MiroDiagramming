@@ -148,7 +148,7 @@ export class BoardBuilder {
     );
     const board: import('./board').BoardQueryLike = {
       get: async ({ type: t }) =>
-        selection.filter((i) => (i as { type?: string }).type === t),
+        selection.filter(i => (i as { type?: string }).type === t),
       getSelection: async () => selection,
     };
     const shape = await searchShapes(board, undefined, label);
@@ -219,7 +219,7 @@ export class BoardBuilder {
   public async syncAll(items: Array<BoardItem | Connector>): Promise<void> {
     await this.runBatch(async () => {
       log.trace({ count: items.length }, 'Syncing widgets');
-      await Promise.all(items.map((i) => maybeSync(i)));
+      await Promise.all(items.map(i => maybeSync(i)));
     });
   }
 
@@ -230,7 +230,7 @@ export class BoardBuilder {
     await this.runBatch(async () => {
       this.ensureBoard();
       log.debug({ count: items.length }, 'Removing items');
-      await Promise.all(items.map((item) => miro.board.remove(item)));
+      await Promise.all(items.map(item => miro.board.remove(item)));
     });
   }
 
@@ -314,8 +314,8 @@ export class BoardBuilder {
       )) as unknown as Shape[];
       const map = new Map<string, BaseItem>();
       shapes
-        .filter((s) => typeof s.content === 'string' && s.content.trim())
-        .forEach((s) => map.set(s.content, s as BaseItem));
+        .filter(s => typeof s.content === 'string' && s.content.trim())
+        .forEach(s => map.set(s.content, s as BaseItem));
       this.shapeMap = map;
       log.debug({ count: map.size }, 'Shape cache ready');
     }

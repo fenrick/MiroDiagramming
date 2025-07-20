@@ -19,7 +19,7 @@ describe('spacing-tools', () => {
       getSelection: jest.fn().mockResolvedValue(items),
     };
     await applySpacingLayout({ axis: 'x', spacing: 5 }, board);
-    expect(items.map((i) => i.x)).toEqual([0, 20, 40]);
+    expect(items.map(i => i.x)).toEqual([0, 20, 40]);
     expect(items[0].sync).toHaveBeenCalled();
   });
 
@@ -33,8 +33,8 @@ describe('spacing-tools', () => {
       getSelection: jest.fn().mockResolvedValue(items),
     };
     await applySpacingLayout({ axis: 'x', spacing: 5, mode: 'grow' }, board);
-    expect(items.map((i) => i.width)).toEqual([20, 20, 20]);
-    expect(items.map((i) => i.x)).toEqual([5, 30, 55]);
+    expect(items.map(i => i.width)).toEqual([20, 20, 20]);
+    expect(items.map(i => i.x)).toEqual([5, 30, 55]);
   });
 
   test('applySpacingLayout grows widgets vertically', async () => {
@@ -46,8 +46,8 @@ describe('spacing-tools', () => {
       getSelection: jest.fn().mockResolvedValue(items),
     };
     await applySpacingLayout({ axis: 'y', spacing: 5, mode: 'grow' }, board);
-    expect(items.map((i) => i.height)).toEqual([20, 20]);
-    expect(items.map((i) => i.y)).toEqual([5, 30]);
+    expect(items.map(i => i.height)).toEqual([20, 20]);
+    expect(items.map(i => i.y)).toEqual([5, 30]);
   });
 
   test('applySpacingLayout handles frames', async () => {
@@ -59,7 +59,7 @@ describe('spacing-tools', () => {
       getSelection: jest.fn().mockResolvedValue(items),
     };
     await applySpacingLayout({ axis: 'x', spacing: 5 }, board);
-    expect(items.map((i) => i.x)).toEqual([0, 25]);
+    expect(items.map(i => i.x)).toEqual([0, 25]);
   });
 
   test('applySpacingLayout skips unsupported items', async () => {
@@ -81,7 +81,7 @@ describe('spacing-tools', () => {
       getSelection: jest.fn().mockResolvedValue(items),
     };
     await applySpacingLayout({ axis: 'y', spacing: 3 }, board);
-    expect(items.map((i) => i.y)).toEqual([0, 18]);
+    expect(items.map(i => i.y)).toEqual([0, 18]);
     expect(items[1].sync).toHaveBeenCalled();
   });
 

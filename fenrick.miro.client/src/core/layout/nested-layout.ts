@@ -79,7 +79,7 @@ export class NestedLayouter {
         'elk.algorithm': 'org.eclipse.elk.rectpacking',
         'elk.spacing.nodeNode': String(padding),
       },
-      children: roots.map((r) => this.buildElkNode(r, opts.sortKey, padding)),
+      children: roots.map(r => this.buildElkNode(r, opts.sortKey, padding)),
     };
     prepareForElk(elkRoot, topSpacing, LEAF_WIDTH);
     const Elk = await loadElk();
@@ -115,7 +115,7 @@ export class NestedLayouter {
     const sorted = [...children].sort((a, b) =>
       this.sortValue(a, sortKey).localeCompare(this.sortValue(b, sortKey)),
     );
-    elk.children = sorted.map((c) => this.buildElkNode(c, sortKey, padding));
+    elk.children = sorted.map(c => this.buildElkNode(c, sortKey, padding));
     elk.layoutOptions = {
       'elk.algorithm': 'org.eclipse.elk.rectpacking',
       'elk.spacing.nodeNode': String(padding),

@@ -93,10 +93,10 @@ export function Modal({
         aria-label='Close modal'
         data-testid='modal-backdrop'
         className='custom-modal-backdrop'
-        onClick={(e) => {
+        onClick={e => {
           if (e.target === e.currentTarget) onClose();
         }}
-        onKeyDown={(e) => {
+        onKeyDown={e => {
           if (
             e.target === e.currentTarget &&
             (e.key === 'Enter' || e.key === ' ')

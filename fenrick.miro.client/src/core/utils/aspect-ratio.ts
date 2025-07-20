@@ -41,7 +41,7 @@ export const ASPECT_RATIOS: AspectRatioPreset[] = [
 
 /** List of identifiers for validation. */
 export const ASPECT_RATIO_IDS = ASPECT_RATIOS.map(
-  (r) => r.id,
+  r => r.id,
 ) as readonly AspectRatioId[];
 
 /**
@@ -51,7 +51,7 @@ export const ASPECT_RATIO_IDS = ASPECT_RATIOS.map(
  * @returns Width divided by height as a number.
  */
 export function aspectRatioValue(id: AspectRatioId): number {
-  const preset = ASPECT_RATIOS.find((p) => p.id === id);
+  const preset = ASPECT_RATIOS.find(p => p.id === id);
   if (!preset) throw new Error(`Unknown aspect ratio: ${id}`);
   return preset.ratio;
 }

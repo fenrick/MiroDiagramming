@@ -4,6 +4,6 @@ import { log } from './logger';
 log.info('Starting application');
 DiagramApp.getInstance()
   .init()
-  .catch((err) => log.error(err));
+  .catch(err => log.error(err));
 
 export {};

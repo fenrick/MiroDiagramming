@@ -38,12 +38,12 @@ export class ExcelLoader {
 
   /** List worksheet names from the current workbook. */
   public listSheets(): string[] {
-    return this.workbook ? this.workbook.worksheets.map((ws) => ws.name) : [];
+    return this.workbook ? this.workbook.worksheets.map(ws => ws.name) : [];
   }
 
   /** List named table ranges from the current workbook. */
   public listNamedTables(): string[] {
-    return this.workbook?.definedNames.model.map((n) => n.name) ?? [];
+    return this.workbook?.definedNames.model.map(n => n.name) ?? [];
   }
 
   /**

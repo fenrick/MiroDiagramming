@@ -80,7 +80,7 @@ describe('data mapper', () => {
 
   test('mapRowsWith delegates mapping logic', () => {
     const rows = [{ id: '1' }, { id: '2' }];
-    const ids = mapRowsWith(rows, {}, (r) => r.id as string);
+    const ids = mapRowsWith(rows, {}, r => r.id as string);
     expect(ids).toEqual(['1', '2']);
   });
 });

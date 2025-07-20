@@ -53,7 +53,7 @@ function findRow(
   label: string,
 ): ExcelRow | null {
   if (idColumn) {
-    return rows.find((r) => String(r[idColumn]) === label) ?? null;
+    return rows.find(r => String(r[idColumn]) === label) ?? null;
   }
   const idx = Number(label);
   return Number.isFinite(idx) ? (rows[idx] ?? null) : null;

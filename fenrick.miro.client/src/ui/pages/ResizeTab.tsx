@@ -104,7 +104,7 @@ export const ResizeTab: React.FC = () => {
 
   React.useEffect(() => {
     if (ratio === 'none') return;
-    setSize((prev) => {
+    setSize(prev => {
       const h = ratioHeight(prev.width, aspectRatioValue(ratio));
       return prev.height === h ? prev : { ...prev, height: h };
     });
@@ -148,7 +148,7 @@ export const ResizeTab: React.FC = () => {
             label='Width:'
             type='number'
             value={String(size.width)}
-            onValueChange={(v) => update('width')(v)}
+            onValueChange={v => update('width')(v)}
             placeholder='Width (board units)'
           />
         </Grid.Item>
@@ -159,7 +159,7 @@ export const ResizeTab: React.FC = () => {
             label='Height:'
             type='number'
             value={String(size.height)}
-            onValueChange={(v) => update('height')(v)}
+            onValueChange={v => update('height')(v)}
             placeholder='Height (board units)'
           />
         </Grid.Item>
@@ -169,10 +169,10 @@ export const ResizeTab: React.FC = () => {
           <SelectField
             label='Aspect Ratio'
             value={ratio}
-            onChange={(v) => setRatio(v as AspectRatioId | 'none')}
+            onChange={v => setRatio(v as AspectRatioId | 'none')}
             data-testid='ratio-select'>
             <SelectOption value='none'>Free</SelectOption>
-            {ASPECT_RATIOS.map((r) => (
+            {ASPECT_RATIOS.map(r => (
               <SelectOption
                 key={r.id}
                 value={r.id}>
@@ -186,7 +186,7 @@ export const ResizeTab: React.FC = () => {
       <Grid columns={1}>
         <Grid.Item>
           <div>
-            {(['S', 'M', 'L'] as const).map((p) => (
+            {(['S', 'M', 'L'] as const).map(p => (
               <Button
                 key={p}
                 onClick={() => setSize(PRESET_SIZES[p])}
@@ -195,7 +195,7 @@ export const ResizeTab: React.FC = () => {
               </Button>
             ))}
             <br />
-            {SCALE_OPTIONS.map((s) => (
+            {SCALE_OPTIONS.map(s => (
               <Button
                 key={s.label}
                 onClick={() => scale(s.factor)}

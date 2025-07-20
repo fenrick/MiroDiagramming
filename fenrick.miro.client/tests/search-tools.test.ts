@@ -69,7 +69,7 @@ const makeBoard = () => {
   const board: BoardQueryLike = {
     getSelection: jest.fn().mockResolvedValue(items.slice(0, 2)),
     get: jest.fn(async ({ type }) =>
-      type === 'widget' ? items : items.filter((i) => i.type === type),
+      type === 'widget' ? items : items.filter(i => i.type === type),
     ),
   } as unknown as BoardQueryLike;
   return { board, items };
@@ -79,7 +79,7 @@ describe('search-tools', () => {
   test('search across item types', async () => {
     const { board, items } = makeBoard();
     const res = await searchBoardContent({ query: 'hello' }, board);
-    expect(res.map((r) => r.item)).toEqual(
+    expect(res.map(r => r.item)).toEqual(
       expect.arrayContaining([items[0], items[1], items[4], items[5]]),
     );
   });
@@ -106,7 +106,7 @@ describe('search-tools', () => {
       { query: 'hello', backgroundColor: '#fff' },
       board,
     );
-    expect(byColour.map((r) => r.item)).toEqual(
+    expect(byColour.map(r => r.item)).toEqual(
       expect.arrayContaining([items[0], items[4]]),
     );
     const byAssignee = await searchBoardContent(
@@ -129,7 +129,7 @@ describe('search-tools', () => {
       { query: 'hello', lastModifiedBy: 'm1' },
       board,
     );
-    expect(byModifier.map((r) => r.item)).toEqual(
+    expect(byModifier.map(r => r.item)).toEqual(
       expect.arrayContaining([items[0], items[5]]),
     );
   });
@@ -140,14 +140,14 @@ describe('search-tools', () => {
       { query: 'h.llo', regex: true, widgetTypes: ['shape'] },
       board,
     );
-    expect(regex.map((r) => r.item)).toEqual(
+    expect(regex.map(r => r.item)).toEqual(
       expect.arrayContaining([items[0], items[3], items[5]]),
     );
     const whole = await searchBoardContent(
       { query: 'hello', wholeWord: true, widgetTypes: ['shape'] },
       board,
     );
-    expect(whole.map((r) => r.item)).not.toContain(items[5]);
+    expect(whole.map(r => r.item)).not.toContain(items[5]);
   });
 
   test('case sensitivity and selection only', async () => {
@@ -165,7 +165,7 @@ describe('search-tools', () => {
     );
     expect(board.getSelection).toHaveBeenCalled();
     expect(board.get).not.toHaveBeenCalled();
-    expect(sel.map((r) => r.item)).toEqual(
+    expect(sel.map(r => r.item)).toEqual(
       expect.arrayContaining([items[0], items[1]]),
     );
   });
@@ -189,7 +189,7 @@ describe('search-tools', () => {
     const count = await replaceBoardContent(
       { query: 'hello', replacement: 'hi' },
       board,
-      (i) => seen.push(i),
+      i => seen.push(i),
     );
     expect(count).toBe(4);
     expect(seen).toEqual(

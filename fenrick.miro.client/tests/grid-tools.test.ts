@@ -126,7 +126,7 @@ describe('grid-tools', () => {
       { cols: 2, padding: 5, sortByName: true, sortOrientation: 'vertical' },
       board,
     );
-    const byTitle = Object.fromEntries(items.map((i) => [i.title, i]));
+    const byTitle = Object.fromEntries(items.map(i => [i.title, i]));
     expect(byTitle.a.x).toBe(0);
     expect(byTitle.b.y).toBe(15);
     expect(byTitle.c.x).toBe(15);

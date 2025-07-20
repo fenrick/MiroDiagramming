@@ -14,7 +14,7 @@ vi.mock('@mirohq/design-system', async () => {
     onChange?: (v: string) => void;
   }) => (
     <div>
-      {React.Children.map(children, (child) =>
+      {React.Children.map(children, child =>
         React.cloneElement(child as React.ReactElement, { onChange }),
       )}
     </div>
@@ -27,7 +27,7 @@ vi.mock('@mirohq/design-system', async () => {
     onChange?: (v: string) => void;
   }) => (
     <div role='tablist'>
-      {React.Children.map(children, (child) =>
+      {React.Children.map(children, child =>
         React.cloneElement(child as React.ReactElement, { onChange }),
       )}
     </div>

@@ -41,7 +41,7 @@ describe('graph conversion helpers', () => {
       },
     ];
     const graph = hierarchyToEdges(roots);
-    expect(graph.nodes.map((n) => n.id)).toEqual(['p', 'c']);
+    expect(graph.nodes.map(n => n.id)).toEqual(['p', 'c']);
     expect(graph.edges).toEqual([{ from: 'p', to: 'c' }]);
   });
 });

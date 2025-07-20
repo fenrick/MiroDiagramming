@@ -33,7 +33,7 @@ export const FramesTab: React.FC = () => {
           <InputField
             label='Prefix'
             value={prefix}
-            onValueChange={(v) => setPrefix(v)}
+            onValueChange={v => setPrefix(v)}
             placeholder='Prefix'
           />
         </Grid.Item>
