@@ -8,7 +8,12 @@ export default defineConfig({
   test: {
     coverage: {
       provider: 'istanbul',
-      reporter: ['text', ['lcov', { projectRoot: '../../' }], 'json', 'cobertura'],
+      reporter: [
+        'text',
+        ['lcov', { projectRoot: '../../' }],
+        'json',
+        'cobertura',
+      ],
       reportsDirectory: 'coverage',
       exclude: [
         'commitlint.config.cjs',
