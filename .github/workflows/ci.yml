@@ -207,6 +207,10 @@ jobs:
           path: fenrick.miro.client
           pattern: coverage
 
+      - name: Debug coverage
+        shell: powershell
+        run: dir fenrick.miro.client/coverage
+
       - name: Cache SonarQube Cloud packages
         uses: actions/cache@v4
         with:
