@@ -204,7 +204,7 @@ jobs:
       - name: Download coverage from GitHub Actions Artifacts
         uses: actions/download-artifact@v4
         with:
-          path: fenrick.miro.client/coverage
+          path: fenrick.miro.client
           pattern: coverage
 
       - name: Cache SonarQube Cloud packages
