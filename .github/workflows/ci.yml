@@ -152,6 +152,7 @@ jobs:
         
       - name: Unit tests
         run: npm run test-shard -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        working-directory: fenrick.miro.client
         
       - name: Upload blob report to GitHub Actions Artifacts
         if: ${{ !cancelled() }}
@@ -159,6 +160,7 @@ jobs:
         with:
           name: blob-report-${{ matrix.shardIndex }}
           path: .vitest-reports/*
+          working-directory: fenrick.miro.client
           include-hidden-files: true
           retention-days: 1
 
