@@ -1,8 +1,9 @@
 namespace Fenrick.Miro.Tests;
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Fenrick.Miro.Server.Domain;
+using Server.Domain;
 using Xunit;
 
 public class ClientLogEntryTests

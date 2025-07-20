@@ -3,10 +3,9 @@ import fs from 'fs';
 import dns from 'dns';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import plugin from '@vitejs/plugin-react';
 
 import { fileURLToPath, URL } from 'node:url';
-
-import plugin from '@vitejs/plugin-react';
 import child_process from 'child_process';
 import { env } from 'process';
 

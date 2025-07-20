@@ -1,10 +1,11 @@
 #nullable enable
 
 namespace Fenrick.Miro.Tests;
-using Fenrick.Miro.Server.Api;
-using Fenrick.Miro.Server.Domain;
-using Fenrick.Miro.Server.Services;
+
 using Microsoft.AspNetCore.Mvc;
+using Server.Api;
+using Server.Domain;
+using Server.Services;
 using Xunit;
 
 public class CacheControllerTests
@@ -22,17 +23,9 @@ public class CacheControllerTests
         Assert.Equal("1", data.Id);
     }
 
-    private sealed class StubCache(BoardMetadata value) : ICacheService
-    {
-        private readonly BoardMetadata _value = value;
-
-        public BoardMetadata? Get(string boardId) => this._value;
-        public void Store(BoardMetadata metadata) { }
-    }
-
     /// <summary>
-    /// When the cache misses, the controller should return an OK result with
-    /// a null payload so the client can fetch directly from Miro.
+    ///     When the cache misses, the controller should return an OK result with
+    ///     a null payload so the client can fetch directly from Miro.
     /// </summary>
     [Fact]
     public void GetReturnsNullWhenNotFound()
@@ -42,6 +35,14 @@ public class CacheControllerTests
         var result = controller.Get("missing");
         var ok = Assert.IsType<OkObjectResult>(result.Result);
         Assert.Null(ok.Value);
+    }
+
+    private sealed class StubCache(BoardMetadata value) : ICacheService
+    {
+        private readonly BoardMetadata _value = value;
+
+        public BoardMetadata? Get(string boardId) => this._value;
+        public void Store(BoardMetadata metadata) { }
     }
 
     private sealed class NullCache : ICacheService

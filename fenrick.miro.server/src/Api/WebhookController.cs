@@ -1,9 +1,10 @@
 namespace Fenrick.Miro.Server.Api;
-using Fenrick.Miro.Server.Domain;
+
+using Domain;
 using Microsoft.AspNetCore.Mvc;
 
 /// <summary>
-/// Receives webhook events and queues them for processing.
+///     Receives webhook events and queues them for processing.
 /// </summary>
 [ApiController]
 [Route("api/webhook")]

@@ -1,10 +1,11 @@
 namespace Fenrick.Miro.Tests;
+
 using System;
 using System.Collections.Generic;
-using Fenrick.Miro.Server.Api;
-using Fenrick.Miro.Server.Domain;
-using Fenrick.Miro.Server.Services;
 using Microsoft.AspNetCore.Mvc;
+using Server.Api;
+using Server.Domain;
+using Server.Services;
 using Xunit;
 
 public class LogsControllerTests

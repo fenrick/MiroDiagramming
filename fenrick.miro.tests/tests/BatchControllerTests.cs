@@ -1,12 +1,13 @@
 #nullable enable
 
 namespace Fenrick.Miro.Tests;
+
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Fenrick.Miro.Server.Api;
-using Fenrick.Miro.Server.Domain;
 using Microsoft.AspNetCore.Mvc;
+using Server.Api;
+using Server.Domain;
 using Xunit;
 
 public class BatchControllerTests
@@ -14,11 +15,7 @@ public class BatchControllerTests
     [Fact]
     public async Task ForwardAsyncReturnsOrderedResponses()
     {
-        var requests = new[]
-        {
-            new MiroRequest("GET", "/boards/1", null),
-            new MiroRequest("GET", "/boards/2", null)
-        };
+        var requests = new[] { new MiroRequest("GET", "/boards/1", null), new MiroRequest("GET", "/boards/2", null) };
         var responses = new Queue<MiroResponse>(
         [
             new MiroResponse(200, "1"),
@@ -34,15 +31,8 @@ public class BatchControllerTests
         Assert.Equal("2", data[1].Body);
     }
 
-    private sealed class StubClient(Func<MiroRequest, Task<MiroResponse>> cb) : IMiroClient
-    {
-        private readonly Func<MiroRequest, Task<MiroResponse>> _cb = cb;
-
-        public Task<MiroResponse> SendAsync(MiroRequest request) => this._cb(request);
-    }
-
     /// <summary>
-    /// An empty batch should still produce an OK result with an empty array.
+    ///     An empty batch should still produce an OK result with an empty array.
     /// </summary>
     [Fact]
     public async Task ForwardAsyncWithNoRequestsReturnsEmptyList()
@@ -53,5 +43,12 @@ public class BatchControllerTests
 
         var data = Assert.IsType<List<MiroResponse>>(result!.Value);
         Assert.Empty(data);
+    }
+
+    private sealed class StubClient(Func<MiroRequest, Task<MiroResponse>> cb) : IMiroClient
+    {
+        private readonly Func<MiroRequest, Task<MiroResponse>> _cb = cb;
+
+        public Task<MiroResponse> SendAsync(MiroRequest request) => this._cb(request);
     }
 }

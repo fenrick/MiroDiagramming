@@ -1,9 +1,10 @@
 namespace Fenrick.Miro.Server.Services;
-using Fenrick.Miro.Server.Domain;
+
+using Domain;
 using ILogger = Serilog.ILogger;
 
 /// <summary>
-/// Writes client logs to the server log via Serilog.
+///     Writes client logs to the server log via Serilog.
 /// </summary>
 public class SerilogSink(ILogger logger) : ILogSink
 {
@@ -17,7 +18,7 @@ public class SerilogSink(ILogger logger) : ILogSink
             this._logger
                 .ForContext("Source", "Client")
                 .ForContext("Level", e.Level)
-                .ForContext("Context", e.Context, destructureObjects: true)
+                .ForContext("Context", e.Context, true)
                 .Information("{Message}", e.Message);
         }
     }

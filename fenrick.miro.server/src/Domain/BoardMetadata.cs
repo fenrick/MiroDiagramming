@@ -1,6 +1,6 @@
 namespace Fenrick.Miro.Server.Domain;
 
 /// <summary>
-/// Basic information about a Miro board used by caching.
+///     Basic information about a Miro board used by caching.
 /// </summary>
 public record BoardMetadata(string Id, string Name);

@@ -1,11 +1,12 @@
 namespace Fenrick.Miro.Tests;
+
 using System;
 using System.Collections.Generic;
-using Fenrick.Miro.Server.Domain;
-using Fenrick.Miro.Server.Services;
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
+using Server.Domain;
+using Server.Services;
 using Xunit;
 
 public class SerilogSinkTests
@@ -28,8 +29,8 @@ public class SerilogSinkTests
     }
 
     /// <summary>
-    /// The sink should enrich log events with custom properties so the server
-    /// can filter on the log level and source.
+    ///     The sink should enrich log events with custom properties so the server
+    ///     can filter on the log level and source.
     /// </summary>
     [Fact]
     public void StoreAddsContextProperties()

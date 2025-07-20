@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <Sdk Name="Aspire.AppHost.Sdk" Version="9.3.1" />
+  <Sdk Name="Aspire.AppHost.Sdk" Version="9.3.1"/>
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -12,11 +12,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.AppHost" Version="9.3.1" />
+    <PackageReference Include="Aspire.Hosting.AppHost" Version="9.3.1"/>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../fenrick.miro.server/fenrick.miro.server.csproj" />
+    <ProjectReference Include="../fenrick.miro.server/fenrick.miro.server.csproj"/>
   </ItemGroup>
 
 </Project>

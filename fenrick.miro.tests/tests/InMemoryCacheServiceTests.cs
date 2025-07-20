@@ -1,6 +1,7 @@
 namespace Fenrick.Miro.Tests;
-using Fenrick.Miro.Server.Domain;
-using Fenrick.Miro.Server.Services;
+
+using Server.Domain;
+using Server.Services;
 using Xunit;
 
 public class InMemoryCacheServiceTests
@@ -16,7 +17,7 @@ public class InMemoryCacheServiceTests
     }
 
     /// <summary>
-    /// Storing the same board twice should override the previous value.
+    ///     Storing the same board twice should override the previous value.
     /// </summary>
     [Fact]
     public void StoreOverridesExistingMetadata()
