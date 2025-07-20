@@ -128,32 +128,39 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
+      matrix:
+        shardIndex: [1, 2, 3, 4]
+        shardTotal: [4]
     steps:
       - uses: actions/checkout@v4
+      
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
           cache-dependency-path: fenrick.miro.client/package-lock.json
+          
       - run: corepack enable
         working-directory: fenrick.miro.client
+        
       - run: npm install --frozen-lockfile || npm install
         working-directory: fenrick.miro.client
+        
       - name: Audit dependencies
         run: npm audit --omit=dev --audit-level=moderate
         working-directory: fenrick.miro.client
+        
       - name: Unit tests
-        run: npm test
-        working-directory: fenrick.miro.client
-      - name: Debug coverage files
-        run: ls -R coverage
-        working-directory: fenrick.miro.client
-      - name: Upload coverage
-        if: always()
+        run: npm test-shard -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        
+      - name: Upload blob report to GitHub Actions Artifacts
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
-          name: coverage
-          path: fenrick.miro.client/coverage
+          name: blob-report-${{ matrix.shardIndex }}
+          path: .vitest-reports/*
+          include-hidden-files: true
+          retention-days: 1
 
   sonar:
     if: always()
@@ -182,11 +189,15 @@ jobs:
       - run: corepack enable && npm ci
         working-directory: fenrick.miro.client
         
-      - name: Download coverage
+      - name: Download blob reports from GitHub Actions Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: coverage
-          path: coverage
+          path: .vitest-reports
+          pattern: blob-report-*
+          merge-multiple: true
+          
+      - name: Merge reports
+        run: npm run merge
 
       - name: Cache SonarQube Cloud packages
         uses: actions/cache@v4
