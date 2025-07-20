@@ -24,6 +24,8 @@
     "typecheck": "tsc --noEmit",
     "pretest": "npm install",
     "test": "vitest run --coverage",
+    "test-shard": "vitest run --reporter=blob --coverage",
+    "merge": "vitest run --merge-reports",
     "stylelint": "stylelint 'src/**/*.css'",
     "build-storybook": "storybook build",
     "semantic-release": "semantic-release",
