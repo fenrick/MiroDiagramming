@@ -165,11 +165,11 @@ jobs:
         run: npm run test
         working-directory: fenrick.miro.client
         
-      - name: Upload coversage to GitHub Actions Artifacts
+      - name: Upload coverage to GitHub Actions Artifacts
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
-          name: coversage
+          name: coverage
           path: fenrick.miro.client/coverage/*
           include-hidden-files: true
           retention-days: 1
@@ -201,7 +201,7 @@ jobs:
       - run: corepack enable && npm ci
         working-directory: fenrick.miro.client
 
-      - name: Download coversage from GitHub Actions Artifacts
+      - name: Download coverage from GitHub Actions Artifacts
         uses: actions/download-artifact@v4
         with:
           path: fenrick.miro.client/coverage
