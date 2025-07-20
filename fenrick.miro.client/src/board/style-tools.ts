@@ -2,8 +2,18 @@
  * Colour manipulation utilities for the currently selected widgets.
  */
 import { colors } from '@mirohq/design-tokens';
-import { adjustColor, ensureContrast, resolveColor } from '../core/utils/color-utils';
-import { BoardLike, forEachSelection, getFirstSelection, maybeSync, Syncable } from './board';
+import {
+  adjustColor,
+  ensureContrast,
+  resolveColor,
+} from '../core/utils/color-utils';
+import {
+  BoardLike,
+  forEachSelection,
+  getFirstSelection,
+  maybeSync,
+  Syncable,
+} from './board';
 
 /**
  * Return the first style property present in the provided list.
@@ -30,7 +40,7 @@ function getFillKey(
 ): 'fillColor' | 'backgroundColor' | null {
   const key = findStyleKey(style, ['fillColor', 'backgroundColor']);
   return key && typeof style[key] === 'string'
-    ? key as 'fillColor' | 'backgroundColor'
+    ? (key as 'fillColor' | 'backgroundColor')
     : null;
 }
 
@@ -40,7 +50,7 @@ function getFontKey(
 ): 'color' | 'textColor' | null {
   const key = findStyleKey(style, ['color', 'textColor']);
   return key && typeof style[key] === 'string'
-    ? key as 'color' | 'textColor'
+    ? (key as 'color' | 'textColor')
     : null;
 }
 
@@ -50,7 +60,7 @@ function getOpacityKey(
 ): 'fillOpacity' | 'opacity' | null {
   const key = findStyleKey(style, ['fillOpacity', 'opacity']);
   return key && typeof style[key] === 'number'
-    ? key as 'fillOpacity' | 'opacity'
+    ? (key as 'fillOpacity' | 'opacity')
     : null;
 }
 
@@ -60,7 +70,7 @@ function getBorderWidthKey(
 ): 'borderWidth' | 'strokeWidth' | 'lineWidth' | null {
   const key = findStyleKey(style, ['borderWidth', 'strokeWidth', 'lineWidth']);
   return key && typeof style[key] === 'number'
-    ? key as 'borderWidth' | 'strokeWidth' | 'lineWidth'
+    ? (key as 'borderWidth' | 'strokeWidth' | 'lineWidth')
     : null;
 }
 

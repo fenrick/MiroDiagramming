@@ -5,13 +5,8 @@
       "title": "Easy peasy lemon squeezy",
       "description": "<p>Go back in time and DO NOT clone a whole pack of T-Rexes.<br>They make for rather rowdy pets.<br>🦖👎</p>",
       "taskStatus": "to-do",
-      "tags": [
-        "design"
-      ],
-      "style": {
-        "cardTheme": "#2d9bf0",
-        "fillBackground": true
-      },
+      "tags": ["design"],
+      "style": { "cardTheme": "#2d9bf0", "fillBackground": true },
       "fields": [
         {
           "value": "Bug fix",
@@ -28,13 +23,8 @@
       "title": "Implement Feature",
       "description": "Add card import support",
       "taskStatus": "to-do",
-      "tags": [
-        "dev"
-      ],
-      "style": {
-        "cardTheme": "#2d9bf0",
-        "fillBackground": true
-      },
+      "tags": ["dev"],
+      "style": { "cardTheme": "#2d9bf0", "fillBackground": true },
       "fields": [
         {
           "value": "Bug fix",

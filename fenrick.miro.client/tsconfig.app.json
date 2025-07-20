@@ -1,19 +1,12 @@
 {
   "compilerOptions": {
     /* Configuration */
-    "typeRoots": [
-      "./node_modules/@types",
-      "./node_modules/@mirohq"
-    ],
+    "typeRoots": ["./node_modules/@types", "./node_modules/@mirohq"],
     "sourceMap": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "target": "ES2022",
     "useDefineForClassFields": true,
-    "lib": [
-      "ES2022",
-      "DOM",
-      "DOM.Iterable"
-    ],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
     /* Bundler mode */
@@ -34,7 +27,5 @@
     "strict": true,
     "strictNullChecks": true
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }
