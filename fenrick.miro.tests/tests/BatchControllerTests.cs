@@ -54,9 +54,9 @@ public class BatchControllerTests
     private sealed class StubClient(Func<MiroRequest, Task<MiroResponse>> cb)
         : IMiroClient
     {
-        private readonly Func<MiroRequest, Task<MiroResponse>> _cb = cb;
+        private readonly Func<MiroRequest, Task<MiroResponse>> callback = cb;
 
         public Task<MiroResponse> SendAsync(MiroRequest request) =>
-            this._cb(request);
+            this.callback(request);
     }
 }

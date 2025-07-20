@@ -30,9 +30,9 @@ public class LogsControllerTests
     private sealed class StubSink(Action<IEnumerable<ClientLogEntry>> cb)
         : ILogSink
     {
-        private readonly Action<IEnumerable<ClientLogEntry>> _cb = cb;
+        private readonly Action<IEnumerable<ClientLogEntry>> callback = cb;
 
         public void Store(IEnumerable<ClientLogEntry> entries) =>
-            this._cb(entries);
+            this.callback(entries);
     }
 }

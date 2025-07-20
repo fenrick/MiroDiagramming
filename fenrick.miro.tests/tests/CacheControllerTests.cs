@@ -39,15 +39,15 @@ public class CacheControllerTests
 
     private sealed class StubCache(BoardMetadata value) : ICacheService
     {
-        private readonly BoardMetadata _value = value;
+        private readonly BoardMetadata board = value;
 
-        public BoardMetadata? Get(string boardId) => this._value;
+        public BoardMetadata? Retrieve(string boardId) => this.board;
         public void Store(BoardMetadata metadata) { }
     }
 
     private sealed class NullCache : ICacheService
     {
-        public BoardMetadata? Get(string boardId) => null;
+        public BoardMetadata? Retrieve(string boardId) => null;
         public void Store(BoardMetadata metadata) { }
     }
 }

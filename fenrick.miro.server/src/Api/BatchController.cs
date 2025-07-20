@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 [Route("api/batch")]
 public class BatchController(IMiroClient client) : ControllerBase
 {
-    private readonly IMiroClient _client = client;
+    private readonly IMiroClient miroClient = client;
 
     [HttpPost]
     public async Task<IActionResult> ForwardAsync(
@@ -19,7 +19,7 @@ public class BatchController(IMiroClient client) : ControllerBase
         var responses = new List<MiroResponse>(requests.Length);
         foreach (var req in requests)
         {
-            var res = await this._client.SendAsync(req);
+            var res = await this.miroClient.SendAsync(req);
             responses.Add(res);
         }
 

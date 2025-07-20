@@ -8,11 +8,11 @@ using Domain;
 /// </summary>
 public class InMemoryCacheService : ICacheService
 {
-    private readonly ConcurrentDictionary<string, BoardMetadata> _cache = new();
+    private readonly ConcurrentDictionary<string, BoardMetadata> cache = new();
 
-    public BoardMetadata? Get(string boardId) =>
-        this._cache.TryGetValue(boardId, out var value) ? value : null;
+    public BoardMetadata? Retrieve(string boardId) =>
+        this.cache.TryGetValue(boardId, out var value) ? value : null;
 
     public void Store(BoardMetadata metadata) =>
-        this._cache[metadata.Id] = metadata;
+        this.cache[metadata.Id] = metadata;
 }

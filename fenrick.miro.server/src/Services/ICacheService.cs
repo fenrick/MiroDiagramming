@@ -7,6 +7,6 @@ using Domain;
 /// </summary>
 public interface ICacheService
 {
-    public BoardMetadata? Get(string boardId);
+    public BoardMetadata? Retrieve(string boardId);
     public void Store(BoardMetadata metadata);
 }

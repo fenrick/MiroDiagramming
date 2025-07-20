@@ -12,12 +12,12 @@ using Services;
 [Route("api/logs")]
 public class LogsController(ILogSink sink) : ControllerBase
 {
-    private readonly ILogSink _sink = sink;
+    private readonly ILogSink logSink = sink;
 
     [HttpPost]
     public IActionResult Capture([FromBody] ClientLogEntry[] entries)
     {
-        this._sink.Store(entries);
+        this.logSink.Store(entries);
         return this.Accepted();
     }
 }
