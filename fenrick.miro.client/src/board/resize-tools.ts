@@ -11,13 +11,7 @@ export interface Size {
   height: number;
 }
 
-import {
-  BoardLike,
-  forEachSelection,
-  getFirstSelection,
-  maybeSync,
-  Syncable,
-} from './board';
+import { BoardLike, forEachSelection, getFirstSelection, maybeSync, Syncable } from './board';
 
 /**
  * Retrieve the width and height of the first selected widget.
@@ -28,7 +22,7 @@ import {
 export async function copySizeFromSelection(
   board?: BoardLike,
 ): Promise<Size | null> {
-  const first = (await getFirstSelection(board)) as
+  const first = await getFirstSelection(board) as
     | { width?: number; height?: number }
     | undefined;
   if (
@@ -79,8 +73,12 @@ export async function scaleSelection(
 ): Promise<void> {
   await forEachSelection(async (item: Record<string, unknown>) => {
     const target = item as { width?: number; height?: number } & Syncable;
-    if (typeof target.width === 'number') target.width *= factor;
-    if (typeof target.height === 'number') target.height *= factor;
+    if (typeof target.width === 'number') {
+      target.width *= factor;
+    }
+    if (typeof target.height === 'number') {
+      target.height *= factor;
+    }
     await maybeSync(target);
   }, board);
 }

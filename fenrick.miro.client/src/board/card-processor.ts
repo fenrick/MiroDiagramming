@@ -96,7 +96,9 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
     await this.syncOrUndo([...created, ...updated]);
 
     this.registerCreated(created);
-    if (frame) this.registerCreated(frame);
+    if (frame) {
+      this.registerCreated(frame);
+    }
 
     const target: Frame | Card[] = frame ?? [...created, ...updated];
     if (created.length || updated.length) {
@@ -131,7 +133,9 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
       this.cardMap = new Map();
       for (const c of cards) {
         const id = this.extractId(c.description);
-        if (id) this.cardMap.set(id, c);
+        if (id) {
+          this.cardMap.set(id, c);
+        }
       }
     }
     return this.cardMap;
@@ -179,7 +183,9 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
         tagMap.set(name, tag);
         this.tagsCache?.push(tag);
       }
-      if (tag.id) ids.push(tag.id);
+      if (tag.id) {
+        ids.push(tag.id);
+      }
     }
     return ids;
   }
@@ -200,7 +206,9 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
       x,
       y,
     };
-    if (def.fields) createOpts.fields = def.fields;
+    if (def.fields) {
+      createOpts.fields = def.fields;
+    }
     const card = await miro.board.createCard(createOpts);
     this.registerCreated(card);
     return card;
@@ -216,9 +224,13 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
     card.title = def.title;
     card.description = this.encodeDescription(def.description, def.id);
     card.tagIds = tagIds;
-    if (def.fields) card.fields = def.fields;
+    if (def.fields) {
+      card.fields = def.fields;
+    }
     card.style = def.style as CardStyle;
-    if (def.taskStatus) card.taskStatus = def.taskStatus;
+    if (def.taskStatus) {
+      card.taskStatus = def.taskStatus;
+    }
     return card;
   }
 
@@ -284,7 +296,9 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
   /** Embed the identifier inside the description. */
   private encodeDescription(desc: string | undefined, id?: string): string {
     const base = (desc ?? '').replace(CardProcessor.ID_REMOVE_REGEX, '');
-    if (!id) return base.trim();
+    if (!id) {
+      return base.trim();
+    }
     const trimmed = base.trimEnd();
     return `${trimmed}${trimmed ? '\n' : ''}${CardProcessor.ID_PREFIX}${id}`;
   }

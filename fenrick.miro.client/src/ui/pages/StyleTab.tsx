@@ -45,7 +45,9 @@ export const StyleTab: React.FC = () => {
   );
   const copyFill = React.useCallback(async (): Promise<void> => {
     const colour = await copyFillFromSelection();
-    if (colour) setBaseColor(colour);
+    if (colour) {
+      setBaseColor(colour);
+    }
   }, []);
   const sliderId = React.useId();
   return (

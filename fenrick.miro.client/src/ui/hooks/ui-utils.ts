@@ -21,7 +21,9 @@ export async function undoLastImport(
   proc: GraphProcessor | HierarchyProcessor | CardProcessor | undefined,
   clear: () => void,
 ): Promise<void> {
-  if (!proc) return;
+  if (!proc) {
+    return;
+  }
   await proc.undoLast();
   clear();
 }

@@ -55,10 +55,14 @@ export class ExcelSyncService {
     const nodes = mapRowsToNodes(rows, mapping);
     for (const def of nodes) {
       const rowId = def.metadata?.rowId;
-      if (!rowId) continue;
+      if (!rowId) {
+        continue;
+      }
       const idStr = toSafeString(rowId);
       const widget = await this.findWidget(idStr, def.label);
-      if (!widget) continue;
+      if (!widget) {
+        continue;
+      }
       await this.applyTemplate(widget, def.label, def.type);
       this.registerMapping(idStr, widget.id ?? '');
     }
@@ -147,14 +151,18 @@ export class ExcelSyncService {
     if (byId) {
       try {
         const item = (await miro.board.getById(byId)) as BaseItem | Group;
-        if (item) return item;
+        if (item) {
+          return item;
+        }
       } catch {
         // ignore stale mapping
       }
     }
     const board = miro.board as unknown as BoardQueryLike;
     const shape = await searchShapes(board, undefined, label);
-    if (shape) return shape;
+    if (shape) {
+      return shape;
+    }
     return searchGroups(board, '', label);
   }
 
@@ -168,7 +176,9 @@ export class ExcelSyncService {
     templateName: string,
   ): Promise<void> {
     const template = templateManager.getTemplate(templateName);
-    if (!template) return;
+    if (!template) {
+      return;
+    }
     const items =
       widget.type === 'group'
         ? await (widget as unknown as Group).getItems()

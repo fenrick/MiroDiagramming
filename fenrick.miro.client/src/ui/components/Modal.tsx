@@ -30,9 +30,13 @@ export function Modal({
   const ref = React.useRef<HTMLDialogElement>(null);
 
   React.useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) {
+      return;
+    }
     const root = ref.current;
-    if (!root) return;
+    if (!root) {
+      return;
+    }
     const focusable = root.querySelector<HTMLElement>(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
     );
@@ -40,7 +44,9 @@ export function Modal({
   }, [isOpen]);
 
   const getFocusables = React.useCallback((): HTMLElement[] => {
-    if (!ref.current) return [];
+    if (!ref.current) {
+      return [];
+    }
     return Array.from(
       ref.current.querySelectorAll<HTMLElement>(
         'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
@@ -50,9 +56,13 @@ export function Modal({
 
   const trapTab = React.useCallback(
     (e: KeyboardEvent): boolean => {
-      if (e.key !== 'Tab') return false;
+      if (e.key !== 'Tab') {
+        return false;
+      }
       const nodes = getFocusables();
-      if (nodes.length === 0) return false;
+      if (nodes.length === 0) {
+        return false;
+      }
       const first = nodes[0];
       const last = nodes[nodes.length - 1];
       const active = document.activeElement as HTMLElement;
@@ -70,7 +80,9 @@ export function Modal({
   );
 
   React.useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) {
+      return;
+    }
     const handleKey = (e: KeyboardEvent): void => {
       if (e.key === 'Escape') {
         e.preventDefault();
@@ -83,7 +95,9 @@ export function Modal({
     return () => window.removeEventListener('keydown', handleKey);
   }, [isOpen, onClose, trapTab]);
 
-  if (!isOpen) return null;
+  if (!isOpen) {
+    return null;
+  }
 
   // Close the modal when the backdrop is activated via mouse or keyboard
   return (
@@ -94,7 +108,9 @@ export function Modal({
         data-testid='modal-backdrop'
         className='custom-modal-backdrop'
         onClick={e => {
-          if (e.target === e.currentTarget) onClose();
+          if (e.target === e.currentTarget) {
+            onClose();
+          }
         }}
         onKeyDown={e => {
           if (

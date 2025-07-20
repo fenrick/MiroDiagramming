@@ -122,7 +122,9 @@ export class BoardBuilder {
       this.shapeMap as Map<string, BaseItem>,
       label,
     );
-    if (fromShapes) return fromShapes;
+    if (fromShapes) {
+      return fromShapes;
+    }
     return searchGroups(
       miro.board as unknown as import('./board').BoardQueryLike,
       type,
@@ -152,7 +154,9 @@ export class BoardBuilder {
       getSelection: async () => selection,
     };
     const shape = await searchShapes(board, undefined, label);
-    if (shape) return shape;
+    if (shape) {
+      return shape;
+    }
     return searchGroups(board, type, label);
   }
 
@@ -200,7 +204,9 @@ export class BoardBuilder {
         edges.map(async (edge, i) => {
           const from = nodeMap[edge.from];
           const to = nodeMap[edge.to];
-          if (!from || !to) return undefined;
+          if (!from || !to) {
+            return undefined;
+          }
           const templateName =
             typeof edge.metadata?.template === 'string'
               ? edge.metadata.template
@@ -254,8 +260,12 @@ export class BoardBuilder {
     height: number,
   ): Promise<void> {
     const target = item as { width?: number; height?: number };
-    if (typeof target.width === 'number') target.width = width;
-    if (typeof target.height === 'number') target.height = height;
+    if (typeof target.width === 'number') {
+      target.width = width;
+    }
+    if (typeof target.height === 'number') {
+      target.height = height;
+    }
   }
 
   private ensureBoard(): void {

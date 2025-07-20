@@ -73,7 +73,9 @@ function pushIfString(
   key: string,
   value: unknown,
 ): void {
-  if (typeof value === 'string') arr.push([key, value]);
+  if (typeof value === 'string') {
+    arr.push([key, value]);
+  }
 }
 
 function pushNestedText(
@@ -107,7 +109,9 @@ function getStringAtPath(
   const parts = path.split('.');
   let ref: unknown = item;
   for (const p of parts) {
-    if (!ref || typeof ref !== 'object') return undefined;
+    if (!ref || typeof ref !== 'object') {
+      return undefined;
+    }
     ref = (ref as Record<string, unknown>)[p];
   }
   return typeof ref === 'string' ? ref : undefined;
@@ -124,7 +128,9 @@ function getParent(
   let ref: unknown = obj;
   for (let i = 0; i < parts.length - 1; i += 1) {
     const part = parts[i];
-    if (isUnsafe(part) || !ref || typeof ref !== 'object') return undefined;
+    if (isUnsafe(part) || !ref || typeof ref !== 'object') {
+      return undefined;
+    }
     ref = (ref as Record<string, unknown>)[part];
   }
   return typeof ref === 'object' && ref
@@ -139,9 +145,13 @@ function setStringAtPath(
 ): void {
   const parts = path.split('.');
   const parent = getParent(item, parts);
-  if (!parent) return;
+  if (!parent) {
+    return;
+  }
   const last = parts[parts.length - 1];
-  if (isUnsafe(last)) return;
+  if (isUnsafe(last)) {
+    return;
+  }
   parent[last] = value;
 }
 
@@ -155,7 +165,9 @@ function collectMatches(
   const matches: SearchResult[] = [];
   for (const [field, text] of getTextFields(item)) {
     pattern.lastIndex = 0;
-    if (pattern.test(text)) matches.push({ item, field });
+    if (pattern.test(text)) {
+      matches.push({ item, field });
+    }
   }
   return matches;
 }
@@ -167,7 +179,9 @@ async function queryBoardItems(
   opts: SearchOptions,
   board: BoardQueryLike,
 ): Promise<Record<string, unknown>[]> {
-  if (opts.inSelection) return boardCache.getSelection(board);
+  if (opts.inSelection) {
+    return boardCache.getSelection(board);
+  }
   const types = opts.widgetTypes?.length ? opts.widgetTypes : ['widget'];
   return boardCache.getWidgets(types, board);
 }
@@ -253,7 +267,9 @@ export async function searchBoardContent(
   const pattern = buildRegex(opts);
   const results: SearchResult[] = [];
   for (const item of items) {
-    if (!filter(item)) continue;
+    if (!filter(item)) {
+      continue;
+    }
     results.push(...collectMatches(item, pattern));
   }
   return results;
@@ -283,9 +299,13 @@ export async function replaceBoardContent(
   const pattern = buildRegex(opts);
   let count = 0;
   for (const { item, field } of matches) {
-    if (onMatch) await onMatch(item);
+    if (onMatch) {
+      await onMatch(item);
+    }
     const current = getStringAtPath(item, field);
-    if (current === undefined) continue;
+    if (current === undefined) {
+      continue;
+    }
     const updated = current.replace(pattern, () => {
       count += 1;
       return opts.replacement;

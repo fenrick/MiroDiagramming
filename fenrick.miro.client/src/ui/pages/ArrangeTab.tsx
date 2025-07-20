@@ -45,12 +45,16 @@ export const ArrangeTab: React.FC = () => {
   const setOrientation = (value: string): void =>
     setGrid({ ...grid, sortOrientation: value as 'horizontal' | 'vertical' });
   const updateAxis = (axis: string): void => {
-    if (axis === 'x' || axis === 'y') setSpacing({ ...spacing, axis });
+    if (axis === 'x' || axis === 'y') {
+      setSpacing({ ...spacing, axis });
+    }
   };
   const updateSpacing = (value: string): void =>
     setSpacing({ ...spacing, spacing: Number(value) });
   const updateMode = (mode: string): void => {
-    if (mode === 'move' || mode === 'grow') setSpacing({ ...spacing, mode });
+    if (mode === 'move' || mode === 'grow') {
+      setSpacing({ ...spacing, mode });
+    }
   };
   const applyGrid = async (): Promise<void> => await applyGridLayout(grid);
   const applySpacing = async (): Promise<void> =>

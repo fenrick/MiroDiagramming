@@ -2,18 +2,8 @@
  * Colour manipulation utilities for the currently selected widgets.
  */
 import { colors } from '@mirohq/design-tokens';
-import {
-  adjustColor,
-  ensureContrast,
-  resolveColor,
-} from '../core/utils/color-utils';
-import {
-  BoardLike,
-  forEachSelection,
-  getFirstSelection,
-  maybeSync,
-  Syncable,
-} from './board';
+import { adjustColor, ensureContrast, resolveColor } from '../core/utils/color-utils';
+import { BoardLike, forEachSelection, getFirstSelection, maybeSync, Syncable } from './board';
 
 /**
  * Return the first style property present in the provided list.
@@ -40,7 +30,7 @@ function getFillKey(
 ): 'fillColor' | 'backgroundColor' | null {
   const key = findStyleKey(style, ['fillColor', 'backgroundColor']);
   return key && typeof style[key] === 'string'
-    ? (key as 'fillColor' | 'backgroundColor')
+    ? key as 'fillColor' | 'backgroundColor'
     : null;
 }
 
@@ -50,7 +40,7 @@ function getFontKey(
 ): 'color' | 'textColor' | null {
   const key = findStyleKey(style, ['color', 'textColor']);
   return key && typeof style[key] === 'string'
-    ? (key as 'color' | 'textColor')
+    ? key as 'color' | 'textColor'
     : null;
 }
 
@@ -60,7 +50,7 @@ function getOpacityKey(
 ): 'fillOpacity' | 'opacity' | null {
   const key = findStyleKey(style, ['fillOpacity', 'opacity']);
   return key && typeof style[key] === 'number'
-    ? (key as 'fillOpacity' | 'opacity')
+    ? key as 'fillOpacity' | 'opacity'
     : null;
 }
 
@@ -70,7 +60,7 @@ function getBorderWidthKey(
 ): 'borderWidth' | 'strokeWidth' | 'lineWidth' | null {
   const key = findStyleKey(style, ['borderWidth', 'strokeWidth', 'lineWidth']);
   return key && typeof style[key] === 'number'
-    ? (key as 'borderWidth' | 'strokeWidth' | 'lineWidth')
+    ? key as 'borderWidth' | 'strokeWidth' | 'lineWidth'
     : null;
 }
 
@@ -89,7 +79,9 @@ export async function tweakFillColor(
   await forEachSelection(async (item: Record<string, unknown>) => {
     const style = (item.style ?? {}) as Record<string, unknown>;
     const fillKey = getFillKey(style);
-    if (!fillKey) return;
+    if (!fillKey) {
+      return;
+    }
     const fontKey = getFontKey(style);
     const fill =
       typeof style[fillKey] === 'string'
@@ -118,10 +110,14 @@ export async function tweakFillColor(
 export function extractFillColor(
   item: Record<string, unknown> | undefined,
 ): string | null {
-  if (!item) return null;
+  if (!item) {
+    return null;
+  }
   const style = (item.style ?? {}) as Record<string, unknown>;
   const key = getFillKey(style);
-  if (!key) return null;
+  if (!key) {
+    return null;
+  }
   const fill = style[key];
   return typeof fill === 'string' ? resolveColor(fill, colors.white) : null;
 }
@@ -155,9 +151,13 @@ export async function tweakOpacity(
   await forEachSelection(async (item: Record<string, unknown>) => {
     const style = (item.style ?? {}) as Record<string, unknown>;
     const key = getOpacityKey(style);
-    if (!key) return;
+    if (!key) {
+      return;
+    }
     const current = style[key];
-    if (typeof current !== 'number') return;
+    if (typeof current !== 'number') {
+      return;
+    }
     let next = current + delta;
     next = Math.max(0, Math.min(1, next));
     style[key] = next;
@@ -182,9 +182,13 @@ export async function tweakBorderWidth(
   await forEachSelection(async (item: Record<string, unknown>) => {
     const style = (item.style ?? {}) as Record<string, unknown>;
     const key = getBorderWidthKey(style);
-    if (!key) return;
+    if (!key) {
+      return;
+    }
     const current = style[key];
-    if (typeof current !== 'number') return;
+    if (typeof current !== 'number') {
+      return;
+    }
     const next = Math.max(0, current + delta);
     style[key] = next;
     item.style = style;

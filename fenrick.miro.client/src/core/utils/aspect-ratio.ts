@@ -52,7 +52,9 @@ export const ASPECT_RATIO_IDS = ASPECT_RATIOS.map(
  */
 export function aspectRatioValue(id: AspectRatioId): number {
   const preset = ASPECT_RATIOS.find(p => p.id === id);
-  if (!preset) throw new Error(`Unknown aspect ratio: ${id}`);
+  if (!preset) {
+    throw new Error(`Unknown aspect ratio: ${id}`);
+  }
   return preset.ratio;
 }
 

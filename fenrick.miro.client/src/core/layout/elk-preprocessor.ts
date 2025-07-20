@@ -22,11 +22,15 @@ const DEFAULT_WIDTH = 200;
  */
 function insertSpacer(node: LayoutNode, opts: Required<SpacerOptions>): void {
   const children = node.children ?? [];
-  if (children.length === 0) return;
+  if (children.length === 0) {
+    return;
+  }
 
   const first = children[0];
   const hasSpacer = Boolean(first?.id?.startsWith('spacer_'));
-  if (hasSpacer) return;
+  if (hasSpacer) {
+    return;
+  }
 
   const spacer: LayoutNode = {
     id: `spacer_${node.id}`,
@@ -41,7 +45,9 @@ function insertSpacer(node: LayoutNode, opts: Required<SpacerOptions>): void {
 
 /** Apply rectangle packing algorithm to a parent node. */
 function applyAlgorithm(node: LayoutNode): void {
-  if (!node.children?.length) return;
+  if (!node.children?.length) {
+    return;
+  }
   node.layoutOptions = node.layoutOptions || {};
   node.layoutOptions['elk.algorithm'] = 'org.eclipse.elk.rectpacking';
 }
@@ -59,7 +65,9 @@ export function prepareForElk(
   topMargin: number = DEFAULT_MARGIN,
   defaultWidth: number = DEFAULT_WIDTH,
 ): void {
-  if (!Array.isArray(node.children) || node.children.length === 0) return;
+  if (!Array.isArray(node.children) || node.children.length === 0) {
+    return;
+  }
 
   applyAlgorithm(node);
   insertSpacer(node, { topMargin, defaultWidth });

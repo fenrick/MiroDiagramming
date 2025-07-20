@@ -16,7 +16,9 @@ export function EditMetadataModal({
 }: EditMetadataModalProps): React.JSX.Element | null {
   const data = useExcelData();
   const update = useExcelSync();
-  if (!data) return null;
+  if (!data) {
+    return null;
+  }
   return (
     <Modal
       title='Edit Metadata'

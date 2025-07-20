@@ -77,7 +77,9 @@ export function buildMetadata(
   const extra = mapping.metadataColumns ?? {};
   Object.entries(extra).forEach(([key, col]) => {
     const value = row[col];
-    if (value != null) metadata[key] = value;
+    if (value != null) {
+      metadata[key] = value;
+    }
   });
   const idVal = mapping.idColumn ? row[mapping.idColumn] : undefined;
   metadata.rowId = idVal != null ? toSafeString(idVal) : String(index);

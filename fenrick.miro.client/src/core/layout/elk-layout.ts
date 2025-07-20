@@ -12,7 +12,9 @@ export class LayoutEngine {
 
   /** Access the shared layout engine instance. */
   public static getInstance(): LayoutEngine {
-    if (!LayoutEngine.instance) LayoutEngine.instance = new LayoutEngine();
+    if (!LayoutEngine.instance) {
+      LayoutEngine.instance = new LayoutEngine();
+    }
     return LayoutEngine.instance;
   }
 

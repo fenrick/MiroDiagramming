@@ -30,7 +30,9 @@ export async function renameSelectedFrames(
       type?: string;
     } => (i as { type?: string }).type === 'frame',
   );
-  if (!frames.length) return;
+  if (!frames.length) {
+    return;
+  }
   frames.sort((a, b) => {
     const ax = a.x ?? 0;
     const bx = b.x ?? 0;

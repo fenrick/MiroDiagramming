@@ -166,7 +166,9 @@ export class GraphProcessor extends UndoableProcessor {
     existing: Record<string, BoardItem | undefined>,
     mode: ExistingNodeMode,
   ): GraphData {
-    if (mode !== 'layout') return data;
+    if (mode !== 'layout') {
+      return data;
+    }
     return {
       nodes: data.nodes.map(n => {
         const w = existing[n.id] as { x?: number; y?: number } | undefined;

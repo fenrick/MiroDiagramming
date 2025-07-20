@@ -14,7 +14,9 @@ export function useExcelSync(): (
   const serviceRef = React.useRef<ExcelSyncService>(new ExcelSyncService());
   return React.useCallback(
     async (index: number, updated: ExcelRow): Promise<void> => {
-      if (!ctx) return;
+      if (!ctx) {
+        return;
+      }
       ctx.setRows(prev => prev.map((r, i) => (i === index ? updated : r)));
       await serviceRef.current.updateShapesFromExcel([updated], {
         idColumn: ctx.idColumn,

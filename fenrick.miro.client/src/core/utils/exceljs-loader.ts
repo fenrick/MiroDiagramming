@@ -10,7 +10,9 @@ let excelPromise: Promise<typeof ExcelJS> | null = null;
 
 /** Retrieve the ExcelJS constructor. Cached after the first call. */
 export async function loadExcelJS(): Promise<typeof ExcelJS> {
-  if (excelPromise) return excelPromise;
+  if (excelPromise) {
+    return excelPromise;
+  }
 
   const isNode =
     typeof process !== 'undefined' && process.release?.name === 'node';

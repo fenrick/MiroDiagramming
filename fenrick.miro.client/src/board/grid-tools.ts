@@ -54,7 +54,9 @@ export async function applyGridLayout(
       typeof (i as { x?: number }).x === 'number' &&
       typeof (i as { y?: number }).y === 'number',
   );
-  if (!items.length) return;
+  if (!items.length) {
+    return;
+  }
   const first = items[0] as {
     x: number;
     y: number;

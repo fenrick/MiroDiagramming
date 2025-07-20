@@ -47,7 +47,9 @@ export const SearchTab: React.FC = () => {
         zoomTo(items: unknown[]): Promise<void>;
         zoomToObject?: (i: unknown) => Promise<void>;
       };
-      if (!typedVp) return;
+      if (!typedVp) {
+        return;
+      }
       if (typedVp.zoomToObject) {
         await typedVp.zoomToObject(item);
       } else {
@@ -73,7 +75,9 @@ export const SearchTab: React.FC = () => {
       key: K,
       value: SearchOptions[K],
     ): void => {
-      if (cond) opts[key] = value;
+      if (cond) {
+        opts[key] = value;
+      }
     };
     add(widgetTypes.length > 0, 'widgetTypes', widgetTypes);
     add(tags.length > 0, 'tagIds', tags);

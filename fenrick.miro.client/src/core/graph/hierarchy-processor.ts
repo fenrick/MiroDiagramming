@@ -69,7 +69,9 @@ export class HierarchyProcessor extends UndoableProcessor<
     opts: HierarchyProcessOptions = {},
   ): Promise<void> {
     const data = Array.isArray(roots) ? roots : edgesToHierarchy(roots);
-    if (!Array.isArray(data)) throw new Error('Invalid hierarchy');
+    if (!Array.isArray(data)) {
+      throw new Error('Invalid hierarchy');
+    }
     this.lastCreated = [];
     const result = await layoutHierarchy(data, {
       sortKey: opts.sortKey,

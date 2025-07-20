@@ -15,7 +15,9 @@ export class GraphClient {
    */
   public async fetchFile(identifier: string): Promise<ArrayBuffer> {
     const token = this.auth.getToken();
-    if (!token) throw new Error('Graph token unavailable');
+    if (!token) {
+      throw new Error('Graph token unavailable');
+    }
     const root = 'https://graph.microsoft.com/v1.0';
     const url = identifier.startsWith('http')
       ? `${root}/shares/u!${encodeBase64(identifier)}/driveItem/content`
@@ -23,7 +25,9 @@ export class GraphClient {
     const res = await fetch(url, {
       headers: { Authorization: `Bearer ${token}` },
     });
-    if (!res.ok) throw new Error('Failed to fetch workbook');
+    if (!res.ok) {
+      throw new Error('Failed to fetch workbook');
+    }
     return res.arrayBuffer();
   }
 }

@@ -27,13 +27,17 @@ export function RowInspector({
   React.useEffect(() => setEditRow(row), [row]);
 
   const index = row ? rows.indexOf(row) : -1;
-  if (!editRow) return null;
+  if (!editRow) {
+    return null;
+  }
 
   const handleChange =
     (key: string) =>
     (value: string): void =>
       setEditRow(prev => {
-        if (!prev) return prev;
+        if (!prev) {
+          return prev;
+        }
         const next = { ...prev, [key]: value };
         onUpdate?.(index >= 0 ? index : 0, next);
         return next;

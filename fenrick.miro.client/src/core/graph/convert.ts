@@ -54,6 +54,8 @@ export function hierarchyToEdges(roots: HierNode[]): GraphData {
       visit(child);
     }
   };
-  for (const root of roots) visit(root);
+  for (const root of roots) {
+    visit(root);
+  }
   return { nodes, edges };
 }

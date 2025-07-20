@@ -61,7 +61,9 @@ export function useReplaceAll(
   focusOnItem: (item: unknown) => Promise<void>,
 ): () => Promise<void> {
   return React.useCallback(async () => {
-    if (!query) return;
+    if (!query) {
+      return;
+    }
     const count = await replaceBoardContent(
       { ...buildOptions(), replacement },
       undefined,
@@ -97,7 +99,9 @@ export function useNextMatch(
   focusOnItem: (item: unknown) => Promise<void>,
 ): () => Promise<void> {
   return React.useCallback(async () => {
-    if (!results.length) return;
+    if (!results.length) {
+      return;
+    }
     const next = (currentIndex + 1) % results.length;
     setCurrentIndex(next);
     const { item } = results[next];
@@ -126,7 +130,9 @@ export function useReplaceCurrent(
   focusOnItem: (item: unknown) => Promise<void>,
 ): () => Promise<void> {
   return React.useCallback(async () => {
-    if (!results.length) return;
+    if (!results.length) {
+      return;
+    }
     const board = {
       getSelection: async () => [results[currentIndex].item],
       get: async () => [],

@@ -13,7 +13,9 @@ let elkPromise: Promise<typeof ELK> | null = null;
  * Retrieve the ELK constructor. Subsequent calls return the cached value.
  */
 export async function loadElk(): Promise<typeof ELK> {
-  if (elkPromise) return elkPromise;
+  if (elkPromise) {
+    return elkPromise;
+  }
 
   const isNode =
     typeof process !== 'undefined' && process.release?.name === 'node';

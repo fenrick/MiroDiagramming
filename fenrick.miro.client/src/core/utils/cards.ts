@@ -25,7 +25,9 @@ function parseCardStyle(
 ): Partial<Pick<CardStyle, 'cardTheme' | 'fillBackground'>> {
   const raw = (styleInput ?? {}) as Record<string, unknown>;
   const style: Partial<Pick<CardStyle, 'cardTheme' | 'fillBackground'>> = {};
-  if (raw.cardTheme) style.cardTheme = raw.cardTheme as CardStyle['cardTheme'];
+  if (raw.cardTheme) {
+    style.cardTheme = raw.cardTheme as CardStyle['cardTheme'];
+  }
   if (raw.fillBackground !== undefined) {
     style.fillBackground =
       raw.fillBackground === true || raw.fillBackground === 'true';
@@ -68,13 +70,22 @@ export class CardLoader {
   private normalizeCard(card: Record<string, unknown>): CardData {
     const style = parseCardStyle(card.style);
     const result: CardData = { title: String(card.title) };
-    if (typeof card.id === 'string') result.id = card.id;
-    if (typeof card.description === 'string')
+    if (typeof card.id === 'string') {
+      result.id = card.id;
+    }
+    if (typeof card.description === 'string') {
       result.description = card.description;
-    if (Array.isArray(card.tags)) result.tags = card.tags as string[];
-    if (Array.isArray(card.fields)) result.fields = card.fields as CardField[];
+    }
+    if (Array.isArray(card.tags)) {
+      result.tags = card.tags as string[];
+    }
+    if (Array.isArray(card.fields)) {
+      result.fields = card.fields as CardField[];
+    }
     result.taskStatus = card.taskStatus as CardTaskStatus | undefined;
-    if (Object.keys(style).length) result.style = style;
+    if (Object.keys(style).length) {
+      result.style = style;
+    }
     return result;
   }
 }

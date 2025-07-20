@@ -86,7 +86,9 @@ export const ResizeTab: React.FC = () => {
   const scale = React.useCallback(async (factor: number): Promise<void> => {
     await scaleSelection(factor);
     const updated = await copySizeFromSelection();
-    if (updated) setSize(updated);
+    if (updated) {
+      setSize(updated);
+    }
   }, []);
 
   React.useEffect(() => {
@@ -103,7 +105,9 @@ export const ResizeTab: React.FC = () => {
   }, [selection]);
 
   React.useEffect(() => {
-    if (ratio === 'none') return;
+    if (ratio === 'none') {
+      return;
+    }
     setSize(prev => {
       const h = ratioHeight(prev.width, aspectRatioValue(ratio));
       return prev.height === h ? prev : { ...prev, height: h };

@@ -33,8 +33,12 @@ function resolveDimension(
   templateValue: number | undefined,
   defaultValue: number,
 ): number {
-  if (typeof metaValue === 'number') return metaValue;
-  if (typeof templateValue === 'number') return templateValue;
+  if (typeof metaValue === 'number') {
+    return metaValue;
+  }
+  if (typeof templateValue === 'number') {
+    return templateValue;
+  }
   return defaultValue;
 }
 
@@ -161,7 +165,9 @@ function mapEdges(edges: ElkNode['edges']): PositionedEdge[] {
   const result: PositionedEdge[] = [];
   for (const edge of edges ?? []) {
     const section = edge.sections?.[0];
-    if (!section) continue;
+    if (!section) {
+      continue;
+    }
     result.push({
       startPoint: section.startPoint,
       endPoint: section.endPoint,

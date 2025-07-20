@@ -18,7 +18,9 @@ export function getBoard(board?: BoardLike): BoardLike {
   const b =
     board ??
     (globalThis as unknown as { miro?: { board?: BoardLike } }).miro?.board;
-  if (!b) throw new Error('Miro board not available');
+  if (!b) {
+    throw new Error('Miro board not available');
+  }
   log.debug('Board resolved');
   return b;
 }

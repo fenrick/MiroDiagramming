@@ -62,7 +62,9 @@ export class GraphAuth {
    * token is discarded to mitigate CSRF attacks.
    */
   public handleRedirect(): void {
-    if (!window.location.hash.includes('access_token')) return;
+    if (!window.location.hash.includes('access_token')) {
+      return;
+    }
     const data = new URLSearchParams(window.location.hash.slice(1));
     const token = data.get('access_token');
     const state = data.get('state');

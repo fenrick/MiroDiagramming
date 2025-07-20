@@ -18,7 +18,9 @@ export class HttpLogSink implements LogSink {
   public constructor(private readonly url = '/api/logs') {}
 
   public async store(entries: ClientLogEntry[]): Promise<void> {
-    if (process.env.NODE_ENV === 'test' || typeof fetch !== 'function') return;
+    if (process.env.NODE_ENV === 'test' || typeof fetch !== 'function') {
+      return;
+    }
     try {
       await fetch(this.url, {
         method: 'POST',

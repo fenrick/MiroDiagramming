@@ -36,7 +36,9 @@ async function extractRowId(
     const items = await item.getItems();
     for (const child of items) {
       const rowId = decode((child as { content?: string }).content);
-      if (rowId) return rowId;
+      if (rowId) {
+        return rowId;
+      }
     }
     /* c8 ignore next */
     return undefined;

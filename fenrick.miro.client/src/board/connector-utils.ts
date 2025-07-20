@@ -24,7 +24,9 @@ function buildCaptions(
   edge: EdgeData,
   template?: ConnectorTemplate,
 ): Connector['captions'] {
-  if (!edge.label) return undefined;
+  if (!edge.label) {
+    return undefined;
+  }
   return [
     {
       content: edge.label,
@@ -79,7 +81,9 @@ export function updateConnector(
   hint?: EdgeHint,
 ): void {
   const captions = buildCaptions(edge, template);
-  if (captions) connector.captions = captions;
+  if (captions) {
+    connector.captions = captions;
+  }
   mergeStyle(connector, template);
   applyHint(connector, hint);
 }

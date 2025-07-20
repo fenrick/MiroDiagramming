@@ -57,7 +57,9 @@ export async function searchGroups(
   )) as unknown as Group[];
   for (const group of groups) {
     const items = await group.getItems();
-    if (!Array.isArray(items)) continue;
+    if (!Array.isArray(items)) {
+      continue;
+    }
     const found = items.find(
       i =>
         typeof (i as { content?: string }).content === 'string' &&

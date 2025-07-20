@@ -61,7 +61,9 @@ export function applyShapeElement(
   element: TemplateElement,
   label: string,
 ): void {
-  if (item.type !== 'shape') return;
+  if (item.type !== 'shape') {
+    return;
+  }
   const shape = item as Shape;
   const assignments: Array<[keyof TemplateElement, string]> = [
     ['shape', 'shape'],
@@ -96,7 +98,9 @@ export function applyTextElement(
   element: TemplateElement,
   label: string,
 ): void {
-  if (item.type !== 'text') return;
+  if (item.type !== 'text') {
+    return;
+  }
   const text = item as Text;
   text.content = (element.text ?? '{{label}}').replace('{{label}}', label);
   if (element.style) {

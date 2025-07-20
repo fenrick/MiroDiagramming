@@ -26,13 +26,17 @@ export function useSelection(
         const items = ev.items as Array<Record<string, unknown>>;
         log.trace({ count: items.length }, 'Selection event received');
         boardCache.setSelection(items);
-        if (active) setSel(items);
+        if (active) {
+          setSel(items);
+        }
         return;
       }
       log.trace('Fetching selection due to missing event payload');
       boardCache.clearSelection();
       boardCache.getSelection(b).then(s => {
-        if (active) setSel(s);
+        if (active) {
+          setSel(s);
+        }
       });
     };
     update();

@@ -37,7 +37,9 @@ export async function applySpacingLayout(
   const b = getBoard(board);
   log.info('Applying spacing layout');
   const selection = await boardCache.getSelection(b);
-  if (!selection.length) return;
+  if (!selection.length) {
+    return;
+  }
 
   const axis = opts.axis;
   const sizeKey = axis === 'x' ? 'width' : 'height';

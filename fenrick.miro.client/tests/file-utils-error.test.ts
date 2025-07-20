@@ -12,7 +12,9 @@ describe('FileUtils error handling', () => {
       onerror: (() => void) | null = null;
 
       readAsText() {
-        if (this.onerror) this.onerror();
+        if (this.onerror) {
+          this.onerror();
+        }
       }
     }
 
@@ -27,7 +29,9 @@ describe('FileUtils error handling', () => {
       onerror: (() => void) | null = null;
 
       readAsText() {
-        if (this.onload) this.onload({ target: null });
+        if (this.onload) {
+          this.onload({ target: null });
+        }
       }
     }
 

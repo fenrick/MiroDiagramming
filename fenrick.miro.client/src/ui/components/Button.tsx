@@ -33,7 +33,9 @@ function getIconSlots(
   icon: React.ReactNode,
   iconPosition: 'start' | 'end',
 ): { start: React.ReactNode; end: React.ReactNode } {
-  if (!icon) return { start: null, end: null };
+  if (!icon) {
+    return { start: null, end: null };
+  }
   if (iconPosition === 'start') {
     return {
       start: <DSButton.IconSlot key='icon-start'>{icon}</DSButton.IconSlot>,

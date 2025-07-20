@@ -64,21 +64,31 @@ export class ExcelLoader {
    * @returns Array of row objects keyed by column headers.
    */
   public loadNamedTable(name: string): ExcelRow[] {
-    if (!this.workbook) throw new Error('Workbook not loaded');
+    if (!this.workbook) {
+      throw new Error('Workbook not loaded');
+    }
     const entry = this.workbook.definedNames.getRanges(name);
     const ref = entry.ranges[0];
-    if (!ref) throw new Error(`Unknown table: ${name}`);
+    if (!ref) {
+      throw new Error(`Unknown table: ${name}`);
+    }
     const [sheetName, range] = ref.replace(/'/g, '').split('!');
     const ws = this.workbook.getWorksheet(sheetName);
-    if (!ws) throw new Error(`Missing sheet for table: ${name}`);
+    if (!ws) {
+      throw new Error(`Missing sheet for table: ${name}`);
+    }
     return this.extractRows(ws, range);
   }
 
   /** Retrieve a worksheet object, throwing on missing sheet. */
   private getSheet(name: string): ExcelJS.Worksheet {
-    if (!this.workbook) throw new Error('Workbook not loaded');
+    if (!this.workbook) {
+      throw new Error('Workbook not loaded');
+    }
     const ws = this.workbook.getWorksheet(name);
-    if (!ws) throw new Error(`Unknown sheet: ${name}`);
+    if (!ws) {
+      throw new Error(`Unknown sheet: ${name}`);
+    }
     return ws;
   }
 
@@ -122,7 +132,9 @@ export class ExcelLoader {
     const clean = ref.replace(/\$/g, '');
     const rangeRegex = /([A-Z]+)(\d+):([A-Z]+)(\d+)/i;
     const match = rangeRegex.exec(clean);
-    if (!match) throw new Error(`Invalid range: ${ref}`);
+    if (!match) {
+      throw new Error(`Invalid range: ${ref}`);
+    }
     const [, sCol, sRow, eCol, eRow] = match;
     const colNum = (col: string) =>
       col

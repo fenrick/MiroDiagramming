@@ -113,7 +113,9 @@ export class TemplateManager {
     const key =
       name in this.connectorTemplates ? name : this.connectorAliasMap[name];
     const tpl = key ? this.connectorTemplates[key] : undefined;
-    if (!tpl) return undefined;
+    if (!tpl) {
+      return undefined;
+    }
     const style = tpl.style ? this.resolveStyle(tpl.style) : undefined;
     return { shape: 'curved', ...tpl, style };
   }
@@ -134,7 +136,9 @@ export class TemplateManager {
     const created: GroupableItem[] = [];
     for (const el of template.elements) {
       const item = await this.createElement(el, label, x, y, frame);
-      if (item) created.push(item);
+      if (item) {
+        created.push(item);
+      }
     }
 
     if (created.length > 1) {
@@ -152,10 +156,16 @@ export class TemplateManager {
    *   match the expected pattern.
    */
   private parseColorToken(path: string): string | undefined {
-    if (path === 'color.white') return colors.white;
-    if (path === 'color.black') return colors.black;
+    if (path === 'color.white') {
+      return colors.white;
+    }
+    if (path === 'color.black') {
+      return colors.black;
+    }
     const match = /^color\.([a-zA-Z]+)\[(\d+)\]$/.exec(path);
-    if (!match) return undefined;
+    if (!match) {
+      return undefined;
+    }
     const [, name, shade] = match;
     const key = `${name}-${shade}`;
     return (colors as Record<string, string>)[key];
@@ -168,7 +178,9 @@ export class TemplateManager {
    * corresponding value from the design tokens.
    */
   private resolveToken(value: unknown): unknown {
-    if (typeof value !== 'string' || !value.startsWith('tokens.')) return value;
+    if (typeof value !== 'string' || !value.startsWith('tokens.')) {
+      return value;
+    }
     const path = value.slice('tokens.'.length);
     const color = this.parseColorToken(path);
     return color ?? value;
@@ -180,7 +192,9 @@ export class TemplateManager {
    * Supports optional `px` units which are stripped off.
    */
   private parseNumeric(value: unknown): unknown {
-    if (typeof value !== 'string') return value;
+    if (typeof value !== 'string') {
+      return value;
+    }
     const m = /^(-?\d+(?:\.\d+)?)(px)?$/.exec(value);
     return m ? parseFloat(m[1]) : value;
   }
@@ -237,8 +251,12 @@ export class TemplateManager {
   private getElementType(
     element: TemplateElement,
   ): 'shape' | 'text' | undefined {
-    if (element.shape) return 'shape';
-    if (element.text) return 'text';
+    if (element.shape) {
+      return 'shape';
+    }
+    if (element.text) {
+      return 'text';
+    }
     return undefined;
   }
 

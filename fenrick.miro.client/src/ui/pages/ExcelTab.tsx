@@ -75,8 +75,11 @@ function loadRowsFromSource(
 
 function toggleSelection(prev: Set<number>, idx: number): Set<number> {
   const next = new Set(prev);
-  if (next.has(idx)) next.delete(idx);
-  /* istanbul ignore next */ else next.add(idx);
+  if (next.has(idx)) {
+    next.delete(idx);
+  } /* istanbul ignore next */ else {
+    next.add(idx);
+  }
   return next;
 }
 
