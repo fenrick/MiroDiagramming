@@ -173,8 +173,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: blob-report-${{ matrix.shardIndex }}
-          path: .vitest-reports/*
-          working-directory: fenrick.miro.client
+          path: fenrick.miro.client/.vitest-reports/*
           include-hidden-files: true
           retention-days: 1
 
@@ -208,9 +207,8 @@ jobs:
       - name: Download blob reports from GitHub Actions Artifacts
         uses: actions/download-artifact@v4
         with:
-          path: .vitest-reports
+          path: fenrick.miro.client/.vitest-reports
           pattern: blob-report-*
-          working-directory: fenrick.miro.client
           merge-multiple: true
 
       - name: Merge reports
