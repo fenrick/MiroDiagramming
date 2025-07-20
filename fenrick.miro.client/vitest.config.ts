@@ -7,8 +7,8 @@ export default defineConfig({
   plugins: [react()],
   test: {
     coverage: {
-      provider: 'v8',
-      reporter: ['text', 'lcov'],
+      provider: 'istanbul',
+      reporter: ['text', 'lcov', 'json', 'cobertura'],
       reportsDirectory: 'coverage',
       exclude: [
         'commitlint.config.cjs',
