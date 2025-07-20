@@ -5,11 +5,14 @@ import { searchGroups, searchShapes } from '../src/board/node-search';
 
 const board: BoardQueryLike = {
   get: vi.fn(({ type }) => {
-    if (type === 'shape') return Promise.resolve([{ content: 'A' }]);
-    if (type === 'group')
+    if (type === 'shape') {
+      return Promise.resolve([{ content: 'A' }]);
+    }
+    if (type === 'group') {
       return Promise.resolve([
         { getItems: () => Promise.resolve([{ content: 'B' }]) },
       ]);
+    }
     return Promise.resolve([]);
   }),
   getSelection: vi.fn().mockResolvedValue([]),
