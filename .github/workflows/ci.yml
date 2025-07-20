@@ -142,9 +142,6 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        shardIndex: [1, 2, 3, 4]
-        shardTotal: [4]
     steps:
       - uses: actions/checkout@v4
 
@@ -165,15 +162,15 @@ jobs:
         working-directory: fenrick.miro.client
 
       - name: Unit tests
-        run: npm run test-shard -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        run: npm run test
         working-directory: fenrick.miro.client
         
-      - name: Upload blob report to GitHub Actions Artifacts
+      - name: Upload coversage to GitHub Actions Artifacts
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
-          name: blob-report-${{ matrix.shardIndex }}
-          path: fenrick.miro.client/.vitest-reports/*
+          name: coversage
+          path: fenrick.miro.client/coverage/*
           include-hidden-files: true
           retention-days: 1
 
@@ -204,16 +201,11 @@ jobs:
       - run: corepack enable && npm ci
         working-directory: fenrick.miro.client
 
-      - name: Download blob reports from GitHub Actions Artifacts
+      - name: Download coversage from GitHub Actions Artifacts
         uses: actions/download-artifact@v4
         with:
-          path: fenrick.miro.client/.vitest-reports
-          pattern: blob-report-*
-          merge-multiple: true
-
-      - name: Merge reports
-        run: npm run merge
-        working-directory: fenrick.miro.client
+          path: fenrick.miro.client/coverage
+          pattern: coverage
 
       - name: Cache SonarQube Cloud packages
         uses: actions/cache@v4
