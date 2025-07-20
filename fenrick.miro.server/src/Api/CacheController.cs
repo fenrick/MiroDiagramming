@@ -11,9 +11,9 @@ using Services;
 [Route("api/cache")]
 public class CacheController(ICacheService cache) : ControllerBase
 {
-    private readonly ICacheService _cache = cache;
+    private readonly ICacheService cacheService = cache;
 
     [HttpGet("{boardId}")]
     public ActionResult<BoardMetadata?> Get(string boardId) =>
-        this.Ok(this._cache.Get(boardId));
+        this.Ok(this.cacheService.Retrieve(boardId));
 }

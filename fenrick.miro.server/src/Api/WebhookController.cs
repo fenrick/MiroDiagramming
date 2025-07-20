@@ -8,19 +8,19 @@ using Microsoft.AspNetCore.Mvc;
 /// </summary>
 [ApiController]
 [Route("api/webhook")]
-public class WebhookController(IEventQueue queue) : ControllerBase
+public class WebhookController(IEventSink sink) : ControllerBase
 {
-    private readonly IEventQueue _queue = queue;
+    private readonly IEventSink eventSink = sink;
 
     [HttpPost]
     public IActionResult Handle([FromBody] WebhookEvent evt)
     {
-        this._queue.Enqueue(evt);
+        this.eventSink.Enqueue(evt);
         return this.Accepted();
     }
 }
 
-public interface IEventQueue
+public interface IEventSink
 {
     public void Enqueue(WebhookEvent evt);
 }

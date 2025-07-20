@@ -14,8 +14,8 @@ public class WebhookControllerTests
     public void HandleEnqueuesEvent()
     {
         WebhookEvent? received = null;
-        var queue = new StubQueue(evt => received = evt);
-        var controller = new WebhookController(queue);
+        var sink = new StubSink(evt => received = evt);
+        var controller = new WebhookController(sink);
         var evt = new WebhookEvent("created", "b1");
 
         var result = controller.Handle(evt);
@@ -24,10 +24,10 @@ public class WebhookControllerTests
         Assert.Equal("b1", received?.BoardId);
     }
 
-    private sealed class StubQueue(Action<WebhookEvent> enqueue) : IEventQueue
+    private sealed class StubSink(Action<WebhookEvent> enqueue) : IEventSink
     {
-        private readonly Action<WebhookEvent> _enqueue = enqueue;
+        private readonly Action<WebhookEvent> enqueueAction = enqueue;
 
-        public void Enqueue(WebhookEvent evt) => this._enqueue(evt);
+        public void Enqueue(WebhookEvent evt) => this.enqueueAction(evt);
     }
 }

@@ -8,14 +8,14 @@ using ILogger = Serilog.ILogger;
 /// </summary>
 public class SerilogSink(ILogger logger) : ILogSink
 {
-    private readonly ILogger _logger = logger;
+    private readonly ILogger loggerInstance = logger;
 
     /// <inheritdoc />
     public void Store(IEnumerable<ClientLogEntry> entries)
     {
         foreach (var e in entries)
         {
-            this._logger
+            this.loggerInstance
                 .ForContext("Source", "Client")
                 .ForContext("Level", e.Level)
                 .ForContext("Context", e.Context, true)

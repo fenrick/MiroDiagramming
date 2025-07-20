@@ -10,10 +10,10 @@ public class InMemoryCacheServiceTests
     public void GetReturnsValueWhenPresentOtherwiseNull()
     {
         var service = new InMemoryCacheService();
-        Assert.Null(service.Get("1"));
+        Assert.Null(service.Retrieve("1"));
         var meta = new BoardMetadata("1", "Board");
         service.Store(meta);
-        Assert.Equal(meta, service.Get("1"));
+        Assert.Equal(meta, service.Retrieve("1"));
     }
 
     /// <summary>
@@ -26,6 +26,6 @@ public class InMemoryCacheServiceTests
         service.Store(new BoardMetadata("1", "Old"));
         service.Store(new BoardMetadata("1", "New"));
 
-        Assert.Equal("New", service.Get("1")?.Name);
-    }
+        Assert.Equal("New", service.Retrieve("1")?.Name);
+}
 }

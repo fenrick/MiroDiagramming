@@ -53,8 +53,8 @@ public class SerilogSinkTests
 
     private sealed class DelegatingSink(Action<LogEvent> write) : ILogEventSink
     {
-        private readonly Action<LogEvent> _write = write;
+        private readonly Action<LogEvent> writeAction = write;
 
-        public void Emit(LogEvent logEvent) => this._write(logEvent);
+        public void Emit(LogEvent logEvent) => this.writeAction(logEvent);
     }
 }
