@@ -16,15 +16,15 @@ export interface GridOptions {
   sortOrientation?: 'horizontal' | 'vertical';
 }
 
+import { log } from '../logger';
 /**
  * Minimal abstraction of the board API used for selection and grouping.
  * Allows injection of a mock implementation in tests.
  */
 import { BoardLike, getBoard, maybeSync, Syncable } from './board';
 import { boardCache } from './board-cache';
-import { log } from '../logger';
-import { getTextFields } from './search-tools';
 import { calculateGridPositions } from './grid-layout';
+import { getTextFields } from './search-tools';
 
 /** Extract a name field from a widget for sorting purposes. */
 function getName(item: Record<string, unknown>): string {

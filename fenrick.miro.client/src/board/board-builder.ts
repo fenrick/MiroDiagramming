@@ -1,8 +1,3 @@
-import { templateManager } from './templates';
-import { searchGroups, searchShapes } from './node-search';
-import { createConnector } from './connector-utils';
-import { log } from '../logger';
-import { boardCache } from './board-cache';
 import type {
   BaseItem,
   Connector,
@@ -17,7 +12,12 @@ import type {
   NodeData,
   PositionedNode,
 } from '../core/graph';
+import { log } from '../logger';
 import { maybeSync } from './board';
+import { boardCache } from './board-cache';
+import { createConnector } from './connector-utils';
+import { searchGroups, searchShapes } from './node-search';
+import { templateManager } from './templates';
 
 export { updateConnector } from './connector-utils';
 
@@ -31,6 +31,18 @@ export class BoardBuilder {
   private frame: Frame | undefined;
   /** Cached lookup map for shapes by label content. */
   private shapeMap: Map<string, BaseItem> | undefined;
+
+  /**
+   * Type guard ensuring the provided value conforms to {@link NodeData}.
+   */
+  private static isNodeData(node: unknown): node is NodeData {
+    return (
+      !!node &&
+      typeof node === 'object' &&
+      typeof (node as Record<string, unknown>).type === 'string' &&
+      typeof (node as Record<string, unknown>).label === 'string'
+    );
+  }
 
   /** Reset any builder state between runs. */
   public reset(): void {
@@ -229,11 +241,33 @@ export class BoardBuilder {
     return miro.board.group({ items });
   }
 
+  /**
+   * Resize an item if width and height properties are available.
+   *
+   * Synchronisation is intentionally deferred so multiple widgets can be
+   * updated before calling {@link syncAll}. This reduces the number of API
+   * calls when creating complex structures.
+   */
+  public async resizeItem(
+    item: BoardItem,
+    width: number,
+    height: number,
+  ): Promise<void> {
+    const target = item as { width?: number; height?: number };
+    if (typeof target.width === 'number') target.width = width;
+    if (typeof target.height === 'number') target.height = height;
+  }
+
   private ensureBoard(): void {
     if (typeof miro === 'undefined' || !miro?.board) {
       throw new Error('Miro board not initialized');
     }
   }
+
+  /**
+   * Search board shapes for metadata that matches the given type and label.
+   * Returns the corresponding item if found.
+   */
 
   /**
    * Execute multiple board operations within a batch transaction when
@@ -288,11 +322,6 @@ export class BoardBuilder {
   }
 
   /**
-   * Search board shapes for metadata that matches the given type and label.
-   * Returns the corresponding item if found.
-   */
-
-  /**
    * Create a new widget (or group) for the node using template defaults.
    */
   private async createNewNode(
@@ -307,34 +336,5 @@ export class BoardBuilder {
       this.frame,
     )) as BoardItem;
     return widget;
-  }
-
-  /**
-   * Resize an item if width and height properties are available.
-   *
-   * Synchronisation is intentionally deferred so multiple widgets can be
-   * updated before calling {@link syncAll}. This reduces the number of API
-   * calls when creating complex structures.
-   */
-  public async resizeItem(
-    item: BoardItem,
-    width: number,
-    height: number,
-  ): Promise<void> {
-    const target = item as { width?: number; height?: number };
-    if (typeof target.width === 'number') target.width = width;
-    if (typeof target.height === 'number') target.height = height;
-  }
-
-  /**
-   * Type guard ensuring the provided value conforms to {@link NodeData}.
-   */
-  private static isNodeData(node: unknown): node is NodeData {
-    return (
-      !!node &&
-      typeof node === 'object' &&
-      typeof (node as Record<string, unknown>).type === 'string' &&
-      typeof (node as Record<string, unknown>).label === 'string'
-    );
   }
 }

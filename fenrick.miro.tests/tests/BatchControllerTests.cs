@@ -15,13 +15,18 @@ public class BatchControllerTests
     [Fact]
     public async Task ForwardAsyncReturnsOrderedResponses()
     {
-        var requests = new[] { new MiroRequest("GET", "/boards/1", null), new MiroRequest("GET", "/boards/2", null) };
+        var requests = new[]
+        {
+            new MiroRequest("GET", "/boards/1", null),
+            new MiroRequest("GET", "/boards/2", null)
+        };
         var responses = new Queue<MiroResponse>(
         [
             new MiroResponse(200, "1"),
             new MiroResponse(200, "2")
         ]);
-        var client = new StubClient(req => Task.FromResult(responses.Dequeue()));
+        var client =
+            new StubClient(req => Task.FromResult(responses.Dequeue()));
         var controller = new BatchController(client);
 
         var result = await controller.ForwardAsync(requests) as OkObjectResult;
@@ -37,7 +42,8 @@ public class BatchControllerTests
     [Fact]
     public async Task ForwardAsyncWithNoRequestsReturnsEmptyList()
     {
-        var controller = new BatchController(new StubClient(_ => Task.FromResult(new MiroResponse(200, ""))));
+        var controller = new BatchController(
+            new StubClient(_ => Task.FromResult(new MiroResponse(200, ""))));
 
         var result = await controller.ForwardAsync([]) as OkObjectResult;
 
@@ -45,10 +51,12 @@ public class BatchControllerTests
         Assert.Empty(data);
     }
 
-    private sealed class StubClient(Func<MiroRequest, Task<MiroResponse>> cb) : IMiroClient
+    private sealed class StubClient(Func<MiroRequest, Task<MiroResponse>> cb)
+        : IMiroClient
     {
         private readonly Func<MiroRequest, Task<MiroResponse>> _cb = cb;
 
-        public Task<MiroResponse> SendAsync(MiroRequest request) => this._cb(request);
+        public Task<MiroResponse> SendAsync(MiroRequest request) =>
+            this._cb(request);
     }
 }

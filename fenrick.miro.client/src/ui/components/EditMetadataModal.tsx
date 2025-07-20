@@ -1,8 +1,8 @@
 import React from 'react';
-import { Modal } from './Modal';
-import { RowInspector } from './RowInspector';
 import { useExcelData } from '../hooks/excel-data-context';
 import { useExcelSync } from '../hooks/use-excel-sync';
+import { Modal } from './Modal';
+import { RowInspector } from './RowInspector';
 
 export interface EditMetadataModalProps {
   readonly isOpen: boolean;

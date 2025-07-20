@@ -1,5 +1,5 @@
-import React from 'react';
 import { IconButton, IconQuestionMarkCircle } from '@mirohq/design-system';
+import React from 'react';
 import { Tooltip } from './Tooltip';
 
 export interface PageHelpProps {

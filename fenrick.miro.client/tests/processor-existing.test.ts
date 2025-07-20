@@ -1,6 +1,6 @@
+import { BoardBuilder } from '../src/board/board-builder';
 import { GraphProcessor } from '../src/core/graph/graph-processor';
 import { layoutEngine } from '../src/core/layout/elk-layout';
-import { BoardBuilder } from '../src/board/board-builder';
 
 interface GlobalWithMiro {
   miro?: { board?: Record<string, unknown> };

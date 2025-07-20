@@ -1,5 +1,5 @@
-import { GraphAuth, graphAuth } from './graph-auth';
 import { encodeBase64 } from './base64';
+import { GraphAuth, graphAuth } from './graph-auth';
 
 /**
  * Fetch files from Microsoft Graph using an OAuth access token.

@@ -1,8 +1,8 @@
+import { space } from '@mirohq/design-tokens';
 import React from 'react';
 import { Paragraph } from '../components';
-import { TabPanel } from '../components/TabPanel';
 import { PageHelp } from '../components/PageHelp';
-import { space } from '@mirohq/design-tokens';
+import { TabPanel } from '../components/TabPanel';
 
 /** Placeholder for future layout engine options. */
 export const LayoutEngineTab: React.FC = () => (

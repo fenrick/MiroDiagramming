@@ -1,11 +1,11 @@
+import ELK from 'elkjs/lib/elk.bundled.js';
 import { vi } from 'vitest';
+import { templateManager } from '../src/board/templates';
 import {
   buildElkGraphOptions,
   getNodeDimensions,
   performLayout,
 } from '../src/core/layout/layout-core';
-import { templateManager } from '../src/board/templates';
-import ELK from 'elkjs/lib/elk.bundled.js';
 
 /** Branch coverage tests for performLayout. */
 describe('performLayout', () =>

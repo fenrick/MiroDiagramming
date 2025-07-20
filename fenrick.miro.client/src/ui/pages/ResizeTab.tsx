@@ -1,31 +1,3 @@
-import React from 'react';
-import {
-  Button,
-  InputField,
-  Paragraph,
-  SelectField,
-  SelectOption,
-} from '../components';
-import {
-  applySizeToSelection,
-  copySizeFromSelection,
-  scaleSelection,
-  Size,
-} from '../../board/resize-tools';
-import { useSelection } from '../hooks/use-selection';
-import type { TabTuple } from './tab-definitions';
-import {
-  boardUnitsToInches,
-  boardUnitsToMm,
-} from '../../core/utils/unit-utils';
-import {
-  ASPECT_RATIOS,
-  AspectRatioId,
-  aspectRatioValue,
-  ratioHeight,
-} from '../../core/utils/aspect-ratio';
-import { TabPanel } from '../components/TabPanel';
-import { PageHelp } from '../components/PageHelp';
 import {
   Grid,
   Heading,
@@ -34,6 +6,34 @@ import {
   IconSquaresTwoOverlap,
   Text,
 } from '@mirohq/design-system';
+import React from 'react';
+import {
+  applySizeToSelection,
+  copySizeFromSelection,
+  scaleSelection,
+  Size,
+} from '../../board/resize-tools';
+import {
+  ASPECT_RATIOS,
+  AspectRatioId,
+  aspectRatioValue,
+  ratioHeight,
+} from '../../core/utils/aspect-ratio';
+import {
+  boardUnitsToInches,
+  boardUnitsToMm,
+} from '../../core/utils/unit-utils';
+import {
+  Button,
+  InputField,
+  Paragraph,
+  SelectField,
+  SelectOption,
+} from '../components';
+import { PageHelp } from '../components/PageHelp';
+import { TabPanel } from '../components/TabPanel';
+import { useSelection } from '../hooks/use-selection';
+import type { TabTuple } from './tab-definitions';
 
 /** Predefined button sizes used by the quick presets. */
 const PRESET_SIZES: Record<'S' | 'M' | 'L', Size> = {

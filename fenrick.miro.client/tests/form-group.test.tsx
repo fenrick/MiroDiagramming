@@ -1,7 +1,7 @@
 /** @vitest-environment jsdom */
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import React from 'react';
 import { FormGroup } from '../src/ui/components/FormGroup';
 
 test('renders child content', () => {

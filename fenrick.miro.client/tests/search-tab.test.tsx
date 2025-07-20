@@ -1,8 +1,8 @@
 /** @vitest-environment jsdom */
 import { act, fireEvent, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { renderSearchTab } from './render-utils';
 import * as searchTools from '../src/board/search-tools';
+import { renderSearchTab } from './render-utils';
 
 vi.useFakeTimers();
 

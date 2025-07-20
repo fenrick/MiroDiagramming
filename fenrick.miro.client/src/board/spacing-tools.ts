@@ -3,9 +3,9 @@
  *
  * Located in `src/board` alongside other widget manipulation helpers.
  */
+import { log } from '../logger';
 import { BoardLike, getBoard, maybeSync, Syncable } from './board';
 import { boardCache } from './board-cache';
-import { log } from '../logger';
 import { calculateGrowthPlan, getDimension } from './spacing-layout';
 
 /** Options for spacing layout. */

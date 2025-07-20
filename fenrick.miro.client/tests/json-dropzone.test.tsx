@@ -1,7 +1,7 @@
 /** @vitest-environment jsdom */
-import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import React from 'react';
 import { JsonDropZone } from '../src/ui/components/JsonDropZone';
 
 test('invokes callback when file selected', async () => {

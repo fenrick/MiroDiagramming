@@ -1,5 +1,5 @@
-import React from 'react';
 import { Form, styled } from '@mirohq/design-system';
+import React from 'react';
 import { Select } from './Select';
 
 export type SelectFieldProps = Readonly<

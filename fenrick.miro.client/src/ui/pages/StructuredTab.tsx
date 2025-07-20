@@ -1,19 +1,11 @@
-import React from 'react';
-import {
-  Button,
-  Checkbox,
-  InputField,
-  SelectField,
-  SelectOption,
-} from '../components';
-import { JsonDropZone } from '../components/JsonDropZone';
-import { TabPanel } from '../components/TabPanel';
-import { PageHelp } from '../components/PageHelp';
+import { Grid, IconArrowArcLeft, IconPlus, Text } from '@mirohq/design-system';
 import { space } from '@mirohq/design-tokens';
+import React from 'react';
 import {
   ExistingNodeMode,
   GraphProcessor,
 } from '../../core/graph/graph-processor';
+import { HierarchyProcessor } from '../../core/graph/hierarchy-processor';
 import {
   ALGORITHMS,
   DEFAULT_LAYOUT_OPTIONS,
@@ -29,14 +21,22 @@ import {
   UserLayoutOptions,
 } from '../../core/layout/elk-options';
 import { ASPECT_RATIOS, AspectRatioId } from '../../core/utils/aspect-ratio';
-import { HierarchyProcessor } from '../../core/graph/hierarchy-processor';
+import {
+  Button,
+  Checkbox,
+  InputField,
+  SelectField,
+  SelectOption,
+} from '../components';
+import { JsonDropZone } from '../components/JsonDropZone';
+import { PageHelp } from '../components/PageHelp';
+import { TabPanel } from '../components/TabPanel';
 import { undoLastImport } from '../hooks/ui-utils';
 import {
   LayoutChoice,
   useAdvancedToggle,
   useDiagramCreate,
 } from '../hooks/use-diagram-create';
-import { Grid, IconArrowArcLeft, IconPlus, Text } from '@mirohq/design-system';
 
 /**
  * Queue the first file from a drop event for import.

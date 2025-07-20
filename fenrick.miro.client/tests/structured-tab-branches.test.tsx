@@ -1,8 +1,8 @@
 /** @vitest-environment jsdom */
-/* eslint-disable no-var */
-import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
+/* eslint-disable no-var */
+import React from 'react';
 import { StructuredTab } from '../src/ui/pages/StructuredTab';
 
 var createSpy: vi.Mock;

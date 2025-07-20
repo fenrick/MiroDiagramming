@@ -1,10 +1,10 @@
 /** @vitest-environment jsdom */
-import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { CardsTab } from '../src/ui/pages/CardsTab';
+import React from 'react';
 import { CardProcessor } from '../src/board/card-processor';
 import * as uiUtils from '../src/ui/hooks/ui-utils';
+import { CardsTab } from '../src/ui/pages/CardsTab';
 
 vi.mock('../src/board/card-processor');
 

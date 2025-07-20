@@ -1,9 +1,9 @@
+import { IconSquareArrowIn, Text } from '@mirohq/design-system';
+import { space as dsSpace } from '@mirohq/design-tokens';
 import React from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Button } from './Button';
 import { getDropzoneStyle } from '../hooks/ui-utils';
-import { space as dsSpace } from '@mirohq/design-tokens';
-import { IconSquareArrowIn, Text } from '@mirohq/design-system';
+import { Button } from './Button';
 
 // Provide semantic spacing aliases until the design tokens include them.
 const space = { ...dsSpace, small: dsSpace[200] } as const;

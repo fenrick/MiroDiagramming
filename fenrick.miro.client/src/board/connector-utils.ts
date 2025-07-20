@@ -5,8 +5,8 @@ import type {
   Group,
   TextAlignVertical,
 } from '@mirohq/websdk-types';
-import type { ConnectorTemplate } from './templates';
 import type { EdgeData, EdgeHint } from '../core/graph';
+import type { ConnectorTemplate } from './templates';
 
 /**
  * Build caption objects for a connector label.

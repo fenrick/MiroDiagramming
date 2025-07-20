@@ -1,11 +1,11 @@
 /** @vitest-environment jsdom */
-import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { StyleTab } from '../src/ui/pages/StyleTab';
-import * as styleTools from '../src/board/style-tools';
-import { STYLE_PRESET_NAMES, stylePresets } from '../src/ui/style-presets';
+import React from 'react';
 import * as formatTools from '../src/board/format-tools';
+import * as styleTools from '../src/board/style-tools';
+import { StyleTab } from '../src/ui/pages/StyleTab';
+import { STYLE_PRESET_NAMES, stylePresets } from '../src/ui/style-presets';
 
 vi.mock('../src/board/style-tools');
 

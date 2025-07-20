@@ -1,5 +1,5 @@
-import React from 'react';
 import { Select as DSSelect } from '@mirohq/design-system';
+import React from 'react';
 
 export type SelectProps = Readonly<{
   /** Currently selected value. */

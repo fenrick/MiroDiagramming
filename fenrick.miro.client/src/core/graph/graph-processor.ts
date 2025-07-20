@@ -1,22 +1,22 @@
-import { GraphData, graphService } from './graph-service';
-import { edgesToHierarchy, hierarchyToEdges } from './convert';
-import { isNestedAlgorithm } from './layout-modes';
-import { HierarchyProcessor } from './hierarchy-processor';
-import type { HierNode } from '../layout/nested-layout';
+import type { BaseItem, Frame, Group } from '@mirohq/websdk-types';
+import { maybeSync } from '../../board/board';
 import { BoardBuilder } from '../../board/board-builder';
 import { clearActiveFrame, registerFrame } from '../../board/frame-utils';
-import { maybeSync } from '../../board/board';
-import { UndoableProcessor } from './undoable-processor';
 import { layoutEngine, LayoutResult } from '../layout/elk-layout';
 import { UserLayoutOptions } from '../layout/elk-options';
-import { fileUtils } from '../utils/file-utils';
 import type { PositionedNode } from '../layout/layout-core';
 import {
   boundingBoxFromTopLeft,
   computeEdgeHints,
   frameOffset,
 } from '../layout/layout-utils';
-import type { BaseItem, Frame, Group } from '@mirohq/websdk-types';
+import type { HierNode } from '../layout/nested-layout';
+import { fileUtils } from '../utils/file-utils';
+import { edgesToHierarchy, hierarchyToEdges } from './convert';
+import { GraphData, graphService } from './graph-service';
+import { HierarchyProcessor } from './hierarchy-processor';
+import { isNestedAlgorithm } from './layout-modes';
+import { UndoableProcessor } from './undoable-processor';
 
 /** Board widget or group item. */
 type BoardItem = BaseItem | Group;

@@ -1,6 +1,6 @@
-import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import React from 'react';
 import { StructuredTab } from '../src/ui/pages/StructuredTab';
 
 /** Ensure advanced options panel can be toggled via details element. */

@@ -1,15 +1,3 @@
-import { BoardBuilder } from '../../board/board-builder';
-import { clearActiveFrame, registerFrame } from '../../board/frame-utils';
-import { UndoableProcessor } from './undoable-processor';
-import { fileUtils } from '../utils/file-utils';
-import { boundingBoxFromCenter, frameOffset } from '../layout/layout-utils';
-import {
-  HierNode,
-  layoutHierarchy,
-  NestedLayoutResult,
-} from '../layout/nested-layout';
-import { edgesToHierarchy } from './convert';
-import type { GraphData } from './graph-service';
 import type {
   BaseItem,
   Connector,
@@ -17,6 +5,18 @@ import type {
   Group,
   GroupableItem,
 } from '@mirohq/websdk-types';
+import { BoardBuilder } from '../../board/board-builder';
+import { clearActiveFrame, registerFrame } from '../../board/frame-utils';
+import { boundingBoxFromCenter, frameOffset } from '../layout/layout-utils';
+import {
+  HierNode,
+  layoutHierarchy,
+  NestedLayoutResult,
+} from '../layout/nested-layout';
+import { fileUtils } from '../utils/file-utils';
+import { edgesToHierarchy } from './convert';
+import type { GraphData } from './graph-service';
+import { UndoableProcessor } from './undoable-processor';
 
 export interface HierarchyProcessOptions {
   createFrame?: boolean;

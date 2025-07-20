@@ -1,5 +1,5 @@
-import React from 'react';
 import { Form, Input, styled } from '@mirohq/design-system';
+import React from 'react';
 
 export type InputFieldProps = Readonly<
   Omit<

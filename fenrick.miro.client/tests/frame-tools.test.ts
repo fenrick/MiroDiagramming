@@ -1,9 +1,9 @@
+import { BoardLike } from '../src/board/board';
+import { boardCache } from '../src/board/board-cache';
 import {
   lockSelectedFrames,
   renameSelectedFrames,
 } from '../src/board/frame-tools';
-import { BoardLike } from '../src/board/board';
-import { boardCache } from '../src/board/board-cache';
 
 describe('frame-tools', () => {
   beforeEach(() => boardCache.reset());

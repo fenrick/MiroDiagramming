@@ -1,5 +1,5 @@
-import { loadExcelJS } from './exceljs-loader';
 import type { ExcelRow } from './excel-loader';
+import { loadExcelJS } from './exceljs-loader';
 
 /**
  * Add Miro widget identifiers to the provided rows using the given ID column.

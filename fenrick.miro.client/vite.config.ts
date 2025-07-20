@@ -1,13 +1,13 @@
-import path from 'path';
-import fs from 'fs';
-import dns from 'dns';
-import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import plugin from '@vitejs/plugin-react';
+import child_process from 'child_process';
+import dns from 'dns';
+import fs from 'fs';
 
 import { fileURLToPath, URL } from 'node:url';
-import child_process from 'child_process';
+import path from 'path';
 import { env } from 'process';
+import { defineConfig } from 'vite';
 
 const baseFolder =
   env.APPDATA !== undefined && env.APPDATA !== ''

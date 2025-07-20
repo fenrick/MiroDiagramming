@@ -1,9 +1,9 @@
+import { templateManager } from '../src/board/templates';
 import { edgesToHierarchy, hierarchyToEdges } from '../src/core/graph/convert';
 import { GraphProcessor } from '../src/core/graph/graph-processor';
 import { HierarchyProcessor } from '../src/core/graph/hierarchy-processor';
 import { layoutEngine } from '../src/core/layout/elk-layout';
 import * as nestedLayout from '../src/core/layout/nested-layout';
-import { templateManager } from '../src/board/templates';
 
 interface GlobalWithMiro {
   miro?: { board?: Record<string, unknown> };

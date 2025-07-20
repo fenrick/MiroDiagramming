@@ -1,12 +1,12 @@
+import { Tabs } from '@mirohq/design-system';
 import React from 'react';
-import { ResizeTab } from './ResizeTab';
-import { StyleTab } from './StyleTab';
+import { PageHelp } from '../components/PageHelp';
+import { TabPanel } from '../components/TabPanel';
 import { ArrangeTab } from './ArrangeTab';
 import { FramesTab } from './FramesTab';
-import { TabPanel } from '../components/TabPanel';
-import { PageHelp } from '../components/PageHelp';
+import { ResizeTab } from './ResizeTab';
+import { StyleTab } from './StyleTab';
 import type { TabTuple } from './tab-definitions';
-import { Tabs } from '@mirohq/design-system';
 
 /**
  * Identifier string for each sub-tab.

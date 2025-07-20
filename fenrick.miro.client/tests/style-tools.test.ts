@@ -1,3 +1,4 @@
+import { boardCache } from '../src/board/board-cache';
 import {
   copyFillFromSelection,
   extractFillColor,
@@ -6,7 +7,6 @@ import {
   tweakFillColor,
   tweakOpacity,
 } from '../src/board/style-tools';
-import { boardCache } from '../src/board/board-cache';
 
 describe('style-tools', () => {
   beforeEach(() => boardCache.reset());

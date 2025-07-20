@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { SelectField } from '../ui/components/SelectField';
 import { SelectOption } from '../ui/components';
+import { SelectField } from '../ui/components/SelectField';
 
 const meta: Meta<typeof SelectField> = {
   title: 'Components/SelectField',

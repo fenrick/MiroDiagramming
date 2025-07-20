@@ -1,5 +1,5 @@
-import React from 'react';
 import { DropdownMenu, IconButton, IconFunnel } from '@mirohq/design-system';
+import React from 'react';
 import { InputField } from './InputField';
 
 export interface FilterDropdownProps {

@@ -1,5 +1,5 @@
-import { layoutEngine } from '../src/core/layout/elk-layout';
 import ELK from 'elkjs/lib/elk.bundled.js';
+import { layoutEngine } from '../src/core/layout/elk-layout';
 
 /**
  * Coverage tests for layoutGraph focusing on branch conditions

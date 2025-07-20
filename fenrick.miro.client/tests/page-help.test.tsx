@@ -1,7 +1,7 @@
 /** @vitest-environment jsdom */
-import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import React from 'react';
 import { PageHelp } from '../src/ui/components/PageHelp';
 
 class ResizeObserverMock {

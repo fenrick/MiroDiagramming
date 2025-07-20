@@ -1,11 +1,11 @@
 import { resolveColor } from '../core/utils/color-utils';
+import type { StylePreset } from '../ui/style-presets';
 import {
   type BoardLike,
   forEachSelection,
   maybeSync,
   type Syncable,
 } from './board';
-import type { StylePreset } from '../ui/style-presets';
 
 /** Resolved preset style attributes. */
 export interface PresetStyle {

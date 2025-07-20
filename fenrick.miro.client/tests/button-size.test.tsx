@@ -1,7 +1,7 @@
 /** @vitest-environment jsdom */
-import React from 'react';
 import { render } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import React from 'react';
 import { Button } from '../src/ui/components/Button';
 
 it('defaults to large size for primary', () => {

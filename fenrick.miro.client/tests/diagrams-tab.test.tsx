@@ -1,9 +1,9 @@
 /** @vitest-environment jsdom */
-import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { DiagramsTab } from '../src/ui/pages/DiagramsTab';
+import React from 'react';
 import { GraphProcessor } from '../src/core/graph/graph-processor';
+import { DiagramsTab } from '../src/ui/pages/DiagramsTab';
 
 vi.mock('../src/core/graph/graph-processor');
 vi.mock('../src/board/card-processor');

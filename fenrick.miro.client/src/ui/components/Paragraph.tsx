@@ -1,6 +1,6 @@
-import React from 'react';
 import { Paragraph as DSParagraph, styled } from '@mirohq/design-system';
 import { space } from '@mirohq/design-tokens';
+import React from 'react';
 
 export type ParagraphProps = Readonly<
   Omit<React.HTMLAttributes<HTMLParagraphElement>, 'className' | 'style'>

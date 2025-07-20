@@ -1,12 +1,3 @@
-import React from 'react';
-import { Button, InputField } from '../components';
-import {
-  lockSelectedFrames,
-  renameSelectedFrames,
-} from '../../board/frame-tools';
-import { TabPanel } from '../components/TabPanel';
-import { PageHelp } from '../components/PageHelp';
-import type { TabTuple } from './tab-definitions';
 import {
   Grid,
   Heading,
@@ -14,6 +5,15 @@ import {
   IconPen,
   Text,
 } from '@mirohq/design-system';
+import React from 'react';
+import {
+  lockSelectedFrames,
+  renameSelectedFrames,
+} from '../../board/frame-tools';
+import { Button, InputField } from '../components';
+import { PageHelp } from '../components/PageHelp';
+import { TabPanel } from '../components/TabPanel';
+import type { TabTuple } from './tab-definitions';
 
 /** UI for renaming or locking selected frames. */
 export const FramesTab: React.FC = () => {

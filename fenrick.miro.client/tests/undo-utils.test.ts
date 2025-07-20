@@ -1,6 +1,6 @@
-import { syncOrUndo, undoWidgets } from '../src/board/undo-utils';
-import { BoardBuilder } from '../src/board/board-builder';
 import type { Frame } from '@mirohq/websdk-types';
+import { BoardBuilder } from '../src/board/board-builder';
+import { syncOrUndo, undoWidgets } from '../src/board/undo-utils';
 
 describe('undoWidgets', () => {
   test('removes items when registry populated', async () => {

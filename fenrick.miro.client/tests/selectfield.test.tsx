@@ -1,9 +1,9 @@
 /** @vitest-environment jsdom */
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { SelectField } from '../src/ui/components/SelectField';
+import React from 'react';
 import { SelectOption } from '../src/ui/components';
+import { SelectField } from '../src/ui/components/SelectField';
 
 test('renders label and select', () => {
   render(

@@ -1,18 +1,18 @@
-import { UndoableProcessor } from '../src/core/graph/undoable-processor';
-import { BoardBuilder } from '../src/board/board-builder';
 import type { BaseItem } from '@mirohq/websdk-types';
+import { BoardBuilder } from '../src/board/board-builder';
+import { UndoableProcessor } from '../src/core/graph/undoable-processor';
 
 class Dummy extends UndoableProcessor<BaseItem> {
+  constructor(builder: BoardBuilder) {
+    super(builder);
+  }
+
   public add(item: BaseItem | BaseItem[]): void {
     this.registerCreated(item);
   }
 
   public async doSync(items: BaseItem[]): Promise<void> {
     await this.syncOrUndo(items);
-  }
-
-  constructor(builder: BoardBuilder) {
-    super(builder);
   }
 }
 

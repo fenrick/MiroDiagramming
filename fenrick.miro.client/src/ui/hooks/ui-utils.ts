@@ -1,8 +1,8 @@
 import { colors, fontSizes, fontWeights } from '@mirohq/design-tokens';
+import type React from 'react';
+import { CardProcessor } from '../../board/card-processor';
 import { GraphProcessor } from '../../core/graph/graph-processor';
 import { HierarchyProcessor } from '../../core/graph/hierarchy-processor';
-import { CardProcessor } from '../../board/card-processor';
-import type React from 'react';
 
 const dropzoneStyles = {
   display: 'flex',

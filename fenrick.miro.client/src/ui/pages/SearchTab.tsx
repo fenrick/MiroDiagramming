@@ -1,21 +1,3 @@
-import React from 'react';
-import {
-  Button,
-  FilterDropdown,
-  InputField,
-  Paragraph,
-  RegexSearchField,
-} from '../components';
-import type { SearchOptions } from '../../board/search-tools';
-import {
-  useDebouncedSearch,
-  useNextMatch,
-  useReplaceAll,
-  useReplaceCurrent,
-} from '../hooks/use-search-handlers';
-import { TabPanel } from '../components/TabPanel';
-import { PageHelp } from '../components/PageHelp';
-import type { TabTuple } from './tab-definitions';
 import {
   Grid,
   IconArrowRight,
@@ -23,6 +5,24 @@ import {
   IconPen,
   Text,
 } from '@mirohq/design-system';
+import React from 'react';
+import type { SearchOptions } from '../../board/search-tools';
+import {
+  Button,
+  FilterDropdown,
+  InputField,
+  Paragraph,
+  RegexSearchField,
+} from '../components';
+import { PageHelp } from '../components/PageHelp';
+import { TabPanel } from '../components/TabPanel';
+import {
+  useDebouncedSearch,
+  useNextMatch,
+  useReplaceAll,
+  useReplaceCurrent,
+} from '../hooks/use-search-handlers';
+import type { TabTuple } from './tab-definitions';
 
 /**
  * Sidebar tab providing board wide search and replace.

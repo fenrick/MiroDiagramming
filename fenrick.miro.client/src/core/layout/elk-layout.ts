@@ -1,6 +1,6 @@
-import { LayoutResult, performLayout } from './layout-core';
 import { GraphData } from '../graph';
 import { UserLayoutOptions } from './elk-options';
+import { LayoutResult, performLayout } from './layout-core';
 
 /**
  * LayoutEngine executes ELK layout directly within the main thread.

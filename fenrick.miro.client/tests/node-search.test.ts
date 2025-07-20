@@ -1,7 +1,7 @@
 import { describe, expect, test, vi } from 'vitest';
-import { searchGroups, searchShapes } from '../src/board/node-search';
-import { boardCache } from '../src/board/board-cache';
 import type { BoardQueryLike } from '../src/board/board';
+import { boardCache } from '../src/board/board-cache';
+import { searchGroups, searchShapes } from '../src/board/node-search';
 
 const board: BoardQueryLike = {
   get: vi.fn(({ type }) => {

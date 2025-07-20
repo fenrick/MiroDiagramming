@@ -1,5 +1,5 @@
-import React from 'react';
 import { Tooltip as DSTooltip } from '@mirohq/design-system';
+import React from 'react';
 
 export interface TooltipProps {
   /** Text displayed inside the tooltip. */

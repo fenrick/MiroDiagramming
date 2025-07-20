@@ -1,8 +1,8 @@
+import type { BaseItem, GroupableItem } from '@mirohq/websdk-types';
 import { describe, expect, test, vi } from 'vitest';
 import { BoardBuilder } from '../src/board/board-builder';
 import { templateManager } from '../src/board/templates';
 import { mockBoard } from './mock-board';
-import type { BaseItem, GroupableItem } from '@mirohq/websdk-types';
 
 describe('BoardBuilder resizeItem', () => {
   test('updates width and height without syncing', async () => {

@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using Services;
 
 /// <summary>
-///     Captures log entries from the client and stores them via <see cref="ILogSink" />.
+///     Captures log entries from the client and stores them via
+///     <see cref="ILogSink" />.
 /// </summary>
 [ApiController]
 [Route("api/logs")]

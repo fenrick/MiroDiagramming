@@ -32,8 +32,8 @@ const LEAF_HEIGHT = 30;
 const DEFAULT_PADDING = 20;
 const DEFAULT_TOP_SPACING = 50;
 
-import { loadElk } from './elk-loader';
 import type { ElkNode } from 'elkjs/lib/elk-api';
+import { loadElk } from './elk-loader';
 import type { LayoutNode } from './elk-preprocessor';
 import { prepareForElk } from './elk-preprocessor';
 
@@ -41,6 +41,57 @@ import { prepareForElk } from './elk-preprocessor';
  * Layout hierarchical data using the ELK engine and compute container sizes.
  */
 export class NestedLayouter {
+  public computePosition(
+    node: ElkNode,
+    offsetX: number,
+    offsetY: number,
+  ): PositionedNode | null {
+    if (
+      node.id !== 'root' &&
+      typeof node.x === 'number' &&
+      typeof node.y === 'number' &&
+      typeof node.width === 'number' &&
+      typeof node.height === 'number'
+    ) {
+      return {
+        id: node.id,
+        x: offsetX + node.x,
+        y: offsetY + node.y,
+        width: node.width,
+        height: node.height,
+      };
+    }
+    return null;
+  }
+
+  /**
+   * Compute a nested layout using ELK for positioning.
+   */
+  public async layoutHierarchy(
+    roots: HierNode[],
+    opts: NestedLayoutOptions = {},
+  ): Promise<NestedLayoutResult> {
+    const padding = opts.padding ?? DEFAULT_PADDING;
+    const topSpacing = opts.topSpacing ?? DEFAULT_TOP_SPACING;
+    const elkRoot: LayoutNode = {
+      id: 'root',
+      layoutOptions: {
+        'elk.algorithm': 'org.eclipse.elk.rectpacking',
+        'elk.spacing.nodeNode': String(padding),
+      },
+      children: roots.map((r) => this.buildElkNode(r, opts.sortKey, padding)),
+    };
+    prepareForElk(elkRoot, topSpacing, LEAF_WIDTH);
+    const Elk = await loadElk();
+    const elk = new Elk();
+    const result = await elk.layout(elkRoot);
+    const nodes: Record<string, PositionedNode> = {};
+    for (const child of result.children ?? []) {
+      this.collectPositions(child, nodes);
+    }
+    return { nodes };
+  }
+
   private sortValue(node: HierNode, key?: string): string {
     const metaValue = key ? node.metadata?.[key] : undefined;
     if (metaValue !== undefined) {
@@ -73,29 +124,6 @@ export class NestedLayouter {
     return elk;
   }
 
-  public computePosition(
-    node: ElkNode,
-    offsetX: number,
-    offsetY: number,
-  ): PositionedNode | null {
-    if (
-      node.id !== 'root' &&
-      typeof node.x === 'number' &&
-      typeof node.y === 'number' &&
-      typeof node.width === 'number' &&
-      typeof node.height === 'number'
-    ) {
-      return {
-        id: node.id,
-        x: offsetX + node.x,
-        y: offsetY + node.y,
-        width: node.width,
-        height: node.height,
-      };
-    }
-    return null;
-  }
-
   private collectChildPositions(
     node: ElkNode,
     map: Record<string, PositionedNode>,
@@ -124,34 +152,6 @@ export class NestedLayouter {
       map[node.id] = pos;
     }
     this.collectChildPositions(node, map, offsetX, offsetY);
-  }
-
-  /**
-   * Compute a nested layout using ELK for positioning.
-   */
-  public async layoutHierarchy(
-    roots: HierNode[],
-    opts: NestedLayoutOptions = {},
-  ): Promise<NestedLayoutResult> {
-    const padding = opts.padding ?? DEFAULT_PADDING;
-    const topSpacing = opts.topSpacing ?? DEFAULT_TOP_SPACING;
-    const elkRoot: LayoutNode = {
-      id: 'root',
-      layoutOptions: {
-        'elk.algorithm': 'org.eclipse.elk.rectpacking',
-        'elk.spacing.nodeNode': String(padding),
-      },
-      children: roots.map((r) => this.buildElkNode(r, opts.sortKey, padding)),
-    };
-    prepareForElk(elkRoot, topSpacing, LEAF_WIDTH);
-    const Elk = await loadElk();
-    const elk = new Elk();
-    const result = await elk.layout(elkRoot);
-    const nodes: Record<string, PositionedNode> = {};
-    for (const child of result.children ?? []) {
-      this.collectPositions(child, nodes);
-    }
-    return { nodes };
   }
 }
 

@@ -1,6 +1,6 @@
-import { clearActiveFrame, registerFrame } from '../src/board/frame-utils';
 import type { Frame } from '@mirohq/websdk-types';
 import { BoardBuilder } from '../src/board/board-builder';
+import { clearActiveFrame, registerFrame } from '../src/board/frame-utils';
 
 describe('frame-utils', () => {
   test('registerFrame creates frame and records it', async () => {

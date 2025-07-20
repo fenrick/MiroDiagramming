@@ -1,6 +1,6 @@
+import { log } from '../logger';
 import { BoardLike, getBoard, maybeSync, Syncable } from './board';
 import { boardCache } from './board-cache';
-import { log } from '../logger';
 
 /** Options for renaming selected frames. */
 export interface RenameOptions {

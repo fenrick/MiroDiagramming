@@ -1,5 +1,5 @@
-import type { BoardLike, BoardQueryLike } from './types';
 import { log } from '../logger';
+import type { BoardLike, BoardQueryLike } from './types';
 
 function resolveBoard(board?: BoardLike): BoardLike {
   const b =

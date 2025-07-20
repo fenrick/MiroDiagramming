@@ -1,10 +1,10 @@
+import { BoardQueryLike } from '../src/board/board';
+import { boardCache } from '../src/board/board-cache';
 import {
   getTextFields,
   replaceBoardContent,
   searchBoardContent,
 } from '../src/board/search-tools';
-import { BoardQueryLike } from '../src/board/board';
-import { boardCache } from '../src/board/board-cache';
 
 beforeEach(() => boardCache.reset());
 

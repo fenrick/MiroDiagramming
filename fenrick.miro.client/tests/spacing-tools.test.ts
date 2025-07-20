@@ -1,7 +1,7 @@
-import { applySpacingLayout } from '../src/board/spacing-tools';
-import { calculateSpacingOffsets } from '../src/board/spacing-layout';
 import { BoardLike } from '../src/board/board';
 import { boardCache } from '../src/board/board-cache';
+import { calculateSpacingOffsets } from '../src/board/spacing-layout';
+import { applySpacingLayout } from '../src/board/spacing-tools';
 
 beforeEach(() => boardCache.reset());
 

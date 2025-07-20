@@ -20,7 +20,8 @@ public class SerilogSinkTests
             .CreateLogger();
         var sink = new SerilogSink(logger);
 
-        var entry = new ClientLogEntry(DateTime.UnixEpoch, "info", "hello", null);
+        var entry =
+            new ClientLogEntry(DateTime.UnixEpoch, "info", "hello", null);
         sink.Store([entry]);
 
         Assert.Single(events);
@@ -41,7 +42,8 @@ public class SerilogSinkTests
             .CreateLogger();
         var sink = new SerilogSink(logger);
 
-        var entry = new ClientLogEntry(DateTime.UnixEpoch, "warn", "hello", null);
+        var entry =
+            new ClientLogEntry(DateTime.UnixEpoch, "warn", "hello", null);
         sink.Store([entry]);
 
         var log = events[0];

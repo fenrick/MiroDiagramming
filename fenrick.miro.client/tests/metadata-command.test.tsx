@@ -1,11 +1,11 @@
 /** @vitest-environment jsdom */
-import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import React from 'react';
 import { App } from '../src/app/App';
+import { ExcelSyncService } from '../src/core/excel-sync-service';
 import { EditMetadataModal } from '../src/ui/components/EditMetadataModal';
 import { useRowData } from '../src/ui/hooks/use-row-data';
-import { ExcelSyncService } from '../src/core/excel-sync-service';
 
 interface GlobalWithMiro {
   miro?: { board?: Record<string, unknown> };

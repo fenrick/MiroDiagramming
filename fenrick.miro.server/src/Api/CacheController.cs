@@ -14,5 +14,6 @@ public class CacheController(ICacheService cache) : ControllerBase
     private readonly ICacheService _cache = cache;
 
     [HttpGet("{boardId}")]
-    public ActionResult<BoardMetadata?> Get(string boardId) => this.Ok(this._cache.Get(boardId));
+    public ActionResult<BoardMetadata?> Get(string boardId) =>
+        this.Ok(this._cache.Get(boardId));
 }

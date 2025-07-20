@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from 'vitest';
-import { boardCache } from '../src/board/board-cache';
 import type { BoardQueryLike } from '../src/board/board';
+import { boardCache } from '../src/board/board-cache';
 
 describe('BoardCache', () => {
   afterEach(() => boardCache.reset());

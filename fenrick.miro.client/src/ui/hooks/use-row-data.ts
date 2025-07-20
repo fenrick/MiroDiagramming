@@ -1,7 +1,7 @@
+import type { BaseItem, Group } from '@mirohq/websdk-types';
 import React from 'react';
 import type { ExcelRow } from '../../core/utils/excel-loader';
 import { useSelection } from './use-selection';
-import type { BaseItem, Group } from '@mirohq/websdk-types';
 
 /**
  * Narrow a board item to the Group type.

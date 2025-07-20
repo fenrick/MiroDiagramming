@@ -1,7 +1,7 @@
 /** @vitest-environment jsdom */
-import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import React from 'react';
 import { Modal } from '../src/ui/components/Modal';
 
 describe('Modal', () => {

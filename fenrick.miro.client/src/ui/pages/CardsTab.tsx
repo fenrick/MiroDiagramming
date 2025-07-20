@@ -1,13 +1,13 @@
+import { Grid, IconArrowArcLeft, IconPlus, Text } from '@mirohq/design-system';
 import React from 'react';
+import { CardProcessor } from '../../board/card-processor';
 import { Button, Checkbox, InputField } from '../components';
 import { JsonDropZone } from '../components/JsonDropZone';
-import { CardProcessor } from '../../board/card-processor';
+import { PageHelp } from '../components/PageHelp';
+import { TabPanel } from '../components/TabPanel';
 
 import { showError } from '../hooks/notifications';
 import { undoLastImport } from '../hooks/ui-utils';
-import { Grid, IconArrowArcLeft, IconPlus, Text } from '@mirohq/design-system';
-import { TabPanel } from '../components/TabPanel';
-import { PageHelp } from '../components/PageHelp';
 
 /** UI for the Cards tab. */
 export const CardsTab: React.FC = () => {

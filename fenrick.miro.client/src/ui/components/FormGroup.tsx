@@ -1,6 +1,6 @@
-import React from 'react';
 import { Form, styled } from '@mirohq/design-system';
 import { space as dsSpace } from '@mirohq/design-tokens';
+import React from 'react';
 
 // Add semantic alias for spacing tokens until the design-tokens package
 // exposes named slots. Small corresponds to 16 px.

@@ -1,10 +1,10 @@
-import { GraphProcessor } from '../src/core/graph/graph-processor';
-import { graphService } from '../src/core/graph';
-import { BoardBuilder } from '../src/board/board-builder';
-import { templateManager } from '../src/board/templates';
-import { layoutEngine } from '../src/core/layout/elk-layout';
-import * as frameUtils from '../src/board/frame-utils';
 import type { Frame } from '@mirohq/websdk-types';
+import { BoardBuilder } from '../src/board/board-builder';
+import * as frameUtils from '../src/board/frame-utils';
+import { templateManager } from '../src/board/templates';
+import { graphService } from '../src/core/graph';
+import { GraphProcessor } from '../src/core/graph/graph-processor';
+import { layoutEngine } from '../src/core/layout/elk-layout';
 import sample from './fixtures/sample-graph.json';
 
 interface GlobalWithMiro {

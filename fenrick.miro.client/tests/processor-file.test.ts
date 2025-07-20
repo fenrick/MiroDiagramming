@@ -1,5 +1,5 @@
-import { GraphProcessor } from '../src/core/graph/graph-processor';
 import { graphService } from '../src/core/graph';
+import { GraphProcessor } from '../src/core/graph/graph-processor';
 
 /**
  * Tests for the processFile helper method which loads a graph

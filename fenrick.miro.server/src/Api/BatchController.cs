@@ -13,7 +13,8 @@ public class BatchController(IMiroClient client) : ControllerBase
     private readonly IMiroClient _client = client;
 
     [HttpPost]
-    public async Task<IActionResult> ForwardAsync([FromBody] MiroRequest[] requests)
+    public async Task<IActionResult> ForwardAsync(
+        [FromBody] MiroRequest[] requests)
     {
         var responses = new List<MiroResponse>(requests.Length);
         foreach (var req in requests)

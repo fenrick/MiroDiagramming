@@ -21,6 +21,13 @@ export abstract class UndoableProcessor<T extends BoardEntity = BoardEntity> {
   }
 
   /**
+   * Remove widgets created during the last run from the board.
+   */
+  public async undoLast(): Promise<void> {
+    await undoWidgets(this.builder, this.lastCreated as BoardEntity[]);
+  }
+
+  /**
    * Register newly created widget(s) for later undo.
    */
   protected registerCreated(item: ItemCollection<T>): void {
@@ -29,13 +36,6 @@ export abstract class UndoableProcessor<T extends BoardEntity = BoardEntity> {
     } else {
       this.lastCreated.push(item);
     }
-  }
-
-  /**
-   * Remove widgets created during the last run from the board.
-   */
-  public async undoLast(): Promise<void> {
-    await undoWidgets(this.builder, this.lastCreated as BoardEntity[]);
   }
 
   /**

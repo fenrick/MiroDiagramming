@@ -1,10 +1,10 @@
 /** @vitest-environment jsdom */
-import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { ArrangeTab } from '../src/ui/pages/ArrangeTab';
+import React from 'react';
 import * as grid from '../src/board/grid-tools';
 import * as spacing from '../src/board/spacing-tools';
+import { ArrangeTab } from '../src/ui/pages/ArrangeTab';
 
 class ResizeObserverMock {
   observe() {}

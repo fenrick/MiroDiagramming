@@ -1,11 +1,11 @@
 /** @vitest-environment jsdom */
-import React from 'react';
+import { colors } from '@mirohq/design-tokens';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import React from 'react';
 import { App } from '../src/app/App';
-import { getDropzoneStyle, undoLastImport } from '../src/ui/hooks/ui-utils';
-import { colors } from '@mirohq/design-tokens';
 import { GraphProcessor } from '../src/core/graph/graph-processor';
+import { getDropzoneStyle, undoLastImport } from '../src/ui/hooks/ui-utils';
 
 interface GlobalWithMiro {
   miro?: { board?: Record<string, unknown> };

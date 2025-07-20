@@ -1,9 +1,9 @@
 /** @vitest-environment jsdom */
-import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { Tooltip } from '../src/ui/components/Tooltip';
+import React from 'react';
 import { Button } from '../src/ui/components/Button';
+import { Tooltip } from '../src/ui/components/Tooltip';
 
 class ResizeObserverMock {
   observe() {}

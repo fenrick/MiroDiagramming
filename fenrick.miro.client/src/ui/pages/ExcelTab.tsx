@@ -1,4 +1,13 @@
+import { IconPlus, Text } from '@mirohq/design-system';
 import React from 'react';
+import { templateManager } from '../../board/templates';
+import {
+  excelLoader,
+  ExcelLoader,
+  ExcelRow,
+  graphExcelLoader,
+  GraphExcelLoader,
+} from '../../core/utils/excel-loader';
 import {
   Button,
   Checkbox,
@@ -7,28 +16,19 @@ import {
   SelectField,
   SelectOption,
 } from '../components';
-import {
-  excelLoader,
-  ExcelLoader,
-  ExcelRow,
-  graphExcelLoader,
-  GraphExcelLoader,
-} from '../../core/utils/excel-loader';
-import { templateManager } from '../../board/templates';
-import { TabPanel } from '../components/TabPanel';
 import { PageHelp } from '../components/PageHelp';
-import { showError } from '../hooks/notifications';
 import { RowInspector } from '../components/RowInspector';
-import type { TabTuple } from './tab-definitions';
+import { TabPanel } from '../components/TabPanel';
 import { useExcelData } from '../hooks/excel-data-context';
-import { useExcelSync } from '../hooks/use-excel-sync';
+import { showError } from '../hooks/notifications';
 import {
   fetchRemoteWorkbook,
   handleLocalDrop,
   useExcelCreate,
   useExcelDrop,
 } from '../hooks/use-excel-handlers';
-import { IconPlus, Text } from '@mirohq/design-system';
+import { useExcelSync } from '../hooks/use-excel-sync';
+import type { TabTuple } from './tab-definitions';
 
 /**
  * Remote workbook loader with error handling.

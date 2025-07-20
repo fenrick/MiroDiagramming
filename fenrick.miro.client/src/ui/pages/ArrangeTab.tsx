@@ -1,4 +1,12 @@
+import {
+  Grid,
+  IconChevronRightDouble,
+  IconGrid,
+  Text,
+} from '@mirohq/design-system';
 import React from 'react';
+import { applyGridLayout, GridOptions } from '../../board/grid-tools';
+import { applySpacingLayout, SpacingOptions } from '../../board/spacing-tools';
 import {
   Button,
   Checkbox,
@@ -6,17 +14,9 @@ import {
   SelectField,
   SelectOption,
 } from '../components';
-import { applyGridLayout, GridOptions } from '../../board/grid-tools';
-import { applySpacingLayout, SpacingOptions } from '../../board/spacing-tools';
-import { TabPanel } from '../components/TabPanel';
 import { PageHelp } from '../components/PageHelp';
+import { TabPanel } from '../components/TabPanel';
 import type { TabTuple } from './tab-definitions';
-import {
-  Grid,
-  IconChevronRightDouble,
-  IconGrid,
-  Text,
-} from '@mirohq/design-system';
 
 /**
  * Combines grid and spacing tools into a single sidebar tab.

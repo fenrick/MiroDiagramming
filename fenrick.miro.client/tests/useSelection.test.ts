@@ -1,7 +1,7 @@
 /** @vitest-environment jsdom */
 import { act, renderHook } from '@testing-library/react';
-import { useSelection } from '../src/ui/hooks/use-selection';
 import { BoardLike } from '../src/board/board';
+import { useSelection } from '../src/ui/hooks/use-selection';
 
 describe('useSelection', () => {
   test('fetches initial selection', async () => {

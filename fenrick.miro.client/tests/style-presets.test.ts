@@ -1,13 +1,13 @@
 /** @vitest-environment jsdom */
+import { render, screen } from '@testing-library/react';
+import React from 'react';
 import { describe, expect, test } from 'vitest';
 import '@testing-library/jest-dom';
 import templatesJson from '../../templates/shapeTemplates.json';
-import { STYLE_PRESET_NAMES, stylePresets } from '../src/ui/style-presets';
 import type { TemplateDefinition } from '../src/board/templates';
 import { templateManager } from '../src/board/templates';
-import React from 'react';
-import { render, screen } from '@testing-library/react';
 import { StyleTab } from '../src/ui/pages/StyleTab';
+import { STYLE_PRESET_NAMES, stylePresets } from '../src/ui/style-presets';
 
 // Ensure presets derive from templates
 describe('style-presets', () => {

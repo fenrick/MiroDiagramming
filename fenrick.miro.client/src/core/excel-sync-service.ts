@@ -1,10 +1,10 @@
-import { ColumnMapping, mapRowsToNodes } from './data-mapper';
-import type { ExcelRow } from './utils/excel-loader';
-import { templateManager } from '../board/templates';
-import { applyElementToItem } from '../board/element-utils';
-import { searchGroups, searchShapes } from '../board/node-search';
 import type { BaseItem, Group } from '@mirohq/websdk-types';
 import type { BoardQueryLike } from '../board/board';
+import { applyElementToItem } from '../board/element-utils';
+import { searchGroups, searchShapes } from '../board/node-search';
+import { templateManager } from '../board/templates';
+import { ColumnMapping, mapRowsToNodes } from './data-mapper';
+import type { ExcelRow } from './utils/excel-loader';
 import { toSafeString } from './utils/string-utils';
 
 /** Item supporting text content on the board. */

@@ -1,9 +1,9 @@
-import { BoardBuilder } from './board-builder';
-import { clearActiveFrame, registerFrame } from './frame-utils';
+import type { Card, CardStyle, Frame, Tag } from '@mirohq/websdk-types';
 import { UndoableProcessor } from '../core/graph/undoable-processor';
 import { type CardData, cardLoader } from '../core/utils/cards';
+import { BoardBuilder } from './board-builder';
+import { clearActiveFrame, registerFrame } from './frame-utils';
 import { calculateGrid } from './grid-layout';
-import type { Card, CardStyle, Frame, Tag } from '@mirohq/websdk-types';
 
 export interface CardProcessOptions {
   createFrame?: boolean;

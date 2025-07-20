@@ -1,9 +1,9 @@
 /** @vitest-environment jsdom */
-import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { ResizeTab } from '../src/ui/pages/ResizeTab';
+import React from 'react';
 import * as resizeTools from '../src/board/resize-tools';
+import { ResizeTab } from '../src/ui/pages/ResizeTab';
 
 // Helper to provide a mock Miro board API
 function setupBoard(): void {

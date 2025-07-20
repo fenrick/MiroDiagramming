@@ -3,9 +3,9 @@
  *
  * @jest-environment jsdom
  */
-import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import React from 'react';
 import { Checkbox } from '../src/ui/components/Checkbox';
 
 test('renders label connected via htmlFor', () => {

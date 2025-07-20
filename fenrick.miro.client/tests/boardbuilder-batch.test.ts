@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { BoardBuilder } from '../src/board/board-builder';
-import { mockBoard } from './mock-board';
 import { boardCache } from '../src/board/board-cache';
+import { mockBoard } from './mock-board';
 
 beforeEach(() => boardCache.reset());
 

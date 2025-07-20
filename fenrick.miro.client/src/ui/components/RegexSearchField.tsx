@@ -1,5 +1,5 @@
-import React from 'react';
 import { Form, Input, Switch } from '@mirohq/design-system';
+import React from 'react';
 
 export interface RegexSearchFieldProps
   extends Omit<React.ComponentProps<typeof Input>, 'onChange'> {

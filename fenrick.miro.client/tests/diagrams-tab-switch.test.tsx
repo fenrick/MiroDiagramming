@@ -1,8 +1,8 @@
 /** @vitest-environment jsdom */
-import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
+import React from 'react';
 import { DiagramsTab } from '../src/ui/pages/DiagramsTab';
 
 describe('DiagramsTab switching', () =>

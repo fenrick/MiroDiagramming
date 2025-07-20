@@ -1,10 +1,10 @@
-import { applyGridLayout } from '../src/board/grid-tools';
+import { BoardLike } from '../src/board/board';
+import { boardCache } from '../src/board/board-cache';
 import {
   calculateGrid,
   calculateGridPositions,
 } from '../src/board/grid-layout';
-import { BoardLike } from '../src/board/board';
-import { boardCache } from '../src/board/board-cache';
+import { applyGridLayout } from '../src/board/grid-tools';
 
 beforeEach(() => boardCache.reset());
 

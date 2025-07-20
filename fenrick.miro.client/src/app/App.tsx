@@ -1,12 +1,12 @@
+import { createTheme, Tabs, themes } from '@mirohq/design-system';
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
+import type { ExcelRow } from '../core/utils/excel-loader';
+import { EditMetadataModal, IntroScreen } from '../ui/components';
+import { Paragraph } from '../ui/components/Paragraph';
+import { ExcelDataProvider } from '../ui/hooks/excel-data-context';
 
 import { type Tab, TAB_DATA } from '../ui/pages/tabs';
-import { EditMetadataModal, IntroScreen } from '../ui/components';
-import { ExcelDataProvider } from '../ui/hooks/excel-data-context';
-import type { ExcelRow } from '../core/utils/excel-loader';
-import { createTheme, Tabs, themes } from '@mirohq/design-system';
-import { Paragraph } from '../ui/components/Paragraph';
 
 const lightThemeClassName = createTheme(themes.light);
 

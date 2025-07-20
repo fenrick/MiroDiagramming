@@ -1,15 +1,15 @@
 import React from 'react';
 import { useDropzone } from 'react-dropzone';
+import { ColumnMapping, mapRowsToNodes } from '../../core/data-mapper';
+import { GraphProcessor } from '../../core/graph/graph-processor';
 import {
   excelLoader,
   ExcelRow,
   graphExcelLoader,
 } from '../../core/utils/excel-loader';
-import { GraphProcessor } from '../../core/graph/graph-processor';
-import { ColumnMapping, mapRowsToNodes } from '../../core/data-mapper';
 import { addMiroIds, downloadWorkbook } from '../../core/utils/workbook-writer';
-import { getDropzoneStyle } from './ui-utils';
 import { showError } from './notifications';
+import { getDropzoneStyle } from './ui-utils';
 
 export interface DropReturn {
   dropzone: ReturnType<typeof useDropzone>;
