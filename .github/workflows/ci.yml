@@ -151,7 +151,7 @@ jobs:
         working-directory: fenrick.miro.client
         
       - name: Unit tests
-        run: npm test-shard -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        run: npm run test-shard -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
         
       - name: Upload blob report to GitHub Actions Artifacts
         if: ${{ !cancelled() }}
