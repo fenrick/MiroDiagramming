@@ -167,6 +167,15 @@ jobs:
       - name: Unit tests
         run: npm run test -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
         working-directory: fenrick.miro.client
+        
+      - name: Upload blob report to GitHub Actions Artifacts
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: blob-report-${{ matrix.shardIndex }}
+          path: fenrick.miro.client/.vitest-reports/*
+          include-hidden-files: true
+          retention-days: 1
 
   sonar:
     if: always()
@@ -193,6 +202,17 @@ jobs:
           cache-dependency-path: fenrick.miro.client/package-lock.json
 
       - run: corepack enable && npm ci
+        working-directory: fenrick.miro.client
+
+      - name: Download blob reports from GitHub Actions Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: fenrick.miro.client/.vitest-reports
+          pattern: blob-report-*
+          merge-multiple: true
+
+      - name: Merge reports
+        run: npm run merge
         working-directory: fenrick.miro.client
 
       - name: Cache SonarQube Cloud packages
@@ -244,11 +264,7 @@ jobs:
         shell: powershell
         run: |
           dotnet-coverage collect "dotnet test" -f xml -o "coverage.xml"
-
-      - name: Unit tests
-        run: npm run test
-        working-directory: fenrick.miro.client
-
+          
       - name: End sonar-scanner
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
