@@ -122,23 +122,12 @@ jobs:
           fenrick.miro.tests/fenrick.miro.tests.csproj
       - name: Test
         run: |
-          dotnet test fenrick.miro.tests/fenrick.miro.tests.csproj \
-            --logger "trx;LogFileName=results.trx" \
-            /p:CollectCoverage=true \
-            /p:CoverletOutputFormat=cobertura \
-            /p:CoverletOutput=coverage/coverage.cobertura.xml
-      - name: Upload coverage
-        uses: actions/upload-artifact@v4
-        with:
-          name: dotnet-coverage
-          path: fenrick.miro.tests/coverage
+          dotnet test fenrick.miro.tests/fenrick.miro.tests.csproj
 
   unit-tests:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      matrix:
-        shard: [1, 2]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -154,73 +143,23 @@ jobs:
         run: npm audit --omit=dev --audit-level=moderate
         working-directory: fenrick.miro.client
       - name: Unit tests
-        run: npm test -- --shard=${{ matrix.shard }}/2
+        run: npm test
         working-directory: fenrick.miro.client
       - name: Debug coverage files
         run: ls -R coverage
         working-directory: fenrick.miro.client
-      - name: Rename coverage folder
-        if: always()
-        run: mv coverage "coverage-${{ matrix.shard }}"
-        working-directory: fenrick.miro.client
       - name: Upload coverage
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-${{ matrix.shard }}
-          path: fenrick.miro.client/coverage-${{ matrix.shard }}
+          name: coverage
+          path: fenrick.miro.client/coverage
 
-  merge-coverage:
+  sonar:
     if: always()
     needs:
       - unit-tests
       - dotnet-tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          cache-dependency-path: fenrick.miro.client/package-lock.json
-      - run: corepack enable
-        working-directory: fenrick.miro.client
-      - name: Download coverage shard 1
-        uses: actions/download-artifact@v4
-        with:
-          name: coverage-1
-          path: coverage-1
-      - name: Download coverage shard 2
-        uses: actions/download-artifact@v4
-        with:
-          name: coverage-2
-          path: coverage-2
-      - name: Download dotnet coverage
-        uses: actions/download-artifact@v4
-        with:
-          name: dotnet-coverage
-          path: dotnet-coverage
-      - name: Debug downloaded coverage files
-        run: ls -R .
-      - name: Merge coverage
-        run: |
-          mkdir -p coverage
-          npx --prefix fenrick.miro.client lcov-result-merger "coverage-*/lcov.info" coverage/lcov.info
-          cat coverage-*/sonar-report.xml > coverage/sonar-report.xml
-          # globstar is not enabled by default in the bash shell used by
-          # GitHub Actions, so the previous recursive copy failed to match
-          # the coverage file. Use `find` instead to locate the Cobertura
-          # report produced by the .NET tests.
-          find dotnet-coverage -name coverage.cobertura.xml -exec cp {} coverage/coverage.cobertura.xml \;
-      - name: Upload coverage
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage
-          path: coverage
-
-  sonar:
-    if: always()
-    needs: merge-coverage
     runs-on: windows-latest
     steps:
       - name: Set up JDK 17
@@ -228,6 +167,7 @@ jobs:
         with:
           java-version: 17
           distribution: 'zulu'
+          
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -238,20 +178,23 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
           cache-dependency-path: fenrick.miro.client/package-lock.json
+          
       - run: corepack enable && npm ci
         working-directory: fenrick.miro.client
-
+        
       - name: Download coverage
         uses: actions/download-artifact@v4
         with:
           name: coverage
           path: coverage
+
       - name: Cache SonarQube Cloud packages
         uses: actions/cache@v4
         with:
           path: ~\sonar\cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
+          
       - name: Cache SonarQube Cloud scanner
         id: cache-sonar-scanner
         uses: actions/cache@v4
@@ -259,16 +202,21 @@ jobs:
           path: .\.sonar\scanner
           key: ${{ runner.os }}-sonar-scanner
           restore-keys: ${{ runner.os }}-sonar-scanner
+          
       - name: Install SonarQube Cloud scanner
         if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
         shell: powershell
         run: |
           New-Item -Path .\.sonar\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+          
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
-      - name: Build and analyze
+  
+      - run: dotnet tool install --global dotnet-coverage
+
+      - name: Begin sonar-scanner
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
@@ -277,16 +225,24 @@ jobs:
             /k:"fenrick_MiroDiagraming" /o:"fenrick" `
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
             /d:sonar.host.url="https://sonarcloud.io" `
-            /d:sonar.sources="fenrick.miro.server/src;fenrick.miro.client/src" `
-            /d:sonar.exclusions="**/node_modules/**,**/obj/**" `
-            /d:sonar.cs.opencover.reportsPaths="coverage\coverage.opencover.xml" `
+            /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml `
             /d:sonar.javascript.lcov.reportPaths="coverage\lcov.info"
-          dotnet build fenrick.miro.server/fenrick.miro.server.csproj
-          dotnet test fenrick.miro.tests/fenrick.miro.tests.csproj --no-build `
-            /p:CollectCoverage=true `
-            /p:CoverletOutputFormat=opencover `
-            /p:CoverletOutput="coverage/coverage.opencover.xml" `
-            --logger "trx"
+
+      - name: Build
+        shell: powershell
+        run: |
+          dotnet build --no-incremental
+
+      - name: Test coverage
+        shell: powershell
+        run: |
+          dotnet-coverage collect "dotnet test" -f xml -o "coverage.xml"
+      
+      - name: End sonar-scanner
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        shell: powershell
+        run: |
           .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
 
   codeql:
