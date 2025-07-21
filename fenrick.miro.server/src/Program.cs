@@ -11,7 +11,7 @@ builder.AddServiceDefaults();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSingleton<ILogSink, SerilogSink>();
+builder.Services.AddSingleton<ILogSink>(_ => new SerilogSink(Log.Logger));
 builder.Services.AddSingleton<IShapeCache, InMemoryShapeCache>();
 
 var app = builder.Build();

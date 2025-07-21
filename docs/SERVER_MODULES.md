@@ -73,3 +73,14 @@ for all data shapes.
 
 See **ARCHITECTURE.md** for the overall system overview and code quality
 requirements.
+
+## 5 Future Work
+
+The initial services intentionally keep the scope small. The following features remain TODO and are marked throughout the source:
+
+- **ELK-based LayoutEngine** – port the heavy shape placement algorithms from the JavaScript codebase. The current `LayoutEngine` only stacks nodes vertically.
+- **ExcelLoader extensions** – add streaming support, large workbook optimisation and named table handling.
+- **Template persistence** – store user templates in a database and expose API endpoints for editing and listing templates.
+- **Advanced object matching** – provide fuzzy search and shape property filters beyond simple label comparison.
+
+These enhancements will gradually replace the lightweight placeholders.

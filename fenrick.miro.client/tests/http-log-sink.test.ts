@@ -10,10 +10,8 @@ beforeAll(async () => {
     res.statusCode = 202;
     res.end();
   });
-  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
-  const addr = server.address() as import('node:net').AddressInfo;
-  url = `http://127.0.0.1:${addr.port}/api/logs`;
-});
+  url = `${addr}/api/logs`;
+}, 30000);
 
 afterAll(async () => {
   server.close();

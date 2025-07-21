@@ -290,6 +290,10 @@ The .NET server uses **Serilog** for structured logging. Client log entries are
 automatically batched by `HttpLogSink` and forwarded via `POST /api/logs` so
 both sides share the same log stream.
 
+Several new C# utilities (`ExcelLoader`, `LayoutEngine`, `TemplateService` and
+`ObjectMatcher`) are early prototypes. TODO markers outline the remaining work
+to match the JavaScript implementations.
+
 Example:
 
 ```bash
