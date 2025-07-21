@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Server.Api;
 using Server.Domain;
+using Server.Services;
 using Xunit;
 
 public class ShapesControllerTests
@@ -16,9 +17,9 @@ public class ShapesControllerTests
     public async Task CreateAsyncReturnsResponses()
     {
         var shapes = new[] { new ShapeData("rect", 0, 0, 1, 1, null, null, null) };
-        var controller = new ShapesController(new StubClient());
+        var controller = new ShapesController(new StubClient(), new NullShapeCache());
 
-        var result = await controller.CreateAsync(shapes) as OkObjectResult;
+        var result = await controller.CreateAsync("b1", shapes) as OkObjectResult;
 
         var data = Assert.IsType<List<MiroResponse>>(result!.Value);
         Assert.Single(data);
@@ -31,9 +32,9 @@ public class ShapesControllerTests
         var shapes = Enumerable.Range(0, 25)
             .Select(i => new ShapeData("r", i, 0, 1, 1, null, null, null))
             .ToArray();
-        var controller = new ShapesController(new StubClient());
+        var controller = new ShapesController(new StubClient(), new NullShapeCache());
 
-        var result = await controller.CreateAsync(shapes) as OkObjectResult;
+        var result = await controller.CreateAsync("b1", shapes) as OkObjectResult;
 
         var data = Assert.IsType<List<MiroResponse>>(result!.Value);
         Assert.Equal(25, data.Count);
@@ -47,5 +48,12 @@ public class ShapesControllerTests
             var res = new MiroResponse(201, (this.count++).ToString());
             return Task.FromResult(res);
         }
+    }
+
+    private sealed class NullShapeCache : IShapeCache
+    {
+        public ShapeCacheEntry? Retrieve(string boardId, string itemId) => null;
+        public void Store(ShapeCacheEntry entry) { }
+        public void Remove(string boardId, string itemId) { }
     }
 }
