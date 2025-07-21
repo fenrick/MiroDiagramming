@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Server.Api;
 using Server.Domain;
+using Server.Services;
 using Xunit;
 
 public class BatchControllerTests

@@ -1,6 +1,7 @@
 namespace Fenrick.Miro.Server.Api;
 
 using Domain;
+using Services;
 using Microsoft.AspNetCore.Mvc;
 
 /// <summary>
@@ -27,7 +28,3 @@ public class BatchController(IMiroClient client) : ControllerBase
     }
 }
 
-public interface IMiroClient
-{
-    public Task<MiroResponse> SendAsync(MiroRequest request);
-}

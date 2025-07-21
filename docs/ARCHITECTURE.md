@@ -40,9 +40,11 @@ Browser
 
 The React GUI communicates with a **.NET 9** server for all Miro REST API calls.
 OAuth tokens are obtained during browser login, then stored securely by the
-server and retrieved for each request. The existing web API embedded in the GUI
-continues to handle UX events and simple actions. The server also persists the
-ids of created Miro items so they can be synchronised or referenced later.
+server and retrieved for each request. Tokens currently live only in an
+<code>InMemoryUserStore</code> while we design database persistence. The existing
+web API embedded in the GUI continues to handle UX events and simple actions.
+The server also persists the ids of created Miro items so they can be
+synchronised or referenced later.
 
 ```
 React GUI ──► .NET 9 Server ──► Miro REST API

@@ -55,6 +55,7 @@ fenrick.miro.client/src/core/
 | graph/index.ts               | Bundle graph utilities for external use.            |
 | graph/layout-modes.ts        | Enumerate supported layout algorithms.              |
 | graph/undoable-processor.ts  | Base class adding undo support to processors.       |
+| user-auth.ts                 | Forward the board user's token to the backend.   |
 | layout/elk-layout.ts         | Run layout calculations using the ELK engine.       |
 | layout/elk-loader.ts         | Lazy-load the ELK WebAssembly bundle.               |
 | layout/elk-options.ts        | Provide user options for ELK layout algorithms.     |
