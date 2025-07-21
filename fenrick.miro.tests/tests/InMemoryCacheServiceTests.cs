@@ -27,5 +27,5 @@ public class InMemoryCacheServiceTests
         service.Store(new BoardMetadata("1", "New"));
 
         Assert.Equal("New", service.Retrieve("1")?.Name);
-}
+    }
 }

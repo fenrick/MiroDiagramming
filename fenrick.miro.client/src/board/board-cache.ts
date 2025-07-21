@@ -38,6 +38,7 @@ export class BoardCache {
   ): Promise<Array<Record<string, unknown>>> {
     if (!this.selection) {
       log.trace('Fetching selection from board');
+      // TODO replace direct board.getSelection usage with cached backend lookup
       const b = resolveBoard(board);
       this.selection = await b.getSelection();
       log.debug({ count: this.selection.length }, 'Selection cached');
@@ -75,6 +76,7 @@ export class BoardCache {
     }
     if (missing.length) {
       log.trace({ missing }, 'Fetching uncached widget types');
+      // TODO replace board.get with backend service once caching implemented
       const fetched = await Promise.all(missing.map(t => b.get({ type: t })));
       for (let i = 0; i < missing.length; i += 1) {
         const list = fetched[i];
