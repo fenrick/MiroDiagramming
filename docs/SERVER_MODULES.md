@@ -54,6 +54,10 @@ The API exposes five controller types:
 4. **LogsController** – accepts client log entries and writes them to the server
    log via Serilog.
 5. **UsersController** – stores OAuth tokens received from the client.
+6. **ShapesController** – creates, updates and deletes widgets via the Miro API.
+   Each operation updates `IShapeCache` so the front‑end can fetch shapes
+   without calling `board.get`. TODO: expose a lookup endpoint once the cache
+   supports persistence.
 
 Each controller resides under `fenrick.miro.server/src/Api/` and is covered by
 dedicated unit tests.
@@ -77,3 +81,14 @@ Supporting classes under `src/Services/` provide infrastructure glue:
 
 See **ARCHITECTURE.md** for the overall system overview and code quality
 requirements.
+
+## 5 Future Work
+
+The initial services intentionally keep the scope small. The following features remain TODO and are marked throughout the source:
+
+- **ELK-based LayoutEngine** – port the heavy shape placement algorithms from the JavaScript codebase. The current `LayoutEngine` only stacks nodes vertically.
+- **ExcelLoader extensions** – add streaming support, large workbook optimisation and named table handling.
+- **Template persistence** – store user templates in a database and expose API endpoints for editing and listing templates.
+- **Advanced object matching** – provide fuzzy search and shape property filters beyond simple label comparison.
+
+These enhancements will gradually replace the lightweight placeholders.
