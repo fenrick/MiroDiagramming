@@ -7,13 +7,10 @@ export default defineConfig({
   plugins: [react()],
   test: {
     coverage: {
-      provider: 'istanbul',
-      reporter: [
-        'text',
-        ['lcov', { projectRoot: path.resolve(__dirname, '..') }],
-        'json',
-        'cobertura',
-      ],
+      provider: 'v8',
+      relativePath: false,
+      allowExternal: true,
+      reporter: ['text', 'lcov', 'json', 'cobertura'],
       reportsDirectory: 'coverage',
       exclude: [
         'commitlint.config.cjs',

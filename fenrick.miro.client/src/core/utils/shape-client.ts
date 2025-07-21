@@ -15,7 +15,14 @@ export interface ShapeData {
  * any necessary chunking when forwarding to Miro.
  */
 export class ShapeClient {
-  public constructor(private readonly url = '/api/shapes') {}
+  public constructor(
+    private readonly boardId: string,
+    private readonly baseUrl = '/api/boards',
+  ) {}
+
+  private get url(): string {
+    return `${this.baseUrl}/${this.boardId}/shapes`;
+  }
 
   /** Create a single shape widget. */
   public async createShape(shape: ShapeData): Promise<void> {
@@ -32,5 +39,25 @@ export class ShapeClient {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(shapes),
     });
+  }
+
+  /** Update an existing shape. */
+  public async updateShape(id: string, shape: ShapeData): Promise<void> {
+    if (typeof fetch !== 'function') {
+      return;
+    }
+    await fetch(`${this.url}/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(shape),
+    });
+  }
+
+  /** Delete a shape widget from the board. */
+  public async deleteShape(id: string): Promise<void> {
+    if (typeof fetch !== 'function') {
+      return;
+    }
+    await fetch(`${this.url}/${id}`, { method: 'DELETE' });
   }
 }

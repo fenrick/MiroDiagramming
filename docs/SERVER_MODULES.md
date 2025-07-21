@@ -53,6 +53,10 @@ The API exposes four controller types:
    server cache. This minimises round trips when rendering existing diagrams.
 4. **LogsController** – accepts client log entries and writes them to the server
    log via Serilog.
+5. **ShapesController** – creates, updates and deletes widgets via the Miro API.
+   Each operation updates `IShapeCache` so the front‑end can fetch shapes
+   without calling `board.get`. TODO: expose a lookup endpoint once the cache
+   supports persistence.
 
 Each controller resides under `fenrick.miro.server/src/Api/` and is covered by
 dedicated unit tests.
