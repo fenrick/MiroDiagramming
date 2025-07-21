@@ -1,5 +1,8 @@
+using Fenrick.Miro.Server.Services;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseSerilog((_, cfg) => cfg.WriteTo.Console());
 
 builder.AddServiceDefaults();
 
@@ -23,7 +26,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseAuthorization();
 
