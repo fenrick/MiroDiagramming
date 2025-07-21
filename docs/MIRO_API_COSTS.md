@@ -29,3 +29,11 @@ Excessive use quickly exhausts the daily rate limit.
 4. **Avoid direct board calls** – Front‑end modules now contain TODOs to replace remaining direct Web SDK calls (`board.getSelection`, `board.get`) with cached lookups.
 
 This approach reduces point expenditure and keeps the application responsive.
+
+## 3 Remaining Work
+
+The caching layer currently lives purely in memory. Persisted storage and
+automatic invalidation are future enhancements. Client modules such as
+`card-processor.ts` and `excel-sync-service.ts` still invoke `board.get` and
+`getById`; TODO comments mark these spots until the backend lookup API is fully
+integrated.

@@ -342,8 +342,11 @@ dependency installs run from that directory.
 - [Tab Overview](docs/TABS.md) describes the sidebar tabs and their purpose.
 - [Deployment & Build Guide](docs/DEPLOYMENT.md) explains how to build and host
   the bundle.
+- [Aspire Quick Start](docs/ASPIRE.md) shows how to run the .NET AppHost
+  locally or in Docker.
 - [Server Modules](docs/SERVER_MODULES.md) details the planned .NET API layout.
 - [Miro API Costs](docs/MIRO_API_COSTS.md) explains why we cache shapes and avoid expensive board calls.
+- [ShapesController](docs/SERVER_MODULES.md#3-controllers) handles create, update and delete of Miro widgets via the backend cache.
 - [Components Catalogue](docs/COMPONENTS.md) documents reusable React
   components.
 - [Design Foundation](docs/FOUNDATION.md) explains tokens and theming rules.

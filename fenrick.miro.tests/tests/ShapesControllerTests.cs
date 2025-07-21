@@ -40,6 +40,32 @@ public class ShapesControllerTests
         Assert.Equal(25, data.Count);
     }
 
+    [Fact]
+    public async Task UpdateAsyncStoresEntry()
+    {
+        var stub = new StubClient();
+        var cache = new RecordingCache();
+        var controller = new ShapesController(stub, cache);
+
+        var res = await controller.UpdateAsync("b1", "i1", new ShapeData("r", 0, 0, 1, 1, null, null, null)) as OkObjectResult;
+
+        Assert.Equal("0", ((MiroResponse)res!.Value!).Body);
+        Assert.Equal("i1", cache.ItemId);
+    }
+
+    [Fact]
+    public async Task DeleteAsyncRemovesEntry()
+    {
+        var stub = new StubClient();
+        var cache = new RecordingCache();
+        var controller = new ShapesController(stub, cache);
+
+        var res = await controller.DeleteAsync("b2", "i3") as OkObjectResult;
+
+        Assert.Equal("0", ((MiroResponse)res!.Value!).Body);
+        Assert.Equal("i3", cache.RemovedItem);
+    }
+
     private sealed class StubClient : IMiroClient
     {
         private int count;
@@ -55,5 +81,21 @@ public class ShapesControllerTests
         public ShapeCacheEntry? Retrieve(string boardId, string itemId) => null;
         public void Store(ShapeCacheEntry entry) { }
         public void Remove(string boardId, string itemId) { }
+    }
+
+    private sealed class RecordingCache : IShapeCache
+    {
+        public string? ItemId { get; private set; }
+        public string? RemovedItem { get; private set; }
+        public ShapeCacheEntry? Retrieve(string boardId, string itemId) => null;
+        public void Store(ShapeCacheEntry entry)
+        {
+            this.ItemId = entry.ItemId;
+        }
+
+        public void Remove(string boardId, string itemId)
+        {
+            this.RemovedItem = itemId;
+        }
     }
 }
