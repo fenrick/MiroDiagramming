@@ -1,0 +1,36 @@
+/** Data describing a Miro shape widget. */
+export interface ShapeData {
+  shape: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  rotation?: number;
+  text?: string;
+  style?: Record<string, unknown>;
+}
+
+/**
+ * Minimal HTTP client for the shapes API. The server performs
+ * any necessary chunking when forwarding to Miro.
+ */
+export class ShapeClient {
+  public constructor(private readonly url = '/api/shapes') {}
+
+  /** Create a single shape widget. */
+  public async createShape(shape: ShapeData): Promise<void> {
+    await this.createShapes([shape]);
+  }
+
+  /** Create multiple shapes in one request. */
+  public async createShapes(shapes: ShapeData[]): Promise<void> {
+    if (typeof fetch !== 'function') {
+      return;
+    }
+    await fetch(this.url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(shapes),
+    });
+  }
+}
