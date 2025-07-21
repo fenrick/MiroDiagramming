@@ -212,6 +212,7 @@ export class TemplateManager {
     if (element.fill && !style.fillColor) {
       style.fillColor = this.resolveToken(element.fill) as string;
     }
+    // TODO migrate creation to ShapeClient to avoid direct board API calls
     const shape = await miro.board.createShape({
       shape: element.shape as ShapeType,
       x,
