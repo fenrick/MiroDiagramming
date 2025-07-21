@@ -8,6 +8,7 @@ export default defineConfig({
   test: {
     coverage: {
       provider: 'istanbul',
+      relativePath: false,
       reporter: [
         'text',
         ['lcov', { projectRoot: path.resolve(__dirname, '..') }],
