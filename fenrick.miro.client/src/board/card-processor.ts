@@ -113,6 +113,7 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
    * results so multiple calls during a run hit the board only once.
    */
   private async getBoardTags(): Promise<Tag[]> {
+    // TODO use cached backend lookup instead of board.get once shape cache service exposes tags
     this.tagsCache ??= (await miro.board.get({ type: 'tag' })) as Tag[];
     return this.tagsCache;
   }
@@ -122,6 +123,7 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
    * caches the promise result so subsequent calls avoid extra lookups.
    */
   private async getBoardCards(): Promise<Card[]> {
+    // TODO use cached backend lookup instead of board.get to reduce API cost
     this.cardsCache ??= (await miro.board.get({ type: 'card' })) as Card[];
     return this.cardsCache;
   }

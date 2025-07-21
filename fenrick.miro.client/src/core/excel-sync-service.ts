@@ -150,6 +150,7 @@ export class ExcelSyncService {
     const byId = this.rowMap[rowId];
     if (byId) {
       try {
+        // TODO lookup widget via ShapeClient + cache rather than board.getById
         const item = (await miro.board.getById(byId)) as BaseItem | Group;
         if (item) {
           return item;
