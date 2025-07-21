@@ -343,6 +343,7 @@ dependency installs run from that directory.
 - [Deployment & Build Guide](docs/DEPLOYMENT.md) explains how to build and host
   the bundle.
 - [Server Modules](docs/SERVER_MODULES.md) details the planned .NET API layout.
+- [Miro API Costs](docs/MIRO_API_COSTS.md) explains why we cache shapes and avoid expensive board calls.
 - [Components Catalogue](docs/COMPONENTS.md) documents reusable React
   components.
 - [Design Foundation](docs/FOUNDATION.md) explains tokens and theming rules.
