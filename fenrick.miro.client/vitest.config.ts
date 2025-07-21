@@ -11,7 +11,7 @@ export default defineConfig({
       relativePath: false,
       reporter: [
         'text',
-        ['lcov', { projectRoot: path.resolve(__dirname, '..') }],
+        'lcov',
         'json',
         'cobertura',
       ],
