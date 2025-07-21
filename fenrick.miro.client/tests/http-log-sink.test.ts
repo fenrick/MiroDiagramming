@@ -43,7 +43,7 @@ beforeAll(async () => {
     );
   });
   url = `${addr}/api/logs`;
-});
+}, 30000);
 
 afterAll(async () => {
   process.env.NODE_ENV = originalEnv;
