@@ -342,6 +342,8 @@ dependency installs run from that directory.
 - [Tab Overview](docs/TABS.md) describes the sidebar tabs and their purpose.
 - [Deployment & Build Guide](docs/DEPLOYMENT.md) explains how to build and host
   the bundle.
+- [Aspire Quick Start](docs/ASPIRE.md) shows how to run the .NET AppHost
+  locally or in Docker.
 - [Server Modules](docs/SERVER_MODULES.md) details the planned .NET API layout.
 - [Components Catalogue](docs/COMPONENTS.md) documents reusable React
   components.
