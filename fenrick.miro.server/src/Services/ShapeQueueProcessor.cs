@@ -1,0 +1,74 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Fenrick.Miro.Server.Domain;
+
+using Fenrick.Miro.Server.Api;
+namespace Fenrick.Miro.Server.Services;
+
+/// <summary>
+///     Processes shape creation requests sequentially.
+///     TODO: integrate modify and delete queues with board cache checks.
+/// </summary>
+public sealed class ShapeQueueProcessor
+{
+    private readonly Queue<ShapeData> createQueue = new();
+    private readonly IMiroClient miroClient;
+    private readonly SemaphoreSlim gate = new(1, 1);
+
+    /// <summary>
+    ///     Maximum number of shapes to send per API request.
+    /// </summary>
+    public int BatchSize { get; set; } = 20;
+
+    public ShapeQueueProcessor(IMiroClient client)
+    {
+        this.miroClient = client;
+    }
+
+    /// <summary>
+    ///     Enqueue shapes to be created.
+    /// </summary>
+    public void EnqueueCreate(IEnumerable<ShapeData> shapes)
+    {
+        foreach (var shape in shapes)
+        {
+            this.createQueue.Enqueue(shape);
+        }
+    }
+
+    /// <summary>
+    ///     Process queued shapes one request at a time.
+    /// </summary>
+    public async Task<List<MiroResponse>> ProcessAsync(CancellationToken ct = default)
+    {
+        var results = new List<MiroResponse>();
+        await this.gate.WaitAsync(ct);
+        try
+        {
+            while (this.createQueue.Count > 0)
+            {
+                var batch = DequeueBatch(this.BatchSize).ToArray();
+                // TODO validate shapes against board cache and prioritise modify operations
+                var res = await this.miroClient.CreateAsync("/shapes", batch);
+                results.AddRange(res);
+            }
+        }
+        finally
+        {
+            this.gate.Release();
+        }
+
+        return results;
+    }
+
+    private IEnumerable<ShapeData> DequeueBatch(int size)
+    {
+        while (size-- > 0 && this.createQueue.Count > 0)
+        {
+            yield return this.createQueue.Dequeue();
+        }
+    }
+}
+
