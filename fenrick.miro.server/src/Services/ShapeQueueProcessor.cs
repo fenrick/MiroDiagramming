@@ -1,31 +1,23 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Fenrick.Miro.Server.Domain;
-
-using Fenrick.Miro.Server.Api;
 namespace Fenrick.Miro.Server.Services;
+
+using Domain;
 
 /// <summary>
 ///     Processes shape creation requests sequentially.
 ///     TODO: integrate modify and delete queues with board cache checks.
 /// </summary>
-public sealed class ShapeQueueProcessor
+public sealed class ShapeQueueProcessor(IMiroClient client) : IDisposable
 {
     private readonly Queue<ShapeData> createQueue = new();
-    private readonly IMiroClient miroClient;
     private readonly SemaphoreSlim gate = new(1, 1);
+    private readonly IMiroClient miroClient = client;
 
     /// <summary>
     ///     Maximum number of shapes to send per API request.
     /// </summary>
     public int BatchSize { get; set; } = 20;
 
-    public ShapeQueueProcessor(IMiroClient client)
-    {
-        this.miroClient = client;
-    }
+    public void Dispose() => throw new NotImplementedException();
 
     /// <summary>
     ///     Enqueue shapes to be created.
@@ -41,7 +33,8 @@ public sealed class ShapeQueueProcessor
     /// <summary>
     ///     Process queued shapes one request at a time.
     /// </summary>
-    public async Task<List<MiroResponse>> ProcessAsync(CancellationToken ct = default)
+    public async Task<List<MiroResponse>> ProcessAsync(
+        CancellationToken ct = default)
     {
         var results = new List<MiroResponse>();
         await this.gate.WaitAsync(ct);
@@ -49,7 +42,7 @@ public sealed class ShapeQueueProcessor
         {
             while (this.createQueue.Count > 0)
             {
-                var batch = DequeueBatch(this.BatchSize).ToArray();
+                var batch = this.DequeueBatch(this.BatchSize).ToArray();
                 // TODO validate shapes against board cache and prioritise modify operations
                 var res = await this.miroClient.CreateAsync("/shapes", batch);
                 results.AddRange(res);
@@ -71,4 +64,3 @@ public sealed class ShapeQueueProcessor
         }
     }
 }
-

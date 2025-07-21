@@ -16,7 +16,10 @@ public class CardsControllerTests
     [Fact]
     public async Task CreateAsyncReturnsResponses()
     {
-        var cards = new[] { new CardData("t", null, null, null, null, null, null) };
+        var cards = new[]
+        {
+            new CardData("t", null, null, null, null, null, null)
+        };
         var controller = new CardsController(new StubClient());
 
         var result = await controller.CreateAsync(cards) as OkObjectResult;
@@ -43,9 +46,10 @@ public class CardsControllerTests
     private sealed class StubClient : IMiroClient
     {
         private int count;
+
         public Task<MiroResponse> SendAsync(MiroRequest request)
         {
-            var res = new MiroResponse(201, (this.count++).ToString());
+            var res = new MiroResponse(201, this.count++.ToString());
             return Task.FromResult(res);
         }
     }

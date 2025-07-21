@@ -4,9 +4,7 @@ import type { CardData } from '../src/core/utils/cards';
 
 vi.stubGlobal('fetch', vi.fn());
 
-beforeEach(() => {
-  (fetch as unknown as vi.Mock).mockReset();
-});
+beforeEach(() => (fetch as unknown as vi.Mock).mockReset());
 
 test('createCard posts single card', async () => {
   const api = new CardClient('/api');

@@ -1,8 +1,5 @@
 namespace Fenrick.Miro.Server.Domain;
 
-using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
-
 /// <summary>
 ///     Log entry forwarded from the client application.
 /// </summary>

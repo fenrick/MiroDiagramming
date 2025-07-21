@@ -1,8 +1,8 @@
 namespace Fenrick.Miro.Tests;
 
-using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
 using Server.Api;
 using Server.Domain;
 using Server.Services;
@@ -14,7 +14,7 @@ public class UsersControllerTests
     public void RegisterStoresUser()
     {
         var received = new List<UserInfo>();
-        var store = new StubStore(info => received.Add(info));
+        var store = new StubStore(received.Add);
         var controller = new UsersController(store);
         var info = new UserInfo("u1", "Bob", "t1");
 

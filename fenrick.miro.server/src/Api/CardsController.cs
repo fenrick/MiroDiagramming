@@ -1,8 +1,8 @@
 namespace Fenrick.Miro.Server.Api;
 
 using Domain;
-using Services;
 using Microsoft.AspNetCore.Mvc;
+using Services;
 
 /// <summary>
 ///     Endpoint for creating card widgets through the Miro API.

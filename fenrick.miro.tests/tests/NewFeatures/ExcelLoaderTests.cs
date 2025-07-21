@@ -1,4 +1,5 @@
 using System.IO;
+using System.Threading.Tasks;
 using ClosedXML.Excel;
 using Fenrick.Miro.Server.Services;
 using Xunit;
@@ -6,14 +7,14 @@ using Xunit;
 public class ExcelLoaderTests
 {
     [Fact]
-    public async System.Threading.Tasks.Task LoadSheetReturnsRowsAsync()
+    public async Task LoadSheetReturnsRowsAsync()
     {
         using var wb = new XLWorkbook();
         var ws = wb.Worksheets.Add("Sheet1");
-        ws.Cell(1,1).Value = "Name";
-        ws.Cell(1,2).Value = "Age";
-        ws.Cell(2,1).Value = "Alice";
-        ws.Cell(2,2).Value = 30;
+        ws.Cell(1, 1).Value = "Name";
+        ws.Cell(1, 2).Value = "Age";
+        ws.Cell(2, 1).Value = "Alice";
+        ws.Cell(2, 2).Value = 30;
         using var ms = new MemoryStream();
         wb.SaveAs(ms);
         ms.Position = 0;

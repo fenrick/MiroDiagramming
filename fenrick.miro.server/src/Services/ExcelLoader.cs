@@ -6,9 +6,11 @@ using ClosedXML.Excel;
 ///     Lightweight Excel workbook loader built around ClosedXML.
 /// </summary>
 // TODO: add named table support and streaming for large files
-public class ExcelLoader
+public class ExcelLoader : IDisposable
 {
     private XLWorkbook? workbook;
+
+    public void Dispose() => throw new NotImplementedException();
 
     /// <summary>
     ///     Load a workbook from a stream.
@@ -24,10 +26,8 @@ public class ExcelLoader
     /// <summary>
     ///     List worksheet names from the loaded workbook.
     /// </summary>
-    public IReadOnlyList<string> ListSheets()
-    {
-        return this.workbook?.Worksheets.Select(ws => ws.Name).ToList() ?? [];
-    }
+    public IReadOnlyList<string> ListSheets() =>
+        this.workbook?.Worksheets.Select(ws => ws.Name).ToList() ?? [];
 
     // TODO: implement LoadNamedTable for compatibility with client loader
 
@@ -36,7 +36,10 @@ public class ExcelLoader
     /// </summary>
     /// <param name="name">Worksheet name.</param>
     /// <returns>Row objects keyed by column header.</returns>
-    /// <exception cref="InvalidOperationException">Thrown if <see cref="LoadAsync"/> was not called.</exception>
+    /// <exception cref="InvalidOperationException">
+    ///     Thrown if <see cref="LoadAsync" />
+    ///     was not called.
+    /// </exception>
     /// <exception cref="ArgumentException">Thrown when the sheet does not exist.</exception>
     public IReadOnlyList<Dictionary<string, string>> LoadSheet(string name)
     {
@@ -45,11 +48,8 @@ public class ExcelLoader
             throw new InvalidOperationException("Workbook not loaded");
         }
 
-        var ws = this.workbook.Worksheet(name);
-        if (ws is null)
-        {
-            throw new ArgumentException($"Unknown sheet: {name}");
-        }
+        var ws = this.workbook.Worksheet(name) ??
+                 throw new ArgumentException($"Unknown sheet: {name}");
 
         var headers = ws.Row(1).Cells().Select(c => c.GetString()).ToList();
         var rows = new List<Dictionary<string, string>>();

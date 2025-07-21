@@ -46,7 +46,7 @@ app.MapFallbackToFile("/index.html");
 app.Run();
 
 /// <summary>
-/// Exposes the entry point for integration tests.
+///     Exposes the entry point for integration tests.
 /// </summary>
 public partial class Program
 {

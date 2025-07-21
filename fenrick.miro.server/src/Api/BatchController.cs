@@ -1,8 +1,8 @@
 namespace Fenrick.Miro.Server.Api;
 
 using Domain;
-using Services;
 using Microsoft.AspNetCore.Mvc;
+using Services;
 
 /// <summary>
 ///     Aggregates REST calls so the client can send them in one request.
@@ -27,4 +27,3 @@ public class BatchController(IMiroClient client) : ControllerBase
         return this.Ok(responses);
     }
 }
-
