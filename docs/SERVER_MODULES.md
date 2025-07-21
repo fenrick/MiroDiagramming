@@ -42,7 +42,7 @@ to end using the shared `npm` and `dotnet` commands.
 
 ## 3 Controllers
 
-The API exposes four controller types:
+The API exposes five controller types:
 
 1. **BatchController** – accepts an array of REST requests and forwards them to
    the Miro API using a single authenticated client. Responses are returned in
@@ -53,6 +53,7 @@ The API exposes four controller types:
    server cache. This minimises round trips when rendering existing diagrams.
 4. **LogsController** – accepts client log entries and writes them to the server
    log via Serilog.
+5. **UsersController** – stores OAuth tokens received from the client.
 
 Each controller resides under `fenrick.miro.server/src/Api/` and is covered by
 dedicated unit tests.
@@ -64,6 +65,13 @@ Models used by both the server and client live in
 payloads and diagram definitions. The React code imports the TypeScript
 declarations generated from the C# records, ensuring a single source of truth
 for all data shapes.
+
+## 5 Services
+
+Supporting classes under `src/Services/` provide infrastructure glue:
+
+- **InMemoryUserStore** – temporary storage for user tokens during development.
+- **MiroRestClient** – HTTP adapter attaching bearer tokens to requests.
 
 ---
 

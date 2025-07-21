@@ -9,6 +9,10 @@ builder.AddServiceDefaults();
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddSingleton<IUserStore, InMemoryUserStore>();
+builder.Services.AddSingleton<ILogSink, SerilogSink>();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient<IMiroClient, MiroRestClient>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

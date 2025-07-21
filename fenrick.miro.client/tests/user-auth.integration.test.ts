@@ -1,14 +1,11 @@
 import { spawn } from 'node:child_process';
 import { once } from 'node:events';
 import path from 'node:path';
-import { afterAll, beforeAll, expect, test } from 'vitest';
-import { HttpLogSink } from '../src/log-sink';
-
-declare let process: NodeJS.Process;
+import { afterAll, beforeAll, expect, test, vi } from 'vitest';
+import { AuthClient, registerCurrentUser } from '../src/user-auth';
 
 let server: ReturnType<typeof spawn>;
 let url: string;
-const originalEnv = process.env.NODE_ENV;
 
 beforeAll(async () => {
   server = spawn(
@@ -42,34 +39,30 @@ beforeAll(async () => {
       reject(new Error(`server exited with code ${code}`)),
     );
   });
-  url = `${addr}/api/logs`;
+  url = `${addr}/api/users`;
 }, 30000);
 
 afterAll(async () => {
-  process.env.NODE_ENV = originalEnv;
   server.kill();
   await once(server, 'exit');
 });
 
-test('HttpLogSink posts log entries to backend', async () => {
-  const entry = {
-    timestamp: new Date().toISOString(),
-    level: 'info',
-    message: 'pong',
+test('registerCurrentUser sends token to server', async () => {
+  (global as unknown as { miro: unknown }).miro = {
+    board: {
+      getIdToken: vi.fn().mockResolvedValue('tok'),
+      getUserInfo: vi.fn().mockResolvedValue({ id: 'u1', name: 'Alice' }),
+    },
   };
-  let status = 0;
+  const client = new AuthClient(url);
   const originalFetch = global.fetch;
+  let status = 0;
   global.fetch = async (...args) => {
-    const res = await originalFetch(...args);
-    status = res.status;
-    return res;
+    const r = await originalFetch(...args);
+    status = r.status;
+    return r;
   };
-
-  process.env.NODE_ENV = 'development';
-  const sink = new HttpLogSink(url);
-  await sink.store([entry]);
-
+  await registerCurrentUser(client);
   expect(status).toBe(202);
-
   global.fetch = originalFetch;
 });

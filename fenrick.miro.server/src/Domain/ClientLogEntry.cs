@@ -11,9 +11,7 @@ using System.Text.Json.Serialization;
 /// <param name="Message">Message text.</param>
 /// <param name="Context">Optional structured context data.</param>
 public record ClientLogEntry(
-    [property: Required]
-    [property: JsonRequired]
     DateTime Timestamp,
-    [property: Required] string Level,
-    [property: Required] string Message,
+    string Level,
+    string Message,
     Dictionary<string, string>? Context);
