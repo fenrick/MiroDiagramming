@@ -249,7 +249,7 @@ jobs:
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
             /d:sonar.host.url="https://sonarcloud.io" `
             /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml `
-            /d:sonar.javascript.lcov.reportPaths="fenrick.miro.client/coverage/lcov.info"
+            /d:sonar.javascript.lcov.reportPaths="${{ github.workspace }}/fenrick.miro.client/coverage/lcov.info"
 
       - name: Build
         shell: powershell
