@@ -5,6 +5,8 @@ using Domain;
 /// <summary>
 ///     Stores board shapes for quick lookup by board and item identifier.
 /// </summary>
+/// TODO: provide persistent implementation using a fast datastore and keep
+///       DTOs in sync between client and server.
 public interface IShapeCache
 {
     /// <summary>

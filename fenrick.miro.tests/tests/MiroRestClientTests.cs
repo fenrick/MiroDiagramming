@@ -28,6 +28,9 @@ public class MiroRestClientTests
         Assert.Equal("tok", handler.Request?.Headers.Authorization?.Parameter);
     }
 
+    // TODO add tests covering token refresh behaviour once refresh endpoint is
+    // implemented on the server.
+
     private sealed class StubHandler : HttpMessageHandler
     {
         public HttpRequestMessage? Request { get; private set; }

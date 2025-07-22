@@ -8,6 +8,7 @@ import { CardsTab } from '../src/ui/pages/CardsTab';
 vi.mock('../src/board/card-processor');
 
 describe('CardsTab extra paths', () => {
+  // TODO extend to test server-backed card lookups once card cache is persistent
   beforeEach(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (globalThis as any).miro = {

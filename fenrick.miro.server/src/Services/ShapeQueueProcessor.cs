@@ -9,11 +9,16 @@ namespace Fenrick.Miro.Server.Services;
 
 /// <summary>
 ///     Processes shape creation requests sequentially.
-///     TODO: integrate modify and delete queues with board cache checks.
+///     TODO: manage modify/delete queues, persist them between restarts and
+///     prioritise updates via cache checks.
+///     TODO: integrate with ORM-backed store so queue state survives process
+///     restarts and can be inspected for debugging.
 /// </summary>
 public sealed class ShapeQueueProcessor
 {
     private readonly Queue<ShapeData> createQueue = new();
+    // TODO persist queue entries to survive restarts using a database or message
+    //      broker and expose an ORM-based inspection API
     private readonly IMiroClient miroClient;
     private readonly SemaphoreSlim gate = new(1, 1);
 
