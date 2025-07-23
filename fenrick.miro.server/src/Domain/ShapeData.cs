@@ -7,10 +7,10 @@ using System.ComponentModel.DataAnnotations;
 /// </summary>
 public record ShapeData(
     [property: Required] string Shape,
-    double X,
-    double Y,
-    double Width,
-    double Height,
+    [property: Required] double X,
+    [property: Required] double Y,
+    [property: Required] double Width,
+    [property: Required] double Height,
     double? Rotation,
     string? Text,
     Dictionary<string, object>? Style);
