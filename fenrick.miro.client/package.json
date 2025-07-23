@@ -12,7 +12,7 @@
   ],
   "license": "Unlicense",
   "engines": {
-    "node": "^24"
+    "node": "^20"
   },
   "scripts": {
     "dev": "vite",
