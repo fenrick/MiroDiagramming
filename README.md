@@ -189,8 +189,8 @@ the rest of the UI. These guidelines help keep layouts consistent:
 - Your Miro account has a
   [Developer team](https://developers.miro.com/docs/create-a-developer-team).
 - Your development environment includes
-  [Node.js](https://nodejs.org/en/download) v24. The repository
-  includes an `.nvmrc` file pinned to version `24`. Use
+  [Node.js](https://nodejs.org/en/download) v20. The repository
+  includes an `.nvmrc` file pinned to version `20`. Use
   [`nvm`](https://github.com/nvm-sh/nvm) or [`volta`](https://volta.sh/) to
   install and manage this Node version.
 - All examples use `npm` as a package manager and `npx` as a package runner.

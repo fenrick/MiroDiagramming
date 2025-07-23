@@ -7,7 +7,7 @@ on:
     types: [opened, synchronize, edited]
 
 env:
-  NODE_VERSION: 24
+  NODE_VERSION: 20
 
 jobs:
   commitlint:
