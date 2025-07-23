@@ -279,7 +279,7 @@ describe('search-tools', () => {
   test('searchBoardContent rejects unsafe regex patterns', async () => {
     const { board } = makeBoard();
     await expect(
-      searchBoardContent({ query: '(a+)+$', regex: true }, board),
+      searchBoardContent({ query: '(aa+)$', regex: true }, board),
     ).rejects.toThrow('Unsafe regular expression');
   });
 
