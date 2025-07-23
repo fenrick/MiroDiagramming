@@ -1,50 +1,27 @@
-import { spawn } from 'node:child_process';
-import { once } from 'node:events';
-import path from 'node:path';
+import http, { type Server } from 'node:http';
+import { AddressInfo } from 'node:net';
 import { afterAll, beforeAll, expect, test, vi } from 'vitest';
 import { AuthClient, registerCurrentUser } from '../src/user-auth';
 
-let server: ReturnType<typeof spawn>;
+let server: Server;
 let url: string;
 
 beforeAll(async () => {
-  server = spawn(
-    'dotnet',
-    [
-      'run',
-      '--project',
-      path.join('fenrick.miro.server'),
-      '--no-launch-profile',
-    ],
-    {
-      cwd: path.resolve(__dirname, '..', '..'),
-      env: {
-        ...process.env,
-        ASPNETCORE_URLS: 'http://127.0.0.1:0',
-        ASPNETCORE_ENVIRONMENT: 'Development',
-      },
-    },
-  );
-  const addr = await new Promise<string>((resolve, reject) => {
-    const onData = (data: Buffer) => {
-      const match = /Now listening on: (http:\/\/[^\s]+)/.exec(data.toString());
-      if (match) {
-        server.stdout.off('data', onData);
-        resolve(match[1]);
-      }
-    };
-    server.stdout.on('data', onData);
-    server.once('error', reject);
-    server.once('exit', code =>
-      reject(new Error(`server exited with code ${code}`)),
-    );
+  server = http.createServer((req, res) => {
+    if (req.method === 'POST' && req.url === '/api/users') {
+      req.resume();
+      res.writeHead(202).end();
+      return;
+    }
+    res.writeHead(404).end();
   });
-  url = `${addr}/api/users`;
+  await new Promise<void>(resolve => server.listen(0, '127.0.0.1', resolve));
+  const addr = server.address() as AddressInfo;
+  url = `http://127.0.0.1:${addr.port}/api/users`;
 }, 30000);
 
 afterAll(async () => {
-  server.kill();
-  await once(server, 'exit');
+  await new Promise<void>(resolve => server.close(() => resolve()));
 });
 
 test('registerCurrentUser sends token to server', async () => {
