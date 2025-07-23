@@ -1,5 +1,4 @@
 using System.Globalization;
-using Fenrick.Miro.Server.Services;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,14 +9,14 @@ builder.AddServiceDefaults();
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddSingleton<IUserStore, InMemoryUserStore>();
-builder.Services.AddSingleton<ILogSink, SerilogSink>();
+builder.Services.AddSingleton<Fenrick.Miro.Server.Services.IUserStore, Fenrick.Miro.Server.Services.InMemoryUserStore>();
+builder.Services.AddSingleton<Fenrick.Miro.Server.Services.ILogSink, Fenrick.Miro.Server.Services.SerilogSink>();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddHttpClient<IMiroClient, MiroRestClient>();
+builder.Services.AddHttpClient<Fenrick.Miro.Server.Services.IMiroClient, Fenrick.Miro.Server.Services.MiroRestClient>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSingleton<ILogSink>(_ => new SerilogSink(Log.Logger));
-builder.Services.AddSingleton<IShapeCache, InMemoryShapeCache>();
+builder.Services.AddSingleton<Fenrick.Miro.Server.Services.ILogSink>(_ => new Fenrick.Miro.Server.Services.SerilogSink(Log.Logger));
+builder.Services.AddSingleton<Fenrick.Miro.Server.Services.IShapeCache, Fenrick.Miro.Server.Services.InMemoryShapeCache>();
 
 var app = builder.Build();
 
