@@ -10,7 +10,31 @@ public class ExcelLoader : IDisposable
 {
     private XLWorkbook? workbook;
 
-    public void Dispose() => throw new NotImplementedException();
+    private bool disposed;
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        this.Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    ///     Release workbook resources.
+    /// </summary>
+    /// <param name="disposing">Indicates whether called from <see cref="Dispose"/>.</param>
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!this.disposed)
+        {
+            if (disposing)
+            {
+                this.workbook?.Dispose();
+            }
+
+            this.disposed = true;
+        }
+    }
 
     /// <summary>
     ///     Load a workbook from a stream.

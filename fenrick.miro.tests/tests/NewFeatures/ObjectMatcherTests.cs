@@ -2,6 +2,9 @@ using System.Collections.Generic;
 using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
 using Xunit;
+#nullable enable
+
+namespace Fenrick.Miro.Tests.NewFeatures;
 
 public class ObjectMatcherTests
 {

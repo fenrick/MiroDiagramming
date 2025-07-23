@@ -4,6 +4,7 @@ namespace Fenrick.Miro.Tests;
 
 using System.Collections.Generic;
 using System.Linq;
+using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Server.Api;
@@ -80,7 +81,9 @@ public class ShapesControllerTests
 
         public Task<MiroResponse> SendAsync(MiroRequest request)
         {
-            var res = new MiroResponse(201, this.count++.ToString());
+            var res = new MiroResponse(
+                201,
+                this.count++.ToString(CultureInfo.InvariantCulture));
             return Task.FromResult(res);
         }
     }

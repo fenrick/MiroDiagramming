@@ -1,8 +1,9 @@
+using System.Globalization;
 using Fenrick.Miro.Server.Services;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Host.UseSerilog((_, cfg) => cfg.WriteTo.Console());
+builder.Host.UseSerilog((_, cfg) => cfg.WriteTo.Console(formatProvider: CultureInfo.InvariantCulture));
 
 builder.AddServiceDefaults();
 
@@ -43,11 +44,14 @@ app.MapControllers();
 
 app.MapFallbackToFile("/index.html");
 
-app.Run();
+await app.RunAsync();
 
 /// <summary>
 ///     Exposes the entry point for integration tests.
 /// </summary>
 public partial class Program
 {
+    protected Program()
+    {
+    }
 }
