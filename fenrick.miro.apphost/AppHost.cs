@@ -1,4 +1,5 @@
 using Projects;
+using Fenrick.Miro.AppHost;
 
 var builder = DistributedApplication.CreateBuilder(args);
 

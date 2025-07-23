@@ -14,7 +14,6 @@ public sealed class ShapeQueueProcessor(IMiroClient client) : IDisposable
     private readonly Queue<ShapeData> createQueue = new();
     // TODO persist queue entries to survive restarts using a database or message
     //      broker and expose an ORM-based inspection API
-    private readonly IMiroClient miroClient;
     private readonly SemaphoreSlim gate = new(1, 1);
     private readonly IMiroClient miroClient = client;
 

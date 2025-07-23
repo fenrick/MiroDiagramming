@@ -1,14 +1,12 @@
 namespace Fenrick.Miro.Server.Services;
 
-using ClosedXML.Excel;
-
 /// <summary>
 ///     Lightweight Excel workbook loader built around ClosedXML.
 /// </summary>
 // TODO: add named table support and streaming for large files
 public class ExcelLoader : IDisposable
 {
-    private XLWorkbook? workbook;
+    private ClosedXML.Excel.XLWorkbook? workbook;
 
     private bool disposed;
 
@@ -43,7 +41,7 @@ public class ExcelLoader : IDisposable
     /// <remarks>Currently loads the entire workbook into memory.</remarks>
     public async Task LoadAsync(Stream stream)
     {
-        this.workbook = new XLWorkbook(stream);
+        this.workbook = new ClosedXML.Excel.XLWorkbook(stream);
         await Task.CompletedTask;
     }
 
