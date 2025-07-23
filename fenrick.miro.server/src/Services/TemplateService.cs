@@ -5,7 +5,9 @@ using Domain;
 /// <summary>
 ///     Manage user specific template collections in memory.
 /// </summary>
-// TODO: persist templates and expose an editing API
+// TODO: persist templates in a database using an ORM and expose full CRUD API
+//       endpoints so the client can create, read, update and delete templates
+//       via REST. Model templates in the shared DTO layer for portability.
 public class TemplateService
 {
     private readonly Dictionary<string, Dictionary<string, TemplateDefinition>>

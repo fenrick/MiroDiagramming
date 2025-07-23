@@ -22,4 +22,7 @@ public class TemplateServiceTests
         Assert.Equal("{{label}}", fetched!.Elements[0].Text);
         Assert.Null(svc.GetTemplate("u2", "A"));
     }
+
+    // TODO create integration tests once TemplateService exposes REST endpoints
+    // for creating, updating and deleting templates.
 }

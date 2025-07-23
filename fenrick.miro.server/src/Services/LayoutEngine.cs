@@ -5,7 +5,8 @@ using Domain;
 /// <summary>
 ///     Simplified layout engine placing nodes vertically.
 /// </summary>
-// TODO: integrate ELK for advanced layout algorithms
+// TODO: port existing JS layout algorithms to C# and explore using the ELK
+//       Java library via cross compilation or WASM to ensure parity across tiers
 public class LayoutEngine
 {
     private const double Spacing = 120;

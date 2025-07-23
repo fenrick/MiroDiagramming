@@ -45,6 +45,9 @@ server and retrieved for each request. Tokens currently live only in an
 web API embedded in the GUI continues to handle UX events and simple actions.
 The server also persists the ids of created Miro items so they can be
 synchronised or referenced later.
+<!-- TODO build a richer .NET object model to persist board state beyond item ids -->
+<!-- TODO design a simple DTO layer shared between the React client and .NET server
+     and translate it into concrete Miro REST calls -->
 
 ```
 React GUI ──► .NET 9 Server ──► Miro REST API
@@ -200,6 +203,11 @@ server encrypts tokens at rest and attaches them to API requests._
 
 - Worker pool size = CPU cores − 1 (max 4).
 - IndexedDB caches ELK layouts keyed by graph hash.
+- TODO evaluate cross-compiling the Java ELK library to .NET or WASM for
+  consistent server/client layout behaviour.
+- TODO research .NET ports of the Eclipse Layout Kernel; none found so far so cross-compilation may be required.
+- TODO explore official or community .NET wrappers for the Miro REST API so
+  server calls can rely on typed endpoints rather than manual JSON handling.
 - Diff-sync on board updates – never full re-render.
 - WebAssembly ELK optional behind feature flag.
 - Telemetry (posthog-js) tracks layout duration and error rate; thresholds feed

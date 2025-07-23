@@ -23,6 +23,10 @@ function resolveBoardWithQuery(board?: BoardQueryLike): BoardQueryLike {
  * same information.
  */
 export class BoardCache {
+  // TODO persistent cache service backing onto Redis or SQLite for multi-process reuse
+  // TODO translate cached results to a simple data model shared with the server
+  // TODO expose typed lookup endpoints on the server so the client never calls
+  //      board.get directly.
   private selection: Array<Record<string, unknown>> | undefined;
   private readonly widgets = new Map<string, Array<Record<string, unknown>>>();
 

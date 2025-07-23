@@ -13,6 +13,10 @@ export interface ShapeData {
 /**
  * Minimal HTTP client for the shapes API. The server performs
  * any necessary chunking when forwarding to Miro.
+ * TODO: add shims for additional board endpoints so the client relies solely on
+ *       this API layer.
+ * TODO: align with a typed .NET client on the server side once a suitable
+ *       library or code generator is chosen.
  */
 export class ShapeClient {
   public constructor(

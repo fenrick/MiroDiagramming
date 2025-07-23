@@ -3,6 +3,7 @@ import type { BoardQueryLike } from '../src/board/board';
 import { boardCache } from '../src/board/board-cache';
 
 describe('BoardCache', () => {
+  // TODO add integration tests once cache persistence layer is implemented
   afterEach(() => boardCache.reset());
 
   test('selection result is cached', async () => {

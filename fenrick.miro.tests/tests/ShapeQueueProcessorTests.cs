@@ -44,6 +44,10 @@ public class ShapeQueueProcessorTests
         Assert.Equal(1, client.Count);
     }
 
+    // TODO expand tests to cover modify and delete queues once implemented in
+    // ShapeQueueProcessor.
+    // TODO add tests for queue persistence once the processor writes to a durable store.
+
     private sealed class StubClient : IMiroClient
     {
         public int Count { get; private set; }
