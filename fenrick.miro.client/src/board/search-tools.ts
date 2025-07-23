@@ -5,6 +5,7 @@ import {
   Syncable,
 } from './board';
 import { boardCache } from './board-cache';
+import safeRegex from 'safe-regex';
 
 /** Search configuration. */
 export interface SearchOptions {
@@ -52,7 +53,13 @@ function escapeRegExp(str: string): string {
 
 function buildRegex(opts: SearchOptions): RegExp {
   const src = opts.regex ? opts.query : escapeRegExp(opts.query);
+  if (src.length > 200) {
+    throw new SyntaxError('Pattern too long');
+  }
   const pattern = opts.wholeWord ? `\\b${src}\\b` : src;
+  if (!safeRegex(pattern)) {
+    throw new SyntaxError('Unsafe regular expression');
+  }
   const flags = opts.caseSensitive ? 'g' : 'gi';
   return new RegExp(pattern, flags);
 }

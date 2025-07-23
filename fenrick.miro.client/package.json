@@ -40,7 +40,8 @@
     "elkjs": "^0.10.0",
     "exceljs": "^4.4.0",
     "pino": "^8.21.0",
-    "react-dropzone": "^14.3.8"
+    "react-dropzone": "^14.3.8",
+    "safe-regex": "^2.1.1"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",

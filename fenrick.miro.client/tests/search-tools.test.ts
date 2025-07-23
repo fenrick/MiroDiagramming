@@ -276,6 +276,24 @@ describe('search-tools', () => {
     ).rejects.toThrow(SyntaxError);
   });
 
+  test('searchBoardContent rejects unsafe regex patterns', async () => {
+    const { board } = makeBoard();
+    await expect(
+      searchBoardContent({ query: '(a+)+$', regex: true }, board),
+    ).rejects.toThrow('Unsafe regular expression');
+  });
+
+  test('replaceBoardContent rejects excessively long patterns', async () => {
+    const { board } = makeBoard();
+    const pattern = 'a'.repeat(201);
+    await expect(
+      replaceBoardContent(
+        { query: pattern, replacement: 'x', regex: true },
+        board,
+      ),
+    ).rejects.toThrow('Pattern too long');
+  });
+
   test('getTextFields extracts common text properties', () => {
     const item = {
       title: 't',
