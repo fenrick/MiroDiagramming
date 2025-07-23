@@ -3,14 +3,13 @@ import path from 'path';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
-  resolve: { alias: { 'fenrick.miro.client': path.resolve(__dirname, 'src') } },
+  root: path.resolve(__dirname),
   plugins: [react()],
   test: {
     coverage: {
-      provider: 'v8',
-      relativePath: false,
-      allowExternal: true,
-      reporter: ['text', 'lcov', 'json', 'cobertura'],
+      provider: 'istanbul',
+      reporter: ['text', ['lcov', {"projectRoot": path.resolve(__dirname)}]],
+      reportOnFailure: true,
       reportsDirectory: 'coverage',
       exclude: [
         'commitlint.config.cjs',
@@ -20,19 +19,9 @@ export default defineConfig({
         'eslint.config.js',
         '.storybook/**',
         'src/stories/**',
-        'src/core/excel-sync-service.ts',
-        'src/board/item-types.ts',
-        'src/board/types.ts',
         '**/*.d.ts',
       ],
     },
-    reporters: [
-      'default',
-      [
-        'junit',
-        { outputFile: 'coverage/sonar-report.xml', suiteName: 'vitest' },
-      ],
-    ],
     projects: [
       {
         test: {

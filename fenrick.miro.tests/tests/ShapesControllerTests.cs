@@ -16,10 +16,15 @@ public class ShapesControllerTests
     [Fact]
     public async Task CreateAsyncReturnsResponses()
     {
-        var shapes = new[] { new ShapeData("rect", 0, 0, 1, 1, null, null, null) };
-        var controller = new ShapesController(new StubClient(), new NullShapeCache());
+        var shapes = new[]
+        {
+            new ShapeData("rect", 0, 0, 1, 1, null, null, null)
+        };
+        var controller =
+            new ShapesController(new StubClient(), new NullShapeCache());
 
-        var result = await controller.CreateAsync("b1", shapes) as OkObjectResult;
+        var result =
+            await controller.CreateAsync("b1", shapes) as OkObjectResult;
 
         var data = Assert.IsType<List<MiroResponse>>(result!.Value);
         Assert.Single(data);
@@ -32,9 +37,11 @@ public class ShapesControllerTests
         var shapes = Enumerable.Range(0, 25)
             .Select(i => new ShapeData("r", i, 0, 1, 1, null, null, null))
             .ToArray();
-        var controller = new ShapesController(new StubClient(), new NullShapeCache());
+        var controller =
+            new ShapesController(new StubClient(), new NullShapeCache());
 
-        var result = await controller.CreateAsync("b1", shapes) as OkObjectResult;
+        var result =
+            await controller.CreateAsync("b1", shapes) as OkObjectResult;
 
         var data = Assert.IsType<List<MiroResponse>>(result!.Value);
         Assert.Equal(25, data.Count);
@@ -47,7 +54,8 @@ public class ShapesControllerTests
         var cache = new RecordingCache();
         var controller = new ShapesController(stub, cache);
 
-        var res = await controller.UpdateAsync("b1", "i1", new ShapeData("r", 0, 0, 1, 1, null, null, null)) as OkObjectResult;
+        var res = await controller.UpdateAsync("b1", "i1",
+            new ShapeData("r", 0, 0, 1, 1, null, null, null)) as OkObjectResult;
 
         Assert.Equal("0", ((MiroResponse)res!.Value!).Body);
         Assert.Equal("i1", cache.ItemId);
@@ -69,9 +77,10 @@ public class ShapesControllerTests
     private sealed class StubClient : IMiroClient
     {
         private int count;
+
         public Task<MiroResponse> SendAsync(MiroRequest request)
         {
-            var res = new MiroResponse(201, (this.count++).ToString());
+            var res = new MiroResponse(201, this.count++.ToString());
             return Task.FromResult(res);
         }
     }
@@ -88,14 +97,9 @@ public class ShapesControllerTests
         public string? ItemId { get; private set; }
         public string? RemovedItem { get; private set; }
         public ShapeCacheEntry? Retrieve(string boardId, string itemId) => null;
-        public void Store(ShapeCacheEntry entry)
-        {
-            this.ItemId = entry.ItemId;
-        }
+        public void Store(ShapeCacheEntry entry) => this.ItemId = entry.ItemId;
 
-        public void Remove(string boardId, string itemId)
-        {
+        public void Remove(string boardId, string itemId) =>
             this.RemovedItem = itemId;
-        }
     }
 }

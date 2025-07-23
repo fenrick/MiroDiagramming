@@ -3,9 +3,7 @@ import { ShapeClient, type ShapeData } from '../src/core/utils/shape-client';
 
 vi.stubGlobal('fetch', vi.fn());
 
-beforeEach(() => {
-  (fetch as unknown as vi.Mock).mockReset();
-});
+beforeEach(() => (fetch as unknown as vi.Mock).mockReset());
 
 test('createShape sends single payload', async () => {
   const api = new ShapeClient('b1', '/api');

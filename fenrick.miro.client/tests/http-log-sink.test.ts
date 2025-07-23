@@ -13,9 +13,7 @@ beforeAll(async () => {
   url = `${addr}/api/logs`;
 }, 30000);
 
-afterAll(async () => {
-  server.close();
-});
+afterAll(async () => server.close());
 
 test('HttpLogSink posts log entries to backend', async () => {
   const entry = {

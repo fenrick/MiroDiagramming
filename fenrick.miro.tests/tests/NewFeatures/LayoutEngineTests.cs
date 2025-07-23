@@ -9,7 +9,7 @@ public class LayoutEngineTests
     {
         var engine = new LayoutEngine();
         var data = new GraphData(
-            new[]{ new GraphNode("n1","A","t"), new GraphNode("n2","B","t") },
+            [new GraphNode("n1", "A", "t"), new GraphNode("n2", "B", "t")],
             []);
 
         var result = engine.Layout(data);

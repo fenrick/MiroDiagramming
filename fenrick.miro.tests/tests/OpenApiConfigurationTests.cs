@@ -5,14 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 
-public class OpenApiConfigurationTests : IClassFixture<WebApplicationFactory<Program>>
+public class OpenApiConfigurationTests(WebApplicationFactory<Program> factory)
+    : IClassFixture<WebApplicationFactory<Program>>
 {
-    private readonly HttpClient client;
-
-    public OpenApiConfigurationTests(WebApplicationFactory<Program> factory)
-    {
-        this.client = factory.CreateClient();
-    }
+    private readonly HttpClient client = factory.CreateClient();
 
     [Fact]
     public async Task SwaggerJsonEndpointReturnsDocumentAsync()

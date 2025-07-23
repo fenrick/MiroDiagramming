@@ -1,7 +1,6 @@
-using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
-
 namespace Fenrick.Miro.Server.Domain;
+
+using System.ComponentModel.DataAnnotations;
 
 /// <summary>
 ///     Data describing a shape widget to be created via the Miro API.

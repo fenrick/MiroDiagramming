@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
-using Fenrick.Miro.Server.Api;
 using Xunit;
 
 public class ShapeQueueProcessorTests
@@ -18,6 +17,7 @@ public class ShapeQueueProcessorTests
         {
             shapes.Add(new ShapeData("r", 0, 0, 1, 1, null, null, null));
         }
+
         proc.EnqueueCreate(shapes);
 
         var responses = await proc.ProcessAsync();
@@ -31,7 +31,10 @@ public class ShapeQueueProcessorTests
     {
         var client = new StubClient();
         var proc = new ShapeQueueProcessor(client);
-        proc.EnqueueCreate(new[] { new ShapeData("r", 0, 0, 1, 1, null, null, null) });
+        proc.EnqueueCreate(
+        [
+            new ShapeData("r", 0, 0, 1, 1, null, null, null)
+        ]);
         var t1 = proc.ProcessAsync();
         var t2 = proc.ProcessAsync();
 
@@ -47,11 +50,12 @@ public class ShapeQueueProcessorTests
     private sealed class StubClient : IMiroClient
     {
         public int Count { get; private set; }
+
         public Task<MiroResponse> SendAsync(MiroRequest request)
         {
             this.Count++;
-            return Task.FromResult(new MiroResponse(201, this.Count.ToString()));
+            return Task.FromResult(new MiroResponse(201,
+                this.Count.ToString()));
         }
     }
 }
-

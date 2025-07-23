@@ -93,7 +93,7 @@ jobs:
 
       - run: npm install --frozen-lockfile || npm install
         working-directory: fenrick.miro.client
-        
+
       - name: Audit dependencies
         run: npm audit --omit=dev --audit-level=moderate
         working-directory: fenrick.miro.client
@@ -164,7 +164,7 @@ jobs:
       - name: Unit tests
         run: npm run test
         working-directory: fenrick.miro.client
-        
+
       - name: Upload coverage to GitHub Actions Artifacts
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
@@ -249,7 +249,7 @@ jobs:
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
             /d:sonar.host.url="https://sonarcloud.io" `
             /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml `
-            /d:sonar.javascript.lcov.reportPaths="fenrick.miro.client/coverage/lcov.info"
+            /d:sonar.javascript.lcov.reportPaths="${{ github.workspace }}/fenrick.miro.client/coverage/lcov.info"
 
       - name: Build
         shell: powershell
@@ -260,7 +260,7 @@ jobs:
         shell: powershell
         run: |
           dotnet-coverage collect "dotnet test" -f xml -o "coverage.xml"
-          
+
       - name: End sonar-scanner
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -328,7 +328,7 @@ jobs:
 
       - name: Build server and client
         run: dotnet build fenrick.miro.server/fenrick.miro.server.csproj -c Release
-        
+
       - name: Build Storybook
         run: npm run build-storybook
         working-directory: fenrick.miro.client
@@ -443,4 +443,3 @@ jobs:
 
       - name: Deploy previous artefact
         run: echo "Rollback to previous artefact"
-  

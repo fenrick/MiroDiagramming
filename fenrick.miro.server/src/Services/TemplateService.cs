@@ -1,6 +1,6 @@
 namespace Fenrick.Miro.Server.Services;
 
-using Fenrick.Miro.Server.Domain;
+using Domain;
 
 /// <summary>
 ///     Manage user specific template collections in memory.
@@ -10,7 +10,8 @@ using Fenrick.Miro.Server.Domain;
 //       via REST. Model templates in the shared DTO layer for portability.
 public class TemplateService
 {
-    private readonly Dictionary<string, Dictionary<string, TemplateDefinition>> store = new();
+    private readonly Dictionary<string, Dictionary<string, TemplateDefinition>>
+        store = [];
 
     /// <summary>
     ///     Store or replace a template for a specific user.
@@ -18,11 +19,12 @@ public class TemplateService
     /// <param name="userId">User identifier.</param>
     /// <param name="name">Template name.</param>
     /// <param name="template">Template definition to store.</param>
-    public void SetTemplate(string userId, string name, TemplateDefinition template)
+    public void SetTemplate(string userId, string name,
+        TemplateDefinition template)
     {
         if (!this.store.TryGetValue(userId, out var map))
         {
-            map = new Dictionary<string, TemplateDefinition>();
+            map = [];
             this.store[userId] = map;
         }
 
@@ -35,8 +37,9 @@ public class TemplateService
     /// <param name="userId">User identifier.</param>
     /// <param name="name">Template name.</param>
     /// <returns>The stored template or <c>null</c>.</returns>
-    public TemplateDefinition? GetTemplate(string userId, string name)
-    {
-        return this.store.TryGetValue(userId, out var map) && map.TryGetValue(name, out var tpl) ? tpl : null;
-    }
+    public TemplateDefinition? GetTemplate(string userId, string name) =>
+        this.store.TryGetValue(userId, out var map) &&
+        map.TryGetValue(name, out var tpl)
+            ? tpl
+            : null;
 }

@@ -11,21 +11,19 @@ using Domain;
 /// </summary>
 public class InMemoryShapeCache : IShapeCache
 {
-    private readonly ConcurrentDictionary<(string Board, string Item), ShapeCacheEntry> cache = new();
+    private readonly
+        ConcurrentDictionary<(string Board, string Item), ShapeCacheEntry>
+        cache = new();
 
     /// <inheritdoc />
     public ShapeCacheEntry? Retrieve(string boardId, string itemId) =>
         this.cache.TryGetValue((boardId, itemId), out var entry) ? entry : null;
 
     /// <inheritdoc />
-    public void Store(ShapeCacheEntry entry)
-    {
+    public void Store(ShapeCacheEntry entry) =>
         this.cache[(entry.BoardId, entry.ItemId)] = entry;
-    }
 
     /// <inheritdoc />
-    public void Remove(string boardId, string itemId)
-    {
+    public void Remove(string boardId, string itemId) =>
         this.cache.TryRemove((boardId, itemId), out _);
-    }
 }
