@@ -10,10 +10,11 @@ EXPOSE 8081
 
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS with-node
-RUN apt-get update
-RUN apt-get install curl
-RUN curl -sL https://deb.nodesource.com/setup_20.x | bash
-RUN apt-get -y install nodejs
+RUN apt-get update \
+    && apt-get install -y curl \
+    && curl -sL https://deb.nodesource.com/setup_20.x | bash \
+    && apt-get install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
 
 
 FROM with-node AS build
@@ -24,12 +25,12 @@ COPY ["fenrick.miro.client/fenrick.miro.client.esproj", "fenrick.miro.client/"]
 RUN dotnet restore "./fenrick.miro.server/fenrick.miro.server.csproj"
 COPY . .
 WORKDIR "/src/fenrick.miro.server"
-RUN dotnet build "./fenrick.miro.server.csproj" -c $BUILD_CONFIGURATION -o /app/build
+RUN dotnet build "./fenrick.miro.server.csproj" -c "$BUILD_CONFIGURATION" -o /app/build
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./fenrick.miro.server.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./fenrick.miro.server.csproj" -c "$BUILD_CONFIGURATION" -o /app/publish /p:UseAppHost=false
 
 # This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
 FROM base AS final

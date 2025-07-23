@@ -1,5 +1,6 @@
 namespace Fenrick.Miro.Server.Services;
 
+using System;
 using System.Net.Http.Headers;
 using System.Text;
 using Domain;
@@ -26,7 +27,9 @@ public class MiroRestClient(
         var userId = ctx?.Request.Headers["X-User-Id"].FirstOrDefault();
         var token = userId != null ? this.store.Retrieve(userId)?.Token : null;
         var message =
-            new HttpRequestMessage(new HttpMethod(request.Method), request.Path)
+            new HttpRequestMessage(
+                new HttpMethod(request.Method),
+                new Uri(request.Path, UriKind.Relative))
             {
                 Content = request.Body == null
                     ? null

@@ -1,3 +1,5 @@
+#nullable enable
+
 namespace Fenrick.Miro.Tests;
 
 using System;

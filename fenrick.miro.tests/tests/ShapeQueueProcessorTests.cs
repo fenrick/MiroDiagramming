@@ -1,5 +1,6 @@
 #nullable enable
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
@@ -50,8 +51,10 @@ public class ShapeQueueProcessorTests
         public Task<MiroResponse> SendAsync(MiroRequest request)
         {
             this.Count++;
-            return Task.FromResult(new MiroResponse(201,
-                this.Count.ToString()));
+            return Task.FromResult(
+                new MiroResponse(
+                    201,
+                    this.Count.ToString(CultureInfo.InvariantCulture)));
         }
     }
 }

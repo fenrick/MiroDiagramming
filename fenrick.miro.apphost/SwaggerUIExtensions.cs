@@ -1,3 +1,5 @@
+namespace Fenrick.Miro.AppHost;
+
 /// <summary>
 ///     Provides a placeholder implementation of the <c>WithSwaggerUI</c> extension
 ///     used in distributed applications.
