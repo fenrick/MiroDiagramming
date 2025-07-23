@@ -51,15 +51,30 @@ function escapeRegExp(str: string): string {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+/**
+ * Ensure the regular expression is reasonably safe.
+ *
+ * The heuristics block known backtracking patterns like `(aa+)` and nested
+ * quantifiers which `safe-regex` alone does not catch.
+ *
+ * @param pattern - Source string of the regular expression.
+ * @throws {SyntaxError} If the pattern appears unsafe.
+ */
+function assertRegexSafe(pattern: string): void {
+  const repeatedGroup = /\((\w)\1+\+\)/.test(pattern);
+  const nestedQuantifier = /\(.+[+*].+\)[+*?]/.test(pattern);
+  if (!safeRegex(pattern) || repeatedGroup || nestedQuantifier) {
+    throw new SyntaxError('Unsafe regular expression');
+  }
+}
+
 function buildRegex(opts: SearchOptions): RegExp {
   const src = opts.regex ? opts.query : escapeRegExp(opts.query);
   if (src.length > 200) {
     throw new SyntaxError('Pattern too long');
   }
   const pattern = opts.wholeWord ? `\\b${src}\\b` : src;
-  if (!safeRegex(pattern)) {
-    throw new SyntaxError('Unsafe regular expression');
-  }
+  assertRegexSafe(pattern);
   const flags = opts.caseSensitive ? 'g' : 'gi';
   return new RegExp(pattern, flags);
 }
