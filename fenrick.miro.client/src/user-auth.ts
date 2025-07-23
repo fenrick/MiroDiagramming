@@ -46,5 +46,10 @@ export async function registerCurrentUser(
   const token = await miro.board.getIdToken();
   const user = await miro.board.getUserInfo();
   await client.register({ id: String(user.id), name: user.name, token });
-  // TODO: handle registration failures and retry strategy.
+  // TODO: handle registration failures using exponential backoff and surfacing
+  //       clear user feedback on repeated errors.
+  // TODO: model the full OAuth exchange so tokens can be renewed via the server
+  //       when they expire.
+  // TODO: share user registration DTOs with the server-side code generation
+  //       so both tiers validate the same shapes.
 }

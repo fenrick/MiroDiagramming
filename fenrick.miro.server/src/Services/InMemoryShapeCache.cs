@@ -5,6 +5,9 @@ using Domain;
 
 /// <summary>
 ///     Thread-safe in-memory cache for board shapes.
+///     TODO: back with persistent store and eviction strategy for large boards.
+///     TODO: expose DTO-based accessors so the client and server share the same
+///     shape representation.
 /// </summary>
 public class InMemoryShapeCache : IShapeCache
 {

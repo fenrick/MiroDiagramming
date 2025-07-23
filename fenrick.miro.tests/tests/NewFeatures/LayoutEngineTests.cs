@@ -19,4 +19,7 @@ public class LayoutEngineTests
         Assert.Equal(0, result.Nodes["n2"].X);
         Assert.Equal(120, result.Nodes["n2"].Y);
     }
+
+    // TODO extend tests to cover ELK integration once the server supports
+    // advanced layout algorithms.
 }

@@ -8,7 +8,11 @@ using Domain;
 ///     HTTP client adapter that forwards requests to the Miro REST API.
 ///     The access token is looked up via <see cref="IUserStore" />
 ///     using the <c>X-User-Id</c> request header.
-///     TODO: refresh expired tokens and surface failures to callers.
+///     TODO: refresh expired tokens via dedicated endpoint, model the full OAuth
+///     code exchange using AspNet.Security.OAuth.Miro and update the
+///     user store securely, surfacing failures to callers.
+///     TODO: evaluate existing .NET REST API clients for Miro to simplify
+///     request generation and response parsing.
 /// </summary>
 public class MiroRestClient(
     HttpClient httpClient,

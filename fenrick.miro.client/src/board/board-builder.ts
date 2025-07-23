@@ -26,6 +26,10 @@ export type BoardItem = BaseItem | Group;
 
 /**
  * Helper responsible for finding, creating and updating widgets on the board.
+ * TODO introduce OO based shape interactions to support planned move/update
+ * operations and improve testability.
+ * TODO compute data-driven board diffs so modifications can be queued and
+ * persisted by the server.
  */
 export class BoardBuilder {
   private frame: Frame | undefined;
