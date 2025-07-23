@@ -1,11 +1,11 @@
+#nullable enable
+
+namespace Fenrick.Miro.Tests.NewFeatures;
 using System.IO;
 using System.Threading.Tasks;
 using ClosedXML.Excel;
 using Fenrick.Miro.Server.Services;
 using Xunit;
-#nullable enable
-
-namespace Fenrick.Miro.Tests.NewFeatures;
 
 public class ExcelLoaderTests
 {

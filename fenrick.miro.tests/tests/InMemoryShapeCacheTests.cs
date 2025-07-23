@@ -1,9 +1,8 @@
+namespace Fenrick.Miro.Tests;
 #nullable enable
 using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
 using Xunit;
-
-namespace Fenrick.Miro.Tests;
 
 public class InMemoryShapeCacheTests
 {
