@@ -18,6 +18,9 @@ import {
 } from '../components';
 import { PageHelp } from '../components/PageHelp';
 import { RowInspector } from '../components/RowInspector';
+
+// prettier-ignore
+type LoaderStateDispatch = React.Dispatch<React.SetStateAction<ExcelLoader | GraphExcelLoader>>;
 import { TabPanel } from '../components/TabPanel';
 import { useExcelData } from '../hooks/excel-data-context';
 import { showError } from '../hooks/notifications';
@@ -35,9 +38,7 @@ import type { TabTuple } from './tab-definitions';
  */
 async function handleRemote(
   remote: string,
-  setLoader: React.Dispatch<
-    React.SetStateAction<ExcelLoader | GraphExcelLoader>
-  >,
+  setLoader: LoaderStateDispatch,
   setFile: React.Dispatch<React.SetStateAction<File | null>>,
   setSource: React.Dispatch<React.SetStateAction<string>>,
   setRows: React.Dispatch<React.SetStateAction<ExcelRow[]>>,
@@ -99,9 +100,7 @@ function useExcelDataSync(
 }
 
 function useDropHandler(
-  setLoader: React.Dispatch<
-    React.SetStateAction<ExcelLoader | GraphExcelLoader>
-  >,
+  setLoader: LoaderStateDispatch,
   setFile: React.Dispatch<React.SetStateAction<File | null>>,
   setSource: React.Dispatch<React.SetStateAction<string>>,
   setRows: React.Dispatch<React.SetStateAction<ExcelRow[]>>,
@@ -114,9 +113,7 @@ function useDropHandler(
 
 async function handleDrop(
   files: File[],
-  setLoader: React.Dispatch<
-    React.SetStateAction<ExcelLoader | GraphExcelLoader>
-  >,
+  setLoader: LoaderStateDispatch,
   setFile: React.Dispatch<React.SetStateAction<File | null>>,
   setSource: React.Dispatch<React.SetStateAction<string>>,
   setRows: React.Dispatch<React.SetStateAction<ExcelRow[]>>,

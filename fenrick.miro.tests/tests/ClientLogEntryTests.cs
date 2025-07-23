@@ -9,7 +9,7 @@ using Xunit;
 public class ClientLogEntryTests
 {
     [Fact]
-    public void ValidationAlwaysSucceeds()
+    public void ValidationFailsWhenLevelMissing()
     {
         var entry = new ClientLogEntry(DateTime.UtcNow, null!, "msg", null);
         var ctx = new ValidationContext(entry);
@@ -17,8 +17,8 @@ public class ClientLogEntryTests
 
         var valid = Validator.TryValidateObject(entry, ctx, results, true);
 
-        Assert.True(valid);
-        Assert.Empty(results);
+        Assert.False(valid);
+        Assert.NotEmpty(results);
     }
 
     [Fact]
