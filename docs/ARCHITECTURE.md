@@ -41,7 +41,8 @@ Browser
 The React GUI communicates with a **.NET 9** server for all Miro REST API calls.
 OAuth tokens are obtained during browser login, then stored securely by the
 server and retrieved for each request. Tokens currently live only in an
-<code>InMemoryUserStore</code> while we design database persistence. The existing
+<code>InMemoryUserStore</code> while we design **PostgreSQL** persistence managed
+through **Entity Framework Core**. The existing
 web API embedded in the GUI continues to handle UX events and simple actions.
 The server also persists the ids of created Miro items so they can be
 synchronised or referenced later.
@@ -204,7 +205,8 @@ server encrypts tokens at rest and attaches them to API requests._
 - Worker pool size = CPU cores − 1 (max 4).
 - IndexedDB caches ELK layouts keyed by graph hash.
 - TODO evaluate cross-compiling the Java ELK library to .NET or WASM for
-  consistent server/client layout behaviour.
+  consistent server/client layout behaviour. Consider **IKVM** to run the
+  original Java bytecode directly on .NET.
 - TODO research .NET ports of the Eclipse Layout Kernel; none found so far so cross-compilation may be required.
 - TODO explore official or community .NET wrappers for the Miro REST API so
   server calls can rely on typed endpoints rather than manual JSON handling.
