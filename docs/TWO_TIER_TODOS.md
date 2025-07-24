@@ -4,7 +4,7 @@ This document tracks outstanding tasks needed to optimise the add-on around a th
 
 ## Data Model
 - [ ] Build a shared DTO layer compiled to both TypeScript and C#.
-- [ ] Persist board state using a lightweight ORM and expose typed REST endpoints.
+- [ ] Persist board state in a **PostgreSQL** database managed via **Entity Framework Core** and expose typed REST endpoints.
 - [ ] Research open-source .NET clients for the Miro REST API or auto-generate one.
 
 ## Queueing and Persistence
@@ -20,5 +20,6 @@ This document tracks outstanding tasks needed to optimise the add-on around a th
 ## Layout Engine
 - [ ] Evaluate .NET ports or cross-compilation of the Eclipse Layout Kernel.
 - [ ] Keep layout algorithms consistent across tiers.
+- [ ] Investigate **IKVM** as a path to run the Java-based ELK library on .NET.
 
 These tasks expand upon the TODO markers found throughout the source.

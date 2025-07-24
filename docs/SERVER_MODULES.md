@@ -87,14 +87,14 @@ requirements.
 The initial services intentionally keep the scope small. The following features remain TODO and are marked throughout the source:
 
 - **ELK-based LayoutEngine** – port the heavy shape placement algorithms from the JavaScript codebase. The current `LayoutEngine` only stacks nodes vertically.
-- **Persistent shape cache** – back `IShapeCache` with Redis/SQLite and expose a lookup endpoint.
+- **Persistent shape cache** – back `IShapeCache` with Redis and a **PostgreSQL** store managed by **Entity Framework Core**, then expose a lookup endpoint.
 - **Background queue management** – handle modify and delete operations with priority over new creations.
-- **Queue persistence** – store pending shape operations using a durable queue and integrate with a future ORM layer.
+  - **Queue persistence** – store pending shape operations in **PostgreSQL** using Entity Framework Core and integrate with a durable queue.
 - **Token refresh endpoint** – automatically renew expired tokens and store updates securely.
 - **REST client library** – investigate community or official .NET wrappers for the Miro REST API to avoid bespoke HTTP code.
 - **Full OAuth flow** – research `AspNet.Security.OAuth.Miro` and implement the server-side exchange.
 - **ExcelLoader extensions** – add streaming support, large workbook optimisation and named table handling.
-- **Template persistence** – store user templates in a database and expose API endpoints for editing and listing templates.
+  - **Template persistence** – store user templates in **PostgreSQL** via Entity Framework Core and expose API endpoints for editing and listing templates.
 - **Advanced object matching** – provide fuzzy search and shape property filters beyond simple label comparison.
 - **Comprehensive tests** – ensure every endpoint reaches ≥ 90 % coverage with unit and integration tests.
 

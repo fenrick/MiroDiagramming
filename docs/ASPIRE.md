@@ -23,6 +23,8 @@ builder.AddProject<fenrick_miro_server>("fenrick-miro-server")
 builder.Build().Run();
 ```
 
+The server persists data in **PostgreSQL** using the `Microsoft.EntityFrameworkCore` `Npgsql` provider.
+
 ## 2 Dashboard
 
 The Aspire dashboard listens on port `18888`. Set the `DOTNET_DASHBOARD_PORT` environment variable to change it. The example below runs the dashboard on port `3000`:
