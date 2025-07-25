@@ -1,21 +1,19 @@
-name: Commitlint
-permissions:
-  contents: read
+name: client-typecheck
 
 on:
+  push:
   pull_request:
-    types: [opened, synchronize, edited]
+
+permissions: write-all
 
 env:
   NODE_VERSION: 20
 
 jobs:
-  commitlint:
+  typecheck:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
@@ -25,6 +23,6 @@ jobs:
         working-directory: fenrick.miro.client
       - run: npm ci --prefer-offline --no-audit
         working-directory: fenrick.miro.client
-      - run:
-          npx commitlint --from=${{ github.event.pull_request.base.sha }} --to=${{ github.event.pull_request.head.sha }}
+      - name: Typecheck
+        run: npm run typecheck
         working-directory: fenrick.miro.client

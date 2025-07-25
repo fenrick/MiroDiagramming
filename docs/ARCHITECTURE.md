@@ -138,7 +138,7 @@ Complexity limits enforced automatically by **SonarQube** gate.
 - Every PR must pass all CI gates; manual reviewers are optional.
 - **CodeQL** scan adds static-analysis findings to the check suite for
   JavaScript, GitHub Actions and C# projects (job `codeql` in
-  [.github/workflows/ci.yml](../.github/workflows/ci.yml)).
+  [repo-codeql.yml](../.github/workflows/repo-codeql.yml)).
 
 ---
 
