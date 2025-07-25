@@ -4,9 +4,9 @@
         <JavaScriptTestRoot>tests\</JavaScriptTestRoot>
         <JavaScriptTestFramework>Vitest</JavaScriptTestFramework>
         <!-- Allows the build (or compile) script located on package.json to run on Build -->
-        <ShouldRunBuildScript>true</ShouldRunBuildScript>
+        <ShouldRunBuildScript>false</ShouldRunBuildScript>
         <!-- Folder where production build objects will be placed -->
         <BuildOutputFolder>$(MSBuildProjectDirectory)\dist</BuildOutputFolder>
-        <BuildCommand>vite build</BuildCommand>
+        <BuildCommand>npm run build</BuildCommand>
     </PropertyGroup>
 </Project>
