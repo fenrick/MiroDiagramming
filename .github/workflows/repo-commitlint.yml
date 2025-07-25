@@ -1,21 +1,21 @@
-name: miro-prettier
+name: repo-commitlint
+permissions:
+  contents: read
 
 on:
   pull_request:
-    branches: [main, develop]
-  push:
-    branches: [main, develop]
-
-permissions: write-all
+    types: [opened, synchronize, edited]
 
 env:
   NODE_VERSION: 20
 
 jobs:
-  prettier:
+  commitlint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
@@ -25,6 +25,6 @@ jobs:
         working-directory: fenrick.miro.client
       - run: npm ci --prefer-offline --no-audit
         working-directory: fenrick.miro.client
-      - name: Prettier
-        run: npm run prettier:check
+      - run:
+          npx commitlint --from=${{ github.event.pull_request.base.sha }} --to=${{ github.event.pull_request.head.sha }}
         working-directory: fenrick.miro.client

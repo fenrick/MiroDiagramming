@@ -1,4 +1,4 @@
-name: miro-dotnet
+name: server-dotnet
 
 on:
   pull_request:

@@ -1,4 +1,4 @@
-name: miro-release
+name: repo-release
 
 on:
   push:

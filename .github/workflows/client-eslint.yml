@@ -1,4 +1,4 @@
-name: miro-eslint
+name: client-eslint
 
 on:
   pull_request:

@@ -1,4 +1,4 @@
-name: miro-sonar
+name: repo-sonar
 
 on:
   pull_request:

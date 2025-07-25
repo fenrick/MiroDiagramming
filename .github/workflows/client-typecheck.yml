@@ -1,4 +1,4 @@
-name: miro-stylelint
+name: client-typecheck
 
 on:
   pull_request:
@@ -12,7 +12,7 @@ env:
   NODE_VERSION: 20
 
 jobs:
-  stylelint:
+  typecheck:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -25,6 +25,6 @@ jobs:
         working-directory: fenrick.miro.client
       - run: npm ci --prefer-offline --no-audit
         working-directory: fenrick.miro.client
-      - name: Stylelint
-        run: npm run stylelint
+      - name: Typecheck
+        run: npm run typecheck
         working-directory: fenrick.miro.client

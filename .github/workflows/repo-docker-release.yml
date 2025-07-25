@@ -1,4 +1,4 @@
-name: miro-docker-release
+name: repo-docker-release
 
 on:
   push:

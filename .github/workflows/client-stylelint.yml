@@ -1,21 +1,21 @@
-name: miro-commitlint
-permissions:
-  contents: read
+name: client-stylelint
 
 on:
   pull_request:
-    types: [opened, synchronize, edited]
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
+
+permissions: write-all
 
 env:
   NODE_VERSION: 20
 
 jobs:
-  commitlint:
+  stylelint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
@@ -25,6 +25,6 @@ jobs:
         working-directory: fenrick.miro.client
       - run: npm ci --prefer-offline --no-audit
         working-directory: fenrick.miro.client
-      - run:
-          npx commitlint --from=${{ github.event.pull_request.base.sha }} --to=${{ github.event.pull_request.head.sha }}
+      - name: Stylelint
+        run: npm run stylelint
         working-directory: fenrick.miro.client
