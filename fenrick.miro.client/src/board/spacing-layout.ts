@@ -16,10 +16,10 @@ export function calculateSpacingOffsets(
 /** Plan widget positions and size when distributing by growth. */
 export function calculateGrowthPlan(
   items: Array<Record<string, number>>,
-  axis: 'x' | 'y',
+  axis: "x" | "y",
   spacing: number,
 ): { size: number; positions: number[] } {
-  const sizeKey = axis === 'x' ? 'width' : 'height';
+  const sizeKey = axis === "x" ? "width" : "height";
   const first = items[0];
   const last = items[items.length - 1];
   /* c8 ignore next */
@@ -50,5 +50,5 @@ export function getDimension(
   key: string,
 ): number {
   const val = item[key];
-  return typeof val === 'number' ? val : 0;
+  return typeof val === "number" ? val : 0;
 }

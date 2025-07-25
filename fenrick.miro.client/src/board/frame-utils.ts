@@ -1,15 +1,14 @@
 {
-  Frame;
+  Frame
 }
 from;
-('@mirohq/websdk-types');
-import { BoardBuilder } from './board-builder';
-
+"@mirohq/websdk-types";
+import { BoardBuilder } from "./board-builder";
 {
-  BoardEntity;
+  BoardEntity
 }
 from;
-('./item-types');
+"./item-types";
 
 /**
  * Create a frame and register it for undo handling.

@@ -1,11 +1,10 @@
-import { BoardBuilder } from '../../board/board-builder';
-import { syncOrUndo as syncHelper, undoWidgets } from '../../board/undo-utils';
-
+import { BoardBuilder } from "../../board/board-builder";
 {
-  BoardEntity;
+  BoardEntity
 }
 from;
-('../../board/item-types');
+"../../board/item-types";
+import { syncOrUndo as syncHelper, undoWidgets } from "../../board/undo-utils";
 
 /**
  * Base class that tracks widgets created during a processing run and

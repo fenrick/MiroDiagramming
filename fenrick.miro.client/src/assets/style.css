@@ -26,9 +26,7 @@
 
 *,
 *:before,
-*:after {
-  box-sizing: border-box;
-}
+*:after { box-sizing: border-box; }
 
 html,
 body {
@@ -66,9 +64,7 @@ body {
   padding: var(--space-50) var(--space-100);
 }
 
-.custom-segment button + button {
-  margin-left: var(--space-50);
-}
+.custom-segment button + button { margin-left: var(--space-50); }
 
 .custom-visually-hidden {
   border: 0;
@@ -88,9 +84,7 @@ body {
   gap: var(--space-50);
 }
 
-.search-input input {
-  flex: 1;
-}
+.search-input input { flex: 1; }
 
 .custom-form-group-small {
   display: flex;
@@ -123,13 +117,9 @@ body {
   position: relative;
 }
 
-.custom-modal-small {
-  width: 300px;
-}
+.custom-modal-small { width: 300px; }
 
-.custom-modal-medium {
-  width: 400px;
-}
+.custom-modal-medium { width: 400px; }
 
 .custom-modal-header {
   align-items: center;
@@ -138,9 +128,7 @@ body {
   margin-bottom: var(--space-small);
 }
 
-.custom-modal-content {
-  overflow-y: auto;
-}
+.custom-modal-content { overflow-y: auto; }
 
 .page-help {
   position: absolute;

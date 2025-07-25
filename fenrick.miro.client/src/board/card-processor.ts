@@ -1,13 +1,13 @@
 {
-  Card, CardStyle, Frame, Tag;
+  Card, CardStyle, Frame, Tag
 }
 from;
-'@mirohq/websdk-types';
-import { UndoableProcessor } from '../core/graph/undoable-processor';
-import { BoardBuilder } from './board-builder';
-import { clearActiveFrame, registerFrame } from './frame-utils';
-import { calculateGrid } from './grid-layout';
-import { CardData cardLoader } from '../core/utils/cards';
+"@mirohq/websdk-types";
+import { UndoableProcessor } from "../core/graph/undoable-processor";
+import { CardData cardLoader } from "../core/utils/cards";
+import { BoardBuilder } from "./board-builder";
+import { clearActiveFrame, registerFrame } from "./frame-utils";
+import { calculateGrid } from "./grid-layout";
 
 export interface CardProcessOptions {
   createFrame?: boolean;
@@ -24,7 +24,7 @@ export interface CardProcessOptions {
  */
 export class CardProcessor extends UndoableProcessor<Card | Frame> {
   /** Prefix used to embed identifiers in descriptions. */
-  private static readonly ID_PREFIX = 'ID:';
+  private static readonly ID_PREFIX = "ID:";
   /** Regex capturing an embedded identifier. */
   private static readonly ID_REGEX = /ID:(\s+)/;
   /** Regex removing any embedded identifier from text. */
@@ -65,7 +65,7 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
     options: CardProcessOptions = {},
   ): Promise<void> {
     if (!Array.isArray(cards)) {
-      throw new Error('Invalid cards');
+      throw new Error("Invalid cards");
     }
     this.lastCreated = [];
     // Reset per-run caches to ensure fresh board state
@@ -118,7 +118,7 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
    */
   private async getBoardTags(): Promise<Tag[]> {
     // TODO use cached backend lookup instead of board.get once shape cache service exposes tags
-    this.tagsCache ?? = await miro.board.get({ type: 'tag' }) as Tag[];
+    this.tagsCache ?? = (await miro.board.get({ type: "tag" })) as Tag[];
     return this.tagsCache;
   }
 
@@ -128,7 +128,7 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
    */
   private async getBoardCards(): Promise<Card[]> {
     // TODO use cached backend lookup instead of board.get to reduce API cost
-    this.cardsCache ?? = await miro.board.get({ type: 'card' }) as Card[];
+    this.cardsCache ?? = (await miro.board.get({ type: "card" })) as Card[];
     return this.cardsCache;
   }
 
@@ -301,12 +301,12 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
 
   /** Embed the identifier inside the description. */
   private encodeDescription(desc: string | undefined, id?: string): string {
-    const base = (desc ?? '').replace(CardProcessor.ID_REMOVE_REGEX, '');
+    const base = (desc ?? "").replace(CardProcessor.ID_REMOVE_REGEX, "");
     if (!id) {
       return base.trim();
     }
     const trimmed = base.trimEnd();
-    return `${trimmed}${trimmed ? '\n' : ''}${CardProcessor.ID_PREFIX}${id}`;
+    return `${trimmed}${trimmed ? "\n" : ""}${CardProcessor.ID_PREFIX}${id}`;
   }
 
   /**

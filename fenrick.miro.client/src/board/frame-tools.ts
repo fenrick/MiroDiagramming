@@ -1,5 +1,5 @@
-import { getBoard, maybeSync, Syncable } from './board';
-import { boardCache } from './board-cache';
+import { getBoard, maybeSync, Syncable } from "./board";
+import { boardCache } from "./board-cache";
 
 /** Options for renaming selected frames. */
 export interface RenameOptions {
@@ -18,7 +18,7 @@ export async function renameSelectedFrames(
   board?: BoardLike,
 ): Promise<void> {
   const b = getBoard(board);
-  log.info('Renaming selected frames');
+  log.info("Renaming selected frames");
   const selection = await boardCache.getSelection(b);
   const frames = selection.filter(
     (
@@ -27,7 +27,7 @@ export async function renameSelectedFrames(
       x?: number;
       y?: number;
       type?: string;
-    } => (i as { type?: string }).type === 'frame',
+    } => (i as { type?: string }).type === "frame",
   );
   if (!frames.length) {
     return;
@@ -48,7 +48,7 @@ export async function renameSelectedFrames(
       await maybeSync(frame as Syncable);
     }),
   );
-  log.debug({ count: frames.length }, 'Frames renamed');
+  log.debug({ count: frames.length }, "Frames renamed");
 }
 
 /**
@@ -79,7 +79,7 @@ interface FrameLike extends LockableItem {
  * @param item - Widget to test.
  */
 function isFrame(item: Record<string, unknown>): item is FrameLike {
-  return (item as { type?: string }).type === 'frame';
+  return (item as { type?: string }).type === "frame";
 }
 
 /**
@@ -110,9 +110,9 @@ async function lockFrame(frame: FrameLike): Promise<void> {
  */
 export async function lockSelectedFrames(board?: BoardLike): Promise<void> {
   const b = getBoard(board);
-  log.info('Locking selected frames');
+  log.info("Locking selected frames");
   const selection = await boardCache.getSelection(b);
   const frames = selection.filter(isFrame);
   await Promise.all(frames.map(frame => lockFrame(frame)));
-  log.debug({ count: frames.length }, 'Frames locked');
+  log.debug({ count: frames.length }, "Frames locked");
 }

@@ -1,7 +1,7 @@
-import { expect, vi } from 'vitest';
-import { BoardBuilder, updateConnector } from '../src/board/board-builder';
-import { boardCache } from '../src/board/board-cache';
-import { mockBoard } from './mock-board';
+import { expect, vi } from "vitest";
+import { BoardBuilder, updateConnector } from "../src/board/board-builder";
+import { boardCache } from "../src/board/board-cache";
+import { mockBoard } from "./mock-board";
 
 interface GlobalWithMiro {
   miro?: { board: Record<string, unknown> };
@@ -13,60 +13,60 @@ declare const global: GlobalWithMiro;
  * Additional tests exercising lookup and connector styling logic.
  */
 
-describe('BoardBuilder lookup and connector updates',
+describe("BoardBuilder lookup and connector updates",
   () => {
     afterEach(() => {
       boardCache.reset();
       vi.clearAllMocks();
     });
-    test('findNode caches shapes by text',
+    test("findNode caches shapes by text",
       async () => {
-        const shape = { content: 'B' } as Record<string, unknown>;
+        const shape = { content: "B" } as Record<string, unknown>;
         mockBoard({ get: vi.fn().mockResolvedValue([shape]) });
         const builder = new BoardBuilder();
-        await builder.findNode('Business', 'B');
-        await builder.findNode('Business', 'B');
+        await builder.findNode("Business", "B");
+        await builder.findNode("Business", "B");
         expect((global.miro.board.get as vi.Mock).mock.calls.length).toBe(1);
       });
 
-    test('reset clears the shape cache',
+    test("reset clears the shape cache",
       async () => {
-        const shape = { content: 'B' } as Record<string, unknown>;
+        const shape = { content: "B" } as Record<string, unknown>;
         mockBoard({ get: vi.fn().mockResolvedValue([shape]) });
         const builder = new BoardBuilder();
-        await builder.findNode('Business', 'B');
+        await builder.findNode("Business", "B");
         builder.reset();
-        await builder.findNode('Business', 'B');
+        await builder.findNode("Business", "B");
         expect((global.miro.board.get as vi.Mock).mock.calls.length).toBe(1);
       });
 
-    test('findNodeInSelection uses cached selection',
+    test("findNodeInSelection uses cached selection",
       async () => {
-        const selection = [{ type: 'shape', content: 'B' }];
+        const selection = [{ type: "shape", content: "B" }];
         mockBoard({ getSelection: vi.fn().mockResolvedValue(selection) });
         const builder = new BoardBuilder();
-        await builder.findNodeInSelection('Business', 'B');
-        await builder.findNodeInSelection('Business', 'B');
+        await builder.findNodeInSelection("Business", "B");
+        await builder.findNodeInSelection("Business", "B");
         expect((global.miro.board.getSelection as vi.Mock).mock.calls.length)
           .toBe(
             1,
           );
       });
 
-    test('lookup matches shape text regardless of metadata',
+    test("lookup matches shape text regardless of metadata",
       async () => {
         const shape = {
-          content: 'A',
-          getMetadata: vi.fn().mockResolvedValue({ type: 'X', label: 'Y' }),
+          content: "A",
+          getMetadata: vi.fn().mockResolvedValue({ type: "X", label: "Y" }),
           getItems: vi.fn().mockResolvedValue([]),
         } as Record<string, unknown>;
         mockBoard({ get: vi.fn().mockResolvedValue([shape]) });
         const builder = new BoardBuilder();
-        const result = await builder.findNode('Business', 'A');
+        const result = await builder.findNode("Business", "A");
         expect(result).toBe(shape);
       });
 
-    test('createEdges skips connector lookup',
+    test("createEdges skips connector lookup",
       async () => {
         const board = mockBoard({
           get: vi.fn(),
@@ -76,12 +76,12 @@ describe('BoardBuilder lookup and connector updates',
               setMetadata: vi.fn(),
               getMetadata: vi.fn(),
               sync: vi.fn(),
-              id: 'c1',
+              id: "c1",
             }),
         });
         const builder = new BoardBuilder();
-        const edges = [{ from: 'n1', to: 'n2' }];
-        const nodeMap = { n1: { id: 'a' }, n2: { id: 'b' } } as Record<
+        const edges = [{ from: "n1", to: "n2" }];
+        const nodeMap = { n1: { id: "a" }, n2: { id: "b" } } as Record<
           string,
           unknown
         >;
@@ -93,19 +93,18 @@ describe('BoardBuilder lookup and connector updates',
         expect(board.get).not.toHaveBeenCalled();
       });
 
-    test('updateConnector merges style from template',
+    test("updateConnector merges style from template",
       () => {
         const existing = { style: {} } as Record<string, unknown>;
         updateConnector(
           existing as unknown as Connector,
           {
-            from: 'n1',
-            to: 'n2',
+            from: "n1",
+            to: "n2",
           } as unknown as;
-        import('../src/core/graph').EdgeData,
-          { shape: 'curved', style: { strokeStyle: 'dashed' } },
-          undefined,;
-      )
-        expect(existing.style.strokeStyle).toBe('dashed');
-      });
+        import("../src/core/graph").EdgeData,
+          { shape: "curved", style: { strokeStyle: "dashed" } },
+          undefined, ;);
+    expect(existing.style.strokeStyle).toBe("dashed");
   });
+});

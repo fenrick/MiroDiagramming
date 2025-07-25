@@ -1,9 +1,9 @@
 ExcelJS;
 from;
-('exceljs');
-import { loadExcelJS } from './exceljs-loader';
-import { fileUtils } from './file-utils';
-import { GraphClient, graphClient } from './graph-client';
+"exceljs";
+import { loadExcelJS } from "./exceljs-loader";
+import { fileUtils } from "./file-utils";
+import { GraphClient, graphClient } from "./graph-client";
 
 /** Row object produced from a worksheet. */
 export interface ExcelRow {
@@ -67,14 +67,14 @@ export class ExcelLoader {
    */
   public loadNamedTable(name: string): ExcelRow[] {
     if (!this.workbook) {
-      throw new Error('Workbook not loaded');
+      throw new Error("Workbook not loaded");
     }
     const entry = this.workbook.definedNames.getRanges(name);
     const ref = entry.ranges[0];
     if (!ref) {
       throw new Error(`Unknown table: ${name}`);
     }
-    const [sheetName, range] = ref.replace(/'/g, '').split('!');
+    const [sheetName, range] = ref.replace(/'/g, "").split("!");
     const ws = this.workbook.getWorksheet(sheetName);
     if (!ws) {
       throw new Error(`Missing sheet for table: ${name}`);
@@ -85,7 +85,7 @@ export class ExcelLoader {
   /** Retrieve a worksheet object, throwing on missing sheet. */
   private getSheet(name: string): ExcelJS.Worksheet {
     if (!this.workbook) {
-      throw new Error('Workbook not loaded');
+      throw new Error("Workbook not loaded");
     }
     const ws = this.workbook.getWorksheet(name);
     if (!ws) {
@@ -98,7 +98,7 @@ export class ExcelLoader {
     const { start, end } = this.parseRange(range, ws);
     const headers = [] as string[];
     for (let c = start.col; c <= end.col; c++) {
-      headers.push(String(ws.getRow(start.row).getCell(c).value ?? ''));
+      headers.push(String(ws.getRow(start.row).getCell(c).value ?? ""));
     }
     const rows: ExcelRow[] = [];
     for (let r = start.row + 1; r <= end.row; r++) {
@@ -131,7 +131,7 @@ export class ExcelLoader {
         end: { row: ws.rowCount, col: ws.columnCount },
       };
     }
-    const clean = ref.replace(/\$/g, '');
+    const clean = ref.replace(/\$/g, "");
     const rangeRegex = /([A-Z]+)(\d+):([A-Z]+)(\d+)/i;
     const match = rangeRegex.exec(clean);
     if (!match) {
@@ -140,9 +140,9 @@ export class ExcelLoader {
     const [, sCol, sRow, eCol, eRow] = match;
     const colNum = (col: string) =>
       col
-        .toUpperCase()
-        .split('')
-        .reduce((n, ch) => n * 26 + ch.charCodeAt(0) - 64, 0);
+      .toUpperCase()
+      .split("")
+      .reduce((n, ch) => n * 26 + ch.charCodeAt(0) - 64, 0);
     return {
       start: { row: Number(sRow), col: colNum(sCol) },
       end: { row: Number(eRow), col: colNum(eCol) },

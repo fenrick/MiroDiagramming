@@ -1,9 +1,9 @@
 namespace Fenrick.Miro.Server.Api;
 
 using System.Text.Json;
-using Domain;
+using Fenrick.Miro.Server.Domain;
+using Fenrick.Miro.Server.Services;
 using Microsoft.AspNetCore.Mvc;
-using Services;
 
 /// <summary>
 ///     Endpoint for creating shape widgets through the Miro API.
@@ -23,8 +23,8 @@ public class ShapesController(IMiroClient client, IShapeCache cache)
         [FromBody] ShapeData[] shapes)
     {
         var responses = await this.miroClient.CreateAsync(
-            $"/boards/{boardId}/shapes",
-            shapes);
+                            $"/boards/{boardId}/shapes",
+                            shapes);
         for (var i = 0; i < responses.Count && i < shapes.Length; i++)
         {
             this.shapeCache.Store(
@@ -38,10 +38,10 @@ public class ShapesController(IMiroClient client, IShapeCache cache)
     public async Task<IActionResult> DeleteAsync(string boardId, string itemId)
     {
         var response = await this.miroClient.SendAsync(
-            new MiroRequest(
-                "DELETE",
-                $"/boards/{boardId}/shapes/{itemId}",
-                null));
+                           new MiroRequest(
+                               "DELETE",
+                               $"/boards/{boardId}/shapes/{itemId}",
+                               null));
         this.shapeCache.Remove(boardId, itemId);
         return this.Ok(response);
     }
@@ -54,10 +54,10 @@ public class ShapesController(IMiroClient client, IShapeCache cache)
     {
         var body = JsonSerializer.Serialize(shape);
         var response = await this.miroClient.SendAsync(
-            new MiroRequest(
-                "PUT",
-                $"/boards/{boardId}/shapes/{itemId}",
-                body));
+                           new MiroRequest(
+                               "PUT",
+                               $"/boards/{boardId}/shapes/{itemId}",
+                               body));
         this.shapeCache.Store(new ShapeCacheEntry(boardId, itemId, shape));
         return this.Ok(response);
     }

@@ -1,6 +1,6 @@
 namespace Fenrick.Miro.Server.Data;
 
-using Domain;
+using Fenrick.Miro.Server.Domain;
 
 /// <summary>
 ///     Database record storing a template per user.
@@ -13,6 +13,6 @@ public class TemplateEntity
     /// <summary>Unique name of the template.</summary>
     public required string Name { get; set; }
 
-    /// <summary>JSON encoded <see cref="TemplateDefinition" />.</summary>
+    /// <summary>JSON encoded <see cref="TemplateDefinition"/>.</summary>
     public required string DefinitionJson { get; set; }
 }

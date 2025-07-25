@@ -1,5 +1,5 @@
-import React from 'react';
-import { Button } from './Button';
+import React from "react";
+import { Button } from "./Button";
 
 export interface SegmentedOption {
   readonly label: string;
@@ -27,7 +27,7 @@ export function SegmentedControl({
         <Button
           key={opt.value}
           onClick={() => onChange(opt.value)}
-          variant={value === opt.value ? 'primary' : 'secondary'}>
+          variant={value === opt.value ? "primary" : "secondary"}>
           {opt.label}
         </Button>
       ))}

@@ -1,50 +1,43 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-
 #nullable disable
 
-namespace Fenrick.Miro.Server.src.Data.Migrations
+namespace Fenrick.Miro.Server.src.Data.Migrations;
+
+using Microsoft.EntityFrameworkCore.Migrations;
+
+/// <inheritdoc />
+public partial class InitialCreate : Migration
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    protected override void Up(MigrationBuilder migrationBuilder)
     {
-        /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.CreateTable(
-                name: "Templates",
-                columns: table => new
-                {
-                    UserId = table.Column<string>(type: "text", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    DefinitionJson = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Templates", x => new { x.UserId, x.Name });
-                });
+        migrationBuilder.CreateTable(
+            name: "Templates",
+            columns: table => new
+            {
+                UserId = table.Column<string>(type: "text", nullable: false),
+                Name = table.Column<string>(type: "text", nullable: false),
+                DefinitionJson = table.Column<string>(type: "text", nullable: false)
+            },
+            constraints: table => table.PrimaryKey("PK_Templates", x => new { x.UserId, x.Name }));
 
-            migrationBuilder.CreateTable(
-                name: "Users",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    Token = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Users", x => x.Id);
-                });
-        }
+        migrationBuilder.CreateTable(
+            name: "Users",
+            columns: table => new
+            {
+                Id = table.Column<string>(type: "text", nullable: false),
+                Name = table.Column<string>(type: "text", nullable: false),
+                Token = table.Column<string>(type: "text", nullable: false)
+            },
+            constraints: table => table.PrimaryKey("PK_Users", x => x.Id));
+    }
 
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DropTable(
-                name: "Templates");
+    /// <inheritdoc />
+    protected override void Down(MigrationBuilder migrationBuilder)
+    {
+        migrationBuilder.DropTable(
+            name: "Templates");
 
-            migrationBuilder.DropTable(
-                name: "Users");
-        }
+        migrationBuilder.DropTable(
+            name: "Users");
     }
 }

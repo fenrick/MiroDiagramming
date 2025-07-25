@@ -1,10 +1,10 @@
-import React from 'react';
+import React from "react";
 import {
   replaceBoardContent,
   searchBoardContent,
   SearchOptions,
   SearchResult,
-} from '../../board/search-tools';
+} from "../../board/search-tools";
 
 /**
  * Perform a board search with a 300 ms debounce.
@@ -26,18 +26,20 @@ export function useDebouncedSearch(
   const [currentIndex, setCurrentIndex] = React.useState(-1);
 
   React.useEffect(() => {
-    const handle = setTimeout(async () => {
-      if (!query) {
-        setResults([]);
-        setCurrentIndex(-1);
-        return;
-      }
-      const res = await searchBoardContent(buildOptions());
-      setResults(res);
-      setCurrentIndex(res.length ? 0 : -1);
-    }, 300);
-    return () => clearTimeout(handle);
-  }, [buildOptions, query]);
+      const handle = setTimeout(async () => {
+          if (!query) {
+            setResults([]);
+            setCurrentIndex(-1);
+            return;
+          }
+          const res = await searchBoardContent(buildOptions());
+          setResults(res);
+          setCurrentIndex(res.length ? 0 : -1);
+        },
+        300);
+      return () => clearTimeout(handle);
+    },
+    [buildOptions, query]);
 
   return { results, currentIndex, setResults, setCurrentIndex };
 }
@@ -61,27 +63,28 @@ export function useReplaceAll(
   focusOnItem: (item: unknown) => Promise<void>,
 ): () => Promise<void> {
   return React.useCallback(async () => {
-    if (!query) {
-      return;
-    }
-    const count = await replaceBoardContent(
-      { ...buildOptions(), replacement },
-      undefined,
+      if (!query) {
+        return;
+      }
+      const count = await replaceBoardContent(
+        { ...buildOptions(), replacement },
+        undefined,
+        focusOnItem,
+      );
+      if (count) {
+        const res = await searchBoardContent(buildOptions());
+        setResults(res);
+        setCurrentIndex(res.length ? 0 : -1);
+      }
+    },
+    [
+      buildOptions,
       focusOnItem,
-    );
-    if (count) {
-      const res = await searchBoardContent(buildOptions());
-      setResults(res);
-      setCurrentIndex(res.length ? 0 : -1);
-    }
-  }, [
-    buildOptions,
-    focusOnItem,
-    query,
-    replacement,
-    setCurrentIndex,
-    setResults,
-  ]);
+      query,
+      replacement,
+      setCurrentIndex,
+      setResults,
+    ]);
 }
 
 /**
@@ -99,14 +102,15 @@ export function useNextMatch(
   focusOnItem: (item: unknown) => Promise<void>,
 ): () => Promise<void> {
   return React.useCallback(async () => {
-    if (!results.length) {
-      return;
-    }
-    const next = (currentIndex + 1) % results.length;
-    setCurrentIndex(next);
-    const { item } = results[next];
-    await focusOnItem(item);
-  }, [currentIndex, focusOnItem, results, setCurrentIndex]);
+      if (!results.length) {
+        return;
+      }
+      const next = (currentIndex + 1) % results.length;
+      setCurrentIndex(next);
+      const { item } = results[next];
+      await focusOnItem(item);
+    },
+    [currentIndex, focusOnItem, results, setCurrentIndex]);
 }
 
 /**
@@ -130,28 +134,29 @@ export function useReplaceCurrent(
   focusOnItem: (item: unknown) => Promise<void>,
 ): () => Promise<void> {
   return React.useCallback(async () => {
-    if (!results.length) {
-      return;
-    }
-    const board = {
-      getSelection: async () => [results[currentIndex].item],
-      get: async () => [],
-    } as unknown as Parameters<typeof replaceBoardContent>[1];
-    await replaceBoardContent(
-      { ...buildOptions(), replacement, inSelection: true },
-      board,
+      if (!results.length) {
+        return;
+      }
+      const board = {
+        getSelection: async () => [results[currentIndex].item],
+        get: async () => [],
+      } as unknown as Parameters<typeof replaceBoardContent>[1];
+      await replaceBoardContent(
+        { ...buildOptions(), replacement, inSelection: true },
+        board,
+        focusOnItem,
+      );
+      const res = await searchBoardContent(buildOptions());
+      setResults(res);
+      setCurrentIndex(res.length ? Math.min(currentIndex, res.length - 1) : -1);
+    },
+    [
+      buildOptions,
+      currentIndex,
       focusOnItem,
-    );
-    const res = await searchBoardContent(buildOptions());
-    setResults(res);
-    setCurrentIndex(res.length ? Math.min(currentIndex, res.length - 1) : -1);
-  }, [
-    buildOptions,
-    currentIndex,
-    focusOnItem,
-    replacement,
-    results,
-    setCurrentIndex,
-    setResults,
-  ]);
+      replacement,
+      results,
+      setCurrentIndex,
+      setResults,
+    ]);
 }

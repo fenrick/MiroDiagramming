@@ -1,7 +1,8 @@
 namespace Fenrick.Miro.Server.Services;
 
-using Data;
-using Domain;
+using System;
+using Fenrick.Miro.Server.Data;
+using Fenrick.Miro.Server.Domain;
 
 /// <summary>
 ///     User store backed by Entity Framework Core.
@@ -16,14 +17,11 @@ public class EfUserStore(MiroDbContext context) : IUserStore
     {
         if (string.IsNullOrWhiteSpace(userId))
         {
-            throw new ArgumentException("User id must be provided",
-                nameof(userId));
+            throw new ArgumentException("User id must be provided", nameof(userId));
         }
 
         var entity = this.db.Users.Find(userId);
-        return entity is null
-            ? null
-            : new UserInfo(entity.Id, entity.Name, entity.Token);
+        return entity is null ? null : new UserInfo(entity.Id, entity.Name, entity.Token);
     }
 
     /// <inheritdoc />
@@ -31,17 +29,13 @@ public class EfUserStore(MiroDbContext context) : IUserStore
     {
         if (string.IsNullOrWhiteSpace(info.Id))
         {
-            throw new ArgumentException("User id must be provided",
-                nameof(info));
+            throw new ArgumentException("User id must be provided", nameof(info));
         }
 
         var entity = this.db.Users.Find(info.Id);
         if (entity is null)
         {
-            this.db.Users.Add(new UserEntity
-            {
-                Id = info.Id, Name = info.Name, Token = info.Token
-            });
+            this.db.Users.Add(new UserEntity { Id = info.Id, Name = info.Name, Token = info.Token });
         }
         else
         {
@@ -57,8 +51,7 @@ public class EfUserStore(MiroDbContext context) : IUserStore
     {
         if (string.IsNullOrWhiteSpace(userId))
         {
-            throw new ArgumentException("User id must be provided",
-                nameof(userId));
+            throw new ArgumentException("User id must be provided", nameof(userId));
         }
 
         var entity = this.db.Users.Find(userId);

@@ -1,12 +1,12 @@
-import { afterEach, vi } from 'vitest';
+import { afterEach, vi } from "vitest";
 
 // alias jest global to vitest for compatibility
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (globalThis as any).jest = vi;
 
 // Silence noisy console output from third-party libraries during tests
-const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
 // Reset mocks and clean up globals after every test
 afterEach(() => {
@@ -15,8 +15,9 @@ afterEach(() => {
 });
 
 // Provide a minimal PointerEvent implementation for jsdom
-if (typeof window !== 'undefined' && !('PointerEvent' in window)) {
-  class PointerEvent extends MouseEvent {}
+if (typeof window !== "undefined" && !("PointerEvent" in window)) {
+  class PointerEvent extends MouseEvent {
+  }
 
   window.PointerEvent = PointerEvent as typeof globalThis.PointerEvent;
   (

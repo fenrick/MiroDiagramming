@@ -1,6 +1,6 @@
 namespace Fenrick.Miro.Server.Api;
 
-using Domain;
+using Fenrick.Miro.Server.Domain;
 using Microsoft.AspNetCore.Mvc;
 
 /// <summary>

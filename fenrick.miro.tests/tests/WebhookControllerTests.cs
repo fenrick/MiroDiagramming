@@ -3,9 +3,9 @@
 namespace Fenrick.Miro.Tests;
 
 using System;
+using Fenrick.Miro.Server.Api;
+using Fenrick.Miro.Server.Domain;
 using Microsoft.AspNetCore.Mvc;
-using Server.Api;
-using Server.Domain;
 using Xunit;
 
 public class WebhookControllerTests

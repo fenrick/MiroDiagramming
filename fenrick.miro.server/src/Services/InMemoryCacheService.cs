@@ -1,7 +1,7 @@
 namespace Fenrick.Miro.Server.Services;
 
 using System.Collections.Concurrent;
-using Domain;
+using Fenrick.Miro.Server.Domain;
 
 /// <summary>
 ///     Simple in-memory implementation of <see cref="ICacheService" />.

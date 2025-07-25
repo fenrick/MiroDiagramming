@@ -28,5 +28,5 @@ npm run prettier --silent
 ```
 
 Tests must cover positive and negative branches as well as core UX flows.
-Maintain at least 90 % coverage across modules, functions, branches and lines.
+Maintain at least 90 % coverage across modules, functions, branches and lines.
 Follow the complexity budgets defined in the repository root.

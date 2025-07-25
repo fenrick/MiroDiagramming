@@ -1,5 +1,4 @@
 namespace Fenrick.Miro.Server.Data;
-
 using Microsoft.EntityFrameworkCore;
 
 /// <summary>

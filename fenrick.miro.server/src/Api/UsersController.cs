@@ -1,8 +1,8 @@
 namespace Fenrick.Miro.Server.Api;
 
-using Domain;
+using Fenrick.Miro.Server.Domain;
+using Fenrick.Miro.Server.Services;
 using Microsoft.AspNetCore.Mvc;
-using Services;
 
 /// <summary>
 ///     Receives user authentication details from the client.

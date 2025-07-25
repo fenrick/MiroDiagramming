@@ -1,13 +1,12 @@
-import { space } from '@mirohq/design-tokens';
-import React from 'react';
-import { useRowData } from '../hooks/use-row-data';
-import { InputField } from './InputField';
-
+import { space } from "@mirohq/design-tokens";
+import React from "react";
 {
-  ExcelRow;
+  ExcelRow
 }
 from;
-('../../core/utils/excel-loader');
+"../../core/utils/excel-loader";
+import { useRowData } from "../hooks/use-row-data";
+import { InputField } from "./InputField";
 
 export interface RowInspectorProps {
   /** Rows loaded from the workbook. */
@@ -38,7 +37,7 @@ export function RowInspector({
 
   const handleChange =
     (key: string) =>
-    (value: string): void =>
+      (value: string): void =>
       setEditRow(prev => {
         if (!prev) {
           return prev;
@@ -53,14 +52,13 @@ export function RowInspector({
       data-testid='row-inspector'
       style={{ marginTop: space[200] }}>
       <strong>Row Values</strong>
-      <ul style={{ maxHeight: 120, overflowY: 'auto' }}>
+      <ul style={{ maxHeight: 120, overflowY: "auto" }}>
         {Object.entries(editRow).map(([k, v]) => (
           <li key={k}>
             <InputField
               label={<code>{k}</code>}
               value={String(v)}
-              onValueChange={handleChange(k)}
-            />
+              onValueChange={handleChange(k)}/>
           </li>
         ))}
       </ul>

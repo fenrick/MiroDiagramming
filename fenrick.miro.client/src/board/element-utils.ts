@@ -3,16 +3,16 @@
     Shape,
     ShapeStyle,
     Text,
-    TextStyle,;
+    TextStyle, ;
 }
 from;
-'@mirohq/websdk-types';
+"@mirohq/websdk-types";
 {
-  TemplateElement;
+  TemplateElement
 }
 from;
-'./templates';
-import { templateManager } from './templates';
+"./templates";
+import { templateManager } from "./templates";
 
 /**
  * Combine an item's current style with values from a template element.
@@ -67,15 +67,15 @@ export function applyShapeElement(
   element: TemplateElement,
   label: string,
 ): void {
-  if (item.type !== 'shape') {
+  if (item.type !== "shape") {
     return;
   }
   const shape = item as Shape;
   const assignments: Array<[keyof TemplateElement, string]> = [
-    ['shape', 'shape'],
-    ['rotation', 'rotation'],
-    ['width', 'width'],
-    ['height', 'height'],
+    ["shape", "shape"],
+    ["rotation", "rotation"],
+    ["width", "width"],
+    ["height", "height"],
   ];
   for (const [src, dest] of assignments) {
     const value = (element as Record<string, unknown>)[src];
@@ -83,7 +83,7 @@ export function applyShapeElement(
       (shape as unknown as Record<string, unknown>)[dest] = value;
     }
   }
-  shape.content = (element.text ?? '{{label}}').replace('{{label}}', label);
+  shape.content = (element.text ?? "{{label}}").replace("{{label}}", label);
   shape.style = buildShapeStyle(shape.style as Partial<ShapeStyle>, element);
 }
 
@@ -104,14 +104,14 @@ export function applyTextElement(
   element: TemplateElement,
   label: string,
 ): void {
-  if (item.type !== 'text') {
+  if (item.type !== "text") {
     return;
   }
   const text = item as Text;
-  text.content = (element.text ?? '{{label}}').replace('{{label}}', label);
+  text.content = (element.text ?? "{{label}}").replace("{{label}}", label);
   if (element.style) {
     text.style = {
-      ...(text.style ?? {} as Partial<TextStyle>),
+      ...(text.style ?? ({} as Partial<TextStyle>)),
       ...(templateManager.resolveStyle(element.style) as Partial<TextStyle>),
     } as TextStyle;
   }
@@ -134,9 +134,9 @@ export function applyElementToItem(
   element: TemplateElement,
   label: string,
 ): void {
-  if (item.type === 'shape') {
+  if (item.type === "shape") {
     applyShapeElement(item, element, label);
-  } else if (item.type === 'text') {
+  } else if (item.type === "text") {
     applyTextElement(item, element, label);
   }
 }

@@ -1,8 +1,8 @@
-import React from 'react';
-import { useExcelData } from '../hooks/excel-data-context';
-import { useExcelSync } from '../hooks/use-excel-sync';
-import { Modal } from './Modal';
-import { RowInspector } from './RowInspector';
+import React from "react";
+import { useExcelData } from "../hooks/excel-data-context";
+import { useExcelSync } from "../hooks/use-excel-sync";
+import { Modal } from "./Modal";
+import { RowInspector } from "./RowInspector";
 
 export interface EditMetadataModalProps {
   readonly isOpen: boolean;
@@ -27,8 +27,7 @@ export function EditMetadataModal({
       <RowInspector
         rows={data.rows}
         idColumn={data.idColumn}
-        onUpdate={update}
-      />
+        onUpdate={update}/>
     </Modal>
   );
 }

@@ -1,13 +1,13 @@
 {
-  ElkNode;
+  ElkNode
 }
 from;
-('elkjs/lib/elk-api');
-import { templateManager } from '../../board/templates';
-import { GraphData } from '../graph';
-import { aspectRatioValue } from '../utils/aspect-ratio';
-import { loadElk } from './elk-loader';
-import { UserLayoutOptions, validateLayoutOptions } from './elk-options';
+"elkjs/lib/elk-api";
+import { templateManager } from "../../board/templates";
+import { GraphData } from "../graph";
+import { aspectRatioValue } from "../utils/aspect-ratio";
+import { loadElk } from "./elk-loader";
+import { UserLayoutOptions, validateLayoutOptions } from "./elk-options";
 
 export interface PositionedNode {
   id: string;
@@ -37,10 +37,10 @@ function resolveDimension(
   templateValue: number | undefined,
   defaultValue: number,
 ): number {
-  if (typeof metaValue === 'number') {
+  if (typeof metaValue === "number") {
     return metaValue;
   }
-  if (typeof templateValue === 'number') {
+  if (typeof templateValue === "number") {
     return templateValue;
   }
   return defaultValue;
@@ -75,23 +75,26 @@ export function buildElkGraphOptions(
   opts: UserLayoutOptions,
 ): Record<string, string> {
   return {
-    'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
+    'elk.hierarchyHandling': "INCLUDE_CHILDREN",
     'elk.algorithm': opts.algorithm,
-    'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF',
-    'elk.layered.mergeEdges': 'false',
+    'elk.layered.nodePlacement.strategy': "BRANDES_KOEPF",
+    'elk.layered.mergeEdges': "false",
     'elk.direction': opts.direction,
     'elk.layered.spacing.nodeNodeBetweenLayers': String(opts.spacing),
     'elk.spacing.nodeNode': String(opts.spacing),
-    'elk.layered.unnecessaryBendpoints': 'true',
-    'elk.layered.cycleBreaking.strategy': 'GREEDY',
-    ...(opts.aspectRatio && {
+    'elk.layered.unnecessaryBendpoints': "true",
+    'elk.layered.cycleBreaking.strategy': "GREEDY",
+    ...(opts.aspectRatio &&
+    {
       'elk.aspectRatio': String(aspectRatioValue(opts.aspectRatio)),
     }),
     ...(opts.edgeRouting && { 'elk.edgeRouting': opts.edgeRouting }),
-    ...(opts.edgeRoutingMode && {
+    ...(opts.edgeRoutingMode &&
+    {
       'elk.mrtree.edgeRoutingMode': opts.edgeRoutingMode,
     }),
-    ...(opts.optimizationGoal && {
+    ...(opts.optimizationGoal &&
+    {
       'elk.rectpacking.widthApproximation.optimizationGoal':
         opts.optimizationGoal,
     }),
@@ -132,7 +135,7 @@ export async function performLayout(
  */
 function buildElkGraph(data: GraphData, opts: UserLayoutOptions): ElkNode {
   return {
-    id: 'root',
+    id: "root",
     layoutOptions: buildElkGraphOptions(opts),
     children: data.nodes.map(n => ({ id: n.id, ...getNodeDimensions(n) })),
     edges: data.edges.map((e, idx) => ({
@@ -147,7 +150,7 @@ function buildElkGraph(data: GraphData, opts: UserLayoutOptions): ElkNode {
  * Map ELK positioned children back into our node structure.
  */
 function mapNodes(
-  children: ElkNode['children'],
+  children: ElkNode["children"],
 ): Record<string, PositionedNode> {
   const nodes: Record<string, PositionedNode> = {};
   for (const child of children ?? []) {
@@ -165,7 +168,7 @@ function mapNodes(
 /**
  * Map ELK positioned edges back into our edge structure.
  */
-function mapEdges(edges: ElkNode['edges']): PositionedEdge[] {
+function mapEdges(edges: ElkNode["edges"]): PositionedEdge[] {
   const result: PositionedEdge[] = [];
   for (const edge of edges ?? []) {
     const section = edge.sections?.[0];

@@ -1,7 +1,7 @@
 {
-  Miro;
+  Miro
 }
 from;
-('@mirohq/websdk-types');
+"@mirohq/websdk-types";
 
 declare const miro: Miro;

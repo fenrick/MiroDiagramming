@@ -1,12 +1,12 @@
 {
-  (Meta, StoryObj);
+  Meta, StoryObj
 }
 from;
-('@storybook/react');
-import { JsonDropZone } from '../ui/components/JsonDropZone';
+"@storybook/react";
+import { JsonDropZone } from "../ui/components/JsonDropZone";
 
 const meta: Meta<typeof JsonDropZone> = {
-  title: 'Components/JsonDropZone',
+  title: "Components/JsonDropZone",
   component: JsonDropZone,
 };
 export default meta;

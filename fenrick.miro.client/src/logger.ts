@@ -1,11 +1,10 @@
-import pino from 'pino';
-import { HttpLogSink } from './log-sink';
-
+import pino from "pino";
 {
-  (ClientLogEntry, LogSink);
+  ClientLogEntry, LogSink
 }
 from;
-('./log-sink');
+"./log-sink";
+import { HttpLogSink } from "./log-sink";
 
 /**
  * Centralised application logger.
@@ -15,26 +14,26 @@ from;
  * `debug`, `info`, `warn`, `error` and `silent`.
  */
 export function createLogger(sink?: LogSink) {
-  const level = (process.env.LOG_LEVEL || 'info') as pino.LevelWithSilent;
+  const level = (process.env.LOG_LEVEL || "info") as pino.LevelWithSilent;
   return pino({
     level,
     browser: { asObject: true },
     hooks: sink
       ? {
-          logMethod(args, method, lvl) {
-            method.apply(this, args);
-            const [msg, ctx] = args;
-            const labels = this.levels.labels;
-            const name = labels[lvl] ?? 'info';
-            const entry: ClientLogEntry = {
-              timestamp: new Date().toISOString(),
-              level: name,
-              message: String(msg),
-              context: ctx as Record<string, string> | undefined,
-            };
-            void sink.store([entry]);
-          },
-        }
+        logMethod(args, method, lvl) {
+          method.apply(this, args);
+          const [msg, ctx] = args;
+          const labels = this.levels.labels;
+          const name = labels[lvl] ?? "info";
+          const entry: ClientLogEntry = {
+            timestamp: new Date().toISOString(),
+            level: name,
+            message: String(msg),
+            context: ctx as Record<string, string> | undefined,
+          };
+          void sink.store([entry]);
+        },
+      }
       : undefined,
   });
 }

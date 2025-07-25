@@ -16,19 +16,23 @@ export class DiagramApp {
 
   /** Register UI handlers with the Miro board. */
   public async init(): Promise<void> {
-    log.info('Initialising Miro UI handlers');
-    if (typeof miro === 'undefined' || !miro?.board?.ui) {
-      throw new Error('Miro SDK not available');
+    log.info("Initialising Miro UI handlers");
+    if (typeof miro === "undefined" || !miro?.board?.ui) {
+      throw new Error("Miro SDK not available");
     }
-    miro.board.ui.on('icon:click', async () => {
-      log.trace('Icon clicked');
-      await miro.board.ui.openPanel({ url: 'app.html' });
-    });
-    log.debug('Registered icon:click handler');
-    miro.board.ui.on('custom:edit-metadata', async () => {
-      log.trace('Edit metadata command received');
-      await miro.board.ui.openPanel({ url: 'app.html?command=edit-metadata' });
-    });
-    log.debug('Registered edit-metadata handler');
+    miro.board.ui.on("icon:click",
+      async () => {
+        log.trace("Icon clicked");
+        await miro.board.ui.openPanel({ url: "app.html" });
+      });
+    log.debug("Registered icon:click handler");
+    miro.board.ui.on("custom:edit-metadata",
+      async () => {
+        log.trace("Edit metadata command received");
+        await miro.board.ui.openPanel({
+          url: "app.html?command=edit-metadata"
+        });
+      });
+    log.debug("Registered edit-metadata handler");
   }
 }

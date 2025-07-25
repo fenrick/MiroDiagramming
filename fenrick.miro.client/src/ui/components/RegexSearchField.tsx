@@ -1,19 +1,19 @@
-import { Form } from '@mirohq/design-system';
-import React from 'react';
+import { Form } from "@mirohq/design-system";
+import React from "react";
 
 export interface RegexSearchFieldProps
-  extends Omit<React.ComponentProps<typeof Input>, 'onChange'> {
-  /** Visible label text. */
-  label: React.ReactNode;
-  /** Current search text. */
-  value?: string;
-  /** Change handler returning the input value. */
-  onChange?: (value: string) => void;
-  /** Whether the query should be treated as a regular expression. */
-  regex: boolean;
-  /** Handler toggling regex mode. */
-  onRegexToggle: (v: boolean) => void;
-}
+  extends Omit<React.ComponentProps<typeof Input>, "onChange"> {
+    /** Visible label text. */
+    label: React.ReactNode;
+    /** Current search text. */
+    value?: string;
+    /** Change handler returning the input value. */
+    onChange?: (value: string) => void;
+    /** Whether the query should be treated as a regular expression. */
+    regex: boolean;
+    /** Handler toggling regex mode. */
+    onRegexToggle: (v: boolean) => void;
+  }
 
 /**
  * Input field with an inline toggle to enable regular expression search.
@@ -39,14 +39,12 @@ export const RegexSearchField = React.forwardRef<
           ref={ref}
           value={value}
           onChange={handleChange}
-          {...(props as React.ComponentProps<typeof Input>)}
-        />
+          {...(props as React.ComponentProps<typeof Input>)}/>
         <Switch
           aria-label='Regex'
           checked={regex}
           onChecked={() => toggle(true)}
-          onUnchecked={() => toggle(false)}
-        />
+          onUnchecked={() => toggle(false)}/>
       </div>
     </Form.Field>
   );

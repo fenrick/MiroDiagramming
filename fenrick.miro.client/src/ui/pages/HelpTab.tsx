@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
-import { Button, Markdown, Paragraph } from '../components';
-import { PageHelp } from '../components/PageHelp';
-import { TabPanel } from '../components/TabPanel';
-
+import React, { useState } from "react";
+import { Button, Markdown, Paragraph } from "../components";
+import { PageHelp } from "../components/PageHelp";
+import { TabPanel } from "../components/TabPanel";
 {
-  TabTuple;
+  TabTuple
 }
 from;
-('./tab-definitions');
+"./tab-definitions";
 
 /** Static help page summarising diagram options and tools. */
 export const HelpTab: React.FC = () => {
@@ -15,7 +14,7 @@ export const HelpTab: React.FC = () => {
 
   return (
     <TabPanel tabId='help'>
-      <PageHelp content='Overview of diagram options and tools' />
+      <PageHelp content='Overview of diagram options and tools'/>
       <Heading level={2}>Getting Started</Heading>
       <Paragraph>
         Use the Create tab to import diagrams or cards from a JSON file. Nodes
@@ -57,17 +56,17 @@ export const HelpTab: React.FC = () => {
         variant='secondary'
         onClick={() => setShowLog(v => !v)}
         data-testid='toggle-changelog'>
-        {showLog ? 'Hide' : 'Show'} Changelog
+        {showLog ? "Hide" : "Show"} Changelog
       </Button>
-      {showLog && <Markdown source={changelog} />}
+      {showLog && <Markdown source={changelog}/>}
     </TabPanel>
   );
 };
 
 export const tabDef: TabTuple = [
   99,
-  'help',
-  'Help',
-  'Overview of diagram options and tools',
+  "help",
+  "Help",
+  "Overview of diagram options and tools",
   HelpTab,
 ];

@@ -1,9 +1,9 @@
 {
-  TemplateElement;
+  TemplateElement
 }
 from;
-('../board/templates');
-import { templateManager } from '../board/templates';
+"../board/templates";
+import { templateManager } from "../board/templates";
 
 /** Definition of a named style preset. */
 export interface StylePreset {
@@ -21,11 +21,11 @@ export interface StylePreset {
  * uses design tokens which are resolved at runtime when applying presets.
  */
 const DEFAULT_PRESET: StylePreset = {
-  label: '',
-  fontColor: 'var(--primary-text-color)',
+  label: "",
+  fontColor: "var(--primary-text-color)",
   borderWidth: 2,
-  borderColor: 'var(--colors-gray-200)',
-  fillColor: 'var(--colors-gray-200)',
+  borderColor: "var(--colors-gray-200)",
+  fillColor: "var(--colors-gray-200)",
 };
 
 /**
@@ -44,10 +44,10 @@ function templateToPreset(
   const fill = valueOrDefault(
     resolved.fillColor as string | undefined,
     valueOrDefault(
-      templateManager.resolveStyle({ fillColor: el?.fill ?? '' }).fillColor as
-        | string
-        | undefined,
-      '',
+      templateManager.resolveStyle({ fillColor: el?.fill ?? "" }).fillColor as
+      | string
+      | undefined,
+      "",
     ),
   );
   return {
@@ -70,11 +70,11 @@ function templateToPreset(
 
 export const stylePresets: Record<string, StylePreset> = Object.fromEntries(
   Object.entries(templatesJson)
-    .filter(([name]) => name !== 'stylePresets')
-    .map(([name, tpl]) => [
-      name,
-      templateToPreset(name, tpl as { elements?: TemplateElement[] }),
-    ]),
+  .filter(([name]) => name !== "stylePresets")
+  .map(([name, tpl]) => [
+    name,
+    templateToPreset(name, tpl as { elements?: TemplateElement[] }),
+  ]),
 );
 
 /** Array of preset names in insertion order. */

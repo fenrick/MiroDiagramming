@@ -1,11 +1,11 @@
 {
   CardField,
     CardStyle,
-    CardTaskStatus,;
+    CardTaskStatus, ;
 }
 from;
-'@mirohq/websdk-types';
-import { fileUtils } from './file-utils';
+"@mirohq/websdk-types";
+import { fileUtils } from "./file-utils";
 
 export interface CardData {
   /** Optional unique identifier for updating existing cards. */
@@ -13,7 +13,7 @@ export interface CardData {
   title: string;
   description?: string;
   tags?: string[];
-  style?: Partial<Pick<CardStyle, 'cardTheme' | 'fillBackground'>>;
+  style?: Partial<Pick<CardStyle, "cardTheme" | "fillBackground">>;
   fields?: CardField[];
   taskStatus?: CardTaskStatus;
 }
@@ -24,15 +24,15 @@ export interface CardFile {
 
 function parseCardStyle(
   styleInput: unknown,
-): Partial<Pick<CardStyle, 'cardTheme' | 'fillBackground'>> {
+): Partial<Pick<CardStyle, "cardTheme" | "fillBackground">> {
   const raw = (styleInput ?? {}) as Record<string, unknown>;
-  const style: Partial<Pick<CardStyle, 'cardTheme' | 'fillBackground'>> = {};
+  const style: Partial<Pick<CardStyle, "cardTheme" | "fillBackground">> = {};
   if (raw.cardTheme) {
-    style.cardTheme = raw.cardTheme as CardStyle['cardTheme'];
+    style.cardTheme = raw.cardTheme as CardStyle["cardTheme"];
   }
   if (raw.fillBackground !== undefined) {
     style.fillBackground =
-      raw.fillBackground === true || raw.fillBackground === 'true';
+      raw.fillBackground === true || raw.fillBackground === "true";
   }
   return style;
 }
@@ -41,8 +41,7 @@ function parseCardStyle(
 export class CardLoader {
   private static instance: CardLoader;
 
-  private constructor() {
-  }
+  private constructor() {}
 
   /** Access the shared loader instance. */
   public static getInstance(): CardLoader {
@@ -59,10 +58,10 @@ export class CardLoader {
     const data = JSON.parse(text) as unknown;
     if (
       !data ||
-      typeof data !== 'object' ||
-      !Array.isArray((data as { cards?: unknown }).cards)
+        typeof data !== "object" ||
+        !Array.isArray((data as { cards?: unknown }).cards)
     ) {
-      throw new Error('Invalid card data');
+      throw new Error("Invalid card data");
     }
     return (data as CardFile).cards.map(card =>
       this.normalizeCard(card as unknown as Record<string, unknown>),
@@ -73,10 +72,10 @@ export class CardLoader {
   private normalizeCard(card: Record<string, unknown>): CardData {
     const style = parseCardStyle(card.style);
     const result: CardData = { title: String(card.title) };
-    if (typeof card.id === 'string') {
+    if (typeof card.id === "string") {
       result.id = card.id;
     }
-    if (typeof card.description === 'string') {
+    if (typeof card.description === "string") {
       result.description = card.description;
     }
     if (Array.isArray(card.tags)) {
