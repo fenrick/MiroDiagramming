@@ -1,4 +1,4 @@
-name: CodeQL
+name: miro-codeql
 
 on:
   pull_request:

@@ -1,4 +1,4 @@
-name: Sonar
+name: miro-sonar
 
 on:
   pull_request:
