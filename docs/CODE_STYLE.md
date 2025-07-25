@@ -60,5 +60,6 @@ version with:
 npm run build-storybook
 ```
 
-The CI workflow defined in `.github/workflows/ci.yml` also builds Storybook to
-verify component integrity as part of each pull request.
+The CI workflows under `.github/workflows/` also build Storybook during pull
+requests. `client-prettier.yml` and related files keep the UI consistent before
+merging.

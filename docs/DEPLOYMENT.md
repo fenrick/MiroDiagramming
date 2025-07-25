@@ -91,10 +91,12 @@ dotnet build fenrick.miro.server/fenrick.miro.server.csproj -c Release
 vercel deploy --prod --confirm
 ```
 
-The GitHub Actions workflow in **.github/workflows/ci.yml** performs the same
-steps automatically on merge to `main`. It also audits production dependencies
-with `npm audit --omit=dev` and fails the build when a moderate or higher
-severity vulnerability is found.
+GitHub Actions mirror these steps using several workflows under
+`.github/workflows/`. Pushes to `main` trigger the release pipeline defined in
+`repo-release.yml`, while pull requests run the quality gates (`client-*` and
+`server-dotnet.yml`). Production dependencies are audited with
+`npm audit --omit=dev` and any moderate or higher vulnerability blocks the
+build.
 
 ---
 
@@ -161,13 +163,14 @@ Push → GitHub Action
 All gates and complexity budgets are defined in **ARCHITECTURE.md** (sections
 4–6).
 
-The pipeline is orchestrated by the GitHub Actions workflow in
-`.github/workflows/ci.yml`. Every push or pull request triggers the jobs listed
-above using Node 20. Artefacts from the build and Storybook steps are uploaded
-as workflow artefacts so deployment jobs can promote the exact output. The
-server pipeline uses .NET 9 for restoration, formatting and tests. Run
-`npm run ci:local` to replicate the pipeline on your machine before opening a
-pull request.
+The pipeline is orchestrated by several GitHub Actions workflows. Feature
+branches and pull requests trigger the `client-*` checks and
+`server-dotnet.yml` to run lint rules, type safety and unit tests. Pushes to
+`main` additionally execute `repo-sonar.yml`, `repo-codeql.yml` and
+`repo-release.yml` for coverage, static analysis and release packaging. All
+jobs use Node 20 and .NET 9. Build and Storybook artefacts are uploaded so
+deployment jobs can promote the exact output. Run `npm run ci:local` to
+replicate the pipeline locally before opening a pull request.
 
 ---
 
@@ -190,8 +193,8 @@ docker run --rm -p 8080:80 miro-diagramming
 ```
 
 Tagged releases on GitHub automatically push the built image to GHCR via the
-`docker-image` stage in `.github/workflows/ci.yml`. That job runs only when the
-release job publishes a tag. The workflow targets `linux/amd64` only, so
+`docker-image` stage in `repo-release.yml`. That job runs only when the release
+workflow publishes a tag. The pipeline targets `linux/amd64` only, so
 emulation via QEMU is skipped and `docker/build-push-action@v5` sets up Buildx
 automatically.
 
