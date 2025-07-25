@@ -1,11 +1,11 @@
-import { Grid, IconArrowArcLeft, IconPlus } from "@mirohq/design-system";
-import { space } from "@mirohq/design-tokens";
-import React from "react";
+import { Grid, IconArrowArcLeft, IconPlus } from '@mirohq/design-system';
+import { space } from '@mirohq/design-tokens';
+import React from 'react';
 import {
   ExistingNodeMode,
   GraphProcessor,
-} from "../../core/graph/graph-processor";
-import { HierarchyProcessor } from "../../core/graph/hierarchy-processor";
+} from '../../core/graph/graph-processor';
+import { HierarchyProcessor } from '../../core/graph/hierarchy-processor';
 import {
   ALGORITHMS,
   DEFAULT_LAYOUT_OPTIONS,
@@ -19,24 +19,24 @@ import {
   ElkOptimizationGoal,
   OPTIMIZATION_GOALS,
   UserLayoutOptions,
-} from "../../core/layout/elk-options";
-import { ASPECT_RATIOS, AspectRatioId } from "../../core/utils/aspect-ratio";
+} from '../../core/layout/elk-options';
+import { ASPECT_RATIOS, AspectRatioId } from '../../core/utils/aspect-ratio';
 import {
   Button,
   Checkbox,
   InputField,
   SelectField,
   SelectOption,
-} from "../components";
-import { JsonDropZone } from "../components/JsonDropZone";
-import { PageHelp } from "../components/PageHelp";
-import { TabPanel } from "../components/TabPanel";
-import { undoLastImport } from "../hooks/ui-utils";
+} from '../components';
+import { JsonDropZone } from '../components/JsonDropZone';
+import { PageHelp } from '../components/PageHelp';
+import { TabPanel } from '../components/TabPanel';
+import { undoLastImport } from '../hooks/ui-utils';
 import {
   LayoutChoice,
   useAdvancedToggle,
   useDiagramCreate,
-} from "../hooks/use-diagram-create";
+} from '../hooks/use-diagram-create';
 
 /**
  * Queue the first file from a drop event for import.
@@ -56,13 +56,13 @@ export function handleFileDrop(
 }
 
 const LAYOUTS = [
-  "Layered",
-  "Tree",
-  "Grid",
-  "Nested",
-  "Radial",
-  "Box",
-  "Rect Packing",
+  'Layered',
+  'Tree',
+  'Grid',
+  'Nested',
+  'Radial',
+  'Box',
+  'Rect Packing',
 ] as const;
 
 const OPTION_VISIBILITY: Record<
@@ -85,13 +85,13 @@ const OPTION_VISIBILITY: Record<
 
 /** Descriptions for layout choices shown inline when importing graphs. */
 const LAYOUT_DESCRIPTIONS: Record<LayoutChoice, string> = {
-  'Layered': "Flow diagrams with layers",
-  'Tree': "Compact hierarchical tree",
-  'Grid': "Organic force-directed grid",
-  'Nested': "Containers sized to fit children",
-  'Radial': "Circular layout around a hub",
-  'Box': "Uniform box grid",
-  'Rect Packing': "Fits rectangles within parents",
+  'Layered': 'Flow diagrams with layers',
+  'Tree': 'Compact hierarchical tree',
+  'Grid': 'Organic force-directed grid',
+  'Nested': 'Containers sized to fit children',
+  'Radial': 'Circular layout around a hub',
+  'Box': 'Uniform box grid',
+  'Rect Packing': 'Fits rectangles within parents',
 };
 
 /** UI for the Structured sub-tab. */
@@ -99,17 +99,17 @@ const LAYOUT_DESCRIPTIONS: Record<LayoutChoice, string> = {
 export const StructuredTab: React.FC = () => {
   const [importQueue, setImportQueue] = React.useState<File[]>([]);
   const [layoutChoice, setLayoutChoice] =
-    React.useState<LayoutChoice>("Layered");
+    React.useState<LayoutChoice>('Layered');
   const [showAdvanced, setShowAdvanced] = React.useState(false);
   const [withFrame, setWithFrame] = React.useState(false);
-  const [frameTitle, setFrameTitle] = React.useState("");
+  const [frameTitle, setFrameTitle] = React.useState('');
   const [layoutOpts, setLayoutOpts] = React.useState<UserLayoutOptions>(
     DEFAULT_LAYOUT_OPTIONS,
   );
   const [nestedPadding, setNestedPadding] = React.useState(20);
   const [nestedTopSpacing, setNestedTopSpacing] = React.useState(50);
   const [existingMode, setExistingMode] =
-    React.useState<ExistingNodeMode>("move");
+    React.useState<ExistingNodeMode>('move');
   const [progress, setProgress] = React.useState<number>(0);
   const [error, setError] = React.useState<string | null>(null);
   const [lastProc, setLastProc] = React.useState<
@@ -120,7 +120,7 @@ export const StructuredTab: React.FC = () => {
 
   const handleFiles = React.useCallback(
     (droppedFiles: File[]): void =>
-    handleFileDrop(droppedFiles, setImportQueue, setError),
+      handleFileDrop(droppedFiles, setImportQueue, setError),
     [],
   );
 
@@ -146,11 +146,10 @@ export const StructuredTab: React.FC = () => {
     <TabPanel
       tabId='structured'
       style={{ marginTop: space[200] }}>
-      <PageHelp content='Flow or tree diagrams with advanced options'/>
-      <JsonDropZone onFiles={handleFiles}/>
+      <PageHelp content='Flow or tree diagrams with advanced options' />
+      <JsonDropZone onFiles={handleFiles} />
 
-      {importQueue.length > 0 &&
-      (
+      {importQueue.length > 0 && (
         <Grid columns={2}>
           <Grid.Item>
             <ul className='custom-dropped-files'>
@@ -186,15 +185,16 @@ export const StructuredTab: React.FC = () => {
                 <Checkbox
                   label='Wrap items in frame'
                   value={withFrame}
-                  onChange={setWithFrame}/>
+                  onChange={setWithFrame}
+                />
               </div>
-              {withFrame &&
- (
+              {withFrame && (
                 <InputField
                   label='Frame title'
                   value={frameTitle}
                   onValueChange={v => setFrameTitle(v)}
-                  placeholder='Frame title'/>
+                  placeholder='Frame title'
+                />
               )}
               <details
                 open={showAdvanced}
@@ -209,9 +209,9 @@ export const StructuredTab: React.FC = () => {
                   value={String(layoutOpts.spacing)}
                   onValueChange={v =>
                     setLayoutOpts({ ...layoutOpts, spacing: Number(v) })
-                  }/>
-                {OPTION_VISIBILITY[layoutOpts.algorithm].aspectRatio &&
- (
+                  }
+                />
+                {OPTION_VISIBILITY[layoutOpts.algorithm].aspectRatio && (
                   <SelectField
                     label='Aspect ratio'
                     value={layoutOpts.aspectRatio}
@@ -272,8 +272,7 @@ export const StructuredTab: React.FC = () => {
                     </SelectOption>
                   ))}
                 </SelectField>
-                {OPTION_VISIBILITY[layoutOpts.algorithm].edgeRouting &&
- (
+                {OPTION_VISIBILITY[layoutOpts.algorithm].edgeRouting && (
                   <SelectField
                     label='Edge routing'
                     value={layoutOpts.edgeRouting as ElkEdgeRouting}
@@ -292,8 +291,7 @@ export const StructuredTab: React.FC = () => {
                     ))}
                   </SelectField>
                 )}
-                {OPTION_VISIBILITY[layoutOpts.algorithm].edgeRoutingMode &&
- (
+                {OPTION_VISIBILITY[layoutOpts.algorithm].edgeRoutingMode && (
                   <SelectField
                     label='Routing mode'
                     value={layoutOpts.edgeRoutingMode as ElkEdgeRoutingMode}
@@ -312,8 +310,7 @@ export const StructuredTab: React.FC = () => {
                     ))}
                   </SelectField>
                 )}
-                {OPTION_VISIBILITY[layoutOpts.algorithm].optimizationGoal &&
- (
+                {OPTION_VISIBILITY[layoutOpts.algorithm].optimizationGoal && (
                   <SelectField
                     label='Optimisation goal'
                     value={layoutOpts.optimizationGoal as ElkOptimizationGoal}
@@ -332,21 +329,21 @@ export const StructuredTab: React.FC = () => {
                     ))}
                   </SelectField>
                 )}
-                {layoutChoice === 'Nested' &&
- (
+                {layoutChoice === 'Nested' && (
                   <InputField
                     label='Padding'
                     type='number'
                     value={String(nestedPadding)}
-                    onValueChange={v => setNestedPadding(Number(v))}/>
+                    onValueChange={v => setNestedPadding(Number(v))}
+                  />
                 )}
-                {layoutChoice === 'Nested' &&
- (
+                {layoutChoice === 'Nested' && (
                   <InputField
                     label='Top spacing'
                     type='number'
                     value={String(nestedTopSpacing)}
-                    onValueChange={v => setNestedTopSpacing(Number(v))}/>
+                    onValueChange={v => setNestedTopSpacing(Number(v))}
+                  />
                 )}
               </details>
             </fieldset>
@@ -357,26 +354,24 @@ export const StructuredTab: React.FC = () => {
                 onClick={handleCreate}
                 variant='primary'
                 iconPosition='start'
-                icon={<IconPlus/>}>
+                icon={<IconPlus />}>
                 <Text>Create Diagram</Text>
               </Button>
-              {progress > 0 &&
- progress < 100 &&
- (
+              {progress > 0 && progress < 100 && (
                 <progress
                   value={progress}
-                  max={100}/>
+                  max={100}
+                />
               )}
               {error && <p className='error'>{error}</p>}
-              {lastProc &&
- (
+              {lastProc && (
                 <Button
                   onClick={() =>
                     undoLastImport(lastProc, () => setLastProc(undefined))
                   }
                   variant='secondary'
                   iconPosition='start'
-                  icon={<IconArrowArcLeft/>}>
+                  icon={<IconArrowArcLeft />}>
                   <Text>Undo Last Import</Text>
                 </Button>
               )}

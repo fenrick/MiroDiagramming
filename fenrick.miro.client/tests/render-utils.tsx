@@ -1,6 +1,6 @@
-import { render, screen } from "@testing-library/react";
-import React from "react";
-import { SearchTab } from "../src/ui/pages/SearchTab";
+import { render, screen } from '@testing-library/react';
+import React from 'react';
+import { SearchTab } from '../src/ui/pages/SearchTab';
 
 /**
  * Helper to render the SearchTab and return the search input element.
@@ -10,6 +10,6 @@ import { SearchTab } from "../src/ui/pages/SearchTab";
  * @returns The search text input element.
  */
 export function renderSearchTab() {
-  render(<SearchTab/>);
+  render(<SearchTab />);
   return screen.getByPlaceholderText(/search board text/i);
 }

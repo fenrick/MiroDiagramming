@@ -1,7 +1,7 @@
 namespace Fenrick.Miro.Server.Services;
 
 using System.Collections.Concurrent;
-using Fenrick.Miro.Server.Domain;
+using Domain;
 
 /// <summary>
 ///     Thread-safe in-memory cache for board shapes.
@@ -12,7 +12,8 @@ using Fenrick.Miro.Server.Domain;
 public class InMemoryShapeCache : IShapeCache
 {
     private readonly
-        ConcurrentDictionary<(string Board, string Item), ShapeCacheEntry> cache = new();
+        ConcurrentDictionary<(string Board, string Item), ShapeCacheEntry>
+        cache = new();
 
     /// <inheritdoc />
     public void Remove(string boardId, string itemId) =>

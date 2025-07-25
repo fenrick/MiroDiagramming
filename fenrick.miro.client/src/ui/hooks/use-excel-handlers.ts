@@ -1,15 +1,15 @@
-import React from "react";
-import { useDropzone } from "react-dropzone";
-import { ColumnMapping, mapRowsToNodes } from "../../core/data-mapper";
-import { GraphProcessor } from "../../core/graph/graph-processor";
+import React from 'react';
+import { useDropzone } from 'react-dropzone';
+import { ColumnMapping, mapRowsToNodes } from '../../core/data-mapper';
+import { GraphProcessor } from '../../core/graph/graph-processor';
 import {
   excelLoader,
   ExcelRow,
   graphExcelLoader,
-} from "../../core/utils/excel-loader";
-import { addMiroIds, downloadWorkbook } from "../../core/utils/workbook-writer";
-import { showError } from "./notifications";
-import { getDropzoneStyle } from "./ui-utils";
+} from '../../core/utils/excel-loader';
+import { addMiroIds, downloadWorkbook } from '../../core/utils/workbook-writer';
+import { showError } from './notifications';
+import { getDropzoneStyle } from './ui-utils';
 
 export interface DropReturn {
   dropzone: ReturnType<typeof useDropzone>;
@@ -27,9 +27,9 @@ export function useExcelDrop(
 ): DropReturn {
   const dropzone = useDropzone({
     accept: {
-      'application/vnd.ms-excel': [".xls"],
+      'application/vnd.ms-excel': ['.xls'],
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [
-        ".xlsx",
+        '.xlsx',
       ],
     },
     maxFiles: 1,
@@ -37,15 +37,14 @@ export function useExcelDrop(
   });
 
   const style = React.useMemo(() => {
-      let state: Parameters<typeof getDropzoneStyle>[0] = "base";
-      if (dropzone.isDragReject) {
-        state = "reject";
-      } else if (dropzone.isDragAccept) {
-        state = "accept";
-      }
-      return getDropzoneStyle(state);
-    },
-    [dropzone.isDragAccept, dropzone.isDragReject]);
+    let state: Parameters<typeof getDropzoneStyle>[0] = 'base';
+    if (dropzone.isDragReject) {
+      state = 'reject';
+    } else if (dropzone.isDragAccept) {
+      state = 'accept';
+    }
+    return getDropzoneStyle(state);
+  }, [dropzone.isDragAccept, dropzone.isDragReject]);
 
   return { dropzone, style };
 }
@@ -85,35 +84,34 @@ export function useExcelCreate({
 }: CreateArgs): () => Promise<void> {
   const graphProcessor = React.useMemo(() => new GraphProcessor(), []);
   return React.useCallback(async () => {
-      try {
-        const mapping: ColumnMapping = {
-          idColumn: idColumn || undefined,
-          labelColumn: labelColumn || undefined,
-          templateColumn: templateColumn || undefined,
-        };
-        const indices = [...selected];
-        const chosen = rows.filter((_, i) => selected.has(i));
-        const nodes = mapRowsToNodes(chosen, mapping).map(n => ({
-          ...n,
-          type: templateColumn ? n.type : template,
-        }));
-        await graphProcessor.processGraph({ nodes, edges: [] });
-        const idMap = graphProcessor.getNodeIdMap();
-        const updated = addMiroIds(chosen, mapping.idColumn ?? "", idMap);
-        const merged = rows.map((r, i) => {
-          const idx = indices.indexOf(i);
-          return idx >= 0 ? updated[idx] : r;
-        });
-        setRows(merged);
-        /* istanbul ignore next */
-        if (file) {
-          await downloadWorkbook(merged, `updated-${file.name}`);
-        }
-      } catch (e) {
-        await showError(String(e));
+    try {
+      const mapping: ColumnMapping = {
+        idColumn: idColumn || undefined,
+        labelColumn: labelColumn || undefined,
+        templateColumn: templateColumn || undefined,
+      };
+      const indices = [...selected];
+      const chosen = rows.filter((_, i) => selected.has(i));
+      const nodes = mapRowsToNodes(chosen, mapping).map(n => ({
+        ...n,
+        type: templateColumn ? n.type : template,
+      }));
+      await graphProcessor.processGraph({ nodes, edges: [] });
+      const idMap = graphProcessor.getNodeIdMap();
+      const updated = addMiroIds(chosen, mapping.idColumn ?? '', idMap);
+      const merged = rows.map((r, i) => {
+        const idx = indices.indexOf(i);
+        return idx >= 0 ? updated[idx] : r;
+      });
+      setRows(merged);
+      /* istanbul ignore next */
+      if (file) {
+        await downloadWorkbook(merged, `updated-${file.name}`);
       }
-    },
-    [file, idColumn, labelColumn, rows, selected, template, templateColumn]);
+    } catch (e) {
+      await showError(String(e));
+    }
+  }, [file, idColumn, labelColumn, rows, selected, template, templateColumn]);
 }
 
 /**

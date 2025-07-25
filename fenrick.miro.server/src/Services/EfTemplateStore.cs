@@ -1,9 +1,8 @@
 namespace Fenrick.Miro.Server.Services;
 
-using System;
 using System.Text.Json;
-using Fenrick.Miro.Server.Data;
-using Fenrick.Miro.Server.Domain;
+using Data;
+using Domain;
 
 /// <summary>
 ///     Template store backed by Entity Framework Core.
@@ -17,31 +16,37 @@ public class EfTemplateStore(MiroDbContext context) : ITemplateStore
     {
         if (string.IsNullOrWhiteSpace(userId))
         {
-            throw new ArgumentException("User id must be provided", nameof(userId));
+            throw new ArgumentException("User id must be provided",
+                nameof(userId));
         }
 
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new ArgumentException("Template name must be provided", nameof(name));
+            throw new ArgumentException("Template name must be provided",
+                nameof(name));
         }
 
         var entity = this.db.Templates.Find(userId, name);
         return entity is null
             ? null
-            : JsonSerializer.Deserialize<TemplateDefinition>(entity.DefinitionJson);
+            : JsonSerializer.Deserialize<TemplateDefinition>(
+                entity.DefinitionJson);
     }
 
     /// <inheritdoc />
-    public void SetTemplate(string userId, string name, TemplateDefinition template)
+    public void SetTemplate(string userId, string name,
+        TemplateDefinition template)
     {
         if (string.IsNullOrWhiteSpace(userId))
         {
-            throw new ArgumentException("User id must be provided", nameof(userId));
+            throw new ArgumentException("User id must be provided",
+                nameof(userId));
         }
 
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new ArgumentException("Template name must be provided", nameof(name));
+            throw new ArgumentException("Template name must be provided",
+                nameof(name));
         }
 
         var entity = this.db.Templates.Find(userId, name);
@@ -50,9 +55,7 @@ public class EfTemplateStore(MiroDbContext context) : ITemplateStore
         {
             this.db.Templates.Add(new TemplateEntity
             {
-                UserId = userId,
-                Name = name,
-                DefinitionJson = json,
+                UserId = userId, Name = name, DefinitionJson = json
             });
         }
         else

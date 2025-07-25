@@ -5,7 +5,7 @@ namespace Fenrick.Miro.Tests.NewFeatures;
 using System.IO;
 using System.Threading.Tasks;
 using ClosedXML.Excel;
-using Fenrick.Miro.Server.Services;
+using Server.Services;
 using Xunit;
 
 public class ExcelLoaderTests

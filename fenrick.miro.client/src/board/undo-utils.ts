@@ -1,14 +1,15 @@
 {
-  BaseItem, Connector, Group
+  (BaseItem, Connector, Group);
 }
 from;
-"@mirohq/websdk-types";
-import { BoardBuilder } from "./board-builder";
+('@mirohq/websdk-types');
+import { BoardBuilder } from './board-builder';
+
 {
-  BoardEntity
+  BoardEntity;
 }
 from;
-"./item-types";
+('./item-types');
 
 /**
  * Remove widgets tracked in the registry and clear the list.

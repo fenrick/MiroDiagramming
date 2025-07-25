@@ -45,10 +45,12 @@ public class EfTemplateStoreTests
             .Options;
         using var db = new MiroDbContext(options);
         var store = new EfTemplateStore(db);
-        var tpl = new TemplateDefinition([new TemplateElement("r", 10, 10, "t1")]);
+        var tpl =
+            new TemplateDefinition([new TemplateElement("r", 10, 10, "t1")]);
 
         store.SetTemplate("u1", "A", tpl);
-        store.SetTemplate("u1", "A", new TemplateDefinition([new TemplateElement("r", 10, 10, "t2")]));
+        store.SetTemplate("u1", "A",
+            new TemplateDefinition([new TemplateElement("r", 10, 10, "t2")]));
 
         Assert.Equal("t2", store.GetTemplate("u1", "A")!.Elements[0].Text);
     }

@@ -6,10 +6,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
-using Fenrick.Miro.Server.Api;
-using Fenrick.Miro.Server.Domain;
-using Fenrick.Miro.Server.Services;
 using Microsoft.AspNetCore.Mvc;
+using Server.Api;
+using Server.Domain;
+using Server.Services;
 using Xunit;
 
 public class ShapesControllerTests
@@ -18,7 +18,7 @@ public class ShapesControllerTests
     public async Task CreateAsyncHandlesBulk()
     {
         var shapes = Enumerable.Range(0, 25)
-            .Select((int i) => new ShapeData("r", i, 0, 1, 1, null, null, null))
+            .Select(i => new ShapeData("r", i, 0, 1, 1, null, null, null))
             .ToArray();
         var controller = new ShapesController(
             new StubClient(),
@@ -35,9 +35,9 @@ public class ShapesControllerTests
     public async Task CreateAsyncReturnsResponses()
     {
         var shapes = new[]
-                     {
-                         new ShapeData("rect", 0, 0, 1, 1, null, null, null)
-                     };
+        {
+            new ShapeData("rect", 0, 0, 1, 1, null, null, null)
+        };
         var controller = new ShapesController(
             new StubClient(),
             new NullShapeCache());
@@ -71,17 +71,17 @@ public class ShapesControllerTests
         var controller = new ShapesController(stub, cache);
 
         var res = await controller.UpdateAsync(
-                      "b1",
-                      "i1",
-                      new ShapeData(
-                          "r",
-                          0,
-                          0,
-                          1,
-                          1,
-                          null,
-                          null,
-                          null)) as OkObjectResult;
+            "b1",
+            "i1",
+            new ShapeData(
+                "r",
+                0,
+                0,
+                1,
+                1,
+                null,
+                null,
+                null)) as OkObjectResult;
 
         Assert.Equal("0", ((MiroResponse)res!.Value!).Body);
         Assert.Equal("i1", cache.ItemId);

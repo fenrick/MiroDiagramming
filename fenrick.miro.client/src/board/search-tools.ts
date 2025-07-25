@@ -1,9 +1,5 @@
-import {
-  getBoardWithQuery,
-  maybeSync,
-  Syncable,
-} from "./board";
-import { boardCache } from "./board-cache";
+import { getBoardWithQuery, maybeSync, Syncable } from './board';
+import { boardCache } from './board-cache';
 
 /** Search configuration. */
 export interface SearchOptions {
@@ -46,7 +42,7 @@ export interface ReplaceOptions extends SearchOptions {
 }
 
 function escapeRegExp(str: string): string {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
 /**
@@ -62,18 +58,18 @@ function assertRegexSafe(pattern: string): void {
   const repeatedGroup = /\((\w)\1+\+\)/.test(pattern);
   const nestedQuantifier = /\(.+[+*].+\)[+*?]/.test(pattern);
   if (!safeRegex(pattern) || repeatedGroup || nestedQuantifier) {
-    throw new SyntaxError("Unsafe regular expression");
+    throw new SyntaxError('Unsafe regular expression');
   }
 }
 
 function buildRegex(opts: SearchOptions): RegExp {
   const src = opts.regex ? opts.query : escapeRegExp(opts.query);
   if (src.length > 200) {
-    throw new SyntaxError("Pattern too long");
+    throw new SyntaxError('Pattern too long');
   }
   const pattern = opts.wholeWord ? `\\b${src}\\b` : src;
   assertRegexSafe(pattern);
-  const flags = opts.caseSensitive ? "g" : "gi";
+  const flags = opts.caseSensitive ? 'g' : 'gi';
   return new RegExp(pattern, flags);
 }
 
@@ -93,7 +89,7 @@ function pushIfString(
   key: string,
   value: unknown,
 ): void {
-  if (typeof value === "string") {
+  if (typeof value === 'string') {
     arr.push([key, value]);
   }
 }
@@ -102,21 +98,21 @@ function pushNestedText(
   arr: Array<[string, string]>,
   text: Record<string, unknown>,
 ): void {
-  pushIfString(arr, "text.plainText", text.plainText);
-  pushIfString(arr, "text.content", text.content);
+  pushIfString(arr, 'text.plainText', text.plainText);
+  pushIfString(arr, 'text.content', text.content);
 }
 
 export function getTextFields(
   item: Record<string, unknown>,
 ): Array<[string, string]> {
   const fields: Array<[string, string]> = [];
-  pushIfString(fields, "title", item.title);
-  pushIfString(fields, "content", item.content);
-  pushIfString(fields, "plainText", item.plainText);
-  pushIfString(fields, "description", item.description);
-  if (typeof item.text === "string") {
-    pushIfString(fields, "text", item.text);
-  } else if (item.text && typeof item.text === "object") {
+  pushIfString(fields, 'title', item.title);
+  pushIfString(fields, 'content', item.content);
+  pushIfString(fields, 'plainText', item.plainText);
+  pushIfString(fields, 'description', item.description);
+  if (typeof item.text === 'string') {
+    pushIfString(fields, 'text', item.text);
+  } else if (item.text && typeof item.text === 'object') {
     pushNestedText(fields, item.text as Record<string, unknown>);
   }
   return fields;
@@ -126,19 +122,19 @@ function getStringAtPath(
   item: Record<string, unknown>,
   path: string,
 ): string | undefined {
-  const parts = path.split(".");
+  const parts = path.split('.');
   let ref: unknown = item;
   for (const p of parts) {
-    if (!ref || typeof ref !== "object") {
+    if (!ref || typeof ref !== 'object') {
       return undefined;
     }
     ref = (ref as Record<string, unknown>)[p];
   }
-  return typeof ref === "string" ? ref : undefined;
+  return typeof ref === 'string' ? ref : undefined;
 }
 
 function isUnsafe(prop: string): boolean {
-  return prop === "__proto__" || prop === "constructor";
+  return prop === '__proto__' || prop === 'constructor';
 }
 
 function getParent(
@@ -148,12 +144,12 @@ function getParent(
   let ref: unknown = obj;
   for (let i = 0; i < parts.length - 1; i += 1) {
     const part = parts[i];
-    if (isUnsafe(part) || !ref || typeof ref !== "object") {
+    if (isUnsafe(part) || !ref || typeof ref !== 'object') {
       return undefined;
     }
     ref = (ref as Record<string, unknown>)[part];
   }
-  return typeof ref === "object" && ref
+  return typeof ref === 'object' && ref
     ? (ref as Record<string, unknown>)
     : undefined;
 }
@@ -163,7 +159,7 @@ function setStringAtPath(
   path: string,
   value: string,
 ): void {
-  const parts = path.split(".");
+  const parts = path.split('.');
   const parent = getParent(item, parts);
   if (!parent) {
     return;
@@ -202,7 +198,7 @@ async function queryBoardItems(
   if (opts.inSelection) {
     return boardCache.getSelection(board);
   }
-  const types = opts.widgetTypes?.length ? opts.widgetTypes : ["widget"];
+  const types = opts.widgetTypes?.length ? opts.widgetTypes : ['widget'];
   return boardCache.getWidgets(types, board);
 }
 
@@ -219,7 +215,7 @@ function buildFilter(
 
   if (opts.widgetTypes) {
     const types = new Set(opts.widgetTypes);
-    checks.push(i => types.has((i as { type?: string }).type ?? ""));
+    checks.push(i => types.has((i as { type?: string }).type ?? ''));
   }
 
   if (opts.tagIds) {
@@ -237,7 +233,7 @@ function buildFilter(
       const fill = (style.fillColor ?? style.backgroundColor) as
         | string
         | undefined;
-      return typeof fill === "string" && fill.toLowerCase() === colour;
+      return typeof fill === 'string' && fill.toLowerCase() === colour;
     });
   }
 
@@ -246,7 +242,7 @@ function buildFilter(
     checks.push(i => {
       const assignee =
         (i as { assignee?: string; assigneeId?: string }).assignee ??
-          (i as { assigneeId?: string }).assigneeId;
+        (i as { assigneeId?: string }).assigneeId;
       return assignee === assigneeId;
     });
   }
@@ -326,11 +322,10 @@ export async function replaceBoardContent(
     if (current === undefined) {
       continue;
     }
-    const updated = current.replace(pattern,
-      () => {
-        count += 1;
-        return opts.replacement;
-      });
+    const updated = current.replace(pattern, () => {
+      count += 1;
+      return opts.replacement;
+    });
     if (updated !== current) {
       setStringAtPath(item, field, updated);
       await maybeSync(item as Syncable);

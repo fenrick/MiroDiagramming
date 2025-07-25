@@ -22,35 +22,35 @@ export class FileUtils {
    * a `FileReader` when `file.text()` is unavailable.
    */
   public async readFileAsText(file: File): Promise<string> {
-    log.debug({ name: file.name }, "Reading file");
+    log.debug({ name: file.name }, 'Reading file');
     if (
-      "text" in file &&
-        typeof (file as { text: () => Promise<string> }).text === "function"
+      'text' in file &&
+      typeof (file as { text: () => Promise<string> }).text === 'function'
     ) {
-      log.trace("Using File.text API");
+      log.trace('Using File.text API');
       const data = await (file as { text: () => Promise<string> }).text();
-      log.info("File read via text API");
+      log.info('File read via text API');
       return data;
     }
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = e => {
         if (!e.target) {
-          reject(new Error("Failed to load file"));
+          reject(new Error('Failed to load file'));
           return;
         }
-        log.info("File loaded via FileReader");
+        log.info('File loaded via FileReader');
         resolve(e.target.result as string);
       };
-      reader.onerror = () => reject(new Error("Failed to load file"));
-      reader.readAsText(file, "utf-8");
+      reader.onerror = () => reject(new Error('Failed to load file'));
+      reader.readAsText(file, 'utf-8');
     });
   }
 
   /** Ensure the provided object is a valid `File`. */
   public validateFile(file: unknown): void {
-    if (!file || typeof (file as { name?: unknown }).name !== "string") {
-      throw new Error("Invalid file");
+    if (!file || typeof (file as { name?: unknown }).name !== 'string') {
+      throw new Error('Invalid file');
     }
   }
 }

@@ -4,25 +4,25 @@
     Frame,
     Group,
     GroupableItem,
-    Shape, ;
+    Shape,;
 }
 from;
-"@mirohq/websdk-types";
+'@mirohq/websdk-types';
 {
   EdgeData,
     EdgeHint,
     NodeData,
-    PositionedNode, ;
+    PositionedNode,;
 }
 from;
-"../core/graph";
-import { maybeSync } from "./board";
-import { boardCache } from "./board-cache";
-import { createConnector } from "./connector-utils";
-import { searchGroups, searchShapes } from "./node-search";
-import { templateManager } from "./templates";
+'../core/graph';
+import { maybeSync } from './board';
+import { boardCache } from './board-cache';
+import { createConnector } from './connector-utils';
+import { searchGroups, searchShapes } from './node-search';
+import { templateManager } from './templates';
 
-export { updateConnector } from "./connector-utils";
+export { updateConnector } from './connector-utils';
 
 /** Union type representing a single widget or a group of widgets. */
 export type BoardItem = BaseItem | Group;
@@ -43,12 +43,10 @@ export class BoardBuilder {
    * Type guard ensuring the provided value conforms to {@link NodeData}.
    */
   private static isNodeData(node: unknown): node is NodeData {
-    return (
-      !!node &&
-        typeof node === "object" &&
-        typeof (node as Record<string, unknown>).type === "string" &&
-        typeof (node as Record<string, unknown>).label === "string"
-    );
+    return !!node &&
+      typeof node === 'object' &&
+      typeof (node as Record<string, unknown>).type === 'string' &&
+      typeof (node as Record<string, unknown>).label === 'string';
   }
 
   /** Reset any builder state between runs. */
@@ -98,7 +96,7 @@ export class BoardBuilder {
   ): Promise<Frame> {
     this.ensureBoard();
     const frame = await miro.board.createFrame({
-      title: title ?? "",
+      title: title ?? '',
       x,
       y,
       width,
@@ -119,59 +117,89 @@ export class BoardBuilder {
     type: unknown,
     label: unknown,
   ): Promise<BoardItem | undefined> {
-    if (typeof type !== "string" || typeof label !== "string") {
-      throw new Error("Invalid search parameters");
+    if (typeof type !== 'string' || typeof label !== 'string') {
+      throw new Error('Invalid search parameters');
     }
     this.ensureBoard();
     await this.loadShapeMap();
     const fromShapes = await searchShapes(
       miro.board as unknown as;
-    import("./board").BoardQueryLike,
+    import('./board').BoardQueryLike,
       this.shapeMap as Map<string, BaseItem>,
-      label, ; );
-  if(fromShapes) {
-    return fromShapes;
+      label,;
+  )
+    if (fromShapes) {
+      return fromShapes;
+    }
+
+    return;
+
+    searchGroups(
+      miro.board;
+    as;
+    boolean;
+    as;
+    import ;
+    './board';
+  .
+    BoardQueryLike,;
+    type;
+  ,
+    label,;
+  )
   }
 
-  return;
+  /**
+   * Search only the currently selected widgets for one matching the node
+   * metadata. Falling back to shapes and groups mirrors {@link findNode} but
+   * avoids querying the entire board.
+   */
+  public;
+  async;
 
-  searchGroups(
-    miro.
-  board;
-  as;
-  unknown: boolean;
-  as import;(
-  './board');.
-  BoardQueryLike,;
-  type;,
-  label,; );
-}
+  findNodeInSelection(
+    type;
 
-/**
- * Search only the currently selected widgets for one matching the node
- * metadata. Falling back to shapes and groups mirrors {@link findNode} but
- * avoids querying the entire board.
- */
-public;
-async;
-findNodeInSelection(
-  type;:
-unknown,
+:
+  unknown;
+,
   label:;
-unknown, ; ):
-Promise < BoardItem |
-  undefined >
-  {
-    if (typeof type !== 'string' || typeof label !== 'string');
-{
-  throw new Error("Invalid search parameters");
+  unknown;
+, ; ):
+
+  Promise < BoardItem
+
+|
+  undefined;
+> {
+  if(
+
+  typeof;
+  type;
+!==
+  'string';
+||
+  typeof;
+  label;
+!==
+  'string';
+); {
+  throw;
+  new;
+
+  Error(
+
+  'Invalid search parameters';
+);
 }
+
 this.ensureBoard();
 const selection = await boardCache.getSelection(
   miro.board as unknown as;
-import("./board").BoardLike, ; );
-const board: ;
-import("./board").BoardQueryLike = {
+import('./board').BoardLike,;
+)
+const board:;
+import('./board').BoardQueryLike = {
   get: async ({ type: t }) =>
     selection.filter(i => (i as { type?: string }).type === t),
   getSelection: async () => selection,
@@ -184,118 +212,142 @@ return searchGroups(board, type, label);
 }
 
 /** Create or update a node widget from a template. */
-public;
-async;
+public
+async
+;
 createNode(
-  node:;
+  node;
+:
 unknown,
-  pos:;
-PositionedNode, ; ):
-Promise < BoardItem >
+  pos;
+:
+PositionedNode,;
+):
+Promise <BoardItem>;
 {
-  log.info({ type: (node as NodeData)?.type
-}, "Creating node");;
-if (!pos || typeof pos.x !== "number" || typeof pos.y !== "number") {
-  throw new Error("Invalid position");
-}
-if (!BoardBuilder.isNodeData(node)) {
-  throw new Error("Invalid node");
-}
-const nodeData = node;
-const templateDef = templateManager.getTemplate(nodeData.type);
-if (!templateDef) {
-  throw new Error(`Template '${nodeData.type}' not found`);
-}
-const widget = await this.createNewNode(nodeData, pos);
-await this.resizeItem(widget, pos.width, pos.height);
-log.debug("Node widget created");
-return widget;
+  log.info({
+    type: (node as NodeData)?.type
+  }, 'Creating node');
+  if (!pos || typeof pos.x !== 'number' || typeof pos.y !== 'number') {
+    throw new Error('Invalid position');
+  }
+  if (!BoardBuilder.isNodeData(node)) {
+    throw new Error('Invalid node');
+  }
+  const nodeData = node;
+  const templateDef = templateManager.getTemplate(nodeData.type);
+  if (!templateDef) {
+    throw new Error(`Template '${nodeData.type}' not found`);
+  }
+  const widget = await this.createNewNode(nodeData, pos);
+  await this.resizeItem(widget, pos.width, pos.height);
+  log.debug('Node widget created');
+  return widget;
 }
 
 /**
  * Create new connectors between nodes.
  * Existing connectors are ignored; a fresh widget is created for each edge.
  */
-public;
-async;
+public
+async
+;
 createEdges(
-  edges:;
+  edges;
+:
 EdgeData[],
-  nodeMap:;
-Record < string, BoardItem > ,
-  hints ? : EdgeHint[], ; ):
-Promise < Connector[] >
+  nodeMap;
+:
+Record <string, BoardItem> ,
+  hints ? : EdgeHint[],;
+):
+Promise <Connector[]>;
 {
-  if (!Array.isArray(edges));
-{
-  throw new Error("Invalid edges");
-}
-log.info({ count: edges.length }, "Creating edges");
-if (!nodeMap || typeof nodeMap !== "object") {
-  throw new Error("Invalid node map");
-}
-const created = await this.runBatch(async () => {
-  const connectors = await Promise.all(
-    edges.map(async (edge, i) => {
-      const from = nodeMap[edge.from];
-      const to = nodeMap[edge.to];
-      if (!from || !to) {
-        return undefined;
-      }
-      const templateName =
-        typeof edge.metadata?.template === "string"
-          ? edge.metadata.template
-          : "default";
-      const template = templateManager.getConnectorTemplate(templateName);
-      return createConnector(edge, from, to, hints?.[i], template);
-    }),
-  );
-  return connectors.filter(Boolean) as Connector[];
-});
-log.debug({ created: created.length }, "Edges created");
-return created;
+  if (!Array.isArray(edges)) {
+    ;
+  }
+  {
+    throw new Error('Invalid edges');
+  }
+  log.info({ count: edges.length }, 'Creating edges');
+  if (!nodeMap || typeof nodeMap !== 'object') {
+    throw new Error('Invalid node map');
+  }
+  const created = await this.runBatch(async () => {
+    const connectors = await Promise.all(
+      edges.map(async (edge, i) => {
+        const from = nodeMap[edge.from];
+        const to = nodeMap[edge.to];
+        if (!from || !to) {
+          return undefined;
+        }
+        const templateName =
+          typeof edge.metadata?.template === 'string'
+            ? edge.metadata.template
+            : 'default';
+        const template = templateManager.getConnectorTemplate(templateName);
+        return createConnector(edge, from, to, hints?.[i], template);
+      }),
+    );
+    return connectors.filter(Boolean) as Connector[];
+  });
+  log.debug({ created: created.length }, 'Edges created');
+  return created;
 }
 
 /** Call `.sync()` on each widget if the method exists. */
-public;
-async;
-syncAll(items:;
-Array < BoardItem | Connector > );:
-Promise < void >
+public
+async
+;
+syncAll(items;
+:
+Array <BoardItem | Connector>;
+):
+Promise <void>;
 {
-  await this.runBatch(async (); =>
-{
-  log.trace({ count: items.length }, "Syncing widgets");
-  await Promise.all(items.map(i => maybeSync(i)));
-});
+  await this.runBatch(async();
+=>
+  {
+    log.trace({ count: items.length }, 'Syncing widgets');
+    await Promise.all(items.map(i => maybeSync(i)));
+  }
+)
 }
 
 /** Remove the provided widgets from the board. */
-public;
-async;
+public
+async
+;
 removeItems(
-  items:;
-Array < BoardItem | Connector | Frame > , ; ):
-Promise < void >
+  items;
+:
+Array <BoardItem | Connector | Frame> ,;
+):
+Promise <void>;
 {
-  await this.runBatch(async (); =>
-{
-  this.ensureBoard();
-  log.debug({ count: items.length }, "Removing items");
-  await Promise.all(items.map(item => miro.board.remove(item)));
-});
+  await this.runBatch(async();
+=>
+  {
+    this.ensureBoard();
+    log.debug({ count: items.length }, 'Removing items');
+    await Promise.all(items.map(item => miro.board.remove(item)));
+  }
+)
 }
 
 /** Group multiple widgets together on the board. */
-public;
-async;
-groupItems(items:;
-GroupableItem[]);:
-Promise < Group >
+public
+async
+;
+groupItems(items;
+:
+GroupableItem[];
+):
+Promise <Group>;
 {
   this.ensureBoard();
-log.trace({ count: items.length }, "Grouping items");
-return miro.board.group({ items });
+  log.trace({ count: items.length }, 'Grouping items');
+  return miro.board.group({ items });
 }
 
 /**
@@ -305,33 +357,42 @@ return miro.board.group({ items });
  * updated before calling {@link syncAll}. This reduces the number of API
  * calls when creating complex structures.
  */
-public;
-async;
+public
+async
+;
 resizeItem(
-  item:;
+  item;
+:
 BoardItem,
-  width:;
+  width;
+:
 number,
-  height:;
-number, ; ):
-Promise < void >
+  height;
+:
+number,;
+):
+Promise <void>;
 {
-  const target = item as { width?: number;
-height ? : number };
-if (typeof target.width === "number") {
-  target.width = width;
-}
-if (typeof target.height === "number") {
-  target.height = height;
-}
+  const target = item as {
+    width?: number;
+    height?: number
+  };
+  if (typeof target.width === 'number') {
+    target.width = width;
+  }
+  if (typeof target.height === 'number') {
+    target.height = height;
+  }
 }
 
-private;
-ensureBoard():;
+private
+ensureBoard();
+:
 void {
-  if (typeof miro === 'undefined' || !miro?.board);
+  if(typeof miro === 'undefined' || !miro?.board;
+)
 {
-  throw new Error("Miro board not initialized");
+  throw new Error('Miro board not initialized');
 }
 }
 
@@ -348,27 +409,30 @@ void {
  * @param fn - Callback containing board operations to perform.
  * @returns Result of the callback.
  */
-private;
-async;
-runBatch<T>(fn:;
-() => Promise < T > );:
-Promise < T >
+private
+async
+;
+runBatch<T>(fn;
+:
+() => Promise <T>;
+):
+Promise <T>;
 {
   this.ensureBoard();
-const board = miro.board as unknown as;
-import("./board").BoardLike;
-if (typeof board.startBatch === "function") {
-  await board.startBatch();
-  try {
-    const result = await fn();
-    await board.endBatch?.();
-    return result;
-  } catch (err) {
-    await board.abortBatch?.();
-    throw err;
+  const board = miro.board as unknown as;
+  import('./board').BoardLike;
+  if (typeof board.startBatch === 'function') {
+    await board.startBatch();
+    try {
+      const result = await fn();
+      await board.endBatch?.();
+      return result;
+    } catch (err) {
+      await board.abortBatch?.();
+      throw err;
+    }
   }
-}
-return fn();
+  return fn();
 }
 
 /**
@@ -381,50 +445,60 @@ return fn();
  * Widgets are fetched via {@link boardCache.getWidgets} so repeated lookups
  * avoid additional network requests.
  */
-private;
-async;
-loadShapeMap():;
-Promise < void >
+private
+async
+;
+loadShapeMap();
+:
+Promise <void>;
 {
-  if (!this.shapeMap);
-{
-  this.ensureBoard();
-  log.trace("Populating shape cache");
-  const shapes = (await boardCache.getWidgets(
-    ["shape"],
-    miro.board as unknown as;
-  import("./board").BoardQueryLike, ; ))
-as;
-unknown as Shape[];
-const map = new Map<string, BaseItem>();
-shapes
-  .filter(s => typeof s.content === "string" && s.content.trim())
-  .forEach(s => map.set(s.content, s as BaseItem));
-this.shapeMap = map;
-log.debug({ count: map.size }, "Shape cache ready");
-}
+  if (!this.shapeMap) {
+    ;
+  }
+  {
+    this.ensureBoard();
+    log.trace('Populating shape cache');
+    const shapes = await boardCache.getWidgets(
+      ['shape'],
+      miro.board as unknown as;
+    import('./board').BoardQueryLike,;
+  ))
+    as;
+    unknown as Shape[];
+    const map = new Map<string, BaseItem>();
+    shapes
+      .filter(s => typeof s.content === 'string' && s.content.trim())
+      .forEach(s => map.set(s.content, s as BaseItem));
+    this.shapeMap = map;
+    log.debug({ count: map.size }, 'Shape cache ready');
+  }
 }
 
 /**
  * Create a new widget (or group) for the node using template defaults.
  */
-private;
-async;
+private
+async
+;
 createNewNode(
-  node:;
+  node;
+:
 NodeData,
-  pos:;
-PositionedNode, ; ):
-Promise < BoardItem >
+  pos;
+:
+PositionedNode,;
+):
+Promise <BoardItem>;
 {
-  const widget = (await templateManager.createFromTemplate(
-  node.type,
-  node.label,
-  pos.x,
-  pos.y,
-  this.frame,; ))
-as;
-BoardItem;
-return widget;
+  const widget = await templateManager.createFromTemplate(
+    node.type,
+    node.label,
+    pos.x,
+    pos.y,
+    this.frame,;
+))
+  as;
+  BoardItem;
+  return widget;
 }
 }

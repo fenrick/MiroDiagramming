@@ -1,6 +1,6 @@
 namespace Fenrick.Miro.Server.Services;
 
-using Fenrick.Miro.Server.Domain;
+using Domain;
 
 /// <summary>
 ///     Simplified layout engine placing nodes vertically.

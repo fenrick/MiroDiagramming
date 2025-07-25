@@ -1,13 +1,14 @@
-import { resolveColor } from "../core/utils/color-utils";
+import { resolveColor } from '../core/utils/color-utils';
+
 {
-  StylePreset
+  StylePreset;
 }
 from;
-"../ui/style-presets";
+'../ui/style-presets';
 import {
   BoardLike forEachSelection,
   maybeSync Syncable,
-} from "./board";
+} from './board';
 
 /** Resolved preset style attributes. */
 export interface PresetStyle {
@@ -25,10 +26,10 @@ export interface PresetStyle {
  */
 export function presetStyle(preset: StylePreset): PresetStyle {
   return {
-    color: resolveColor(preset.fontColor, "#000000"),
-    borderColor: resolveColor(preset.borderColor, "#000000"),
+    color: resolveColor(preset.fontColor, '#000000'),
+    borderColor: resolveColor(preset.borderColor, '#000000'),
     borderWidth: preset.borderWidth,
-    fillColor: resolveColor(preset.fillColor, "#ffffff"),
+    fillColor: resolveColor(preset.fillColor, '#ffffff'),
   };
 }
 

@@ -1,11 +1,12 @@
-import React from "react";
-import { ExcelSyncService } from "../../core/excel-sync-service";
+import React from 'react';
+import { ExcelSyncService } from '../../core/excel-sync-service';
+import { useExcelData } from './excel-data-context';
+
 {
-  ExcelRow
+  ExcelRow;
 }
 from;
-"../../core/utils/excel-loader";
-import { useExcelData } from "./excel-data-context";
+('../../core/utils/excel-loader');
 
 /**
  * Hook returning a function that updates local row data and board widgets.
@@ -22,12 +23,11 @@ export function useExcelSync(): (
         return;
       }
       ctx.setRows(prev => prev.map((r, i) => (i === index ? updated : r)));
-      await serviceRef.current.updateShapesFromExcel([updated],
-        {
-          idColumn: ctx.idColumn,
-          labelColumn: ctx.labelColumn,
-          templateColumn: ctx.templateColumn,
-        });
+      await serviceRef.current.updateShapesFromExcel([updated], {
+        idColumn: ctx.idColumn,
+        labelColumn: ctx.labelColumn,
+        templateColumn: ctx.templateColumn,
+      });
     },
     [ctx],
   );

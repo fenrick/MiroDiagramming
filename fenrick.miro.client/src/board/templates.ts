@@ -1,4 +1,5 @@
-import { colors } from "@mirohq/design-tokens";
+import { colors } from '@mirohq/design-tokens';
+
 {
   ConnectorStyle,
     Frame,
@@ -6,10 +7,10 @@ import { colors } from "@mirohq/design-tokens";
     GroupableItem,
     ShapeStyle,
     ShapeType,
-    TextStyle, ;
+    TextStyle,;
 }
 from;
-"@mirohq/websdk-types";
+'@mirohq/websdk-types';
 
 /**
  * Single element of a shape template description.
@@ -45,7 +46,7 @@ export interface TemplateCollection {
 /** Definition for connector styling templates. */
 export interface ConnectorTemplate {
   style?: ConnectorStyle & Record<string, unknown>;
-  shape?: "straight" | "elbowed" | "curved";
+  shape?: 'straight' | 'elbowed' | 'curved';
   caption?: { position?: number; textAlignVertical?: string };
   /** Alternative names referring to this template. */
   alias?: string[];
@@ -58,7 +59,7 @@ export interface ConnectorTemplateCollection {
 export class TemplateManager {
   private static instance: TemplateManager;
   public readonly templates = Object.fromEntries(
-    Object.entries(templatesJson).filter(([k]) => k !== "stylePresets"),
+    Object.entries(templatesJson).filter(([k]) => k !== 'stylePresets'),
   ) as TemplateCollection;
   public readonly connectorTemplates =
     connectorJson as ConnectorTemplateCollection;
@@ -117,7 +118,7 @@ export class TemplateManager {
       return undefined;
     }
     const style = tpl.style ? this.resolveStyle(tpl.style) : undefined;
-    return { shape: "curved", ...tpl, style };
+    return { shape: 'curved', ...tpl, style };
   }
 
   /** Instantiate board widgets described by a template. */
@@ -156,10 +157,10 @@ export class TemplateManager {
    *   match the expected pattern.
    */
   private parseColorToken(path: string): string | undefined {
-    if (path === "color.white") {
+    if (path === 'color.white') {
       return colors.white;
     }
-    if (path === "color.black") {
+    if (path === 'color.black') {
       return colors.black;
     }
     const match = /^color\.([a-zA-Z]+)\[(\d+)\]$/.exec(path);
@@ -178,10 +179,10 @@ export class TemplateManager {
    * corresponding value from the design tokens.
    */
   private resolveToken(value: unknown): unknown {
-    if (typeof value !== "string" || !value.startsWith("tokens.")) {
+    if (typeof value !== 'string' || !value.startsWith('tokens.')) {
       return value;
     }
-    const path = value.slice("tokens.".length);
+    const path = value.slice('tokens.'.length);
     const color = this.parseColorToken(path);
     return color ?? value;
   }
@@ -192,7 +193,7 @@ export class TemplateManager {
    * Supports optional `px` units which are stripped off.
    */
   private parseNumeric(value: unknown): unknown {
-    if (typeof value !== "string") {
+    if (typeof value !== 'string') {
       return value;
     }
     const m = /^(-?\d+(?:\.\d+)?)(px)?$/.exec(value);
@@ -220,7 +221,7 @@ export class TemplateManager {
       width: element.width,
       height: element.height,
       rotation: element.rotation ?? 0,
-      content: (element.text ?? "{{label}}").replace("{{label}}", label),
+      content: (element.text ?? '{{label}}').replace('{{label}}', label),
       style: style as Partial<ShapeStyle>,
     });
     frame?.add(shape);
@@ -236,11 +237,11 @@ export class TemplateManager {
     frame?: Frame,
   ): Promise<GroupableItem> {
     const style: Partial<TextStyle> & Record<string, unknown> = {
-      textAlign: "center",
+      textAlign: 'center',
       ...this.resolveStyle(element.style ?? {}),
     };
     const text = await miro.board.createText({
-      content: element.text?.replace("{{label}}", label) ?? label,
+      content: element.text?.replace('{{label}}', label) ?? label,
       x,
       y,
       style: style as Partial<TextStyle>,
@@ -251,12 +252,12 @@ export class TemplateManager {
 
   private getElementType(
     element: TemplateElement,
-  ): "shape" | "text" | undefined {
+  ): 'shape' | 'text' | undefined {
     if (element.shape) {
-      return "shape";
+      return 'shape';
     }
     if (element.text) {
-      return "text";
+      return 'text';
     }
     return undefined;
   }
@@ -269,12 +270,12 @@ export class TemplateManager {
     frame?: Frame,
   ): Promise<GroupableItem | undefined> {
     switch (this.getElementType(element)) {
-    case "shape":
-      return this.createShapeWidget(element, label, x, y, frame);
-    case "text":
-      return this.createTextWidget(element, label, x, y, frame);
-    default:
-      return undefined;
+      case 'shape':
+        return this.createShapeWidget(element, label, x, y, frame);
+      case 'text':
+        return this.createTextWidget(element, label, x, y, frame);
+      default:
+        return undefined;
     }
   }
 }

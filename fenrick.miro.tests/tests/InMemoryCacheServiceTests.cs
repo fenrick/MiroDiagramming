@@ -1,7 +1,7 @@
 namespace Fenrick.Miro.Tests;
 
-using Fenrick.Miro.Server.Domain;
-using Fenrick.Miro.Server.Services;
+using Server.Domain;
+using Server.Services;
 using Xunit;
 
 public class InMemoryCacheServiceTests

@@ -8,7 +8,9 @@ public class DbContextRegistrationTests(WebApplicationFactory<Program> factory)
     : IClassFixture<WebApplicationFactory<Program>>
 {
     private readonly WebApplicationFactory<Program> configuredFactory =
-        factory.WithWebHostBuilder(builder => builder.UseSetting("ConnectionStrings:postgres", "Host=unused;Database=test;Username=u;Password=p"));
+        factory.WithWebHostBuilder(builder =>
+            builder.UseSetting("ConnectionStrings:postgres",
+                "Host=unused;Database=test;Username=u;Password=p"));
 
     [Fact]
     public void CanResolveDbContext()

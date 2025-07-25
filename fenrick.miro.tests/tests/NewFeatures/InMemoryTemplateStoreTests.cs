@@ -2,8 +2,8 @@
 
 namespace Fenrick.Miro.Tests.NewFeatures;
 
-using Fenrick.Miro.Server.Domain;
-using Fenrick.Miro.Server.Services;
+using Server.Domain;
+using Server.Services;
 using Xunit;
 
 public class InMemoryTemplateStoreTests

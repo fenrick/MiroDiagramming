@@ -16,7 +16,7 @@ import {
   getFirstSelection,
   maybeSync,
   Syncable,
-} from "./board";
+} from './board';
 
 /**
  * Retrieve the width and height of the first selected widget.
@@ -32,8 +32,8 @@ export async function copySizeFromSelection(
     | undefined;
   if (
     !first ||
-      typeof first.width !== "number" ||
-      typeof first.height !== "number"
+    typeof first.width !== 'number' ||
+    typeof first.height !== 'number'
   ) {
     return null;
   }
@@ -55,13 +55,12 @@ export async function applySizeToSelection(
   board?: BoardLike,
 ): Promise<void> {
   await forEachSelection(async (item: Record<string, unknown>) => {
-      if (typeof item.width === "number" && typeof item.height === "number") {
-        item.width = size.width;
-        item.height = size.height;
-        await maybeSync(item as Syncable);
-      }
-    },
-    board);
+    if (typeof item.width === 'number' && typeof item.height === 'number') {
+      item.width = size.width;
+      item.height = size.height;
+      await maybeSync(item as Syncable);
+    }
+  }, board);
 }
 
 /**
@@ -78,14 +77,13 @@ export async function scaleSelection(
   board?: BoardLike,
 ): Promise<void> {
   await forEachSelection(async (item: Record<string, unknown>) => {
-      const target = item as { width?: number; height?: number } & Syncable;
-      if (typeof target.width === "number") {
-        target.width *= factor;
-      }
-      if (typeof target.height === "number") {
-        target.height *= factor;
-      }
-      await maybeSync(target);
-    },
-    board);
+    const target = item as { width?: number; height?: number } & Syncable;
+    if (typeof target.width === 'number') {
+      target.width *= factor;
+    }
+    if (typeof target.height === 'number') {
+      target.height *= factor;
+    }
+    await maybeSync(target);
+  }, board);
 }

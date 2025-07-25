@@ -1,23 +1,24 @@
 {
-  BaseItem, Group
+  (BaseItem, Group);
 }
 from;
-"@mirohq/websdk-types";
+('@mirohq/websdk-types');
 {
-  BoardQueryLike
+  BoardQueryLike;
 }
 from;
-"../board/board";
-import { applyElementToItem } from "../board/element-utils";
-import { searchGroups, searchShapes } from "../board/node-search";
-import { templateManager } from "../board/templates";
-import { ColumnMapping, mapRowsToNodes } from "./data-mapper";
+('../board/board');
+import { applyElementToItem } from '../board/element-utils';
+import { searchGroups, searchShapes } from '../board/node-search';
+import { templateManager } from '../board/templates';
+import { ColumnMapping, mapRowsToNodes } from './data-mapper';
+import { toSafeString } from './utils/string-utils';
+
 {
-  ExcelRow
+  ExcelRow;
 }
 from;
-"./utils/excel-loader";
-import { toSafeString } from "./utils/string-utils";
+('./utils/excel-loader');
 
 /** Item supporting text content on the board. */
 export interface ContentItem extends BaseItem {
@@ -76,7 +77,7 @@ export class ExcelSyncService {
         continue;
       }
       await this.applyTemplate(widget, def.label, def.type);
-      this.registerMapping(idStr, widget.id ?? "");
+      this.registerMapping(idStr, widget.id ?? '');
     }
   }
 
@@ -99,13 +100,13 @@ export class ExcelSyncService {
       const idStr = toSafeString(rowId ?? i);
       const label = mapping.labelColumn
         ? toSafeString(r[mapping.labelColumn])
-        : "";
+        : '';
       const widget = await this.lookupWidget(idStr, label);
       let row = { ...r };
       if (widget) {
         const data = await this.extractWidgetData(widget);
         row = this.updateRowFromWidget(row, mapping, data);
-        this.registerMapping(idStr, widget.id ?? "");
+        this.registerMapping(idStr, widget.id ?? '');
       }
       updated.push(row);
     }
@@ -130,7 +131,7 @@ export class ExcelSyncService {
     widget: BaseItem | Group,
   ): Promise<{ content?: string; meta?: Record<string, unknown> }> {
     const item = (await this.extractItem(widget)) as ContentItem;
-    const content = item.content ?? "";
+    const content = item.content ?? '';
     return { content };
   }
 
@@ -169,16 +170,14 @@ export class ExcelSyncService {
         }
       } catch {
         // ignore stale mapping
-      
       }
-    
     }
     const board = miro.board as unknown as BoardQueryLike;
     const shape = await searchShapes(board, undefined, label);
     if (shape) {
       return shape;
     }
-    return searchGroups(board, "", label);
+    return searchGroups(board, '', label);
   }
 
   /**
@@ -195,7 +194,7 @@ export class ExcelSyncService {
       return;
     }
     const items =
-      widget.type === "group"
+      widget.type === 'group'
         ? await (widget as unknown as Group).getItems()
         : [widget];
     template.elements.forEach((el, idx) => {
@@ -212,7 +211,7 @@ export class ExcelSyncService {
 
   /** Retrieve the first item of a widget for text extraction. */
   private async extractItem(widget: BaseItem | Group): Promise<BaseItem> {
-    if (widget.type === "group") {
+    if (widget.type === 'group') {
       const items = await (widget as unknown as Group).getItems();
       return items[0] as BaseItem;
     }

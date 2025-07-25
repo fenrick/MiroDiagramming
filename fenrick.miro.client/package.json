@@ -19,10 +19,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "prettier":
-      "prettier '**/*.{js,jsx,ts,tsx,md,json,yml,yaml,html,css}' --write",
-    "prettier:check":
-      "prettier '**/*.{js,jsx,ts,tsx,md,json,yml,yaml,html,css}' --check",
+    "prettier": "prettier '**/*.{js,jsx,ts,tsx,md,json,yml,yaml,html,css}' --write",
+    "prettier:check": "prettier '**/*.{js,jsx,ts,tsx,md,json,yml,yaml,html,css}' --check",
     "typecheck": "tsc --noEmit",
     "pretest": "npm install",
     "test": "vitest run --coverage",

@@ -3,26 +3,27 @@
     Connector,
     Frame,
     Group,
-    GroupableItem, ;
+    GroupableItem,;
 }
 from;
-"@mirohq/websdk-types";
-import { BoardBuilder } from "../../board/board-builder";
-import { clearActiveFrame, registerFrame } from "../../board/frame-utils";
-import { boundingBoxFromCenter, frameOffset } from "../layout/layout-utils";
+'@mirohq/websdk-types';
+import { BoardBuilder } from '../../board/board-builder';
+import { clearActiveFrame, registerFrame } from '../../board/frame-utils';
+import { boundingBoxFromCenter, frameOffset } from '../layout/layout-utils';
 import {
   HierNode,
   layoutHierarchy,
   NestedLayoutResult,
-} from "../layout/nested-layout";
-import { fileUtils } from "../utils/file-utils";
-import { edgesToHierarchy } from "./convert";
+} from '../layout/nested-layout';
+import { fileUtils } from '../utils/file-utils';
+import { edgesToHierarchy } from './convert';
+import { UndoableProcessor } from './undoable-processor';
+
 {
-  GraphData
+  GraphData;
 }
 from;
-"./graph-service";
-import { UndoableProcessor } from "./undoable-processor";
+'./graph-service';
 
 export interface HierarchyProcessOptions {
   createFrame?: boolean;
@@ -76,7 +77,7 @@ export class HierarchyProcessor extends UndoableProcessor<
   ): Promise<void> {
     const data = Array.isArray(roots) ? roots : edgesToHierarchy(roots);
     if (!Array.isArray(data)) {
-      throw new Error("Invalid hierarchy");
+      throw new Error('Invalid hierarchy');
     }
     this.lastCreated = [];
     const result = await layoutHierarchy(data,
@@ -113,7 +114,7 @@ export class HierarchyProcessor extends UndoableProcessor<
     await this.createWidgets(data, result.nodes, offsetX, offsetY);
     const syncItems = this.lastCreated.filter(i => i !== frame);
     await this.syncOrUndo(syncItems as Array<BaseItem | Group | Connector>);
-    const target = frame ?? (this.lastCreated as Array<BaseItem | Group>);
+    const target = frame ?? this.lastCreated as Array<BaseItem | Group>;
     await this.builder.zoomTo(target);
   }
 

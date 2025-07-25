@@ -1,13 +1,14 @@
-import { IconQuestionMarkCircle } from "@mirohq/design-system";
+import { IconQuestionMarkCircle } from '@mirohq/design-system';
+import { Tooltip } from '../ui/components/Tooltip';
+
 {
-  Meta, StoryObj
+  (Meta, StoryObj);
 }
 from;
-"@storybook/react";
-import { Tooltip } from "../ui/components/Tooltip";
+('@storybook/react');
 
 const meta: Meta<typeof Tooltip> = {
-  title: "Components/Tooltip",
+  title: 'Components/Tooltip',
   component: Tooltip,
 };
 export default meta;
@@ -16,10 +17,10 @@ type Story = StoryObj<typeof Tooltip>;
 
 export const Default: Story = {
   args: {
-    content: "Helpful info",
+    content: 'Helpful info',
     children: (
       <IconButton aria-label='Help'>
-        <IconQuestionMarkCircle/>
+        <IconQuestionMarkCircle />
       </IconButton>
     ),
   },

@@ -1,6 +1,6 @@
 namespace Fenrick.Miro.Server.Services;
 
-using Fenrick.Miro.Server.Domain;
+using Domain;
 
 /// <summary>
 ///     Utility helpers for matching board objects by content.
@@ -19,7 +19,7 @@ public static class ObjectMatcher
     public static ShapeData? FindShapeByLabel(
         IEnumerable<ShapeData> shapes,
         string label) =>
-        shapes.FirstOrDefault((ShapeData s) => string.Equals(
+        shapes.FirstOrDefault(s => string.Equals(
             s.Text,
             label,
             StringComparison.OrdinalIgnoreCase));

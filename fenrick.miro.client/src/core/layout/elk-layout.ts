@@ -1,6 +1,6 @@
-import { GraphData } from "../graph";
-import { UserLayoutOptions } from "./elk-options";
-import { LayoutResult, performLayout } from "./layout-core";
+import { GraphData } from '../graph';
+import { UserLayoutOptions } from './elk-options';
+import { LayoutResult, performLayout } from './layout-core';
 
 /**
  * LayoutEngine executes ELK layout directly within the main thread.
@@ -8,7 +8,8 @@ import { LayoutResult, performLayout } from "./layout-core";
 export class LayoutEngine {
   private static instance: LayoutEngine;
 
-  private constructor() {}
+  private constructor() {
+  }
 
   /** Access the shared layout engine instance. */
   public static getInstance(): LayoutEngine {
@@ -30,6 +31,8 @@ export class LayoutEngine {
 }
 
 export const layoutEngine = LayoutEngine.getInstance();
-export type { LayoutResult }
-from;
-"./layout-core";
+export type {
+  LayoutResult
+}
+  from;
+'./layout-core';

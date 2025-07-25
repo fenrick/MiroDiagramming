@@ -1,8 +1,7 @@
 namespace Fenrick.Miro.Server.Services;
 
-using System;
 using System.Collections.Concurrent;
-using Fenrick.Miro.Server.Domain;
+using Domain;
 
 /// <summary>
 ///     Thread safe in-memory implementation of <see cref="IUserStore" />.
@@ -20,7 +19,8 @@ public class InMemoryUserStore : IUserStore
     {
         if (string.IsNullOrWhiteSpace(userId))
         {
-            throw new ArgumentException("User id must be provided", nameof(userId));
+            throw new ArgumentException("User id must be provided",
+                nameof(userId));
         }
 
         return this.users.TryGetValue(userId, out var info) ? info : null;
@@ -31,7 +31,8 @@ public class InMemoryUserStore : IUserStore
     {
         if (string.IsNullOrWhiteSpace(info.Id))
         {
-            throw new ArgumentException("User id must be provided", nameof(info));
+            throw new ArgumentException("User id must be provided",
+                nameof(info));
         }
 
         this.users[info.Id] = info;
@@ -42,7 +43,8 @@ public class InMemoryUserStore : IUserStore
     {
         if (string.IsNullOrWhiteSpace(userId))
         {
-            throw new ArgumentException("User id must be provided", nameof(userId));
+            throw new ArgumentException("User id must be provided",
+                nameof(userId));
         }
 
         this.users.TryRemove(userId, out _);

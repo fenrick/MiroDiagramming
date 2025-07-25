@@ -2,7 +2,7 @@ namespace Fenrick.Miro.Server.Services;
 
 using System.Net.Http.Headers;
 using System.Text;
-using Fenrick.Miro.Server.Domain;
+using Domain;
 
 /// <summary>
 ///     HTTP client adapter that forwards requests to the Miro REST API.
@@ -37,11 +37,11 @@ public class MiroRestClient(
                 new Uri(request.Path, UriKind.Relative))
             {
                 Content = request.Body == null
-                              ? null
-                              : new StringContent(
-                                  request.Body,
-                                  Encoding.UTF8,
-                                  "application/json")
+                    ? null
+                    : new StringContent(
+                        request.Body,
+                        Encoding.UTF8,
+                        "application/json")
             };
         if (token != null)
         {

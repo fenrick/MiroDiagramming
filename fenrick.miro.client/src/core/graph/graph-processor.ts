@@ -1,34 +1,35 @@
 {
-  BaseItem, Frame, Group
+  (BaseItem, Frame, Group);
 }
 from;
-"@mirohq/websdk-types";
-import { maybeSync } from "../../board/board";
-import { BoardBuilder } from "../../board/board-builder";
-import { clearActiveFrame, registerFrame } from "../../board/frame-utils";
-import { layoutEngine } from "../layout/elk-layout";
-import { UserLayoutOptions } from "../layout/elk-options";
-{
-  PositionedNode
-}
-from;
-"../layout/layout-core";
+('@mirohq/websdk-types');
+import { maybeSync } from '../../board/board';
+import { BoardBuilder } from '../../board/board-builder';
+import { clearActiveFrame, registerFrame } from '../../board/frame-utils';
+import { layoutEngine } from '../layout/elk-layout';
+import { UserLayoutOptions } from '../layout/elk-options';
 import {
   boundingBoxFromTopLeft,
   computeEdgeHints,
   frameOffset,
-} from "../layout/layout-utils";
+} from '../layout/layout-utils';
+import { fileUtils } from '../utils/file-utils';
+import { edgesToHierarchy, hierarchyToEdges } from './convert';
+import { GraphData, graphService } from './graph-service';
+import { HierarchyProcessor } from './hierarchy-processor';
+import { isNestedAlgorithm } from './layout-modes';
+import { UndoableProcessor } from './undoable-processor';
+
 {
-  HierNode
+  PositionedNode;
 }
 from;
-"../layout/nested-layout";
-import { fileUtils } from "../utils/file-utils";
-import { edgesToHierarchy, hierarchyToEdges } from "./convert";
-import { GraphData, graphService } from "./graph-service";
-import { HierarchyProcessor } from "./hierarchy-processor";
-import { isNestedAlgorithm } from "./layout-modes";
-import { UndoableProcessor } from "./undoable-processor";
+('../layout/layout-core');
+{
+  HierNode;
+}
+from;
+('../layout/nested-layout');
 
 /** Board widget or group item. */
 type BoardItem = BaseItem | Group;
@@ -44,7 +45,7 @@ type BoardItem = BaseItem | Group;
  * - `layout`: keep widgets in selection and feed their coordinates to ELK.
  * - `ignore`: leave widgets in place and use their existing coordinates.
  */
-export type ExistingNodeMode = "move" | "layout" | "ignore";
+export type ExistingNodeMode = 'move' | 'layout' | 'ignore';
 
 export interface ProcessOptions {
   /** Whether to wrap the diagram in a frame. */
@@ -90,8 +91,8 @@ export class GraphProcessor extends UndoableProcessor {
     options: ProcessOptions = {},
   ): Promise<void> {
     this.nodeIdMap = {};
-    const existingMode: ExistingNodeMode = options.existingMode ?? "move";
-    const alg = options.layout?.algorithm ?? "mrtree";
+    const existingMode: ExistingNodeMode = options.existingMode ?? 'move';
+    const alg = options.layout?.algorithm ?? 'mrtree';
     if (isNestedAlgorithm(alg)) {
       await this.processNestedGraph(graph, options);
       return;
@@ -178,13 +179,13 @@ export class GraphProcessor extends UndoableProcessor {
     existing: Record<string, BoardItem | undefined>,
     mode: ExistingNodeMode,
   ): GraphData {
-    if (mode !== "layout") {
+    if (mode !== 'layout') {
       return data;
     }
     return {
       nodes: data.nodes.map(n => {
         const w = existing[n.id] as { x?: number; y?: number } | undefined;
-        return w && typeof w.x === "number" && typeof w.y === "number"
+        return w && typeof w.x === 'number' && typeof w.y === 'number'
           ? { ...n, metadata: { ...(n.metadata ?? {}), x: w.x, y: w.y } }
           : n;
       }),
@@ -204,11 +205,10 @@ export class GraphProcessor extends UndoableProcessor {
   ): Promise<void> {
     const hp = new HierarchyProcessor(this.builder);
     const hierarchy = Array.isArray(graph) ? graph : edgesToHierarchy(graph);
-    await hp.processHierarchy(hierarchy,
-      {
-        createFrame: opts.createFrame,
-        frameTitle: opts.frameTitle,
-      });
+    await hp.processHierarchy(hierarchy, {
+      createFrame: opts.createFrame,
+      frameTitle: opts.frameTitle,
+    });
     this.lastCreated = hp.getLastCreated();
   }
 
@@ -249,7 +249,7 @@ export class GraphProcessor extends UndoableProcessor {
       let widget: BoardItem;
       if (found) {
         widget = found;
-        if (mode !== "ignore") {
+        if (mode !== 'ignore') {
           (widget as { x?: number; y?: number }).x = target.x;
           (widget as { x?: number; y?: number }).y = target.y;
           await maybeSync(widget as unknown as { sync?: () => Promise<void> });
@@ -313,7 +313,7 @@ export class GraphProcessor extends UndoableProcessor {
    */
   private validateGraph(graph: GraphData): void {
     if (!graph || !Array.isArray(graph.nodes) || !Array.isArray(graph.edges)) {
-      throw new Error("Invalid graph format");
+      throw new Error('Invalid graph format');
     }
 
     const nodeIds = new Set(graph.nodes.map(n => n.id));

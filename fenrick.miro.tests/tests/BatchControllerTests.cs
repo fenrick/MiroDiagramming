@@ -5,10 +5,10 @@ namespace Fenrick.Miro.Tests;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Fenrick.Miro.Server.Api;
-using Fenrick.Miro.Server.Domain;
-using Fenrick.Miro.Server.Services;
 using Microsoft.AspNetCore.Mvc;
+using Server.Api;
+using Server.Domain;
+using Server.Services;
 using Xunit;
 
 public class BatchControllerTests
@@ -17,17 +17,17 @@ public class BatchControllerTests
     public async Task ForwardAsyncReturnsOrderedResponses()
     {
         var requests = new[]
-                       {
-                           new MiroRequest("GET", "/boards/1", null),
-                           new MiroRequest("GET", "/boards/2", null)
-                       };
+        {
+            new MiroRequest("GET", "/boards/1", null),
+            new MiroRequest("GET", "/boards/2", null)
+        };
         var responses = new Queue<MiroResponse>(
         [
             new MiroResponse(200, "1"),
             new MiroResponse(200, "2")
         ]);
         var client =
-            new StubClient((MiroRequest req) => Task.FromResult(responses.Dequeue()));
+            new StubClient(req => Task.FromResult(responses.Dequeue()));
         var controller = new BatchController(client);
 
         var result = await controller.ForwardAsync(requests) as OkObjectResult;
@@ -44,7 +44,8 @@ public class BatchControllerTests
     public async Task ForwardAsyncWithNoRequestsReturnsEmptyList()
     {
         var controller = new BatchController(
-            new StubClient((MiroRequest _) => Task.FromResult(new MiroResponse(200, string.Empty))));
+            new StubClient(_ =>
+                Task.FromResult(new MiroResponse(200, string.Empty))));
 
         var result = await controller.ForwardAsync([]) as OkObjectResult;
 

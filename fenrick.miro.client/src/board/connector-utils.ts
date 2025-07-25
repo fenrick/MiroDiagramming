@@ -3,20 +3,20 @@
     Connector,
     ConnectorStyle,
     Group,
-    TextAlignVertical, ;
+    TextAlignVertical,;
 }
 from;
-"@mirohq/websdk-types";
+'@mirohq/websdk-types';
 {
-  EdgeData, EdgeHint
+  EdgeData, EdgeHint;
 }
 from;
-"../core/graph";
+'../core/graph';
 {
-  ConnectorTemplate
+  ConnectorTemplate;
 }
 from;
-"./templates";
+'./templates';
 
 /**
  * Build caption objects for a connector label.
@@ -33,7 +33,7 @@ from;
 function buildCaptions(
   edge: EdgeData,
   template?: ConnectorTemplate,
-): Connector["captions"] {
+): Connector['captions'] {
   if (!edge.label) {
     return undefined;
   }
@@ -62,13 +62,13 @@ function applyHint(connector: Connector, hint?: EdgeHint): void {
     connector.start = {
       ...(connector.start ?? {}),
       position: hint.startPosition,
-    } as Connector["start"];
+    } as Connector['start'];
   }
   if (hint?.endPosition) {
     connector.end = {
       ...(connector.end ?? {}),
       position: hint.endPosition,
-    } as Connector["end"];
+    } as Connector['end'];
   }
 }
 
@@ -118,7 +118,7 @@ export async function createConnector(
   const connector = await miro.board.createConnector({
     start: { item: from.id, position: hint?.startPosition },
     end: { item: to.id, position: hint?.endPosition },
-    shape: template?.shape ?? "curved",
+    shape: template?.shape ?? 'curved',
     captions: buildCaptions(edge, template),
     style: template?.style as ConnectorStyle | undefined,
   });

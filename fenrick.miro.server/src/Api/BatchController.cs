@@ -1,8 +1,8 @@
 namespace Fenrick.Miro.Server.Api;
 
-using Fenrick.Miro.Server.Domain;
-using Fenrick.Miro.Server.Services;
+using Domain;
 using Microsoft.AspNetCore.Mvc;
+using Services;
 
 /// <summary>
 ///     Aggregates REST calls so the client can send them in one request.

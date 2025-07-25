@@ -1,19 +1,19 @@
-import React from "react";
-import { GraphProcessor } from "../../core/graph/graph-processor";
-import { HierarchyProcessor } from "../../core/graph/hierarchy-processor";
-import { ElkAlgorithm, UserLayoutOptions } from "../../core/layout/elk-options";
-import { showError } from "./notifications";
+import React from 'react';
+import { GraphProcessor } from '../../core/graph/graph-processor';
+import { HierarchyProcessor } from '../../core/graph/hierarchy-processor';
+import { ElkAlgorithm, UserLayoutOptions } from '../../core/layout/elk-options';
+import { showError } from './notifications';
 
 /** Configuration options controlling diagram creation. */
 
 export type LayoutChoice =
-  | "Layered"
-  | "Tree"
-  | "Grid"
-  | "Nested"
-  | "Radial"
-  | "Box"
-  | "Rect Packing";
+  | 'Layered'
+  | 'Tree'
+  | 'Grid'
+  | 'Nested'
+  | 'Radial'
+  | 'Box'
+  | 'Rect Packing';
 
 /** Options controlling how diagrams are created. */
 interface CreateOptions {
@@ -24,9 +24,14 @@ interface CreateOptions {
   layoutOpts: UserLayoutOptions;
   nestedPadding: number;
   nestedTopSpacing: number;
-  existingMode: ; import
+  '../../core/graph/graph-processor'ExistingNodeMode;
+  ).
 
-("../../core/graph/graph-processor").ExistingNodeMode;
+import
+
+  (
+
+
 }
 
 /**
@@ -56,7 +61,7 @@ export function useDiagramCreate(
       setError(null);
       for (const file of importQueue) {
         try {
-          if (opts.layoutChoice === "Nested") {
+          if (opts.layoutChoice === 'Nested') {
             setLastProc(hierarchyProcessor);
             await hierarchyProcessor.processFile(file,
               {
@@ -68,13 +73,13 @@ export function useDiagramCreate(
           } else {
             setLastProc(graphProcessor);
             const algorithmMap: Record<LayoutChoice, ElkAlgorithm> = {
-              'Layered': "layered",
-              'Tree': "mrtree",
-              'Grid': "force",
-              'Nested': "rectpacking",
-              'Radial': "radial",
-              'Box': "box",
-              'Rect Packing': "rectpacking",
+              'Layered': 'layered',
+              'Tree': 'mrtree',
+              'Grid': 'force',
+              'Nested': 'rectpacking',
+              'Radial': 'radial',
+              'Box': 'box',
+              'Rect Packing': 'rectpacking',
             };
             const selectedAlg = opts.showAdvanced
               ? opts.layoutOpts.algorithm
@@ -118,13 +123,13 @@ export function useAdvancedToggle(
 ): void {
   React.useEffect(() => {
       const handler = (e: KeyboardEvent): void => {
-        if ((e.metaKey || e.ctrlKey) && e.key === "/") {
+        if ((e.metaKey || e.ctrlKey) && e.key === '/') {
           e.preventDefault();
           setShow(v => !v);
         }
       };
-      window.addEventListener("keydown", handler);
-      return () => window.removeEventListener("keydown", handler);
+      window.addEventListener('keydown', handler);
+      return () => window.removeEventListener('keydown', handler);
     },
     [setShow]);
 }

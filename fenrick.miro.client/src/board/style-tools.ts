@@ -1,18 +1,18 @@
 /**
  * Colour manipulation utilities for the currently selected widgets.
  */
-import { colors } from "@mirohq/design-tokens";
+import { colors } from '@mirohq/design-tokens';
 import {
   adjustColor,
   ensureContrast,
   resolveColor,
-} from "../core/utils/color-utils";
+} from '../core/utils/color-utils';
 import {
   forEachSelection,
   getFirstSelection,
   maybeSync,
   Syncable,
-} from "./board";
+} from './board';
 
 /**
  * Return the first style property present in the provided list.
@@ -36,40 +36,40 @@ export function findStyleKey(
 /** Retrieve the property name used for widget fill colour. */
 function getFillKey(
   style: Record<string, unknown>,
-): "fillColor" | "backgroundColor" | null {
-  const key = findStyleKey(style, ["fillColor", "backgroundColor"]);
-  return key && typeof style[key] === "string"
-    ? (key as "fillColor" | "backgroundColor")
+): 'fillColor' | 'backgroundColor' | null {
+  const key = findStyleKey(style, ['fillColor', 'backgroundColor']);
+  return key && typeof style[key] === 'string'
+    ? (key as 'fillColor' | 'backgroundColor')
     : null;
 }
 
 /** Retrieve the property name used for widget font colour. */
 function getFontKey(
   style: Record<string, unknown>,
-): "color" | "textColor" | null {
-  const key = findStyleKey(style, ["color", "textColor"]);
-  return key && typeof style[key] === "string"
-    ? (key as "color" | "textColor")
+): 'color' | 'textColor' | null {
+  const key = findStyleKey(style, ['color', 'textColor']);
+  return key && typeof style[key] === 'string'
+    ? (key as 'color' | 'textColor')
     : null;
 }
 
 /** Retrieve the property name used for widget opacity. */
 function getOpacityKey(
   style: Record<string, unknown>,
-): "fillOpacity" | "opacity" | null {
-  const key = findStyleKey(style, ["fillOpacity", "opacity"]);
-  return key && typeof style[key] === "number"
-    ? (key as "fillOpacity" | "opacity")
+): 'fillOpacity' | 'opacity' | null {
+  const key = findStyleKey(style, ['fillOpacity', 'opacity']);
+  return key && typeof style[key] === 'number'
+    ? (key as 'fillOpacity' | 'opacity')
     : null;
 }
 
 /** Retrieve the property name used for border width. */
 function getBorderWidthKey(
   style: Record<string, unknown>,
-): "borderWidth" | "strokeWidth" | "lineWidth" | null {
-  const key = findStyleKey(style, ["borderWidth", "strokeWidth", "lineWidth"]);
-  return key && typeof style[key] === "number"
-    ? (key as "borderWidth" | "strokeWidth" | "lineWidth")
+): 'borderWidth' | 'strokeWidth' | 'lineWidth' | null {
+  const key = findStyleKey(style, ['borderWidth', 'strokeWidth', 'lineWidth']);
+  return key && typeof style[key] === 'number'
+    ? (key as 'borderWidth' | 'strokeWidth' | 'lineWidth')
     : null;
 }
 
@@ -86,29 +86,28 @@ export async function tweakFillColor(
   board?: BoardLike,
 ): Promise<void> {
   await forEachSelection(async (item: Record<string, unknown>) => {
-      const style = (item.style ?? {}) as Record<string, unknown>;
-      const fillKey = getFillKey(style);
-      if (!fillKey) {
-        return;
-      }
-      const fontKey = getFontKey(style);
-      const fill =
-        typeof style[fillKey] === "string"
-          ? style[fillKey]
-          : resolveColor(colors.white, colors.white);
-      const font =
-        fontKey && typeof style[fontKey] === "string"
-          ? style[fontKey]
-          : resolveColor(colors["gray-700"], colors["gray-700"]);
-      const newFill = adjustColor(fill, delta);
-      style[fillKey] = newFill;
-      if (fontKey) {
-        style[fontKey] = ensureContrast(newFill, font);
-      }
-      item.style = style;
-      await maybeSync(item as Syncable);
-    },
-    board);
+    const style = (item.style ?? {}) as Record<string, unknown>;
+    const fillKey = getFillKey(style);
+    if (!fillKey) {
+      return;
+    }
+    const fontKey = getFontKey(style);
+    const fill =
+      typeof style[fillKey] === 'string'
+        ? style[fillKey]
+        : resolveColor(colors.white, colors.white);
+    const font =
+      fontKey && typeof style[fontKey] === 'string'
+        ? style[fontKey]
+        : resolveColor(colors['gray-700'], colors['gray-700']);
+    const newFill = adjustColor(fill, delta);
+    style[fillKey] = newFill;
+    if (fontKey) {
+      style[fontKey] = ensureContrast(newFill, font);
+    }
+    item.style = style;
+    await maybeSync(item as Syncable);
+  }, board);
 }
 
 /**
@@ -129,7 +128,7 @@ export function extractFillColor(
     return null;
   }
   const fill = style[key];
-  return typeof fill === "string" ? resolveColor(fill, colors.white) : null;
+  return typeof fill === 'string' ? resolveColor(fill, colors.white) : null;
 }
 
 /**
@@ -159,22 +158,21 @@ export async function tweakOpacity(
   board?: BoardLike,
 ): Promise<void> {
   await forEachSelection(async (item: Record<string, unknown>) => {
-      const style = (item.style ?? {}) as Record<string, unknown>;
-      const key = getOpacityKey(style);
-      if (!key) {
-        return;
-      }
-      const current = style[key];
-      if (typeof current !== "number") {
-        return;
-      }
-      let next = current + delta;
-      next = Math.max(0, Math.min(1, next));
-      style[key] = next;
-      item.style = style;
-      await maybeSync(item as Syncable);
-    },
-    board);
+    const style = (item.style ?? {}) as Record<string, unknown>;
+    const key = getOpacityKey(style);
+    if (!key) {
+      return;
+    }
+    const current = style[key];
+    if (typeof current !== 'number') {
+      return;
+    }
+    let next = current + delta;
+    next = Math.max(0, Math.min(1, next));
+    style[key] = next;
+    item.style = style;
+    await maybeSync(item as Syncable);
+  }, board);
 }
 
 /**
@@ -191,19 +189,18 @@ export async function tweakBorderWidth(
   board?: BoardLike,
 ): Promise<void> {
   await forEachSelection(async (item: Record<string, unknown>) => {
-      const style = (item.style ?? {}) as Record<string, unknown>;
-      const key = getBorderWidthKey(style);
-      if (!key) {
-        return;
-      }
-      const current = style[key];
-      if (typeof current !== "number") {
-        return;
-      }
-      const next = Math.max(0, current + delta);
-      style[key] = next;
-      item.style = style;
-      await maybeSync(item as Syncable);
-    },
-    board);
+    const style = (item.style ?? {}) as Record<string, unknown>;
+    const key = getBorderWidthKey(style);
+    if (!key) {
+      return;
+    }
+    const current = style[key];
+    if (typeof current !== 'number') {
+      return;
+    }
+    const next = Math.max(0, current + delta);
+    style[key] = next;
+    item.style = style;
+    await maybeSync(item as Syncable);
+  }, board);
 }

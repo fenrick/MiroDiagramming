@@ -1,9 +1,10 @@
-import React from "react";
+import React from 'react';
+
 {
-  ExcelRow
+  ExcelRow;
 }
 from;
-"../../core/utils/excel-loader";
+('../../core/utils/excel-loader');
 
 export interface ExcelDataContextValue {
   rows: ExcelRow[];
