@@ -1,0 +1,82 @@
+name: Lints
+
+on:
+  pull_request:
+    branches:
+      - main
+      - develop
+  push:
+    branches:
+      - main
+      - develop
+
+permissions: write-all
+
+env:
+  NODE_VERSION: 20
+
+jobs:
+  prettier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: fenrick.miro.client/package-lock.json
+      - run: corepack enable
+        working-directory: fenrick.miro.client
+      - run: npm ci --prefer-offline --no-audit
+        working-directory: fenrick.miro.client
+      - name: Prettier
+        run: npm run prettier:check
+        working-directory: fenrick.miro.client
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: fenrick.miro.client/package-lock.json
+      - run: corepack enable
+        working-directory: fenrick.miro.client
+      - run: npm ci --prefer-offline --no-audit
+        working-directory: fenrick.miro.client
+      - name: ESLint
+        run: npm run lint
+        working-directory: fenrick.miro.client
+  stylelint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: fenrick.miro.client/package-lock.json
+      - run: corepack enable
+        working-directory: fenrick.miro.client
+      - run: npm ci --prefer-offline --no-audit
+        working-directory: fenrick.miro.client
+      - name: Stylelint
+        run: npm run stylelint
+        working-directory: fenrick.miro.client
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: fenrick.miro.client/package-lock.json
+      - run: corepack enable
+        working-directory: fenrick.miro.client
+      - run: npm ci --prefer-offline --no-audit
+        working-directory: fenrick.miro.client
+      - name: Typecheck
+        run: npm run typecheck
+        working-directory: fenrick.miro.client
