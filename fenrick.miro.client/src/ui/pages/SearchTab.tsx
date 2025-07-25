@@ -3,46 +3,39 @@ import {
   IconArrowRight,
   IconChevronRight,
   IconPen,
-} from "@mirohq/design-system";
-import React from "react";
-{
-  SearchOptions
-}
-from;
-"../../board/search-tools";
+  Text,
+} from '@mirohq/design-system';
+import React from 'react';
+import type { SearchOptions } from '../../board/search-tools';
 import {
   Button,
   FilterDropdown,
   InputField,
   Paragraph,
   RegexSearchField,
-} from "../components";
-import { PageHelp } from "../components/PageHelp";
-import { TabPanel } from "../components/TabPanel";
+} from '../components';
+import { PageHelp } from '../components/PageHelp';
+import { TabPanel } from '../components/TabPanel';
 import {
   useDebouncedSearch,
   useNextMatch,
   useReplaceAll,
   useReplaceCurrent,
-} from "../hooks/use-search-handlers";
-{
-  TabTuple
-}
-from;
-"./tab-definitions";
+} from '../hooks/use-search-handlers';
+import type { TabTuple } from './tab-definitions';
 
 /**
  * Sidebar tab providing board wide search and replace.
  */
 export const SearchTab: React.FC = () => {
-  const [query, setQuery] = React.useState("");
-  const [replacement, setReplacement] = React.useState("");
+  const [query, setQuery] = React.useState('');
+  const [replacement, setReplacement] = React.useState('');
   const [widgetTypes, setWidgetTypes] = React.useState<string[]>([]);
-  const [tagIds, setTagIds] = React.useState("");
-  const [backgroundColor, setBackgroundColor] = React.useState("");
-  const [assignee, setAssignee] = React.useState("");
-  const [creator, setCreator] = React.useState("");
-  const [lastModifiedBy, setLastModifiedBy] = React.useState("");
+  const [tagIds, setTagIds] = React.useState('');
+  const [backgroundColor, setBackgroundColor] = React.useState('');
+  const [assignee, setAssignee] = React.useState('');
+  const [creator, setCreator] = React.useState('');
+  const [lastModifiedBy, setLastModifiedBy] = React.useState('');
   const [caseSensitive, setCaseSensitive] = React.useState(false);
   const [wholeWord, setWholeWord] = React.useState(false);
   const [regex, setRegex] = React.useState(false);
@@ -72,43 +65,42 @@ export const SearchTab: React.FC = () => {
     );
 
   const buildOptions = React.useCallback((): SearchOptions => {
-      const tags = tagIds
-        .split(",")
-        .map(t => t.trim())
-        .filter(Boolean);
-      const opts: SearchOptions = { query };
-      const add = <K extends keyof SearchOptions>(
-        cond: boolean,
-        key: K,
-        value: SearchOptions[K],
-      ): void => {
-        if (cond) {
-          opts[key] = value;
-        }
-      };
-      add(widgetTypes.length > 0, "widgetTypes", widgetTypes);
-      add(tags.length > 0, "tagIds", tags);
-      add(Boolean(backgroundColor), "backgroundColor", backgroundColor);
-      add(Boolean(assignee), "assignee", assignee);
-      add(Boolean(creator), "creator", creator);
-      add(Boolean(lastModifiedBy), "lastModifiedBy", lastModifiedBy);
-      add(caseSensitive, "caseSensitive", true);
-      add(wholeWord, "wholeWord", true);
-      add(regex, "regex", true);
-      return opts;
-    },
-    [
-      query,
-      widgetTypes,
-      tagIds,
-      backgroundColor,
-      assignee,
-      creator,
-      lastModifiedBy,
-      caseSensitive,
-      wholeWord,
-      regex,
-    ]);
+    const tags = tagIds
+      .split(',')
+      .map(t => t.trim())
+      .filter(Boolean);
+    const opts: SearchOptions = { query };
+    const add = <K extends keyof SearchOptions>(
+      cond: boolean,
+      key: K,
+      value: SearchOptions[K],
+    ): void => {
+      if (cond) {
+        opts[key] = value;
+      }
+    };
+    add(widgetTypes.length > 0, 'widgetTypes', widgetTypes);
+    add(tags.length > 0, 'tagIds', tags);
+    add(Boolean(backgroundColor), 'backgroundColor', backgroundColor);
+    add(Boolean(assignee), 'assignee', assignee);
+    add(Boolean(creator), 'creator', creator);
+    add(Boolean(lastModifiedBy), 'lastModifiedBy', lastModifiedBy);
+    add(caseSensitive, 'caseSensitive', true);
+    add(wholeWord, 'wholeWord', true);
+    add(regex, 'regex', true);
+    return opts;
+  }, [
+    query,
+    widgetTypes,
+    tagIds,
+    backgroundColor,
+    assignee,
+    creator,
+    lastModifiedBy,
+    caseSensitive,
+    wholeWord,
+    regex,
+  ]);
   const { results, currentIndex, setResults, setCurrentIndex } =
     useDebouncedSearch(query, buildOptions);
 
@@ -140,7 +132,7 @@ export const SearchTab: React.FC = () => {
 
   return (
     <TabPanel tabId='search'>
-      <PageHelp content='Find and replace text on the board'/>
+      <PageHelp content='Find and replace text on the board' />
       <Grid columns={2}>
         <Grid.Item>
           <RegexSearchField
@@ -149,14 +141,16 @@ export const SearchTab: React.FC = () => {
             onChange={v => setQuery(v)}
             regex={regex}
             onRegexToggle={setRegex}
-            placeholder='Search board text'/>
+            placeholder='Search board text'
+          />
         </Grid.Item>
         <Grid.Item>
           <InputField
             label='Replace'
             value={replacement}
             onValueChange={v => setReplacement(v)}
-            placeholder='Replacement text'/>
+            placeholder='Replacement text'
+          />
         </Grid.Item>
         <Grid.Item>
           <FilterDropdown
@@ -175,7 +169,8 @@ export const SearchTab: React.FC = () => {
             caseSensitive={caseSensitive}
             onCaseSensitiveChange={setCaseSensitive}
             wholeWord={wholeWord}
-            onWholeWordChange={setWholeWord}/>
+            onWholeWordChange={setWholeWord}
+          />
         </Grid.Item>
         <Grid.Item>
           <Paragraph data-testid='match-count'>
@@ -188,7 +183,7 @@ export const SearchTab: React.FC = () => {
               onClick={nextMatch}
               disabled={!results.length}
               variant='secondary'
-              icon={<IconChevronRight/>}
+              icon={<IconChevronRight />}
               iconPosition='start'>
               <Text>Next</Text>
             </Button>
@@ -196,14 +191,14 @@ export const SearchTab: React.FC = () => {
               onClick={replaceCurrent}
               disabled={!results.length}
               variant='secondary'
-              icon={<IconPen/>}
+              icon={<IconPen />}
               iconPosition='start'>
               <Text>Replace</Text>
             </Button>
             <Button
               onClick={replaceAll}
               variant='primary'
-              icon={<IconArrowRight/>}
+              icon={<IconArrowRight />}
               iconPosition='start'>
               <Text>Replace All</Text>
             </Button>
@@ -216,8 +211,8 @@ export const SearchTab: React.FC = () => {
 
 export const tabDef: TabTuple = [
   8,
-  "search",
-  "Search",
-  "Find and replace text on the board",
+  'search',
+  'Search',
+  'Find and replace text on the board',
   SearchTab,
 ];

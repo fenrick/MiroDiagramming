@@ -1,6 +1,6 @@
-import { DropdownMenu, IconFunnel } from "@mirohq/design-system";
-import React from "react";
-import { InputField } from "./InputField";
+import { DropdownMenu, IconButton, IconFunnel } from '@mirohq/design-system';
+import React from 'react';
+import { InputField } from './InputField';
 
 export interface FilterDropdownProps {
   widgetTypes: string[];
@@ -48,7 +48,7 @@ export function FilterDropdown({
     <DropdownMenu>
       <DropdownMenu.Trigger asChild>
         <IconButton aria-label='Filters'>
-          <IconFunnel/>
+          <IconFunnel />
         </IconButton>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
@@ -62,11 +62,11 @@ export function FilterDropdown({
           onChange={onWholeWordChange}>
           Whole word
         </DropdownMenu.SwitchItem>
-        <DropdownMenu.Separator/>
+        <DropdownMenu.Separator />
         <div className='custom-form-group-small'>
           <legend className='custom-visually-hidden'>Widget Types</legend>
           <div>
-            {["shape", "card", "sticky_note", "text"].map(t => (
+            {['shape', 'card', 'sticky_note', 'text'].map(t => (
               <DropdownMenu.CheckboxItem
                 key={t}
                 checked={widgetTypes.includes(t)}
@@ -80,27 +80,32 @@ export function FilterDropdown({
           label='Tag IDs'
           value={tagIds}
           onValueChange={onTagIdsChange}
-          placeholder='Comma separated'/>
+          placeholder='Comma separated'
+        />
         <InputField
           label='Background colour'
           value={backgroundColor}
           onValueChange={onBackgroundColorChange}
-          placeholder='CSS colour'/>
+          placeholder='CSS colour'
+        />
         <InputField
           label='Assignee ID'
           value={assignee}
           onValueChange={onAssigneeChange}
-          placeholder='User ID'/>
+          placeholder='User ID'
+        />
         <InputField
           label='Creator ID'
           value={creator}
           onValueChange={onCreatorChange}
-          placeholder='User ID'/>
+          placeholder='User ID'
+        />
         <InputField
           label='Last modified by'
           value={lastModifiedBy}
           onValueChange={onLastModifiedByChange}
-          placeholder='User ID'/>
+          placeholder='User ID'
+        />
       </DropdownMenu.Content>
     </DropdownMenu>
   );

@@ -1,5 +1,5 @@
-import { HierNode } from "../layout/nested-layout";
-import { EdgeData, GraphData, NodeData } from "./graph-service";
+import { HierNode } from '../layout/nested-layout';
+import { EdgeData, GraphData, NodeData } from './graph-service';
 
 /**
  * Transform a flat edge list into a nested hierarchy structure.
@@ -12,7 +12,7 @@ export function edgesToHierarchy(graph: GraphData): HierNode[] {
   const children: Record<string, string[]> = {};
   const childSet = new Set<string>();
   for (const edge of graph.edges) {
-    children[edge.from] ?? = [];
+    children[edge.from] ??= [];
     children[edge.from].push(edge.to);
     childSet.add(edge.to);
   }

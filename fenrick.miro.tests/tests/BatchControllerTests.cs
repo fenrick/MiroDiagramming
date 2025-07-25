@@ -27,7 +27,7 @@ public class BatchControllerTests
             new MiroResponse(200, "2")
         ]);
         var client =
-            new StubClient(req => Task.FromResult(responses.Dequeue()));
+            new StubClient((MiroRequest req) => Task.FromResult(responses.Dequeue()));
         var controller = new BatchController(client);
 
         var result = await controller.ForwardAsync(requests) as OkObjectResult;
@@ -44,7 +44,7 @@ public class BatchControllerTests
     public async Task ForwardAsyncWithNoRequestsReturnsEmptyList()
     {
         var controller = new BatchController(
-            new StubClient(_ => Task.FromResult(new MiroResponse(200, string.Empty))));
+            new StubClient((MiroRequest _) => Task.FromResult(new MiroResponse(200, string.Empty))));
 
         var result = await controller.ForwardAsync([]) as OkObjectResult;
 

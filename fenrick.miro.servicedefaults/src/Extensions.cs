@@ -2,10 +2,13 @@ namespace Microsoft.Extensions.Hosting;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry;
+using OpenTelemetry.Instrumentation.AspNetCore;
+using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 
@@ -41,7 +44,8 @@ public static class Extensions
 
         builder.Services.AddServiceDiscovery();
 
-        builder.Services.ConfigureHttpClientDefaults(http =>
+        builder.Services.ConfigureHttpClientDefaults((
+            IHttpClientBuilder http) =>
         {
             // Turn on resilience by default
             http.AddStandardResilienceHandler();
@@ -57,22 +61,24 @@ public static class Extensions
         this TBuilder builder)
         where TBuilder : IHostApplicationBuilder
     {
-        builder.Logging.AddOpenTelemetry(logging =>
+        builder.Logging.AddOpenTelemetry((OpenTelemetryLoggerOptions logging) =>
         {
             logging.IncludeFormattedMessage = true;
             logging.IncludeScopes = true;
         });
 
         builder.Services.AddOpenTelemetry()
-            .WithMetrics(metrics => metrics
+            .WithMetrics((MeterProviderBuilder metrics) => metrics
                 .AddAspNetCoreInstrumentation().AddHttpClientInstrumentation()
                 .AddRuntimeInstrumentation())
-            .WithTracing(tracing => tracing
+            .WithTracing((TracerProviderBuilder tracing) => tracing
                 .AddSource(builder.Environment.ApplicationName)
-                .AddAspNetCoreInstrumentation(tracing =>
+                .AddAspNetCoreInstrumentation((
+                        AspNetCoreTraceInstrumentationOptions tracing) =>
 
                     // Exclude health check requests from tracing
-                    tracing.Filter = context => !context.Request.Path.StartsWithSegments(
+                    tracing.Filter = (HttpContext context) =>
+                        !context.Request.Path.StartsWithSegments(
                             HealthEndpointPath)
                         && !context.Request.Path.StartsWithSegments(
                             AlivenessEndpointPath))
@@ -100,7 +106,8 @@ public static class Extensions
                 AlivenessEndpointPath,
                 new HealthCheckOptions
                 {
-                    Predicate = r => r.Tags.Contains("live")
+                    Predicate = (HealthCheckRegistration r) =>
+                        r.Tags.Contains("live")
                 });
         }
 

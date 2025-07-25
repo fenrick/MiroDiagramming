@@ -21,9 +21,8 @@ export interface ShapeData {
 export class ShapeClient {
   public constructor(
     private readonly boardId: string,
-    private readonly baseUrl = "/api/boards",
-  ) {
-  }
+    private readonly baseUrl = '/api/boards',
+  ) {}
 
   private get url(): string {
     return `${this.baseUrl}/${this.boardId}/shapes`;
@@ -36,35 +35,33 @@ export class ShapeClient {
 
   /** Create multiple shapes in one request. */
   public async createShapes(shapes: ShapeData[]): Promise<void> {
-    if (typeof fetch !== "function") {
+    if (typeof fetch !== 'function') {
       return;
     }
-    await fetch(this.url,
-      {
-        method: "POST",
-        headers: { 'Content-Type': "application/json" },
-        body: JSON.stringify(shapes),
-      });
+    await fetch(this.url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(shapes),
+    });
   }
 
   /** Update an existing shape. */
   public async updateShape(id: string, shape: ShapeData): Promise<void> {
-    if (typeof fetch !== "function") {
+    if (typeof fetch !== 'function') {
       return;
     }
-    await fetch(`${this.url}/${id}`,
-      {
-        method: "PUT",
-        headers: { 'Content-Type': "application/json" },
-        body: JSON.stringify(shape),
-      });
+    await fetch(`${this.url}/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(shape),
+    });
   }
 
   /** Delete a shape widget from the board. */
   public async deleteShape(id: string): Promise<void> {
-    if (typeof fetch !== "function") {
+    if (typeof fetch !== 'function') {
       return;
     }
-    await fetch(`${this.url}/${id}`, { method: "DELETE" });
+    await fetch(`${this.url}/${id}`, { method: 'DELETE' });
   }
 }

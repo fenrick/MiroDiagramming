@@ -13,7 +13,7 @@ export interface AuthDetails {
 
 /** HTTP client for sending Miro auth details to the backend. */
 export class AuthClient {
-  public constructor(private readonly url = "/api/users") {}
+  public constructor(private readonly url = '/api/users') {}
 
   /**
    * Send authentication info to the server.
@@ -21,15 +21,14 @@ export class AuthClient {
    * @param details - User id, name and OAuth token.
    */
   public async register(details: AuthDetails): Promise<void> {
-    if (typeof fetch !== "function") {
+    if (typeof fetch !== 'function') {
       return;
     }
-    await fetch(this.url,
-      {
-        method: "POST",
-        headers: { 'Content-Type': "application/json" },
-        body: JSON.stringify(details),
-      });
+    await fetch(this.url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(details),
+    });
   }
 }
 
@@ -41,8 +40,8 @@ export class AuthClient {
 export async function registerCurrentUser(
   client = new AuthClient(),
 ): Promise<void> {
-  if (typeof miro === "undefined" || !miro.board) {
-    throw new Error("Miro SDK not available");
+  if (typeof miro === 'undefined' || !miro.board) {
+    throw new Error('Miro SDK not available');
   }
   const token = await miro.board.getIdToken();
   const user = await miro.board.getUserInfo();

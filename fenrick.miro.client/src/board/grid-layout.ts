@@ -59,7 +59,7 @@ export function calculateGridPositions(
   opts: {
     cols: number;
     padding: number;
-    sortOrientation?: "horizontal" | "vertical";
+    sortOrientation?: 'horizontal' | 'vertical';
   },
   count: number,
   cellWidth: number,
@@ -68,7 +68,7 @@ export function calculateGridPositions(
   const config: GridConfig = {
     cols: opts.cols,
     padding: opts.padding,
-    vertical: opts.sortOrientation === "vertical",
+    vertical: opts.sortOrientation === 'vertical',
   };
   return calculateGrid(count, config, cellWidth, cellHeight);
 }

@@ -1,30 +1,24 @@
-React;
-from;
-"react";
+import type React from 'react';
 
 export type TabId =
-  | "diagrams"
-  | "tools"
-  | "size"
-  | "style"
-  | "arrange"
-  | "frames"
-  | "excel"
-  | "search"
-  | "help"
-  | "dummy";
+  | 'diagrams'
+  | 'tools'
+  | 'size'
+  | 'style'
+  | 'arrange'
+  | 'frames'
+  | 'excel'
+  | 'search'
+  | 'help'
+  | 'dummy';
 
 export type TabTuple = readonly [
-  order:
-number,
-  id:;
-TabId,
-  label:;
-string,
-  instructions:;
-string,
-  Component:;
-React.FC, ;];
+  order: number,
+  id: TabId,
+  label: string,
+  instructions: string,
+  Component: React.FC,
+];
 
 export interface CommandDef {
   /** Unique identifier used for keyboard shortcuts. */
@@ -37,5 +31,5 @@ export interface CommandDef {
 
 /** List of global commands available in the app. */
 export const COMMANDS: CommandDef[] = [
-  { id: "edit-metadata", label: "Edit Metadata", shortcut: "Ctrl+Alt+M" },
+  { id: 'edit-metadata', label: 'Edit Metadata', shortcut: 'Ctrl+Alt+M' },
 ];

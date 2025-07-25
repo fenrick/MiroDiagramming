@@ -1,14 +1,10 @@
-{
-  Meta, StoryObj
-}
-from;
-"@storybook/react";
-import { App } from "../app/App";
+import type { Meta, StoryObj } from '@storybook/react';
+import { App } from '../app/App';
 
 const meta: Meta<typeof App> = {
-  title: "Pages/App",
+  title: 'Pages/App',
   component: App,
-  parameters: { layout: "fullscreen" },
+  parameters: { layout: 'fullscreen' },
 };
 export default meta;
 

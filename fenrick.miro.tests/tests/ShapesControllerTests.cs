@@ -18,7 +18,7 @@ public class ShapesControllerTests
     public async Task CreateAsyncHandlesBulk()
     {
         var shapes = Enumerable.Range(0, 25)
-            .Select(i => new ShapeData("r", i, 0, 1, 1, null, null, null))
+            .Select((int i) => new ShapeData("r", i, 0, 1, 1, null, null, null))
             .ToArray();
         var controller = new ShapesController(
             new StubClient(),

@@ -1,11 +1,11 @@
 export interface BoardUILike {
   on(
-    event: "selection:update",
+    event: 'selection:update',
     handler: (ev: { items: unknown[] }) => void,
   ): void;
 
   off?(
-    event: "selection:update",
+    event: 'selection:update',
     handler: (ev: { items: unknown[] }) => void,
   ): void;
 }

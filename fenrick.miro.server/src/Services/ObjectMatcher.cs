@@ -19,7 +19,7 @@ public static class ObjectMatcher
     public static ShapeData? FindShapeByLabel(
         IEnumerable<ShapeData> shapes,
         string label) =>
-        shapes.FirstOrDefault(s => string.Equals(
+        shapes.FirstOrDefault((ShapeData s) => string.Equals(
             s.Text,
             label,
             StringComparison.OrdinalIgnoreCase));

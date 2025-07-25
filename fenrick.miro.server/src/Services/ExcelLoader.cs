@@ -24,7 +24,7 @@ public class ExcelLoader : IDisposable
     ///     List worksheet names from the loaded workbook.
     /// </summary>
     public IReadOnlyList<string> ListSheets() =>
-        this.workbook?.Worksheets.Select(ws => ws.Name).ToList()
+        this.workbook?.Worksheets.Select((IXLWorksheet ws) => ws.Name).ToList()
         ?? [];
 
     /// <summary>
@@ -60,7 +60,7 @@ public class ExcelLoader : IDisposable
         var ws = this.workbook.Worksheet(name)
                  ?? throw new ArgumentException($"Unknown sheet: {name}");
 
-        var headers = ws.Row(1).Cells().Select(c => c.GetString())
+        var headers = ws.Row(1).Cells().Select((IXLCell c) => c.GetString())
             .ToList();
         var rows = new List<Dictionary<string, string>>();
         foreach (var row in ws.RowsUsed().Skip(1))

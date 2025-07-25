@@ -5,8 +5,8 @@
  * browser to the Microsoft login page when no token is available.
  */
 export class GraphAuth {
-  private static readonly KEY = "graph.token";
-  private static readonly STATE = "graph.state";
+  private static readonly KEY = 'graph.token';
+  private static readonly STATE = 'graph.state';
 
   /**
    * Generate and persist a cryptographically secure state token used for OAuth
@@ -46,14 +46,13 @@ export class GraphAuth {
   public login(clientId: string, scopes: string[], redirectUri: string): void {
     const params = new URLSearchParams({
       client_id: clientId,
-      response_type: "token",
+      response_type: 'token',
       redirect_uri: redirectUri,
-      scope: scopes.join(" "),
+      scope: scopes.join(' '),
       state: this.generateState(),
     });
     window.location.assign(
-      `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?${params
-      .toString()}`,
+      `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?${params.toString()}`,
     );
   }
 
@@ -63,17 +62,17 @@ export class GraphAuth {
    * token is discarded to mitigate CSRF attacks.
    */
   public handleRedirect(): void {
-    if (!window.location.hash.includes("access_token")) {
+    if (!window.location.hash.includes('access_token')) {
       return;
     }
     const data = new URLSearchParams(window.location.hash.slice(1));
-    const token = data.get("access_token");
-    const state = data.get("state");
+    const token = data.get('access_token');
+    const state = data.get('state');
     const stored = sessionStorage.getItem(GraphAuth.STATE);
     if (token && state && stored === state) {
       this.setToken(token);
       sessionStorage.removeItem(GraphAuth.STATE);
-      window.history.replaceState(null, "", window.location.pathname);
+      window.history.replaceState(null, '', window.location.pathname);
     }
   }
 }

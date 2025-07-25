@@ -32,18 +32,10 @@ const LEAF_HEIGHT = 30;
 const DEFAULT_PADDING = 20;
 const DEFAULT_TOP_SPACING = 50;
 
-{
-  ElkNode
-}
-from;
-"elkjs/lib/elk-api";
-import { loadElk } from "./elk-loader";
-{
-  LayoutNode
-}
-from;
-"./elk-preprocessor";
-import { prepareForElk } from "./elk-preprocessor";
+import type { ElkNode } from 'elkjs/lib/elk-api';
+import { loadElk } from './elk-loader';
+import type { LayoutNode } from './elk-preprocessor';
+import { prepareForElk } from './elk-preprocessor';
 
 /**
  * Layout hierarchical data using the ELK engine and compute container sizes.
@@ -55,11 +47,11 @@ export class NestedLayouter {
     offsetY: number,
   ): PositionedNode | null {
     if (
-      node.id !== "root" &&
-        typeof node.x === "number" &&
-        typeof node.y === "number" &&
-        typeof node.width === "number" &&
-        typeof node.height === "number"
+      node.id !== 'root' &&
+      typeof node.x === 'number' &&
+      typeof node.y === 'number' &&
+      typeof node.width === 'number' &&
+      typeof node.height === 'number'
     ) {
       return {
         id: node.id,
@@ -82,9 +74,9 @@ export class NestedLayouter {
     const padding = opts.padding ?? DEFAULT_PADDING;
     const topSpacing = opts.topSpacing ?? DEFAULT_TOP_SPACING;
     const elkRoot: LayoutNode = {
-      id: "root",
+      id: 'root',
       layoutOptions: {
-        'elk.algorithm': "org.eclipse.elk.rectpacking",
+        'elk.algorithm': 'org.eclipse.elk.rectpacking',
         'elk.spacing.nodeNode': String(padding),
       },
       children: roots.map(r => this.buildElkNode(r, opts.sortKey, padding)),
@@ -125,9 +117,9 @@ export class NestedLayouter {
     );
     elk.children = sorted.map(c => this.buildElkNode(c, sortKey, padding));
     elk.layoutOptions = {
-      'elk.algorithm': "org.eclipse.elk.rectpacking",
+      'elk.algorithm': 'org.eclipse.elk.rectpacking',
       'elk.spacing.nodeNode': String(padding),
-      'elk.direction': "RIGHT",
+      'elk.direction': 'RIGHT',
     };
     return elk;
   }
@@ -138,8 +130,8 @@ export class NestedLayouter {
     offsetX: number,
     offsetY: number,
   ): void {
-    const childX = (typeof node.x === "number" ? node.x : 0) + offsetX;
-    const childY = (typeof node.y === "number" ? node.y : 0) + offsetY;
+    const childX = (typeof node.x === 'number' ? node.x : 0) + offsetX;
+    const childY = (typeof node.y === 'number' ? node.y : 0) + offsetY;
     for (const child of node.children ?? []) {
       this.collectPositions(child, map, childX, childY);
     }
@@ -155,7 +147,7 @@ export class NestedLayouter {
     // Skip spacer nodes that only influence layout sizing
     const isInvisible =
       (node as LayoutNode).properties?.invisible === true ||
-        String(node.id).startsWith("spacer_");
+      String(node.id).startsWith('spacer_');
     if (pos && !isInvisible) {
       map[node.id] = pos;
     }

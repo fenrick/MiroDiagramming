@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Reflection;
 using Fenrick.Miro.Server.Data;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Xunit;

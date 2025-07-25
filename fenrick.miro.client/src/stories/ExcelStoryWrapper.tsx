@@ -1,15 +1,7 @@
-{
-  JSX
-}
-from;
-"react";
-import React from "react";
-{
-  ExcelRow
-}
-from;
-"../core/utils/excel-loader";
-import { ExcelDataProvider } from "../ui/hooks/excel-data-context";
+import type { JSX } from 'react';
+import React from 'react';
+import type { ExcelRow } from '../core/utils/excel-loader';
+import { ExcelDataProvider } from '../ui/hooks/excel-data-context';
 
 interface BoardItem {
   getMetadata: () => Promise<{ rowId: string }>;
@@ -43,23 +35,22 @@ export function ExcelStoryWrapper({
 }: ExcelStoryWrapperProps): JSX.Element {
   const memoRows = React.useMemo(() => [...rows], [rows]);
   React.useEffect(() => {
-      const id = memoRows[0]?.ID;
-      const rowId =
-        typeof id === "string" || typeof id === "number" ? String(id) : "1";
-      (globalThis as unknown as { miro?: { board?: StubBoard } }).miro = {
-        board: {
-          getSelection: async () => [{ getMetadata: async () => ({ rowId }) }],
-          ui: { on: () => {}, off: () => {} },
-        },
-      };
-    },
-    [memoRows]);
+    const id = memoRows[0]?.ID;
+    const rowId =
+      typeof id === 'string' || typeof id === 'number' ? String(id) : '1';
+    (globalThis as unknown as { miro?: { board?: StubBoard } }).miro = {
+      board: {
+        getSelection: async () => [{ getMetadata: async () => ({ rowId }) }],
+        ui: { on: () => {}, off: () => {} },
+      },
+    };
+  }, [memoRows]);
   return (
     <ExcelDataProvider
       value={{
         rows: memoRows,
-        idColumn: "ID",
-        labelColumn: "Name",
+        idColumn: 'ID',
+        labelColumn: 'Name',
         templateColumn: undefined,
         setRows: () => {},
         setIdColumn: () => {},

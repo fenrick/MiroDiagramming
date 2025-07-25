@@ -1,5 +1,5 @@
-import { marked } from "marked";
-import React from "react";
+import { marked } from 'marked';
+import React from 'react';
 
 export interface MarkdownProps {
   /** Markdown source to convert to HTML. */
@@ -20,6 +20,7 @@ export function Markdown({
   return (
     <div
       className={className}
-      dangerouslySetInnerHTML={{ __html: html }}/>
+      dangerouslySetInnerHTML={{ __html: html }}
+    />
   );
 }

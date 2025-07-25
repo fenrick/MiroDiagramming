@@ -2,24 +2,21 @@ import {
   Grid,
   IconChevronRightDouble,
   IconGrid,
-} from "@mirohq/design-system";
-import React from "react";
-import { applyGridLayout, GridOptions } from "../../board/grid-tools";
-import { applySpacingLayout, SpacingOptions } from "../../board/spacing-tools";
+  Text,
+} from '@mirohq/design-system';
+import React from 'react';
+import { applyGridLayout, GridOptions } from '../../board/grid-tools';
+import { applySpacingLayout, SpacingOptions } from '../../board/spacing-tools';
 import {
   Button,
   Checkbox,
   InputField,
   SelectField,
   SelectOption,
-} from "../components";
-import { PageHelp } from "../components/PageHelp";
-import { TabPanel } from "../components/TabPanel";
-{
-  TabTuple
-}
-from;
-"./tab-definitions";
+} from '../components';
+import { PageHelp } from '../components/PageHelp';
+import { TabPanel } from '../components/TabPanel';
+import type { TabTuple } from './tab-definitions';
 
 /**
  * Combines grid and spacing tools into a single sidebar tab.
@@ -30,32 +27,32 @@ export const ArrangeTab: React.FC = () => {
     padding: 20,
     groupResult: false,
     sortByName: false,
-    sortOrientation: "horizontal",
+    sortOrientation: 'horizontal',
   });
   const [spacing, setSpacing] = React.useState<SpacingOptions>({
-    axis: "x",
+    axis: 'x',
     spacing: 20,
-    mode: "move",
+    mode: 'move',
   });
-  const [frameTitle, setFrameTitle] = React.useState("");
+  const [frameTitle, setFrameTitle] = React.useState('');
 
   const updateNumber =
-    (key: "cols" | "padding") =>
-      (value: string): void =>
+    (key: 'cols' | 'padding') =>
+    (value: string): void =>
       setGrid({ ...grid, [key]: Number(value) });
-  const toggle = (key: "groupResult" | "sortByName") => (): void =>
+  const toggle = (key: 'groupResult' | 'sortByName') => (): void =>
     setGrid({ ...grid, [key]: !grid[key] });
   const setOrientation = (value: string): void =>
-    setGrid({ ...grid, sortOrientation: value as "horizontal" | "vertical" });
+    setGrid({ ...grid, sortOrientation: value as 'horizontal' | 'vertical' });
   const updateAxis = (axis: string): void => {
-    if (axis === "x" || axis === "y") {
+    if (axis === 'x' || axis === 'y') {
       setSpacing({ ...spacing, axis });
     }
   };
   const updateSpacing = (value: string): void =>
     setSpacing({ ...spacing, spacing: Number(value) });
   const updateMode = (mode: string): void => {
-    if (mode === "move" || mode === "grow") {
+    if (mode === 'move' || mode === 'grow') {
       setSpacing({ ...spacing, mode });
     }
   };
@@ -65,32 +62,34 @@ export const ArrangeTab: React.FC = () => {
 
   return (
     <TabPanel tabId='arrange'>
-      <PageHelp content='Grid and spacing tools'/>
+      <PageHelp content='Grid and spacing tools' />
       <Grid columns={2}>
         <Grid.Item>
           <InputField
             label='Columns'
             type='number'
             value={String(grid.cols)}
-            onValueChange={v => updateNumber("cols")(v)}
-            placeholder='Columns'/>
+            onValueChange={v => updateNumber('cols')(v)}
+            placeholder='Columns'
+          />
         </Grid.Item>
         <Grid.Item>
           <InputField
             label='Gap'
             type='number'
             value={String(grid.padding)}
-            onValueChange={v => updateNumber("padding")(v)}
-            placeholder='Gap'/>
+            onValueChange={v => updateNumber('padding')(v)}
+            placeholder='Gap'
+          />
         </Grid.Item>
         <Grid.Item>
           <Checkbox
             label='Sort by name'
             value={Boolean(grid.sortByName)}
-            onChange={toggle("sortByName")}/>
+            onChange={toggle('sortByName')}
+          />
         </Grid.Item>
-        {grid.sortByName &&
-        (
+        {grid.sortByName && (
           <Grid.Item>
             <SelectField
               label='Order'
@@ -105,16 +104,17 @@ export const ArrangeTab: React.FC = () => {
           <Checkbox
             label='Group items into Frame'
             value={Boolean(grid.groupResult)}
-            onChange={toggle("groupResult")}/>
+            onChange={toggle('groupResult')}
+          />
         </Grid.Item>
-        {grid.groupResult &&
-        (
+        {grid.groupResult && (
           <Grid.Item>
             <InputField
               label='Frame Title'
               value={frameTitle}
               onValueChange={v => setFrameTitle(v)}
-              placeholder='Optional'/>
+              placeholder='Optional'
+            />
           </Grid.Item>
         )}
         <Grid.Item>
@@ -123,7 +123,7 @@ export const ArrangeTab: React.FC = () => {
               onClick={applyGrid}
               variant='primary'
               iconPosition='start'
-              icon={<IconGrid/>}>
+              icon={<IconGrid />}>
               <Text>Arrange Grid</Text>
             </Button>
           </div>
@@ -140,7 +140,7 @@ export const ArrangeTab: React.FC = () => {
             </SelectField>
             <SelectField
               label='Mode'
-              value={spacing.mode ?? "move"}
+              value={spacing.mode ?? 'move'}
               onChange={updateMode}>
               <SelectOption value='move'>Move</SelectOption>
               <SelectOption value='grow'>Expand</SelectOption>
@@ -150,13 +150,14 @@ export const ArrangeTab: React.FC = () => {
               type='number'
               value={String(spacing.spacing)}
               onValueChange={v => updateSpacing(v)}
-              placeholder='Distance'/>
+              placeholder='Distance'
+            />
             <div className='buttons'>
               <Button
                 onClick={applySpacing}
                 variant='primary'
                 iconPosition='start'
-                icon={<IconChevronRightDouble/>}>
+                icon={<IconChevronRightDouble />}>
                 <Text>Distribute</Text>
               </Button>
             </div>
@@ -169,8 +170,8 @@ export const ArrangeTab: React.FC = () => {
 
 export const tabDef: TabTuple = [
   4,
-  "arrange",
-  "Arrange",
-  "Grid and spacing tools",
+  'arrange',
+  'Arrange',
+  'Grid and spacing tools',
   ArrangeTab,
 ];

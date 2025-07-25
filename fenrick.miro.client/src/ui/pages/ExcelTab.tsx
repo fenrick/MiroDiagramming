@@ -1,13 +1,13 @@
-import { IconPlus } from "@mirohq/design-system";
-import React from "react";
-import { templateManager } from "../../board/templates";
+import { IconPlus, Text } from '@mirohq/design-system';
+import React from 'react';
+import { templateManager } from '../../board/templates';
 import {
   excelLoader,
   ExcelLoader,
   ExcelRow,
   graphExcelLoader,
   GraphExcelLoader,
-} from "../../core/utils/excel-loader";
+} from '../../core/utils/excel-loader';
 import {
   Button,
   Checkbox,
@@ -15,28 +15,23 @@ import {
   Paragraph,
   SelectField,
   SelectOption,
-} from "../components";
-import { PageHelp } from "../components/PageHelp";
-import { RowInspector } from "../components/RowInspector";
+} from '../components';
+import { PageHelp } from '../components/PageHelp';
+import { RowInspector } from '../components/RowInspector';
 
 // prettier-ignore
-type LoaderStateDispatch =
-  React.Dispatch<React.SetStateAction<ExcelLoader | GraphExcelLoader>>;
-import { TabPanel } from "../components/TabPanel";
-import { useExcelData } from "../hooks/excel-data-context";
-import { showError } from "../hooks/notifications";
+type LoaderStateDispatch = React.Dispatch<React.SetStateAction<ExcelLoader | GraphExcelLoader>>;
+import { TabPanel } from '../components/TabPanel';
+import { useExcelData } from '../hooks/excel-data-context';
+import { showError } from '../hooks/notifications';
 import {
   fetchRemoteWorkbook,
   handleLocalDrop,
   useExcelCreate,
   useExcelDrop,
-} from "../hooks/use-excel-handlers";
-import { useExcelSync } from "../hooks/use-excel-sync";
-{
-  TabTuple
-}
-from;
-"./tab-definitions";
+} from '../hooks/use-excel-handlers';
+import { useExcelSync } from '../hooks/use-excel-sync';
+import type { TabTuple } from './tab-definitions';
 
 /**
  * Remote workbook loader with error handling.
@@ -53,7 +48,7 @@ async function handleRemote(
     await fetchRemoteWorkbook(remote);
     setLoader(graphExcelLoader);
     setFile(null);
-    setSource("");
+    setSource('');
     setRows([]);
     setSelected(new Set());
   } catch (e) {
@@ -68,9 +63,9 @@ function loadRowsFromSource(
   setSelected: React.Dispatch<React.SetStateAction<Set<number>>>,
 ): void {
   try {
-    if (source.startsWith("sheet:")) {
+    if (source.startsWith('sheet:')) {
       setRows(loader.loadSheet(source.slice(6)));
-    } else if (source.startsWith("table:")) {
+    } else if (source.startsWith('table:')) {
       setRows(loader.loadNamedTable(source.slice(6)));
     }
     setSelected(new Set());
@@ -97,12 +92,11 @@ function useExcelDataSync(
   templateColumn: string,
 ): void {
   React.useEffect(() => {
-      data?.setRows(rows);
-      data?.setIdColumn(idColumn);
-      data?.setLabelColumn(labelColumn);
-      data?.setTemplateColumn(templateColumn);
-    },
-    [rows, idColumn, labelColumn, templateColumn, data]);
+    data?.setRows(rows);
+    data?.setIdColumn(idColumn);
+    data?.setLabelColumn(labelColumn);
+    data?.setTemplateColumn(templateColumn);
+  }, [rows, idColumn, labelColumn, templateColumn, data]);
 }
 
 function useDropHandler(
@@ -130,7 +124,7 @@ async function handleDrop(
     const f = files[0];
     setLoader(excelLoader);
     setFile(f);
-    setSource("");
+    setSource('');
     setRows([]);
     setSelected(new Set());
   } catch (e) {
@@ -141,7 +135,7 @@ async function handleDrop(
 /** Sidebar tab for importing nodes from Excel files. */
 export const ExcelTab: React.FC = () => {
   const state = useExcelTabState();
-  return <ExcelTabView {...state}/>;
+  return <ExcelTabView {...state} />;
 };
 
 interface ExcelTabState {
@@ -155,7 +149,7 @@ interface ExcelTabState {
   templateColumn: string;
   template: string;
   loader: ExcelLoader | GraphExcelLoader;
-  dropzone: ReturnType<typeof useExcelDrop>["dropzone"];
+  dropzone: ReturnType<typeof useExcelDrop>['dropzone'];
   style: React.CSSProperties;
   columns: string[];
   fetchRemote: () => Promise<void>;
@@ -175,16 +169,16 @@ interface ExcelTabState {
 function useExcelTabData() {
   const data = useExcelData();
   const [file, setFile] = React.useState<File | null>(null);
-  const [remote, setRemote] = React.useState("");
-  const [source, setSource] = React.useState("");
+  const [remote, setRemote] = React.useState('');
+  const [source, setSource] = React.useState('');
   const [rows, setRows] = React.useState<ExcelRow[]>(data?.rows ?? []);
   const [selected, setSelected] = React.useState(new Set<number>());
-  const [idColumn, setIdColumn] = React.useState(data?.idColumn ?? "");
-  const [labelColumn, setLabelColumn] = React.useState(data?.labelColumn ?? "");
+  const [idColumn, setIdColumn] = React.useState(data?.idColumn ?? '');
+  const [labelColumn, setLabelColumn] = React.useState(data?.labelColumn ?? '');
   const [templateColumn, setTemplateColumn] = React.useState(
-    data?.templateColumn ?? "",
+    data?.templateColumn ?? '',
   );
-  const [template, setTemplate] = React.useState("Motivation");
+  const [template, setTemplate] = React.useState('Motivation');
   const [loader, setLoader] = React.useState<ExcelLoader | GraphExcelLoader>(
     excelLoader,
   );
@@ -238,7 +232,7 @@ function useExcelTabHandlers(state: ReturnType<typeof useExcelTabData>) {
 
   const fetchRemote = React.useCallback(
     (): Promise<void> =>
-    handleRemote(remote, setLoader, setFile, setSource, setRows, setSelected),
+      handleRemote(remote, setLoader, setFile, setSource, setRows, setSelected),
     [remote],
   );
 
@@ -337,7 +331,7 @@ function ExcelTabView({
 }): React.JSX.Element {
   return (
     <TabPanel tabId='excel'>
-      <PageHelp content='Import nodes from Excel workbooks'/>
+      <PageHelp content='Import nodes from Excel workbooks' />
       <div
         {...dropzone.getRootProps({ style })}
         aria-label='Excel drop area'>
@@ -351,7 +345,8 @@ function ExcelTabView({
               label='Excel file'
               type='file'
               data-testid='file-input'
-              {...(fileProps as Record<string, unknown>)}/>
+              {...(fileProps as Record<string, unknown>)}
+            />
           );
         })()}
       </div>
@@ -359,103 +354,102 @@ function ExcelTabView({
         label='OneDrive/SharePoint file'
         value={remote}
         onValueChange={v => setRemote(v)}
-        aria-label='graph file'/>
+        aria-label='graph file'
+      />
       <Button
         onClick={fetchRemote}
         variant='secondary'>
         Fetch File
       </Button>
-      {loader.listSheets().length > 0 &&
-      (
+      {loader.listSheets().length > 0 && (
         <>
-<SelectField
-  label='Data source'
-  value={source}
-  onChange={setSource}
-  aria-label='Data source'>
-  <SelectOption value=''>Select…</SelectOption>
-  {loader.listSheets().map(s => (
+          <SelectField
+            label='Data source'
+            value={source}
+            onChange={setSource}
+            aria-label='Data source'>
+            <SelectOption value=''>Select…</SelectOption>
+            {loader.listSheets().map(s => (
               <SelectOption
                 key={`s-${s}`}
                 value={`sheet:${s}`}>
                 Sheet: {s}
               </SelectOption>
             ))}
-  {loader.listNamedTables().map(t => (
+            {loader.listNamedTables().map(t => (
               <SelectOption
                 key={`t-${t}`}
                 value={`table:${t}`}>
                 Table: {t}
               </SelectOption>
             ))}
-</SelectField>
-<Button
-  onClick={loadRows}
-  variant='secondary'>
-  Load Rows
-</Button>
-</>
+          </SelectField>
+          <Button
+            onClick={loadRows}
+            variant='secondary'>
+            Load Rows
+          </Button>
+        </>
       )}
-      {rows.length > 0 &&
-      (
+      {rows.length > 0 && (
         <>
-<SelectField
-  label='Template'
-  value={template}
-  onChange={setTemplate}
-  aria-label='Template'>
-  {Object.keys(templateManager.templates).map(tpl => (
+          <SelectField
+            label='Template'
+            value={template}
+            onChange={setTemplate}
+            aria-label='Template'>
+            {Object.keys(templateManager.templates).map(tpl => (
               <SelectOption
                 key={tpl}
                 value={tpl}>
                 {tpl}
               </SelectOption>
             ))}
-</SelectField>
-<SelectField
-  label='Label column'
-  value={labelColumn}
-  onChange={setLabelColumn}
-  aria-label='Label column'>
-  <SelectOption value=''>None</SelectOption>
-  {columns.map(c => (
+          </SelectField>
+          <SelectField
+            label='Label column'
+            value={labelColumn}
+            onChange={setLabelColumn}
+            aria-label='Label column'>
+            <SelectOption value=''>None</SelectOption>
+            {columns.map(c => (
               <SelectOption
                 key={`l-${c}`}
                 value={c}>
                 {c}
               </SelectOption>
             ))}
-</SelectField>
-<SelectField
-  label='Template column'
-  value={templateColumn}
-  onChange={setTemplateColumn}
-  aria-label='Template column'>
-  <SelectOption value=''>None</SelectOption>
-  {columns.map(c => (
+          </SelectField>
+          <SelectField
+            label='Template column'
+            value={templateColumn}
+            onChange={setTemplateColumn}
+            aria-label='Template column'>
+            <SelectOption value=''>None</SelectOption>
+            {columns.map(c => (
               <SelectOption
                 key={`tcol-${c}`}
                 value={c}>
                 {c}
               </SelectOption>
             ))}
-</SelectField>
-<SelectField
-  label='ID column'
-  value={idColumn}
-  onChange={setIdColumn}
-  aria-label='ID column'>
-  <SelectOption value=''>None</SelectOption>
-  {columns.map(c => (
+          </SelectField>
+          <SelectField
+            label='ID column'
+            value={idColumn}
+            onChange={setIdColumn}
+            aria-label='ID column'>
+            <SelectOption value=''>None</SelectOption>
+            {columns.map(c => (
               <SelectOption
                 key={`i-${c}`}
                 value={c}>
                 {c}
               </SelectOption>
             ))}
-</SelectField>
-<ul style={{ maxHeight: 160, overflowY: 'auto' }}>
-  {rows.map((r, i) => (
+          </SelectField>
+          <ul style={{ maxHeight: 160, overflowY: 'auto' }}>
+            {rows.map((r, i) => (
               <li key={idColumn ? String(r[idColumn]) : JSON.stringify(r)}>
                 <Checkbox
                   label={`Row ${i + 1}`}
@@ -465,30 +459,31 @@ function ExcelTabView({
                 <Paragraph>{JSON.stringify(r)}</Paragraph>
               </li>
             ))}
-</ul>
-<div className='buttons'>
-  <Button
-    onClick={handleCreate}
-    variant='primary'
-    iconPosition='start'
-    icon={<IconPlus />}>
-    <Text>Create Nodes</Text>
-  </Button>
-</div>
-</>
+          </ul>
+          <div className='buttons'>
+            <Button
+              onClick={handleCreate}
+              variant='primary'
+              iconPosition='start'
+              icon={<IconPlus />}>
+              <Text>Create Nodes</Text>
+            </Button>
+          </div>
+        </>
       )}
       <RowInspector
         rows={rows}
         idColumn={idColumn || undefined}
-        onUpdate={updateRow}/>
+        onUpdate={updateRow}
+      />
     </TabPanel>
   );
 }
 
 export const tabDef: TabTuple = [
   6,
-  "excel",
-  "Excel",
-  "Import nodes from Excel workbooks",
+  'excel',
+  'Excel',
+  'Import nodes from Excel workbooks',
   ExcelTab,
 ];

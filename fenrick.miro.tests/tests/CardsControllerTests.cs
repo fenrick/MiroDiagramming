@@ -17,7 +17,8 @@ public class CardsControllerTests
     [Fact]
     public async Task CreateAsyncHandlesBulk()
     {
-        var cards = Enumerable.Range(0, 21).Select(_ => new CardData("t", null, null, null, null, null, null)).ToArray();
+        var cards = Enumerable.Range(0, 21).Select((int _) =>
+            new CardData("t", null, null, null, null, null, null)).ToArray();
         var controller = new CardsController(new StubClient());
 
         var result = await controller.CreateAsync(cards) as OkObjectResult;
