@@ -2,23 +2,27 @@
 
 _Explicit UI + interaction walkthrough for every tab (June 2025)_
 
-This document narrows focus to the **ten sidebar tabs** in the
-Structured Diagramming add‑on. Each tab section specifies panel layout, visible
-controls, states, interaction flows, tool‑tips, keyboard shortcuts, and
-validation rules—so any developer can translate designs into code with zero
-ambiguity.
+This document narrows focus to the **five sidebar tabs** in the Quick Tools
+add‑on. Each tab section specifies panel layout, visible controls, states,
+interaction flows, tool‑tips, keyboard shortcuts and validation rules—so any
+developer can translate designs into code with zero ambiguity.
 
 ---
 
 ## Legend
 
-- **UI Element** – Visual component to render (exact Mirotone component/class).
+- **UI Element** – Visual component to render (exact design-system
+  component/class).
 - **Copy (EN‑AU)** – Literal text shown to users.
 - **Interaction Flow** – Ordered user actions → system responses.
 - **State Store** – Redux slice / React context field.
 - **Shortcut** – Keyboard binding (Mac / Win).
 
 ---
+
+Each page component wraps its content in a `TabPanel` wrapper which sets
+`role="tabpanel"` and links the panel to its controlling tab. Preview the tab
+layouts under **Pages/Tabs** in Storybook.
 
 ## 1  Diagrams Tab
 
@@ -59,105 +63,42 @@ Prefix rename and locking options from the old **Frames Tab**.
 
 ---
 
-## 6  Templates Tab
+## 3  Excel Tab
 
-Two‑pane Flex (`SidebarList` categories + `MasonryGrid` templates).
+Allows importing nodes from Excel workbooks. Choose a sheet, map columns and
+create widgets. Edits on the board sync back via `ExcelSyncService`.
 
-| Category List Item | Copy                         | Keyboard Nav                   |
-| ------------------ | ---------------------------- | ------------------------------ |
-| List button        | “Flowcharts”, “AWS”, “BPMN”… | Up/Down to move; Enter selects |
+## 4  Search Tab
 
-Template Card shows:
-
-- Thumbnail 160×100
-- Node count badge
-- “Insert” button
-
-Insert Flow: click → loads JSON → `GraphProcessor` → `BoardBuilder.sync` → opens
-Rename modal.
-
----
-
-## 7  Export Tab
-
-| Export Type            | Fields                                                      | Default Values      |
-| ---------------------- | ----------------------------------------------------------- | ------------------- |
-| **PNG**                | Resolution dropdown (1×/2×), Background: Transparent toggle | 1×, Transparent OFF |
-| **SVG**                | Include Comments checkbox                                   | OFF                 |
-| **BPMN XML**           | Version dropdown (2.0/2.1)                                  | 2.0                 |
-| **Markdown (Mermaid)** | Copy to clipboard only                                      | –                   |
-
-Progress Bar: shows %; disable sidebar during export.
-
-Error: if PNG > 16 k × 16 k px → show modal “Canvas too large; zoom or frame to
-export.”
-
----
-
-## 8  Data Tab (Live Bindings)
-
-Wizard (Stepper):
-
-1. **Select Source** – REST / CSV / WebSocket; URL/file input.
-2. **Test Connection** – Ping and show latency badge (green < 200 ms, yellow
-   < 500 ms, red otherwise).
-3. **Field Mapping** – Drag API fields → node properties list.
-4. **Activation** – Toggle “Live Update”; snackbar shows success.
-
-Polling interval slider (2 – 300 s). State `dataBindings[{boardId}]`.
-
----
-
-## 9  Comment Tab
-
-- **Thread List** – Sidebar list grouped by widget.
-- **Editor** – RichTextInput supports `@mention`; autocomplete list uses
-  `miro.board.getUsers()`.
-- **Resolve Toggle** – Checkbox; resolved threads greyed out, filtered when view
-  = “Unresolved”.
-- **Filter Tabs** – All / Mine / Unresolved (Tertiary buttons).
-
-Shortcut: **Shift +C** opens comment editor on current selection.
-
----
-
-## 10  Search Tab
-
-| Control                     | Details                             |
-| --------------------------- | ----------------------------------- |
-| **Find Input**              | Text to locate on the board         |
-| **Replace Input**           | Replacement text applied in bulk    |
-| **Case Sensitive Checkbox** | Match exact letter case             |
-| **Whole Word Checkbox**     | Skip partial-word matches           |
-| **Regex Checkbox**          | Treat query as regular expression   |
-| **Widget Type Checkboxes**  | Filter results by widget type       |
-| **Tag IDs Input**           | Comma separated tags to match       |
-| **Background Colour Input** | Exact fill colour filter            |
-| **Assignee ID Input**       | Filter by assigned user             |
-| **Creator ID Input**        | Filter by creator                   |
-| **Last Modified By Input**  | Filter by last modifier             |
-| **Next Button**             | Scrolls board to next match         |
-| **Replace Button**          | Replace the highlighted match only  |
-| **Replace All**             | Calls `replaceBoardContent` utility |
+| Control            | Details                                            |
+| ------------------ | -------------------------------------------------- |
+| **Find Input**     | Text to locate on the board; regex toggle embedded |
+| **Replace Input**  | Replacement text applied in bulk; respects regex   |
+| **Filters Menu**   | Icon button opens advanced options                 |
+| **Next Button**    | Scrolls board to next match                        |
+| **Replace Button** | Replace the highlighted match only                 |
+| **Replace All**    | Calls `replaceBoardContent` utility                |
 
 Flow: typing in the **Find** field debounces `searchBoardContent` by 300 ms and
 updates the match count. The **Next** button cycles through results and zooms
 the board to each widget. **Replace** updates just the current item via
-`replaceBoardContent` with `inSelection` pointing to that widget.
+`replaceBoardContent` with `inSelection` pointing to that widget. When the regex
+toggle is enabled replacements match the regular expression.
+
+## 5  Help Tab
+
+Shows a getting started guide and a collapsible changelog.
 
 ---
 
 ## Global Keyboard Shortcuts
 
-| Action       | Mac | Win/Linux |
-| ------------ | --- | --------- |
-| Undo         | ⌘Z  | CtrlZ     |
-| Redo         | ⌘⇧Z | Ctrl⇧Z    |
-| Copy Size    | ⌥C  | AltC      |
-| Apply Size   | ⌥V  | AltV      |
-| Open Comment | ⇧C  | ShiftC    |
-
----
+| Action     | Mac | Win/Linux |
+| ---------- | --- | --------- |
+| Undo       | ⌘Z  | CtrlZ     |
+| Redo       | ⌘⇧Z | Ctrl⇧Z    |
+| Copy Size  | ⌥C  | AltC      |
+| Apply Size | ⌥V  | AltV      |
 
 ## Board Actions
 

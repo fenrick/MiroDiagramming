@@ -79,11 +79,12 @@ when creating widgets.
 
 ## 3 Two-Way Sync
 
-`ExcelSyncService` links workbook rows to board widgets using metadata. During
-import `registerMapping` stores the row identifier alongside the created widget
-ID. `updateShapesFromExcel` applies template and text changes from Excel to
-existing widgets, while `pushChangesToExcel` extracts widget content back into
-rows. The service relies on `templateManager` to handle widget updates.
+`ExcelSyncService` links workbook rows to board widgets using their visible text
+content. During import `registerMapping` stores the row identifier alongside the
+created widget ID. `updateShapesFromExcel` applies template and text changes
+from Excel to existing widgets, while `pushChangesToExcel` reads the widget
+content back into the sheet. The service relies on `templateManager` to handle
+widget updates.
 
 `RowInspector` surfaces the values of the selected widget's row inside the
 sidebar, allowing quick edits. Changes invoke the callback provided by
