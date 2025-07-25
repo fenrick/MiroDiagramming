@@ -1,14 +1,17 @@
 namespace Fenrick.Miro.Server.Services;
 
+using ClosedXML.Excel;
+
 /// <summary>
 ///     Lightweight Excel workbook loader built around ClosedXML.
 /// </summary>
+
 // TODO: add named table support and streaming for large files
 public class ExcelLoader : IDisposable
 {
-    private ClosedXML.Excel.XLWorkbook? workbook;
-
     private bool disposed;
+
+    private XLWorkbook? workbook;
 
     /// <inheritdoc />
     public void Dispose()
@@ -18,21 +21,11 @@ public class ExcelLoader : IDisposable
     }
 
     /// <summary>
-    ///     Release workbook resources.
+    ///     List worksheet names from the loaded workbook.
     /// </summary>
-    /// <param name="disposing">Indicates whether called from <see cref="Dispose"/>.</param>
-    protected virtual void Dispose(bool disposing)
-    {
-        if (!this.disposed)
-        {
-            if (disposing)
-            {
-                this.workbook?.Dispose();
-            }
-
-            this.disposed = true;
-        }
-    }
+    public IReadOnlyList<string> ListSheets() =>
+        this.workbook?.Worksheets.Select((IXLWorksheet ws) => ws.Name).ToList()
+        ?? [];
 
     /// <summary>
     ///     Load a workbook from a stream.
@@ -41,15 +34,9 @@ public class ExcelLoader : IDisposable
     /// <remarks>Currently loads the entire workbook into memory.</remarks>
     public async Task LoadAsync(Stream stream)
     {
-        this.workbook = new ClosedXML.Excel.XLWorkbook(stream);
+        this.workbook = new XLWorkbook(stream);
         await Task.CompletedTask;
     }
-
-    /// <summary>
-    ///     List worksheet names from the loaded workbook.
-    /// </summary>
-    public IReadOnlyList<string> ListSheets() =>
-        this.workbook?.Worksheets.Select(ws => ws.Name).ToList() ?? [];
 
     // TODO: implement LoadNamedTable for compatibility with client loader
 
@@ -70,10 +57,11 @@ public class ExcelLoader : IDisposable
             throw new InvalidOperationException("Workbook not loaded");
         }
 
-        var ws = this.workbook.Worksheet(name) ??
-                 throw new ArgumentException($"Unknown sheet: {name}");
+        var ws = this.workbook.Worksheet(name)
+                 ?? throw new ArgumentException($"Unknown sheet: {name}");
 
-        var headers = ws.Row(1).Cells().Select(c => c.GetString()).ToList();
+        var headers = ws.Row(1).Cells().Select((IXLCell c) => c.GetString())
+            .ToList();
         var rows = new List<Dictionary<string, string>>();
         foreach (var row in ws.RowsUsed().Skip(1))
         {
@@ -87,5 +75,22 @@ public class ExcelLoader : IDisposable
         }
 
         return rows;
+    }
+
+    /// <summary>
+    ///     Release workbook resources.
+    /// </summary>
+    /// <param name="disposing">Indicates whether called from <see cref="Dispose" />.</param>
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!this.disposed)
+        {
+            if (disposing)
+            {
+                this.workbook?.Dispose();
+            }
+
+            this.disposed = true;
+        }
     }
 }

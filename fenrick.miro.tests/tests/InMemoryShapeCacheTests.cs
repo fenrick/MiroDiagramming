@@ -7,6 +7,19 @@ using Xunit;
 public class InMemoryShapeCacheTests
 {
     [Fact]
+    public void RemoveDeletesEntry()
+    {
+        var cache = new InMemoryShapeCache();
+        var entry = new ShapeCacheEntry(
+            "b",
+            "i",
+            new ShapeData("r", 0, 0, 1, 1, null, null, null));
+        cache.Store(entry);
+        cache.Remove("b", "i");
+        Assert.Null(cache.Retrieve("b", "i"));
+    }
+
+    [Fact]
     public void RetrieveReturnsStoredEntry()
     {
         var cache = new InMemoryShapeCache();
@@ -18,18 +31,5 @@ public class InMemoryShapeCacheTests
 
         var result = cache.Retrieve("b1", "i1");
         Assert.Equal(entry, result);
-    }
-
-    [Fact]
-    public void RemoveDeletesEntry()
-    {
-        var cache = new InMemoryShapeCache();
-        var entry = new ShapeCacheEntry(
-            "b",
-            "i",
-            new ShapeData("r", 0, 0, 1, 1, null, null, null));
-        cache.Store(entry);
-        cache.Remove("b", "i");
-        Assert.Null(cache.Retrieve("b", "i"));
     }
 }

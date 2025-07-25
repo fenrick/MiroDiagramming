@@ -1,6 +1,7 @@
 #nullable enable
 
 namespace Fenrick.Miro.Tests.NewFeatures;
+
 using System.IO;
 using System.Threading.Tasks;
 using ClosedXML.Excel;

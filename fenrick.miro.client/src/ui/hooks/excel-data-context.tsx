@@ -1,5 +1,9 @@
-import React from 'react';
-import type { ExcelRow } from '../../core/utils/excel-loader';
+import React from "react";
+{
+  ExcelRow
+}
+from;
+"../../core/utils/excel-loader";
 
 export interface ExcelDataContextValue {
   rows: ExcelRow[];

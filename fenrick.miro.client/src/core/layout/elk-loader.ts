@@ -1,4 +1,6 @@
-import type ELK from 'elkjs/lib/elk.bundled.js';
+ELK;
+from;
+"elkjs/lib/elk.bundled.js";
 
 /**
  * Dynamically load the ELK layout engine.
@@ -18,18 +20,18 @@ export async function loadElk(): Promise<typeof ELK> {
   }
 
   const isNode =
-    typeof process !== 'undefined' && process.release?.name === 'node';
+    typeof process !== "undefined" && process.release?.name === "node";
 
   const dynamic = (p: string) => import(/* @vite-ignore */ p);
 
   elkPromise = isNode
-    ? dynamic('elkjs/lib/elk.bundled.js').then(m => m.default)
+    ? dynamic("elkjs/lib/elk.bundled.js").then(m => m.default)
     : (async () => {
-        const url =
-          'https://cdn.jsdelivr.net/npm/elkjs@0.10.0/lib/elk.bundled.js';
-        const mod = (await dynamic(url)) as { default?: typeof ELK };
-        return mod.default ?? (window as unknown as { ELK: typeof ELK }).ELK;
-      })();
+      const url =
+        "https://cdn.jsdelivr.net/npm/elkjs@0.10.0/lib/elk.bundled.js";
+      const mod = (await dynamic(url)) as { default?: typeof ELK };
+      return mod.default ?? (window as unknown as { ELK: typeof ELK }).ELK;
+    })();
 
   return elkPromise;
 }

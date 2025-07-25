@@ -1,5 +1,5 @@
-import { Select as DSSelect } from '@mirohq/design-system';
-import React from 'react';
+import { Select as DSSelect } from "@mirohq/design-system";
+import React from "react";
 
 export type SelectProps = Readonly<{
   /** Currently selected value. */
@@ -11,7 +11,7 @@ export type SelectProps = Readonly<{
   /** Whether the control is disabled. */
   disabled?: boolean;
   /** Select size token. Defaults to medium. */
-  size?: 'medium' | 'large' | 'x-large';
+  size?: "medium" | "large" | "x-large";
   /** Additional children, typically `<SelectOption>` elements. */
   children?: React.ReactNode;
 }>;
@@ -26,7 +26,7 @@ export function Select({
   value,
   onChange,
   placeholder,
-  size = 'medium',
+  size = "medium",
   disabled,
   children,
   // className intentionally omitted
@@ -39,7 +39,7 @@ export function Select({
       <DSSelect.Trigger
         size={size}
         aria-label='Select option'>
-        <DSSelect.Value placeholder={placeholder} />
+        <DSSelect.Value placeholder={placeholder}/>
       </DSSelect.Trigger>
       <DSSelect.Portal>
         <DSSelect.Content>{children}</DSSelect.Content>

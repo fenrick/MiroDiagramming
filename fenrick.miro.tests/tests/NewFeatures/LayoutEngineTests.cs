@@ -1,6 +1,7 @@
 namespace Fenrick.Miro.Tests.NewFeatures;
-using Fenrick.Miro.Server.Domain;
+
 #nullable enable
+using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
 using Xunit;
 

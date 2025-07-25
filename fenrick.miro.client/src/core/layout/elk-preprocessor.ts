@@ -1,4 +1,8 @@
-import type { ElkNode } from 'elkjs/lib/elk-api';
+{
+  ElkNode
+}
+from;
+"elkjs/lib/elk-api";
 
 /** ELK node extended with optional custom properties. */
 export interface LayoutNode extends ElkNode {
@@ -27,7 +31,7 @@ function insertSpacer(node: LayoutNode, opts: Required<SpacerOptions>): void {
   }
 
   const first = children[0];
-  const hasSpacer = Boolean(first?.id?.startsWith('spacer_'));
+  const hasSpacer = Boolean(first?.id?.startsWith("spacer_"));
   if (hasSpacer) {
     return;
   }
@@ -49,7 +53,7 @@ function applyAlgorithm(node: LayoutNode): void {
     return;
   }
   node.layoutOptions = node.layoutOptions || {};
-  node.layoutOptions['elk.algorithm'] = 'org.eclipse.elk.rectpacking';
+  node.layoutOptions["elk.algorithm"] = "org.eclipse.elk.rectpacking";
 }
 
 /**

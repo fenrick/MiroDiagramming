@@ -1,7 +1,7 @@
 namespace Fenrick.Miro.Server.Services;
 
 using System.Text.Json;
-using Domain;
+using Fenrick.Miro.Server.Domain;
 
 /// <summary>
 ///     Helper methods for interacting with the Miro REST API via
@@ -29,7 +29,7 @@ public static class MiroClientExtensions
             {
                 var body = JsonSerializer.Serialize(item);
                 var response = await client.SendAsync(
-                    new MiroRequest("POST", path, body));
+                                   new MiroRequest("POST", path, body));
                 responses.Add(response);
             }
         }

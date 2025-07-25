@@ -1,12 +1,14 @@
 namespace Fenrick.Miro.Server.Services;
 
-using Domain;
+using Fenrick.Miro.Server.Domain;
 
 /// <summary>
 ///     Simplified layout engine placing nodes vertically.
 /// </summary>
+
 // TODO: port existing JS layout algorithms to C# and explore using the ELK
-//       Java library via cross compilation or WASM to ensure parity across tiers
+
+// Java library via cross compilation or WASM to ensure parity across tiers
 public class LayoutEngine
 {
     private const double Spacing = 120;
@@ -30,8 +32,8 @@ public class LayoutEngine
         var edges = new List<PositionedEdge>();
         foreach (var edge in data.Edges)
         {
-            if (nodes.TryGetValue(edge.From, out var start) &&
-                nodes.TryGetValue(edge.To, out var end))
+            if (nodes.TryGetValue(edge.From, out var start)
+                && nodes.TryGetValue(edge.To, out var end))
             {
                 edges.Add(
                     new PositionedEdge((start.X, start.Y), (end.X, end.Y)));

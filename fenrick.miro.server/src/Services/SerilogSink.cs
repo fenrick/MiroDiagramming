@@ -1,6 +1,6 @@
 namespace Fenrick.Miro.Server.Services;
 
-using Domain;
+using Fenrick.Miro.Server.Domain;
 using ILogger = Serilog.ILogger;
 
 /// <summary>
@@ -15,8 +15,7 @@ public class SerilogSink(ILogger logger) : ILogSink
     {
         foreach (var e in entries)
         {
-            this.loggerInstance
-                .ForContext("Source", "Client")
+            this.loggerInstance.ForContext("Source", "Client")
                 .ForContext("Level", e.Level)
                 .ForContext("Context", e.Context, true)
                 .Information("{Message}", e.Message);

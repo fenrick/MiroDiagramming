@@ -1,7 +1,15 @@
-import type { BaseItem, Connector, Group } from '@mirohq/websdk-types';
-import { BoardBuilder } from '../../board/board-builder';
-import type { HierNode } from '../layout/nested-layout';
-import { fileUtils } from '../utils/file-utils';
+{
+  BaseItem, Connector, Group
+}
+from;
+"@mirohq/websdk-types";
+import { BoardBuilder } from "../../board/board-builder";
+{
+  HierNode
+}
+from;
+"../layout/nested-layout";
+import { fileUtils } from "../utils/file-utils";
 
 export interface NodeData {
   id: string;
@@ -60,11 +68,11 @@ export class GraphService {
     const data = JSON.parse(text) as unknown;
     if (
       !data ||
-      typeof data !== 'object' ||
-      !Array.isArray((data as { nodes?: unknown; edges?: unknown }).nodes) ||
-      !Array.isArray((data as { nodes?: unknown; edges?: unknown }).edges)
+        typeof data !== "object" ||
+        !Array.isArray((data as { nodes?: unknown; edges?: unknown }).nodes) ||
+        !Array.isArray((data as { nodes?: unknown; edges?: unknown }).edges)
     ) {
-      throw new Error('Invalid graph data');
+      throw new Error("Invalid graph data");
     }
     this.resetBoardCache();
     return data as GraphData;
@@ -82,7 +90,7 @@ export class GraphService {
     fileUtils.validateFile(file);
     const text = await fileUtils.readFileAsText(file);
     const data = JSON.parse(text) as unknown;
-    const isObj = data !== null && typeof data === 'object';
+    const isObj = data !== null && typeof data === "object";
     const hasNodes =
       isObj && Array.isArray((data as { nodes?: unknown }).nodes);
     const hasEdges =
@@ -95,7 +103,7 @@ export class GraphService {
       this.resetBoardCache();
       return data as HierNode[];
     }
-    throw new Error('Invalid graph data');
+    throw new Error("Invalid graph data");
   }
 
   /** Clear caches for board lookups. */

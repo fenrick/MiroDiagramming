@@ -1,9 +1,9 @@
-import React from 'react';
+import React from "react";
 
 /**
  * Wraps tab content with appropriate ARIA attributes.
  */
-export interface TabPanelProps extends React.ComponentPropsWithoutRef<'div'> {
+export interface TabPanelProps extends React.ComponentPropsWithoutRef<"div"> {
   /** Identifier of the tab controlling this panel. */
   readonly tabId: string;
   /** Panel content. */
@@ -24,7 +24,7 @@ export const TabPanel: React.FC<TabPanelProps> = ({
     id={`panel-${tabId}`}
     role='tabpanel'
     aria-labelledby={`tab-${tabId}`}
-    style={{ position: 'relative', ...style }}
+    style={{ position: "relative", ...style }}
     {...props}>
     {children}
   </div>

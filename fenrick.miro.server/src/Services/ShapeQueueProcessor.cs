@@ -1,6 +1,6 @@
 namespace Fenrick.Miro.Server.Services;
 
-using Domain;
+using Fenrick.Miro.Server.Domain;
 
 /// <summary>
 ///     Processes shape creation requests sequentially.
@@ -12,9 +12,11 @@ using Domain;
 public sealed class ShapeQueueProcessor(IMiroClient client) : IDisposable
 {
     private readonly Queue<ShapeData> createQueue = new();
+
     // TODO persist queue entries to survive restarts using a database or message
-    //      broker and expose an ORM-based inspection API
+    // broker and expose an ORM-based inspection API
     private readonly SemaphoreSlim gate = new(1, 1);
+
     private readonly IMiroClient miroClient = client;
 
     /// <summary>
@@ -48,6 +50,7 @@ public sealed class ShapeQueueProcessor(IMiroClient client) : IDisposable
             while (this.createQueue.Count > 0)
             {
                 var batch = this.DequeueBatch(this.BatchSize).ToArray();
+
                 // TODO validate shapes against board cache and prioritise modify operations
                 var res = await this.miroClient.CreateAsync("/shapes", batch);
                 results.AddRange(res);

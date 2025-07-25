@@ -1,6 +1,7 @@
 #nullable enable
 
 namespace Fenrick.Miro.Tests.NewFeatures;
+
 using System.Collections.Generic;
 using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
@@ -12,10 +13,10 @@ public class ObjectMatcherTests
     public void FindsShapeByLabelIgnoringCase()
     {
         var shapes = new List<ShapeData>
-        {
-            new("r", 0, 0, 1, 1, null, "Alpha", null),
-            new("r", 0, 0, 1, 1, null, "Beta", null)
-        };
+                     {
+                         new("r", 0, 0, 1, 1, null, "Alpha", null),
+                         new("r", 0, 0, 1, 1, null, "Beta", null)
+                     };
 
         var result = ObjectMatcher.FindShapeByLabel(shapes, "beta");
 

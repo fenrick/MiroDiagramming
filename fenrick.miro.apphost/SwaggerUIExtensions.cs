@@ -15,6 +15,7 @@ public static class SwaggerUIExtensions
     /// <returns>The original project builder.</returns>
     public static IResourceBuilder<ProjectResource> WithSwaggerUI(
         this IResourceBuilder<ProjectResource> builder) =>
+
         // In a full implementation this would host Swagger UI for the project's OpenAPI endpoint.
         builder;
 }

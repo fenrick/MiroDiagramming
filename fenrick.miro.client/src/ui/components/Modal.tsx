@@ -1,5 +1,5 @@
-import React from 'react';
-import { Button } from './Button';
+import React from "react";
+import { Button } from "./Button";
 
 export interface ModalProps {
   /** Dialog title displayed in the header. */
@@ -9,7 +9,7 @@ export interface ModalProps {
   /** Callback when the dialog should close. */
   readonly onClose: () => void;
   /** Optional size variant. */
-  readonly size?: 'small' | 'medium';
+  readonly size?: "small" | "medium";
   /** Modal content. */
   readonly children: React.ReactNode;
 }
@@ -24,39 +24,41 @@ export function Modal({
   title,
   isOpen,
   onClose,
-  size = 'medium',
+  size = "medium",
   children,
 }: ModalProps): React.JSX.Element | null {
   const ref = React.useRef<HTMLDialogElement>(null);
 
   React.useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-    const root = ref.current;
-    if (!root) {
-      return;
-    }
-    const focusable = root.querySelector<HTMLElement>(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
-    );
-    focusable?.focus();
-  }, [isOpen]);
+      if (!isOpen) {
+        return;
+      }
+      const root = ref.current;
+      if (!root) {
+        return;
+      }
+      const focusable = root.querySelector<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      );
+      focusable?.focus();
+    },
+    [isOpen]);
 
   const getFocusables = React.useCallback((): HTMLElement[] => {
-    if (!ref.current) {
-      return [];
-    }
-    return Array.from(
-      ref.current.querySelectorAll<HTMLElement>(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
-      ),
-    );
-  }, []);
+      if (!ref.current) {
+        return [];
+      }
+      return Array.from(
+        ref.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+        ),
+      );
+    },
+    []);
 
   const trapTab = React.useCallback(
     (e: KeyboardEvent): boolean => {
-      if (e.key !== 'Tab') {
+      if (e.key !== "Tab") {
         return false;
       }
       const nodes = getFocusables();
@@ -80,20 +82,21 @@ export function Modal({
   );
 
   React.useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-    const handleKey = (e: KeyboardEvent): void => {
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        onClose();
-      } else if (trapTab(e)) {
-        e.preventDefault();
+      if (!isOpen) {
+        return;
       }
-    };
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
-  }, [isOpen, onClose, trapTab]);
+      const handleKey = (e: KeyboardEvent): void => {
+        if (e.key === "Escape") {
+          e.preventDefault();
+          onClose();
+        } else if (trapTab(e)) {
+          e.preventDefault();
+        }
+      };
+      window.addEventListener("keydown", handleKey);
+      return () => window.removeEventListener("keydown", handleKey);
+    },
+    [isOpen, onClose, trapTab]);
 
   if (!isOpen) {
     return null;
@@ -115,13 +118,12 @@ export function Modal({
         onKeyDown={e => {
           if (
             e.target === e.currentTarget &&
-            (e.key === 'Enter' || e.key === ' ')
+            (e.key === "Enter" || e.key === " ")
           ) {
             e.preventDefault();
             onClose();
           }
-        }}
-      />
+        }}/>
       <dialog
         open
         aria-label={title}

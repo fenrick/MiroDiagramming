@@ -10,6 +10,23 @@ using Xunit;
 public class ShapeQueueProcessorTests
 {
     [Fact]
+    public async Task ConcurrentProcessCallsAreSerialised()
+    {
+        var client = new StubClient();
+        var proc = new ShapeQueueProcessor(client);
+        proc.EnqueueCreate(
+        [
+            new ShapeData("r", 0, 0, 1, 1, null, null, null)
+        ]);
+        var t1 = proc.ProcessAsync();
+        var t2 = proc.ProcessAsync();
+
+        await Task.WhenAll(t1, t2);
+
+        Assert.Equal(1, client.Count);
+    }
+
+    [Fact]
     public async Task ProcessAsyncPostsSequentialBatches()
     {
         var client = new StubClient();
@@ -28,27 +45,9 @@ public class ShapeQueueProcessorTests
         Assert.Equal(25, responses.Count);
     }
 
-    [Fact]
-    public async Task ConcurrentProcessCallsAreSerialised()
-    {
-        var client = new StubClient();
-        var proc = new ShapeQueueProcessor(client);
-        proc.EnqueueCreate(
-        [
-            new ShapeData("r", 0, 0, 1, 1, null, null, null)
-        ]);
-        var t1 = proc.ProcessAsync();
-        var t2 = proc.ProcessAsync();
-
-        await Task.WhenAll(t1, t2);
-
-        Assert.Equal(1, client.Count);
-    }
-
     // TODO expand tests to cover modify and delete queues once implemented in
     // ShapeQueueProcessor.
     // TODO add tests for queue persistence once the processor writes to a durable store.
-
     private sealed class StubClient : IMiroClient
     {
         public int Count { get; private set; }

@@ -17,26 +17,26 @@ export interface AspectRatioPreset {
 
 /** Supported preset identifiers. */
 export type AspectRatioId =
-  | 'golden'
-  | 'square'
-  | '16:9'
-  | '16:10'
-  | '4:3'
-  | 'A-landscape'
-  | 'A-portrait';
+  | "golden"
+  | "square"
+  | "16:9"
+  | "16:10"
+  | "4:3"
+  | "A-landscape"
+  | "A-portrait";
 
 /** Golden ratio constant used by presets. */
 export const GOLDEN_RATIO = (1 + Math.sqrt(5)) / 2;
 
 /** List of selectable aspect ratios. */
 export const ASPECT_RATIOS: AspectRatioPreset[] = [
-  { id: 'golden', label: 'Golden', ratio: GOLDEN_RATIO },
-  { id: 'square', label: 'Square', ratio: 1 },
-  { id: '16:9', label: '16:9', ratio: 16 / 9 },
-  { id: '16:10', label: '16:10', ratio: 16 / 10 },
-  { id: '4:3', label: '4:3', ratio: 4 / 3 },
-  { id: 'A-landscape', label: 'A Landscape', ratio: Math.SQRT2 },
-  { id: 'A-portrait', label: 'A Portrait', ratio: 1 / Math.SQRT2 },
+  { id: "golden", label: "Golden", ratio: GOLDEN_RATIO },
+  { id: "square", label: "Square", ratio: 1 },
+  { id: "16:9", label: "16:9", ratio: 16 / 9 },
+  { id: "16:10", label: "16:10", ratio: 16 / 10 },
+  { id: "4:3", label: "4:3", ratio: 4 / 3 },
+  { id: "A-landscape", label: "A Landscape", ratio: Math.SQRT2 },
+  { id: "A-portrait", label: "A Portrait", ratio: 1 / Math.SQRT2 },
 ];
 
 /** List of identifiers for validation. */

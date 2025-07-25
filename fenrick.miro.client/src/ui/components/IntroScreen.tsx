@@ -1,7 +1,6 @@
-import React from 'react';
-import introText from '../intro.md?raw';
-import { Button } from './Button';
-import { Markdown } from './Markdown';
+import React from "react";
+import { Button } from "./Button";
+import { Markdown } from "./Markdown";
 
 export interface IntroScreenProps {
   /** Called when the user chooses to start the app. */
@@ -19,7 +18,7 @@ export function IntroScreen({ onStart }: IntroScreenProps): React.JSX.Element {
     <div
       className='intro-screen scrollable'
       data-testid='intro-screen'>
-      <Markdown source={introText} />
+      <Markdown source={introText}/>
       <span className='custom-visually-hidden'>Welcome to Quick Tools</span>
       <Button
         variant='primary'

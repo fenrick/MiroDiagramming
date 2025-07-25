@@ -1,11 +1,11 @@
-import { Form, styled } from '@mirohq/design-system';
-import React from 'react';
-import { Select } from './Select';
+import { Form, styled } from "@mirohq/design-system";
+import React from "react";
+import { Select } from "./Select";
 
 export type SelectFieldProps = Readonly<
   Omit<
     React.ComponentProps<typeof Select>,
-    'className' | 'style' | 'onChange'
+    "className" | "style" | "onChange"
   > & {
     /** Visible label text. */
     label: React.ReactNode;
@@ -15,17 +15,19 @@ export type SelectFieldProps = Readonly<
 >;
 
 /** Single component combining label and select control. */
-const StyledFormField = styled(Form.Field, {
-  marginBottom: '16px',
-  position: 'relative',
-});
+const StyledFormField = styled(Form.Field,
+  {
+    marginBottom: "16px",
+    position: "relative",
+  });
 
-const StyledLabel = styled(Form.Label, { marginBottom: 'var(--space-xsmall)' });
+const StyledLabel = styled(Form.Label, { marginBottom: "var(--space-xsmall)" });
 
-const StyledSelect = styled(Select, {
-  paddingLeft: 'var(--space-small)',
-  paddingRight: 'var(--space-small)',
-});
+const StyledSelect = styled(Select,
+  {
+    paddingLeft: "var(--space-small)",
+    paddingRight: "var(--space-small)",
+  });
 
 export function SelectField({
   label,

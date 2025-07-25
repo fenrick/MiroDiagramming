@@ -4,10 +4,10 @@ namespace Fenrick.Miro.Tests;
 
 using System;
 using System.Collections.Generic;
+using Fenrick.Miro.Server.Api;
+using Fenrick.Miro.Server.Domain;
+using Fenrick.Miro.Server.Services;
 using Microsoft.AspNetCore.Mvc;
-using Server.Api;
-using Server.Domain;
-using Server.Services;
 using Xunit;
 
 public class UsersControllerTests
@@ -30,7 +30,9 @@ public class UsersControllerTests
     private sealed class StubStore(Action<UserInfo> cb) : IUserStore
     {
         private readonly Action<UserInfo> callback = cb;
+
         public UserInfo? Retrieve(string userId) => null;
+
         public void Store(UserInfo info) => this.callback(info);
     }
 }

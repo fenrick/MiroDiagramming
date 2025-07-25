@@ -1,22 +1,28 @@
-import type {
+{
   BaseItem,
-  Connector,
-  Frame,
-  Group,
-  GroupableItem,
-} from '@mirohq/websdk-types';
-import { BoardBuilder } from '../../board/board-builder';
-import { clearActiveFrame, registerFrame } from '../../board/frame-utils';
-import { boundingBoxFromCenter, frameOffset } from '../layout/layout-utils';
+    Connector,
+    Frame,
+    Group,
+    GroupableItem, ;
+}
+from;
+"@mirohq/websdk-types";
+import { BoardBuilder } from "../../board/board-builder";
+import { clearActiveFrame, registerFrame } from "../../board/frame-utils";
+import { boundingBoxFromCenter, frameOffset } from "../layout/layout-utils";
 import {
   HierNode,
   layoutHierarchy,
   NestedLayoutResult,
-} from '../layout/nested-layout';
-import { fileUtils } from '../utils/file-utils';
-import { edgesToHierarchy } from './convert';
-import type { GraphData } from './graph-service';
-import { UndoableProcessor } from './undoable-processor';
+} from "../layout/nested-layout";
+import { fileUtils } from "../utils/file-utils";
+import { edgesToHierarchy } from "./convert";
+{
+  GraphData
+}
+from;
+"./graph-service";
+import { UndoableProcessor } from "./undoable-processor";
 
 export interface HierarchyProcessOptions {
   createFrame?: boolean;
@@ -70,14 +76,15 @@ export class HierarchyProcessor extends UndoableProcessor<
   ): Promise<void> {
     const data = Array.isArray(roots) ? roots : edgesToHierarchy(roots);
     if (!Array.isArray(data)) {
-      throw new Error('Invalid hierarchy');
+      throw new Error("Invalid hierarchy");
     }
     this.lastCreated = [];
-    const result = await layoutHierarchy(data, {
-      sortKey: opts.sortKey,
-      padding: opts.padding,
-      topSpacing: opts.topSpacing,
-    });
+    const result = await layoutHierarchy(data,
+      {
+        sortKey: opts.sortKey,
+        padding: opts.padding,
+        topSpacing: opts.topSpacing,
+      });
     const bounds = this.computeBounds(result);
     const margin = 40;
     const width = bounds.maxX - bounds.minX + margin * 2;
@@ -136,12 +143,13 @@ export class HierarchyProcessor extends UndoableProcessor<
     const pos = posMap[node.id];
     const centerX = pos.x + offsetX + pos.width / 2;
     const centerY = pos.y + offsetY + pos.height / 2;
-    const widget = await this.builder.createNode(node, {
-      x: centerX,
-      y: centerY,
-      width: pos.width,
-      height: pos.height,
-    });
+    const widget = await this.builder.createNode(node,
+      {
+        x: centerX,
+        y: centerY,
+        width: pos.width,
+        height: pos.height,
+      });
     await this.builder.resizeItem(widget, pos.width, pos.height);
 
     if (!node.children?.length) {

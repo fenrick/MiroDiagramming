@@ -1,8 +1,13 @@
-import { log } from '../logger';
-import { boardCache } from './board-cache';
-import type { BoardLike, BoardQueryLike } from './types';
+import { boardCache } from "./board-cache";
+{
+  BoardLike, BoardQueryLike
+}
+from;
+"./types";
 
-export type { BoardUILike, BoardLike, BoardQueryLike } from './types';
+export type { BoardUILike, BoardLike, BoardQueryLike }
+from;
+"./types";
 
 /**
  * Resolve the active board instance.
@@ -14,14 +19,14 @@ export type { BoardUILike, BoardLike, BoardQueryLike } from './types';
  * @returns The board API instance.
  */
 export function getBoard(board?: BoardLike): BoardLike {
-  log.trace('Resolving board instance');
+  log.trace("Resolving board instance");
   const b =
     board ??
-    (globalThis as unknown as { miro?: { board?: BoardLike } }).miro?.board;
+      (globalThis as unknown as { miro?: { board?: BoardLike } }).miro?.board;
   if (!b) {
-    throw new Error('Miro board not available');
+    throw new Error("Miro board not available");
   }
-  log.debug('Board resolved');
+  log.debug("Board resolved");
   return b;
 }
 
@@ -35,7 +40,7 @@ export function getBoard(board?: BoardLike): BoardLike {
  * @returns Board API exposing query capabilities.
  */
 export function getBoardWithQuery(board?: BoardQueryLike): BoardQueryLike {
-  log.trace('Casting board with query capabilities');
+  log.trace("Casting board with query capabilities");
   return getBoard(board) as BoardQueryLike;
 }
 
@@ -53,7 +58,7 @@ export async function getFirstSelection(
 ): Promise<Record<string, unknown> | undefined> {
   const b = getBoard(board);
   const selection = await boardCache.getSelection(b);
-  log.debug({ count: selection.length }, 'Fetched first selection');
+  log.debug({ count: selection.length }, "Fetched first selection");
   return selection[0] as Record<string, unknown> | undefined;
 }
 
@@ -72,7 +77,7 @@ export async function forEachSelection(
 ): Promise<void> {
   const b = getBoard(board);
   const selection = await boardCache.getSelection(b);
-  log.info({ count: selection.length }, 'Processing selection');
+  log.info({ count: selection.length }, "Processing selection");
   await Promise.all(selection.map(item => cb(item)));
 }
 
@@ -95,8 +100,8 @@ export interface Syncable {
  * Simplifies conditional sync calls across board utilities.
  */
 export async function maybeSync(item: Syncable): Promise<void> {
-  if (typeof item.sync === 'function') {
-    log.trace('Syncing widget');
+  if (typeof item.sync === "function") {
+    log.trace("Syncing widget");
     await item.sync();
   }
 }

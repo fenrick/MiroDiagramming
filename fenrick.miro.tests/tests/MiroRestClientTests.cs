@@ -7,9 +7,9 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Fenrick.Miro.Server.Domain;
+using Fenrick.Miro.Server.Services;
 using Microsoft.AspNetCore.Http;
-using Server.Domain;
-using Server.Services;
 using Xunit;
 
 public class MiroRestClientTests
@@ -24,7 +24,9 @@ public class MiroRestClientTests
         store.Store(new UserInfo("u1", "Bob", "tok"));
         var ctx = new DefaultHttpContext();
         ctx.Request.Headers["X-User-Id"] = "u1";
-        var client = new MiroRestClient(httpClient, store,
+        var client = new MiroRestClient(
+            httpClient,
+            store,
             new HttpContextAccessor { HttpContext = ctx });
 
         await client.SendAsync(new MiroRequest("GET", "/", null));
@@ -35,19 +37,20 @@ public class MiroRestClientTests
 
     // TODO add tests covering token refresh behaviour once refresh endpoint is
     // implemented on the server.
-
     private sealed class StubHandler : HttpMessageHandler
     {
         public HttpRequestMessage? Request { get; private set; }
 
         protected override Task<HttpResponseMessage> SendAsync(
-            HttpRequestMessage request, CancellationToken cancellationToken)
+            HttpRequestMessage request,
+            CancellationToken cancellationToken)
         {
             this.Request = request;
-            return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
-            {
-                Content = new StringContent("{}")
-            });
+            return Task.FromResult(
+                new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent("{}")
+                });
         }
     }
 }

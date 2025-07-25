@@ -1,7 +1,7 @@
 namespace Fenrick.Miro.Server.Services;
 
 using System.Collections.Concurrent;
-using Domain;
+using Fenrick.Miro.Server.Domain;
 
 /// <summary>
 ///     Thread safe in-memory implementation of <see cref="IUserStore" />.
@@ -19,6 +19,5 @@ public class InMemoryUserStore : IUserStore
         this.users.TryGetValue(userId, out var info) ? info : null;
 
     /// <inheritdoc />
-    public void Store(UserInfo info) =>
-        this.users[info.Id] = info;
+    public void Store(UserInfo info) => this.users[info.Id] = info;
 }

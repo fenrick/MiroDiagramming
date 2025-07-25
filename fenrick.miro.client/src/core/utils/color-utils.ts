@@ -5,12 +5,12 @@
  * contrast calculations so fill and font colours remain readable.
  */
 
-import { colors } from '@mirohq/design-tokens';
+import { colors } from "@mirohq/design-tokens";
 
 /** Convert a token reference to its hex value. */
 export function resolveColor(token: string, fallback: string): string {
-  if (token.startsWith('var(')) {
-    if (typeof document !== 'undefined') {
+  if (token.startsWith("var(")) {
+    if (typeof document !== "undefined") {
       const name = token.slice(4, -1);
       const val = getComputedStyle(document.documentElement).getPropertyValue(
         name,
@@ -31,14 +31,14 @@ export interface Rgb {
 
 /** Convert a hex colour string to RGB components. */
 export function hexToRgb(hex: string): Rgb {
-  const n = hex.replace('#', '');
+  const n = hex.replace("#", "");
   const int = parseInt(n, 16);
   return { r: (int >> 16) & 255, g: (int >> 8) & 255, b: int & 255 };
 }
 
 /** Convert RGB colour components to a hex string. */
 export function rgbToHex(rgb: Rgb): string {
-  const toHex = (v: number): string => v.toString(16).padStart(2, '0');
+  const toHex = (v: number): string => v.toString(16).padStart(2, "0");
   return `#${toHex(rgb.r)}${toHex(rgb.g)}${toHex(rgb.b)}`;
 }
 
@@ -68,8 +68,8 @@ export function luminance(rgb: Rgb): number {
   };
   return (
     0.2126 * toLinear(rgb.r) +
-    0.7152 * toLinear(rgb.g) +
-    0.0722 * toLinear(rgb.b)
+      0.7152 * toLinear(rgb.g) +
+      0.0722 * toLinear(rgb.b)
   );
 }
 

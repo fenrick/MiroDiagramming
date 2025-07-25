@@ -29,7 +29,7 @@ export interface CardDefinition {
   style?: { cardTheme?: string };
 }
 
-import { toSafeString } from './utils/string-utils';
+import { toSafeString } from "./utils/string-utils";
 
 /**
  * Add a property to the target object when the provided value is defined.
@@ -101,8 +101,8 @@ export function resolveIdLabelType(
     : undefined;
   return {
     id: idVal != null ? toSafeString(idVal) : String(index),
-    label: labelVal != null ? toSafeString(labelVal) : '',
-    type: typeVal != null ? toSafeString(typeVal) : 'default',
+    label: labelVal != null ? toSafeString(labelVal) : "",
+    type: typeVal != null ? toSafeString(typeVal) : "default",
   };
 }
 
@@ -144,17 +144,17 @@ export function mapRowToCard(
   const descVal = readColumn(row, mapping.textColumn);
   const themeVal = readColumn(row, mapping.templateColumn);
   const card: CardDefinition = {
-    title: titleVal != null ? toSafeString(titleVal) : '',
+    title: titleVal != null ? toSafeString(titleVal) : "",
   };
-  assignIfDefined(card, 'id', idVal != null ? toSafeString(idVal) : undefined);
+  assignIfDefined(card, "id", idVal != null ? toSafeString(idVal) : undefined);
   assignIfDefined(
     card,
-    'description',
+    "description",
     descVal != null ? toSafeString(descVal) : undefined,
   );
   assignIfDefined(
     card,
-    'style',
+    "style",
     themeVal != null ? { cardTheme: toSafeString(themeVal) } : undefined,
   );
 

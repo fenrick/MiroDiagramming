@@ -3,7 +3,8 @@
     {
       "id": "card-1",
       "title": "Easy peasy lemon squeezy",
-      "description": "<p>Go back in time and DO NOT clone a whole pack of T-Rexes.<br>They make for rather rowdy pets.<br>🦖👎</p>",
+      "description":
+        "<p>Go back in time and DO NOT clone a whole pack of T-Rexes.<br>They make for rather rowdy pets.<br>🦖👎</p>",
       "taskStatus": "to-do",
       "tags": ["design"],
       "style": { "cardTheme": "#2d9bf0", "fillBackground": true },
@@ -14,7 +15,8 @@
           "iconShape": "round",
           "fillColor": "#E5E5E5",
           "textColor": "#000000",
-          "tooltip": "Caption text displayed in a tooltip when clicking or hovering over the preview field"
+          "tooltip":
+            "Caption text displayed in a tooltip when clicking or hovering over the preview field"
         }
       ]
     },
@@ -32,7 +34,8 @@
           "iconShape": "round",
           "fillColor": "#E5E5E5",
           "textColor": "#000000",
-          "tooltip": "Caption text displayed in a tooltip when clicking or hovering over the preview field"
+          "tooltip":
+            "Caption text displayed in a tooltip when clicking or hovering over the preview field"
         }
       ]
     }

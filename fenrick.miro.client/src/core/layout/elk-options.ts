@@ -1,41 +1,41 @@
-import { ASPECT_RATIO_IDS, AspectRatioId } from '../utils/aspect-ratio';
+import { ASPECT_RATIO_IDS, AspectRatioId } from "../utils/aspect-ratio";
 
 /**
  * Supported ELK layout algorithms. Extend when enabling additional
  * algorithms in the layout engine.
  */
 export const ALGORITHMS = [
-  'mrtree',
-  'layered',
-  'force',
-  'rectpacking',
-  'rectstacking',
-  'box',
-  'radial',
+  "mrtree",
+  "layered",
+  "force",
+  "rectpacking",
+  "rectstacking",
+  "box",
+  "radial",
 ] as const;
 export type ElkAlgorithm = (typeof ALGORITHMS)[number];
 
 /** Allowed primary layout directions used by ELK. */
-export const DIRECTIONS = ['DOWN', 'UP', 'LEFT', 'RIGHT'] as const;
+export const DIRECTIONS = ["DOWN", "UP", "LEFT", "RIGHT"] as const;
 export type ElkDirection = (typeof DIRECTIONS)[number];
 
 /** Supported edge routing styles for the layered algorithm. */
-export const EDGE_ROUTINGS = ['ORTHOGONAL', 'POLYLINE', 'SPLINES'] as const;
+export const EDGE_ROUTINGS = ["ORTHOGONAL", "POLYLINE", "SPLINES"] as const;
 export type ElkEdgeRouting = (typeof EDGE_ROUTINGS)[number];
 
 /** Routing modes used by MrTree. */
 export const EDGE_ROUTING_MODES = [
-  'NONE',
-  'MIDDLE_TO_MIDDLE',
-  'AVOID_OVERLAP',
+  "NONE",
+  "MIDDLE_TO_MIDDLE",
+  "AVOID_OVERLAP",
 ] as const;
 export type ElkEdgeRoutingMode = (typeof EDGE_ROUTING_MODES)[number];
 
 /** Optimisation goals supported by RectPacking. */
 export const OPTIMIZATION_GOALS = [
-  'ASPECT_RATIO_DRIVEN',
-  'MAX_SCALE_DRIVEN',
-  'AREA_DRIVEN',
+  "ASPECT_RATIO_DRIVEN",
+  "MAX_SCALE_DRIVEN",
+  "AREA_DRIVEN",
 ] as const;
 export type ElkOptimizationGoal = (typeof OPTIMIZATION_GOALS)[number];
 
@@ -62,34 +62,34 @@ export interface UserLayoutOptions {
 /** Default layout options applied when none are provided. */
 export const ALGORITHM_DEFAULTS: Record<
   ElkAlgorithm,
-  Omit<UserLayoutOptions, 'algorithm'>
+  Omit<UserLayoutOptions, "algorithm">
 > = {
   mrtree: {
-    direction: 'DOWN',
+    direction: "DOWN",
     spacing: 50,
-    aspectRatio: 'golden',
-    edgeRoutingMode: 'AVOID_OVERLAP',
+    aspectRatio: "golden",
+    edgeRoutingMode: "AVOID_OVERLAP",
   },
   layered: {
-    direction: 'DOWN',
+    direction: "DOWN",
     spacing: 50,
-    aspectRatio: 'golden',
-    edgeRouting: 'ORTHOGONAL',
+    aspectRatio: "golden",
+    edgeRouting: "ORTHOGONAL",
   },
-  force: { direction: 'DOWN', spacing: 160, aspectRatio: '16:10' },
+  force: { direction: "DOWN", spacing: 160, aspectRatio: "16:10" },
   rectpacking: {
-    direction: 'DOWN',
+    direction: "DOWN",
     spacing: 15,
-    aspectRatio: '4:3',
-    optimizationGoal: 'MAX_SCALE_DRIVEN',
+    aspectRatio: "4:3",
+    optimizationGoal: "MAX_SCALE_DRIVEN",
   },
-  rectstacking: { direction: 'DOWN', spacing: 15, aspectRatio: 'golden' },
-  box: { direction: 'DOWN', spacing: 15, aspectRatio: 'golden' },
-  radial: { direction: 'RIGHT', spacing: 30, aspectRatio: 'golden' },
+  rectstacking: { direction: "DOWN", spacing: 15, aspectRatio: "golden" },
+  box: { direction: "DOWN", spacing: 15, aspectRatio: "golden" },
+  radial: { direction: "RIGHT", spacing: 30, aspectRatio: "golden" },
 };
 
 export const DEFAULT_LAYOUT_OPTIONS: UserLayoutOptions = {
-  algorithm: 'mrtree',
+  algorithm: "mrtree",
   ...ALGORITHM_DEFAULTS.mrtree,
 };
 
@@ -123,7 +123,7 @@ export function validateLayoutOptions(
     defaults.direction,
   );
   const spacing =
-    typeof opts.spacing === 'number' && opts.spacing > 0
+    typeof opts.spacing === "number" && opts.spacing > 0
       ? opts.spacing
       : defaults.spacing;
   const aspectRatio = validateEnum(
@@ -137,17 +137,17 @@ export function validateLayoutOptions(
     : undefined;
   const edgeRoutingMode = defaults.edgeRoutingMode
     ? validateEnum(
-        opts.edgeRoutingMode,
-        EDGE_ROUTING_MODES,
-        defaults.edgeRoutingMode,
-      )
+      opts.edgeRoutingMode,
+      EDGE_ROUTING_MODES,
+      defaults.edgeRoutingMode,
+    )
     : undefined;
   const optimizationGoal = defaults.optimizationGoal
     ? validateEnum(
-        opts.optimizationGoal,
-        OPTIMIZATION_GOALS,
-        defaults.optimizationGoal,
-      )
+      opts.optimizationGoal,
+      OPTIMIZATION_GOALS,
+      defaults.optimizationGoal,
+    )
     : undefined;
 
   return {

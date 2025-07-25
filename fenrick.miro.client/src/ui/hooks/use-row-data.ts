@@ -1,7 +1,15 @@
-import type { BaseItem, Group } from '@mirohq/websdk-types';
-import React from 'react';
-import type { ExcelRow } from '../../core/utils/excel-loader';
-import { useSelection } from './use-selection';
+{
+  BaseItem, Group
+}
+from;
+"@mirohq/websdk-types";
+import React from "react";
+{
+  ExcelRow
+}
+from;
+"../../core/utils/excel-loader";
+import { useSelection } from "./use-selection";
 
 /**
  * Narrow a board item to the Group type.
@@ -10,7 +18,7 @@ import { useSelection } from './use-selection';
  * @returns True when the item exposes a `getItems` method.
  */
 function isGroup(item: BaseItem | Group): item is Group {
-  return typeof (item as Group).getItems === 'function';
+  return typeof (item as Group).getItems === "function";
 }
 
 /**
@@ -88,13 +96,14 @@ export function useRowData(
       } catch {
         /* c8 ignore next */
         setRow(null);
-      }
     }
+  };
 
-    void update();
-  }, [selection, rows, idColumn]);
+  void update();
+},
+[selection, rows, idColumn]);;
 
-  return row;
+return row;
 }
 
 export { extractRowId, findRow };

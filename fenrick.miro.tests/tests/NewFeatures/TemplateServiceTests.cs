@@ -1,6 +1,7 @@
 #nullable enable
 
 namespace Fenrick.Miro.Tests.NewFeatures;
+
 using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
 using Xunit;
@@ -11,7 +12,8 @@ public class TemplateServiceTests
     public void StoresAndRetrievesTemplatePerUser()
     {
         var svc = new TemplateService();
-        var tpl = new TemplateDefinition([
+        var tpl = new TemplateDefinition(
+        [
             new TemplateElement("r", 100, 60, "{{label}}")
         ]);
 

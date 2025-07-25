@@ -1,32 +1,36 @@
-import { Form, Grid, Heading, IconSlidersX, Text } from '@mirohq/design-system';
-import { colors, space } from '@mirohq/design-tokens';
-import React from 'react';
-import { applyStylePreset, presetStyle } from '../../board/format-tools';
+import { Form, Grid, IconSlidersX } from "@mirohq/design-system";
+import { colors, space } from "@mirohq/design-tokens";
+import React from "react";
+import { applyStylePreset, presetStyle } from "../../board/format-tools";
 import {
   copyFillFromSelection,
   extractFillColor,
   tweakBorderWidth,
   tweakFillColor,
   tweakOpacity,
-} from '../../board/style-tools';
-import { adjustColor } from '../../core/utils/color-utils';
-import { Button, InputField } from '../components';
-import { PageHelp } from '../components/PageHelp';
-import { TabPanel } from '../components/TabPanel';
-import { useSelection } from '../hooks/use-selection';
-import { STYLE_PRESET_NAMES, stylePresets } from '../style-presets';
-import type { TabTuple } from './tab-definitions';
+} from "../../board/style-tools";
+import { adjustColor } from "../../core/utils/color-utils";
+import { Button, InputField } from "../components";
+import { PageHelp } from "../components/PageHelp";
+import { TabPanel } from "../components/TabPanel";
+import { useSelection } from "../hooks/use-selection";
+import { STYLE_PRESET_NAMES, stylePresets } from "../style-presets";
+{
+  TabTuple
+}
+from;
+"./tab-definitions";
 
 /** Adjusts the fill colour of selected widgets. */
 export const StyleTab: React.FC = () => {
   const [adjust, setAdjust] = React.useState(0);
   const selection = useSelection();
-  const [baseColor, setBaseColor] = React.useState('#808080');
+  const [baseColor, setBaseColor] = React.useState("#808080");
   const [opacityDelta, setOpacityDelta] = React.useState(0);
   const [borderDelta, setBorderDelta] = React.useState(0);
   // Update base colour when the selection changes
   React.useEffect(
-    () => setBaseColor(extractFillColor(selection[0]) ?? '#808080'),
+    () => setBaseColor(extractFillColor(selection[0]) ?? "#808080"),
     [selection],
   );
   // Preview colour updated live as the user tweaks the slider
@@ -44,15 +48,16 @@ export const StyleTab: React.FC = () => {
     [borderDelta],
   );
   const copyFill = React.useCallback(async (): Promise<void> => {
-    const colour = await copyFillFromSelection();
-    if (colour) {
-      setBaseColor(colour);
-    }
-  }, []);
+      const colour = await copyFillFromSelection();
+      if (colour) {
+        setBaseColor(colour);
+      }
+    },
+    []);
   const sliderId = React.useId();
   return (
     <TabPanel tabId='style'>
-      <PageHelp content='Lighten or darken the fill colour of selected shapes' />
+      <PageHelp content='Lighten or darken the fill colour of selected shapes'/>
       <Grid columns={2}>
         <Grid.Item>
           <Form.Field>
@@ -65,27 +70,24 @@ export const StyleTab: React.FC = () => {
               max='100'
               list='adjust-marks'
               value={adjust}
-              onChange={e => setAdjust(Number(e.target.value))}
-            />
+              onChange={e => setAdjust(Number(e.target.value))}/>
             <datalist id='adjust-marks'>
               {[-100, -50, 0, 50, 100].map(n => (
                 <option
                   key={n}
-                  value={n}
-                />
+                  value={n}/>
               ))}
             </datalist>
             <span
               data-testid='adjust-preview'
               style={{
-                display: 'inline-block',
-                width: '24px',
-                height: '24px',
+                display: "inline-block",
+                width: "24px",
+                height: "24px",
                 marginLeft: space[200],
-                border: `1px solid ${colors['gray-200']}`,
+                border: `1px solid ${colors["gray-200"]}`,
                 backgroundColor: preview,
-              }}
-            />
+              }}/>
             <code
               data-testid='color-hex'
               style={{ marginLeft: space[50] }}>
@@ -102,8 +104,7 @@ export const StyleTab: React.FC = () => {
             value={String(adjust)}
             onValueChange={v => setAdjust(Number(v))}
             placeholder='Adjust (-100–100)'
-            data-testid='adjust-input'
-          />
+            data-testid='adjust-input'/>
         </Grid.Item>
         <Grid.Item>
           <InputField
@@ -115,8 +116,7 @@ export const StyleTab: React.FC = () => {
             value={String(opacityDelta)}
             onValueChange={v => setOpacityDelta(Number(v))}
             placeholder='Δ opacity (-1–1)'
-            data-testid='opacity-input'
-          />
+            data-testid='opacity-input'/>
         </Grid.Item>
         <Grid.Item>
           <InputField
@@ -125,8 +125,7 @@ export const StyleTab: React.FC = () => {
             value={String(borderDelta)}
             onValueChange={v => setBorderDelta(Number(v))}
             placeholder='Δ width'
-            data-testid='border-input'
-          />
+            data-testid='border-input'/>
         </Grid.Item>
         <Grid.Item>
           <div className='buttons'>
@@ -134,7 +133,7 @@ export const StyleTab: React.FC = () => {
               onClick={apply}
               type='button'
               variant='primary'
-              icon={<IconSlidersX />}
+              icon={<IconSlidersX/>}
               iconPosition='start'>
               <Text>Apply</Text>
             </Button>
@@ -177,9 +176,9 @@ export const StyleTab: React.FC = () => {
                     backgroundColor: style.fillColor,
                     borderColor: style.borderColor,
                     borderWidth: style.borderWidth,
-                    borderStyle: 'solid',
-                    display: 'inline-block',
-                    padding: '0 4px',
+                    borderStyle: "solid",
+                    display: "inline-block",
+                    padding: "0 4px",
                   }}>
                   {preset.label}
                 </Button>
@@ -194,8 +193,8 @@ export const StyleTab: React.FC = () => {
 
 export const tabDef: TabTuple = [
   3,
-  'style',
-  'Colours',
-  'Lighten or darken the fill colour of selected shapes',
+  "style",
+  "Colours",
+  "Lighten or darken the fill colour of selected shapes",
   StyleTab,
 ];

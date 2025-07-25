@@ -1,8 +1,8 @@
 namespace Fenrick.Miro.Server.Api;
 
-using Domain;
+using Fenrick.Miro.Server.Domain;
+using Fenrick.Miro.Server.Services;
 using Microsoft.AspNetCore.Mvc;
-using Services;
 
 /// <summary>
 ///     Receives user authentication details from the client.
@@ -21,6 +21,7 @@ public class UsersController(IUserStore store) : ControllerBase
     public IActionResult Register([FromBody] UserInfo info)
     {
         this.userStore.Store(info);
+
         // TODO: persist beyond process lifetime once a database is introduced.
         return this.Accepted();
     }

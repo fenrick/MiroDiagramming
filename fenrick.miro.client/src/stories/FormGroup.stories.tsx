@@ -1,8 +1,12 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { FormGroup } from '../ui/components/FormGroup';
+{
+  Meta, StoryObj
+}
+from;
+"@storybook/react";
+import { FormGroup } from "../ui/components/FormGroup";
 
 const meta: Meta<typeof FormGroup> = {
-  title: 'Components/FormGroup',
+  title: "Components/FormGroup",
   component: FormGroup,
 };
 export default meta;

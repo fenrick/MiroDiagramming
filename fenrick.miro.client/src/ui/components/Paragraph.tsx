@@ -1,9 +1,9 @@
-import { Paragraph as DSParagraph, styled } from '@mirohq/design-system';
-import { space } from '@mirohq/design-tokens';
-import React from 'react';
+import { styled } from "@mirohq/design-system";
+import { space } from "@mirohq/design-tokens";
+import React from "react";
 
 export type ParagraphProps = Readonly<
-  Omit<React.HTMLAttributes<HTMLParagraphElement>, 'className' | 'style'>
+  Omit<React.HTMLAttributes<HTMLParagraphElement>, "className" | "style">
 >;
 
 /**
@@ -12,11 +12,12 @@ export type ParagraphProps = Readonly<
  * Custom class names and inline styles are intentionally excluded so
  * typography remains consistent across the app.
  */
-const StyledParagraph = styled(DSParagraph, {
-  marginTop: 0,
-  marginBottom: space[200],
-  position: 'relative',
-});
+const StyledParagraph = styled(DSParagraph,
+  {
+    marginTop: 0,
+    marginBottom: space[200],
+    position: "relative",
+  });
 
 export function Paragraph({
   children,

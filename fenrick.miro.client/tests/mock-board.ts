@@ -1,5 +1,9 @@
-import { vi } from 'vitest';
-import type { BoardLike } from '../src/board/board';
+import { vi } from "vitest";
+{
+  BoardLike
+}
+from;
+"../src/board/board";
 
 /**
  * Provide a basic Miro board mock for tests.

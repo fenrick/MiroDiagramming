@@ -1,12 +1,14 @@
-import { createTheme, Tabs, themes } from '@mirohq/design-system';
-import * as React from 'react';
-import { createRoot } from 'react-dom/client';
-import type { ExcelRow } from '../core/utils/excel-loader';
-import { EditMetadataModal, IntroScreen } from '../ui/components';
-import { Paragraph } from '../ui/components/Paragraph';
-import { ExcelDataProvider } from '../ui/hooks/excel-data-context';
-
-import { type Tab, TAB_DATA } from '../ui/pages/tabs';
+import { createTheme, themes } from "@mirohq/design-system";
+import * as React from "react";
+import { createRoot } from "react-dom/client";
+{
+  ExcelRow
+}
+from;
+"../core/utils/excel-loader";
+import { EditMetadataModal, IntroScreen } from "../ui/components";
+import { Paragraph } from "../ui/components/Paragraph";
+import { ExcelDataProvider } from "../ui/hooks/excel-data-context";
 
 const lightThemeClassName = createTheme(themes.light);
 
@@ -18,29 +20,30 @@ const lightThemeClassName = createTheme(themes.light);
 function AppShell(): React.JSX.Element {
   const [tab, setTab] = React.useState<Tab>(TAB_DATA[0][1]);
   const [rows, setRows] = React.useState<ExcelRow[]>([]);
-  const [idColumn, setIdColumn] = React.useState('');
-  const [labelColumn, setLabelColumn] = React.useState('');
-  const [templateColumn, setTemplateColumn] = React.useState('');
+  const [idColumn, setIdColumn] = React.useState("");
+  const [labelColumn, setLabelColumn] = React.useState("");
+  const [templateColumn, setTemplateColumn] = React.useState("");
   const [showMeta, setShowMeta] = React.useState(() => {
     const params = new URLSearchParams(window.location.search);
-    return params.get('command') === 'edit-metadata';
+    return params.get("command") === "edit-metadata";
   });
   const tabIds = React.useMemo(() => TAB_DATA.map(t => t[1]), []);
   React.useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.altKey) {
-        const idx = parseInt(e.key, 10);
-        if (idx >= 1 && idx <= tabIds.length) {
-          setTab(tabIds[idx - 1]);
+      const handler = (e: KeyboardEvent) => {
+        if (e.ctrlKey && e.altKey) {
+          const idx = parseInt(e.key, 10);
+          if (idx >= 1 && idx <= tabIds.length) {
+            setTab(tabIds[idx - 1]);
+          }
+          if (e.key.toLowerCase() === "m") {
+            setShowMeta(true);
+          }
         }
-        if (e.key.toLowerCase() === 'm') {
-          setShowMeta(true);
-        }
-      }
-    };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
-  }, [tabIds]);
+      };
+      window.addEventListener("keydown", handler);
+      return () => window.removeEventListener("keydown", handler);
+    },
+    [tabIds]);
   const current = TAB_DATA.find(t => t[1] === tab)!;
   const CurrentComp = current[4];
 
@@ -60,7 +63,7 @@ function AppShell(): React.JSX.Element {
         <Tabs
           value={tab}
           onChange={id => setTab(id as Tab)}
-          variant={'tabs'}
+          variant={"tabs"}
           size='medium'>
           <Tabs.List>
             {TAB_DATA.map(t => (
@@ -73,11 +76,10 @@ function AppShell(): React.JSX.Element {
           </Tabs.List>
         </Tabs>
         <Paragraph>{current[3]}</Paragraph>
-        <CurrentComp />
+        <CurrentComp/>
         <EditMetadataModal
           isOpen={showMeta}
-          onClose={() => setShowMeta(false)}
-        />
+          onClose={() => setShowMeta(false)}/>
       </ExcelDataProvider>
     </div>
   );
@@ -90,16 +92,18 @@ function AppShell(): React.JSX.Element {
  */
 export const App: React.FC = () => {
   const [started, setStarted] = React.useState(false);
-  return started ? (
-    <AppShell />
-  ) : (
-    <IntroScreen onStart={() => setStarted(true)} />
-  );
+  return started
+    ? (
+      <AppShell/>
+    )
+    : (
+      <IntroScreen onStart={() => setStarted(true)}/>
+    );
 };
 
-const container = document.getElementById('root');
+const container = document.getElementById("root");
 if (container) {
   container.classList += lightThemeClassName;
   const root = createRoot(container);
-  root.render(<App />);
+  root.render(<App/>);
 }

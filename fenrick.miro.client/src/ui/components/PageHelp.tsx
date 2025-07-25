@@ -1,6 +1,6 @@
-import { IconButton, IconQuestionMarkCircle } from '@mirohq/design-system';
-import React from 'react';
-import { Tooltip } from './Tooltip';
+import { IconQuestionMarkCircle } from "@mirohq/design-system";
+import React from "react";
+import { Tooltip } from "./Tooltip";
 
 export interface PageHelpProps {
   /** Descriptive text explaining the current page. */
@@ -17,7 +17,7 @@ export interface PageHelpProps {
  */
 export function PageHelp({
   content,
-  ariaLabel = 'Help',
+  ariaLabel = "Help",
 }: PageHelpProps): React.JSX.Element {
   return (
     <div className='page-help'>
@@ -29,7 +29,7 @@ export function PageHelp({
           aria-label={ariaLabel}
           size='small'
           variant='ghost'>
-          <IconQuestionMarkCircle />
+          <IconQuestionMarkCircle/>
         </IconButton>
       </Tooltip>
     </div>

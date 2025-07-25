@@ -1,5 +1,9 @@
-import type { ExcelRow } from './excel-loader';
-import { loadExcelJS } from './exceljs-loader';
+{
+  ExcelRow
+}
+from;
+"./excel-loader";
+import { loadExcelJS } from "./exceljs-loader";
 
 /**
  * Add Miro widget identifiers to the provided rows using the given ID column.
@@ -33,17 +37,18 @@ export async function downloadWorkbook(
 ): Promise<void> {
   const Excel = await loadExcelJS();
   const wb = new Excel.Workbook();
-  const ws = wb.addWorksheet('Sheet1');
+  const ws = wb.addWorksheet("Sheet1");
   if (rows.length) {
     ws.addRow(Object.keys(rows[0]));
   }
   rows.forEach(r => ws.addRow(Object.values(r)));
   const data = await wb.xlsx.writeBuffer();
-  const blob = new Blob([data], {
-    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  });
+  const blob = new Blob([data],
+    {
+      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
   const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
+  const link = document.createElement("a");
   link.href = url;
   link.download = fileName;
   link.click();
