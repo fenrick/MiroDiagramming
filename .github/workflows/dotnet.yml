@@ -30,11 +30,6 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          cache-dependency-path: fenrick.miro.client/package-lock.json
       - name: Restore
         run: dotnet restore fenrick.miro.tests/fenrick.miro.tests.csproj
       - name: Test

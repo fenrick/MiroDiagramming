@@ -1,4 +1,4 @@
-name: miro-unit-tests
+name: miro-node-tests
 
 on:
   pull_request:
@@ -10,7 +10,6 @@ permissions: write-all
 
 env:
   NODE_VERSION: 20
-  DOTNET_VERSION: "9.0.x"
 
 jobs:
   node-tests:
@@ -37,15 +36,3 @@ jobs:
           path: fenrick.miro.client/coverage/*
           include-hidden-files: true
           retention-days: 1
-
-  dotnet-tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-      - name: Restore
-        run: dotnet restore fenrick.miro.tests/fenrick.miro.tests.csproj
-      - name: Test
-        run: dotnet test fenrick.miro.tests/fenrick.miro.tests.csproj
