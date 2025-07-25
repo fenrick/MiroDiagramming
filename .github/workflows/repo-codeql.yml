@@ -1,10 +1,9 @@
 name: repo-codeql
 
 on:
-  pull_request:
-    branches: [main, develop]
   push:
-    branches: [main, develop]
+    branches: [main]
+  workflow_dispatch:
 
 permissions:
   security-events: write
