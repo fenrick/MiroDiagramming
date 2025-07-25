@@ -5,7 +5,22 @@
 
 version: 2
 updates:
-  - package-ecosystem: 'npm' # See documentation for possible values
-    directory: '/' # Location of package manifests
+  - package-ecosystem: "npm"
+    directory: "/fenrick.miro.client"
     schedule:
-      interval: 'daily'
+      interval: "daily"
+
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "docker"
+    directory: "/fenrick.miro.server"
+    schedule:
+      interval: "daily"
