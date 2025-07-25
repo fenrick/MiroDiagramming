@@ -292,7 +292,7 @@ both sides share the same log stream.
 
 Data persistence is handled by **Entity Framework Core** using the Npgsql provider with a **PostgreSQL** backend via `EfUserStore`.
 
-Several new C# utilities (`ExcelLoader`, `LayoutEngine`, `TemplateService` and
+Several new C# utilities (`ExcelLoader`, `LayoutEngine`, `InMemoryTemplateStore` and
 `ObjectMatcher`) are early prototypes. TODO markers outline the remaining work
 to match the JavaScript implementations.
 

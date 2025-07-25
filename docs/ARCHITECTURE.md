@@ -42,7 +42,8 @@ The React GUI communicates with a **.NET 9** server for all Miro REST API calls
 OAuth tokens are obtained during browser login, then stored securely by the
 server and retrieved for each request. Tokens are persisted by
 <code>EfUserStore</code> in **PostgreSQL** using
-**Entity Framework Core**. The existing
+**Entity Framework Core**. Templates are stored via
+<code>EfTemplateStore</code> using the same database. The existing
 web API embedded in the GUI continues to handle UX events and simple actions.
 The server also persists the ids of created Miro items so they can be
 synchronised or referenced later.

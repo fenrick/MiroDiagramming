@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Host.UseSerilog((HostBuilderContext _, LoggerConfiguration cfg) =>
+builder.Host.UseSerilog((_, cfg) =>
     cfg.WriteTo.Console(formatProvider: CultureInfo.InvariantCulture));
 
 builder.AddServiceDefaults();
@@ -15,13 +15,13 @@ builder.Services.AddControllers();
 var conn = builder.Configuration.GetConnectionString("postgres");
 builder.Services.AddDbContext<MiroDbContext>(opt => opt.UseNpgsql(conn));
 builder.Services.AddScoped<IUserStore, EfUserStore>();
+builder.Services.AddScoped<ITemplateStore, EfTemplateStore>();
 builder.Services.AddSingleton<ILogSink, SerilogSink>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient<IMiroClient, MiroRestClient>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSingleton<ILogSink>((IServiceProvider _) =>
-    new SerilogSink(Log.Logger));
+builder.Services.AddSingleton<ILogSink>(_ => new SerilogSink(Log.Logger));
 builder.Services.AddSingleton<IShapeCache, InMemoryShapeCache>();
 
 var app = builder.Build();

@@ -75,6 +75,7 @@ for all data shapes.
 Supporting classes under `src/Services/` provide infrastructure glue:
 
 - **EfUserStore** – persists user tokens in PostgreSQL.
+- **EfTemplateStore** – stores user templates in PostgreSQL.
 - **MiroRestClient** – HTTP adapter attaching bearer tokens to requests.
 
 ---
