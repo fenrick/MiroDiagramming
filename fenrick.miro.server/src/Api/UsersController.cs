@@ -22,7 +22,7 @@ public class UsersController(IUserStore store) : ControllerBase
     {
         this.userStore.Store(info);
 
-        // TODO: persist beyond process lifetime once a database is introduced.
+        // Tokens persist via the configured IUserStore.
         return this.Accepted();
     }
 }

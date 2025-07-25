@@ -77,7 +77,7 @@ Supporting classes under `src/Services/` provide infrastructure glue:
 - **EfUserStore** – persists user tokens in PostgreSQL.
 - **MiroRestClient** – HTTP adapter attaching bearer tokens to requests.
 
---
+---
 
 See **ARCHITECTURE.md** for the overall system overview and code quality
 requirements.

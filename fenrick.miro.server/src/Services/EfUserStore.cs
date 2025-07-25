@@ -1,5 +1,6 @@
 namespace Fenrick.Miro.Server.Services;
 
+using System;
 using Fenrick.Miro.Server.Data;
 using Fenrick.Miro.Server.Domain;
 
@@ -14,6 +15,11 @@ public class EfUserStore(MiroDbContext context) : IUserStore
     /// <inheritdoc />
     public UserInfo? Retrieve(string userId)
     {
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            throw new ArgumentException("User id must be provided", nameof(userId));
+        }
+
         var entity = this.db.Users.Find(userId);
         return entity is null ? null : new UserInfo(entity.Id, entity.Name, entity.Token);
     }
@@ -21,6 +27,11 @@ public class EfUserStore(MiroDbContext context) : IUserStore
     /// <inheritdoc />
     public void Store(UserInfo info)
     {
+        if (string.IsNullOrWhiteSpace(info.Id))
+        {
+            throw new ArgumentException("User id must be provided", nameof(info));
+        }
+
         var entity = this.db.Users.Find(info.Id);
         if (entity is null)
         {
@@ -33,5 +44,21 @@ public class EfUserStore(MiroDbContext context) : IUserStore
         }
 
         this.db.SaveChanges();
+    }
+
+    /// <inheritdoc />
+    public void Delete(string userId)
+    {
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            throw new ArgumentException("User id must be provided", nameof(userId));
+        }
+
+        var entity = this.db.Users.Find(userId);
+        if (entity != null)
+        {
+            this.db.Users.Remove(entity);
+            this.db.SaveChanges();
+        }
     }
 }
