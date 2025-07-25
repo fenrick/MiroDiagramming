@@ -45,6 +45,7 @@ server and retrieved for each request. Tokens are persisted by
 **Entity Framework Core**. Templates are stored via
 <code>EfTemplateStore</code> using the same database. The existing
 web API embedded in the GUI continues to handle UX events and simple actions.
+EF Core migrations run on startup to keep the schema in sync with the model.
 The server also persists the ids of created Miro items so they can be
 synchronised or referenced later.
 <!-- TODO build a richer .NET object model to persist board state beyond item ids -->

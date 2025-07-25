@@ -291,6 +291,7 @@ automatically batched by `HttpLogSink` and forwarded via `POST /api/logs` so
 both sides share the same log stream.
 
 Data persistence is handled by **Entity Framework Core** using the Npgsql provider with a **PostgreSQL** backend via `EfUserStore`.
+Database schemas are maintained through EF Core migrations applied automatically on startup.
 
 Several new C# utilities (`ExcelLoader`, `LayoutEngine`, `InMemoryTemplateStore` and
 `ObjectMatcher`) are early prototypes. TODO markers outline the remaining work
