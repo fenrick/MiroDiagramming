@@ -34,5 +34,9 @@ public class UsersControllerTests
         public UserInfo? Retrieve(string userId) => null;
 
         public void Store(UserInfo info) => this.callback(info);
+
+        public void Delete(string userId)
+        {
+        }
     }
 }

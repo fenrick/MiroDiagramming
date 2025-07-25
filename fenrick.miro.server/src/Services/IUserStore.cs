@@ -12,6 +12,10 @@ public interface IUserStore
     /// <returns>Stored details or <c>null</c>.</returns>
     public UserInfo? Retrieve(string userId);
 
+    /// <summary>Remove the user and associated token.</summary>
+    /// <param name="userId">Identifier of the user.</param>
+    public void Delete(string userId);
+
     /// <summary>Store or replace user details.</summary>
     /// <param name="info">Details to persist.</param>
     public void Store(UserInfo info);

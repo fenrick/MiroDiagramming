@@ -34,8 +34,8 @@ under `fenrick.miro.tests/`. The Node code resides in
 
 ## 2 IDE Configuration
 
-- `fenrick.miro.server/fenrick.miro.server.csproj` – .NET 9 Web API project.
-- `package.json` in `fenrick.miro.client/` – Node workspace for the React client.
+ `fenrick.miro.server/fenrick.miro.server.csproj` – .NET 9 Web API project.
+ `package.json` in `fenrick.miro.client/` – Node workspace for the React client.
 
 Each tool can open only its relevant folder, but the repository still builds end
 to end using the shared `npm` and `dotnet` commands.
@@ -74,7 +74,9 @@ for all data shapes.
 
 Supporting classes under `src/Services/` provide infrastructure glue:
 
-- **InMemoryUserStore** – temporary storage for user tokens during development.
+- **EfUserStore** – persists user tokens in PostgreSQL.
+- **EfTemplateStore** – stores user templates in PostgreSQL.
+- Migrations apply automatically on startup to keep the schema current.
 - **MiroRestClient** – HTTP adapter attaching bearer tokens to requests.
 
 ---

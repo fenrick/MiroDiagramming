@@ -6,12 +6,12 @@ using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
 using Xunit;
 
-public class TemplateServiceTests
+public class InMemoryTemplateStoreTests
 {
     [Fact]
     public void StoresAndRetrievesTemplatePerUser()
     {
-        var svc = new TemplateService();
+        var svc = new InMemoryTemplateStore();
         var tpl = new TemplateDefinition(
         [
             new TemplateElement("r", 100, 60, "{{label}}")
@@ -25,6 +25,6 @@ public class TemplateServiceTests
         Assert.Null(svc.GetTemplate("u2", "A"));
     }
 
-    // TODO create integration tests once TemplateService exposes REST endpoints
+    // TODO create integration tests once template endpoints allow full CRUD
     // for creating, updating and deleting templates.
 }

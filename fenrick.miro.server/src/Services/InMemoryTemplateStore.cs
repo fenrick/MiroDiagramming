@@ -1,17 +1,18 @@
 namespace Fenrick.Miro.Server.Services;
 
+using System.Collections.Generic;
 using Fenrick.Miro.Server.Domain;
 
 /// <summary>
 ///     Manage user specific template collections in memory.
 /// </summary>
-
-// TODO: persist templates in a database using an ORM and expose full CRUD API
-
-// endpoints so the client can create, read, update and delete templates
-
-// via REST. Model templates in the shared DTO layer for portability.
-public class TemplateService
+/// <remarks>
+///     TODO: persist templates in a database using an ORM and expose full CRUD
+///     API endpoints so the client can create, read, update and delete
+///     templates via REST. Model templates in the shared DTO layer for
+///     portability.
+/// </remarks>
+public class InMemoryTemplateStore : ITemplateStore
 {
     private readonly Dictionary<string, Dictionary<string, TemplateDefinition>>
         store = [];
