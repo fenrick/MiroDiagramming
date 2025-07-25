@@ -41,8 +41,8 @@ Browser
 The React GUI communicates with a **.NET 9** server for all Miro REST API calls.
 OAuth tokens are obtained during browser login, then stored securely by the
 server and retrieved for each request. Tokens currently live only in an
-<code>InMemoryUserStore</code> while we design **PostgreSQL** persistence managed
-through **Entity Framework Core**. The existing
+<code>EfUserStore</code> persists tokens in **PostgreSQL** via
+**Entity Framework Core**. The existing
 web API embedded in the GUI continues to handle UX events and simple actions.
 The server also persists the ids of created Miro items so they can be
 synchronised or referenced later.

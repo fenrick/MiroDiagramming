@@ -3,6 +3,10 @@ using Projects;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
-builder.AddProject<fenrick_miro_server>("fenrick-miro-server").WithSwaggerUI();
+var db = builder.AddNpgsqlContainer("postgres");
+
+builder.AddProject<fenrick_miro_server>("fenrick-miro-server")
+    .WithReference(db)
+    .WithSwaggerUI();
 
 await builder.Build().RunAsync();

@@ -1,5 +1,7 @@
 using System.Globalization;
+using Fenrick.Miro.Server.Data;
 using Fenrick.Miro.Server.Services;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,7 +12,9 @@ builder.AddServiceDefaults();
 
 // Add services to the container.
 builder.Services.AddControllers();
-builder.Services.AddSingleton<IUserStore, InMemoryUserStore>();
+var conn = builder.Configuration.GetConnectionString("postgres");
+builder.Services.AddDbContext<MiroDbContext>(opt => opt.UseNpgsql(conn));
+builder.Services.AddScoped<IUserStore, EfUserStore>();
 builder.Services.AddSingleton<ILogSink, SerilogSink>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient<IMiroClient, MiroRestClient>();

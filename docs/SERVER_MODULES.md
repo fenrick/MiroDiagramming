@@ -1,6 +1,6 @@
 # Server Module Reference
 
----
+--
 
 ## 0 Purpose
 
@@ -34,8 +34,8 @@ under `fenrick.miro.tests/`. The Node code resides in
 
 ## 2 IDE Configuration
 
-- `fenrick.miro.server/fenrick.miro.server.csproj` – .NET 9 Web API project.
-- `package.json` in `fenrick.miro.client/` – Node workspace for the React client.
+ `fenrick.miro.server/fenrick.miro.server.csproj` – .NET 9 Web API project.
+ `package.json` in `fenrick.miro.client/` – Node workspace for the React client.
 
 Each tool can open only its relevant folder, but the repository still builds end
 to end using the shared `npm` and `dotnet` commands.
@@ -44,17 +44,17 @@ to end using the shared `npm` and `dotnet` commands.
 
 The API exposes five controller types:
 
-1. **BatchController** – accepts an array of REST requests and forwards them to
+1.- **BatchController** – accepts an array of REST requests and forwards them to
    the Miro API using a single authenticated client. Responses are returned in
    the original order.
-2. **WebhookController** – handles Miro board webhooks. Each event is validated
+2.- **WebhookController** – handles Miro board webhooks. Each event is validated
    and queued for processing so the webhook endpoint stays lightweight.
-3. **CacheController** – returns board ids and other metadata stored in the
+3.- **CacheController** – returns board ids and other metadata stored in the
    server cache. This minimises round trips when rendering existing diagrams.
-4. **LogsController** – accepts client log entries and writes them to the server
+4.- **LogsController** – accepts client log entries and writes them to the server
    log via Serilog.
-5. **UsersController** – stores OAuth tokens received from the client.
-6. **ShapesController** – creates, updates and deletes widgets via the Miro API.
+5.- **UsersController** – stores OAuth tokens received from the client.
+6.- **ShapesController** – creates, updates and deletes widgets via the Miro API.
    Each operation updates `IShapeCache` so the front‑end can fetch shapes
    without calling `board.get`. TODO: expose a lookup endpoint once the cache
    supports persistence.
@@ -74,12 +74,12 @@ for all data shapes.
 
 Supporting classes under `src/Services/` provide infrastructure glue:
 
-- **InMemoryUserStore** – temporary storage for user tokens during development.
+- **EfUserStore** – persists user tokens in PostgreSQL.
 - **MiroRestClient** – HTTP adapter attaching bearer tokens to requests.
 
----
+--
 
-See **ARCHITECTURE.md** for the overall system overview and code quality
+See- **ARCHITECTURE.md** for the overall system overview and code quality
 requirements.
 
 ## 5 Future Work
@@ -87,14 +87,14 @@ requirements.
 The initial services intentionally keep the scope small. The following features remain TODO and are marked throughout the source:
 
 - **ELK-based LayoutEngine** – port the heavy shape placement algorithms from the JavaScript codebase. The current `LayoutEngine` only stacks nodes vertically.
-- **Persistent shape cache** – back `IShapeCache` with Redis and a **PostgreSQL** store managed by **Entity Framework Core**, then expose a lookup endpoint.
+- **Persistent shape cache** – back `IShapeCache` with Redis and a- **PostgreSQL** store managed by- **Entity Framework Core**, then expose a lookup endpoint.
 - **Background queue management** – handle modify and delete operations with priority over new creations.
-  - **Queue persistence** – store pending shape operations in **PostgreSQL** using Entity Framework Core and integrate with a durable queue.
+  -- **Queue persistence** – store pending shape operations in- **PostgreSQL** using Entity Framework Core and integrate with a durable queue.
 - **Token refresh endpoint** – automatically renew expired tokens and store updates securely.
 - **REST client library** – investigate community or official .NET wrappers for the Miro REST API to avoid bespoke HTTP code.
 - **Full OAuth flow** – research `AspNet.Security.OAuth.Miro` and implement the server-side exchange.
 - **ExcelLoader extensions** – add streaming support, large workbook optimisation and named table handling.
-  - **Template persistence** – store user templates in **PostgreSQL** via Entity Framework Core and expose API endpoints for editing and listing templates.
+  -- **Template persistence** – store user templates in- **PostgreSQL** via Entity Framework Core and expose API endpoints for editing and listing templates.
 - **Advanced object matching** – provide fuzzy search and shape property filters beyond simple label comparison.
 - **Comprehensive tests** – ensure every endpoint reaches ≥ 90 % coverage with unit and integration tests.
 
