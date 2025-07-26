@@ -1,3 +1,4 @@
+import { Tabs } from '@mirohq/design-system';
 import React from 'react';
 import { PageHelp } from '../components/PageHelp';
 import { TabPanel } from '../components/TabPanel';
@@ -5,12 +6,7 @@ import { ArrangeTab } from './ArrangeTab';
 import { FramesTab } from './FramesTab';
 import { ResizeTab } from './ResizeTab';
 import { StyleTab } from './StyleTab';
-
-{
-  TabTuple;
-}
-from;
-('./tab-definitions');
+import type { TabTuple } from './tab-definitions';
 
 /**
  * Identifier string for each sub-tab.

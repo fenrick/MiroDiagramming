@@ -1,5 +1,5 @@
 /** @vitest-environment jsdom */
-import { expect, vi } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
 import {
   addMiroIds,
   downloadWorkbook,

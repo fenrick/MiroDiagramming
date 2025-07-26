@@ -1,6 +1,7 @@
 namespace Fenrick.Miro.Server.Services;
 
-using Domain;
+using System.Collections.Generic;
+using Fenrick.Miro.Server.Domain;
 
 /// <summary>
 ///     Manage user specific template collections in memory.

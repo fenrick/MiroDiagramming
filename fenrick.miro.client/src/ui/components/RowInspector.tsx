@@ -1,13 +1,8 @@
 import { space } from '@mirohq/design-tokens';
 import React from 'react';
+import type { ExcelRow } from '../../core/utils/excel-loader';
 import { useRowData } from '../hooks/use-row-data';
 import { InputField } from './InputField';
-
-{
-  ExcelRow;
-}
-from;
-('../../core/utils/excel-loader');
 
 export interface RowInspectorProps {
   /** Rows loaded from the workbook. */

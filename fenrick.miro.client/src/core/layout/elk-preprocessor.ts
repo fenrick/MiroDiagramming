@@ -1,8 +1,4 @@
-{
-  ElkNode;
-}
-from;
-('elkjs/lib/elk-api');
+import type { ElkNode } from 'elkjs/lib/elk-api';
 
 /** ELK node extended with optional custom properties. */
 export interface LayoutNode extends ElkNode {

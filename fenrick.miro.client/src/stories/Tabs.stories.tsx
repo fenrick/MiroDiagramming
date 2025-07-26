@@ -3,11 +3,7 @@
  * Parent tabs such as Tools and Diagrams host their own sub-navigation
  * but are represented here as standalone pages for review and testability.
  */
-{
-  (Meta, StoryObj);
-}
-from;
-('@storybook/react');
+import type { Meta, StoryObj } from '@storybook/react';
 import { ArrangeTab } from '../ui/pages/ArrangeTab';
 import { CardsTab } from '../ui/pages/CardsTab';
 import { DiagramsTab } from '../ui/pages/DiagramsTab';

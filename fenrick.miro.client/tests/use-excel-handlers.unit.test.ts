@@ -1,18 +1,13 @@
 /** @vitest-environment jsdom */
 import { act, renderHook } from '@testing-library/react';
-import { useDropzone } from 'react-dropzone';
-import { mapRowsToNodes } from '../src/core/data-mapper';
-import { GraphProcessor } from '../src/core/graph/graph-processor';
 import { excelLoader, graphExcelLoader } from '../src/core/utils/excel-loader';
-import { addMiroIds } from '../src/core/utils/workbook-writer';
-import { showError } from '../src/ui/hooks/notifications';
-import { getDropzoneStyle } from '../src/ui/hooks/ui-utils';
 import {
   fetchRemoteWorkbook,
   handleLocalDrop,
-  useExcelCreate,
   useExcelDrop,
 } from '../src/ui/hooks/use-excel-handlers';
+import { getDropzoneStyle } from '../src/ui/hooks/ui-utils';
+import { useDropzone } from 'react-dropzone';
 
 vi.mock('../src/core/utils/excel-loader', () => ({
   excelLoader: { loadWorkbook: vi.fn() },
@@ -49,11 +44,19 @@ describe('use-excel-handlers helpers', () => {
     const cb = vi.fn().mockResolvedValue(undefined);
     renderHook(() => useExcelDrop(cb));
     const f = new File(['b'], 'b.xlsx');
-    await act(async () => await dropCallback([f]));
+    await act(async () => {
+      await dropCallback([f]);
+    });
     expect(cb).toHaveBeenCalledWith([f]);
     expect(getDropzoneStyle).toHaveBeenCalled();
   });
 });
+
+import { useExcelCreate } from '../src/ui/hooks/use-excel-handlers';
+import { addMiroIds } from '../src/core/utils/workbook-writer';
+import { mapRowsToNodes } from '../src/core/data-mapper';
+import { GraphProcessor } from '../src/core/graph/graph-processor';
+import { showError } from '../src/ui/hooks/notifications';
 
 vi.mock('../src/core/utils/workbook-writer', () => ({
   addMiroIds: vi.fn((rows, col, map) =>
@@ -91,7 +94,9 @@ describe('use-excel-create', () => {
         setRows,
       }),
     );
-    await act(async () => await result.current());
+    await act(async () => {
+      await result.current();
+    });
     expect(processSpy).toHaveBeenCalled();
     expect(mapRowsToNodes).toHaveBeenCalled();
     expect(addMiroIds).toHaveBeenCalled();
@@ -115,7 +120,9 @@ describe('use-excel-create', () => {
         setRows,
       }),
     );
-    await act(async () => await result.current());
+    await act(async () => {
+      await result.current();
+    });
     expect(showError).toHaveBeenCalled();
   });
 });

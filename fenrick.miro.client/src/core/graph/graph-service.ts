@@ -1,16 +1,7 @@
-{
-  (BaseItem, Connector, Group);
-}
-from;
-('@mirohq/websdk-types');
+import type { BaseItem, Connector, Group } from '@mirohq/websdk-types';
 import { BoardBuilder } from '../../board/board-builder';
+import type { HierNode } from '../layout/nested-layout';
 import { fileUtils } from '../utils/file-utils';
-
-{
-  HierNode;
-}
-from;
-('../layout/nested-layout');
 
 export interface NodeData {
   id: string;

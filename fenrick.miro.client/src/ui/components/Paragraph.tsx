@@ -1,4 +1,4 @@
-import { styled } from '@mirohq/design-system';
+import { Paragraph as DSParagraph, styled } from '@mirohq/design-system';
 import { space } from '@mirohq/design-tokens';
 import React from 'react';
 

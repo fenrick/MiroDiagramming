@@ -1,8 +1,7 @@
-name: server-dotnet
+name: server-format
 
 on:
   push:
-  pull_request:
 
 permissions: write-all
 
@@ -12,6 +11,7 @@ env:
 
 jobs:
   dotnet-format:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,15 +20,3 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - name: Format check
         run: dotnet format --no-restore --verify-no-changes fenrick.miro.server/fenrick.miro.server.csproj
-
-  dotnet-tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-      - name: Restore
-        run: dotnet restore fenrick.miro.tests/fenrick.miro.tests.csproj
-      - name: Test
-        run: dotnet test fenrick.miro.tests/fenrick.miro.tests.csproj

@@ -1,8 +1,4 @@
-{
-  ExcelRow;
-}
-from;
-('./excel-loader');
+import type { ExcelRow } from './excel-loader';
 import { loadExcelJS } from './exceljs-loader';
 
 /**

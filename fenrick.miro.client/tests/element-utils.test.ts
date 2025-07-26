@@ -1,22 +1,13 @@
-import { vi } from 'vitest';
 import {
-  applyElementToItem,
+  buildShapeStyle,
   applyShapeElement,
   applyTextElement,
-  buildShapeStyle,
+  applyElementToItem,
 } from '../src/board/element-utils';
 import { templateManager } from '../src/board/templates';
-
-{
-  TemplateElement;
-}
-from;
-('../src/board/templates');
-{
-  (Shape, Text, BaseItem);
-}
-from;
-('@mirohq/websdk-types');
+import type { TemplateElement } from '../src/board/templates';
+import { vi } from 'vitest';
+import type { Shape, Text, BaseItem } from '@mirohq/websdk-types';
 
 describe('buildShapeStyle', () => {
   afterEach(() => vi.restoreAllMocks());

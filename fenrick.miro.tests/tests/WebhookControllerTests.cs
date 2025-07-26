@@ -3,9 +3,9 @@
 namespace Fenrick.Miro.Tests;
 
 using System;
+using Fenrick.Miro.Server.Api;
+using Fenrick.Miro.Server.Domain;
 using Microsoft.AspNetCore.Mvc;
-using Server.Api;
-using Server.Domain;
 using Xunit;
 
 public class WebhookControllerTests
@@ -14,7 +14,7 @@ public class WebhookControllerTests
     public void HandleEnqueuesEvent()
     {
         WebhookEvent? received = null;
-        var sink = new StubSink(evt => received = evt);
+        var sink = new StubSink((WebhookEvent evt) => received = evt);
         var controller = new WebhookController(sink);
         var evt = new WebhookEvent("created", "b1");
 

@@ -1,11 +1,6 @@
-import { beforeEach, expect, vi } from 'vitest';
+import { beforeEach, expect, test, vi } from 'vitest';
 import { CardClient } from '../src/core/utils/card-client';
-
-{
-  CardData;
-}
-from;
-('../src/core/utils/cards');
+import type { CardData } from '../src/core/utils/cards';
 
 vi.stubGlobal('fetch', vi.fn());
 

@@ -1,3 +1,5 @@
+import { log } from '../logger';
+
 /**
  * Singleton wrapper that wires the Miro Web SDK UI events.
  */

@@ -1,4 +1,9 @@
-import { Grid, IconChevronRightDouble, IconGrid } from '@mirohq/design-system';
+import {
+  Grid,
+  IconChevronRightDouble,
+  IconGrid,
+  Text,
+} from '@mirohq/design-system';
 import React from 'react';
 import { applyGridLayout, GridOptions } from '../../board/grid-tools';
 import { applySpacingLayout, SpacingOptions } from '../../board/spacing-tools';
@@ -11,12 +16,7 @@ import {
 } from '../components';
 import { PageHelp } from '../components/PageHelp';
 import { TabPanel } from '../components/TabPanel';
-
-{
-  TabTuple;
-}
-from;
-('./tab-definitions');
+import type { TabTuple } from './tab-definitions';
 
 /**
  * Combines grid and spacing tools into a single sidebar tab.

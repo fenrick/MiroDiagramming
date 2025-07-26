@@ -9,6 +9,7 @@
  *
  * @param message - The text to display.
  */
+import { log } from '../../logger';
 
 export async function showError(message: string): Promise<void> {
   const trimmed = message.length > 80 ? `${message.slice(0, 77)}...` : message;

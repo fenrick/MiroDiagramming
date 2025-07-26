@@ -1,4 +1,4 @@
-import { expect } from 'vitest';
+import { expect, test } from 'vitest';
 import { BoardBuilder } from '../src/board/board-builder';
 
 test('stores and retrieves frame', () => {

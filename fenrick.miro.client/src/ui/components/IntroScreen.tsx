@@ -1,4 +1,5 @@
 import React from 'react';
+import introText from '../intro.md?raw';
 import { Button } from './Button';
 import { Markdown } from './Markdown';
 

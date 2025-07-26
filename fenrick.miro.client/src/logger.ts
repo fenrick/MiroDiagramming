@@ -1,11 +1,6 @@
 import pino from 'pino';
+import type { ClientLogEntry, LogSink } from './log-sink';
 import { HttpLogSink } from './log-sink';
-
-{
-  (ClientLogEntry, LogSink);
-}
-from;
-('./log-sink');
 
 /**
  * Centralised application logger.

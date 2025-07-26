@@ -1,8 +1,4 @@
-{
-  (Meta, StoryObj);
-}
-from;
-('@storybook/react');
+import type { Meta, StoryObj } from '@storybook/react';
 import { App } from '../app/App';
 
 const meta: Meta<typeof App> = {

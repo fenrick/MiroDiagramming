@@ -1,8 +1,4 @@
-{
-  CardData;
-}
-from;
-('./cards');
+import type { CardData } from './cards';
 
 /** HTTP client for the cards API. */
 export class CardClient {

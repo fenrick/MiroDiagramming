@@ -1,3 +1,4 @@
+import { log } from '../src/logger';
 import { showError } from '../src/ui/hooks/notifications';
 
 interface GlobalWithMiro {

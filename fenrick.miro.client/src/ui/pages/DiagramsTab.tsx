@@ -1,15 +1,11 @@
+import { Tabs } from '@mirohq/design-system';
 import React from 'react';
 import { PageHelp } from '../components/PageHelp';
 import { TabPanel } from '../components/TabPanel';
 import { CardsTab } from './CardsTab';
 import { LayoutEngineTab } from './LayoutEngineTab';
 import { StructuredTab } from './StructuredTab';
-
-{
-  TabTuple;
-}
-from;
-('./tab-definitions');
+import type { TabTuple } from './tab-definitions';
 
 /**
  * Parent tab hosting diagram-related tools via nested navigation.

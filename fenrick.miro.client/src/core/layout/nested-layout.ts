@@ -32,19 +32,10 @@ const LEAF_HEIGHT = 30;
 const DEFAULT_PADDING = 20;
 const DEFAULT_TOP_SPACING = 50;
 
-{
-  ElkNode;
-}
-from;
-('elkjs/lib/elk-api');
+import type { ElkNode } from 'elkjs/lib/elk-api';
 import { loadElk } from './elk-loader';
+import type { LayoutNode } from './elk-preprocessor';
 import { prepareForElk } from './elk-preprocessor';
-
-{
-  LayoutNode;
-}
-from;
-('./elk-preprocessor');
 
 /**
  * Layout hierarchical data using the ELK engine and compute container sizes.

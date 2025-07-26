@@ -1,4 +1,4 @@
-import { miroViewports } from '../.storybook/preview';
+import preview, { miroViewports } from '../.storybook/preview';
 
 describe('storybook viewport configuration', () => {
   it('provides a miro viewport', () =>

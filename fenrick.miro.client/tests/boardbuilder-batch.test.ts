@@ -1,4 +1,4 @@
-import { beforeEach, expect, vi } from 'vitest';
+import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { BoardBuilder } from '../src/board/board-builder';
 import { boardCache } from '../src/board/board-cache';
 import { mockBoard } from './mock-board';

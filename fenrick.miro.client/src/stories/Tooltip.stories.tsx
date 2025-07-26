@@ -1,11 +1,6 @@
-import { IconQuestionMarkCircle } from '@mirohq/design-system';
+import { IconButton, IconQuestionMarkCircle } from '@mirohq/design-system';
+import type { Meta, StoryObj } from '@storybook/react';
 import { Tooltip } from '../ui/components/Tooltip';
-
-{
-  (Meta, StoryObj);
-}
-from;
-('@storybook/react');
 
 const meta: Meta<typeof Tooltip> = {
   title: 'Components/Tooltip',

@@ -1,4 +1,4 @@
-import { Form, Grid, IconSlidersX } from '@mirohq/design-system';
+import { Form, Grid, Heading, IconSlidersX, Text } from '@mirohq/design-system';
 import { colors, space } from '@mirohq/design-tokens';
 import React from 'react';
 import { applyStylePreset, presetStyle } from '../../board/format-tools';
@@ -15,12 +15,7 @@ import { PageHelp } from '../components/PageHelp';
 import { TabPanel } from '../components/TabPanel';
 import { useSelection } from '../hooks/use-selection';
 import { STYLE_PRESET_NAMES, stylePresets } from '../style-presets';
-
-{
-  TabTuple;
-}
-from;
-('./tab-definitions');
+import type { TabTuple } from './tab-definitions';
 
 /** Adjusts the fill colour of selected widgets. */
 export const StyleTab: React.FC = () => {

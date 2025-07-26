@@ -1,6 +1,6 @@
 namespace Fenrick.Miro.Server.Services;
 
-using Domain;
+using Fenrick.Miro.Server.Domain;
 
 /// <summary>
 ///     Provides user-scoped template storage.
@@ -11,6 +11,5 @@ public interface ITemplateStore
     public TemplateDefinition? GetTemplate(string userId, string name);
 
     /// <summary>Store or replace a user template.</summary>
-    public void SetTemplate(string userId, string name,
-        TemplateDefinition template);
+    public void SetTemplate(string userId, string name, TemplateDefinition template);
 }

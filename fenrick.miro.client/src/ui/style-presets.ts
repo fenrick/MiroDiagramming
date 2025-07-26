@@ -1,8 +1,5 @@
-{
-  TemplateElement;
-}
-from;
-('../board/templates');
+import templatesJson from '../../../templates/shapeTemplates.json';
+import type { TemplateElement } from '../board/templates';
 import { templateManager } from '../board/templates';
 
 /** Definition of a named style preset. */

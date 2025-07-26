@@ -8,6 +8,7 @@ import {
   resolveColor,
 } from '../core/utils/color-utils';
 import {
+  BoardLike,
   forEachSelection,
   getFirstSelection,
   maybeSync,

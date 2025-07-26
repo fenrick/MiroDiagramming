@@ -1,12 +1,10 @@
-{
+import type {
   BaseItem,
-    Connector,
-    Frame,
-    Group,
-    GroupableItem,;
-}
-from;
-'@mirohq/websdk-types';
+  Connector,
+  Frame,
+  Group,
+  GroupableItem,
+} from '@mirohq/websdk-types';
 import { BoardBuilder } from '../../board/board-builder';
 import { clearActiveFrame, registerFrame } from '../../board/frame-utils';
 import { boundingBoxFromCenter, frameOffset } from '../layout/layout-utils';
@@ -17,13 +15,8 @@ import {
 } from '../layout/nested-layout';
 import { fileUtils } from '../utils/file-utils';
 import { edgesToHierarchy } from './convert';
+import type { GraphData } from './graph-service';
 import { UndoableProcessor } from './undoable-processor';
-
-{
-  GraphData;
-}
-from;
-'./graph-service';
 
 export interface HierarchyProcessOptions {
   createFrame?: boolean;
@@ -80,12 +73,11 @@ export class HierarchyProcessor extends UndoableProcessor<
       throw new Error('Invalid hierarchy');
     }
     this.lastCreated = [];
-    const result = await layoutHierarchy(data,
-      {
-        sortKey: opts.sortKey,
-        padding: opts.padding,
-        topSpacing: opts.topSpacing,
-      });
+    const result = await layoutHierarchy(data, {
+      sortKey: opts.sortKey,
+      padding: opts.padding,
+      topSpacing: opts.topSpacing,
+    });
     const bounds = this.computeBounds(result);
     const margin = 40;
     const width = bounds.maxX - bounds.minX + margin * 2;
@@ -114,7 +106,7 @@ export class HierarchyProcessor extends UndoableProcessor<
     await this.createWidgets(data, result.nodes, offsetX, offsetY);
     const syncItems = this.lastCreated.filter(i => i !== frame);
     await this.syncOrUndo(syncItems as Array<BaseItem | Group | Connector>);
-    const target = frame ?? this.lastCreated as Array<BaseItem | Group>;
+    const target = frame ?? (this.lastCreated as Array<BaseItem | Group>);
     await this.builder.zoomTo(target);
   }
 
@@ -144,13 +136,12 @@ export class HierarchyProcessor extends UndoableProcessor<
     const pos = posMap[node.id];
     const centerX = pos.x + offsetX + pos.width / 2;
     const centerY = pos.y + offsetY + pos.height / 2;
-    const widget = await this.builder.createNode(node,
-      {
-        x: centerX,
-        y: centerY,
-        width: pos.width,
-        height: pos.height,
-      });
+    const widget = await this.builder.createNode(node, {
+      x: centerX,
+      y: centerY,
+      width: pos.width,
+      height: pos.height,
+    });
     await this.builder.resizeItem(widget, pos.width, pos.height);
 
     if (!node.children?.length) {

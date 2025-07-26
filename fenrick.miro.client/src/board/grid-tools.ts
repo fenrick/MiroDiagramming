@@ -16,11 +16,12 @@ export interface GridOptions {
   sortOrientation?: 'horizontal' | 'vertical';
 }
 
+import { log } from '../logger';
 /**
  * Minimal abstraction of the board API used for selection and grouping.
  * Allows injection of a mock implementation in tests.
  */
-import { getBoard, maybeSync, Syncable } from './board';
+import { BoardLike, getBoard, maybeSync, Syncable } from './board';
 import { boardCache } from './board-cache';
 import { calculateGridPositions } from './grid-layout';
 import { getTextFields } from './search-tools';

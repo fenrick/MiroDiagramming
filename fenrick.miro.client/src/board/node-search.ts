@@ -1,13 +1,6 @@
-{
-  (BaseItem, Group, Shape);
-}
-from;
-('@mirohq/websdk-types');
-{
-  BoardQueryLike;
-}
-from;
-('./board');
+import type { BaseItem, Group, Shape } from '@mirohq/websdk-types';
+import { log } from '../logger';
+import type { BoardQueryLike } from './board';
 import { boardCache } from './board-cache';
 
 /**

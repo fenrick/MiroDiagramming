@@ -2,7 +2,6 @@ name: client-eslint
 
 on:
   push:
-  pull_request:
 
 permissions: write-all
 

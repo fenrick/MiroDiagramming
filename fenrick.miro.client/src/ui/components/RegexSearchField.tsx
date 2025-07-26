@@ -1,4 +1,4 @@
-import { Form } from '@mirohq/design-system';
+import { Form, Input, Switch } from '@mirohq/design-system';
 import React from 'react';
 
 export interface RegexSearchFieldProps

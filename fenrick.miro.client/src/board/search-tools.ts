@@ -1,5 +1,11 @@
-import { getBoardWithQuery, maybeSync, Syncable } from './board';
+import {
+  BoardQueryLike,
+  getBoardWithQuery,
+  maybeSync,
+  Syncable,
+} from './board';
 import { boardCache } from './board-cache';
+import safeRegex from 'safe-regex';
 
 /** Search configuration. */
 export interface SearchOptions {

@@ -1,4 +1,4 @@
-import { styled } from '@mirohq/design-system';
+import { Flex, styled, Switch as DSSwitch } from '@mirohq/design-system';
 import React from 'react';
 
 export type CheckboxProps = Readonly<

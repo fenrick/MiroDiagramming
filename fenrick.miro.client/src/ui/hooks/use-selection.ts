@@ -1,6 +1,7 @@
 import React from 'react';
-import { getBoard } from '../../board/board';
+import { BoardLike, getBoard } from '../../board/board';
 import { boardCache } from '../../board/board-cache';
+import { log } from '../../logger';
 
 /**
  * React hook returning the current board selection.
@@ -13,8 +14,8 @@ export function useSelection(
 ): Array<Record<string, unknown>> {
   const [sel, setSel] = React.useState<Array<Record<string, unknown>>>([]);
   React.useEffect(() => {
+    let b: BoardLike;
     try {
-      let b: BoardLike;
       b = getBoard(board);
     } catch {
       return;

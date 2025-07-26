@@ -1,17 +1,11 @@
-{
+import type {
   BaseItem,
-    Shape,
-    ShapeStyle,
-    Text,
-    TextStyle,;
-}
-from;
-'@mirohq/websdk-types';
-{
-  TemplateElement;
-}
-from;
-'./templates';
+  Shape,
+  ShapeStyle,
+  Text,
+  TextStyle,
+} from '@mirohq/websdk-types';
+import type { TemplateElement } from './templates';
 import { templateManager } from './templates';
 
 /**
@@ -111,7 +105,7 @@ export function applyTextElement(
   text.content = (element.text ?? '{{label}}').replace('{{label}}', label);
   if (element.style) {
     text.style = {
-      ...(text.style ?? {} as Partial<TextStyle>),
+      ...(text.style ?? ({} as Partial<TextStyle>)),
       ...(templateManager.resolveStyle(element.style) as Partial<TextStyle>),
     } as TextStyle;
   }

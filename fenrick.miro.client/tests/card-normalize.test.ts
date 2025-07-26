@@ -19,18 +19,18 @@ describe('CardLoader normalization', () => {
       onload: ((e: ReaderEvent) => void) | null = null;
 
       readAsText() {
+        const json = {
+          cards: [
+            {
+              title: 'A',
+              tags: 'bad',
+              fields: 'no',
+              style: { fillBackground: 'false', cardTheme: 'blue' },
+            },
+            { title: 'B', tags: ['x'], style: {} },
+          ],
+        };
         if (this.onload) {
-          const json = {
-            cards: [
-              {
-                title: 'A',
-                tags: 'bad',
-                fields: 'no',
-                style: { fillBackground: 'false', cardTheme: 'blue' },
-              },
-              { title: 'B', tags: ['x'], style: {} },
-            ],
-          };
           const evt = {
             target: { result: JSON.stringify(json) },
           } as ReaderEvent;

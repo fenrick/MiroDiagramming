@@ -1,3 +1,4 @@
+import { BoardQueryLike } from '../src/board/board';
 import { boardCache } from '../src/board/board-cache';
 import {
   getTextFields,

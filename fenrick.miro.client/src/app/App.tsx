@@ -1,15 +1,12 @@
-import { createTheme, themes } from '@mirohq/design-system';
+import { createTheme, Tabs, themes } from '@mirohq/design-system';
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
+import type { ExcelRow } from '../core/utils/excel-loader';
 import { EditMetadataModal, IntroScreen } from '../ui/components';
 import { Paragraph } from '../ui/components/Paragraph';
 import { ExcelDataProvider } from '../ui/hooks/excel-data-context';
 
-{
-  ExcelRow;
-}
-from;
-('../core/utils/excel-loader');
+import { type Tab, TAB_DATA } from '../ui/pages/tabs';
 
 const lightThemeClassName = createTheme(themes.light);
 

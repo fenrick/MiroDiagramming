@@ -1,6 +1,4 @@
-React;
-from;
-'react';
+import type React from 'react';
 
 export type TabId =
   | 'diagrams'
@@ -15,22 +13,12 @@ export type TabId =
   | 'dummy';
 
 export type TabTuple = readonly [
-  order
-:
-number,
-  id;
-:
-TabId,
-  label;
-:
-string,
-  instructions;
-:
-string,
-  Component;
-:
-React.FC,;
-]
+  order: number,
+  id: TabId,
+  label: string,
+  instructions: string,
+  Component: React.FC,
+];
 
 export interface CommandDef {
   /** Unique identifier used for keyboard shortcuts. */

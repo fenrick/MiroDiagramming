@@ -1,13 +1,5 @@
-{
-  (Meta, StoryObj);
-}
-from;
-('@storybook/react');
-{
-  JSX;
-}
-from;
-('react');
+import type { Meta, StoryObj } from '@storybook/react';
+import type { JSX } from 'react';
 import React from 'react';
 import { RowInspector } from '../ui/components/RowInspector';
 import { ExcelStoryWrapper } from './ExcelStoryWrapper';

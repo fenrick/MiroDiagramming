@@ -1,10 +1,5 @@
 import { GraphProcessor } from '../src/core/graph/graph-processor';
-import
-{
-  GraphData
-}
-from
-'../src/core/graph/graph-service';
+import type { GraphData } from '../src/core/graph/graph-service';
 
 describe('GraphProcessor private helpers', () => {
   test('buildLayoutInput returns input when mode not layout', () => {

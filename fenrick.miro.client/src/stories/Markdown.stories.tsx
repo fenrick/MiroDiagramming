@@ -1,8 +1,4 @@
-{
-  (Meta, StoryObj);
-}
-from;
-('@storybook/react');
+import type { Meta, StoryObj } from '@storybook/react';
 import { Markdown } from '../ui/components/Markdown';
 
 const meta: Meta<typeof Markdown> = {

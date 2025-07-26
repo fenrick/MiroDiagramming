@@ -1,4 +1,5 @@
 /** @vitest-environment jsdom */
+import ExcelJS from 'exceljs';
 import { readFileSync } from 'fs';
 import { ExcelLoader } from '../src/core/utils/excel-loader';
 

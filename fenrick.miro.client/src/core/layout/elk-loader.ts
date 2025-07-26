@@ -1,6 +1,4 @@
-ELK;
-from;
-('elkjs/lib/elk.bundled.js');
+import type ELK from 'elkjs/lib/elk.bundled.js';
 
 /**
  * Dynamically load the ELK layout engine.

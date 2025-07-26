@@ -1,4 +1,5 @@
-import { getBoard, maybeSync, Syncable } from './board';
+import { log } from '../logger';
+import { BoardLike, getBoard, maybeSync, Syncable } from './board';
 import { boardCache } from './board-cache';
 
 /** Options for renaming selected frames. */

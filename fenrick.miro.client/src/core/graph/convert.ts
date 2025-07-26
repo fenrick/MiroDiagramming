@@ -12,7 +12,7 @@ export function edgesToHierarchy(graph: GraphData): HierNode[] {
   const children: Record<string, string[]> = {};
   const childSet = new Set<string>();
   for (const edge of graph.edges) {
-    children[edge.from] ?? = [];
+    children[edge.from] ??= [];
     children[edge.from].push(edge.to);
     childSet.add(edge.to);
   }

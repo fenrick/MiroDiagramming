@@ -1,4 +1,4 @@
-import { DropdownMenu, IconFunnel } from '@mirohq/design-system';
+import { DropdownMenu, IconButton, IconFunnel } from '@mirohq/design-system';
 import React from 'react';
 import { InputField } from './InputField';
 

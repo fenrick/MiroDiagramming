@@ -1,16 +1,7 @@
-{
-  JSX;
-}
-from;
-('react');
+import type { JSX } from 'react';
 import React from 'react';
+import type { ExcelRow } from '../core/utils/excel-loader';
 import { ExcelDataProvider } from '../ui/hooks/excel-data-context';
-
-{
-  ExcelRow;
-}
-from;
-('../core/utils/excel-loader');
 
 interface BoardItem {
   getMetadata: () => Promise<{ rowId: string }>;

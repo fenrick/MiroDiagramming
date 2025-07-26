@@ -1,24 +1,11 @@
-import { applyElementToItem } from '../src/board/element-utils';
-import { searchGroups, searchShapes } from '../src/board/node-search';
-import { templateManager } from '../src/board/templates';
 import { ExcelSyncService } from '../src/core/excel-sync-service';
+import type { ExcelRow } from '../src/core/utils/excel-loader';
+import type { ColumnMapping } from '../src/core/data-mapper';
+import type { Group } from '@mirohq/websdk-types';
 import { mockBoard } from './mock-board';
-import
-{
-  ExcelRow
-}
-from
-'../src/core/utils/excel-loader';
-{
-  ColumnMapping
-}
-from
-'../src/core/data-mapper';
-{
-  Group
-}
-from
-'@mirohq/websdk-types';
+import { searchShapes, searchGroups } from '../src/board/node-search';
+import { templateManager } from '../src/board/templates';
+import { applyElementToItem } from '../src/board/element-utils';
 
 vi.mock('../src/board/node-search', () => ({
   searchShapes: vi.fn(),

@@ -1,8 +1,4 @@
-import {
-  Frame
-}
-from
-'@mirohq/websdk-types';
+import type { Frame } from '@mirohq/websdk-types';
 import { BoardBuilder } from '../src/board/board-builder';
 import { clearActiveFrame, registerFrame } from '../src/board/frame-utils';
 
@@ -12,7 +8,7 @@ describe('frame-utils', () => {
       createFrame: jest.fn().mockResolvedValue({ id: 'f' }),
       setFrame: jest.fn(),
     } as unknown as BoardBuilder;
-    const list = [] as unknown as Array<Frame>;
+    const list: Array<Frame> = [] as unknown as Array<Frame>;
     const frame = await registerFrame(
       builder,
       list,

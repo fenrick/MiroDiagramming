@@ -1,7 +1,5 @@
 @import '@mirohq/design-tokens/tokens.css';
-
 @import '@mirohq/design-system-themes/base.css';
-
 @import '@mirohq/design-system-themes/light.css';
 
 :root {
@@ -32,15 +30,15 @@
 
 html,
 body {
-  background: none;
   height: 100%;
+  background: none;
 }
 
 #root {
-  align-items: stretch;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  align-items: stretch;
   overflow: hidden;
 }
 
@@ -51,19 +49,19 @@ body {
 }
 
 .scrollable .buttons {
-  background: #fff;
+  position: sticky;
   bottom: 0;
   padding-block: var(--space-300);
-  position: sticky;
+  background: #fff;
 }
 
 .custom-dropped-files {
-  border: 3px dashed var(--colors-alpha-black-400);
-  font-size: var(--font-size-200);
   list-style: none;
+  padding: var(--space-50) var(--space-100);
+  border: 3px dashed var(--colors-alpha-black-400);
   max-height: 80px;
   overflow-y: auto;
-  padding: var(--space-50) var(--space-100);
+  font-size: var(--font-size-200);
 }
 
 .custom-segment button + button {
@@ -71,20 +69,20 @@ body {
 }
 
 .custom-visually-hidden {
-  border: 0;
-  clip: rect(0 0 0 0);
+  position: absolute;
+  width: 1px;
   height: 1px;
+  padding: 0;
   margin: -1px;
   overflow: hidden;
-  padding: 0;
-  position: absolute;
+  clip: rect(0 0 0 0);
   white-space: nowrap;
-  width: 1px;
+  border: 0;
 }
 
 .search-input {
-  align-items: center;
   display: flex;
+  align-items: center;
   gap: var(--space-50);
 }
 
@@ -93,34 +91,34 @@ body {
 }
 
 .custom-form-group-small {
+  margin-bottom: var(--space-small);
   display: flex;
   flex-direction: column;
   gap: var(--space-xsmall);
-  margin-bottom: var(--space-small);
 }
 
 .custom-modal-container {
-  inset: 0;
   position: fixed;
+  inset: 0;
   z-index: 1000;
 }
 
 .custom-modal-backdrop {
+  position: absolute;
+  inset: 0;
   background: var(--colors-background-alpha-neutrals-overlay-subtle);
   border: none;
-  inset: 0;
-  position: absolute;
 }
 
 .custom-modal {
-  background: var(--colors-background-neutrals);
+  position: relative;
+  margin: auto;
   border: none;
   border-radius: var(--radii-100);
+  background: var(--colors-background-neutrals);
   color: var(--primary-text-color);
-  margin: auto;
-  max-width: 400px;
   padding: var(--space-medium);
-  position: relative;
+  max-width: 400px;
 }
 
 .custom-modal-small {
@@ -132,9 +130,9 @@ body {
 }
 
 .custom-modal-header {
-  align-items: center;
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: var(--space-small);
 }
 
@@ -144,6 +142,6 @@ body {
 
 .page-help {
   position: absolute;
-  right: var(--space-100);
   top: var(--space-100);
+  right: var(--space-100);
 }

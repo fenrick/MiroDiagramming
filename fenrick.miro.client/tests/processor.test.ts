@@ -1,10 +1,11 @@
-import { Frame } from '@mirohq/websdk-types';
+import type { Frame } from '@mirohq/websdk-types';
 import { BoardBuilder } from '../src/board/board-builder';
 import * as frameUtils from '../src/board/frame-utils';
 import { templateManager } from '../src/board/templates';
 import { graphService } from '../src/core/graph';
 import { GraphProcessor } from '../src/core/graph/graph-processor';
 import { layoutEngine } from '../src/core/layout/elk-layout';
+import sample from './fixtures/sample-graph.json';
 
 interface GlobalWithMiro {
   miro?: { board?: Record<string, unknown> };

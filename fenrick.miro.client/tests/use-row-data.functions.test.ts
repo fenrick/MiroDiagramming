@@ -1,7 +1,7 @@
 /** @vitest-environment jsdom */
 import { extractRowId, findRow } from '../src/ui/hooks/use-row-data';
-import { ExcelRow } from '../src/core/utils/excel-loader';
-import { BaseItem, Group } from '@mirohq/websdk-types';
+import type { ExcelRow } from '../src/core/utils/excel-loader';
+import type { BaseItem, Group } from '@mirohq/websdk-types';
 
 describe('use-row-data helpers', () => {
   test('extractRowId returns first child value for groups', async () => {

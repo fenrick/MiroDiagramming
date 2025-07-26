@@ -1,5 +1,6 @@
 /** @vitest-environment jsdom */
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import React from 'react';
 import * as grid from '../src/board/grid-tools';
@@ -99,11 +100,11 @@ describe('ArrangeTab', () => {
     const orientation = screen
       .getByText('Order')
       .parentElement?.querySelector('select');
-    act(() =>
+    act(() => {
       fireEvent.change(orientation as HTMLElement, {
         target: { value: 'vertical' },
-      }),
-    );
+      });
+    });
     fireEvent.click(screen.getByRole('button', { name: 'Arrange Grid' }));
     expect(spy).toHaveBeenCalledWith(
       expect.objectContaining({ sortOrientation: 'vertical' }),

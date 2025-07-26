@@ -1,4 +1,4 @@
-import { expect, vi } from 'vitest';
+import { expect, test, vi } from 'vitest';
 
 import { AuthClient, registerCurrentUser } from '../src/user-auth';
 

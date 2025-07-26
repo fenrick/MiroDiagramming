@@ -1,22 +1,12 @@
-{
+import type {
   BaseItem,
-    Connector,
-    ConnectorStyle,
-    Group,
-    TextAlignVertical,;
-}
-from;
-'@mirohq/websdk-types';
-{
-  EdgeData, EdgeHint;
-}
-from;
-'../core/graph';
-{
-  ConnectorTemplate;
-}
-from;
-'./templates';
+  Connector,
+  ConnectorStyle,
+  Group,
+  TextAlignVertical,
+} from '@mirohq/websdk-types';
+import type { EdgeData, EdgeHint } from '../core/graph';
+import type { ConnectorTemplate } from './templates';
 
 /**
  * Build caption objects for a connector label.

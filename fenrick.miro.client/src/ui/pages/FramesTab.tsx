@@ -1,4 +1,10 @@
-import { Grid, IconLockClosed, IconPen } from '@mirohq/design-system';
+import {
+  Grid,
+  Heading,
+  IconLockClosed,
+  IconPen,
+  Text,
+} from '@mirohq/design-system';
 import React from 'react';
 import {
   lockSelectedFrames,
@@ -7,12 +13,7 @@ import {
 import { Button, InputField } from '../components';
 import { PageHelp } from '../components/PageHelp';
 import { TabPanel } from '../components/TabPanel';
-
-{
-  TabTuple;
-}
-from;
-('./tab-definitions');
+import type { TabTuple } from './tab-definitions';
 
 /** UI for renaming or locking selected frames. */
 export const FramesTab: React.FC = () => {

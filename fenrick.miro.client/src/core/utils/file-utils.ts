@@ -1,3 +1,5 @@
+import { log } from '../../logger';
+
 /**
  * Read the contents of a `File` as UTF-8 text.
  *

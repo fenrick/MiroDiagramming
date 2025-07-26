@@ -1,8 +1,4 @@
-{
-  (Meta, StoryObj);
-}
-from;
-('@storybook/react');
+import type { Meta, StoryObj } from '@storybook/react';
 import { Modal } from '../ui/components/Modal';
 
 const meta: Meta<typeof Modal> = {

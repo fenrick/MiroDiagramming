@@ -1,6 +1,6 @@
 namespace Fenrick.Miro.Server.Services;
 
-using Domain;
+using Fenrick.Miro.Server.Domain;
 using ILogger = Serilog.ILogger;
 
 /// <summary>

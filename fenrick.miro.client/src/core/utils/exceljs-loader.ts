@@ -1,6 +1,4 @@
-ExcelJS;
-from;
-('exceljs');
+import type ExcelJS from 'exceljs';
 
 /**
  * Dynamically load the ExcelJS library.

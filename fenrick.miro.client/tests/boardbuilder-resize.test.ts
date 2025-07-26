@@ -1,9 +1,5 @@
-{
-  (BaseItem, GroupableItem);
-}
-from;
-('@mirohq/websdk-types');
-import { expect, vi } from 'vitest';
+import type { BaseItem, GroupableItem } from '@mirohq/websdk-types';
+import { describe, expect, test, vi } from 'vitest';
 import { BoardBuilder } from '../src/board/board-builder';
 import { templateManager } from '../src/board/templates';
 import { mockBoard } from './mock-board';

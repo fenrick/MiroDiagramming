@@ -7,9 +7,9 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Fenrick.Miro.Server.Domain;
+using Fenrick.Miro.Server.Services;
 using Microsoft.AspNetCore.Http;
-using Server.Domain;
-using Server.Services;
 using Xunit;
 
 public class MiroRestClientTests

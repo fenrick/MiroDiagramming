@@ -1,24 +1,11 @@
-{
-  (BaseItem, Group);
-}
-from;
-('@mirohq/websdk-types');
-{
-  BoardQueryLike;
-}
-from;
-('../board/board');
+import type { BaseItem, Group } from '@mirohq/websdk-types';
+import type { BoardQueryLike } from '../board/board';
 import { applyElementToItem } from '../board/element-utils';
 import { searchGroups, searchShapes } from '../board/node-search';
 import { templateManager } from '../board/templates';
 import { ColumnMapping, mapRowsToNodes } from './data-mapper';
+import type { ExcelRow } from './utils/excel-loader';
 import { toSafeString } from './utils/string-utils';
-
-{
-  ExcelRow;
-}
-from;
-('./utils/excel-loader');
 
 /** Item supporting text content on the board. */
 export interface ContentItem extends BaseItem {

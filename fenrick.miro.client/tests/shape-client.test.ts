@@ -1,5 +1,5 @@
-import { beforeEach, expect, vi } from 'vitest';
-import { ShapeClient, ShapeData } from '../src/core/utils/shape-client';
+import { beforeEach, expect, test, vi } from 'vitest';
+import { ShapeClient, type ShapeData } from '../src/core/utils/shape-client';
 
 vi.stubGlobal('fetch', vi.fn());
 

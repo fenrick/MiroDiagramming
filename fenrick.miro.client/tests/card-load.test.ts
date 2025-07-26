@@ -16,17 +16,17 @@ describe('loadCards', () => {
       onerror: (() => void) | null = null;
 
       readAsText() {
+        const json = {
+          cards: [
+            {
+              title: 't',
+              taskStatus: 'done',
+              style: { cardTheme: '#fff', fillBackground: 'true', extra: 1 },
+              fields: [{ value: 'x' }],
+            },
+          ],
+        };
         if (this.onload) {
-          const json = {
-            cards: [
-              {
-                title: 't',
-                taskStatus: 'done',
-                style: { cardTheme: '#fff', fillBackground: 'true', extra: 1 },
-                fields: [{ value: 'x' }],
-              },
-            ],
-          };
           const evt = {
             target: { result: JSON.stringify(json) },
           } as ReaderEvent;

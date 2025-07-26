@@ -1,8 +1,4 @@
-{
-  (Meta, StoryObj);
-}
-from;
-('@storybook/react');
+import type { Meta, StoryObj } from '@storybook/react';
 import { TabPanel } from '../ui/components/TabPanel';
 
 const meta: Meta<typeof TabPanel> = {

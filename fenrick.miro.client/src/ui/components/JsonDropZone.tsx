@@ -1,4 +1,4 @@
-import { IconSquareArrowIn } from '@mirohq/design-system';
+import { IconSquareArrowIn, Text } from '@mirohq/design-system';
 import { space as dsSpace } from '@mirohq/design-tokens';
 import React from 'react';
 import { useDropzone } from 'react-dropzone';

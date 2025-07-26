@@ -12,6 +12,7 @@ export interface Size {
 }
 
 import {
+  BoardLike,
   forEachSelection,
   getFirstSelection,
   maybeSync,

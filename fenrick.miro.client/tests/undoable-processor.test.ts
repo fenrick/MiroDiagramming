@@ -1,4 +1,4 @@
-import { BaseItem } from '@mirohq/websdk-types';
+import type { BaseItem } from '@mirohq/websdk-types';
 import { BoardBuilder } from '../src/board/board-builder';
 import { UndoableProcessor } from '../src/core/graph/undoable-processor';
 

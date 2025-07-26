@@ -1,5 +1,6 @@
+import http, { type Server } from 'node:http';
 import { AddressInfo } from 'node:net';
-import { afterAll, beforeAll, expect, vi } from 'vitest';
+import { afterAll, beforeAll, expect, test, vi } from 'vitest';
 import { AuthClient, registerCurrentUser } from '../src/user-auth';
 
 let server: Server;
@@ -19,9 +20,9 @@ beforeAll(async () => {
   url = `http://127.0.0.1:${addr.port}/api/users`;
 }, 30000);
 
-afterAll(
-  async () => await new Promise<void>(resolve => server.close(() => resolve())),
-);
+afterAll(async () => {
+  await new Promise<void>(resolve => server.close(() => resolve()));
+});
 
 test('registerCurrentUser sends token to server', async () => {
   (global as unknown as { miro: unknown }).miro = {

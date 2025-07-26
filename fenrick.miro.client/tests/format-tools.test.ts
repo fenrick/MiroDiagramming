@@ -1,12 +1,7 @@
 /** @vitest-environment jsdom */
 import { boardCache } from '../src/board/board-cache';
 import { applyStylePreset, presetStyle } from '../src/board/format-tools';
-import
-{
-  StylePreset;
-}
-from;
-'../src/ui/style-presets';
+import type { StylePreset } from '../src/ui/style-presets';
 
 describe('format-tools', () => {
   beforeEach(() => boardCache.reset());

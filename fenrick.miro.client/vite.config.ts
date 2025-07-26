@@ -1,7 +1,12 @@
 import react from '@vitejs/plugin-react';
 import plugin from '@vitejs/plugin-react';
+import child_process from 'child_process';
+import dns from 'dns';
+import fs from 'fs';
 
 import { fileURLToPath, URL } from 'node:url';
+import path from 'path';
+import { env } from 'process';
 import { defineConfig } from 'vite';
 
 const baseFolder =

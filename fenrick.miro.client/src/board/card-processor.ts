@@ -1,13 +1,9 @@
-{
-  Card, CardStyle, Frame, Tag;
-}
-from;
-'@mirohq/websdk-types';
+import type { Card, CardStyle, Frame, Tag } from '@mirohq/websdk-types';
 import { UndoableProcessor } from '../core/graph/undoable-processor';
+import { type CardData, cardLoader } from '../core/utils/cards';
 import { BoardBuilder } from './board-builder';
 import { clearActiveFrame, registerFrame } from './frame-utils';
 import { calculateGrid } from './grid-layout';
-import { CardData cardLoader } from '../core/utils/cards';
 
 export interface CardProcessOptions {
   createFrame?: boolean;
@@ -118,7 +114,7 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
    */
   private async getBoardTags(): Promise<Tag[]> {
     // TODO use cached backend lookup instead of board.get once shape cache service exposes tags
-    this.tagsCache ?? = await miro.board.get({ type: 'tag' }) as Tag[];
+    this.tagsCache ??= (await miro.board.get({ type: 'tag' })) as Tag[];
     return this.tagsCache;
   }
 
@@ -128,7 +124,7 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
    */
   private async getBoardCards(): Promise<Card[]> {
     // TODO use cached backend lookup instead of board.get to reduce API cost
-    this.cardsCache ?? = await miro.board.get({ type: 'card' }) as Card[];
+    this.cardsCache ??= (await miro.board.get({ type: 'card' })) as Card[];
     return this.cardsCache;
   }
 
@@ -348,11 +344,11 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
         this.createCardWidget(
           def,
           layout.startX +
-          (i % layout.columns) *
-          (CardProcessor.CARD_WIDTH + CardProcessor.CARD_GAP),
+            (i % layout.columns) *
+              (CardProcessor.CARD_WIDTH + CardProcessor.CARD_GAP),
           layout.startY +
-          Math.floor(i / layout.columns) *
-          (CardProcessor.CARD_HEIGHT + CardProcessor.CARD_GAP),
+            Math.floor(i / layout.columns) *
+              (CardProcessor.CARD_HEIGHT + CardProcessor.CARD_GAP),
           tagMap,
         ),
       ),

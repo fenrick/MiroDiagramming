@@ -1,13 +1,10 @@
 import { resolveColor } from '../core/utils/color-utils';
-
-{
-  StylePreset;
-}
-from;
-'../ui/style-presets';
+import type { StylePreset } from '../ui/style-presets';
 import {
-  BoardLike forEachSelection,
-  maybeSync Syncable,
+  type BoardLike,
+  forEachSelection,
+  maybeSync,
+  type Syncable,
 } from './board';
 
 /** Resolved preset style attributes. */
@@ -41,14 +38,13 @@ export async function applyStylePreset(
   board?: BoardLike,
 ): Promise<void> {
   await forEachSelection(async (item: Record<string, unknown>) => {
-      const style = { ...(item.style ?? {}) } as Record<string, unknown>;
-      const resolved = presetStyle(preset);
-      style.color = resolved.color;
-      style.borderColor = resolved.borderColor;
-      style.borderWidth = resolved.borderWidth;
-      style.fillColor = resolved.fillColor;
-      item.style = style;
-      await maybeSync(item as Syncable);
-    },
-    board);
+    const style = { ...(item.style ?? {}) } as Record<string, unknown>;
+    const resolved = presetStyle(preset);
+    style.color = resolved.color;
+    style.borderColor = resolved.borderColor;
+    style.borderWidth = resolved.borderWidth;
+    style.fillColor = resolved.fillColor;
+    item.style = style;
+    await maybeSync(item as Syncable);
+  }, board);
 }

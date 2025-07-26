@@ -1,9 +1,11 @@
-import { ElkNode } from 'elkjs/lib/elk-api';
+import type { ElkNode } from 'elkjs/lib/elk-api';
 import ELK from 'elkjs/lib/elk.bundled.js';
 import {
   layoutHierarchy,
+  NestedLayouter,
   nestedLayouter,
 } from '../src/core/layout/nested-layout';
+import sampleHier from './fixtures/sample-hier.json';
 
 interface TestNode {
   id: string;
@@ -97,13 +99,13 @@ describe('layoutHierarchy', () => {
   });
 
   test('computePosition returns null for root node', () => {
-    const layouter = nestedLayouter;
+    const layouter: NestedLayouter = nestedLayouter;
     const result = layouter.computePosition({ id: 'root' }, 0, 0);
     expect(result).toBeNull();
   });
 
   test('computePosition returns null when dimensions are missing', () => {
-    const layouter = nestedLayouter;
+    const layouter: NestedLayouter = nestedLayouter;
     const node = { id: 'x', x: 1, y: 2 };
     const result = layouter.computePosition(node, 0, 0);
     expect(result).toBeNull();

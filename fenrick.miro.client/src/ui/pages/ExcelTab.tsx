@@ -1,4 +1,4 @@
-import { IconPlus } from '@mirohq/design-system';
+import { IconPlus, Text } from '@mirohq/design-system';
 import React from 'react';
 import { templateManager } from '../../board/templates';
 import {
@@ -18,6 +18,9 @@ import {
 } from '../components';
 import { PageHelp } from '../components/PageHelp';
 import { RowInspector } from '../components/RowInspector';
+
+// prettier-ignore
+type LoaderStateDispatch = React.Dispatch<React.SetStateAction<ExcelLoader | GraphExcelLoader>>;
 import { TabPanel } from '../components/TabPanel';
 import { useExcelData } from '../hooks/excel-data-context';
 import { showError } from '../hooks/notifications';
@@ -28,15 +31,7 @@ import {
   useExcelDrop,
 } from '../hooks/use-excel-handlers';
 import { useExcelSync } from '../hooks/use-excel-sync';
-
-// prettier-ignore
-type LoaderStateDispatch =
-  React.Dispatch<React.SetStateAction<ExcelLoader | GraphExcelLoader>>;
-{
-  TabTuple;
-}
-from;
-('./tab-definitions');
+import type { TabTuple } from './tab-definitions';
 
 /**
  * Remote workbook loader with error handling.

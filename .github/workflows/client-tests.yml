@@ -1,7 +1,6 @@
 name: client-tests
 
 on:
-  push:
   pull_request:
 
 permissions: write-all

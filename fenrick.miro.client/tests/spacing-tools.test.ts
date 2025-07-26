@@ -1,3 +1,4 @@
+import { BoardLike } from '../src/board/board';
 import { boardCache } from '../src/board/board-cache';
 import { calculateSpacingOffsets } from '../src/board/spacing-layout';
 import { applySpacingLayout } from '../src/board/spacing-tools';

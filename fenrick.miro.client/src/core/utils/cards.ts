@@ -1,10 +1,8 @@
-{
+import type {
   CardField,
-    CardStyle,
-    CardTaskStatus,;
-}
-from;
-'@mirohq/websdk-types';
+  CardStyle,
+  CardTaskStatus,
+} from '@mirohq/websdk-types';
 import { fileUtils } from './file-utils';
 
 export interface CardData {
@@ -41,8 +39,7 @@ function parseCardStyle(
 export class CardLoader {
   private static instance: CardLoader;
 
-  private constructor() {
-  }
+  private constructor() {}
 
   /** Access the shared loader instance. */
   public static getInstance(): CardLoader {

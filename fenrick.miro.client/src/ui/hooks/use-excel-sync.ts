@@ -1,12 +1,7 @@
 import React from 'react';
 import { ExcelSyncService } from '../../core/excel-sync-service';
+import type { ExcelRow } from '../../core/utils/excel-loader';
 import { useExcelData } from './excel-data-context';
-
-{
-  ExcelRow;
-}
-from;
-('../../core/utils/excel-loader');
 
 /**
  * Hook returning a function that updates local row data and board widgets.

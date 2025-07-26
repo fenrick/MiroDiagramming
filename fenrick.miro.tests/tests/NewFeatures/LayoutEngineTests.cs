@@ -1,8 +1,8 @@
 namespace Fenrick.Miro.Tests.NewFeatures;
 
 #nullable enable
-using Server.Domain;
-using Server.Services;
+using Fenrick.Miro.Server.Domain;
+using Fenrick.Miro.Server.Services;
 using Xunit;
 
 public class LayoutEngineTests

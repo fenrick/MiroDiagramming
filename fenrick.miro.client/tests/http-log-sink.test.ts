@@ -1,4 +1,5 @@
-import { afterAll, beforeAll, expect } from 'vitest';
+import { createServer } from 'node:http';
+import { afterAll, beforeAll, expect, test } from 'vitest';
 import { HttpLogSink } from '../src/log-sink';
 
 let server: ReturnType<typeof createServer>;

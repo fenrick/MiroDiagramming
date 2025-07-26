@@ -1,4 +1,4 @@
-import { afterEach, expect, vi } from 'vitest';
+import { afterEach, expect, test, vi } from 'vitest';
 import { HttpLogSink } from '../src/log-sink';
 
 const ORIG_LEVEL = process.env.LOG_LEVEL;

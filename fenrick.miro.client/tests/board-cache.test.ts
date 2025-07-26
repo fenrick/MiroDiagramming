@@ -1,11 +1,6 @@
-import { expect, vi } from 'vitest';
+import { describe, expect, test, vi } from 'vitest';
+import type { BoardQueryLike } from '../src/board/board';
 import { boardCache } from '../src/board/board-cache';
-
-{
-  BoardQueryLike;
-}
-from;
-('../src/board/board');
 
 describe('BoardCache', () => {
   // TODO add integration tests once cache persistence layer is implemented

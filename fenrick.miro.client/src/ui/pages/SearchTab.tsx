@@ -3,8 +3,10 @@ import {
   IconArrowRight,
   IconChevronRight,
   IconPen,
+  Text,
 } from '@mirohq/design-system';
 import React from 'react';
+import type { SearchOptions } from '../../board/search-tools';
 import {
   Button,
   FilterDropdown,
@@ -20,17 +22,7 @@ import {
   useReplaceAll,
   useReplaceCurrent,
 } from '../hooks/use-search-handlers';
-
-{
-  SearchOptions;
-}
-from;
-('../../board/search-tools');
-{
-  TabTuple;
-}
-from;
-('./tab-definitions');
+import type { TabTuple } from './tab-definitions';
 
 /**
  * Sidebar tab providing board wide search and replace.

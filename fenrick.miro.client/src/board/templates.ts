@@ -1,16 +1,15 @@
 import { colors } from '@mirohq/design-tokens';
-
-{
+import type {
   ConnectorStyle,
-    Frame,
-    Group,
-    GroupableItem,
-    ShapeStyle,
-    ShapeType,
-    TextStyle,;
-}
-from;
-'@mirohq/websdk-types';
+  Frame,
+  Group,
+  GroupableItem,
+  ShapeStyle,
+  ShapeType,
+  TextStyle,
+} from '@mirohq/websdk-types';
+import connectorJson from '../../../templates/connectorTemplates.json';
+import templatesJson from '../../../templates/shapeTemplates.json';
 
 /**
  * Single element of a shape template description.
@@ -58,10 +57,10 @@ export interface ConnectorTemplateCollection {
 
 export class TemplateManager {
   private static instance: TemplateManager;
-  public readonly templates = Object.fromEntries(
+  public readonly templates: TemplateCollection = Object.fromEntries(
     Object.entries(templatesJson).filter(([k]) => k !== 'stylePresets'),
   ) as TemplateCollection;
-  public readonly connectorTemplates =
+  public readonly connectorTemplates: ConnectorTemplateCollection =
     connectorJson as ConnectorTemplateCollection;
   private readonly aliasMap: Record<string, string> = {};
   private readonly connectorAliasMap: Record<string, string> = {};

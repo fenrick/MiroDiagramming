@@ -1,6 +1,4 @@
-ExcelJS;
-from;
-('exceljs');
+import type ExcelJS from 'exceljs';
 import { loadExcelJS } from './exceljs-loader';
 import { fileUtils } from './file-utils';
 import { GraphClient, graphClient } from './graph-client';

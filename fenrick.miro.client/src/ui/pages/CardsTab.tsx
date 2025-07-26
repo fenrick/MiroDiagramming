@@ -1,4 +1,4 @@
-import { Grid, IconArrowArcLeft, IconPlus } from '@mirohq/design-system';
+import { Grid, IconArrowArcLeft, IconPlus, Text } from '@mirohq/design-system';
 import React from 'react';
 import { CardProcessor } from '../../board/card-processor';
 import { Button, Checkbox, InputField } from '../components';

@@ -1,16 +1,8 @@
+import { log } from '../logger';
 import { boardCache } from './board-cache';
+import type { BoardLike, BoardQueryLike } from './types';
 
-{
-  BoardLike, BoardQueryLike;
-}
-from;
-'./types';
-
-export type {
-  BoardUILike, BoardLike, BoardQueryLike
-}
-  from;
-'./types';
+export type { BoardUILike, BoardLike, BoardQueryLike } from './types';
 
 /**
  * Resolve the active board instance.

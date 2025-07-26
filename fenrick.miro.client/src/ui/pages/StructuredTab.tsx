@@ -1,4 +1,4 @@
-import { Grid, IconArrowArcLeft, IconPlus } from '@mirohq/design-system';
+import { Grid, IconArrowArcLeft, IconPlus, Text } from '@mirohq/design-system';
 import { space } from '@mirohq/design-tokens';
 import React from 'react';
 import {

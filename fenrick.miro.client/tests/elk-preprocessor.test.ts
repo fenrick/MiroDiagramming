@@ -1,8 +1,4 @@
-{
-  LayoutNode;
-}
-from;
-('../src/core/layout/elk-preprocessor');
+import type { LayoutNode } from '../src/core/layout/elk-preprocessor';
 import { prepareForElk } from '../src/core/layout/elk-preprocessor';
 
 describe('prepareForElk', () => {

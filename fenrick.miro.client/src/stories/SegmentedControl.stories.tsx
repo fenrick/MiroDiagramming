@@ -1,8 +1,4 @@
-{
-  (Meta, StoryObj);
-}
-from;
-('@storybook/react');
+import type { Meta, StoryObj } from '@storybook/react';
 import { SegmentedControl } from '../ui/components/SegmentedControl';
 
 const meta: Meta<typeof SegmentedControl> = {

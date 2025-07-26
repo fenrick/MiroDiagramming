@@ -1,4 +1,5 @@
 import { DiagramApp } from './app/diagram-app';
+import { log } from './logger';
 
 log.info('Starting application');
 DiagramApp.getInstance()
