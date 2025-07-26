@@ -25,9 +25,11 @@ builder.Services.AddSingleton<IShapeCache, InMemoryShapeCache>();
 
 var app = builder.Build();
 
-// Apply migrations so the schema matches the EF Core model.
-using (var scope = app.Services.CreateScope())
+var applyMigrations = builder.Configuration.GetValue<bool>("ApplyMigrations", true);
+if (applyMigrations)
 {
+    // Apply migrations so the schema matches the EF Core model.
+    using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<MiroDbContext>();
     db.Database.Migrate();
 }
