@@ -6,7 +6,8 @@ using ClosedXML.Excel;
 ///     Lightweight Excel workbook loader built around ClosedXML.
 /// </summary>
 
-// TODO: add named table support and streaming for large files
+// TODO: add streaming for large files
+// TODO: list named tables defined in the workbook
 public class ExcelLoader : IDisposable
 {
     private bool disposed;
@@ -26,6 +27,10 @@ public class ExcelLoader : IDisposable
     public IReadOnlyList<string> ListSheets() =>
         this.workbook?.Worksheets.Select((IXLWorksheet ws) => ws.Name).ToList()
         ?? [];
+
+    // TODO: return the names of defined ranges (named tables)
+    public IReadOnlyList<string> ListNamedTables() =>
+        this.workbook?.DefinedNames.Select(n => n.Name).ToList() ?? [];
 
     /// <summary>
     ///     Load a workbook from a stream.
@@ -64,6 +69,42 @@ public class ExcelLoader : IDisposable
             .ToList();
         var rows = new List<Dictionary<string, string>>();
         foreach (var row in ws.RowsUsed().Skip(1))
+        {
+            var obj = new Dictionary<string, string>();
+            for (var i = 0; i < headers.Count; i++)
+            {
+                obj[headers[i]] = row.Cell(i + 1).GetString();
+            }
+
+            rows.Add(obj);
+        }
+
+        return rows;
+    }
+
+    // TODO: load rows from a defined table range by name
+    public IReadOnlyList<Dictionary<string, string>> LoadNamedTable(string name)
+    {
+        if (this.workbook is null)
+        {
+            throw new InvalidOperationException("Workbook not loaded");
+        }
+
+        if (!this.workbook.DefinedNames.TryGetValue(name, out var def)
+            || !def.Ranges.Any())
+        {
+            throw new ArgumentException($"Unknown table: {name}");
+        }
+
+        var range = def.Ranges.First();
+        if (range.Worksheet is null)
+        {
+            throw new ArgumentException($"Missing sheet for table: {name}");
+        }
+
+        var headers = range.FirstRow().Cells().Select(c => c.GetString()).ToList();
+        var rows = new List<Dictionary<string, string>>();
+        foreach (var row in range.Rows().Skip(1))
         {
             var obj = new Dictionary<string, string>();
             for (var i = 0; i < headers.Count; i++)
