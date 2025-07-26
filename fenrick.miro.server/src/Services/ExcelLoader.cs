@@ -7,7 +7,6 @@ using ClosedXML.Excel;
 /// </summary>
 
 // TODO: add streaming for large files
-// TODO: list named tables defined in the workbook
 public class ExcelLoader : IDisposable
 {
     private bool disposed;
@@ -25,10 +24,9 @@ public class ExcelLoader : IDisposable
     ///     List worksheet names from the loaded workbook.
     /// </summary>
     public IReadOnlyList<string> ListSheets() =>
-        this.workbook?.Worksheets.Select((IXLWorksheet ws) => ws.Name).ToList()
+        this.workbook?.Worksheets.Select(ws => ws.Name).ToList()
         ?? [];
 
-    // TODO: return the names of defined ranges (named tables)
     public IReadOnlyList<string> ListNamedTables() =>
         this.workbook?.DefinedNames.Select(n => n.Name).ToList() ?? [];
 
@@ -43,7 +41,6 @@ public class ExcelLoader : IDisposable
         await Task.CompletedTask;
     }
 
-    // TODO: implement LoadNamedTable for compatibility with client loader
 
     /// <summary>
     ///     Load rows from a worksheet by name.
@@ -65,7 +62,7 @@ public class ExcelLoader : IDisposable
         var ws = this.workbook.Worksheet(name)
                  ?? throw new ArgumentException($"Unknown sheet: {name}");
 
-        var headers = ws.Row(1).Cells().Select((IXLCell c) => c.GetString())
+        var headers = ws.Row(1).Cells().Select(c => c.GetString())
             .ToList();
         var rows = new List<Dictionary<string, string>>();
         foreach (var row in ws.RowsUsed().Skip(1))
@@ -82,7 +79,6 @@ public class ExcelLoader : IDisposable
         return rows;
     }
 
-    // TODO: load rows from a defined table range by name
     public IReadOnlyList<Dictionary<string, string>> LoadNamedTable(string name)
     {
         if (this.workbook is null)
@@ -91,7 +87,7 @@ public class ExcelLoader : IDisposable
         }
 
         if (!this.workbook.DefinedNames.TryGetValue(name, out var def)
-            || !def.Ranges.Any())
+            || def.Ranges.Count == 0)
         {
             throw new ArgumentException($"Unknown table: {name}");
         }
