@@ -1,6 +1,7 @@
 namespace Fenrick.Miro.Tests;
 
 using System;
+using System.Threading.Tasks;
 using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
 using Xunit;
@@ -62,5 +63,20 @@ public class InMemoryUserStoreTests
         var store = new InMemoryUserStore();
 
         Assert.Throws<ArgumentException>(() => store.Delete(" "));
+    }
+
+    [Fact]
+    public async Task AsyncMethodsWork()
+    {
+        var store = new InMemoryUserStore();
+        var info = new UserInfo("u1", "Bob", "t1");
+        await store.StoreAsync(info);
+
+        var fetched = await store.RetrieveAsync("u1");
+        Assert.Equal("t1", fetched?.Token);
+
+        await store.DeleteAsync("u1");
+
+        Assert.Null(await store.RetrieveAsync("u1"));
     }
 }

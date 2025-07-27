@@ -6,6 +6,7 @@ import { mockBoard } from './mock-board';
 import { searchShapes, searchGroups } from '../src/board/node-search';
 import { templateManager } from '../src/board/templates';
 import { applyElementToItem } from '../src/board/element-utils';
+import { ShapeClient } from '../src/core/utils/shape-client';
 
 vi.mock('../src/board/node-search', () => ({
   searchShapes: vi.fn(),
@@ -74,10 +75,11 @@ describe('ExcelSyncService', () => {
   });
 
   test('findWidget uses cached id mapping', async () => {
-    const board = mockBoard({
-      getById: vi.fn().mockResolvedValue({ id: 'w1' }),
-    });
-    const svc = new ExcelSyncService() as unknown as {
+    mockBoard();
+    const api = {
+      getShape: vi.fn().mockResolvedValue({ id: 'w1' }),
+    } as unknown as ShapeClient;
+    const svc = new ExcelSyncService(api) as unknown as {
       findWidget: (
         id: string,
         label: string,
@@ -86,14 +88,17 @@ describe('ExcelSyncService', () => {
     (svc as unknown as ExcelSyncService).registerMapping('r1', 'w1');
     const result = await svc.findWidget('r1', 'foo');
     expect(result).toEqual({ id: 'w1' });
-    expect((board.getById as vi.Mock).mock.calls[0][0]).toBe('w1');
+    expect(api.getShape).toHaveBeenCalledWith('w1');
   });
 
   test('findWidget searches shapes then groups', async () => {
-    mockBoard({ getById: vi.fn().mockRejectedValue(new Error('nope')) });
+    const api = {
+      getShape: vi.fn().mockRejectedValue(new Error('nope')),
+    } as unknown as ShapeClient;
+    mockBoard();
     (searchShapes as vi.Mock).mockResolvedValueOnce(undefined);
     (searchGroups as vi.Mock).mockResolvedValueOnce({ id: 'g1' });
-    const svc = new ExcelSyncService() as unknown as {
+    const svc = new ExcelSyncService(api) as unknown as {
       findWidget: (
         id: string,
         label: string,

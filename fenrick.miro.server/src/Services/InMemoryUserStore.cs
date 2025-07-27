@@ -2,6 +2,8 @@ namespace Fenrick.Miro.Server.Services;
 
 using System;
 using System.Collections.Concurrent;
+using System.Threading;
+using System.Threading.Tasks;
 using Fenrick.Miro.Server.Domain;
 
 /// <summary>
@@ -27,6 +29,10 @@ public class InMemoryUserStore : IUserStore
     }
 
     /// <inheritdoc />
+    public Task<UserInfo?> RetrieveAsync(string userId, CancellationToken ct = default) =>
+        Task.FromResult(this.Retrieve(userId));
+
+    /// <inheritdoc />
     public void Store(UserInfo info)
     {
         if (string.IsNullOrWhiteSpace(info.Id))
@@ -38,6 +44,13 @@ public class InMemoryUserStore : IUserStore
     }
 
     /// <inheritdoc />
+    public Task StoreAsync(UserInfo info, CancellationToken ct = default)
+    {
+        this.Store(info);
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc />
     public void Delete(string userId)
     {
         if (string.IsNullOrWhiteSpace(userId))
@@ -46,5 +59,12 @@ public class InMemoryUserStore : IUserStore
         }
 
         this.users.TryRemove(userId, out _);
+    }
+
+    /// <inheritdoc />
+    public Task DeleteAsync(string userId, CancellationToken ct = default)
+    {
+        this.Delete(userId);
+        return Task.CompletedTask;
     }
 }

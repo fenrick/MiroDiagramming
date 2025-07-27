@@ -21,6 +21,7 @@ npm --prefix fenrick.miro.client run test --silent
 npm --prefix fenrick.miro.client run lint --silent
 npm --prefix fenrick.miro.client run stylelint --silent
 npm --prefix fenrick.miro.client run prettier --silent
+dotnet format
 dotnet restore
 dotnet test fenrick.miro.tests/fenrick.miro.tests.csproj -v minimal
 ```

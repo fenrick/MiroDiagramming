@@ -8,7 +8,17 @@ using Xunit;
 public class OpenApiConfigurationTests(WebApplicationFactory<Program> factory)
     : IClassFixture<WebApplicationFactory<Program>>
 {
-    private readonly HttpClient client = factory.CreateClient();
+    private readonly HttpClient client =
+        factory
+            .WithWebHostBuilder(
+                builder =>
+                {
+                    builder.UseSetting("ApplyMigrations", "false");
+                    builder.UseSetting(
+                        "ConnectionStrings:sqlite",
+                        "Data Source=:memory:");
+                })
+            .CreateClient();
 
     [Fact]
     public async Task SwaggerJsonEndpointReturnsDocumentAsync()

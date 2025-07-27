@@ -1,6 +1,7 @@
 namespace Fenrick.Miro.Server.Services;
 
 using System.Text.Json;
+using System.Threading;
 using Fenrick.Miro.Server.Domain;
 
 /// <summary>
@@ -20,7 +21,8 @@ public static class MiroClientExtensions
     public static async Task<List<MiroResponse>> CreateAsync<T>(
         this IMiroClient client,
         string path,
-        IEnumerable<T> items)
+        IEnumerable<T> items,
+        CancellationToken ct = default)
     {
         var responses = new List<MiroResponse>();
         foreach (var group in items.Chunk(20))
@@ -29,7 +31,8 @@ public static class MiroClientExtensions
             {
                 var body = JsonSerializer.Serialize(item);
                 var response = await client.SendAsync(
-                                   new MiroRequest("POST", path, body));
+                                   new MiroRequest("POST", path, body),
+                                   ct);
                 responses.Add(response);
             }
         }

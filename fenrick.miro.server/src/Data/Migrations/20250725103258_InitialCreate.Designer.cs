@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Fenrick.Miro.Server.src.Data.Migrations
+namespace Fenrick.Miro.Server.Data.Migrations
 {
     [DbContext(typeof(MiroDbContext))]
     [Migration("20250725103258_InitialCreate")]

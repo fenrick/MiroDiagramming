@@ -1,6 +1,11 @@
 import type { Card, CardStyle, Frame, Tag } from '@mirohq/websdk-types';
 import { UndoableProcessor } from '../core/graph/undoable-processor';
 import { type CardData, cardLoader } from '../core/utils/cards';
+import { TagClient } from '../core/utils/tag-client';
+
+interface GlobalWithMiro {
+  miro?: { board?: { id?: string } };
+}
 import { BoardBuilder } from './board-builder';
 import { clearActiveFrame, registerFrame } from './frame-utils';
 import { calculateGrid } from './grid-layout';
@@ -39,9 +44,17 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
   private cardMap: Map<string, Card> | undefined;
   /** Cached board tags when processing updates. */
   private tagsCache: Tag[] | undefined;
+  private readonly tagClient: TagClient;
 
-  constructor(builder: BoardBuilder = new BoardBuilder()) {
+  constructor(
+    builder: BoardBuilder = new BoardBuilder(),
+    tagClient: TagClient = new TagClient(
+      (globalThis as GlobalWithMiro).miro?.board?.id ?? '',
+      '/api/boards',
+    ),
+  ) {
     super(builder);
+    this.tagClient = tagClient;
   }
 
   /** Load cards from a file and create them on the board. */
@@ -113,8 +126,9 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
    * results so multiple calls during a run hit the board only once.
    */
   private async getBoardTags(): Promise<Tag[]> {
-    // TODO use cached backend lookup instead of board.get once shape cache service exposes tags
-    this.tagsCache ??= (await miro.board.get({ type: 'tag' })) as Tag[];
+    if (!this.tagsCache) {
+      this.tagsCache = await this.tagClient.getTags();
+    }
     return this.tagsCache;
   }
 

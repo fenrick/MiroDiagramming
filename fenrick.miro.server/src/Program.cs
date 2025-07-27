@@ -12,8 +12,17 @@ builder.AddServiceDefaults();
 
 // Add services to the container.
 builder.Services.AddControllers();
-var conn = builder.Configuration.GetConnectionString("postgres");
-builder.Services.AddDbContext<MiroDbContext>(opt => opt.UseNpgsql(conn));
+var pg = builder.Configuration.GetConnectionString("postgres");
+var sqlite =
+    builder.Configuration.GetConnectionString("sqlite") ?? "Data Source=app.db";
+if (builder.Environment.IsProduction() && !string.IsNullOrEmpty(pg))
+{
+    builder.Services.AddDbContext<MiroDbContext>(opt => opt.UseNpgsql(pg));
+}
+else
+{
+    builder.Services.AddDbContext<MiroDbContext>(opt => opt.UseSqlite(sqlite));
+}
 builder.Services.AddScoped<IUserStore, EfUserStore>();
 builder.Services.AddScoped<ITemplateStore, EfTemplateStore>();
 builder.Services.AddSingleton<ILogSink, SerilogSink>();
@@ -22,12 +31,15 @@ builder.Services.AddHttpClient<IMiroClient, MiroRestClient>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IShapeCache, InMemoryShapeCache>();
+builder.Services.AddScoped<ITagService, TagService>();
 
 var app = builder.Build();
 
-// Apply migrations so the schema matches the EF Core model.
-using (var scope = app.Services.CreateScope())
+var applyMigrations = builder.Configuration.GetValue("ApplyMigrations", true);
+if (applyMigrations)
 {
+    // Apply migrations so the schema matches the EF Core model.
+    using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<MiroDbContext>();
     db.Database.Migrate();
 }

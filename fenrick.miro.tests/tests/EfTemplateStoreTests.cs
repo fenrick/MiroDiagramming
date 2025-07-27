@@ -2,8 +2,6 @@ using System;
 using Fenrick.Miro.Server.Data;
 using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
-using Microsoft.EntityFrameworkCore;
-using Xunit;
 
 public class EfTemplateStoreTests
 {

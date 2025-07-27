@@ -4,12 +4,13 @@ namespace Fenrick.Miro.Tests;
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Fenrick.Miro.Server.Api;
 using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Xunit;
 
 public class BatchControllerTests
 {
@@ -27,8 +28,14 @@ public class BatchControllerTests
             new MiroResponse(200, "2")
         ]);
         var client =
-            new StubClient((MiroRequest req) => Task.FromResult(responses.Dequeue()));
-        var controller = new BatchController(client);
+            new StubClient(req => Task.FromResult(responses.Dequeue()));
+        var controller = new BatchController(client)
+        {
+            ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext()
+            }
+        };
 
         var result = await controller.ForwardAsync(requests) as OkObjectResult;
 
@@ -44,7 +51,13 @@ public class BatchControllerTests
     public async Task ForwardAsyncWithNoRequestsReturnsEmptyList()
     {
         var controller = new BatchController(
-            new StubClient((MiroRequest _) => Task.FromResult(new MiroResponse(200, string.Empty))));
+            new StubClient(_ => Task.FromResult(new MiroResponse(200, string.Empty))))
+        {
+            ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext()
+            }
+        };
 
         var result = await controller.ForwardAsync([]) as OkObjectResult;
 
@@ -57,7 +70,9 @@ public class BatchControllerTests
     {
         private readonly Func<MiroRequest, Task<MiroResponse>> callback = cb;
 
-        public Task<MiroResponse> SendAsync(MiroRequest request) =>
+        public Task<MiroResponse> SendAsync(
+            MiroRequest request,
+            CancellationToken ct = default) =>
             this.callback(request);
     }
 }
