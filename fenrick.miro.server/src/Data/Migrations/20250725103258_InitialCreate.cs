@@ -1,12 +1,12 @@
 #nullable disable
 
-using Microsoft.EntityFrameworkCore.Migrations;
-
-namespace Fenrick.Miro.Server.Data.Migrations;
-
-/// <inheritdoc />
-public partial class InitialCreate : Migration
+namespace Fenrick.Miro.Server.Data.Migrations
 {
+    using Microsoft.EntityFrameworkCore.Migrations;
+
+    /// <inheritdoc />
+    public partial class InitialCreate : Migration
+    {
     /// <inheritdoc />
     protected override void Up(MigrationBuilder migrationBuilder)
     {
@@ -40,4 +40,5 @@ public partial class InitialCreate : Migration
         migrationBuilder.DropTable(
             name: "Users");
     }
+}
 }

@@ -1,5 +1,6 @@
-namespace Fenrick.Miro.Server.Data;
-using Microsoft.EntityFrameworkCore;
+namespace Fenrick.Miro.Server.Data
+{
+    using Microsoft.EntityFrameworkCore;
 
 /// <summary>
 ///     Entity Framework context managing persistence for the server.
@@ -23,4 +24,6 @@ public class MiroDbContext(DbContextOptions<MiroDbContext> options)
 
         base.OnModelCreating(modelBuilder);
     }
+}
+
 }

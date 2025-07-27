@@ -1,10 +1,10 @@
-namespace Fenrick.Miro.Server.Services;
-
-using System.Globalization;
-using System.Text;
-using ClosedXML.Excel;
-using Fenrick.Miro.Server.Resources;
-using Microsoft.Extensions.Logging.Abstractions;
+namespace Fenrick.Miro.Server.Services
+{
+    using System.Globalization;
+    using System.Text;
+    using ClosedXML.Excel;
+    using Fenrick.Miro.Server.Resources;
+    using Microsoft.Extensions.Logging.Abstractions;
 
 /// <summary>
 ///     Lightweight Excel workbook loader built around ClosedXML.
@@ -292,4 +292,5 @@ public class ExcelLoader(ILogger<ExcelLoader>? log = null) : IDisposable
             this.disposed = true;
         }
     }
+}
 }
