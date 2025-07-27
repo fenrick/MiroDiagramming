@@ -24,11 +24,39 @@ export class AuthClient {
     if (typeof fetch !== 'function') {
       return;
     }
-    await fetch(this.url, {
+
+    const res = await fetch(this.url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(details),
     });
+
+    if (!res.ok) {
+      throw new Error(`Registration failed with status ${res.status}`);
+    }
+  }
+
+  /**
+   * Attempt to register a user, retrying with exponential backoff on failure.
+   *
+   * @param details - User id, name and OAuth token.
+   * @param attempts - Maximum number of tries.
+   */
+  public async registerWithRetry(
+    details: AuthDetails,
+    attempts = 3,
+  ): Promise<void> {
+    for (let i = 0; i < attempts; i += 1) {
+      try {
+        await this.register(details);
+        return;
+      } catch (err) {
+        if (i === attempts - 1) {
+          throw err;
+        }
+        await new Promise(r => setTimeout(r, 2 ** i * 1000));
+      }
+    }
   }
 }
 
@@ -45,9 +73,11 @@ export async function registerCurrentUser(
   }
   const token = await miro.board.getIdToken();
   const user = await miro.board.getUserInfo();
-  await client.register({ id: String(user.id), name: user.name, token });
-  // TODO: handle registration failures using exponential backoff and surfacing
-  //       clear user feedback on repeated errors.
+  await client.registerWithRetry({
+    id: String(user.id),
+    name: user.name,
+    token,
+  });
   // TODO: model the full OAuth exchange so tokens can be renewed via the server
   //       when they expire.
   // TODO: share user registration DTOs with the server-side code generation
