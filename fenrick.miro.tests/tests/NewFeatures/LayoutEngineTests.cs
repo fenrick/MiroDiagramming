@@ -11,12 +11,11 @@ public class LayoutEngineTests
     [Fact]
     public void LayoutPositionsNodesVertically()
     {
-        var engine = new LayoutEngine();
         var data = new GraphData(
-            [new GraphNode($"n1", $"A", $"t"), new GraphNode($"n2", $"B", $"t")],
+            [new GraphNode("n1", "A", "t"), new GraphNode("n2", "B", "t")],
             []);
 
-        LayoutResult result = engine.Layout(data);
+        LayoutResult result = LayoutEngine.Layout(data);
 
         Assert.Equal(0, result.Nodes[$"n1"].X);
         Assert.Equal(0, result.Nodes[$"n1"].Y);

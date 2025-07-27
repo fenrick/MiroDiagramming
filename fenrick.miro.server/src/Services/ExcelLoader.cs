@@ -169,8 +169,8 @@ public class ExcelLoader(ILogger<ExcelLoader>? log = null) : IDisposable
             throw ex;
         }
 
-        return StreamSheetAsync(name);
-        async IAsyncEnumerable<Dictionary<string, string>> StreamSheetAsync(string name)
+        return StreamSheetAsync();
+        async IAsyncEnumerable<Dictionary<string, string>> StreamSheetAsync()
         {
             var headers = ws.Row(1).Cells().Select(c => c.GetString()).ToList();
             foreach (IXLRow? row in ws.RowsUsed().Skip(1))
@@ -223,8 +223,8 @@ public class ExcelLoader(ILogger<ExcelLoader>? log = null) : IDisposable
             throw ex;
         }
 
-        return StreamNamedTableAsync(name);
-        async IAsyncEnumerable<Dictionary<string, string>> StreamNamedTableAsync(string name)
+        return StreamNamedTableAsync();
+        async IAsyncEnumerable<Dictionary<string, string>> StreamNamedTableAsync()
         {
             var headers = range.FirstRow().Cells().Select(c => c.GetString()).ToList();
             foreach (IXLRangeRow? row in range.Rows().Skip(1))

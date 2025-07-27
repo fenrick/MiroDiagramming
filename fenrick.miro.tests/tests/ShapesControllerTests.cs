@@ -23,7 +23,7 @@ public class ShapesControllerTests
     public async Task CreateAsyncHandlesBulk()
     {
         ShapeData[] shapes = Enumerable.Range(0, 25)
-            .Select(i => new ShapeData($"r", i, 0, 1, 1, Rotation: Text: null, Style: null, null))
+            .Select(i => new ShapeData("r", i, 0, 1, 1, Rotation: null, Text: null, Style: null))
             .ToArray();
         var controller = new ShapesController(
             new StubClient(),
@@ -47,7 +47,7 @@ public class ShapesControllerTests
     {
         ShapeData[] shapes = new[]
                      {
-                         new ShapeData($"rect", 0, 0, 1, 1, Rotation: Text: null, Style: null, null),
+                         new ShapeData("rect", 0, 0, 1, 1, Rotation: null, Text: null, Style: null),
                      };
         var controller = new ShapesController(
             new StubClient(),
@@ -120,7 +120,7 @@ Style: null,
     public async Task GetAsyncReturnsCachedEntry()
     {
         var cache = new RecordingCache();
-        cache.Store(new ShapeCacheEntry($"b1", $"i2", new ShapeData($"r", 0, 0, 1, 1, Rotation: Text: null, Style: null, null)));
+        cache.Store(new ShapeCacheEntry("b1", "i2", new ShapeData("r", 0, 0, 1, 1, Rotation: null, Text: null, Style: null)));
         var controller = new ShapesController(new StubClient(), cache)
         {
             ControllerContext = new ControllerContext

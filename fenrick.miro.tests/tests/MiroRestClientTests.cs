@@ -24,7 +24,7 @@ public class MiroRestClientTests
         var httpClient =
             new HttpClient(handler) { BaseAddress = new Uri($"http://x") };
         var store = new InMemoryUserStore();
-        await store.StoreAsync(new UserInfo($"u1", $"Bob", $"tok")).ConfigureAwait(false);
+        await store.StoreAsync(new UserInfo($"u1", $"Bob", $"tok"));
         var ctx = new DefaultHttpContext();
         ctx.Request.Headers[$"X-User-Id"] = $"u1";
         var client = new MiroRestClient(
@@ -32,7 +32,7 @@ public class MiroRestClientTests
             store,
             new HttpContextAccessor { HttpContext = ctx });
 
-        await client.SendAsync(new MiroRequest($"GET", $"/", Body: null), ctx.RequestAborted).ConfigureAwait(false);
+        await client.SendAsync(new MiroRequest($"GET", $"/", Body: null), ctx.RequestAborted);
 
         Assert.Equal($"Bearer", handler.Request?.Headers.Authorization?.Scheme);
         Assert.Equal($"tok", handler.Request?.Headers.Authorization?.Parameter);
@@ -52,7 +52,7 @@ public class MiroRestClientTests
             return Task.FromResult(
                 new HttpResponseMessage(HttpStatusCode.OK)
                 {
-                    Content = new StringContent($"{}"),
+                    Content = new StringContent("{}"),
                 });
         }
     }

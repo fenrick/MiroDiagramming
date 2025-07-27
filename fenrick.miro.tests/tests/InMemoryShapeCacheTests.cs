@@ -12,9 +12,9 @@ public class InMemoryShapeCacheTests
     {
         var cache = new InMemoryShapeCache();
         var entry = new ShapeCacheEntry(
-$"b",
-$"i",
-            new ShapeData($"r", 0, 0, 1, 1, Rotation: Text: null, Style: null, null));
+            "b",
+            "i",
+            new ShapeData("r", 0, 0, 1, 1, Rotation: null, Text: null, Style: null));
         cache.Store(entry);
         cache.Remove($"b", $"i");
         Assert.Null(cache.Retrieve($"b", $"i"));
@@ -25,9 +25,9 @@ $"i",
     {
         var cache = new InMemoryShapeCache();
         var entry = new ShapeCacheEntry(
-$"b1",
-$"i1",
-            new ShapeData($"rect", 0, 0, 1, 1, Rotation: Text: null, Style: null, null));
+            "b1",
+            "i1",
+            new ShapeData("rect", 0, 0, 1, 1, Rotation: null, Text: null, Style: null));
         cache.Store(entry);
 
         ShapeCacheEntry? result = cache.Retrieve($"b1", $"i1");
