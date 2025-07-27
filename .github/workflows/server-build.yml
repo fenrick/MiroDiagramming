@@ -10,7 +10,7 @@ env:
   DOTNET_VERSION: "9.0.x"
 
 jobs:
-  dotnet-format:
+  server-build:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
