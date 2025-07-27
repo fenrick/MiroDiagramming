@@ -1,6 +1,9 @@
 namespace Fenrick.Miro.Server.Services;
 
 using ClosedXML.Excel;
+using Fenrick.Miro.Server.Resources;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 /// <summary>
 ///     Lightweight Excel workbook loader built around ClosedXML.
@@ -9,9 +12,16 @@ using ClosedXML.Excel;
 // TODO: add streaming for large files
 public class ExcelLoader : IDisposable
 {
+    private readonly ILogger<ExcelLoader> logger;
+
     private bool disposed;
 
     private XLWorkbook? workbook;
+
+    public ExcelLoader(ILogger<ExcelLoader>? logger = null)
+    {
+        this.logger = logger ?? Microsoft.Extensions.Logging.Abstractions.NullLogger<ExcelLoader>.Instance;
+    }
 
     /// <inheritdoc />
     public void Dispose()
@@ -23,12 +33,17 @@ public class ExcelLoader : IDisposable
     /// <summary>
     ///     List worksheet names from the loaded workbook.
     /// </summary>
-    public IReadOnlyList<string> ListSheets() =>
-        this.workbook?.Worksheets.Select(ws => ws.Name).ToList()
-        ?? [];
+    public IReadOnlyList<string> ListSheets()
+    {
+        this.logger.LogTrace(LogMessages.ListingSheets);
+        return this.workbook?.Worksheets.Select(ws => ws.Name).ToList() ?? [];
+    }
 
-    public IReadOnlyList<string> ListNamedTables() =>
-        this.workbook?.DefinedNames.Select(n => n.Name).ToList() ?? [];
+    public IReadOnlyList<string> ListNamedTables()
+    {
+        this.logger.LogTrace(LogMessages.ListingTables);
+        return this.workbook?.DefinedNames.Select(n => n.Name).ToList() ?? [];
+    }
 
     /// <summary>
     ///     Load a workbook from a stream.
@@ -37,8 +52,18 @@ public class ExcelLoader : IDisposable
     /// <remarks>Currently loads the entire workbook into memory.</remarks>
     public async Task LoadAsync(Stream stream)
     {
-        this.workbook = new XLWorkbook(stream);
-        await Task.CompletedTask;
+        this.logger.LogDebug(LogMessages.LoadingWorkbook);
+        try
+        {
+            this.workbook = new XLWorkbook(stream);
+            this.logger.LogDebug(LogMessages.WorkbookLoaded, this.workbook.Worksheets.Count);
+            await Task.CompletedTask;
+        }
+        catch (Exception ex)
+        {
+            this.logger.LogError(ex, LogMessages.WorkbookNotLoaded);
+            throw;
+        }
     }
 
 
@@ -54,13 +79,21 @@ public class ExcelLoader : IDisposable
     /// <exception cref="ArgumentException">Thrown when the sheet does not exist.</exception>
     public IReadOnlyList<Dictionary<string, string>> LoadSheet(string name)
     {
+        this.logger.LogDebug(LogMessages.LoadingSheet, name);
         if (this.workbook is null)
         {
-            throw new InvalidOperationException("Workbook not loaded");
+            var ex = new InvalidOperationException(LogMessages.WorkbookNotLoaded);
+            this.logger.LogError(ex, LogMessages.WorkbookNotLoaded);
+            throw ex;
         }
 
-        var ws = this.workbook.Worksheet(name)
-                 ?? throw new ArgumentException($"Unknown sheet: {name}");
+        var ws = this.workbook.Worksheet(name);
+        if (ws is null)
+        {
+            var ex = new ArgumentException(string.Format(LogMessages.UnknownSheet, name));
+            this.logger.LogError(ex, LogMessages.UnknownSheet, name);
+            throw ex;
+        }
 
         var headers = ws.Row(1).Cells().Select(c => c.GetString())
             .ToList();
@@ -76,26 +109,34 @@ public class ExcelLoader : IDisposable
             rows.Add(obj);
         }
 
+        this.logger.LogDebug("Loaded {Count} rows", rows.Count);
         return rows;
     }
 
     public IReadOnlyList<Dictionary<string, string>> LoadNamedTable(string name)
     {
+        this.logger.LogDebug(LogMessages.LoadingTable, name);
         if (this.workbook is null)
         {
-            throw new InvalidOperationException("Workbook not loaded");
+            var ex = new InvalidOperationException(LogMessages.WorkbookNotLoaded);
+            this.logger.LogError(ex, LogMessages.WorkbookNotLoaded);
+            throw ex;
         }
 
         if (!this.workbook.DefinedNames.TryGetValue(name, out var def)
             || def.Ranges.Count == 0)
         {
-            throw new ArgumentException($"Unknown table: {name}");
+            var ex = new ArgumentException(string.Format(LogMessages.UnknownTable, name));
+            this.logger.LogError(ex, LogMessages.UnknownTable, name);
+            throw ex;
         }
 
         var range = def.Ranges.First();
         if (range.Worksheet is null)
         {
-            throw new ArgumentException($"Missing sheet for table: {name}");
+            var ex = new ArgumentException(string.Format(LogMessages.MissingSheetForTable, name));
+            this.logger.LogError(ex, LogMessages.MissingSheetForTable, name);
+            throw ex;
         }
 
         var headers = range.FirstRow().Cells().Select(c => c.GetString()).ToList();
@@ -111,6 +152,7 @@ public class ExcelLoader : IDisposable
             rows.Add(obj);
         }
 
+        this.logger.LogDebug("Loaded {Count} rows", rows.Count);
         return rows;
     }
 
@@ -124,6 +166,7 @@ public class ExcelLoader : IDisposable
         {
             if (disposing)
             {
+                this.logger.LogTrace(LogMessages.DisposingWorkbook);
                 this.workbook?.Dispose();
             }
 

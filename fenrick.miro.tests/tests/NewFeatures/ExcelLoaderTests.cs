@@ -5,8 +5,10 @@ namespace Fenrick.Miro.Tests.NewFeatures;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using ClosedXML.Excel;
 using Fenrick.Miro.Server.Services;
+using Microsoft.Extensions.Logging;
 using Xunit;
 
 public class ExcelLoaderTests
@@ -112,5 +114,52 @@ public class ExcelLoaderTests
         await loader.LoadAsync(ms);
 
         Assert.Throws<ArgumentException>(() => loader.LoadNamedTable("Bad"));
+    }
+
+    [Fact]
+    public async Task LoadAsyncLogsLifecycle()
+    {
+        using var wb = new XLWorkbook();
+        wb.Worksheets.Add("Sheet1");
+        using var ms = new MemoryStream();
+        wb.SaveAs(ms);
+        ms.Position = 0;
+
+        var logger = new CaptureLogger<ExcelLoader>();
+        var loader = new ExcelLoader(logger);
+        await loader.LoadAsync(ms);
+
+        Assert.Contains(logger.Entries, l => l.Level == LogLevel.Debug && l.Message.Contains("Loading workbook"));
+        Assert.Contains(logger.Entries, l => l.Message.Contains("Workbook loaded"));
+    }
+
+    [Fact]
+    public void LoadSheetLogsErrors()
+    {
+        var logger = new CaptureLogger<ExcelLoader>();
+        var loader = new ExcelLoader(logger);
+
+        Assert.Throws<InvalidOperationException>(() => loader.LoadSheet("A"));
+        Assert.Contains(logger.Entries, l => l.Level == LogLevel.Error);
+    }
+}
+
+internal sealed class CaptureLogger<T> : ILogger<T>
+{
+    public List<(LogLevel Level, string Message)> Entries { get; } = new();
+
+    public IDisposable BeginScope<TState>(TState state) => NullScope.Instance;
+
+    public bool IsEnabled(LogLevel logLevel) => true;
+
+    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+    {
+        this.Entries.Add((logLevel, formatter(state, exception)));
+    }
+
+    private sealed class NullScope : IDisposable
+    {
+        public static readonly NullScope Instance = new();
+        public void Dispose() { }
     }
 }
