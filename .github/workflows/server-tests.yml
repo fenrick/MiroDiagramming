@@ -20,6 +20,6 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - name: Restore
-        run: dotnet restore fenrick.miro.tests/fenrick.miro.tests.csproj
+        run: dotnet restore fenrick.miro.slnx
       - name: Test
-        run: dotnet test fenrick.miro.tests/fenrick.miro.tests.csproj
+        run: dotnet test fenrick.miro.slnx
