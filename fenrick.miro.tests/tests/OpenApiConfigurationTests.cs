@@ -13,10 +13,10 @@ public class OpenApiConfigurationTests(WebApplicationFactory<Program> factory)
             .WithWebHostBuilder(
                 builder =>
                 {
-                    builder.UseSetting("ApplyMigrations", "false");
+                builder.UseSetting("ApplyMigrations", "false");
                     builder.UseSetting(
-                        "ConnectionStrings:postgres",
-                        "Host=unused;Database=test;Username=u;Password=p");
+                        "ConnectionStrings:sqlite",
+                        "Data Source=:memory:");
                 })
             .CreateClient();
 

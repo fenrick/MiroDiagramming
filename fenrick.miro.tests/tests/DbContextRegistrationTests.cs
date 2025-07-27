@@ -11,9 +11,7 @@ public class DbContextRegistrationTests(WebApplicationFactory<Program> factory)
         factory.WithWebHostBuilder(
             builder =>
             {
-                builder.UseSetting(
-                    "ConnectionStrings:postgres",
-                    "Host=unused;Database=test;Username=u;Password=p");
+                builder.UseSetting("ConnectionStrings:sqlite", "Data Source=:memory:");
                 builder.UseSetting("ApplyMigrations", "false");
             });
 

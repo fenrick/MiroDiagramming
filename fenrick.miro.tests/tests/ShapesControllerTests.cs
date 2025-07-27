@@ -87,6 +87,32 @@ public class ShapesControllerTests
         Assert.Equal("i1", cache.ItemId);
     }
 
+    [Fact]
+    public async Task GetAsyncReturnsCachedEntry()
+    {
+        var cache = new RecordingCache();
+        cache.Store(new ShapeCacheEntry("b1", "i2", new ShapeData("r", 0, 0, 1, 1, null, null, null)));
+        var controller = new ShapesController(new StubClient(), cache);
+
+        var res = await controller.GetAsync("b1", "i2") as ContentResult;
+
+        Assert.NotNull(res);
+        Assert.Contains("\"Shape\"", res!.Content);
+    }
+
+    [Fact]
+    public async Task GetAsyncFetchesAndStores()
+    {
+        var cache = new RecordingCache();
+        var stub = new StubClient("{\"shape\":\"rect\"}");
+        var controller = new ShapesController(stub, cache);
+
+        var res = await controller.GetAsync("b1", "i3") as ContentResult;
+
+        Assert.Equal("{\"shape\":\"rect\"}", res!.Content);
+        Assert.Equal("i3", cache.ItemId);
+    }
+
     private sealed class NullShapeCache : IShapeCache
     {
         public void Remove(string boardId, string itemId) { }
@@ -100,25 +126,38 @@ public class ShapesControllerTests
     {
         public string? ItemId { get; private set; }
 
+        private readonly Dictionary<string, ShapeCacheEntry> store = new();
+
         public string? RemovedItem { get; private set; }
 
         public void Remove(string boardId, string itemId) =>
             this.RemovedItem = itemId;
 
-        public ShapeCacheEntry? Retrieve(string boardId, string itemId) => null;
+        public ShapeCacheEntry? Retrieve(string boardId, string itemId) =>
+            this.store.TryGetValue($"{boardId}:{itemId}", out var e) ? e : null;
 
-        public void Store(ShapeCacheEntry entry) => this.ItemId = entry.ItemId;
+        public void Store(ShapeCacheEntry entry)
+        {
+            this.ItemId = entry.ItemId;
+            this.store[$"{entry.BoardId}:{entry.ItemId}"] = entry;
+        }
     }
 
     private sealed class StubClient : IMiroClient
     {
         private int count;
+        private readonly string? fixedBody;
+
+        public StubClient(string? body = null)
+        {
+            this.fixedBody = body;
+        }
 
         public Task<MiroResponse> SendAsync(MiroRequest request)
         {
             var res = new MiroResponse(
                 201,
-                this.count++.ToString(CultureInfo.InvariantCulture));
+                this.fixedBody ?? this.count++.ToString(CultureInfo.InvariantCulture));
             return Task.FromResult(res);
         }
     }
