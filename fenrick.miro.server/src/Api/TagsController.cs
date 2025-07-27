@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 ///     Endpoint exposing board tags via the server.
 /// </summary>
 [ApiController]
-[Route($"api/boards/{boardId}/tags")]
+[Route("api/boards/{boardId}/tags")]
 public class TagsController(ITagService service) : ControllerBase
 {
     private readonly ITagService tagService = service;
