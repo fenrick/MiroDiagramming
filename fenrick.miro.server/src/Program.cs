@@ -31,6 +31,7 @@ builder.Services.AddHttpClient<IMiroClient, MiroRestClient>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IShapeCache, InMemoryShapeCache>();
+builder.Services.AddScoped<ITagService, TagService>();
 
 var app = builder.Build();
 
