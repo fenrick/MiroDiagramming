@@ -31,7 +31,7 @@ public class ExcelLoader(ILogger<ExcelLoader>? log = null) : IDisposable
         public static readonly Action<ILogger, string, Exception?> LoadingSheet =
             LoggerMessage.Define<string>(LogLevel.Debug, new EventId(5, nameof(LoadSheet)), LogMessages.LoadingSheet);
         public static readonly Action<ILogger, int, Exception?> LoadedRows =
-            LoggerMessage.Define<int>(LogLevel.Debug, new EventId(6, nameof(LoadSheet)), $"Loaded {RowCount} rows");
+            LoggerMessage.Define<int>(LogLevel.Debug, new EventId(6, nameof(LoadSheet)), "Loaded {RowCount} rows");
         public static readonly Action<ILogger, string, Exception?> StreamingSheet =
             LoggerMessage.Define<string>(LogLevel.Debug, new EventId(7, nameof(StreamSheet)), LogMessages.StreamingSheet);
         public static readonly Action<ILogger, string, Exception?> StreamingTable =
