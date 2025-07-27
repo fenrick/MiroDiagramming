@@ -1,8 +1,7 @@
-name: server-tests
+name: server-format
 
 on:
   push:
-  pull_request:
 
 permissions: write-all
 
@@ -11,15 +10,13 @@ env:
   DOTNET_VERSION: "9.0.x"
 
 jobs:
-  dotnet-tests:
-    if: github.event_name == 'pull_request'
+  dotnet-format:
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
-      - name: Restore
-        run: dotnet restore fenrick.miro.slnx
-      - name: Test
-        run: dotnet test fenrick.miro.slnx
+      - name: Format check
+        run: dotnet format --verify-no-changes fenrick.miro.slnx

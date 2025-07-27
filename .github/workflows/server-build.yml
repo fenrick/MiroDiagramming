@@ -1,4 +1,4 @@
-name: server-format
+name: server-build
 
 on:
   push:
@@ -18,5 +18,7 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
-      - name: Format check
-        run: dotnet format --no-restore --verify-no-changes fenrick.miro.server/fenrick.miro.server.csproj
+      - name: restore
+        run: dotnet restore fenrick.miro.slnx
+      - name: build
+        run: dotnet build fenrick.miro.slnx
