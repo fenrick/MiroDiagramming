@@ -16,14 +16,14 @@ Before committing changes run `npm install` to ensure dependencies are up to
 date and then run the full suite of checks:
 
 ```bash
-npm --prefix fenrick.miro.client run typecheck --silent
-npm --prefix fenrick.miro.client run test --silent
-npm --prefix fenrick.miro.client run lint --silent
-npm --prefix fenrick.miro.client run stylelint --silent
-npm --prefix fenrick.miro.client run prettier --silent
-dotnet format
-dotnet restore
-dotnet test fenrick.miro.tests/fenrick.miro.tests.csproj -v minimal
+npm --prefix fenrick.miro.client run typecheck
+npm --prefix fenrick.miro.client run test
+npm --prefix fenrick.miro.client run lint
+npm --prefix fenrick.miro.client run stylelint
+npm --prefix fenrick.miro.client run prettier
+dotnet format fenrick.miro.slnx
+dotnet restore fenrick.miro.slnx
+dotnet test fenrick.miro.slnx
 ```
 
 The `.husky/` folder stores Git hooks. Run `npx husky install` once after
