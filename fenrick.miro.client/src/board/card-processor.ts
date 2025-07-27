@@ -1,7 +1,7 @@
-import type { Card, CardStyle, Frame, Tag } from '@mirohq/websdk-types';
+import type { Card, CardStyle, Frame } from '@mirohq/websdk-types';
 import { UndoableProcessor } from '../core/graph/undoable-processor';
 import { type CardData, cardLoader } from '../core/utils/cards';
-import { TagClient } from '../core/utils/tag-client';
+import { TagClient, type TagInfo } from '../core/utils/tag-client';
 
 interface GlobalWithMiro {
   miro?: { board?: { id?: string } };
@@ -43,7 +43,7 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
   /** Cached map from card identifier to card widget. */
   private cardMap: Map<string, Card> | undefined;
   /** Cached board tags when processing updates. */
-  private tagsCache: Tag[] | undefined;
+  private tagsCache: TagInfo[] | undefined;
   private readonly tagClient: TagClient;
 
   constructor(
@@ -125,7 +125,7 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
    * Retrieve all tags on the board. Uses nullish assignment to cache
    * results so multiple calls during a run hit the board only once.
    */
-  private async getBoardTags(): Promise<Tag[]> {
+  private async getBoardTags(): Promise<TagInfo[]> {
     if (!this.tagsCache) {
       this.tagsCache = await this.tagClient.getTags();
     }
@@ -188,7 +188,7 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
    */
   private async ensureTagIds(
     names: string[] | undefined,
-    tagMap: Map<string, Tag>,
+    tagMap: Map<string, TagInfo>,
   ): Promise<string[]> {
     const ids: string[] = [];
     const uniqueNames = new Set(names ?? []);
@@ -196,8 +196,13 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
       let tag = tagMap.get(name);
       if (!tag) {
         tag = await miro.board.createTag({ title: name });
-        tagMap.set(name, tag);
-        this.tagsCache?.push(tag);
+        const info: TagInfo = {
+          id: tag.id,
+          title: tag.title,
+          color: tag.color,
+        };
+        tagMap.set(name, info);
+        this.tagsCache?.push(info);
       }
       if (tag.id) {
         ids.push(tag.id);
@@ -210,7 +215,7 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
     def: CardData,
     x: number,
     y: number,
-    tagMap: Map<string, Tag>,
+    tagMap: Map<string, TagInfo>,
   ): Promise<Card> {
     const tagIds = await this.ensureTagIds(def.tags, tagMap);
     const createOpts: Record<string, unknown> = {
@@ -234,7 +239,7 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
   private async updateCardWidget(
     card: Card,
     def: CardData,
-    tagMap: Map<string, Tag>,
+    tagMap: Map<string, TagInfo>,
   ): Promise<Card> {
     const tagIds = await this.ensureTagIds(def.tags, tagMap);
     card.title = def.title;
@@ -350,7 +355,7 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
   private async createCardWidgets(
     defs: CardData[],
     layout: { startX: number; startY: number; columns: number },
-    tagMap: Map<string, Tag>,
+    tagMap: Map<string, TagInfo>,
     frame?: Frame,
   ): Promise<Card[]> {
     const cards = await Promise.all(
