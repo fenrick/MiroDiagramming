@@ -1,8 +1,8 @@
 #nullable disable
 
-namespace Fenrick.Miro.Server.Data.Migrations
-{
-    using Microsoft.EntityFrameworkCore.Migrations;
+namespace Fenrick.Miro.Server.Data.Migrations;
+
+using Microsoft.EntityFrameworkCore.Migrations;
 
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -40,5 +40,4 @@ namespace Fenrick.Miro.Server.Data.Migrations
         migrationBuilder.DropTable(
             name: "Users");
     }
-}
 }
