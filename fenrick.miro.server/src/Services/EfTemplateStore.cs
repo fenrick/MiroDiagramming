@@ -32,7 +32,7 @@ public class EfTemplateStore(MiroDbContext context) : ITemplateStore
     }
 
     /// <inheritdoc />
-    public void SetTemplate(string userId, string name, TemplateDefinition template)
+    public void SetTemplate(string userId, string name, TemplateDefinition definition)
     {
         if (string.IsNullOrWhiteSpace(userId))
         {
@@ -45,7 +45,7 @@ public class EfTemplateStore(MiroDbContext context) : ITemplateStore
         }
 
         var entity = this.db.Templates.Find(userId, name);
-        var json = JsonSerializer.Serialize(template);
+        var json = JsonSerializer.Serialize(definition);
         if (entity is null)
         {
             this.db.Templates.Add(new TemplateEntity

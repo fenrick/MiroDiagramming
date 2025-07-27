@@ -1,8 +1,8 @@
 using System.Globalization;
 using Fenrick.Miro.Server.Data;
 using Fenrick.Miro.Server.Services;
-using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((_, cfg) =>
@@ -12,8 +12,17 @@ builder.AddServiceDefaults();
 
 // Add services to the container.
 builder.Services.AddControllers();
-var conn = builder.Configuration.GetConnectionString("postgres");
-builder.Services.AddDbContext<MiroDbContext>(opt => opt.UseNpgsql(conn));
+var pg = builder.Configuration.GetConnectionString("postgres");
+var sqlite =
+    builder.Configuration.GetConnectionString("sqlite") ?? "Data Source=app.db";
+if (builder.Environment.IsProduction() && !string.IsNullOrEmpty(pg))
+{
+    builder.Services.AddDbContext<MiroDbContext>(opt => opt.UseNpgsql(pg));
+}
+else
+{
+    builder.Services.AddDbContext<MiroDbContext>(opt => opt.UseSqlite(sqlite));
+}
 builder.Services.AddScoped<IUserStore, EfUserStore>();
 builder.Services.AddScoped<ITemplateStore, EfTemplateStore>();
 builder.Services.AddSingleton<ILogSink, SerilogSink>();
@@ -25,9 +34,11 @@ builder.Services.AddSingleton<IShapeCache, InMemoryShapeCache>();
 
 var app = builder.Build();
 
-// Apply migrations so the schema matches the EF Core model.
-using (var scope = app.Services.CreateScope())
+var applyMigrations = builder.Configuration.GetValue("ApplyMigrations", true);
+if (applyMigrations)
 {
+    // Apply migrations so the schema matches the EF Core model.
+    using var scope = app.Services.CreateScope();
     var db = scope.ServiceProvider.GetRequiredService<MiroDbContext>();
     db.Database.Migrate();
 }

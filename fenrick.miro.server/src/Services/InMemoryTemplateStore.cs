@@ -34,11 +34,11 @@ public class InMemoryTemplateStore : ITemplateStore
     /// </summary>
     /// <param name="userId">User identifier.</param>
     /// <param name="name">Template name.</param>
-    /// <param name="template">Template definition to store.</param>
+    /// <param name="definition">Template definition to store.</param>
     public void SetTemplate(
         string userId,
         string name,
-        TemplateDefinition template)
+        TemplateDefinition definition)
     {
         if (!this.store.TryGetValue(userId, out var map))
         {
@@ -46,6 +46,6 @@ public class InMemoryTemplateStore : ITemplateStore
             this.store[userId] = map;
         }
 
-        map[name] = template;
+        map[name] = definition;
     }
 }

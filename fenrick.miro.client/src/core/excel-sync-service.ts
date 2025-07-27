@@ -2,6 +2,7 @@ import type { BaseItem, Group } from '@mirohq/websdk-types';
 import type { BoardQueryLike } from '../board/board';
 import { applyElementToItem } from '../board/element-utils';
 import { searchGroups, searchShapes } from '../board/node-search';
+import { ShapeClient } from './utils/shape-client';
 import { templateManager } from '../board/templates';
 import { ColumnMapping, mapRowsToNodes } from './data-mapper';
 import type { ExcelRow } from './utils/excel-loader';
@@ -19,6 +20,19 @@ export interface ContentItem extends BaseItem {
  */
 export class ExcelSyncService {
   private rowMap: Record<string, string> = {};
+  private readonly api: ShapeClient;
+
+  public constructor(api?: ShapeClient) {
+    this.api =
+      api ??
+      new ShapeClient(
+        ((
+          globalThis as unknown as {
+            miro?: { board?: { info?: { id: string } } };
+          }
+        ).miro?.board?.info?.id ?? '') as string,
+      );
+  }
 
   /** Clear the internal row mapping. */
   public reset(): void {
@@ -150,8 +164,9 @@ export class ExcelSyncService {
     const byId = this.rowMap[rowId];
     if (byId) {
       try {
-        // TODO lookup widget via ShapeClient + cache rather than board.getById
-        const item = (await miro.board.getById(byId)) as BaseItem | Group;
+        const item = (await this.api.getShape(byId)) as unknown as
+          | BaseItem
+          | Group;
         if (item) {
           return item;
         }

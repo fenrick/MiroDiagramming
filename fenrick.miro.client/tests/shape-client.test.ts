@@ -43,3 +43,15 @@ test('deleteShape sends DELETE request', async () => {
   expect(call[0]).toBe('/api/b3/shapes/s2');
   expect(call[1].method).toBe('DELETE');
 });
+
+test('getShape fetches widget', async () => {
+  const api = new ShapeClient('b4', '/api');
+  (fetch as vi.Mock).mockResolvedValueOnce({
+    ok: true,
+    json: vi.fn().mockResolvedValue({ id: 's9' }),
+  });
+  const result = await api.getShape('s9');
+  const call = (fetch as vi.Mock).mock.calls[0];
+  expect(call[0]).toBe('/api/b4/shapes/s9');
+  expect(result).toEqual({ id: 's9' });
+});

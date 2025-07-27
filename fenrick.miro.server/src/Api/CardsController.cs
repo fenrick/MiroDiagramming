@@ -16,7 +16,10 @@ public class CardsController(IMiroClient client) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateAsync([FromBody] CardData[] cards)
     {
-        var responses = await this.miroClient.CreateAsync("/cards", cards);
+        var responses = await this.miroClient.CreateAsync(
+                            "/cards",
+                            cards,
+                            this.HttpContext.RequestAborted);
         return this.Ok(responses);
     }
 }

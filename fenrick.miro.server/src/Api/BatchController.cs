@@ -20,7 +20,9 @@ public class BatchController(IMiroClient client) : ControllerBase
         var responses = new List<MiroResponse>(requests.Length);
         foreach (var req in requests)
         {
-            var res = await this.miroClient.SendAsync(req);
+            var res = await this.miroClient.SendAsync(
+                req,
+                this.HttpContext.RequestAborted);
             responses.Add(res);
         }
 

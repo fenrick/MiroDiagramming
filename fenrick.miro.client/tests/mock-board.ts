@@ -10,11 +10,15 @@ import type { BoardLike } from '../src/board/board';
  * @param overrides - Board methods to override in the stub.
  * @returns The mock board instance.
  */
-export function mockBoard(overrides: Partial<BoardLike> = {}): BoardLike {
-  const board: BoardLike = {
+export function mockBoard(
+  overrides: Partial<BoardLike> = {},
+  id = 'b1',
+): BoardLike {
+  const board = {
     getSelection: vi.fn().mockResolvedValue([]),
+    info: { id },
     ...overrides,
-  };
+  } as unknown as BoardLike;
   (globalThis as { miro?: { board?: BoardLike } }).miro = { board };
   return board;
 }

@@ -64,4 +64,18 @@ export class ShapeClient {
     }
     await fetch(`${this.url}/${id}`, { method: 'DELETE' });
   }
+
+  /** Retrieve a shape widget by identifier. */
+  public async getShape(
+    id: string,
+  ): Promise<Record<string, unknown> | undefined> {
+    if (typeof fetch !== 'function') {
+      return undefined;
+    }
+    const res = await fetch(`${this.url}/${id}`);
+    if (!res.ok) {
+      return undefined;
+    }
+    return (await res.json()) as Record<string, unknown>;
+  }
 }

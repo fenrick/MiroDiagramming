@@ -24,7 +24,8 @@ public class ShapesController(IMiroClient client, IShapeCache cache)
     {
         var responses = await this.miroClient.CreateAsync(
                             $"/boards/{boardId}/shapes",
-                            shapes);
+                            shapes,
+                            this.HttpContext.RequestAborted);
         for (var i = 0; i < responses.Count && i < shapes.Length; i++)
         {
             this.shapeCache.Store(
@@ -41,7 +42,8 @@ public class ShapesController(IMiroClient client, IShapeCache cache)
                            new MiroRequest(
                                "DELETE",
                                $"/boards/{boardId}/shapes/{itemId}",
-                               null));
+                               null),
+                           this.HttpContext.RequestAborted);
         this.shapeCache.Remove(boardId, itemId);
         return this.Ok(response);
     }
@@ -57,8 +59,34 @@ public class ShapesController(IMiroClient client, IShapeCache cache)
                            new MiroRequest(
                                "PUT",
                                $"/boards/{boardId}/shapes/{itemId}",
-                               body));
+                               body),
+                           this.HttpContext.RequestAborted);
         this.shapeCache.Store(new ShapeCacheEntry(boardId, itemId, shape));
         return this.Ok(response);
+    }
+
+    [HttpGet("{itemId}")]
+    public async Task<IActionResult> GetAsync(string boardId, string itemId)
+    {
+        var cached = this.shapeCache.Retrieve(boardId, itemId);
+        if (cached != null)
+        {
+            var json = JsonSerializer.Serialize(cached.Data);
+            return this.Content(json, "application/json");
+        }
+
+        var response = await this.miroClient.SendAsync(
+                           new MiroRequest(
+                               "GET",
+                               $"/boards/{boardId}/shapes/{itemId}",
+                               null),
+                           this.HttpContext.RequestAborted);
+        var data = JsonSerializer.Deserialize<ShapeData>(response.Body);
+        if (data != null)
+        {
+            this.shapeCache.Store(new ShapeCacheEntry(boardId, itemId, data));
+        }
+
+        return this.Content(response.Body, "application/json");
     }
 }
