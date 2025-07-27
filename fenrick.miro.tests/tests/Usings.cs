@@ -1,3 +1,10 @@
+global using ClosedXML.Excel;
+global using Microsoft.AspNetCore.Http;
+global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.AspNetCore.Mvc.Testing;
 global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.Logging;
+global using Serilog;
+global using Serilog.Core;
+global using Serilog.Events;
 global using Xunit;

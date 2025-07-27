@@ -1,8 +1,8 @@
+namespace Fenrick.Miro.Server.Data.Migrations;
 #nullable disable
 
-namespace Fenrick.Miro.Server.Data.Migrations;
-
 using Microsoft.EntityFrameworkCore.Migrations;
+
 /// <inheritdoc />
 public partial class InitialCreate : Migration
 {
