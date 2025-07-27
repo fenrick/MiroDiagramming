@@ -11,6 +11,8 @@ internal static class LogMessages
     public const string ListingTables = "Listing named tables";
     public const string LoadingSheet = "Loading sheet {0}";
     public const string LoadingTable = "Loading table {0}";
+    public const string StreamingSheet = "Streaming sheet {0}";
+    public const string StreamingTable = "Streaming table {0}";
     public const string WorkbookNotLoaded = "Workbook not loaded";
     public const string UnknownSheet = "Unknown sheet: {0}";
     public const string UnknownTable = "Unknown table: {0}";
