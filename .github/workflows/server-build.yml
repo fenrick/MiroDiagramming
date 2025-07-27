@@ -1,4 +1,4 @@
-name: server-format
+name: server-build
 
 on:
   push:
