@@ -1,5 +1,6 @@
 namespace Fenrick.Miro.Tests;
 #nullable enable
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
@@ -43,6 +44,18 @@ public class ShapeQueueProcessorTests
 
         Assert.Equal(25, client.Count);
         Assert.Equal(25, responses.Count);
+    }
+
+    [Fact]
+    public async Task DisposePreventsProcessing()
+    {
+        var client = new StubClient();
+        var proc = new ShapeQueueProcessor(client);
+        proc.EnqueueCreate([ new ShapeData("r", 0, 0, 1, 1, null, null, null) ]);
+
+        proc.Dispose();
+
+        await Assert.ThrowsAsync<ObjectDisposedException>(() => proc.ProcessAsync());
     }
 
     // TODO expand tests to cover modify and delete queues once implemented in

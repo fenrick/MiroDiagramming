@@ -24,7 +24,12 @@ public sealed class ShapeQueueProcessor(IMiroClient client) : IDisposable
     /// </summary>
     public int BatchSize { get; set; } = 20;
 
-    public void Dispose() => throw new NotImplementedException();
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        this.gate.Dispose();
+        GC.SuppressFinalize(this);
+    }
 
     /// <summary>
     ///     Enqueue shapes to be created.
