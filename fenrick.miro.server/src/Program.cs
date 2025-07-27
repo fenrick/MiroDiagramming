@@ -1,10 +1,13 @@
 using System.Globalization;
+
 using Fenrick.Miro.Server.Data;
 using Fenrick.Miro.Server.Services;
+
 using Microsoft.EntityFrameworkCore;
+
 using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((_, cfg) =>
     cfg.WriteTo.Console(formatProvider: CultureInfo.InvariantCulture));
 
@@ -12,9 +15,9 @@ builder.AddServiceDefaults();
 
 // Add services to the container.
 builder.Services.AddControllers();
-var pg = builder.Configuration.GetConnectionString("postgres");
+var pg = builder.Configuration.GetConnectionString($"postgres");
 var sqlite =
-    builder.Configuration.GetConnectionString("sqlite") ?? "Data Source=app.db";
+    builder.Configuration.GetConnectionString($"sqlite") ?? $"Data Source=app.db";
 if (builder.Environment.IsProduction() && !string.IsNullOrEmpty(pg))
 {
     builder.Services.AddDbContext<MiroDbContext>(opt => opt.UseNpgsql(pg));
@@ -33,15 +36,15 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IShapeCache, InMemoryShapeCache>();
 builder.Services.AddScoped<ITagService, TagService>();
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
-var applyMigrations = builder.Configuration.GetValue("ApplyMigrations", true);
+var applyMigrations = builder.Configuration.GetValue($"ApplyMigrations", defaultValue: true);
 if (applyMigrations)
 {
     // Apply migrations so the schema matches the EF Core model.
-    using var scope = app.Services.CreateScope();
-    var db = scope.ServiceProvider.GetRequiredService<MiroDbContext>();
-    db.Database.Migrate();
+    using IServiceScope scope = app.Services.CreateScope();
+    MiroDbContext db = scope.ServiceProvider.GetRequiredService<MiroDbContext>();
+    await db.Database.MigrateAsync().ConfigureAwait(false);
 }
 
 app.MapDefaultEndpoints();
@@ -65,9 +68,9 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapFallbackToFile("/index.html");
+app.MapFallbackToFile($"/index.html");
 
-await app.RunAsync();
+await app.RunAsync().ConfigureAwait(false);
 
 /// <summary>
 ///     Exposes the entry point for integration tests.

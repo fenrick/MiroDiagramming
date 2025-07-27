@@ -6,9 +6,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Fenrick.Miro.Server.Api;
 using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,15 +19,15 @@ public class BatchControllerTests
     [Fact]
     public async Task ForwardAsyncReturnsOrderedResponses()
     {
-        var requests = new[]
+        MiroRequest[] requests = new[]
                        {
-                           new MiroRequest("GET", "/boards/1", null),
-                           new MiroRequest("GET", "/boards/2", null)
+                           new MiroRequest($"GET", $"/boards/1", Body: null),
+                           new MiroRequest($"GET", $"/boards/2", Body: null),
                        };
         var responses = new Queue<MiroResponse>(
         [
-            new MiroResponse(200, "1"),
-            new MiroResponse(200, "2")
+            new MiroResponse(200, $"1"),
+            new MiroResponse(200, $"2"),
         ]);
         var client =
             new StubClient(req => Task.FromResult(responses.Dequeue()));
@@ -34,14 +36,14 @@ public class BatchControllerTests
             ControllerContext = new ControllerContext
             {
                 HttpContext = new DefaultHttpContext()
-            }
+            },
         };
 
-        var result = await controller.ForwardAsync(requests) as OkObjectResult;
+        var result = await controller.ForwardAsync(requests).ConfigureAwait(false) as OkObjectResult;
 
-        var data = Assert.IsType<List<MiroResponse>>(result!.Value);
-        Assert.Equal("1", data[0].Body);
-        Assert.Equal("2", data[1].Body);
+        List<MiroResponse> data = Assert.IsType<List<MiroResponse>>(result!.Value);
+        Assert.Equal($"1", data[0].Body);
+        Assert.Equal($"2", data[1].Body);
     }
 
     /// <summary>
@@ -56,12 +58,12 @@ public class BatchControllerTests
             ControllerContext = new ControllerContext
             {
                 HttpContext = new DefaultHttpContext()
-            }
+            },
         };
 
-        var result = await controller.ForwardAsync([]) as OkObjectResult;
+        var result = await controller.ForwardAsync([]).ConfigureAwait(false) as OkObjectResult;
 
-        var data = Assert.IsType<List<MiroResponse>>(result!.Value);
+        List<MiroResponse> data = Assert.IsType<List<MiroResponse>>(result!.Value);
         Assert.Empty(data);
     }
 

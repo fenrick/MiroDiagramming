@@ -2,10 +2,13 @@ namespace Fenrick.Miro.Tests;
 
 using System;
 using System.Collections.Generic;
+
 using Fenrick.Miro.Server.Api;
 using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
+
 using Microsoft.AspNetCore.Mvc;
+
 using Xunit;
 
 public class LogsControllerTests
@@ -16,16 +19,16 @@ public class LogsControllerTests
         var received = new List<ClientLogEntry>();
         var sink = new StubSink(received.AddRange);
         var controller = new LogsController(sink);
-        var payload = new[]
+        ClientLogEntry[] payload = new[]
                       {
                           new ClientLogEntry(
                               DateTime.UtcNow,
-                              "info",
-                              "msg",
-                              null)
+$"info",
+$"msg",
+Context: null),
                       };
 
-        var result = controller.Capture(payload);
+        IActionResult result = controller.Capture(payload);
 
         Assert.IsType<AcceptedResult>(result);
         Assert.Single(received);

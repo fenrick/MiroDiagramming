@@ -2,6 +2,7 @@ namespace Fenrick.Miro.Tests;
 #nullable enable
 using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
+
 using Xunit;
 
 public class InMemoryShapeCacheTests
@@ -11,12 +12,12 @@ public class InMemoryShapeCacheTests
     {
         var cache = new InMemoryShapeCache();
         var entry = new ShapeCacheEntry(
-            "b",
-            "i",
-            new ShapeData("r", 0, 0, 1, 1, null, null, null));
+$"b",
+$"i",
+            new ShapeData($"r", 0, 0, 1, 1, Rotation: Text: null, Style: null, null));
         cache.Store(entry);
-        cache.Remove("b", "i");
-        Assert.Null(cache.Retrieve("b", "i"));
+        cache.Remove($"b", $"i");
+        Assert.Null(cache.Retrieve($"b", $"i"));
     }
 
     [Fact]
@@ -24,12 +25,12 @@ public class InMemoryShapeCacheTests
     {
         var cache = new InMemoryShapeCache();
         var entry = new ShapeCacheEntry(
-            "b1",
-            "i1",
-            new ShapeData("rect", 0, 0, 1, 1, null, null, null));
+$"b1",
+$"i1",
+            new ShapeData($"rect", 0, 0, 1, 1, Rotation: Text: null, Style: null, null));
         cache.Store(entry);
 
-        var result = cache.Retrieve("b1", "i1");
+        ShapeCacheEntry? result = cache.Retrieve($"b1", $"i1");
         Assert.Equal(entry, result);
     }
 }

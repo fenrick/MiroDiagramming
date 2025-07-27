@@ -2,6 +2,7 @@ namespace Fenrick.Miro.Server.Services;
 
 using System.Text.Json;
 using System.Threading;
+
 using Fenrick.Miro.Server.Domain;
 
 /// <summary>
@@ -25,14 +26,14 @@ public static class MiroClientExtensions
         CancellationToken ct = default)
     {
         var responses = new List<MiroResponse>();
-        foreach (var group in items.Chunk(20))
+        foreach (T[] group in items.Chunk(20))
         {
-            foreach (var item in group)
+            foreach (T? item in group)
             {
                 var body = JsonSerializer.Serialize(item);
-                var response = await client.SendAsync(
-                                   new MiroRequest("POST", path, body),
-                                   ct);
+                MiroResponse response = await client.SendAsync(
+                                   new MiroRequest($"POST", path, body),
+                                   ct).ConfigureAwait(false);
                 responses.Add(response);
             }
         }

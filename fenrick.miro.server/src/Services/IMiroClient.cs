@@ -1,6 +1,7 @@
 namespace Fenrick.Miro.Server.Services;
 
 using System.Threading;
+
 using Fenrick.Miro.Server.Domain;
 
 /// <summary>

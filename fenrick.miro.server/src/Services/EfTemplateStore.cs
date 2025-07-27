@@ -2,6 +2,7 @@ namespace Fenrick.Miro.Server.Services;
 
 using System;
 using System.Text.Json;
+
 using Fenrick.Miro.Server.Data;
 using Fenrick.Miro.Server.Domain;
 
@@ -17,15 +18,15 @@ public class EfTemplateStore(MiroDbContext context) : ITemplateStore
     {
         if (string.IsNullOrWhiteSpace(userId))
         {
-            throw new ArgumentException("User id must be provided", nameof(userId));
+            throw new ArgumentException($"User id must be provided", nameof(userId));
         }
 
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new ArgumentException("Template name must be provided", nameof(name));
+            throw new ArgumentException($"Template name must be provided", nameof(name));
         }
 
-        var entity = this.db.Templates.Find(userId, name);
+        TemplateEntity? entity = this.db.Templates.Find(userId, name);
         return entity is null
             ? null
             : JsonSerializer.Deserialize<TemplateDefinition>(entity.DefinitionJson);
@@ -36,15 +37,15 @@ public class EfTemplateStore(MiroDbContext context) : ITemplateStore
     {
         if (string.IsNullOrWhiteSpace(userId))
         {
-            throw new ArgumentException("User id must be provided", nameof(userId));
+            throw new ArgumentException($"User id must be provided", nameof(userId));
         }
 
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new ArgumentException("Template name must be provided", nameof(name));
+            throw new ArgumentException($"Template name must be provided", nameof(name));
         }
 
-        var entity = this.db.Templates.Find(userId, name);
+        TemplateEntity? entity = this.db.Templates.Find(userId, name);
         var json = JsonSerializer.Serialize(definition);
         if (entity is null)
         {

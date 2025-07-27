@@ -2,6 +2,7 @@ namespace Fenrick.Miro.Tests;
 
 using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
+
 using Xunit;
 
 public class InMemoryCacheServiceTests
@@ -10,10 +11,10 @@ public class InMemoryCacheServiceTests
     public void GetReturnsValueWhenPresentOtherwiseNull()
     {
         var service = new InMemoryCacheService();
-        Assert.Null(service.Retrieve("1"));
-        var meta = new BoardMetadata("1", "Board");
+        Assert.Null(service.Retrieve($"1"));
+        var meta = new BoardMetadata($"1", $"Board");
         service.Store(meta);
-        Assert.Equal(meta, service.Retrieve("1"));
+        Assert.Equal(meta, service.Retrieve($"1"));
     }
 
     /// <summary>
@@ -23,9 +24,9 @@ public class InMemoryCacheServiceTests
     public void StoreOverridesExistingMetadata()
     {
         var service = new InMemoryCacheService();
-        service.Store(new BoardMetadata("1", "Old"));
-        service.Store(new BoardMetadata("1", "New"));
+        service.Store(new BoardMetadata($"1", $"Old"));
+        service.Store(new BoardMetadata($"1", $"New"));
 
-        Assert.Equal("New", service.Retrieve("1")?.Name);
+        Assert.Equal($"New", service.Retrieve($"1")?.Name);
     }
 }

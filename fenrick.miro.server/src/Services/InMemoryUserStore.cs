@@ -4,6 +4,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Fenrick.Miro.Server.Domain;
 
 /// <summary>
@@ -15,29 +16,29 @@ using Fenrick.Miro.Server.Domain;
 /// </summary>
 public class InMemoryUserStore : IUserStore
 {
-    private readonly ConcurrentDictionary<string, UserInfo> users = new();
+    private readonly ConcurrentDictionary<string, UserInfo> users = new(StringComparer.Ordinal);
 
     /// <inheritdoc />
     public UserInfo? Retrieve(string userId)
     {
         if (string.IsNullOrWhiteSpace(userId))
         {
-            throw new ArgumentException("User id must be provided", nameof(userId));
+            throw new ArgumentException($"User id must be provided", nameof(userId));
         }
 
-        return this.users.TryGetValue(userId, out var info) ? info : null;
+        return this.users.TryGetValue(userId, out UserInfo? info) ? info : null;
     }
 
     /// <inheritdoc />
     public Task<UserInfo?> RetrieveAsync(string userId, CancellationToken ct = default) =>
-        Task.FromResult(this.Retrieve(userId));
+        Task.FromResult(await this.RetrieveAsync(userId).ConfigureAwait(false));
 
     /// <inheritdoc />
     public void Store(UserInfo info)
     {
         if (string.IsNullOrWhiteSpace(info.Id))
         {
-            throw new ArgumentException("User id must be provided", nameof(info));
+            throw new ArgumentException($"User id must be provided", nameof(info));
         }
 
         this.users[info.Id] = info;
@@ -46,7 +47,7 @@ public class InMemoryUserStore : IUserStore
     /// <inheritdoc />
     public Task StoreAsync(UserInfo info, CancellationToken ct = default)
     {
-        this.Store(info);
+        await this.StoreAsync(info).ConfigureAwait(false);
         return Task.CompletedTask;
     }
 
@@ -55,7 +56,7 @@ public class InMemoryUserStore : IUserStore
     {
         if (string.IsNullOrWhiteSpace(userId))
         {
-            throw new ArgumentException("User id must be provided", nameof(userId));
+            throw new ArgumentException($"User id must be provided", nameof(userId));
         }
 
         this.users.TryRemove(userId, out _);
@@ -64,7 +65,7 @@ public class InMemoryUserStore : IUserStore
     /// <inheritdoc />
     public Task DeleteAsync(string userId, CancellationToken ct = default)
     {
-        this.Delete(userId);
+        await this.DeleteAsync(userId).ConfigureAwait(false);
         return Task.CompletedTask;
     }
 }

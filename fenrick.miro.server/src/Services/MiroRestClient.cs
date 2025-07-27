@@ -4,6 +4,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Fenrick.Miro.Server.Domain;
 
 /// <summary>
@@ -30,9 +31,9 @@ public class MiroRestClient(
     /// <inheritdoc />
     public async Task<MiroResponse> SendAsync(MiroRequest request, CancellationToken ct = default)
     {
-        var ctx = this.accessor.HttpContext;
-        var userId = ctx?.Request.Headers["X-User-Id"].FirstOrDefault();
-        var info = userId != null ? await this.store.RetrieveAsync(userId, ct) : null;
+        HttpContext? ctx = this.accessor.HttpContext;
+        var userId = ctx?.Request.Headers[$"X-User-Id"].FirstOrDefault();
+        UserInfo? info = userId != null ? await this.store.RetrieveAsync(userId, ct).ConfigureAwait(false) : null;
         var token = info?.Token;
         var message =
             new HttpRequestMessage(
@@ -44,16 +45,16 @@ public class MiroRestClient(
                               : new StringContent(
                                   request.Body,
                                   Encoding.UTF8,
-                                  "application/json")
+$"application/json"),
             };
         if (token != null)
         {
             message.Headers.Authorization =
-                new AuthenticationHeaderValue("Bearer", token);
+                new AuthenticationHeaderValue($"Bearer", token);
         }
 
-        var response = await this.httpClient.SendAsync(message, ct);
-        var body = await response.Content.ReadAsStringAsync(ct);
+        HttpResponseMessage response = await this.httpClient.SendAsync(message, ct).ConfigureAwait(false);
+        var body = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
         return new MiroResponse((int)response.StatusCode, body);
     }
 }

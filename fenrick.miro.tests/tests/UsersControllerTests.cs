@@ -4,10 +4,13 @@ namespace Fenrick.Miro.Tests;
 
 using System;
 using System.Collections.Generic;
+
 using Fenrick.Miro.Server.Api;
 using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
+
 using Microsoft.AspNetCore.Mvc;
+
 using Xunit;
 
 public class UsersControllerTests
@@ -18,13 +21,13 @@ public class UsersControllerTests
         var received = new List<UserInfo>();
         var store = new StubStore(received.Add);
         var controller = new UsersController(store);
-        var info = new UserInfo("u1", "Bob", "t1");
+        var info = new UserInfo($"u1", $"Bob", $"t1");
 
-        var result = controller.Register(info);
+        IActionResult result = controller.Register(info);
 
         Assert.IsType<AcceptedResult>(result);
         Assert.Single(received);
-        Assert.Equal("u1", received[0].Id);
+        Assert.Equal($"u1", received[0].Id);
     }
 
     private sealed class StubStore(Action<UserInfo> cb) : IUserStore

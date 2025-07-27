@@ -5,6 +5,7 @@ namespace Fenrick.Miro.Tests;
 using Fenrick.Miro.Server.Api;
 using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
+
 using Microsoft.AspNetCore.Mvc;
 
 public class CacheControllerTests
@@ -12,14 +13,14 @@ public class CacheControllerTests
     [Fact]
     public void GetReturnsCachedItem()
     {
-        var service = new StubCache(new BoardMetadata("1", "Board"));
+        var service = new StubCache(new BoardMetadata($"1", $"Board"));
         var controller = new CacheController(service);
 
-        var result = controller.Get("1");
-        var ok = Assert.IsType<OkObjectResult>(result.Result);
+        ActionResult<BoardMetadata?> result = controller.Get($"1");
+        OkObjectResult ok = Assert.IsType<OkObjectResult>(result.Result);
 
-        var data = Assert.IsType<BoardMetadata>(ok.Value);
-        Assert.Equal("1", data.Id);
+        BoardMetadata data = Assert.IsType<BoardMetadata>(ok.Value);
+        Assert.Equal($"1", data.Id);
     }
 
     /// <summary>
@@ -31,8 +32,8 @@ public class CacheControllerTests
     {
         var controller = new CacheController(new NullCache());
 
-        var result = controller.Get("missing");
-        var ok = Assert.IsType<OkObjectResult>(result.Result);
+        ActionResult<BoardMetadata?> result = controller.Get($"missing");
+        OkObjectResult ok = Assert.IsType<OkObjectResult>(result.Result);
         Assert.Null(ok.Value);
     }
 

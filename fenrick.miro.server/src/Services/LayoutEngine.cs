@@ -19,21 +19,21 @@ public class LayoutEngine
     /// <param name="data">Graph structure.</param>
     /// <returns>Result containing node coordinates.</returns>
     /// <remarks>Replaced once ELK integration is complete.</remarks>
-    public LayoutResult Layout(GraphData data)
+    public static LayoutResult Layout(GraphData data)
     {
-        var nodes = new Dictionary<string, PositionedNode>();
+        var nodes = new Dictionary<string, PositionedNode>(StringComparer.Ordinal);
         double y = 0;
-        foreach (var node in data.Nodes)
+        foreach (GraphNode node in data.Nodes)
         {
             nodes[node.Id] = new PositionedNode(0, y, 100, 60);
             y += Spacing;
         }
 
         var edges = new List<PositionedEdge>();
-        foreach (var edge in data.Edges)
+        foreach (GraphEdge edge in data.Edges)
         {
-            if (nodes.TryGetValue(edge.From, out var start)
-                && nodes.TryGetValue(edge.To, out var end))
+            if (nodes.TryGetValue(edge.From, out PositionedNode? start)
+                && nodes.TryGetValue(edge.To, out PositionedNode? end))
             {
                 edges.Add(
                     new PositionedEdge((start.X, start.Y), (end.X, end.Y)));

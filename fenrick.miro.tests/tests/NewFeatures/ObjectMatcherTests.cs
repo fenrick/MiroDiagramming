@@ -4,8 +4,10 @@ namespace Fenrick.Miro.Tests.NewFeatures;
 
 using System.Collections.Generic;
 using System.Linq;
+
 using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
+
 using Xunit;
 
 public class ObjectMatcherTests
@@ -15,14 +17,14 @@ public class ObjectMatcherTests
     {
         var shapes = new List<ShapeData>
                      {
-                         new("r", 0, 0, 1, 1, null, "Alpha", null),
-                         new("r", 0, 0, 1, 1, null, "Beta", null)
+                         new($"r", 0, 0, 1, 1, null, $"Alpha", null),
+                         new($"r", 0, 0, 1, 1, null, $"Beta", null),
                      };
 
-        var result = ObjectMatcher.FindShapeByLabel(shapes, "beta");
+        ShapeData? result = ObjectMatcher.FindShapeByLabel(shapes, $"beta");
 
         Assert.NotNull(result);
-        Assert.Equal("Beta", result!.Text);
+        Assert.Equal($"Beta", result!.Text);
     }
 
     [Fact]
@@ -31,30 +33,30 @@ public class ObjectMatcherTests
         var shapes = new List<ShapeData>
                      {
                          new(
-                             "r",
+$"r",
                              0,
                              0,
                              1,
                              1,
                              null,
                              null,
-                             new Dictionary<string, object> { ["color"] = "red" }),
+                             new Dictionary<string, object>(System.StringComparer.Ordinal) { [$"color"] = $"red"}),
                          new(
-                             "r",
+$"r",
                              0,
                              0,
                              1,
                              1,
                              null,
                              null,
-                             new Dictionary<string, object> { ["color"] = "blue" })
+                             new Dictionary<string, object>(System.StringComparer.Ordinal) { [$"color"] = $"blue"}),
                      };
 
         var results =
-            ObjectMatcher.FindShapesByStyle(shapes, "color", "blue").ToList();
+            ObjectMatcher.FindShapesByStyle(shapes, $"color", $"blue").ToList();
 
         Assert.Single(results);
-        Assert.Equal("blue", results[0].Style!["color"]);
+        Assert.Equal($"blue", results[0].Style![$"color"]);
     }
 
     [Fact]
@@ -62,11 +64,11 @@ public class ObjectMatcherTests
     {
         var shapes = new List<ShapeData>
                      {
-                         new("r", 0, 0, 1, 1, null, null, null)
+                         new($"r", 0, 0, 1, 1, null, null, null),
                      };
 
         var results =
-            ObjectMatcher.FindShapesByStyle(shapes, "color", "red").ToList();
+            ObjectMatcher.FindShapesByStyle(shapes, $"color", $"red").ToList();
 
         Assert.Empty(results);
     }
@@ -77,18 +79,18 @@ public class ObjectMatcherTests
         var shapes = new List<ShapeData>
                      {
                          new(
-                             "r",
+$"r",
                              0,
                              0,
                              1,
                              1,
                              null,
                              null,
-                             new Dictionary<string, object> { ["color"] = "Red" })
+                             new Dictionary<string, object>(System.StringComparer.Ordinal) { [$"color"] = $"Red"}),
                      };
 
         var results =
-            ObjectMatcher.FindShapesByStyle(shapes, "color", "red").ToList();
+            ObjectMatcher.FindShapesByStyle(shapes, $"color", $"red").ToList();
 
         Assert.Single(results);
     }

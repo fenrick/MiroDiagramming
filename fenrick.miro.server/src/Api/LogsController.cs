@@ -2,6 +2,7 @@ namespace Fenrick.Miro.Server.Api;
 
 using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
+
 using Microsoft.AspNetCore.Mvc;
 
 /// <summary>
@@ -9,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 ///     <see cref="ILogSink" />.
 /// </summary>
 [ApiController]
-[Route("api/logs")]
+[Route($"api/logs")]
 public class LogsController(ILogSink sink) : ControllerBase
 {
     private readonly ILogSink logSink = sink;

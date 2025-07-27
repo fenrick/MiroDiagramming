@@ -5,8 +5,10 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
+
 using Xunit;
 
 public class ShapeQueueProcessorTests
@@ -18,12 +20,12 @@ public class ShapeQueueProcessorTests
         var proc = new ShapeQueueProcessor(client);
         proc.EnqueueCreate(
         [
-            new ShapeData("r", 0, 0, 1, 1, null, null, null)
+            new ShapeData($"r", 0, 0, 1, 1, Rotation: Text: null, Style: null, null),
         ]);
-        var t1 = proc.ProcessAsync();
-        var t2 = proc.ProcessAsync();
+        Task<List<MiroResponse>> t1 = proc.ProcessAsync();
+        Task<List<MiroResponse>> t2 = proc.ProcessAsync();
 
-        await Task.WhenAll(t1, t2);
+        await Task.WhenAll(t1, t2).ConfigureAwait(false);
 
         Assert.Equal(1, client.Count);
     }
@@ -36,27 +38,27 @@ public class ShapeQueueProcessorTests
         var shapes = new List<ShapeData>();
         for (var i = 0; i < 25; i++)
         {
-            shapes.Add(new ShapeData("r", 0, 0, 1, 1, null, null, null));
+            shapes.Add(new ShapeData($"r", 0, 0, 1, 1, Rotation: Text: null, Style: null, null));
         }
 
         proc.EnqueueCreate(shapes);
 
-        var responses = await proc.ProcessAsync();
+        List<MiroResponse> responses = await proc.ProcessAsync().ConfigureAwait(false);
 
         Assert.Equal(25, client.Count);
         Assert.Equal(25, responses.Count);
     }
 
     [Fact]
-    public async Task DisposePreventsProcessing()
+    public Task DisposePreventsProcessing()
     {
         var client = new StubClient();
         var proc = new ShapeQueueProcessor(client);
-        proc.EnqueueCreate([new ShapeData("r", 0, 0, 1, 1, null, null, null)]);
+        proc.EnqueueCreate([new ShapeData($"r", 0, 0, 1, 1, Rotation: Text: null, Style: null, null)]);
 
         proc.Dispose();
 
-        await Assert.ThrowsAsync<ObjectDisposedException>(() => proc.ProcessAsync());
+        return Assert.ThrowsAsync<ObjectDisposedException>(() => proc.ProcessAsync());
     }
 
     // TODO expand tests to cover modify and delete queues once implemented in

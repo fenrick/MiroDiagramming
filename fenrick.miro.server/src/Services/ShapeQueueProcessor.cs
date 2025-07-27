@@ -36,7 +36,7 @@ public sealed class ShapeQueueProcessor(IMiroClient client) : IDisposable
     /// </summary>
     public void EnqueueCreate(IEnumerable<ShapeData> shapes)
     {
-        foreach (var shape in shapes)
+        foreach (ShapeData shape in shapes)
         {
             this.createQueue.Enqueue(shape);
         }
@@ -49,18 +49,18 @@ public sealed class ShapeQueueProcessor(IMiroClient client) : IDisposable
         CancellationToken ct = default)
     {
         var results = new List<MiroResponse>();
-        await this.gate.WaitAsync(ct);
+        await this.gate.WaitAsync(ct).ConfigureAwait(false);
         try
         {
             while (this.createQueue.Count > 0)
             {
-                var batch = this.DequeueBatch(this.BatchSize).ToArray();
+                ShapeData[] batch = this.DequeueBatch(this.BatchSize).ToArray();
 
                 // TODO validate shapes against board cache and prioritise modify operations
-                var res = await this.miroClient.CreateAsync(
-                    "/shapes",
+                List<MiroResponse> res = await this.miroClient.CreateAsync(
+$"/shapes",
                     batch,
-                    ct);
+                    ct).ConfigureAwait(false);
                 results.AddRange(res);
             }
         }

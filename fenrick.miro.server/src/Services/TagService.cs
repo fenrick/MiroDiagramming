@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Fenrick.Miro.Server.Domain;
 
 /// <summary>
@@ -16,7 +17,7 @@ public class TagService(IMiroClient client) : ITagService
     /// <inheritdoc />
     public async Task<IReadOnlyList<TagInfo>> GetTagsAsync(string boardId, CancellationToken ct = default)
     {
-        var res = await this.client.SendAsync(new MiroRequest("GET", $"/boards/{boardId}/tags", null), ct);
+        MiroResponse res = await this.client.SendAsync(new MiroRequest($"GET", $"/boards/{boardId}/tags", Body: null), ct).ConfigureAwait(false);
         return JsonSerializer.Deserialize<List<TagInfo>>(res.Body) ?? [];
     }
 }

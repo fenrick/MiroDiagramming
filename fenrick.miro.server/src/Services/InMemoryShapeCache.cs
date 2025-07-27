@@ -1,6 +1,7 @@
 namespace Fenrick.Miro.Server.Services;
 
 using System.Collections.Concurrent;
+
 using Fenrick.Miro.Server.Domain;
 
 /// <summary>
@@ -20,7 +21,7 @@ public class InMemoryShapeCache : IShapeCache
 
     /// <inheritdoc />
     public ShapeCacheEntry? Retrieve(string boardId, string itemId) =>
-        this.cache.TryGetValue((boardId, itemId), out var entry) ? entry : null;
+        this.cache.TryGetValue((boardId, itemId), out ShapeCacheEntry? entry) ? entry : null;
 
     /// <inheritdoc />
     public void Store(ShapeCacheEntry entry) =>

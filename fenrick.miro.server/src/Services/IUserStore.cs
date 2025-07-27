@@ -2,6 +2,7 @@ namespace Fenrick.Miro.Server.Services;
 
 using System.Threading;
 using System.Threading.Tasks;
+
 using Fenrick.Miro.Server.Domain;
 
 /// <summary>
@@ -11,17 +12,17 @@ public interface IUserStore
 {
     /// <summary>Retrieve stored info for a user.</summary>
     /// <param name="userId">Identifier of the user.</param>
-    /// <returns>Stored details or <c>null</c>.</returns>
+    /// <returns>Stored details or <see langword="null"/>.</returns>
     public UserInfo? Retrieve(string userId);
 
     /// <summary>Retrieve stored info for a user asynchronously.</summary>
     /// <param name="userId">Identifier of the user.</param>
     /// <param name="ct">Cancellation token to abort the operation.</param>
-    /// <returns>Stored details or <c>null</c>.</returns>
+    /// <returns>Stored details or <see langword="null"/>.</returns>
     public virtual Task<UserInfo?> RetrieveAsync(
         string userId,
         CancellationToken ct = default) =>
-        Task.FromResult(this.Retrieve(userId));
+        Task.FromResult(await this.RetrieveAsync(userId).ConfigureAwait(false));
 
     /// <summary>Remove the user and associated token.</summary>
     /// <param name="userId">Identifier of the user.</param>
@@ -32,7 +33,7 @@ public interface IUserStore
     /// <param name="ct">Cancellation token to abort the operation.</param>
     public virtual Task DeleteAsync(string userId, CancellationToken ct = default)
     {
-        this.Delete(userId);
+        await this.DeleteAsync(userId).ConfigureAwait(false);
         return Task.CompletedTask;
     }
 
@@ -45,7 +46,7 @@ public interface IUserStore
     /// <param name="ct">Cancellation token to abort the operation.</param>
     public virtual Task StoreAsync(UserInfo info, CancellationToken ct = default)
     {
-        this.Store(info);
+        await this.StoreAsync(info).ConfigureAwait(false);
         return Task.CompletedTask;
     }
 }

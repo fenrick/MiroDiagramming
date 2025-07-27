@@ -2,13 +2,14 @@ namespace Fenrick.Miro.Server.Api;
 
 using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
+
 using Microsoft.AspNetCore.Mvc;
 
 /// <summary>
 ///     Aggregates REST calls so the client can send them in one request.
 /// </summary>
 [ApiController]
-[Route("api/batch")]
+[Route($"api/batch")]
 public class BatchController(IMiroClient client) : ControllerBase
 {
     private readonly IMiroClient miroClient = client;
@@ -18,11 +19,11 @@ public class BatchController(IMiroClient client) : ControllerBase
         [FromBody] MiroRequest[] requests)
     {
         var responses = new List<MiroResponse>(requests.Length);
-        foreach (var req in requests)
+        foreach (MiroRequest req in requests)
         {
-            var res = await this.miroClient.SendAsync(
+            MiroResponse res = await this.miroClient.SendAsync(
                 req,
-                this.HttpContext.RequestAborted);
+                this.HttpContext.RequestAborted).ConfigureAwait(false);
             responses.Add(res);
         }
 

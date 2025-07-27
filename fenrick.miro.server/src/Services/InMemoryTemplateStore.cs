@@ -1,6 +1,7 @@
 namespace Fenrick.Miro.Server.Services;
 
 using System.Collections.Generic;
+
 using Fenrick.Miro.Server.Domain;
 
 /// <summary>
@@ -22,10 +23,10 @@ public class InMemoryTemplateStore : ITemplateStore
     /// </summary>
     /// <param name="userId">User identifier.</param>
     /// <param name="name">Template name.</param>
-    /// <returns>The stored template or <c>null</c>.</returns>
+    /// <returns>The stored template or <see langword="null"/>.</returns>
     public TemplateDefinition? GetTemplate(string userId, string name) =>
-        this.store.TryGetValue(userId, out var map)
-        && map.TryGetValue(name, out var tpl)
+        this.store.TryGetValue(userId, out Dictionary<string, TemplateDefinition>? map)
+        && map.TryGetValue(name, out TemplateDefinition? tpl)
             ? tpl
             : null;
 
@@ -40,7 +41,7 @@ public class InMemoryTemplateStore : ITemplateStore
         string name,
         TemplateDefinition definition)
     {
-        if (!this.store.TryGetValue(userId, out var map))
+        if (!this.store.TryGetValue(userId, out Dictionary<string, TemplateDefinition>? map))
         {
             map = [];
             this.store[userId] = map;

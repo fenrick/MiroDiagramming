@@ -4,6 +4,7 @@ namespace Fenrick.Miro.Tests.NewFeatures;
 
 using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
+
 using Xunit;
 
 public class InMemoryTemplateStoreTests
@@ -14,15 +15,15 @@ public class InMemoryTemplateStoreTests
         var svc = new InMemoryTemplateStore();
         var tpl = new TemplateDefinition(
         [
-            new TemplateElement("r", 100, 60, "{{label}}")
+            new TemplateElement($"r", 100, 60, $"{{label}}"),
         ]);
 
-        svc.SetTemplate("u1", "A", tpl);
-        var fetched = svc.GetTemplate("u1", "A");
+        svc.SetTemplate($"u1", $"A", tpl);
+        TemplateDefinition? fetched = svc.GetTemplate($"u1", $"A");
 
         Assert.NotNull(fetched);
-        Assert.Equal("{{label}}", fetched!.Elements[0].Text);
-        Assert.Null(svc.GetTemplate("u2", "A"));
+        Assert.Equal($"{{label}}", fetched!.Elements[0].Text);
+        Assert.Null(svc.GetTemplate($"u2", $"A"));
     }
 
     // TODO create integration tests once template endpoints allow full CRUD

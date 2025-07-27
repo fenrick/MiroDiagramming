@@ -1,5 +1,7 @@
 using System.Linq;
+
 using Fenrick.Miro.Server.Data;
+
 using Microsoft.EntityFrameworkCore.Migrations;
 
 public class MigrationsPresenceTests

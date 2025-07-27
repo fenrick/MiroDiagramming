@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
+
 using OpenTelemetry;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
@@ -17,9 +18,9 @@ using OpenTelemetry.Trace;
 // To learn more about using this project, see https://aka.ms/dotnet/aspire/service-defaults
 public static class Extensions
 {
-    private const string AlivenessEndpointPath = "/alive";
+    private const string AlivenessEndpointPath = $"/alive";
 
-    private const string HealthEndpointPath = "/health";
+    private const string HealthEndpointPath = $"/health";
 
     public static TBuilder AddDefaultHealthChecks<TBuilder>(
         this TBuilder builder)
@@ -28,7 +29,7 @@ public static class Extensions
         builder.Services.AddHealthChecks()
 
             // Add a default liveness check to ensure app is responsive
-            .AddCheck("self", () => HealthCheckResult.Healthy(), ["live"]);
+            .AddCheck($"self", () => HealthCheckResult.Healthy(), [$"live"]);
 
         return builder;
     }
@@ -76,9 +77,9 @@ public static class Extensions
 
                     // Exclude health check requests from tracing
                     tracing.Filter = context => !context.Request.Path.StartsWithSegments(
-                            HealthEndpointPath)
+                            HealthEndpointPath, StringComparison.Ordinal)
                         && !context.Request.Path.StartsWithSegments(
-                            AlivenessEndpointPath))
+                            AlivenessEndpointPath, StringComparison.Ordinal))
 
                 // Uncomment the following line to enable gRPC instrumentation (requires the OpenTelemetry.Instrumentation.GrpcNetClient package)
                 // .AddGrpcClientInstrumentation()
@@ -103,7 +104,7 @@ public static class Extensions
                 AlivenessEndpointPath,
                 new HealthCheckOptions
                 {
-                    Predicate = r => r.Tags.Contains("live")
+                    Predicate = r => r.Tags.Contains($"live"),
                 });
         }
 
@@ -116,7 +117,7 @@ public static class Extensions
     {
         var useOtlpExporter = !string.IsNullOrWhiteSpace(
                                   builder.Configuration[
-                                      "OTEL_EXPORTER_OTLP_ENDPOINT"]);
+$"OTEL_EXPORTER_OTLP_ENDPOINT"]);
 
         if (useOtlpExporter)
         {

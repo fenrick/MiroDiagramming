@@ -2,13 +2,14 @@ namespace Fenrick.Miro.Server.Api;
 
 using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
+
 using Microsoft.AspNetCore.Mvc;
 
 /// <summary>
 ///     Receives user authentication details from the client.
 /// </summary>
 [ApiController]
-[Route("api/users")]
+[Route($"api/users")]
 public class UsersController(IUserStore store) : ControllerBase
 {
     private readonly IUserStore userStore = store;

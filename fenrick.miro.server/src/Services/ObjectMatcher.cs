@@ -3,6 +3,7 @@ namespace Fenrick.Miro.Server.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Fenrick.Miro.Server.Domain;
 
 /// <summary>
@@ -16,7 +17,7 @@ public static class ObjectMatcher
     /// </summary>
     /// <param name="shapes">Shapes to search.</param>
     /// <param name="label">Label text.</param>
-    /// <returns>The matching shape or <c>null</c>.</returns>
+    /// <returns>The matching shape or <see langword="null"/>.</returns>
     /// <remarks>Matches only the <see cref="ShapeData.Text" /> field for now.</remarks>
     public static ShapeData? FindShapeByLabel(
         IEnumerable<ShapeData> shapes,

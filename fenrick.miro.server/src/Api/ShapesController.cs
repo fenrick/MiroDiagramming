@@ -1,15 +1,17 @@
 namespace Fenrick.Miro.Server.Api;
 
 using System.Text.Json;
+
 using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
+
 using Microsoft.AspNetCore.Mvc;
 
 /// <summary>
 ///     Endpoint for creating shape widgets through the Miro API.
 /// </summary>
 [ApiController]
-[Route("api/boards/{boardId}/shapes")]
+[Route($"api/boards/{boardId}/shapes")]
 public class ShapesController(IMiroClient client, IShapeCache cache)
     : ControllerBase
 {
@@ -22,10 +24,10 @@ public class ShapesController(IMiroClient client, IShapeCache cache)
         string boardId,
         [FromBody] ShapeData[] shapes)
     {
-        var responses = await this.miroClient.CreateAsync(
+        List<MiroResponse> responses = await this.miroClient.CreateAsync(
                             $"/boards/{boardId}/shapes",
                             shapes,
-                            this.HttpContext.RequestAborted);
+                            this.HttpContext.RequestAborted).ConfigureAwait(false);
         for (var i = 0; i < responses.Count && i < shapes.Length; i++)
         {
             this.shapeCache.Store(
@@ -35,58 +37,58 @@ public class ShapesController(IMiroClient client, IShapeCache cache)
         return this.Ok(responses);
     }
 
-    [HttpDelete("{itemId}")]
+    [HttpDelete($"{itemId}")]
     public async Task<IActionResult> DeleteAsync(string boardId, string itemId)
     {
-        var response = await this.miroClient.SendAsync(
+        MiroResponse response = await this.miroClient.SendAsync(
                            new MiroRequest(
-                               "DELETE",
+$"DELETE",
                                $"/boards/{boardId}/shapes/{itemId}",
-                               null),
-                           this.HttpContext.RequestAborted);
+Body: null),
+                           this.HttpContext.RequestAborted).ConfigureAwait(false);
         this.shapeCache.Remove(boardId, itemId);
         return this.Ok(response);
     }
 
-    [HttpPut("{itemId}")]
+    [HttpPut($"{itemId}")]
     public async Task<IActionResult> UpdateAsync(
         string boardId,
         string itemId,
         [FromBody] ShapeData shape)
     {
         var body = JsonSerializer.Serialize(shape);
-        var response = await this.miroClient.SendAsync(
+        MiroResponse response = await this.miroClient.SendAsync(
                            new MiroRequest(
-                               "PUT",
+$"PUT",
                                $"/boards/{boardId}/shapes/{itemId}",
                                body),
-                           this.HttpContext.RequestAborted);
+                           this.HttpContext.RequestAborted).ConfigureAwait(false);
         this.shapeCache.Store(new ShapeCacheEntry(boardId, itemId, shape));
         return this.Ok(response);
     }
 
-    [HttpGet("{itemId}")]
+    [HttpGet($"{itemId}")]
     public async Task<IActionResult> GetAsync(string boardId, string itemId)
     {
-        var cached = this.shapeCache.Retrieve(boardId, itemId);
+        ShapeCacheEntry? cached = this.shapeCache.Retrieve(boardId, itemId);
         if (cached != null)
         {
             var json = JsonSerializer.Serialize(cached.Data);
-            return this.Content(json, "application/json");
+            return this.Content(json, $"application/json");
         }
 
-        var response = await this.miroClient.SendAsync(
+        MiroResponse response = await this.miroClient.SendAsync(
                            new MiroRequest(
-                               "GET",
+$"GET",
                                $"/boards/{boardId}/shapes/{itemId}",
-                               null),
-                           this.HttpContext.RequestAborted);
-        var data = JsonSerializer.Deserialize<ShapeData>(response.Body);
+Body: null),
+                           this.HttpContext.RequestAborted).ConfigureAwait(false);
+        ShapeData? data = JsonSerializer.Deserialize<ShapeData>(response.Body);
         if (data != null)
         {
             this.shapeCache.Store(new ShapeCacheEntry(boardId, itemId, data));
         }
 
-        return this.Content(response.Body, "application/json");
+        return this.Content(response.Body, $"application/json");
     }
 }
