@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 ///     Endpoint for creating shape widgets through the Miro API.
 /// </summary>
 [ApiController]
-[Route($"api/boards/{boardId}/shapes")]
+[Route("api/boards/{boardId}/shapes")]
 public class ShapesController(IMiroClient client, IShapeCache cache)
     : ControllerBase
 {
@@ -37,7 +37,7 @@ public class ShapesController(IMiroClient client, IShapeCache cache)
         return this.Ok(responses);
     }
 
-    [HttpDelete($"{itemId}")]
+    [HttpDelete("{itemId}")]
     public async Task<IActionResult> DeleteAsync(string boardId, string itemId)
     {
         MiroResponse response = await this.miroClient.SendAsync(
@@ -50,7 +50,7 @@ Body: null),
         return this.Ok(response);
     }
 
-    [HttpPut($"{itemId}")]
+    [HttpPut("{itemId}")]
     public async Task<IActionResult> UpdateAsync(
         string boardId,
         string itemId,
@@ -67,7 +67,7 @@ $"PUT",
         return this.Ok(response);
     }
 
-    [HttpGet($"{itemId}")]
+    [HttpGet("{itemId}")]
     public async Task<IActionResult> GetAsync(string boardId, string itemId)
     {
         ShapeCacheEntry? cached = this.shapeCache.Retrieve(boardId, itemId);

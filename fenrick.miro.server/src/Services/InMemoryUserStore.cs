@@ -31,7 +31,7 @@ public class InMemoryUserStore : IUserStore
 
     /// <inheritdoc />
     public Task<UserInfo?> RetrieveAsync(string userId, CancellationToken ct = default) =>
-        Task.FromResult(await this.RetrieveAsync(userId).ConfigureAwait(false));
+        Task.FromResult(this.Retrieve(userId));
 
     /// <inheritdoc />
     public void Store(UserInfo info)
@@ -47,7 +47,7 @@ public class InMemoryUserStore : IUserStore
     /// <inheritdoc />
     public Task StoreAsync(UserInfo info, CancellationToken ct = default)
     {
-        await this.StoreAsync(info).ConfigureAwait(false);
+        this.Store(info);
         return Task.CompletedTask;
     }
 
@@ -65,7 +65,7 @@ public class InMemoryUserStore : IUserStore
     /// <inheritdoc />
     public Task DeleteAsync(string userId, CancellationToken ct = default)
     {
-        await this.DeleteAsync(userId).ConfigureAwait(false);
+        this.Delete(userId);
         return Task.CompletedTask;
     }
 }

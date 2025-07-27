@@ -35,18 +35,17 @@ public class MiroRestClient(
         var userId = ctx?.Request.Headers[$"X-User-Id"].FirstOrDefault();
         UserInfo? info = userId != null ? await this.store.RetrieveAsync(userId, ct).ConfigureAwait(false) : null;
         var token = info?.Token;
-        var message =
-            new HttpRequestMessage(
-                new HttpMethod(request.Method),
-                new Uri(request.Path, UriKind.Relative))
-            {
-                Content = request.Body == null
-                              ? null
-                              : new StringContent(
-                                  request.Body,
-                                  Encoding.UTF8,
+        using var message = new HttpRequestMessage(
+            new HttpMethod(request.Method),
+            new Uri(request.Path, UriKind.Relative))
+        {
+            Content = request.Body == null
+                          ? null
+                          : new StringContent(
+                              request.Body,
+                              Encoding.UTF8,
 $"application/json"),
-            };
+        };
         if (token != null)
         {
             message.Headers.Authorization =

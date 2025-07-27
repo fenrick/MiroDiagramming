@@ -54,7 +54,7 @@ public sealed class ShapeQueueProcessor(IMiroClient client) : IDisposable
         {
             while (this.createQueue.Count > 0)
             {
-                ShapeData[] batch = this.DequeueBatch(this.BatchSize).ToArray();
+                ShapeData[] batch = [.. this.DequeueBatch(this.BatchSize)];
 
                 // TODO validate shapes against board cache and prioritise modify operations
                 List<MiroResponse> res = await this.miroClient.CreateAsync(

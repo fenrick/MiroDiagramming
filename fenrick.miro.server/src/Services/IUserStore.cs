@@ -22,7 +22,7 @@ public interface IUserStore
     public virtual Task<UserInfo?> RetrieveAsync(
         string userId,
         CancellationToken ct = default) =>
-        Task.FromResult(await this.RetrieveAsync(userId).ConfigureAwait(false));
+        Task.FromResult(this.Retrieve(userId));
 
     /// <summary>Remove the user and associated token.</summary>
     /// <param name="userId">Identifier of the user.</param>
@@ -33,7 +33,7 @@ public interface IUserStore
     /// <param name="ct">Cancellation token to abort the operation.</param>
     public virtual Task DeleteAsync(string userId, CancellationToken ct = default)
     {
-        await this.DeleteAsync(userId).ConfigureAwait(false);
+        this.Delete(userId);
         return Task.CompletedTask;
     }
 
@@ -46,7 +46,7 @@ public interface IUserStore
     /// <param name="ct">Cancellation token to abort the operation.</param>
     public virtual Task StoreAsync(UserInfo info, CancellationToken ct = default)
     {
-        await this.StoreAsync(info).ConfigureAwait(false);
+        this.Store(info);
         return Task.CompletedTask;
     }
 }
