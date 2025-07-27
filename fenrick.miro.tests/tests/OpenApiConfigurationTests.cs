@@ -13,7 +13,7 @@ public class OpenApiConfigurationTests(WebApplicationFactory<Program> factory)
             .WithWebHostBuilder(
                 builder =>
                 {
-                builder.UseSetting("ApplyMigrations", "false");
+                    builder.UseSetting("ApplyMigrations", "false");
                     builder.UseSetting(
                         "ConnectionStrings:sqlite",
                         "Data Source=:memory:");

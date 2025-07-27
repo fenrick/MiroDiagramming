@@ -14,7 +14,7 @@ public class WebhookControllerTests
     public void HandleEnqueuesEvent()
     {
         WebhookEvent? received = null;
-        var sink = new StubSink((WebhookEvent evt) => received = evt);
+        var sink = new StubSink(evt => received = evt);
         var controller = new WebhookController(sink);
         var evt = new WebhookEvent("created", "b1");
 

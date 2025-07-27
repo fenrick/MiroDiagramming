@@ -2,6 +2,7 @@ namespace Fenrick.Miro.Server.Services;
 
 using System.Globalization;
 using System.Text;
+using ClosedXML.Excel;
 using Fenrick.Miro.Server.Resources;
 using Microsoft.Extensions.Logging.Abstractions;
 

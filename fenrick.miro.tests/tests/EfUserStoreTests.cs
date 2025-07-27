@@ -1,10 +1,8 @@
 using System;
+using System.Threading.Tasks;
 using Fenrick.Miro.Server.Data;
 using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
-using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
-using Xunit;
 
 public class EfUserStoreTests
 {

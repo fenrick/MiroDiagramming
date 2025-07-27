@@ -6,7 +6,6 @@ using Fenrick.Miro.Server.Api;
 using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
 using Microsoft.AspNetCore.Mvc;
-using Xunit;
 
 public class CacheControllerTests
 {

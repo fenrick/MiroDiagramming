@@ -1,4 +1,6 @@
 namespace Fenrick.Miro.Server.Data;
+
+using Microsoft.EntityFrameworkCore;
 /// <summary>
 ///     Entity Framework context managing persistence for the server.
 /// </summary>

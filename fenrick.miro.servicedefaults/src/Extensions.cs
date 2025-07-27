@@ -2,9 +2,13 @@ namespace Microsoft.Extensions.Hosting;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Logging;
+using OpenTelemetry;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
 
 // Adds common .NET Aspire services: service discovery, resilience, health checks, and OpenTelemetry.
 
@@ -54,24 +58,24 @@ public static class Extensions
         this TBuilder builder)
         where TBuilder : IHostApplicationBuilder
     {
-        builder.Logging.AddOpenTelemetry((OpenTelemetryLoggerOptions logging) =>
+        builder.Logging.AddOpenTelemetry();
+
+        builder.Services.Configure<OpenTelemetryLoggerOptions>(options =>
         {
-            logging.IncludeFormattedMessage = true;
-            logging.IncludeScopes = true;
+            options.IncludeFormattedMessage = true;
+            options.IncludeScopes = true;
         });
 
         builder.Services.AddOpenTelemetry()
-            .WithMetrics((MeterProviderBuilder metrics) => metrics
+            .WithMetrics(metrics => metrics
                 .AddAspNetCoreInstrumentation().AddHttpClientInstrumentation()
                 .AddRuntimeInstrumentation())
-            .WithTracing((TracerProviderBuilder tracing) => tracing
+            .WithTracing(tracing => tracing
                 .AddSource(builder.Environment.ApplicationName)
-                .AddAspNetCoreInstrumentation((
-                        AspNetCoreTraceInstrumentationOptions tracing) =>
+                .AddAspNetCoreInstrumentation(tracing =>
 
                     // Exclude health check requests from tracing
-                    tracing.Filter = (HttpContext context) =>
-                        !context.Request.Path.StartsWithSegments(
+                    tracing.Filter = context => !context.Request.Path.StartsWithSegments(
                             HealthEndpointPath)
                         && !context.Request.Path.StartsWithSegments(
                             AlivenessEndpointPath))

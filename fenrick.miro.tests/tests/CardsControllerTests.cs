@@ -10,8 +10,8 @@ using System.Threading.Tasks;
 using Fenrick.Miro.Server.Api;
 using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Xunit;
 
 public class CardsControllerTests
@@ -19,12 +19,13 @@ public class CardsControllerTests
     [Fact]
     public async Task CreateAsyncHandlesBulk()
     {
-        var cards = Enumerable.Range(0, 21).Select((int _) =>
-            new CardData("t", null, null, null, null, null, null)).ToArray();
-        var controller = new CardsController(new StubClient());
-        controller.ControllerContext = new ControllerContext
+        var cards = Enumerable.Range(0, 21).Select(_ => new CardData("t", null, null, null, null, null, null)).ToArray();
+        var controller = new CardsController(new StubClient())
         {
-            HttpContext = new DefaultHttpContext()
+            ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext()
+            }
         };
 
         var result = await controller.CreateAsync(cards) as OkObjectResult;
@@ -40,10 +41,12 @@ public class CardsControllerTests
                     {
                         new CardData("t", null, null, null, null, null, null)
                     };
-        var controller = new CardsController(new StubClient());
-        controller.ControllerContext = new ControllerContext
+        var controller = new CardsController(new StubClient())
         {
-            HttpContext = new DefaultHttpContext()
+            ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext()
+            }
         };
 
         var result = await controller.CreateAsync(cards) as OkObjectResult;

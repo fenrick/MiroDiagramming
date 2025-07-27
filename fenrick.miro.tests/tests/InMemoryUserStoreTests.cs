@@ -1,9 +1,9 @@
 namespace Fenrick.Miro.Tests;
 
 using System;
+using System.Threading.Tasks;
 using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
-using System.Threading.Tasks;
 using Xunit;
 
 public class InMemoryUserStoreTests

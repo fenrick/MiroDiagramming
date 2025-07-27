@@ -52,7 +52,7 @@ public class ShapeQueueProcessorTests
     {
         var client = new StubClient();
         var proc = new ShapeQueueProcessor(client);
-        proc.EnqueueCreate([ new ShapeData("r", 0, 0, 1, 1, null, null, null) ]);
+        proc.EnqueueCreate([new ShapeData("r", 0, 0, 1, 1, null, null, null)]);
 
         proc.Dispose();
 

@@ -1,8 +1,6 @@
 using Fenrick.Miro.Server.Data;
 using Fenrick.Miro.Server.Services;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using Xunit;
 
 public class DbContextRegistrationTests(WebApplicationFactory<Program> factory)
     : IClassFixture<WebApplicationFactory<Program>>
