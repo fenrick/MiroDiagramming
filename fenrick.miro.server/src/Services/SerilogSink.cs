@@ -19,7 +19,7 @@ public class SerilogSink(ILogger logger) : ILogSink
             this.loggerInstance.ForContext($"Source", $"Client")
                 .ForContext($"Level", e.Level)
                 .ForContext($"Context", e.Context, destructureObjects: true)
-                .Information($"{Message}", e.Message);
+                .Information("{Message}", e.Message);
         }
     }
 }
