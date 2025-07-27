@@ -30,8 +30,15 @@ public class InMemoryUserStore : IUserStore
     }
 
     /// <inheritdoc />
-    public Task<UserInfo?> RetrieveAsync(string userId, CancellationToken ct = default) =>
-        Task.FromResult(this.Retrieve(userId));
+    public Task<UserInfo?> RetrieveAsync(string userId, CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            throw new ArgumentException($"User id must be provided", nameof(userId));
+        }
+
+        return Task.FromResult(this.users.TryGetValue(userId, out UserInfo? info) ? info : null);
+    }
 
     /// <inheritdoc />
     public void Store(UserInfo info)
@@ -47,7 +54,12 @@ public class InMemoryUserStore : IUserStore
     /// <inheritdoc />
     public Task StoreAsync(UserInfo info, CancellationToken ct = default)
     {
-        this.Store(info);
+        if (string.IsNullOrWhiteSpace(info.Id))
+        {
+            throw new ArgumentException($"User id must be provided", nameof(info));
+        }
+
+        this.users[info.Id] = info;
         return Task.CompletedTask;
     }
 
@@ -65,7 +77,12 @@ public class InMemoryUserStore : IUserStore
     /// <inheritdoc />
     public Task DeleteAsync(string userId, CancellationToken ct = default)
     {
-        this.Delete(userId);
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            throw new ArgumentException($"User id must be provided", nameof(userId));
+        }
+
+        this.users.TryRemove(userId, out _);
         return Task.CompletedTask;
     }
 }

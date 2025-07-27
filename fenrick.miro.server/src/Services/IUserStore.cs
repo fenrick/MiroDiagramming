@@ -19,10 +19,9 @@ public interface IUserStore
     /// <param name="userId">Identifier of the user.</param>
     /// <param name="ct">Cancellation token to abort the operation.</param>
     /// <returns>Stored details or <see langword="null"/>.</returns>
-    public virtual Task<UserInfo?> RetrieveAsync(
+    public Task<UserInfo?> RetrieveAsync(
         string userId,
-        CancellationToken ct = default) =>
-        Task.FromResult(this.Retrieve(userId));
+        CancellationToken ct = default);
 
     /// <summary>Remove the user and associated token.</summary>
     /// <param name="userId">Identifier of the user.</param>
@@ -31,11 +30,7 @@ public interface IUserStore
     /// <summary>Remove the user and associated token asynchronously.</summary>
     /// <param name="userId">Identifier of the user.</param>
     /// <param name="ct">Cancellation token to abort the operation.</param>
-    public virtual Task DeleteAsync(string userId, CancellationToken ct = default)
-    {
-        this.Delete(userId);
-        return Task.CompletedTask;
-    }
+    public Task DeleteAsync(string userId, CancellationToken ct = default);
 
     /// <summary>Store or replace user details.</summary>
     /// <param name="info">Details to persist.</param>
@@ -44,9 +39,5 @@ public interface IUserStore
     /// <summary>Store or replace user details asynchronously.</summary>
     /// <param name="info">Details to persist.</param>
     /// <param name="ct">Cancellation token to abort the operation.</param>
-    public virtual Task StoreAsync(UserInfo info, CancellationToken ct = default)
-    {
-        this.Store(info);
-        return Task.CompletedTask;
-    }
+    public Task StoreAsync(UserInfo info, CancellationToken ct = default);
 }
