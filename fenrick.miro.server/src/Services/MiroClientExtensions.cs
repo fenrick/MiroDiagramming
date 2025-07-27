@@ -1,8 +1,8 @@
 namespace Fenrick.Miro.Server.Services;
 
 using System.Text.Json;
-using Fenrick.Miro.Server.Domain;
 using System.Threading;
+using Fenrick.Miro.Server.Domain;
 
 /// <summary>
 ///     Helper methods for interacting with the Miro REST API via

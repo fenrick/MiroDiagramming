@@ -2,9 +2,9 @@ namespace Fenrick.Miro.Server.Services;
 
 using System;
 using System.Collections.Concurrent;
-using Fenrick.Miro.Server.Domain;
 using System.Threading;
 using System.Threading.Tasks;
+using Fenrick.Miro.Server.Domain;
 
 /// <summary>
 ///     Thread safe in-memory implementation of <see cref="IUserStore" />.

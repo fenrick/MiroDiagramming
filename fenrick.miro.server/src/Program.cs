@@ -1,8 +1,6 @@
 using System.Globalization;
 using Fenrick.Miro.Server.Data;
 using Fenrick.Miro.Server.Services;
-using Serilog;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog((_, cfg) =>

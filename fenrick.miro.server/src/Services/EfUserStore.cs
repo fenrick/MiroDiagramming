@@ -1,11 +1,10 @@
 namespace Fenrick.Miro.Server.Services;
 
 using System;
-using Fenrick.Miro.Server.Data;
-using Fenrick.Miro.Server.Domain;
-using Microsoft.EntityFrameworkCore;
 using System.Threading;
 using System.Threading.Tasks;
+using Fenrick.Miro.Server.Data;
+using Fenrick.Miro.Server.Domain;
 
 /// <summary>
 ///     User store backed by Entity Framework Core.

@@ -5,12 +5,6 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Logging;
-using OpenTelemetry;
-using OpenTelemetry.Instrumentation.AspNetCore;
-using OpenTelemetry.Logs;
-using OpenTelemetry.Metrics;
-using OpenTelemetry.Trace;
 
 // Adds common .NET Aspire services: service discovery, resilience, health checks, and OpenTelemetry.
 
@@ -44,8 +38,7 @@ public static class Extensions
 
         builder.Services.AddServiceDiscovery();
 
-        builder.Services.ConfigureHttpClientDefaults((
-            IHttpClientBuilder http) =>
+        builder.Services.ConfigureHttpClientDefaults(http =>
         {
             // Turn on resilience by default
             http.AddStandardResilienceHandler();
@@ -106,8 +99,7 @@ public static class Extensions
                 AlivenessEndpointPath,
                 new HealthCheckOptions
                 {
-                    Predicate = (HealthCheckRegistration r) =>
-                        r.Tags.Contains("live")
+                    Predicate = r => r.Tags.Contains("live")
                 });
         }
 

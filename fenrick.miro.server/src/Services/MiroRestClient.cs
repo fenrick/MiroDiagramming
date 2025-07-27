@@ -2,9 +2,9 @@ namespace Fenrick.Miro.Server.Services;
 
 using System.Net.Http.Headers;
 using System.Text;
-using Fenrick.Miro.Server.Domain;
-using System.Threading.Tasks;
 using System.Threading;
+using System.Threading.Tasks;
+using Fenrick.Miro.Server.Domain;
 
 /// <summary>
 ///     HTTP client adapter that forwards requests to the Miro REST API.

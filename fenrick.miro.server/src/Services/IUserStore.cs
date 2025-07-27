@@ -1,8 +1,8 @@
 namespace Fenrick.Miro.Server.Services;
 
-using Fenrick.Miro.Server.Domain;
 using System.Threading;
 using System.Threading.Tasks;
+using Fenrick.Miro.Server.Domain;
 
 /// <summary>
 ///     Persist user details and OAuth tokens for API requests.
