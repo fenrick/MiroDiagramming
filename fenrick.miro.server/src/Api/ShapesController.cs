@@ -24,7 +24,8 @@ public class ShapesController(IMiroClient client, IShapeCache cache)
     {
         var responses = await this.miroClient.CreateAsync(
                             $"/boards/{boardId}/shapes",
-                            shapes);
+                            shapes,
+                            this.HttpContext.RequestAborted);
         for (var i = 0; i < responses.Count && i < shapes.Length; i++)
         {
             this.shapeCache.Store(
@@ -41,7 +42,8 @@ public class ShapesController(IMiroClient client, IShapeCache cache)
                            new MiroRequest(
                                "DELETE",
                                $"/boards/{boardId}/shapes/{itemId}",
-                               null));
+                               null),
+                           this.HttpContext.RequestAborted);
         this.shapeCache.Remove(boardId, itemId);
         return this.Ok(response);
     }
@@ -57,7 +59,8 @@ public class ShapesController(IMiroClient client, IShapeCache cache)
                            new MiroRequest(
                                "PUT",
                                $"/boards/{boardId}/shapes/{itemId}",
-                               body));
+                               body),
+                           this.HttpContext.RequestAborted);
         this.shapeCache.Store(new ShapeCacheEntry(boardId, itemId, shape));
         return this.Ok(response);
     }
@@ -76,7 +79,8 @@ public class ShapesController(IMiroClient client, IShapeCache cache)
                            new MiroRequest(
                                "GET",
                                $"/boards/{boardId}/shapes/{itemId}",
-                               null));
+                               null),
+                           this.HttpContext.RequestAborted);
         var data = JsonSerializer.Deserialize<ShapeData>(response.Body);
         if (data != null)
         {

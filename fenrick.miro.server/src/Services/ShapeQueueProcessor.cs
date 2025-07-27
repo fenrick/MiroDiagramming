@@ -57,7 +57,10 @@ public sealed class ShapeQueueProcessor(IMiroClient client) : IDisposable
                 var batch = this.DequeueBatch(this.BatchSize).ToArray();
 
                 // TODO validate shapes against board cache and prioritise modify operations
-                var res = await this.miroClient.CreateAsync("/shapes", batch);
+                var res = await this.miroClient.CreateAsync(
+                    "/shapes",
+                    batch,
+                    ct);
                 results.AddRange(res);
             }
         }

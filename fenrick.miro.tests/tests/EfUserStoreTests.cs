@@ -3,6 +3,7 @@ using Fenrick.Miro.Server.Data;
 using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 using Xunit;
 
 public class EfUserStoreTests
@@ -87,5 +88,23 @@ public class EfUserStoreTests
         var store = new EfUserStore(context);
 
         Assert.Throws<ArgumentException>(() => store.Delete(" "));
+    }
+
+    [Fact]
+    public async Task AsyncMethodsWork()
+    {
+        var options = new DbContextOptionsBuilder<MiroDbContext>()
+            .UseInMemoryDatabase("test_async")
+            .Options;
+        await using var context = new MiroDbContext(options);
+        var store = new EfUserStore(context);
+        var info = new UserInfo("u1", "Bob", "t1");
+
+        await store.StoreAsync(info);
+        var fetched = await store.RetrieveAsync("u1");
+        Assert.Equal("t1", fetched?.Token);
+
+        await store.DeleteAsync("u1");
+        Assert.Null(await store.RetrieveAsync("u1"));
     }
 }

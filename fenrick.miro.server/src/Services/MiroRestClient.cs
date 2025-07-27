@@ -3,6 +3,8 @@ namespace Fenrick.Miro.Server.Services;
 using System.Net.Http.Headers;
 using System.Text;
 using Fenrick.Miro.Server.Domain;
+using System.Threading.Tasks;
+using System.Threading;
 
 /// <summary>
 ///     HTTP client adapter that forwards requests to the Miro REST API.
@@ -26,11 +28,12 @@ public class MiroRestClient(
     private readonly IUserStore store = store;
 
     /// <inheritdoc />
-    public async Task<MiroResponse> SendAsync(MiroRequest request)
+    public async Task<MiroResponse> SendAsync(MiroRequest request, CancellationToken ct = default)
     {
         var ctx = this.accessor.HttpContext;
         var userId = ctx?.Request.Headers["X-User-Id"].FirstOrDefault();
-        var token = userId != null ? this.store.Retrieve(userId)?.Token : null;
+        var info = userId != null ? await this.store.RetrieveAsync(userId, ct) : null;
+        var token = info?.Token;
         var message =
             new HttpRequestMessage(
                 new HttpMethod(request.Method),
@@ -49,8 +52,8 @@ public class MiroRestClient(
                 new AuthenticationHeaderValue("Bearer", token);
         }
 
-        var response = await this.httpClient.SendAsync(message);
-        var body = await response.Content.ReadAsStringAsync();
+        var response = await this.httpClient.SendAsync(message, ct);
+        var body = await response.Content.ReadAsStringAsync(ct);
         return new MiroResponse((int)response.StatusCode, body);
     }
 }

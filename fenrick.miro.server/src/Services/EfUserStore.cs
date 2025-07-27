@@ -3,6 +3,9 @@ namespace Fenrick.Miro.Server.Services;
 using System;
 using Fenrick.Miro.Server.Data;
 using Fenrick.Miro.Server.Domain;
+using Microsoft.EntityFrameworkCore;
+using System.Threading;
+using System.Threading.Tasks;
 
 /// <summary>
 ///     User store backed by Entity Framework Core.
@@ -21,6 +24,18 @@ public class EfUserStore(MiroDbContext context) : IUserStore
         }
 
         var entity = this.db.Users.Find(userId);
+        return entity is null ? null : new UserInfo(entity.Id, entity.Name, entity.Token);
+    }
+
+    /// <inheritdoc />
+    public async Task<UserInfo?> RetrieveAsync(string userId, CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            throw new ArgumentException("User id must be provided", nameof(userId));
+        }
+
+        var entity = await this.db.Users.FindAsync([userId], ct);
         return entity is null ? null : new UserInfo(entity.Id, entity.Name, entity.Token);
     }
 
@@ -47,6 +62,28 @@ public class EfUserStore(MiroDbContext context) : IUserStore
     }
 
     /// <inheritdoc />
+    public async Task StoreAsync(UserInfo info, CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(info.Id))
+        {
+            throw new ArgumentException("User id must be provided", nameof(info));
+        }
+
+        var entity = await this.db.Users.FindAsync([info.Id], ct);
+        if (entity is null)
+        {
+            await this.db.Users.AddAsync(new UserEntity { Id = info.Id, Name = info.Name, Token = info.Token }, ct);
+        }
+        else
+        {
+            entity.Name = info.Name;
+            entity.Token = info.Token;
+        }
+
+        await this.db.SaveChangesAsync(ct);
+    }
+
+    /// <inheritdoc />
     public void Delete(string userId)
     {
         if (string.IsNullOrWhiteSpace(userId))
@@ -59,6 +96,22 @@ public class EfUserStore(MiroDbContext context) : IUserStore
         {
             this.db.Users.Remove(entity);
             this.db.SaveChanges();
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task DeleteAsync(string userId, CancellationToken ct = default)
+    {
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            throw new ArgumentException("User id must be provided", nameof(userId));
+        }
+
+        var entity = await this.db.Users.FindAsync([userId], ct);
+        if (entity != null)
+        {
+            this.db.Users.Remove(entity);
+            await this.db.SaveChangesAsync(ct);
         }
     }
 }

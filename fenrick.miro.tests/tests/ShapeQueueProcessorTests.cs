@@ -3,6 +3,7 @@ namespace Fenrick.Miro.Tests;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Threading;
 using System.Threading.Tasks;
 using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
@@ -65,7 +66,9 @@ public class ShapeQueueProcessorTests
     {
         public int Count { get; private set; }
 
-        public Task<MiroResponse> SendAsync(MiroRequest request)
+        public Task<MiroResponse> SendAsync(
+            MiroRequest request,
+            CancellationToken ct = default)
         {
             this.Count++;
             return Task.FromResult(

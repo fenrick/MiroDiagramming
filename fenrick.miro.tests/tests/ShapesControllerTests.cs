@@ -5,11 +5,13 @@ namespace Fenrick.Miro.Tests;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Fenrick.Miro.Server.Api;
 using Fenrick.Miro.Server.Domain;
 using Fenrick.Miro.Server.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Xunit;
 
 public class ShapesControllerTests
@@ -23,6 +25,10 @@ public class ShapesControllerTests
         var controller = new ShapesController(
             new StubClient(),
             new NullShapeCache());
+        controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext()
+        };
 
         var result =
             await controller.CreateAsync("b1", shapes) as OkObjectResult;
@@ -41,6 +47,10 @@ public class ShapesControllerTests
         var controller = new ShapesController(
             new StubClient(),
             new NullShapeCache());
+        controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext()
+        };
 
         var result =
             await controller.CreateAsync("b1", shapes) as OkObjectResult;
@@ -56,6 +66,10 @@ public class ShapesControllerTests
         var stub = new StubClient();
         var cache = new RecordingCache();
         var controller = new ShapesController(stub, cache);
+        controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext()
+        };
 
         var res = await controller.DeleteAsync("b2", "i3") as OkObjectResult;
 
@@ -69,6 +83,10 @@ public class ShapesControllerTests
         var stub = new StubClient();
         var cache = new RecordingCache();
         var controller = new ShapesController(stub, cache);
+        controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext()
+        };
 
         var res = await controller.UpdateAsync(
                       "b1",
@@ -93,6 +111,10 @@ public class ShapesControllerTests
         var cache = new RecordingCache();
         cache.Store(new ShapeCacheEntry("b1", "i2", new ShapeData("r", 0, 0, 1, 1, null, null, null)));
         var controller = new ShapesController(new StubClient(), cache);
+        controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext()
+        };
 
         var res = await controller.GetAsync("b1", "i2") as ContentResult;
 
@@ -106,6 +128,10 @@ public class ShapesControllerTests
         var cache = new RecordingCache();
         var stub = new StubClient("{\"shape\":\"rect\"}");
         var controller = new ShapesController(stub, cache);
+        controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext()
+        };
 
         var res = await controller.GetAsync("b1", "i3") as ContentResult;
 
@@ -153,7 +179,9 @@ public class ShapesControllerTests
             this.fixedBody = body;
         }
 
-        public Task<MiroResponse> SendAsync(MiroRequest request)
+        public Task<MiroResponse> SendAsync(
+            MiroRequest request,
+            CancellationToken ct = default)
         {
             var res = new MiroResponse(
                 201,
