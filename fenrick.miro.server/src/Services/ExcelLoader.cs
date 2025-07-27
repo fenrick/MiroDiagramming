@@ -1,17 +1,15 @@
 namespace Fenrick.Miro.Server.Services;
 
 using System.Globalization;
+using System.Text;
 using ClosedXML.Excel;
 using Fenrick.Miro.Server.Resources;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
 /// <summary>
 ///     Lightweight Excel workbook loader built around ClosedXML.
 /// </summary>
 
-// TODO: add streaming for large files
-// Added StreamSheetAsync and StreamNamedTableAsync for row-by-row processing
 public class ExcelLoader(ILogger<ExcelLoader>? log = null) : IDisposable
 {
     private readonly ILogger<ExcelLoader> logger = log ?? NullLogger<ExcelLoader>.Instance;
@@ -19,6 +17,45 @@ public class ExcelLoader(ILogger<ExcelLoader>? log = null) : IDisposable
     private bool disposed;
 
     private XLWorkbook? workbook;
+
+    private static readonly CompositeFormat UnknownSheetFormat =
+        CompositeFormat.Parse("Unknown sheet: {0}");
+    private static readonly CompositeFormat UnknownTableFormat =
+        CompositeFormat.Parse("Unknown table: {0}");
+    private static readonly CompositeFormat MissingSheetForTableFormat =
+        CompositeFormat.Parse("Missing sheet for table: {0}");
+
+    private static class Log
+    {
+        public static readonly Action<ILogger, Exception?> LoadingWorkbook =
+            LoggerMessage.Define(LogLevel.Debug, new EventId(1, nameof(LoadAsync)), LogMessages.LoadingWorkbook);
+        public static readonly Action<ILogger, int, Exception?> WorkbookLoaded =
+            LoggerMessage.Define<int>(LogLevel.Debug, new EventId(2, nameof(LoadAsync)), LogMessages.WorkbookLoaded);
+        public static readonly Action<ILogger, Exception?> ListingSheets =
+            LoggerMessage.Define(LogLevel.Trace, new EventId(3, nameof(ListSheets)), LogMessages.ListingSheets);
+        public static readonly Action<ILogger, Exception?> ListingTables =
+            LoggerMessage.Define(LogLevel.Trace, new EventId(4, nameof(ListNamedTables)), LogMessages.ListingTables);
+        public static readonly Action<ILogger, string, Exception?> LoadingSheet =
+            LoggerMessage.Define<string>(LogLevel.Debug, new EventId(5, nameof(LoadSheet)), LogMessages.LoadingSheet);
+        public static readonly Action<ILogger, int, Exception?> LoadedRows =
+            LoggerMessage.Define<int>(LogLevel.Debug, new EventId(6, nameof(LoadSheet)), "Loaded {RowCount} rows");
+        public static readonly Action<ILogger, string, Exception?> StreamingSheet =
+            LoggerMessage.Define<string>(LogLevel.Debug, new EventId(7, nameof(StreamSheetAsync)), LogMessages.StreamingSheet);
+        public static readonly Action<ILogger, string, Exception?> StreamingTable =
+            LoggerMessage.Define<string>(LogLevel.Debug, new EventId(8, nameof(StreamNamedTableAsync)), LogMessages.StreamingTable);
+        public static readonly Action<ILogger, string, Exception?> LoadingTable =
+            LoggerMessage.Define<string>(LogLevel.Debug, new EventId(9, nameof(LoadNamedTable)), LogMessages.LoadingTable);
+        public static readonly Action<ILogger, Exception?> WorkbookNotLoaded =
+            LoggerMessage.Define(LogLevel.Error, new EventId(10, nameof(ExcelLoader)), LogMessages.WorkbookNotLoaded);
+        public static readonly Action<ILogger, string, Exception?> UnknownSheet =
+            LoggerMessage.Define<string>(LogLevel.Error, new EventId(11, nameof(ExcelLoader)), LogMessages.UnknownSheet);
+        public static readonly Action<ILogger, string, Exception?> UnknownTable =
+            LoggerMessage.Define<string>(LogLevel.Error, new EventId(12, nameof(ExcelLoader)), LogMessages.UnknownTable);
+        public static readonly Action<ILogger, string, Exception?> MissingSheetForTable =
+            LoggerMessage.Define<string>(LogLevel.Error, new EventId(13, nameof(ExcelLoader)), LogMessages.MissingSheetForTable);
+        public static readonly Action<ILogger, Exception?> DisposingWorkbook =
+            LoggerMessage.Define(LogLevel.Trace, new EventId(14, nameof(Dispose)), LogMessages.DisposingWorkbook);
+    }
 
     /// <inheritdoc />
     public void Dispose()
@@ -32,13 +69,13 @@ public class ExcelLoader(ILogger<ExcelLoader>? log = null) : IDisposable
     /// </summary>
     public IReadOnlyList<string> ListSheets()
     {
-        this.logger.LogTrace(LogMessages.ListingSheets);
+        Log.ListingSheets(this.logger, null);
         return this.workbook?.Worksheets.Select(ws => ws.Name).ToList() ?? [];
     }
 
     public IReadOnlyList<string> ListNamedTables()
     {
-        this.logger.LogTrace(LogMessages.ListingTables);
+        Log.ListingTables(this.logger, null);
         return this.workbook?.DefinedNames.Select(n => n.Name).ToList() ?? [];
     }
 
@@ -49,16 +86,16 @@ public class ExcelLoader(ILogger<ExcelLoader>? log = null) : IDisposable
     /// <remarks>Currently loads the entire workbook into memory.</remarks>
     public async Task LoadAsync(Stream stream)
     {
-        this.logger.LogDebug(LogMessages.LoadingWorkbook);
+        Log.LoadingWorkbook(this.logger, null);
         try
         {
             this.workbook = new XLWorkbook(stream);
-            this.logger.LogDebug(LogMessages.WorkbookLoaded, this.workbook.Worksheets.Count);
+            Log.WorkbookLoaded(this.logger, this.workbook.Worksheets.Count, null);
             await Task.CompletedTask;
         }
         catch (Exception ex)
         {
-            this.logger.LogError(ex, LogMessages.WorkbookNotLoaded);
+            Log.WorkbookNotLoaded(this.logger, ex);
             throw;
         }
     }
@@ -76,19 +113,19 @@ public class ExcelLoader(ILogger<ExcelLoader>? log = null) : IDisposable
     /// <exception cref="ArgumentException">Thrown when the sheet does not exist.</exception>
     public IReadOnlyList<Dictionary<string, string>> LoadSheet(string name)
     {
-        this.logger.LogDebug(LogMessages.LoadingSheet, name);
+        Log.LoadingSheet(this.logger, name, null);
         if (this.workbook is null)
         {
             var ex = new InvalidOperationException(LogMessages.WorkbookNotLoaded);
-            this.logger.LogError(ex, LogMessages.WorkbookNotLoaded);
+            Log.WorkbookNotLoaded(this.logger, ex);
             throw ex;
         }
 
         var ws = this.workbook.Worksheet(name);
         if (ws is null)
         {
-            var ex = new ArgumentException(string.Format(CultureInfo.InvariantCulture, LogMessages.UnknownSheet, name));
-            this.logger.LogError(ex, LogMessages.UnknownSheet, name);
+            var ex = new ArgumentException(string.Format(CultureInfo.InvariantCulture, UnknownSheetFormat, name));
+            Log.UnknownSheet(this.logger, name, ex);
             throw ex;
         }
 
@@ -106,7 +143,7 @@ public class ExcelLoader(ILogger<ExcelLoader>? log = null) : IDisposable
             rows.Add(obj);
         }
 
-        this.logger.LogDebug("Loaded {Count} rows", rows.Count);
+        Log.LoadedRows(this.logger, rows.Count, null);
         return rows;
     }
 
@@ -119,19 +156,19 @@ public class ExcelLoader(ILogger<ExcelLoader>? log = null) : IDisposable
     /// <exception cref="ArgumentException">Thrown when the sheet does not exist.</exception>
     public async IAsyncEnumerable<Dictionary<string, string>> StreamSheetAsync(string name)
     {
-        this.logger.LogDebug(LogMessages.StreamingSheet, name);
+        Log.StreamingSheet(this.logger, name, null);
         if (this.workbook is null)
         {
             var ex = new InvalidOperationException(LogMessages.WorkbookNotLoaded);
-            this.logger.LogError(ex, LogMessages.WorkbookNotLoaded);
+            Log.WorkbookNotLoaded(this.logger, ex);
             throw ex;
         }
 
         var ws = this.workbook.Worksheet(name);
         if (ws is null)
         {
-            var ex = new ArgumentException(string.Format(CultureInfo.InvariantCulture, LogMessages.UnknownSheet, name));
-            this.logger.LogError(ex, LogMessages.UnknownSheet, name);
+            var ex = new ArgumentException(string.Format(CultureInfo.InvariantCulture, UnknownSheetFormat, name));
+            Log.UnknownSheet(this.logger, name, ex);
             throw ex;
         }
 
@@ -158,26 +195,26 @@ public class ExcelLoader(ILogger<ExcelLoader>? log = null) : IDisposable
     /// <exception cref="ArgumentException">Thrown when the table or sheet is missing.</exception>
     public async IAsyncEnumerable<Dictionary<string, string>> StreamNamedTableAsync(string name)
     {
-        this.logger.LogDebug(LogMessages.StreamingTable, name);
+        Log.StreamingTable(this.logger, name, null);
         if (this.workbook is null)
         {
             var ex = new InvalidOperationException(LogMessages.WorkbookNotLoaded);
-            this.logger.LogError(ex, LogMessages.WorkbookNotLoaded);
+            Log.WorkbookNotLoaded(this.logger, ex);
             throw ex;
         }
 
         if (!this.workbook.DefinedNames.TryGetValue(name, out var def) || def.Ranges.Count == 0)
         {
-            var ex = new ArgumentException(string.Format(CultureInfo.InvariantCulture, LogMessages.UnknownTable, name));
-            this.logger.LogError(ex, LogMessages.UnknownTable, name);
+            var ex = new ArgumentException(string.Format(CultureInfo.InvariantCulture, UnknownTableFormat, name));
+            Log.UnknownTable(this.logger, name, ex);
             throw ex;
         }
 
         var range = def.Ranges.First();
         if (range.Worksheet is null)
         {
-            var ex = new ArgumentException(string.Format(CultureInfo.InvariantCulture, LogMessages.MissingSheetForTable, name));
-            this.logger.LogError(ex, LogMessages.MissingSheetForTable, name);
+            var ex = new ArgumentException(string.Format(CultureInfo.InvariantCulture, MissingSheetForTableFormat, name));
+            Log.MissingSheetForTable(this.logger, name, ex);
             throw ex;
         }
 
@@ -197,27 +234,27 @@ public class ExcelLoader(ILogger<ExcelLoader>? log = null) : IDisposable
 
     public IReadOnlyList<Dictionary<string, string>> LoadNamedTable(string name)
     {
-        this.logger.LogDebug(LogMessages.LoadingTable, name);
+        Log.LoadingTable(this.logger, name, null);
         if (this.workbook is null)
         {
             var ex = new InvalidOperationException(LogMessages.WorkbookNotLoaded);
-            this.logger.LogError(ex, LogMessages.WorkbookNotLoaded);
+            Log.WorkbookNotLoaded(this.logger, ex);
             throw ex;
         }
 
         if (!this.workbook.DefinedNames.TryGetValue(name, out var def)
             || def.Ranges.Count == 0)
         {
-            var ex = new ArgumentException(string.Format(CultureInfo.InvariantCulture, LogMessages.UnknownTable, name));
-            this.logger.LogError(ex, LogMessages.UnknownTable, name);
+            var ex = new ArgumentException(string.Format(CultureInfo.InvariantCulture, UnknownTableFormat, name));
+            Log.UnknownTable(this.logger, name, ex);
             throw ex;
         }
 
         var range = def.Ranges.First();
         if (range.Worksheet is null)
         {
-            var ex = new ArgumentException(string.Format(CultureInfo.InvariantCulture, LogMessages.MissingSheetForTable, name));
-            this.logger.LogError(ex, LogMessages.MissingSheetForTable, name);
+            var ex = new ArgumentException(string.Format(CultureInfo.InvariantCulture, MissingSheetForTableFormat, name));
+            Log.MissingSheetForTable(this.logger, name, ex);
             throw ex;
         }
 
@@ -234,7 +271,7 @@ public class ExcelLoader(ILogger<ExcelLoader>? log = null) : IDisposable
             rows.Add(obj);
         }
 
-        this.logger.LogDebug("Loaded {Count} rows", rows.Count);
+        Log.LoadedRows(this.logger, rows.Count, null);
         return rows;
     }
 
@@ -248,7 +285,7 @@ public class ExcelLoader(ILogger<ExcelLoader>? log = null) : IDisposable
         {
             if (disposing)
             {
-                this.logger.LogTrace(LogMessages.DisposingWorkbook);
+                Log.DisposingWorkbook(this.logger, null);
                 this.workbook?.Dispose();
             }
 

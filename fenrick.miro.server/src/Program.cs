@@ -34,7 +34,7 @@ builder.Services.AddSingleton<IShapeCache, InMemoryShapeCache>();
 
 var app = builder.Build();
 
-var applyMigrations = builder.Configuration.GetValue<bool>("ApplyMigrations", true);
+var applyMigrations = builder.Configuration.GetValue("ApplyMigrations", true);
 if (applyMigrations)
 {
     // Apply migrations so the schema matches the EF Core model.
