@@ -8,8 +8,8 @@ using System.ComponentModel.DataAnnotations;
 public record CardData(
     [property: Required] string Title,
     string? Description,
-    List<string>? Tags,
-    Dictionary<string, object>? Style,
-    Dictionary<string, object>? Fields,
+    IReadOnlyList<string>? Tags,
+    IReadOnlyDictionary<string, object>? Style,
+    IReadOnlyDictionary<string, object>? Fields,
     string? TaskStatus,
     string? Id);

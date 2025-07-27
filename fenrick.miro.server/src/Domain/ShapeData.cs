@@ -13,4 +13,4 @@ public record ShapeData(
     [property: Required] double Height,
     double? Rotation,
     string? Text,
-    Dictionary<string, object>? Style);
+    IReadOnlyDictionary<string, object>? Style);

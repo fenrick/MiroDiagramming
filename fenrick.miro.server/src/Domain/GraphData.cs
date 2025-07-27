@@ -31,5 +31,5 @@ public record PositionedEdge(
 ///     Output produced by the layout engine.
 /// </summary>
 public record LayoutResult(
-    Dictionary<string, PositionedNode> Nodes,
-    List<PositionedEdge> Edges);
+    IReadOnlyDictionary<string, PositionedNode> Nodes,
+    IReadOnlyList<PositionedEdge> Edges);

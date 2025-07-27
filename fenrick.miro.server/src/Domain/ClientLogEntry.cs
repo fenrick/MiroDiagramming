@@ -13,4 +13,4 @@ public record ClientLogEntry(
     [property: Required] DateTime Timestamp,
     [property: Required] string Level,
     [property: Required] string Message,
-    Dictionary<string, string>? Context);
+    IReadOnlyDictionary<string, string>? Context);
