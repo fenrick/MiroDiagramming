@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Fenrick.Miro.Server.src.Data.Migrations
+namespace Fenrick.Miro.Server.Data.Migrations
 {
     [DbContext(typeof(MiroDbContext))]
     partial class MiroDbContextModelSnapshot : ModelSnapshot

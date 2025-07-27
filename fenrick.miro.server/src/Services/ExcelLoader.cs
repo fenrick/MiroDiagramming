@@ -1,8 +1,10 @@
 namespace Fenrick.Miro.Server.Services;
 
+using System.Globalization;
 using ClosedXML.Excel;
 using Fenrick.Miro.Server.Resources;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 /// <summary>
 ///     Lightweight Excel workbook loader built around ClosedXML.
@@ -10,9 +12,9 @@ using Microsoft.Extensions.Logging;
 
 // TODO: add streaming for large files
 // Added StreamSheetAsync and StreamNamedTableAsync for row-by-row processing
-public class ExcelLoader(ILogger<ExcelLoader>? logger = null) : IDisposable
+public class ExcelLoader(ILogger<ExcelLoader>? log = null) : IDisposable
 {
-    private readonly ILogger<ExcelLoader> logger = logger ?? Microsoft.Extensions.Logging.Abstractions.NullLogger<ExcelLoader>.Instance;
+    private readonly ILogger<ExcelLoader> logger = log ?? NullLogger<ExcelLoader>.Instance;
 
     private bool disposed;
 
@@ -85,7 +87,7 @@ public class ExcelLoader(ILogger<ExcelLoader>? logger = null) : IDisposable
         var ws = this.workbook.Worksheet(name);
         if (ws is null)
         {
-            var ex = new ArgumentException(string.Format(LogMessages.UnknownSheet, name));
+            var ex = new ArgumentException(string.Format(CultureInfo.InvariantCulture, LogMessages.UnknownSheet, name));
             this.logger.LogError(ex, LogMessages.UnknownSheet, name);
             throw ex;
         }
@@ -128,7 +130,7 @@ public class ExcelLoader(ILogger<ExcelLoader>? logger = null) : IDisposable
         var ws = this.workbook.Worksheet(name);
         if (ws is null)
         {
-            var ex = new ArgumentException(string.Format(LogMessages.UnknownSheet, name));
+            var ex = new ArgumentException(string.Format(CultureInfo.InvariantCulture, LogMessages.UnknownSheet, name));
             this.logger.LogError(ex, LogMessages.UnknownSheet, name);
             throw ex;
         }
@@ -166,7 +168,7 @@ public class ExcelLoader(ILogger<ExcelLoader>? logger = null) : IDisposable
 
         if (!this.workbook.DefinedNames.TryGetValue(name, out var def) || def.Ranges.Count == 0)
         {
-            var ex = new ArgumentException(string.Format(LogMessages.UnknownTable, name));
+            var ex = new ArgumentException(string.Format(CultureInfo.InvariantCulture, LogMessages.UnknownTable, name));
             this.logger.LogError(ex, LogMessages.UnknownTable, name);
             throw ex;
         }
@@ -174,7 +176,7 @@ public class ExcelLoader(ILogger<ExcelLoader>? logger = null) : IDisposable
         var range = def.Ranges.First();
         if (range.Worksheet is null)
         {
-            var ex = new ArgumentException(string.Format(LogMessages.MissingSheetForTable, name));
+            var ex = new ArgumentException(string.Format(CultureInfo.InvariantCulture, LogMessages.MissingSheetForTable, name));
             this.logger.LogError(ex, LogMessages.MissingSheetForTable, name);
             throw ex;
         }
@@ -206,7 +208,7 @@ public class ExcelLoader(ILogger<ExcelLoader>? logger = null) : IDisposable
         if (!this.workbook.DefinedNames.TryGetValue(name, out var def)
             || def.Ranges.Count == 0)
         {
-            var ex = new ArgumentException(string.Format(LogMessages.UnknownTable, name));
+            var ex = new ArgumentException(string.Format(CultureInfo.InvariantCulture, LogMessages.UnknownTable, name));
             this.logger.LogError(ex, LogMessages.UnknownTable, name);
             throw ex;
         }
@@ -214,7 +216,7 @@ public class ExcelLoader(ILogger<ExcelLoader>? logger = null) : IDisposable
         var range = def.Ranges.First();
         if (range.Worksheet is null)
         {
-            var ex = new ArgumentException(string.Format(LogMessages.MissingSheetForTable, name));
+            var ex = new ArgumentException(string.Format(CultureInfo.InvariantCulture, LogMessages.MissingSheetForTable, name));
             this.logger.LogError(ex, LogMessages.MissingSheetForTable, name);
             throw ex;
         }
