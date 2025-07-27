@@ -95,15 +95,15 @@ public class EfUserStoreTests
         DbContextOptions<MiroDbContext> options = new DbContextOptionsBuilder<MiroDbContext>()
             .UseInMemoryDatabase($"test_async")
             .Options;
-        await using MiroDbContext context = new MiroDbContext(options);
+        using var context = new MiroDbContext(options);
         var store = new EfUserStore(context);
         var info = new UserInfo($"u1", $"Bob", $"t1");
 
-        await store.StoreAsync(info);
-        UserInfo fetched = await store.RetrieveAsync($"u1");
+        await store.StoreAsync(info).ConfigureAwait(false);
+        UserInfo fetched = await store.RetrieveAsync($"u1").ConfigureAwait(false);
         Assert.Equal($"t1", fetched?.Token);
 
-        await store.DeleteAsync($"u1");
-        Assert.Null(await store.RetrieveAsync($"u1"));
+        await store.DeleteAsync($"u1").ConfigureAwait(false);
+        Assert.Null(await store.RetrieveAsync($"u1").ConfigureAwait(false));
     }
 }
