@@ -10,6 +10,14 @@
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0" PrivateAssets="all" />
+    <PackageReference Include="AsyncUsageAnalyzers" Version="1.0.0-alpha003" PrivateAssets="all" />
+    <PackageReference Include="ConfigureAwaitChecker.Analyzer" Version="5.0.0.1" PrivateAssets="all" />
+    <PackageReference Include="AsyncFixer" Version="1.6.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Analyzers" Version="9.0.7" PrivateAssets="all" />
+    <PackageReference Include="Meziantou.Analyzer" Version="2.0.208" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers" Version="3.3.1" PrivateAssets="all" />
+    <PackageReference Include="ErrorProne.NET.CoreAnalyzers" Version="0.1.2" PrivateAssets="all" />
 
     <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="9.7.0" />
     <PackageReference Include="Microsoft.Extensions.ServiceDiscovery" Version="9.3.1" />
