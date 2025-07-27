@@ -4,6 +4,7 @@ Target **.NET 9**. Source files live under `src/`. Unit tests are in `fenrick.mi
 
 ```bash
 dotnet restore
+dotnet format
 dotnet test fenrick.miro.tests/fenrick.miro.tests.csproj -v minimal
 ```
 
