@@ -19,13 +19,13 @@ public class ShapeQueueProcessorTests
         var client = new StubClient();
         var proc = new ShapeQueueProcessor(client);
         proc.EnqueueCreate(
-        [
-            new ShapeData($"r", 0, 0, 1, 1, Rotation: Text: null, Style: null, null),
-        ]);
+            [
+                new ShapeData("r", 0, 0, 1, 1, Rotation: null, Text: null, Style: null),
+            ]);
         Task<List<MiroResponse>> t1 = proc.ProcessAsync();
         Task<List<MiroResponse>> t2 = proc.ProcessAsync();
 
-        await Task.WhenAll(t1, t2).ConfigureAwait(false);
+        await Task.WhenAll(t1, t2);
 
         Assert.Equal(1, client.Count);
     }
@@ -38,12 +38,12 @@ public class ShapeQueueProcessorTests
         var shapes = new List<ShapeData>();
         for (var i = 0; i < 25; i++)
         {
-            shapes.Add(new ShapeData($"r", 0, 0, 1, 1, Rotation: Text: null, Style: null, null));
+            shapes.Add(new ShapeData("r", 0, 0, 1, 1, Rotation: null, Text: null, Style: null));
         }
 
         proc.EnqueueCreate(shapes);
 
-        List<MiroResponse> responses = await proc.ProcessAsync().ConfigureAwait(false);
+        List<MiroResponse> responses = await proc.ProcessAsync();
 
         Assert.Equal(25, client.Count);
         Assert.Equal(25, responses.Count);
@@ -54,7 +54,7 @@ public class ShapeQueueProcessorTests
     {
         var client = new StubClient();
         var proc = new ShapeQueueProcessor(client);
-        proc.EnqueueCreate([new ShapeData($"r", 0, 0, 1, 1, Rotation: Text: null, Style: null, null)]);
+        proc.EnqueueCreate([new ShapeData("r", 0, 0, 1, 1, Rotation: null, Text: null, Style: null)]);
 
         proc.Dispose();
 

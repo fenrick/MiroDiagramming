@@ -95,7 +95,7 @@ public class EfUserStoreTests
         DbContextOptions<MiroDbContext> options = new DbContextOptionsBuilder<MiroDbContext>()
             .UseInMemoryDatabase($"test_async")
             .Options;
-        await using var context = new MiroDbContext(options).ConfigureAwait(false);
+        using var context = new MiroDbContext(options);
         var store = new EfUserStore(context);
         var info = new UserInfo($"u1", $"Bob", $"t1");
 

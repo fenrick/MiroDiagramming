@@ -11,7 +11,7 @@ env:
   DOTNET_VERSION: "9.0.x"
 
 jobs:
-  dotnet-tests:
+  server-tests:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
