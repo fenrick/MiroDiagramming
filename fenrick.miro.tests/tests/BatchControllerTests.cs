@@ -35,7 +35,7 @@ public class BatchControllerTests
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() },
         };
 
-        var result = await controller.ForwardAsync(requests).ConfigureAwait(false) as OkObjectResult;
+        var result = await controller.ForwardAsync(requests) as OkObjectResult;
 
         List<MiroResponse> data =
             Assert.IsType<List<MiroResponse>>(result!.Value);
@@ -56,7 +56,7 @@ public class BatchControllerTests
             ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() },
         };
 
-        var result = await controller.ForwardAsync([]).ConfigureAwait(false) as OkObjectResult;
+        var result = await controller.ForwardAsync([]) as OkObjectResult;
 
         List<MiroResponse> data =
             Assert.IsType<List<MiroResponse>>(result!.Value);

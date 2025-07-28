@@ -36,7 +36,7 @@ public class ShapesControllerTests
         };
 
         var result =
-            await controller.CreateAsync($"b1", shapes).ConfigureAwait(false) as OkObjectResult;
+            await controller.CreateAsync($"b1", shapes) as OkObjectResult;
 
         List<MiroResponse> data = Assert.IsType<List<MiroResponse>>(result!.Value);
         Assert.Equal(25, data.Count);
@@ -60,7 +60,7 @@ public class ShapesControllerTests
         };
 
         var result =
-            await controller.CreateAsync($"b1", shapes).ConfigureAwait(false) as OkObjectResult;
+            await controller.CreateAsync($"b1", shapes) as OkObjectResult;
 
         List<MiroResponse> data = Assert.IsType<List<MiroResponse>>(result!.Value);
         Assert.Single(data);
@@ -80,7 +80,7 @@ public class ShapesControllerTests
             },
         };
 
-        var res = await controller.DeleteAsync($"b2", $"i3").ConfigureAwait(false) as OkObjectResult;
+        var res = await controller.DeleteAsync($"b2", $"i3") as OkObjectResult;
 
         Assert.Equal($"0", ((MiroResponse)res!.Value!).Body);
         Assert.Equal($"i3", cache.RemovedItem);
@@ -110,7 +110,7 @@ $"r",
                           1,
 Rotation: null,
 Style: null,
-                          null)).ConfigureAwait(false) as OkObjectResult;
+                          null)) as OkObjectResult;
 
         Assert.Equal($"0", ((MiroResponse)res!.Value!).Body);
         Assert.Equal($"i1", cache.ItemId);
@@ -129,7 +129,7 @@ Style: null,
             },
         };
 
-        var res = await controller.GetAsync($"b1", $"i2").ConfigureAwait(false) as ContentResult;
+        var res = await controller.GetAsync($"b1", $"i2") as ContentResult;
 
         Assert.NotNull(res);
         Assert.Contains($"\"Shape\"", res!.Content, System.StringComparison.Ordinal);
@@ -160,7 +160,11 @@ Style: null,
 
         public ShapeCacheEntry? Retrieve(string boardId, string itemId) => null;
 
+        public ShapeData? RetrieveData(string boardId, string itemId) => null;
+
         public void Store(ShapeCacheEntry entry) { }
+
+        public void Store(string boardId, string itemId, ShapeData data) { }
     }
 
     private sealed class RecordingCache : IShapeCache
@@ -177,11 +181,17 @@ Style: null,
         public ShapeCacheEntry? Retrieve(string boardId, string itemId) =>
             this.store.TryGetValue($"{boardId}:{itemId}", out ShapeCacheEntry? e) ? e : null;
 
+        public ShapeData? RetrieveData(string boardId, string itemId) =>
+            this.Retrieve(boardId, itemId)?.Data;
+
         public void Store(ShapeCacheEntry entry)
         {
             this.ItemId = entry.ItemId;
             this.store[$"{entry.BoardId}:{entry.ItemId}"] = entry;
         }
+
+        public void Store(string boardId, string itemId, ShapeData data) =>
+            this.Store(new ShapeCacheEntry(boardId, itemId, data));
     }
 
     private sealed class StubClient(string? body = null) : IMiroClient

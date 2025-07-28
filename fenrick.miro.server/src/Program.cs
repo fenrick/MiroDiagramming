@@ -97,6 +97,7 @@ public class Program
         services.AddSingleton<ILogSink, SerilogSink>();
         services.AddHttpContextAccessor();
         services.AddHttpClient<IMiroClient, MiroRestClient>();
+        services.AddSingleton<ITokenRefresher, NullTokenRefresher>();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
         services.AddSingleton<IShapeCache, InMemoryShapeCache>();

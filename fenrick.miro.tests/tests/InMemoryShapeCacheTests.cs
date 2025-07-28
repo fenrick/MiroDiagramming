@@ -35,4 +35,16 @@ Style: null));
         ShapeCacheEntry? result = cache.Retrieve($"b1", $"i1");
         Assert.Equal(entry, result);
     }
+
+    [Fact]
+    public void RetrieveDataReturnsStoredShape()
+    {
+        var cache = new InMemoryShapeCache();
+        var data = new ShapeData($"r", 1, 2, 3, 4, Rotation: null, Text: null, Style: null);
+        cache.Store($"b2", $"i2", data);
+
+        ShapeData? result = cache.RetrieveData($"b2", $"i2");
+
+        Assert.Equal(data, result);
+    }
 }

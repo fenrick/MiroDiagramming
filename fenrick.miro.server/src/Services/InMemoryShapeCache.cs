@@ -6,10 +6,10 @@ using Domain;
 
 /// <summary>
 ///     Thread-safe in-memory cache for board shapes.
-///     TODO: back with persistent store and eviction strategy for large boards.
-///     TODO: expose DTO-based accessors so the client and server share the same
-///     shape representation.
 /// </summary>
+/// <remarks>
+///     TODO: back with persistent store and eviction strategy for large boards.
+/// </remarks>
 public class InMemoryShapeCache : IShapeCache
 {
     private readonly
@@ -27,6 +27,14 @@ public class InMemoryShapeCache : IShapeCache
             : null;
 
     /// <inheritdoc />
+    public ShapeData? RetrieveData(string boardId, string itemId) =>
+        this.Retrieve(boardId, itemId)?.Data;
+
+    /// <inheritdoc />
     public void Store(ShapeCacheEntry entry) =>
         this.cache[(entry.BoardId, entry.ItemId)] = entry;
+
+    /// <inheritdoc />
+    public void Store(string boardId, string itemId, ShapeData data) =>
+        this.Store(new ShapeCacheEntry(boardId, itemId, data));
 }

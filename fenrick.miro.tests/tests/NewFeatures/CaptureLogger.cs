@@ -9,7 +9,7 @@ internal sealed class CaptureLogger<T> : ILogger<T>
 {
     public List<(LogLevel Level, string Message)> Entries { get; } = [];
 
-    public IDisposable BeginScope<TState>(TState state) => NullScope.Instance;
+    public IDisposable BeginScope<TState>(TState state) where TState : notnull => new NullScope();
 
     public bool IsEnabled(LogLevel logLevel) => true;
 
@@ -19,7 +19,6 @@ internal sealed class CaptureLogger<T> : ILogger<T>
 
     private sealed class NullScope : IDisposable
     {
-        public static readonly NullScope Instance = new();
         public void Dispose() { }
     }
 }

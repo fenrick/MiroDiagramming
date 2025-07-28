@@ -30,7 +30,7 @@ public class ExcelLoaderTests
         ms.Position = 0;
 
         var loader = new ExcelLoader();
-        await loader.LoadAsync(ms).ConfigureAwait(false);
+        await loader.LoadAsync(ms);
         IReadOnlyList<Dictionary<string, string>> rows =
             loader.LoadSheet($"Sheet1");
 
@@ -52,7 +52,7 @@ public class ExcelLoaderTests
         ms.Position = 0;
 
         var loader = new ExcelLoader();
-        await loader.LoadAsync(ms).ConfigureAwait(false);
+        await loader.LoadAsync(ms);
 
         Assert.Contains($"Table1", loader.ListNamedTables());
     }
@@ -72,7 +72,7 @@ public class ExcelLoaderTests
         ms.Position = 0;
 
         var loader = new ExcelLoader();
-        await loader.LoadAsync(ms).ConfigureAwait(false);
+        await loader.LoadAsync(ms);
         IReadOnlyList<Dictionary<string, string>> rows =
             loader.LoadNamedTable($"Table1");
 
@@ -101,7 +101,7 @@ public class ExcelLoaderTests
         ms.Position = 0;
 
         var loader = new ExcelLoader();
-        await loader.LoadAsync(ms).ConfigureAwait(false);
+        await loader.LoadAsync(ms);
 
         Assert.Throws<ArgumentException>(() =>
             loader.LoadNamedTable($"Missing"));
@@ -118,7 +118,7 @@ public class ExcelLoaderTests
         ms.Position = 0;
 
         var loader = new ExcelLoader();
-        await loader.LoadAsync(ms).ConfigureAwait(false);
+        await loader.LoadAsync(ms);
 
         Assert.Throws<ArgumentException>(() => loader.LoadNamedTable($"Bad"));
     }
@@ -134,7 +134,7 @@ public class ExcelLoaderTests
 
         var logger = new CaptureLogger<ExcelLoader>();
         var loader = new ExcelLoader(logger);
-        await loader.LoadAsync(ms).ConfigureAwait(false);
+        await loader.LoadAsync(ms);
 
         Assert.Contains(logger.Entries,
             l => l.Level == LogLevel.Debug &&
@@ -167,11 +167,9 @@ public class ExcelLoaderTests
         ms.Position = 0;
 
         var loader = new ExcelLoader();
-        await loader.LoadAsync(ms).ConfigureAwait(false);
+        await loader.LoadAsync(ms);
         var results = new List<Dictionary<string, string>>();
-        await foreach (Dictionary<string, string> r in loader
-                           .StreamSheetAsync($"Sheet1").ConfigureAwait(false)
-                           .ConfigureAwait(false))
+        await foreach (Dictionary<string, string> r in loader.StreamSheetAsync($"Sheet1"))
         {
             results.Add(r);
         }
@@ -193,11 +191,9 @@ public class ExcelLoaderTests
         ms.Position = 0;
 
         var loader = new ExcelLoader();
-        await loader.LoadAsync(ms).ConfigureAwait(false);
+        await loader.LoadAsync(ms);
         var results = new List<Dictionary<string, string>>();
-        await foreach (Dictionary<string, string> r in loader
-                           .StreamNamedTableAsync($"Table1").ConfigureAwait(false)
-                           .ConfigureAwait(false))
+        await foreach (Dictionary<string, string> r in loader.StreamNamedTableAsync($"Table1"))
         {
             results.Add(r);
         }
@@ -212,20 +208,18 @@ public class ExcelLoaderTests
         var loader = new ExcelLoader();
         await Assert.ThrowsAsync<InvalidOperationException>(async () =>
         {
-            await foreach (Dictionary<string, string> _ in loader
-                               .StreamSheetAsync($"A").ConfigureAwait(false)
-                               .ConfigureAwait(false))
+            await foreach (Dictionary<string, string> _ in loader.StreamSheetAsync($"A").ConfigureAwait(false))
             {
+                Assert.Fail($"Should not iterate");
             }
-        }).ConfigureAwait(false);
+        });
 
         await Assert.ThrowsAsync<InvalidOperationException>(async () =>
         {
-            await foreach (Dictionary<string, string> _ in loader
-                               .StreamNamedTableAsync($"A").ConfigureAwait(false)
-                               .ConfigureAwait(false))
+            await foreach (Dictionary<string, string> _ in loader.StreamNamedTableAsync($"A").ConfigureAwait(false))
             {
+                Assert.Fail($"Should not iterate");
             }
-        }).ConfigureAwait(false);
+        });
     }
 }

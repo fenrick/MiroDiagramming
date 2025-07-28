@@ -12,7 +12,7 @@ public class DbContextRegistrationTests(WebApplicationFactory<Program> factory)
     private readonly WebApplicationFactory<Program> configuredFactory =
         factory.WithWebHostBuilder(builder =>
         {
-            builder.UseSetting($"ConnectionStrings:sqlite",
+            builder.UseSetting($"ConnectionStrings:MiroDBContext",
                 $"Data Source=:memory:");
             builder.UseSetting($"ApplyMigrations", $"false");
         });
@@ -22,7 +22,7 @@ public class DbContextRegistrationTests(WebApplicationFactory<Program> factory)
     {
         using IServiceScope scope =
             this.configuredFactory.Services.CreateScope();
-        MiroDbContext db = scope.ServiceProvider.GetService<MiroDbContext>();
+        MiroDbContext db = scope.ServiceProvider.GetRequiredService<MiroDbContext>();
         Assert.NotNull(db);
     }
 
@@ -32,7 +32,7 @@ public class DbContextRegistrationTests(WebApplicationFactory<Program> factory)
         using IServiceScope scope =
             this.configuredFactory.Services.CreateScope();
         ITemplateStore store =
-            scope.ServiceProvider.GetService<ITemplateStore>();
+            scope.ServiceProvider.GetRequiredService<ITemplateStore>();
         Assert.NotNull(store);
     }
 }
