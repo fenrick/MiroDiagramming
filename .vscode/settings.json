@@ -1,1 +1,6 @@
-{}
+{
+  "sonarlint.connectedMode.project": {
+    "connectionId": "fenrick",
+    "projectKey": "fenrick_MiroDiagraming"
+  }
+}
