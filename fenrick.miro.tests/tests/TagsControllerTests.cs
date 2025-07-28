@@ -26,7 +26,7 @@ public class TagsControllerTests
         };
 
         ActionResult<IReadOnlyList<TagInfo>> result =
-            await controller.GetAsync($"b1").ConfigureAwait(false);
+            await controller.GetAsync($"b1");
         OkObjectResult ok = Assert.IsType<OkObjectResult>(result.Result);
         IReadOnlyList<TagInfo> tags =
             Assert.IsType<IReadOnlyList<TagInfo>>(ok.Value, false);

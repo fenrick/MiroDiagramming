@@ -36,7 +36,7 @@ public class ShapesControllerTests
         };
 
         var result =
-            await controller.CreateAsync($"b1", shapes).ConfigureAwait(false) as OkObjectResult;
+            await controller.CreateAsync($"b1", shapes) as OkObjectResult;
 
         List<MiroResponse> data = Assert.IsType<List<MiroResponse>>(result!.Value);
         Assert.Equal(25, data.Count);
@@ -60,7 +60,7 @@ public class ShapesControllerTests
         };
 
         var result =
-            await controller.CreateAsync($"b1", shapes).ConfigureAwait(false) as OkObjectResult;
+            await controller.CreateAsync($"b1", shapes) as OkObjectResult;
 
         List<MiroResponse> data = Assert.IsType<List<MiroResponse>>(result!.Value);
         Assert.Single(data);
@@ -80,7 +80,7 @@ public class ShapesControllerTests
             },
         };
 
-        var res = await controller.DeleteAsync($"b2", $"i3").ConfigureAwait(false) as OkObjectResult;
+        var res = await controller.DeleteAsync($"b2", $"i3") as OkObjectResult;
 
         Assert.Equal($"0", ((MiroResponse)res!.Value!).Body);
         Assert.Equal($"i3", cache.RemovedItem);
@@ -110,7 +110,7 @@ $"r",
                           1,
 Rotation: null,
 Style: null,
-                          null)).ConfigureAwait(false) as OkObjectResult;
+                          null)) as OkObjectResult;
 
         Assert.Equal($"0", ((MiroResponse)res!.Value!).Body);
         Assert.Equal($"i1", cache.ItemId);
@@ -129,7 +129,7 @@ Style: null,
             },
         };
 
-        var res = await controller.GetAsync($"b1", $"i2").ConfigureAwait(false) as ContentResult;
+        var res = await controller.GetAsync($"b1", $"i2") as ContentResult;
 
         Assert.NotNull(res);
         Assert.Contains($"\"Shape\"", res!.Content, System.StringComparison.Ordinal);

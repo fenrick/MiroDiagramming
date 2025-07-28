@@ -72,13 +72,13 @@ public class InMemoryUserStoreTests
     {
         var store = new InMemoryUserStore();
         var info = new UserInfo($"u1", $"Bob", $"t1");
-        await store.StoreAsync(info).ConfigureAwait(false);
+        await store.StoreAsync(info);
 
-        UserInfo? fetched = await store.RetrieveAsync($"u1").ConfigureAwait(false);
+        UserInfo? fetched = await store.RetrieveAsync($"u1");
         Assert.Equal($"t1", fetched?.Token);
 
-        await store.DeleteAsync($"u1").ConfigureAwait(false);
+        await store.DeleteAsync($"u1");
 
-        Assert.Null(await store.RetrieveAsync($"u1").ConfigureAwait(false));
+        Assert.Null(await store.RetrieveAsync($"u1"));
     }
 }

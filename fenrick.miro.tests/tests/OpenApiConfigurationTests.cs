@@ -27,9 +27,9 @@ public class OpenApiConfigurationTests(WebApplicationFactory<Program> factory)
     public async Task SwaggerJsonEndpointReturnsDocumentAsync()
     {
         HttpResponseMessage response =
-            await this.client.GetAsync($"/swagger/v1/swagger.json").ConfigureAwait(false);
+            await this.client.GetAsync($"/swagger/v1/swagger.json");
         response.EnsureSuccessStatusCode();
-        var body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        var body = await response.Content.ReadAsStringAsync();
         Assert.Contains($"\"openapi\"", body, System.StringComparison.Ordinal);
         Assert.Contains($"\"title\": \"fenrick.miro.server\"", body,
             System.StringComparison.Ordinal);
