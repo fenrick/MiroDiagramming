@@ -216,6 +216,7 @@ public class ExcelLoaderTests
                                .StreamSheetAsync($"A").ConfigureAwait(false)
                                .ConfigureAwait(false))
             {
+                Assert.Fail($"Should not iterate");
             }
         }).ConfigureAwait(false);
 
@@ -225,6 +226,7 @@ public class ExcelLoaderTests
                                .StreamNamedTableAsync($"A").ConfigureAwait(false)
                                .ConfigureAwait(false))
             {
+                Assert.Fail($"Should not iterate");
             }
         }).ConfigureAwait(false);
     }

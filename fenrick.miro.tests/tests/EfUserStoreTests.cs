@@ -109,7 +109,7 @@ public class EfUserStoreTests
         var info = new UserInfo($"u1", $"Bob", $"t1");
 
         await store.StoreAsync(info).ConfigureAwait(false);
-        UserInfo fetched = await store.RetrieveAsync($"u1").ConfigureAwait(false);
+        UserInfo? fetched = await store.RetrieveAsync($"u1").ConfigureAwait(false);
         Assert.Equal($"t1", fetched?.Token);
 
         await store.DeleteAsync($"u1").ConfigureAwait(false);

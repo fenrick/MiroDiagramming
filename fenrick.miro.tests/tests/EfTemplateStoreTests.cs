@@ -35,7 +35,7 @@ public class EfTemplateStoreTests
 
         store.SetTemplate($"u1", $"A", tpl);
 
-        TemplateDefinition result = store.GetTemplate($"u1", $"A");
+        TemplateDefinition? result = store.GetTemplate($"u1", $"A");
         Assert.NotNull(result);
         Assert.Equal($"t", result!.Elements[0].Text);
     }
