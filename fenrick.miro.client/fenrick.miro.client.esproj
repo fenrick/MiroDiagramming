@@ -8,5 +8,6 @@
         <!-- Folder where production build objects will be placed -->
         <BuildOutputFolder>$(MSBuildProjectDirectory)\dist</BuildOutputFolder>
         <BuildCommand>npx vite build</BuildCommand>
+        <NeutralLanguage>en-AU</NeutralLanguage>
     </PropertyGroup>
 </Project>

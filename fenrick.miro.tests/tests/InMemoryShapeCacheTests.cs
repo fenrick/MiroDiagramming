@@ -1,5 +1,5 @@
 namespace Fenrick.Miro.Tests;
-#nullable enable
+
 using Server.Domain;
 using Server.Services;
 

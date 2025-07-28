@@ -2,4 +2,3 @@ npm --prefix fenrick.miro.client run typecheck --silent
 npm --prefix fenrick.miro.client run lint --silent
 npm --prefix fenrick.miro.client run stylelint --silent -- -q
 npm --prefix fenrick.miro.client run prettier --silent -- --check
-

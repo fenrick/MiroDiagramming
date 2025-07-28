@@ -50,6 +50,7 @@ public class Program
             // Apply migrations so the schema matches the EF Core model.
             using IServiceScope scope = app.Services.CreateScope();
             MiroDbContext db = scope.ServiceProvider.GetRequiredService<MiroDbContext>();
+
             db.Database.Migrate();
         }
 

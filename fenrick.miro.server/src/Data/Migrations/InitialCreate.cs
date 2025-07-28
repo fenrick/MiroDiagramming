@@ -1,5 +1,7 @@
-namespace Fenrick.Miro.Server.Data.Migrations;
 #nullable disable
+
+namespace Fenrick.Miro.Server.Migrations;
+
 using Microsoft.EntityFrameworkCore.Migrations;
 
 /// <inheritdoc />
@@ -9,27 +11,22 @@ public partial class InitialCreate : Migration
     protected override void Up(MigrationBuilder migrationBuilder)
     {
         migrationBuilder.CreateTable(
-            $"Templates",
-            table => new
+            name: $"Templates",
+            columns: table => new
             {
-                UserId =
-                    table.Column<string>($"text", nullable: false),
-                Name = table.Column<string>($"text", nullable: false),
-                DefinitionJson =
-                    table.Column<string>($"text", nullable: false),
+                UserId = table.Column<string>(type: $"TEXT", nullable: false),
+                Name = table.Column<string>(type: $"TEXT", nullable: false),
+                DefinitionJson = table.Column<string>(type: $"TEXT", nullable: false),
             },
-            constraints: table =>
-                table.PrimaryKey($"PK_Templates",
-                    x => new { x.UserId, x.Name }));
+            constraints: table => table.PrimaryKey($"PK_Templates", x => new { x.UserId, x.Name }));
 
         migrationBuilder.CreateTable(
-            $"Users",
-            table => new
+            name: $"Users",
+            columns: table => new
             {
-                Id = table.Column<string>($"text", nullable: false),
-                Name = table.Column<string>($"text", nullable: false),
-                Token =
-                    table.Column<string>($"text", nullable: false),
+                Id = table.Column<string>(type: $"TEXT", nullable: false),
+                Name = table.Column<string>(type: $"TEXT", nullable: false),
+                Token = table.Column<string>(type: $"TEXT", nullable: false),
             },
             constraints: table => table.PrimaryKey($"PK_Users", x => x.Id));
     }
@@ -38,9 +35,9 @@ public partial class InitialCreate : Migration
     protected override void Down(MigrationBuilder migrationBuilder)
     {
         migrationBuilder.DropTable(
-            $"Templates");
+            name: $"Templates");
 
         migrationBuilder.DropTable(
-            $"Users");
+            name: $"Users");
     }
 }

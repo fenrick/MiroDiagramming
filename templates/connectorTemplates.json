@@ -9,7 +9,10 @@
       "textOrientation": "horizontal"
     },
     "shape": "curved",
-    "caption": { "position": 0.5, "textAlignVertical": "middle" },
+    "caption": {
+      "position": 0.5,
+      "textAlignVertical": "middle"
+    },
     "alias": []
   },
   "flow": {
@@ -22,8 +25,13 @@
       "textOrientation": "horizontal"
     },
     "shape": "curved",
-    "caption": { "position": 0.5, "textAlignVertical": "middle" },
-    "alias": ["flows"]
+    "caption": {
+      "position": 0.5,
+      "textAlignVertical": "middle"
+    },
+    "alias": [
+      "flows"
+    ]
   },
   "assignment": {
     "style": {
@@ -35,8 +43,14 @@
       "textOrientation": "horizontal"
     },
     "shape": "curved",
-    "caption": { "position": 0.5, "textAlignVertical": "middle" },
-    "alias": ["deploy", "assigns"]
+    "caption": {
+      "position": 0.5,
+      "textAlignVertical": "middle"
+    },
+    "alias": [
+      "deploy",
+      "assigns"
+    ]
   },
   "realization": {
     "style": {
@@ -48,8 +62,15 @@
       "textOrientation": "horizontal"
     },
     "shape": "curved",
-    "caption": { "position": 0.5, "textAlignVertical": "middle" },
-    "alias": ["realizes", "realises", "realisation"]
+    "caption": {
+      "position": 0.5,
+      "textAlignVertical": "middle"
+    },
+    "alias": [
+      "realizes",
+      "realises",
+      "realisation"
+    ]
   },
   "access": {
     "style": {
@@ -61,8 +82,13 @@
       "textOrientation": "horizontal"
     },
     "shape": "curved",
-    "caption": { "position": 0.5, "textAlignVertical": "middle" },
-    "alias": ["accesses"]
+    "caption": {
+      "position": 0.5,
+      "textAlignVertical": "middle"
+    },
+    "alias": [
+      "accesses"
+    ]
   },
   "influence": {
     "style": {
@@ -74,8 +100,13 @@
       "textOrientation": "horizontal"
     },
     "shape": "curved",
-    "caption": { "position": 0.5, "textAlignVertical": "middle" },
-    "alias": ["influences"]
+    "caption": {
+      "position": 0.5,
+      "textAlignVertical": "middle"
+    },
+    "alias": [
+      "influences"
+    ]
   },
   "association": {
     "style": {
@@ -87,7 +118,12 @@
       "textOrientation": "horizontal"
     },
     "shape": "curved",
-    "caption": { "position": 0.5, "textAlignVertical": "middle" },
-    "alias": ["associates"]
+    "caption": {
+      "position": 0.5,
+      "textAlignVertical": "middle"
+    },
+    "alias": [
+      "associates"
+    ]
   }
 }

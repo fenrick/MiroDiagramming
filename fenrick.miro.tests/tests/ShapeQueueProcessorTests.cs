@@ -1,5 +1,5 @@
 namespace Fenrick.Miro.Tests;
-#nullable enable
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;

@@ -1,5 +1,5 @@
 {
-    "sonarCloudOrganization": "fenrick",
-    "projectKey": "fenrick_MiroDiagraming",
-    "region": "EU"
+  "sonarCloudOrganization": "fenrick",
+  "projectKey": "fenrick_MiroDiagraming",
+  "region": "EU"
 }

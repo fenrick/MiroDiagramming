@@ -12,12 +12,12 @@ Explain our design decisions regarding the high point cost of some Miro REST API
 
 The following endpoints each cost **500** points per call:
 
-| Endpoint | Description |
-| -------- | ----------- |
-| `board.get` | Fetch all widgets of a board. |
-| `item` | Retrieve a single widget. |
-| `item.setmetadata` | Update widget metadata. |
-| `board.getselection` | Retrieve the user selection. |
+| Endpoint             | Description                   |
+| -------------------- | ----------------------------- |
+| `board.get`          | Fetch all widgets of a board. |
+| `item`               | Retrieve a single widget.     |
+| `item.setmetadata`   | Update widget metadata.       |
+| `board.getselection` | Retrieve the user selection.  |
 
 Excessive use quickly exhausts the daily rate limit.
 

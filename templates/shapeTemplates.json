@@ -68,7 +68,12 @@
         "text": "{{label}}"
       }
     ],
-    "alias": ["Resource", "Capability", "Course of action", "Value Stream"]
+    "alias": [
+      "Resource",
+      "Capability",
+      "Course of action",
+      "Value Stream"
+    ]
   },
   "Business": {
     "elements": [
@@ -175,7 +180,12 @@
         "text": "{{label}}"
       }
     ],
-    "alias": ["Equipment", "Facility", "Distribution Network", "Material"]
+    "alias": [
+      "Equipment",
+      "Facility",
+      "Distribution Network",
+      "Material"
+    ]
   },
   "Composite": {
     "elements": [
@@ -192,7 +202,10 @@
         "text": "{{label}}"
       }
     ],
-    "alias": ["Location", "Grouping"]
+    "alias": [
+      "Location",
+      "Grouping"
+    ]
   },
   "Implementation": {
     "elements": [

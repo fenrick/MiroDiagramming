@@ -44,33 +44,33 @@ public class CardsControllerTests
                     {
                         new CardData($"t", Description: Tags: null, null, TaskStatus: null, Id: null, null),
                     };
-        var controller = new CardsController(new StubClient())
+    var controller = new CardsController(new StubClient())
+    {
+        ControllerContext = new ControllerContext
         {
-            ControllerContext = new ControllerContext
-            {
-                HttpContext = new DefaultHttpContext()
-            },
-        };
+            HttpContext = new DefaultHttpContext()
+        },
+    };
 
-        var result = await controller.CreateAsync(cards).ConfigureAwait(false) as OkObjectResult;
+    var result = await controller.CreateAsync(cards).ConfigureAwait(false) as OkObjectResult;
 
-        List<MiroResponse> data = Assert.IsType<List<MiroResponse>>(result!.Value);
-        Assert.Single(data);
+    List<MiroResponse> data = Assert.IsType<List<MiroResponse>>(result!.Value);
+    Assert.Single(data);
         Assert.Equal($"0", data[0].Body);
     }
 
-    private sealed class StubClient : IMiroClient
-    {
-        private int count;
+private sealed class StubClient : IMiroClient
+{
+    private int count;
 
-        public Task<MiroResponse> SendAsync(
-            MiroRequest request,
-            CancellationToken ct = default)
-        {
-            var res = new MiroResponse(
-                201,
-                this.count++.ToString(CultureInfo.InvariantCulture));
-            return Task.FromResult(res);
-        }
+    public Task<MiroResponse> SendAsync(
+        MiroRequest request,
+        CancellationToken ct = default)
+    {
+        var res = new MiroResponse(
+            201,
+            this.count++.ToString(CultureInfo.InvariantCulture));
+        return Task.FromResult(res);
     }
+}
 }
