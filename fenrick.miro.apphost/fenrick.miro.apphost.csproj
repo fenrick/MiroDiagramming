@@ -32,7 +32,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../fenrick.miro.server/fenrick.miro.server.csproj"/>
-    <ProjectReference Include="..\fenrick.miro.servicedefaults\fenrick.miro.servicedefaults.csproj"/>
+    <ProjectReference Include="..\fenrick.miro.servicedefaults\fenrick.miro.servicedefaults.csproj" IsAspireProjectResource="false" />
   </ItemGroup>
 
 </Project>

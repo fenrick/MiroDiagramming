@@ -12,7 +12,7 @@ public class DbContextRegistrationTests(WebApplicationFactory<Program> factory)
     private readonly WebApplicationFactory<Program> configuredFactory =
         factory.WithWebHostBuilder(builder =>
         {
-            builder.UseSetting($"ConnectionStrings:sqlite",
+            builder.UseSetting($"ConnectionStrings:MiroDBContext",
                 $"Data Source=:memory:");
             builder.UseSetting($"ApplyMigrations", $"false");
         });

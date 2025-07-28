@@ -160,7 +160,11 @@ Style: null,
 
         public ShapeCacheEntry? Retrieve(string boardId, string itemId) => null;
 
+        public ShapeData? RetrieveData(string boardId, string itemId) => null;
+
         public void Store(ShapeCacheEntry entry) { }
+
+        public void Store(string boardId, string itemId, ShapeData data) { }
     }
 
     private sealed class RecordingCache : IShapeCache
@@ -177,11 +181,17 @@ Style: null,
         public ShapeCacheEntry? Retrieve(string boardId, string itemId) =>
             this.store.TryGetValue($"{boardId}:{itemId}", out ShapeCacheEntry? e) ? e : null;
 
+        public ShapeData? RetrieveData(string boardId, string itemId) =>
+            this.Retrieve(boardId, itemId)?.Data;
+
         public void Store(ShapeCacheEntry entry)
         {
             this.ItemId = entry.ItemId;
             this.store[$"{entry.BoardId}:{entry.ItemId}"] = entry;
         }
+
+        public void Store(string boardId, string itemId, ShapeData data) =>
+            this.Store(new ShapeCacheEntry(boardId, itemId, data));
     }
 
     private sealed class StubClient(string? body = null) : IMiroClient
