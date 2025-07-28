@@ -1,8 +1,10 @@
+namespace Fenrick.Miro.Tests;
+
 using System.Linq;
 
-using Fenrick.Miro.Server.Data;
-
 using Microsoft.EntityFrameworkCore.Migrations;
+
+using Server.Data;
 
 public class MigrationsPresenceTests
 {

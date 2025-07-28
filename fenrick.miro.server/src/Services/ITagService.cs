@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Fenrick.Miro.Server.Domain;
+using Domain;
 
 /// <summary>
 ///     Provides access to board tags via the Miro API.
@@ -15,5 +15,6 @@ public interface ITagService
     /// <param name="boardId">Target board identifier.</param>
     /// <param name="ct">Cancellation token.</param>
     /// <returns>List of tags.</returns>
-    public Task<IReadOnlyList<TagInfo>> GetTagsAsync(string boardId, CancellationToken ct = default);
+    public Task<IReadOnlyList<TagInfo>> GetTagsAsync(string boardId,
+        CancellationToken ct = default);
 }

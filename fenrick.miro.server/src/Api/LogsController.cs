@@ -1,9 +1,10 @@
 namespace Fenrick.Miro.Server.Api;
 
-using Fenrick.Miro.Server.Domain;
-using Fenrick.Miro.Server.Services;
+using Domain;
 
 using Microsoft.AspNetCore.Mvc;
+
+using Services;
 
 /// <summary>
 ///     Captures log entries from the client and stores them via

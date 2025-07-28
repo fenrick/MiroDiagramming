@@ -1,10 +1,14 @@
 namespace Microsoft.Extensions.Hosting;
 
-using Microsoft.AspNetCore.Builder;
+using AspNetCore.Builder;
+
+using DependencyInjection;
+
+using Diagnostics.HealthChecks;
+
+using Logging;
+
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Logging;
 
 using OpenTelemetry;
 using OpenTelemetry.Logs;
@@ -76,7 +80,8 @@ public static class Extensions
                 .AddAspNetCoreInstrumentation(tracing =>
 
                     // Exclude health check requests from tracing
-                    tracing.Filter = context => !context.Request.Path.StartsWithSegments(
+                    tracing.Filter = context =>
+                        !context.Request.Path.StartsWithSegments(
                             HealthEndpointPath, StringComparison.Ordinal)
                         && !context.Request.Path.StartsWithSegments(
                             AlivenessEndpointPath, StringComparison.Ordinal))
@@ -102,10 +107,7 @@ public static class Extensions
             // Only health checks tagged with the "live" tag must pass for app to be considered alive
             app.MapHealthChecks(
                 AlivenessEndpointPath,
-                new HealthCheckOptions
-                {
-                    Predicate = r => r.Tags.Contains($"live"),
-                });
+                new HealthCheckOptions { Predicate = r => r.Tags.Contains($"live") });
         }
 
         return app;
@@ -116,8 +118,8 @@ public static class Extensions
         where TBuilder : IHostApplicationBuilder
     {
         var useOtlpExporter = !string.IsNullOrWhiteSpace(
-                                  builder.Configuration[
-$"OTEL_EXPORTER_OTLP_ENDPOINT"]);
+            builder.Configuration[
+                $"OTEL_EXPORTER_OTLP_ENDPOINT"]);
 
         if (useOtlpExporter)
         {

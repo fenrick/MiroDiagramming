@@ -5,7 +5,7 @@ using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Fenrick.Miro.Server.Domain;
+using Domain;
 
 /// <summary>
 ///     Thread safe in-memory implementation of <see cref="IUserStore" />.
@@ -16,28 +16,33 @@ using Fenrick.Miro.Server.Domain;
 /// </summary>
 public class InMemoryUserStore : IUserStore
 {
-    private readonly ConcurrentDictionary<string, UserInfo> users = new(StringComparer.Ordinal);
+    private readonly ConcurrentDictionary<string, UserInfo> users =
+        new(StringComparer.Ordinal);
 
     /// <inheritdoc />
     public UserInfo? Retrieve(string userId)
     {
         if (string.IsNullOrWhiteSpace(userId))
         {
-            throw new ArgumentException($"User id must be provided", nameof(userId));
+            throw new ArgumentException($"User id must be provided",
+                nameof(userId));
         }
 
         return this.users.TryGetValue(userId, out UserInfo? info) ? info : null;
     }
 
     /// <inheritdoc />
-    public Task<UserInfo?> RetrieveAsync(string userId, CancellationToken ct = default)
+    public Task<UserInfo?> RetrieveAsync(string userId,
+        CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(userId))
         {
-            throw new ArgumentException($"User id must be provided", nameof(userId));
+            throw new ArgumentException($"User id must be provided",
+                nameof(userId));
         }
 
-        return Task.FromResult(this.users.TryGetValue(userId, out UserInfo? info) ? info : null);
+        return Task.FromResult(
+            this.users.TryGetValue(userId, out UserInfo? info) ? info : null);
     }
 
     /// <inheritdoc />
@@ -45,7 +50,8 @@ public class InMemoryUserStore : IUserStore
     {
         if (string.IsNullOrWhiteSpace(info.Id))
         {
-            throw new ArgumentException($"User id must be provided", nameof(info));
+            throw new ArgumentException($"User id must be provided",
+                nameof(info));
         }
 
         this.users[info.Id] = info;
@@ -56,7 +62,8 @@ public class InMemoryUserStore : IUserStore
     {
         if (string.IsNullOrWhiteSpace(info.Id))
         {
-            throw new ArgumentException($"User id must be provided", nameof(info));
+            throw new ArgumentException($"User id must be provided",
+                nameof(info));
         }
 
         this.users[info.Id] = info;
@@ -68,7 +75,8 @@ public class InMemoryUserStore : IUserStore
     {
         if (string.IsNullOrWhiteSpace(userId))
         {
-            throw new ArgumentException($"User id must be provided", nameof(userId));
+            throw new ArgumentException($"User id must be provided",
+                nameof(userId));
         }
 
         this.users.TryRemove(userId, out _);
@@ -79,7 +87,8 @@ public class InMemoryUserStore : IUserStore
     {
         if (string.IsNullOrWhiteSpace(userId))
         {
-            throw new ArgumentException($"User id must be provided", nameof(userId));
+            throw new ArgumentException($"User id must be provided",
+                nameof(userId));
         }
 
         this.users.TryRemove(userId, out _);

@@ -1,6 +1,6 @@
 namespace Fenrick.Miro.Server.Services;
 
-using Fenrick.Miro.Server.Domain;
+using Domain;
 
 /// <summary>
 ///     Simplified layout engine placing nodes vertically.
@@ -9,7 +9,7 @@ using Fenrick.Miro.Server.Domain;
 // TODO: port existing JS layout algorithms to C# and explore using the ELK
 
 // Java library via cross compilation or WASM to ensure parity across tiers
-public class LayoutEngine
+public static class LayoutEngine
 {
     private const double Spacing = 120;
 
@@ -21,7 +21,8 @@ public class LayoutEngine
     /// <remarks>Replaced once ELK integration is complete.</remarks>
     public static LayoutResult Layout(GraphData data)
     {
-        var nodes = new Dictionary<string, PositionedNode>(StringComparer.Ordinal);
+        var nodes =
+            new Dictionary<string, PositionedNode>(StringComparer.Ordinal);
         double y = 0;
         foreach (GraphNode node in data.Nodes)
         {

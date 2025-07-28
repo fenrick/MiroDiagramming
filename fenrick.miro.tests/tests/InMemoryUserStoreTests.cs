@@ -3,8 +3,8 @@ namespace Fenrick.Miro.Tests;
 using System;
 using System.Threading.Tasks;
 
-using Fenrick.Miro.Server.Domain;
-using Fenrick.Miro.Server.Services;
+using Server.Domain;
+using Server.Services;
 
 using Xunit;
 
@@ -68,7 +68,7 @@ public class InMemoryUserStoreTests
     }
 
     [Fact]
-    public async Task AsyncMethodsWork()
+    public async Task AsyncMethodsWorkAsync()
     {
         var store = new InMemoryUserStore();
         var info = new UserInfo($"u1", $"Bob", $"t1");

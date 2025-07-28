@@ -1,6 +1,6 @@
 namespace Fenrick.Miro.Server.Data;
 
-using Fenrick.Miro.Server.Domain;
+using Domain;
 
 /// <summary>
 ///     Database record storing a template per user.

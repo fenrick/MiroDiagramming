@@ -7,23 +7,23 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Fenrick.Miro.Server.Api;
-using Fenrick.Miro.Server.Domain;
-using Fenrick.Miro.Server.Services;
-
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+
+using Server.Api;
+using Server.Domain;
+using Server.Services;
 
 public class BatchControllerTests
 {
     [Fact]
-    public async Task ForwardAsyncReturnsOrderedResponses()
+    public async Task ForwardAsyncReturnsOrderedResponsesAsync()
     {
-        MiroRequest[] requests = new[]
-                       {
-                           new MiroRequest($"GET", $"/boards/1", Body: null),
-                           new MiroRequest($"GET", $"/boards/2", Body: null),
-                       };
+        MiroRequest[] requests =
+        [
+            new($"GET", $"/boards/1", Body: null),
+            new($"GET", $"/boards/2", Body: null),
+        ];
         var responses = new Queue<MiroResponse>(
         [
             new MiroResponse(200, $"1"),
@@ -33,15 +33,13 @@ public class BatchControllerTests
             new StubClient(req => Task.FromResult(responses.Dequeue()));
         var controller = new BatchController(client)
         {
-            ControllerContext = new ControllerContext
-            {
-                HttpContext = new DefaultHttpContext()
-            },
+            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() },
         };
 
         var result = await controller.ForwardAsync(requests).ConfigureAwait(false) as OkObjectResult;
 
-        List<MiroResponse> data = Assert.IsType<List<MiroResponse>>(result!.Value);
+        List<MiroResponse> data =
+            Assert.IsType<List<MiroResponse>>(result!.Value);
         Assert.Equal($"1", data[0].Body);
         Assert.Equal($"2", data[1].Body);
     }
@@ -50,20 +48,19 @@ public class BatchControllerTests
     ///     An empty batch should still produce an OK result with an empty array.
     /// </summary>
     [Fact]
-    public async Task ForwardAsyncWithNoRequestsReturnsEmptyList()
+    public async Task ForwardAsyncWithNoRequestsReturnsEmptyListAsync()
     {
         var controller = new BatchController(
-            new StubClient(_ => Task.FromResult(new MiroResponse(200, string.Empty))))
+            new StubClient(_ =>
+                Task.FromResult(new MiroResponse(200, string.Empty))))
         {
-            ControllerContext = new ControllerContext
-            {
-                HttpContext = new DefaultHttpContext()
-            },
+            ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() },
         };
 
         var result = await controller.ForwardAsync([]).ConfigureAwait(false) as OkObjectResult;
 
-        List<MiroResponse> data = Assert.IsType<List<MiroResponse>>(result!.Value);
+        List<MiroResponse> data =
+            Assert.IsType<List<MiroResponse>>(result!.Value);
         Assert.Empty(data);
     }
 

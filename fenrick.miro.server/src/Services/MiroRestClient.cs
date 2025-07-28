@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Fenrick.Miro.Server.Domain;
+using Domain;
 
 /// <summary>
 ///     HTTP client adapter that forwards requests to the Miro REST API.
@@ -29,22 +29,25 @@ public class MiroRestClient(
     private readonly IUserStore store = store;
 
     /// <inheritdoc />
-    public async Task<MiroResponse> SendAsync(MiroRequest request, CancellationToken ct = default)
+    public async Task<MiroResponse> SendAsync(MiroRequest request,
+        CancellationToken ct = default)
     {
         HttpContext? ctx = this.accessor.HttpContext;
         var userId = ctx?.Request.Headers[$"X-User-Id"].FirstOrDefault();
-        UserInfo? info = userId != null ? await this.store.RetrieveAsync(userId, ct).ConfigureAwait(false) : null;
+        UserInfo? info = userId != null
+            ? await this.store.RetrieveAsync(userId, ct).ConfigureAwait(false)
+            : null;
         var token = info?.Token;
         using var message = new HttpRequestMessage(
             new HttpMethod(request.Method),
             new Uri(request.Path, UriKind.Relative))
         {
             Content = request.Body == null
-                          ? null
-                          : new StringContent(
-                              request.Body,
-                              Encoding.UTF8,
-$"application/json"),
+                ? null
+                : new StringContent(
+                    request.Body,
+                    Encoding.UTF8,
+                    $"application/json"),
         };
         if (token != null)
         {
@@ -52,8 +55,10 @@ $"application/json"),
                 new AuthenticationHeaderValue($"Bearer", token);
         }
 
-        HttpResponseMessage response = await this.httpClient.SendAsync(message, ct).ConfigureAwait(false);
-        var body = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
+        HttpResponseMessage response = await this.httpClient
+            .SendAsync(message, ct).ConfigureAwait(false);
+        var body = await response.Content.ReadAsStringAsync(ct)
+            .ConfigureAwait(false);
         return new MiroResponse((int)response.StatusCode, body);
     }
 }

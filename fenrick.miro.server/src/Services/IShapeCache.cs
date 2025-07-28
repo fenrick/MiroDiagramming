@@ -1,6 +1,6 @@
 namespace Fenrick.Miro.Server.Services;
 
-using Fenrick.Miro.Server.Domain;
+using Domain;
 
 /// <summary>
 ///     Stores board shapes for quick lookup by board and item identifier.

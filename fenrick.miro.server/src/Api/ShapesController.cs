@@ -2,16 +2,17 @@ namespace Fenrick.Miro.Server.Api;
 
 using System.Text.Json;
 
-using Fenrick.Miro.Server.Domain;
-using Fenrick.Miro.Server.Services;
+using Domain;
 
 using Microsoft.AspNetCore.Mvc;
+
+using Services;
 
 /// <summary>
 ///     Endpoint for creating shape widgets through the Miro API.
 /// </summary>
 [ApiController]
-[Route("api/boards/{boardId}/shapes")]
+[Route($"api/boards/{{boardId}}/shapes")]
 public class ShapesController(IMiroClient client, IShapeCache cache)
     : ControllerBase
 {
@@ -24,10 +25,10 @@ public class ShapesController(IMiroClient client, IShapeCache cache)
         string boardId,
         [FromBody] ShapeData[] shapes)
     {
-        List<MiroResponse> responses = await this.miroClient.CreateAsync(
-                            $"/boards/{boardId}/shapes",
-                            shapes,
-                            this.HttpContext.RequestAborted).ConfigureAwait(false);
+        IList<MiroResponse> responses = await this.miroClient.CreateAsync(
+            $"/boards/{boardId}/shapes",
+            shapes,
+            this.HttpContext.RequestAborted).ConfigureAwait(false);
         for (var i = 0; i < responses.Count && i < shapes.Length; i++)
         {
             this.shapeCache.Store(
@@ -37,20 +38,20 @@ public class ShapesController(IMiroClient client, IShapeCache cache)
         return this.Ok(responses);
     }
 
-    [HttpDelete("{itemId}")]
+    [HttpDelete($"{{itemId}}")]
     public async Task<IActionResult> DeleteAsync(string boardId, string itemId)
     {
         MiroResponse response = await this.miroClient.SendAsync(
-                           new MiroRequest(
-$"DELETE",
-                               $"/boards/{boardId}/shapes/{itemId}",
+            new MiroRequest(
+                $"DELETE",
+                $"/boards/{boardId}/shapes/{itemId}",
 Body: null),
-                           this.HttpContext.RequestAborted).ConfigureAwait(false);
+            this.HttpContext.RequestAborted).ConfigureAwait(false);
         this.shapeCache.Remove(boardId, itemId);
         return this.Ok(response);
     }
 
-    [HttpPut("{itemId}")]
+    [HttpPut($"{{itemId}}")]
     public async Task<IActionResult> UpdateAsync(
         string boardId,
         string itemId,
@@ -58,16 +59,16 @@ Body: null),
     {
         var body = JsonSerializer.Serialize(shape);
         MiroResponse response = await this.miroClient.SendAsync(
-                           new MiroRequest(
-$"PUT",
-                               $"/boards/{boardId}/shapes/{itemId}",
-                               body),
-                           this.HttpContext.RequestAborted).ConfigureAwait(false);
+            new MiroRequest(
+                $"PUT",
+                $"/boards/{boardId}/shapes/{itemId}",
+                body),
+            this.HttpContext.RequestAborted).ConfigureAwait(false);
         this.shapeCache.Store(new ShapeCacheEntry(boardId, itemId, shape));
         return this.Ok(response);
     }
 
-    [HttpGet("{itemId}")]
+    [HttpGet($"{{itemId}}")]
     public async Task<IActionResult> GetAsync(string boardId, string itemId)
     {
         ShapeCacheEntry? cached = this.shapeCache.Retrieve(boardId, itemId);
@@ -78,11 +79,11 @@ $"PUT",
         }
 
         MiroResponse response = await this.miroClient.SendAsync(
-                           new MiroRequest(
-$"GET",
-                               $"/boards/{boardId}/shapes/{itemId}",
+            new MiroRequest(
+                $"GET",
+                $"/boards/{boardId}/shapes/{itemId}",
 Body: null),
-                           this.HttpContext.RequestAborted).ConfigureAwait(false);
+            this.HttpContext.RequestAborted).ConfigureAwait(false);
         ShapeData? data = JsonSerializer.Deserialize<ShapeData>(response.Body);
         if (data != null)
         {

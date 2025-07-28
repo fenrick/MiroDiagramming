@@ -1,17 +1,20 @@
+namespace Fenrick.Miro.Tests;
+
 using System;
 
-using Fenrick.Miro.Server.Data;
-using Fenrick.Miro.Server.Domain;
-using Fenrick.Miro.Server.Services;
+using Server.Data;
+using Server.Domain;
+using Server.Services;
 
 public class EfTemplateStoreTests
 {
     [Fact]
     public void MissingTemplateReturnsNull()
     {
-        DbContextOptions<MiroDbContext> options = new DbContextOptionsBuilder<MiroDbContext>()
-            .UseInMemoryDatabase($"tpl1")
-            .Options;
+        DbContextOptions<MiroDbContext> options =
+            new DbContextOptionsBuilder<MiroDbContext>()
+                .UseInMemoryDatabase($"tpl1")
+                .Options;
         using var db = new MiroDbContext(options);
         var store = new EfTemplateStore(db);
 
@@ -21,9 +24,10 @@ public class EfTemplateStoreTests
     [Fact]
     public void StoreAndRetrieveTemplate()
     {
-        DbContextOptions<MiroDbContext> options = new DbContextOptionsBuilder<MiroDbContext>()
-            .UseInMemoryDatabase($"tpl2")
-            .Options;
+        DbContextOptions<MiroDbContext> options =
+            new DbContextOptionsBuilder<MiroDbContext>()
+                .UseInMemoryDatabase($"tpl2")
+                .Options;
         using var db = new MiroDbContext(options);
         var store = new EfTemplateStore(db);
         var tpl = new TemplateDefinition(
@@ -39,15 +43,18 @@ public class EfTemplateStoreTests
     [Fact]
     public void UpdatesExistingTemplate()
     {
-        DbContextOptions<MiroDbContext> options = new DbContextOptionsBuilder<MiroDbContext>()
-            .UseInMemoryDatabase($"tpl_update")
-            .Options;
+        DbContextOptions<MiroDbContext> options =
+            new DbContextOptionsBuilder<MiroDbContext>()
+                .UseInMemoryDatabase($"tpl_update")
+                .Options;
         using var db = new MiroDbContext(options);
         var store = new EfTemplateStore(db);
-        var tpl = new TemplateDefinition([new TemplateElement($"r", 10, 10, "t1")]);
+        var tpl =
+            new TemplateDefinition([new TemplateElement($"r", 10, 10, $"t1")]);
 
         store.SetTemplate($"u1", $"A", tpl);
-        store.SetTemplate($"u1", $"A", new TemplateDefinition([new TemplateElement($"r", 10, 10, "t2")]));
+        store.SetTemplate($"u1", $"A",
+            new TemplateDefinition([new TemplateElement($"r", 10, 10, $"t2")]));
 
         Assert.Equal($"t2", store.GetTemplate($"u1", $"A")!.Elements[0].Text);
     }
@@ -55,9 +62,10 @@ public class EfTemplateStoreTests
     [Fact]
     public void GetTemplateThrowsForInvalidArgs()
     {
-        DbContextOptions<MiroDbContext> options = new DbContextOptionsBuilder<MiroDbContext>()
-            .UseInMemoryDatabase($"tpl_invalid")
-            .Options;
+        DbContextOptions<MiroDbContext> options =
+            new DbContextOptionsBuilder<MiroDbContext>()
+                .UseInMemoryDatabase($"tpl_invalid")
+                .Options;
         using var db = new MiroDbContext(options);
         var store = new EfTemplateStore(db);
 

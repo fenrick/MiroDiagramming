@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 using ClosedXML.Excel;
 
-using Fenrick.Miro.Server.Services;
-
 using Microsoft.Extensions.Logging;
+
+using Server.Services;
 
 using Xunit;
 
@@ -31,8 +31,9 @@ public class ExcelLoaderTests
         ms.Position = 0;
 
         var loader = new ExcelLoader();
-        await loader.LoadAsync(ms);
-        IReadOnlyList<Dictionary<string, string>> rows = loader.LoadSheet($"Sheet1");
+        await loader.LoadAsync(ms).ConfigureAwait(false);
+        IReadOnlyList<Dictionary<string, string>> rows =
+            loader.LoadSheet($"Sheet1");
 
         Assert.Single(rows);
         Assert.Equal($"Alice", rows[0][$"Name"]);
@@ -46,13 +47,13 @@ public class ExcelLoaderTests
         IXLWorksheet ws = wb.Worksheets.Add($"Sheet1");
         ws.Cell(1, 1).Value = $"A";
         ws.Cell(2, 1).Value = 1;
-        wb.NamedRanges.Add($"Table1", ws.Range($"A1:A2"));
+        wb.DefinedNames.Add($"Table1", ws.Range($"A1:A2"));
         using var ms = new MemoryStream();
         wb.SaveAs(ms);
         ms.Position = 0;
 
         var loader = new ExcelLoader();
-        await loader.LoadAsync(ms);
+        await loader.LoadAsync(ms).ConfigureAwait(false);
 
         Assert.Contains($"Table1", loader.ListNamedTables());
     }
@@ -66,14 +67,15 @@ public class ExcelLoaderTests
         ws.Cell(1, 2).Value = $"Value";
         ws.Cell(2, 1).Value = $"A";
         ws.Cell(2, 2).Value = 1;
-        wb.NamedRanges.Add($"Table1", ws.Range($"A1:B2"));
+        wb.DefinedNames.Add($"Table1", ws.Range($"A1:B2"));
         using var ms = new MemoryStream();
         wb.SaveAs(ms);
         ms.Position = 0;
 
         var loader = new ExcelLoader();
-        await loader.LoadAsync(ms);
-        IReadOnlyList<Dictionary<string, string>> rows = loader.LoadNamedTable($"Table1");
+        await loader.LoadAsync(ms).ConfigureAwait(false);
+        IReadOnlyList<Dictionary<string, string>> rows =
+            loader.LoadNamedTable($"Table1");
 
         Assert.Single(rows);
         Assert.Equal($"A", rows[0][$"Name"]);
@@ -85,7 +87,8 @@ public class ExcelLoaderTests
         var loader = new ExcelLoader();
 
         Assert.Empty(loader.ListNamedTables());
-        Assert.Throws<InvalidOperationException>(() => loader.LoadNamedTable($"T1"));
+        Assert.Throws<InvalidOperationException>(() =>
+            loader.LoadNamedTable($"T1"));
     }
 
     [Fact]
@@ -99,9 +102,10 @@ public class ExcelLoaderTests
         ms.Position = 0;
 
         var loader = new ExcelLoader();
-        await loader.LoadAsync(ms);
+        await loader.LoadAsync(ms).ConfigureAwait(false);
 
-        Assert.Throws<ArgumentException>(() => loader.LoadNamedTable($"Missing"));
+        Assert.Throws<ArgumentException>(() =>
+            loader.LoadNamedTable($"Missing"));
     }
 
     [Fact]
@@ -115,13 +119,13 @@ public class ExcelLoaderTests
         ms.Position = 0;
 
         var loader = new ExcelLoader();
-        await loader.LoadAsync(ms);
+        await loader.LoadAsync(ms).ConfigureAwait(false);
 
         Assert.Throws<ArgumentException>(() => loader.LoadNamedTable($"Bad"));
     }
 
     [Fact]
-    public async Task LoadAsyncLogsLifecycle()
+    public async Task LoadAsyncLogsLifecycleAsync()
     {
         using var wb = new XLWorkbook();
         wb.Worksheets.Add($"Sheet1");
@@ -131,10 +135,15 @@ public class ExcelLoaderTests
 
         var logger = new CaptureLogger<ExcelLoader>();
         var loader = new ExcelLoader(logger);
-        await loader.LoadAsync(ms);
+        await loader.LoadAsync(ms).ConfigureAwait(false);
 
-        Assert.Contains(logger.Entries, l => l.Level == LogLevel.Debug && l.Message.Contains($"Loading workbook", StringComparison.Ordinal));
-        Assert.Contains(logger.Entries, l => l.Message.Contains($"Workbook loaded", StringComparison.Ordinal));
+        Assert.Contains(logger.Entries,
+            l => l.Level == LogLevel.Debug &&
+                 l.Message.Contains($"Loading workbook",
+                     StringComparison.Ordinal));
+        Assert.Contains(logger.Entries,
+            l => l.Message.Contains($"Workbook loaded",
+                StringComparison.Ordinal));
     }
 
     [Fact]
@@ -159,9 +168,11 @@ public class ExcelLoaderTests
         ms.Position = 0;
 
         var loader = new ExcelLoader();
-        await loader.LoadAsync(ms);
+        await loader.LoadAsync(ms).ConfigureAwait(false);
         var results = new List<Dictionary<string, string>>();
-        await foreach (Dictionary<string, string> r in loader.StreamSheet($"Sheet1").ConfigureAwait(false).ConfigureAwait(false))
+        await foreach (Dictionary<string, string> r in loader
+                           .StreamSheetAsync($"Sheet1").ConfigureAwait(false)
+                           .ConfigureAwait(false))
         {
             results.Add(r);
         }
@@ -177,15 +188,17 @@ public class ExcelLoaderTests
         IXLWorksheet ws = wb.Worksheets.Add($"Sheet1");
         ws.Cell(1, 1).Value = $"Value";
         ws.Cell(2, 1).Value = 1;
-        wb.NamedRanges.Add($"Table1", ws.Range($"A1:A2"));
+        wb.DefinedNames.Add($"Table1", ws.Range($"A1:A2"));
         using var ms = new MemoryStream();
         wb.SaveAs(ms);
         ms.Position = 0;
 
         var loader = new ExcelLoader();
-        await loader.LoadAsync(ms);
+        await loader.LoadAsync(ms).ConfigureAwait(false);
         var results = new List<Dictionary<string, string>>();
-        await foreach (Dictionary<string, string> r in loader.StreamNamedTable($"Table1").ConfigureAwait(false).ConfigureAwait(false))
+        await foreach (Dictionary<string, string> r in loader
+                           .StreamNamedTableAsync($"Table1").ConfigureAwait(false)
+                           .ConfigureAwait(false))
         {
             results.Add(r);
         }
@@ -200,33 +213,20 @@ public class ExcelLoaderTests
         var loader = new ExcelLoader();
         await Assert.ThrowsAsync<InvalidOperationException>(async () =>
         {
-            await foreach (Dictionary<string, string> _ in loader.StreamSheet($"A").ConfigureAwait(false).ConfigureAwait(false))
+            await foreach (Dictionary<string, string> _ in loader
+                               .StreamSheetAsync($"A").ConfigureAwait(false)
+                               .ConfigureAwait(false))
             {
             }
-        });
+        }).ConfigureAwait(false);
 
         await Assert.ThrowsAsync<InvalidOperationException>(async () =>
         {
-            await foreach (Dictionary<string, string> _ in loader.StreamNamedTable($"A").ConfigureAwait(false).ConfigureAwait(false))
+            await foreach (Dictionary<string, string> _ in loader
+                               .StreamNamedTableAsync($"A").ConfigureAwait(false)
+                               .ConfigureAwait(false))
             {
             }
-        });
-    }
-}
-
-internal sealed class CaptureLogger<T> : ILogger<T>
-{
-    public List<(LogLevel Level, string Message)> Entries { get; } = [];
-
-    public IDisposable BeginScope<TState>(TState state) => NullScope.Instance;
-
-    public bool IsEnabled(LogLevel logLevel) => true;
-
-    public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter) => this.Entries.Add((logLevel, formatter(state, exception)));
-
-    private sealed class NullScope : IDisposable
-    {
-        public static readonly NullScope Instance = new();
-        public void Dispose() { }
+        }).ConfigureAwait(false);
     }
 }

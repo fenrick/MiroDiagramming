@@ -5,8 +5,8 @@ namespace Fenrick.Miro.Tests.NewFeatures;
 using System.Collections.Generic;
 using System.Linq;
 
-using Fenrick.Miro.Server.Domain;
-using Fenrick.Miro.Server.Services;
+using Server.Domain;
+using Server.Services;
 
 using Xunit;
 
@@ -16,10 +16,9 @@ public class ObjectMatcherTests
     public void FindsShapeByLabelIgnoringCase()
     {
         var shapes = new List<ShapeData>
-                     {
-                         new($"r", 0, 0, 1, 1, null, $"Alpha", null),
-                         new($"r", 0, 0, 1, 1, null, $"Beta", null),
-                     };
+        {
+            new($"r", 0, 0, 1, 1, null, $"Alpha", null), new($"r", 0, 0, 1, 1, null, $"Beta", null),
+        };
 
         ShapeData? result = ObjectMatcher.FindShapeByLabel(shapes, $"beta");
 
@@ -31,26 +30,26 @@ public class ObjectMatcherTests
     public void FindsShapesByStyleMatch()
     {
         var shapes = new List<ShapeData>
-                     {
-                         new(
-$"r",
-                             0,
-                             0,
-                             1,
-                             1,
-                             null,
-                             null,
-                             new Dictionary<string, object>(System.StringComparer.Ordinal) { [$"color"] = $"red"}),
-                         new(
-$"r",
-                             0,
-                             0,
-                             1,
-                             1,
-                             null,
-                             null,
-                             new Dictionary<string, object>(System.StringComparer.Ordinal) { [$"color"] = $"blue"}),
-                     };
+        {
+            new(
+                $"r",
+                0,
+                0,
+                1,
+                1,
+                null,
+                null,
+                new Dictionary<string, object>(System.StringComparer.Ordinal) { [$"color"] = $"red" }),
+            new(
+                $"r",
+                0,
+                0,
+                1,
+                1,
+                null,
+                null,
+                new Dictionary<string, object>(System.StringComparer.Ordinal) { [$"color"] = $"blue" }),
+        };
 
         var results =
             ObjectMatcher.FindShapesByStyle(shapes, $"color", $"blue").ToList();
@@ -62,10 +61,7 @@ $"r",
     [Fact]
     public void FindShapesByStyleHandlesMissing()
     {
-        var shapes = new List<ShapeData>
-                     {
-                         new($"r", 0, 0, 1, 1, null, null, null),
-                     };
+        var shapes = new List<ShapeData> { new($"r", 0, 0, 1, 1, null, null, null) };
 
         var results =
             ObjectMatcher.FindShapesByStyle(shapes, $"color", $"red").ToList();
@@ -77,17 +73,17 @@ $"r",
     public void FindShapesByStyleComparesStringsCaseInsensitive()
     {
         var shapes = new List<ShapeData>
-                     {
-                         new(
-$"r",
-                             0,
-                             0,
-                             1,
-                             1,
-                             null,
-                             null,
-                             new Dictionary<string, object>(System.StringComparer.Ordinal) { [$"color"] = $"Red"}),
-                     };
+        {
+            new(
+                $"r",
+                0,
+                0,
+                1,
+                1,
+                null,
+                null,
+                new Dictionary<string, object>(System.StringComparer.Ordinal) { [$"color"] = $"Red" }),
+        };
 
         var results =
             ObjectMatcher.FindShapesByStyle(shapes, $"color", $"red").ToList();

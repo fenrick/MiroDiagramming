@@ -1,9 +1,10 @@
 namespace Fenrick.Miro.Server.Api;
 
-using Fenrick.Miro.Server.Domain;
-using Fenrick.Miro.Server.Services;
+using Domain;
 
 using Microsoft.AspNetCore.Mvc;
+
+using Services;
 
 /// <summary>
 ///     Endpoint for creating card widgets through the Miro API.
@@ -17,10 +18,10 @@ public class CardsController(IMiroClient client) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateAsync([FromBody] CardData[] cards)
     {
-        List<MiroResponse> responses = await this.miroClient.CreateAsync(
-$"/cards",
-                            cards,
-                            this.HttpContext.RequestAborted).ConfigureAwait(false);
+        IList<MiroResponse> responses = await this.miroClient.CreateAsync(
+            $"/cards",
+            cards,
+            this.HttpContext.RequestAborted).ConfigureAwait(false);
         return this.Ok(responses);
     }
 }

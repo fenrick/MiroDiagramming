@@ -4,12 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using Fenrick.Miro.Server.Domain;
+using Domain;
 
 /// <summary>
 ///     Utility helpers for matching board objects by content.
 /// </summary>
-
 public static class ObjectMatcher
 {
     /// <summary>
@@ -49,8 +48,9 @@ public static class ObjectMatcher
         return shapes.Where(s =>
             s.Style != null
             && s.Style.TryGetValue(key, out var v)
-            && ((v is string sv && value is string svExpect)
-                ? string.Equals(sv, svExpect, StringComparison.OrdinalIgnoreCase)
+            && (v is string sv && value is string svExpect
+                ? string.Equals(sv, svExpect,
+                    StringComparison.OrdinalIgnoreCase)
                 : Equals(v, value)));
     }
 }

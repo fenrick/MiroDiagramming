@@ -1,8 +1,8 @@
 namespace Fenrick.Miro.Tests.NewFeatures;
 
 #nullable enable
-using Fenrick.Miro.Server.Domain;
-using Fenrick.Miro.Server.Services;
+using Server.Domain;
+using Server.Services;
 
 using Xunit;
 
@@ -12,7 +12,10 @@ public class LayoutEngineTests
     public void LayoutPositionsNodesVertically()
     {
         var data = new GraphData(
-            [new GraphNode("n1", "A", "t"), new GraphNode("n2", "B", "t")],
+            [
+                new GraphNode($"n1", $"A", $"t"),
+                new GraphNode($"n2", $"B", $"t"),
+            ],
             []);
 
         LayoutResult result = LayoutEngine.Layout(data);

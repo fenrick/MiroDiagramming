@@ -6,59 +6,65 @@ using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Fenrick.Miro.Server.Domain;
-using Fenrick.Miro.Server.Services;
+using Server.Domain;
+using Server.Services;
 
 using Xunit;
 
 public class ShapeQueueProcessorTests
 {
     [Fact]
-    public async Task ConcurrentProcessCallsAreSerialised()
+    public async Task ConcurrentProcessCallsAreSerialisedAsync()
     {
         var client = new StubClient();
         var proc = new ShapeQueueProcessor(client);
         proc.EnqueueCreate(
-            [
-                new ShapeData("r", 0, 0, 1, 1, Rotation: null, Text: null, Style: null),
-            ]);
-        Task<List<MiroResponse>> t1 = proc.ProcessAsync();
-        Task<List<MiroResponse>> t2 = proc.ProcessAsync();
+        [
+            new ShapeData($"r", 0, 0, 1, 1, Rotation: null, Text: null,
+Style: null),
+        ]);
+        Task<IList<MiroResponse>> t1 = proc.ProcessAsync();
+        Task<IList<MiroResponse>> t2 = proc.ProcessAsync();
 
-        await Task.WhenAll(t1, t2);
+        await Task.WhenAll(t1, t2).ConfigureAwait(false);
 
         Assert.Equal(1, client.Count);
     }
 
     [Fact]
-    public async Task ProcessAsyncPostsSequentialBatches()
+    public async Task ProcessAsyncPostsSequentialBatchesAsync()
     {
         var client = new StubClient();
         var proc = new ShapeQueueProcessor(client) { BatchSize = 20 };
         var shapes = new List<ShapeData>();
         for (var i = 0; i < 25; i++)
         {
-            shapes.Add(new ShapeData("r", 0, 0, 1, 1, Rotation: null, Text: null, Style: null));
+            shapes.Add(new ShapeData($"r", 0, 0, 1, 1, Rotation: null,
+Text: null, Style: null));
         }
 
         proc.EnqueueCreate(shapes);
 
-        List<MiroResponse> responses = await proc.ProcessAsync();
+        IList<MiroResponse> responses = await proc.ProcessAsync().ConfigureAwait(false);
 
         Assert.Equal(25, client.Count);
         Assert.Equal(25, responses.Count);
     }
 
     [Fact]
-    public Task DisposePreventsProcessing()
+    public Task DisposePreventsProcessingAsync()
     {
         var client = new StubClient();
         var proc = new ShapeQueueProcessor(client);
-        proc.EnqueueCreate([new ShapeData("r", 0, 0, 1, 1, Rotation: null, Text: null, Style: null)]);
+        proc.EnqueueCreate([
+            new ShapeData($"r", 0, 0, 1, 1, Rotation: null, Text: null,
+Style: null),
+        ]);
 
         proc.Dispose();
 
-        return Assert.ThrowsAsync<ObjectDisposedException>(() => proc.ProcessAsync());
+        return Assert.ThrowsAsync<ObjectDisposedException>(() =>
+            proc.ProcessAsync());
     }
 
     // TODO expand tests to cover modify and delete queues once implemented in

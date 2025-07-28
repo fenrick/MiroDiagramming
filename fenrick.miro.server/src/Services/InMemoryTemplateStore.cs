@@ -2,7 +2,7 @@ namespace Fenrick.Miro.Server.Services;
 
 using System.Collections.Generic;
 
-using Fenrick.Miro.Server.Domain;
+using Domain;
 
 /// <summary>
 ///     Manage user specific template collections in memory.
@@ -25,7 +25,8 @@ public class InMemoryTemplateStore : ITemplateStore
     /// <param name="name">Template name.</param>
     /// <returns>The stored template or <see langword="null"/>.</returns>
     public TemplateDefinition? GetTemplate(string userId, string name) =>
-        this.store.TryGetValue(userId, out Dictionary<string, TemplateDefinition>? map)
+        this.store.TryGetValue(userId,
+            out Dictionary<string, TemplateDefinition>? map)
         && map.TryGetValue(name, out TemplateDefinition? tpl)
             ? tpl
             : null;
@@ -41,7 +42,8 @@ public class InMemoryTemplateStore : ITemplateStore
         string name,
         TemplateDefinition definition)
     {
-        if (!this.store.TryGetValue(userId, out Dictionary<string, TemplateDefinition>? map))
+        if (!this.store.TryGetValue(userId,
+                out Dictionary<string, TemplateDefinition>? map))
         {
             map = [];
             this.store[userId] = map;

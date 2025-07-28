@@ -1,6 +1,7 @@
 namespace Fenrick.Miro.Server.Domain;
 
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 /// <summary>
 ///     Log entry forwarded from the client application.
@@ -10,7 +11,13 @@ using System.ComponentModel.DataAnnotations;
 /// <param name="Message">Message text.</param>
 /// <param name="Context">Optional structured context data.</param>
 public record ClientLogEntry(
-    [property: Required] DateTime Timestamp,
-    [property: Required] string Level,
-    [property: Required] string Message,
-    Dictionary<string, string>? Context);
+    [property: Required]
+    [property: JsonRequired]
+    DateTime? Timestamp,
+    [property: Required]
+    [property: JsonRequired]
+    string Level,
+    [property: Required]
+    [property: JsonRequired]
+    string Message,
+    IDictionary<string, string>? Context);

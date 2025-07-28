@@ -1,83 +1,104 @@
+namespace Fenrick.Miro.Server;
+
 using System.Globalization;
 
-using Fenrick.Miro.Server.Data;
-using Fenrick.Miro.Server.Services;
+using Data;
 
 using Microsoft.EntityFrameworkCore;
 
 using Serilog;
 
-WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
-builder.Host.UseSerilog((_, cfg) =>
-    cfg.WriteTo.Console(formatProvider: CultureInfo.InvariantCulture));
+using Services;
 
-builder.AddServiceDefaults();
-
-// Add services to the container.
-builder.Services.AddControllers();
-var pg = builder.Configuration.GetConnectionString($"postgres");
-var sqlite =
-    builder.Configuration.GetConnectionString($"sqlite") ?? $"Data Source=app.db";
-if (builder.Environment.IsProduction() && !string.IsNullOrEmpty(pg))
+public class Program
 {
-    builder.Services.AddDbContext<MiroDbContext>(opt => opt.UseNpgsql(pg));
-}
-else
-{
-    builder.Services.AddDbContext<MiroDbContext>(opt => opt.UseSqlite(sqlite));
-}
-builder.Services.AddScoped<IUserStore, EfUserStore>();
-builder.Services.AddScoped<ITemplateStore, EfTemplateStore>();
-builder.Services.AddSingleton<ILogSink, SerilogSink>();
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddHttpClient<IMiroClient, MiroRestClient>();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddSingleton<IShapeCache, InMemoryShapeCache>();
-builder.Services.AddScoped<ITagService, TagService>();
-
-WebApplication app = builder.Build();
-
-var applyMigrations = builder.Configuration.GetValue($"ApplyMigrations", defaultValue: true);
-if (applyMigrations)
-{
-    // Apply migrations so the schema matches the EF Core model.
-    using IServiceScope scope = app.Services.CreateScope();
-    MiroDbContext db = scope.ServiceProvider.GetRequiredService<MiroDbContext>();
-    await db.Database.MigrateAsync().ConfigureAwait(false);
-}
-
-app.MapDefaultEndpoints();
-
-app.UseDefaultFiles();
-app.MapStaticAssets();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-if (!app.Environment.IsDevelopment())
-{
-    app.UseHttpsRedirection();
-}
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.MapFallbackToFile($"/index.html");
-
-await app.RunAsync().ConfigureAwait(false);
-
-/// <summary>
-///     Exposes the entry point for integration tests.
-/// </summary>
-public partial class Program
-{
+    /// <summary>
+    ///     Exposes the entry point for integration tests.
+    /// </summary>
     protected Program()
     {
+    }
+
+    public static Task Main(string[] args)
+    {
+        // Create host builder
+        WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+        builder.Host.UseSerilog(ConfigureLogger);
+
+        builder.AddServiceDefaults();
+
+        ConfigureServices(builder);
+
+        WebApplication app = builder.Build();
+
+        ConfigureWebApp(app);
+
+        return app.RunAsync();
+    }
+
+    private static void ConfigureLogger(HostBuilderContext context,
+        IServiceProvider services, LoggerConfiguration configuration) => configuration.WriteTo.Console(
+        formatProvider: CultureInfo.InvariantCulture);
+
+    private static void ConfigureWebApp(WebApplication app)
+    {
+        IConfiguration configuration = app.Configuration;
+
+        var applyMigrations = configuration.GetValue($"ApplyMigrations", defaultValue: true);
+        if (applyMigrations)
+        {
+            // Apply migrations so the schema matches the EF Core model.
+            using IServiceScope scope = app.Services.CreateScope();
+            MiroDbContext db = scope.ServiceProvider.GetRequiredService<MiroDbContext>();
+            db.Database.Migrate();
+        }
+
+        app.MapDefaultControllerRoute();
+        app.UseDefaultFiles();
+        app.MapStaticAssets();
+
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
+        else
+        {
+            app.UseHttpsRedirection();
+        }
+
+        app.UseAuthorization();
+        app.MapControllers();
+        app.MapFallbackToFile($"/index.html");
+    }
+
+    private static void ConfigureServices(WebApplicationBuilder builder)
+    {
+        IServiceCollection services = builder.Services;
+        IWebHostEnvironment environment = builder.Environment;
+
+        // add controllers
+        services.AddControllers();
+
+        // Configure EF Core DbContext
+        if (environment.IsProduction())
+        {
+            builder.AddNpgsqlDbContext<MiroDbContext>(connectionName: $"MiroDBContext");
+        }
+        else
+        {
+            builder.AddSqliteDbContext<MiroDbContext>(name: $"MiroDBContext");
+        }
+
+        // Register application services
+        services.AddScoped<IUserStore, EfUserStore>();
+        services.AddScoped<ITemplateStore, EfTemplateStore>();
+        services.AddSingleton<ILogSink, SerilogSink>();
+        services.AddHttpContextAccessor();
+        services.AddHttpClient<IMiroClient, MiroRestClient>();
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen();
+        services.AddSingleton<IShapeCache, InMemoryShapeCache>();
+        services.AddScoped<ITagService, TagService>();
     }
 }

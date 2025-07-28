@@ -1,6 +1,6 @@
 namespace Fenrick.Miro.Server.Services;
 
-using Fenrick.Miro.Server.Domain;
+using Domain;
 
 /// <summary>
 ///     Processes shape creation requests sequentially.
@@ -45,7 +45,7 @@ public sealed class ShapeQueueProcessor(IMiroClient client) : IDisposable
     /// <summary>
     ///     Process queued shapes one request at a time.
     /// </summary>
-    public async Task<List<MiroResponse>> ProcessAsync(
+    public async Task<IList<MiroResponse>> ProcessAsync(
         CancellationToken ct = default)
     {
         var results = new List<MiroResponse>();
@@ -57,8 +57,8 @@ public sealed class ShapeQueueProcessor(IMiroClient client) : IDisposable
                 ShapeData[] batch = [.. this.DequeueBatch(this.BatchSize)];
 
                 // TODO validate shapes against board cache and prioritise modify operations
-                List<MiroResponse> res = await this.miroClient.CreateAsync(
-$"/shapes",
+                IList<MiroResponse> res = await this.miroClient.CreateAsync(
+                    $"/shapes",
                     batch,
                     ct).ConfigureAwait(false);
                 results.AddRange(res);

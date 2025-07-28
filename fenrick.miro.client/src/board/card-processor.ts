@@ -6,6 +6,7 @@ import { TagClient } from '../core/utils/tag-client';
 interface GlobalWithMiro {
   miro?: { board?: { id?: string } };
 }
+
 import { BoardBuilder } from './board-builder';
 import { clearActiveFrame, registerFrame } from './frame-utils';
 import { calculateGrid } from './grid-layout';

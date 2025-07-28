@@ -7,11 +7,11 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Fenrick.Miro.Server.Api;
-using Fenrick.Miro.Server.Domain;
-using Fenrick.Miro.Server.Services;
-
 using Microsoft.AspNetCore.Mvc;
+
+using Server.Api;
+using Server.Domain;
+using Server.Services;
 
 using Xunit;
 
@@ -38,7 +38,8 @@ public class UsersControllerTests
 
         public UserInfo? Retrieve(string userId) => null;
 
-        public Task<UserInfo?> RetrieveAsync(string userId, CancellationToken ct = default) =>
+        public Task<UserInfo?> RetrieveAsync(string userId,
+            CancellationToken ct = default) =>
             Task.FromResult<UserInfo?>(null);
 
         public void Store(UserInfo info) => this.callback(info);
@@ -53,7 +54,8 @@ public class UsersControllerTests
         {
         }
 
-        public Task DeleteAsync(string userId, CancellationToken ct = default) =>
+        public Task DeleteAsync(string userId,
+            CancellationToken ct = default) =>
             Task.CompletedTask;
     }
 }

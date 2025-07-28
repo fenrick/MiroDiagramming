@@ -3,12 +3,12 @@ namespace Fenrick.Miro.Tests;
 using System;
 using System.Collections.Generic;
 
-using Fenrick.Miro.Server.Domain;
-using Fenrick.Miro.Server.Services;
-
 using Serilog;
 using Serilog.Core;
 using Serilog.Events;
+
+using Server.Domain;
+using Server.Services;
 
 using Xunit;
 
@@ -28,8 +28,8 @@ public class SerilogSinkTests
 
         var entry = new ClientLogEntry(
             DateTime.UnixEpoch,
-$"warn",
-$"hello",
+            $"warn",
+            $"hello",
 Context: null);
         sink.Store([entry]);
 
@@ -48,8 +48,8 @@ Context: null);
 
         var entry = new ClientLogEntry(
             DateTime.UnixEpoch,
-$"info",
-$"hello",
+            $"info",
+            $"hello",
 Context: null);
         sink.Store([entry]);
 

@@ -1,6 +1,6 @@
 namespace Fenrick.Miro.Server.Api;
 
-using Fenrick.Miro.Server.Domain;
+using Domain;
 
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,9 +19,4 @@ public class WebhookController(IEventSink sink) : ControllerBase
         this.eventSink.Enqueue(evt);
         return this.Accepted();
     }
-}
-
-public interface IEventSink
-{
-    public void Enqueue(WebhookEvent evt);
 }

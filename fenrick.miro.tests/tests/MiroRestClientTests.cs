@@ -8,23 +8,23 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Fenrick.Miro.Server.Domain;
-using Fenrick.Miro.Server.Services;
-
 using Microsoft.AspNetCore.Http;
+
+using Server.Domain;
+using Server.Services;
 
 using Xunit;
 
 public class MiroRestClientTests
 {
     [Fact]
-    public async Task SendAsyncAddsBearerToken()
+    public async Task SendAsyncAddsBearerTokenAsync()
     {
         var handler = new StubHandler();
         var httpClient =
             new HttpClient(handler) { BaseAddress = new Uri($"http://x") };
         var store = new InMemoryUserStore();
-        await store.StoreAsync(new UserInfo($"u1", $"Bob", $"tok"));
+        await store.StoreAsync(new UserInfo($"u1", $"Bob", $"tok")).ConfigureAwait(false);
         var ctx = new DefaultHttpContext();
         ctx.Request.Headers[$"X-User-Id"] = $"u1";
         var client = new MiroRestClient(
@@ -32,7 +32,8 @@ public class MiroRestClientTests
             store,
             new HttpContextAccessor { HttpContext = ctx });
 
-        await client.SendAsync(new MiroRequest($"GET", $"/", Body: null), ctx.RequestAborted);
+        await client.SendAsync(new MiroRequest($"GET", $"/", Body: null),
+            ctx.RequestAborted).ConfigureAwait(false);
 
         Assert.Equal($"Bearer", handler.Request?.Headers.Authorization?.Scheme);
         Assert.Equal($"tok", handler.Request?.Headers.Authorization?.Parameter);
@@ -50,10 +51,7 @@ public class MiroRestClientTests
         {
             this.Request = request;
             return Task.FromResult(
-                new HttpResponseMessage(HttpStatusCode.OK)
-                {
-                    Content = new StringContent("{}"),
-                });
+                new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent($"{{}}") });
         }
     }
 }

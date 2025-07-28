@@ -3,7 +3,7 @@ namespace Fenrick.Miro.Server.Services;
 using System.Text.Json;
 using System.Threading;
 
-using Fenrick.Miro.Server.Domain;
+using Domain;
 
 /// <summary>
 ///     Helper methods for interacting with the Miro REST API via
@@ -19,7 +19,7 @@ public static class MiroClientExtensions
     /// <param name="path">Endpoint path, e.g. "/cards".</param>
     /// <param name="items">Items to create.</param>
     /// <returns>Responses returned by the API.</returns>
-    public static async Task<List<MiroResponse>> CreateAsync<T>(
+    public static async Task<IList<MiroResponse>> CreateAsync<T>(
         this IMiroClient client,
         string path,
         IEnumerable<T> items,
@@ -32,8 +32,8 @@ public static class MiroClientExtensions
             {
                 var body = JsonSerializer.Serialize(item);
                 MiroResponse response = await client.SendAsync(
-                                   new MiroRequest($"POST", path, body),
-                                   ct).ConfigureAwait(false);
+                    new MiroRequest($"POST", path, body),
+                    ct).ConfigureAwait(false);
                 responses.Add(response);
             }
         }

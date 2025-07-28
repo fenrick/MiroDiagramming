@@ -4,8 +4,9 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Fenrick.Miro.Server.Data;
-using Fenrick.Miro.Server.Domain;
+using Data;
+
+using Domain;
 
 /// <summary>
 ///     User store backed by Entity Framework Core.
@@ -20,23 +21,31 @@ public class EfUserStore(MiroDbContext context) : IUserStore
     {
         if (string.IsNullOrWhiteSpace(userId))
         {
-            throw new ArgumentException($"User id must be provided", nameof(userId));
+            throw new ArgumentException($"User id must be provided",
+                nameof(userId));
         }
 
         UserEntity? entity = this.db.Users.Find(userId);
-        return entity is null ? null : new UserInfo(entity.Id, entity.Name, entity.Token);
+        return entity is null
+            ? null
+            : new UserInfo(entity.Id, entity.Name, entity.Token);
     }
 
     /// <inheritdoc />
-    public async Task<UserInfo?> RetrieveAsync(string userId, CancellationToken ct = default)
+    public async Task<UserInfo?> RetrieveAsync(string userId,
+        CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(userId))
         {
-            throw new ArgumentException($"User id must be provided", nameof(userId));
+            throw new ArgumentException($"User id must be provided",
+                nameof(userId));
         }
 
-        UserEntity? entity = await this.db.Users.FindAsync([userId], ct).ConfigureAwait(false);
-        return entity is null ? null : new UserInfo(entity.Id, entity.Name, entity.Token);
+        UserEntity? entity = await this.db.Users.FindAsync([userId], ct)
+            .ConfigureAwait(false);
+        return entity is null
+            ? null
+            : new UserInfo(entity.Id, entity.Name, entity.Token);
     }
 
     /// <inheritdoc />
@@ -44,7 +53,8 @@ public class EfUserStore(MiroDbContext context) : IUserStore
     {
         if (string.IsNullOrWhiteSpace(info.Id))
         {
-            throw new ArgumentException($"User id must be provided", nameof(info));
+            throw new ArgumentException($"User id must be provided",
+                nameof(info));
         }
 
         UserEntity? entity = this.db.Users.Find(info.Id);
@@ -66,13 +76,17 @@ public class EfUserStore(MiroDbContext context) : IUserStore
     {
         if (string.IsNullOrWhiteSpace(info.Id))
         {
-            throw new ArgumentException($"User id must be provided", nameof(info));
+            throw new ArgumentException($"User id must be provided",
+                nameof(info));
         }
 
-        UserEntity? entity = await this.db.Users.FindAsync([info.Id], ct).ConfigureAwait(false);
+        UserEntity? entity = await this.db.Users.FindAsync([info.Id], ct)
+            .ConfigureAwait(false);
         if (entity is null)
         {
-            await this.db.Users.AddAsync(new UserEntity { Id = info.Id, Name = info.Name, Token = info.Token }, ct).ConfigureAwait(false);
+            await this.db.Users
+                .AddAsync(
+                    new UserEntity { Id = info.Id, Name = info.Name, Token = info.Token }, ct).ConfigureAwait(false);
         }
         else
         {
@@ -88,7 +102,8 @@ public class EfUserStore(MiroDbContext context) : IUserStore
     {
         if (string.IsNullOrWhiteSpace(userId))
         {
-            throw new ArgumentException($"User id must be provided", nameof(userId));
+            throw new ArgumentException($"User id must be provided",
+                nameof(userId));
         }
 
         UserEntity? entity = this.db.Users.Find(userId);
@@ -104,10 +119,12 @@ public class EfUserStore(MiroDbContext context) : IUserStore
     {
         if (string.IsNullOrWhiteSpace(userId))
         {
-            throw new ArgumentException($"User id must be provided", nameof(userId));
+            throw new ArgumentException($"User id must be provided",
+                nameof(userId));
         }
 
-        UserEntity? entity = await this.db.Users.FindAsync([userId], ct).ConfigureAwait(false);
+        UserEntity? entity = await this.db.Users.FindAsync([userId], ct)
+            .ConfigureAwait(false);
         if (entity != null)
         {
             this.db.Users.Remove(entity);
