@@ -1,0 +1,7 @@
+<Solution>
+    <Project Path="fenrick.miro.apphost/fenrick.miro.apphost.csproj"/>
+    <Project Path="fenrick.miro.server/fenrick.miro.server.csproj"/>
+    <Project
+        Path="fenrick.miro.servicedefaults/fenrick.miro.servicedefaults.csproj"/>
+    <Project Path="fenrick.miro.tests/fenrick.miro.tests.csproj"/>
+</Solution>

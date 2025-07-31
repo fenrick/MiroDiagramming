@@ -1,35 +1,149 @@
-# Development Notes
+# Development Guidelines
 
-All source files live in `src/**` with accompanying tests in `tests/**`.
+> **Context**
+> The codebase began as a Node-based service but now targets a full-stack **.NET Aspire backend** with a **React (TypeScript) frontend**. All new work follows the patterns, conventions, and tooling described below.
 
-Before committing changes run `npm install` to ensure dependencies are up to
-date and then:
+## Project Structure
 
-```
-npm run typecheck --silent
-npm test --silent
-npm run lint --silent
-npm run stylelint --silent
-npm run prettier --silent
+``` bash
+fenrick.miro.[module]/
+├── src/      – implementation code
+└── tests/    – unit and integration tests
 ```
 
-A Husky pre-commit hook now runs these commands automatically when creating a
-commit. Activate the hooks with `npm run prepare` after cloning.
+Backend code is **C# (nullable enabled)**. Frontend code is **TypeScript + React**.
 
-These commands run **ESLint**, **Stylelint** and **Prettier** to ensure a
-consistent codebase.
+## Object-Oriented Design Principles — **Mandatory**
 
-Commit messages **must** follow the
-[Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) format.
-Use `type(scope): summary` with types such as `feat`, `fix`, `docs` or `chore`
-so tools like semantic-release can parse the history correctly.
+Well-formed OO design maximises reuse, clarity, and long-term changeability.
 
-Refer to [docs/CODE_STYLE.md](docs/CODE_STYLE.md) for formatting and naming
-guidelines. Exported functions and complex logic should include documentation
-comments to aid readability. See [CONTRIBUTING.md](CONTRIBUTING.md) for the
-workflow and a link to the developer tutorial. Build and deployment steps are
-documented in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+| Principle                 | Practical Expectation                                                                                        |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| **Single Responsibility** | Keep each class focused; cyclomatic complexity ≤ 8.                                                          |
+| **Open/Closed**           | Design for extension via interfaces, abstract classes, and independ­ent modules. Avoid editing shipped code. |
+| **Liskov Substitution**   | Subtypes must honour base contracts; no “surprise” behaviour.                                                |
+| **Interface Segregation** | Favour small, purpose-built interfaces.                                                                      |
+| **Dependency Inversion**  | Depend on abstractions; wire concrete types through **DI** (Aspire host or `IServiceCollection`).            |
 
-Per [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) §6, maintain **90 % line and
-branch coverage** and keep **cyclomatic complexity ≤ 8**. New or updated
-features must include unit tests and documentation comments.
+Additional OO practices
+
+* **Composition over inheritance** unless a true “is-a” relationship exists.
+
+* **Domain-Driven Design language** in aggregates and value objects.
+
+* **Generic abstractions** where they cut duplication and remain obvious.
+
+* **Immutability** for value types and DTOs—simplifies reasoning and testing.
+
+* **Encapsulation:** expose the minimal public surface; keep internals private or `internal`.
+
+> _Tip_: Use **Roslynator** and **Meziantou.Analyzer** design‐rules to spot violations early.
+
+## Workflow Expectations
+
+### Test-Driven Development (TDD)
+
+1. Sketch todos.
+
+2. Write a failing test.
+
+3. Implement the smallest fix.
+
+4. Refactor when tests pass.
+
+### Quality Gates
+
+| Metric        | Target                                 |
+| ------------- | -------------------------------------- |
+| Coverage      | ≥ 90 % lines & branches                |
+| Complexity    | Cyclomatic complexity ≤ 8              |
+| OO Compliance | Follows SOLID, composition first       |
+| Documentation | XML/TS comments on every public symbol |
+| Lint/Format   | Zero warnings or smells                |
+| Build         | All analyzers pass; warnings as errors |
+
+## Static Analysis
+
+### .NET (Roslyn)
+
+* **Microsoft.CodeAnalysis.NetAnalyzers** – core rules
+
+* **AsyncFixer, ConfigureAwaitChecker** – safe async
+
+* **Meziantou.Analyzer** – allocation, struct, immutability
+
+* **Roslynator** – design and readability helpers
+
+All rules are configured in `.editorconfig`; the build runs with `-warnaserror`.
+
+### Frontend
+
+* ESLint (typescript-eslint)
+
+* Stylelint
+
+* Prettier
+
+## Development Commands
+
+### Backend
+
+``` bash
+dotnet restore fenrick.miro.slnx
+dotnet format fenrick.miro.slnx
+dotnet build fenrick.miro.slnx -warnaserror
+dotnet test  fenrick.miro.slnx
+```
+
+### Frontend
+
+``` bash
+npm install
+npm --prefix fenrick.miro.client run typecheck
+npm --prefix fenrick.miro.client run lint
+npm --prefix fenrick.miro.client run stylelint
+npm --prefix fenrick.miro.client run prettier
+npm --prefix fenrick.miro.client run test
+```
+
+## Git Hooks
+
+Git hooks live in `.husky/`.
+
+``` bash
+npx husky install
+```
+
+`pre-commit` runs formatters and linters. Run tests locally before committing.
+
+## Commit Convention
+
+Follow **Conventional Commits**:
+
+``` bash
+type(scope): short description
+```
+
+Types include `feat`, `fix`, `docs`, `test`, `refactor`, `chore`.
+
+## Reference Documents
+
+* `docs/CODE_STYLE.md` – naming, formatting
+
+* `docs/ARCHITECTURE.md` – layering, complexity, analyzers
+
+* `docs/DEPLOYMENT.md` – build & CI/CD
+
+* `CONTRIBUTING.md` – PR workflow, onboarding
+
+## Summary
+
+| Area      | Requirement                                  |
+| --------- | -------------------------------------------- |
+| Structure | `src/` and `tests/` folders                  |
+| Language  | C# (.NET Aspire) + React (TypeScript)        |
+| Design    | SOLID, composition over inheritance          |
+| Testing   | TDD, ≥ 90 % coverage                         |
+| Analysis  | Roslyn analyzers, ESLint, Stylelint          |
+| Commits   | Conventional Commits                         |
+| Build     | Typed, documented, formatted, analyzer-clean |

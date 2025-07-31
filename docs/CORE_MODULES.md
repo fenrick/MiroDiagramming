@@ -4,14 +4,14 @@
 
 ## 0 Purpose
 
-This document summarises TypeScript modules under `src/core/`. It complements
-the repository map in `ARCHITECTURE.md` and explains the responsibility of each
-file.
+This document summarises TypeScript modules under `fenrick.miro.client/src/core/`.
+It complements the repository map in `ARCHITECTURE.md` and explains the
+responsibility of each file.
 
 ## 1 Directory Overview
 
 ```
-src/core/
+fenrick.miro.client/src/core/
   data-mapper.ts
   excel-sync-service.ts
   graph/
@@ -55,6 +55,7 @@ src/core/
 | graph/index.ts               | Bundle graph utilities for external use.            |
 | graph/layout-modes.ts        | Enumerate supported layout algorithms.              |
 | graph/undoable-processor.ts  | Base class adding undo support to processors.       |
+| user-auth.ts                 | Forward the board user's token to the backend.      |
 | layout/elk-layout.ts         | Run layout calculations using the ELK engine.       |
 | layout/elk-loader.ts         | Lazy-load the ELK WebAssembly bundle.               |
 | layout/elk-options.ts        | Provide user options for ELK layout algorithms.     |
