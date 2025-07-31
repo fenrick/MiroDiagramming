@@ -2,7 +2,6 @@ namespace Fenrick.Miro.Tests;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using Server;
 using Server.Data;
 using Server.Services;
 

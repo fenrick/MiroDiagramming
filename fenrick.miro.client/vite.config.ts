@@ -1,50 +1,11 @@
 import react from '@vitejs/plugin-react';
 import plugin from '@vitejs/plugin-react';
-import child_process from 'child_process';
 import dns from 'dns';
 import fs from 'fs';
 
 import { fileURLToPath, URL } from 'node:url';
 import path from 'path';
-import { env } from 'process';
-import { defineConfig } from 'vite';
-
-const baseFolder =
-  env.APPDATA !== undefined && env.APPDATA !== ''
-    ? `${env.APPDATA}/ASP.NET/https`
-    : `${env.HOME}/.aspnet/https`;
-
-const certificateName = 'fenrick.miro.client';
-const certFilePath = path.join(baseFolder, `${certificateName}.pem`);
-const keyFilePath = path.join(baseFolder, `${certificateName}.key`);
-
-if (!fs.existsSync(baseFolder)) {
-  fs.mkdirSync(baseFolder, { recursive: true });
-}
-
-if (!fs.existsSync(certFilePath) || !fs.existsSync(keyFilePath)) {
-  if (
-    0 !==
-    child_process.spawnSync(
-      'dotnet',
-      [
-        'dev-certs',
-        'https',
-        '--export-path',
-        certFilePath,
-        '--format',
-        'Pem',
-        '--no-password',
-      ],
-      { stdio: 'inherit' },
-    ).status
-  ) {
-    throw new Error('Could not create certificate.');
-  }
-}
-
-const target =
-  env['services__fenrick-miro-server__https__0'] ?? 'https://localhost:7274';
+import { defineConfig, loadEnv } from 'vite';
 
 // https://vitejs.dev/config/server-options.html#server-host
 dns.setDefaultResultOrder('verbatim');
@@ -61,22 +22,34 @@ const allHtmlEntries = fs
   }, {});
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  root: __dirname,
-  build: {
-    rollupOptions: {
-      input: allHtmlEntries,
-      external: ['elkjs/lib/elk.bundled.js', 'exceljs'],
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
+
+  return {
+    root: __dirname,
+    build: {
+      outDir: 'dist',
+      rollupOptions: {
+        input: allHtmlEntries,
+        external: ['elkjs/lib/elk.bundled.js', 'exceljs'],
+      },
     },
-  },
-  resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
-  plugins: [react(), plugin()],
-  server: {
-    proxy: { '^/api': { target, secure: false } },
-    port: parseInt(env.DEV_SERVER_PORT || '53253'),
-    https: {
-      key: fs.readFileSync(keyFilePath),
-      cert: fs.readFileSync(certFilePath),
+    resolve: {
+      alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
     },
-  },
+    plugins: [react(), plugin()],
+    server: {
+      port: parseInt(env.VITE_PORT),
+      proxy: {
+        '/api': {
+          target:
+            process.env.services__server__https__0 ||
+            process.env.services__server__http__0,
+          changeOrigin: true,
+          rewrite: path => path.replace(/^\/api/, ''),
+          secure: false,
+        },
+      },
+    },
+  };
 });

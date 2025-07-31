@@ -7,21 +7,10 @@ WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
-
-# This stage is used to build the service project
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS with-node
-RUN apt-get update \
-    && apt-get install -y curl \
-    && curl -sL https://deb.nodesource.com/setup_20.x | bash \
-    && apt-get install -y nodejs \
-    && rm -rf /var/lib/apt/lists/*
-
-
-FROM with-node AS build
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["fenrick.miro.server/fenrick.miro.server.csproj", "fenrick.miro.server/"]
-COPY ["fenrick.miro.client/fenrick.miro.client.esproj", "fenrick.miro.client/"]
 RUN dotnet restore "./fenrick.miro.server/fenrick.miro.server.csproj"
 COPY . .
 WORKDIR "/src/fenrick.miro.server"

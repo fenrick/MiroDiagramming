@@ -26,7 +26,7 @@ Style: null),
         Task<IList<MiroResponse>> t1 = proc.ProcessAsync();
         Task<IList<MiroResponse>> t2 = proc.ProcessAsync();
 
-        await Task.WhenAll(t1, t2);
+        await Task.WhenAll(t1, t2).ConfigureAwait(false);
 
         Assert.Equal(1, client.Count);
     }
@@ -45,7 +45,7 @@ Text: null, Style: null));
 
         proc.EnqueueCreate(shapes);
 
-        IList<MiroResponse> responses = await proc.ProcessAsync();
+        IList<MiroResponse> responses = await proc.ProcessAsync().ConfigureAwait(false);
 
         Assert.Equal(25, client.Count);
         Assert.Equal(25, responses.Count);

@@ -9,6 +9,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "DOTNET_ENVIRONMENT": "Development",
+        "Parameters__DatabaseProvider": "postgres",
         "ASPIRE_DASHBOARD_OTLP_ENDPOINT_URL": "https://localhost:21063",
         "ASPIRE_RESOURCE_SERVICE_ENDPOINT_URL": "https://localhost:22133"
       }
@@ -19,10 +20,35 @@
       "launchBrowser": true,
       "applicationUrl": "http://localhost:15157",
       "environmentVariables": {
+        "ASPIRE_ALLOW_UNSECURED_TRANSPORT": "true",
         "ASPNETCORE_ENVIRONMENT": "Development",
         "DOTNET_ENVIRONMENT": "Development",
+        "Parameters__DatabaseProvider": "postgres",
         "ASPIRE_DASHBOARD_OTLP_ENDPOINT_URL": "http://localhost:19239",
         "ASPIRE_RESOURCE_SERVICE_ENDPOINT_URL": "http://localhost:20014"
+      }
+    },
+    "production": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "applicationUrl": "https://localhost:17183;http://localhost:15157",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Production",
+        "DOTNET_ENVIRONMENT": "Production",
+        "Parameters__DatabaseProvider": "sqlite",
+        "ASPIRE_DASHBOARD_OTLP_ENDPOINT_URL": "https://localhost:21063",
+        "ASPIRE_RESOURCE_SERVICE_ENDPOINT_URL": "https://localhost:22133"
+      }
+    },
+    "manifest": {
+      "commandName": "Project",
+      "commandLineArgs": "--publisher manifest --output-path aspire-manifest.json",
+      "dotnetRunMessages": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Production",
+        "Parameters__DatabaseProvider": "postgres",
+        "DOTNET_ENVIRONMENT": "Production"
       }
     }
   }
