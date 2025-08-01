@@ -32,12 +32,17 @@ fenrick.miro.client/src/core/
   utils/
     aspect-ratio.ts
     base64.ts
+    card-client.ts
     cards.ts
     color-utils.ts
     excel-loader.ts
+    exceljs-loader.ts
     file-utils.ts
     graph-auth.ts
     graph-client.ts
+    shape-client.ts
+    string-utils.ts
+    tag-client.ts
     unit-utils.ts
     workbook-writer.ts
 ```
@@ -64,12 +69,16 @@ fenrick.miro.client/src/core/
 | layout/nested-layout.ts      | Arrange nodes in a nested hierarchy.                |
 | utils/aspect-ratio.ts        | Maintain consistent aspect ratios when scaling.     |
 | utils/base64.ts              | Encode data in Base64 without regex backtracking.   |
-| utils/cards.ts               | Format card content for widgets.                    |
-| utils/color-utils.ts         | Map semantic color names to Miro tokens.            |
-| utils/exceljs-loader.ts      | Dynamically load ExcelJS from the CDN.              |
-| utils/excel-loader.ts        | Parse Excel files into row objects.                 |
-| utils/file-utils.ts          | Read and write local files for import/export.       |
-| utils/graph-auth.ts          | Handle OAuth login for the graph service.           |
-| utils/graph-client.ts        | Fetch graph data from the backend API.              |
-| utils/unit-utils.ts          | Unit conversion helpers for board measurements.     |
-| utils/workbook-writer.ts     | Output workbook rows to an Excel file.              |
+| utils/cards.ts               | Format card content for widgets. |
+| utils/card-client.ts        | HTTP client for the cards API. |
+| utils/color-utils.ts         | Map semantic color names to Miro tokens. |
+| utils/exceljs-loader.ts      | Dynamically load ExcelJS from the CDN. |
+| utils/excel-loader.ts        | Parse Excel files into row objects. |
+| utils/file-utils.ts          | Read and write local files for import/export. |
+| utils/graph-auth.ts          | Handle OAuth login for the graph service. |
+| utils/graph-client.ts        | Fetch graph data from the backend API. |
+| utils/shape-client.ts        | HTTP client for the shapes API. |
+| utils/string-utils.ts        | Safe conversions to string values. |
+| utils/tag-client.ts          | HTTP client for the tags API. |
+| utils/unit-utils.ts          | Unit conversion helpers for board measurements. |
+| utils/workbook-writer.ts     | Output workbook rows to an Excel file. |

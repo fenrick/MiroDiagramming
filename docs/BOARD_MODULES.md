@@ -16,6 +16,7 @@ fenrick.miro.client/src/board/
 
 - board-builder.ts
 - board.ts
+- board-cache.ts
 - card-processor.ts
 - connector-utils.ts
 - element-utils.ts
@@ -27,6 +28,7 @@ fenrick.miro.client/src/board/
 - item-types.ts
 - meta-constants.ts
 - node-search.ts
+- types.ts
 - resize-tools.ts
 - search-tools.ts
 - spacing-layout.ts
@@ -41,6 +43,7 @@ fenrick.miro.client/src/board/
 | ------------------ | ------------------------------------------------------------ |
 | board.ts           | Board API helpers and simple abstractions used across tools. |
 | board-builder.ts   | Creates and updates widgets on the board.                    |
+| board-cache.ts     | Caches selection and widget queries to reduce network calls. |
 | card-processor.ts  | Imports card data and arranges them in a grid.               |
 | connector-utils.ts | Connector creation and update helpers.                       |
 | element-utils.ts   | Shared widget helper functions.                              |
@@ -52,6 +55,7 @@ fenrick.miro.client/src/board/
 | item-types.ts      | Type guards for different widget kinds.                      |
 | meta-constants.ts  | Metadata key definitions used across modules.                |
 | node-search.ts     | Board search functions for nodes and groups.                 |
+| types.ts           | Helper interfaces describing board and query APIs. |
 | resize-tools.ts    | Resize selected widgets to match references.                 |
 | search-tools.ts    | Text search helpers for selection and boards.                |
 | spacing-layout.ts  | Pure spacing calculations for growth or movement.            |
