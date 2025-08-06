@@ -15,6 +15,7 @@ public interface ITagService
     /// <param name="boardId">Target board identifier.</param>
     /// <param name="ct">Cancellation token.</param>
     /// <returns>List of tags.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when the Miro API returns malformed JSON.</exception>
     public Task<IReadOnlyList<TagInfo>> GetTagsAsync(string boardId,
         CancellationToken ct = default);
 }
