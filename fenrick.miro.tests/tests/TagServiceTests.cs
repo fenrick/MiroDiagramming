@@ -1,7 +1,8 @@
 namespace Fenrick.Miro.Tests;
 
 using System;
-using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,26 +12,25 @@ using Server.Services;
 public class TagServiceTests
 {
     [Fact]
-    public async Task GetTagsAsyncReturnsEmptyListOnNonSuccessAsync()
+    public async Task GetTagsAsyncThrowsOnNonSuccessStatusAsync()
     {
         var client = new StubClient(new MiroResponse(500, string.Empty));
         var svc = new TagService(client);
 
-        IReadOnlyList<TagInfo> tags =
-            await svc.GetTagsAsync("b1").ConfigureAwait(false);
+        HttpRequestException ex = await Assert
+            .ThrowsAsync<HttpRequestException>(() => svc.GetTagsAsync($"b1")).ConfigureAwait(false);
 
-        Assert.Empty(tags);
+        Assert.Equal(HttpStatusCode.InternalServerError, ex.StatusCode);
     }
 
     [Fact]
-    public async Task GetTagsAsyncThrowsOnMalformedJsonAsync()
+    public Task GetTagsAsyncThrowsOnMalformedJsonAsync()
     {
-        var client = new StubClient(new MiroResponse(200, "not json"));
+        var client = new StubClient(new MiroResponse(200, $"not json"));
         var svc = new TagService(client);
 
-        await Assert
-            .ThrowsAsync<InvalidOperationException>(() => svc.GetTagsAsync("b1"))
-            .ConfigureAwait(false);
+        return Assert
+            .ThrowsAsync<InvalidOperationException>(() => svc.GetTagsAsync($"b1"));
     }
 
     private sealed class StubClient(MiroResponse response) : IMiroClient

@@ -20,9 +20,9 @@ public class SerilogSink(ILogger logger) : ILogSink
         {
             LogEventLevel level = MapLevel(e.Level);
 
-            this.loggerInstance.ForContext("Source", "Client")
-                .ForContext("Level", e.Level)
-                .ForContext("Context", e.Context, destructureObjects: true)
+            this.loggerInstance.ForContext($"Source", $"Client")
+                .ForContext($"Level", e.Level)
+                .ForContext($"Context", e.Context, destructureObjects: true)
                 .Write(level, "{Message}", e.Message);
         }
     }
@@ -30,12 +30,12 @@ public class SerilogSink(ILogger logger) : ILogSink
     private static LogEventLevel MapLevel(string level) =>
         level.ToLowerInvariant() switch
         {
-            "trace" => LogEventLevel.Verbose,
-            "debug" => LogEventLevel.Debug,
-            "info" => LogEventLevel.Information,
-            "warn" => LogEventLevel.Warning,
-            "error" => LogEventLevel.Error,
-            "fatal" => LogEventLevel.Fatal,
+            $"trace" => LogEventLevel.Verbose,
+            $"debug" => LogEventLevel.Debug,
+            $"info" => LogEventLevel.Information,
+            $"warn" => LogEventLevel.Warning,
+            $"error" => LogEventLevel.Error,
+            $"fatal" => LogEventLevel.Fatal,
             _ => LogEventLevel.Information,
         };
 }
