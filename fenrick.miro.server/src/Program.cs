@@ -68,7 +68,13 @@ app.UseAuthorization();
 
 await app.RunAsync().ConfigureAwait(false);
 
-// Expose Program for WebApplicationFactory<T>
+/// <summary>
+/// Entry point for the ASP.NET Core application.
+/// </summary>
+/// <remarks>
+/// The class is non-static and partial to enable test projects to reference it via
+/// Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory.
+/// </remarks>
 public partial class Program
 {
     protected Program()
