@@ -59,7 +59,7 @@ public class MiroRestClient(
                 new AuthenticationHeaderValue($"Bearer", token);
         }
 
-        HttpResponseMessage response =
+        using HttpResponseMessage response =
             await this.httpClient.SendAsync(message, ct).ConfigureAwait(false);
         if (response.StatusCode is HttpStatusCode.Unauthorized && userId != null)
         {
@@ -70,6 +70,7 @@ public class MiroRestClient(
                 await this.store
                     .StoreAsync(new UserInfo(info.Id, info.Name, refreshed), ct)
                     .ConfigureAwait(false);
+                response.Dispose();
                 using var retry = new HttpRequestMessage(
                     new HttpMethod(request.Method),
                     new Uri(request.Path, UriKind.Relative))
@@ -78,8 +79,11 @@ public class MiroRestClient(
                 };
                 retry.Headers.Authorization =
                     new AuthenticationHeaderValue($"Bearer", refreshed);
-                response =
+                using HttpResponseMessage retryResponse =
                     await this.httpClient.SendAsync(retry, ct).ConfigureAwait(false);
+                var retryBody =
+                    await retryResponse.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
+                return new MiroResponse((int)retryResponse.StatusCode, retryBody);
             }
         }
         var body = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
