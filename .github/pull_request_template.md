@@ -5,6 +5,5 @@
 - [ ] Tests provide at least 90% line and branch coverage
 - [ ] Dark-mode snapshot updated
 - [ ] Accessibility reviewed
-- [ ] CHANGELOG entry included
 
 Provide a short description of the changes introduced by this PR.

@@ -1,0 +1,122 @@
+name: repo-release
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions: write-all
+
+env:
+  NODE_VERSION: 20
+  DOTNET_VERSION: "9.0.x"
+
+jobs:
+  build:
+    needs: [ ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: fenrick.miro.client/package-lock.json
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Cache Storybook
+        uses: actions/cache@v4
+        with:
+          path: fenrick.miro.client/node_modules/.cache/storybook
+          key: ${{ runner.os }}-storybook-${{ hashFiles('fenrick.miro.client/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-storybook-
+      - name: Build server and client
+        run: dotnet build fenrick.miro.server/fenrick.miro.server.csproj -c Release
+      - name: Build Storybook
+        run: npm run build-storybook
+        working-directory: fenrick.miro.client
+      - name: Verify Storybook
+        run: test -d storybook-static
+        working-directory: fenrick.miro.client
+      - name: Upload artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: fenrick.miro.client/dist
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.release_tag.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: fenrick.miro.client/package-lock.json
+      - run: corepack enable
+        working-directory: fenrick.miro.client
+      - run: npm ci --prefer-offline --no-audit
+        working-directory: fenrick.miro.client
+      - name: Download artefact
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: fenrick.miro.client/dist
+      - name: Semantic release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx semantic-release
+        working-directory: fenrick.miro.client
+      - name: Check release tag
+        id: release_tag
+        run: |
+          git fetch --tags
+          tag=$(git tag --points-at HEAD | head -n 1)
+          if [ -n "$tag" ]; then
+            echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          fi
+
+  docker-image:
+    if: needs.release.outputs.tag != ''
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=raw,value=${{ needs.release.outputs.tag }}
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  rollback:
+    if: failure() && github.event_name == 'push'
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Use previous artefact
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: dist
+      - name: Deploy previous artefact
+        run: echo "Rollback to previous artefact"

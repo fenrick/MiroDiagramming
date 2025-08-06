@@ -1,199 +1,234 @@
 {
-  "Role": {
+  "FromHereOn": {
     "elements": [
       {
         "shape": "round_rectangle",
         "width": 160,
-        "height": 60,
+        "height": 100,
+        "style": {
+          "fillColor": "#e2e3e4",
+          "fontFamily": "Arial",
+          "borderColor": "#939598",
+          "borderWidth": "2"
+        },
+        "text": "{{label}}"
+      }
+    ],
+    "alias": []
+  },
+  "Motivation": {
+    "elements": [
+      {
+        "shape": "round_rectangle",
+        "width": 160,
+        "height": 100,
+        "style": {
+          "fillColor": "tokens.color.lilac[350]",
+          "fontFamily": "Arial",
+          "borderColor": "#939598",
+          "borderWidth": "2"
+        },
+        "text": "{{label}}"
+      }
+    ],
+    "alias": [
+      "Stakeholder",
+      "Driver",
+      "Assessment",
+      "Goal",
+      "Outcome",
+      "Principle",
+      "Requirement",
+      "Constraint",
+      "Meaning",
+      "Value",
+      "Influencers",
+      "Vision & Mission",
+      "Goals",
+      "Objectives",
+      "Strategies",
+      "Tactics",
+      "Principles",
+      "Performance Measures"
+    ]
+  },
+  "Strategic": {
+    "elements": [
+      {
+        "shape": "round_rectangle",
+        "width": 160,
+        "height": 100,
         "rotation": 0,
         "style": {
-          "fillColor": "tokens.color.yellow[150]",
-          "fontFamily": "Arial"
+          "fillColor": "tokens.color.orange[350]",
+          "fontFamily": "Arial",
+          "borderColor": "#939598",
+          "borderWidth": "2"
         },
         "text": "{{label}}"
       }
+    ],
+    "alias": [
+      "Resource",
+      "Capability",
+      "Course of action",
+      "Value Stream"
     ]
   },
-  "BusinessService": {
+  "Business": {
     "elements": [
       {
         "shape": "round_rectangle",
         "width": 160,
-        "height": 60,
+        "height": 100,
+        "rotation": 0,
         "style": {
-          "fillColor": "tokens.color.blue[200]",
-          "fontFamily": "Arial"
+          "fillColor": "tokens.color.sunshine[350]",
+          "fontFamily": "Arial",
+          "borderColor": "#939598",
+          "borderWidth": "2"
         },
         "text": "{{label}}"
       }
+    ],
+    "alias": [
+      "Business actor",
+      "Business role",
+      "Business colalboration",
+      "Business interface",
+      "Business process",
+      "Business function",
+      "Business interaction",
+      "Product",
+      "Representation",
+      "Contact",
+      "Business object",
+      "Business service",
+      "Business event"
     ]
   },
-  "BusinessProcess": {
+  "Application": {
     "elements": [
       {
         "shape": "round_rectangle",
         "width": 160,
-        "height": 60,
+        "height": 100,
         "style": {
-          "fillColor": "tokens.color.green[150]",
-          "fontFamily": "Arial"
+          "fillColor": "tokens.color.blue[350]",
+          "fontFamily": "Arial",
+          "borderColor": "#939598",
+          "borderWidth": "2"
         },
         "text": "{{label}}"
       }
+    ],
+    "alias": [
+      "Application component",
+      "Application interface",
+      "Application function",
+      "Data object",
+      "Application process",
+      "Application service",
+      "Application interaction",
+      "Application event",
+      "Application collaboration"
     ]
   },
-  "ApplicationComponent": {
+  "Technology": {
     "elements": [
       {
         "shape": "round_rectangle",
         "width": 160,
-        "height": 60,
+        "height": 100,
         "style": {
-          "fillColor": "tokens.color.blue[100]",
-          "fontFamily": "Arial"
+          "fillColor": "tokens.color.green[350]",
+          "fontFamily": "Arial",
+          "borderColor": "#939598",
+          "borderWidth": "2"
         },
         "text": "{{label}}"
       }
+    ],
+    "alias": [
+      "Device",
+      "System software",
+      "Node",
+      "Technology function",
+      "Technology interface",
+      "Technology service",
+      "Technology interaction",
+      "Technology event",
+      "Technology process",
+      "Artifact",
+      "Technolgoy collaboration",
+      "Path",
+      "Communication network"
     ]
   },
-  "DataObject": {
-    "elements": [
-      {
-        "shape": "rectangle",
-        "width": 160,
-        "height": 60,
-        "style": {
-          "fillColor": "tokens.color.yellow[250]",
-          "fontFamily": "Arial"
-        },
-        "text": "{{label}}"
-      }
-    ]
-  },
-  "Device": {
-    "elements": [
-      {
-        "shape": "rectangle",
-        "width": 160,
-        "height": 60,
-        "style": {
-          "fillColor": "tokens.color.gray[200]",
-          "fontFamily": "Arial"
-        },
-        "text": "{{label}}"
-      }
-    ]
-  },
-  "BusinessActor": {
+  "Physical": {
     "elements": [
       {
         "shape": "round_rectangle",
         "width": 160,
-        "height": 60,
+        "height": 100,
         "style": {
-          "fillColor": "tokens.color.yellow[200]",
-          "fontFamily": "Arial"
+          "fillColor": "tokens.color.moss[350]",
+          "fontFamily": "Arial",
+          "borderColor": "#939598",
+          "borderWidth": "2"
         },
         "text": "{{label}}"
       }
+    ],
+    "alias": [
+      "Equipment",
+      "Facility",
+      "Distribution Network",
+      "Material"
     ]
   },
-  "ApplicationService": {
+  "Composite": {
     "elements": [
       {
         "shape": "round_rectangle",
         "width": 160,
-        "height": 60,
+        "height": 100,
         "style": {
-          "fillColor": "tokens.color.blue[200]",
-          "fontFamily": "Arial"
+          "fillColor": "tokens.color.coal[350]",
+          "fontFamily": "Arial",
+          "borderColor": "#939598",
+          "borderWidth": "2"
         },
         "text": "{{label}}"
       }
+    ],
+    "alias": [
+      "Location",
+      "Grouping"
     ]
   },
-  "Node": {
-    "elements": [
-      {
-        "shape": "rectangle",
-        "width": 160,
-        "height": 60,
-        "style": {
-          "fillColor": "tokens.color.gray[200]",
-          "fontFamily": "Arial"
-        },
-        "text": "{{label}}"
-      }
-    ]
-  },
-  "TechnologyService": {
+  "Implementation": {
     "elements": [
       {
         "shape": "round_rectangle",
         "width": 160,
-        "height": 60,
+        "height": 100,
         "style": {
-          "fillColor": "tokens.color.blue[150]",
-          "fontFamily": "Arial"
+          "fillColor": "tokens.color.pink[350]",
+          "fontFamily": "Arial",
+          "borderColor": "#939598",
+          "borderWidth": "2"
         },
         "text": "{{label}}"
       }
-    ]
-  },
-  "WorkPackage": {
-    "elements": [
-      {
-        "shape": "round_rectangle",
-        "width": 160,
-        "height": 60,
-        "style": {
-          "fillColor": "tokens.color.red[150]",
-          "fontFamily": "Arial"
-        },
-        "text": "{{label}}"
-      }
-    ]
-  },
-  "Goal": {
-    "elements": [
-      {
-        "shape": "round_rectangle",
-        "width": 160,
-        "height": 60,
-        "style": {
-          "fillColor": "tokens.color.red[200]",
-          "fontFamily": "Arial"
-        },
-        "text": "{{label}}"
-      }
-    ]
-  },
-  "Decision": {
-    "elements": [
-      {
-        "shape": "diamond",
-        "width": 80,
-        "height": 80,
-        "style": {
-          "fillColor": "tokens.color.yellow[200]",
-          "fontFamily": "Arial"
-        },
-        "text": "{{label}}"
-      }
-    ]
-  },
-  "StartEnd": {
-    "elements": [
-      {
-        "shape": "ellipse",
-        "width": 100,
-        "height": 60,
-        "style": {
-          "fillColor": "tokens.color.yellow[250]",
-          "fontFamily": "Arial"
-        },
-        "text": "{{label}}"
-      }
+    ],
+    "alias": [
+      "Deliverable",
+      "Implementation event",
+      "Work package",
+      "Plateau",
+      "Outcome",
+      "Gap"
     ]
   }
 }

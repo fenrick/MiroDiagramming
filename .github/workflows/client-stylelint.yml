@@ -1,0 +1,27 @@
+name: client-stylelint
+
+on:
+  push:
+
+permissions: write-all
+
+env:
+  NODE_VERSION: 20
+
+jobs:
+  stylelint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: fenrick.miro.client/package-lock.json
+      - run: corepack enable
+        working-directory: fenrick.miro.client
+      - run: npm ci --prefer-offline --no-audit
+        working-directory: fenrick.miro.client
+      - name: Stylelint
+        run: npm run stylelint
+        working-directory: fenrick.miro.client

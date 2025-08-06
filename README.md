@@ -1,10 +1,9 @@
-# Miro JSON Graph Diagram App
+# Quick Tools
 
-This project imports graphs or cards from JSON or Excel files and builds
-diagrams on a Miro board. The application uses the **Eclipse Layout Kernel
-(ELK)** to arrange nodes and edges automatically. Shapes are generated from
-templates and each element can carry metadata that controls its appearance and
-placement.
+Quick Tools imports graphs or cards from JSON or Excel files and builds diagrams
+on a Miro board. The application uses the **Eclipse Layout Kernel (ELK)** to
+arrange nodes and edges automatically. Shapes are generated from templates and
+each element can carry metadata that controls its appearance and placement.
 
 ## Uploading JSON Content
 
@@ -15,7 +14,8 @@ placement.
 4. Once processed, widgets are placed on the board using the selected mode.
    Cards are automatically arranged in a grid with a calculated number of
    columns. Pass `columns` when invoking the importer to override this value.
-5. See [`tests/fixtures/sample-cards.json`](tests/fixtures/sample-cards.json)
+5. See
+   [`fenrick.miro.client/tests/fixtures/sample-cards.json`](fenrick.miro.client/tests/fixtures/sample-cards.json)
    for a cards format example.
 
 ### Card JSON Format
@@ -61,25 +61,17 @@ When **Use existing widgets** is enabled the importer caches all basic shapes on
 the board and matches them by their text content. The cache prevents duplicates
 during placement and is cleared once processing finishes.
 
-## Metadata Usage
+## Identification
 
-Nodes may include a `metadata` object with any additional information. Typical
-fields are:
-
-- `template`: name of the shape template to use.
-- `label`: text displayed on the shape.
-- `elk`: optional layout properties passed directly to the ELK engine.
-- `width` and `height`: optional dimensions overriding the template values.
-- `connectorTemplate`: template name for edge styling.
-- Connector endpoints snap to the sides suggested by the ELK layout.
-- Note: groups cannot store metadata. When a template does create a group the
-  metadata is applied to each element within the group instead. Simple templates
-  set the label directly on the shape to avoid grouping.
+Widgets no longer rely on metadata. Shapes and groups are matched purely by
+their text content. When updating a diagram the importer searches for a shape
+whose content matches the node label. Cards continue to encode their identifier
+in the description using the `ID:` prefix.
 
 ## Sample Graph
 
 A small example is provided in
-[tests/fixtures/sample-graph.json](tests/fixtures/sample-graph.json):
+[fenrick.miro.client/tests/fixtures/sample-graph.json](fenrick.miro.client/tests/fixtures/sample-graph.json):
 
 ```json
 {
@@ -98,9 +90,9 @@ visualised using the **Nested** layout option in the Diagram tab. Positions and
 container sizes are computed entirely by the ELK engine for consistent spacing.
 Nodes are sorted alphabetically by default or via a custom metadata key. A
 three‑level sample dataset is available at
-[tests/fixtures/sample-hier.json](tests/fixtures/sample-hier.json). Simply
-select **Nested** and import this file to see parent widgets sized to fit their
-children. Flat graph data is automatically converted when necessary.
+[fenrick.miro.client/tests/fixtures/sample-hier.json](fenrick.miro.client/tests/fixtures/sample-hier.json).
+Simply select **Nested** and import this file to see parent widgets sized to fit
+their children. Flat graph data is automatically converted when necessary.
 
 ## Accessibility
 
@@ -124,11 +116,7 @@ The sidebar exposes extra tabs to manipulate existing widgets:
   the text readable.
 - **Grid** arranges widgets into a grid with options for sorting and grouping
   the result.
-- **Templates** inserts prebuilt diagrams from the templates catalog.
 - **Frames** renames or locks selected frames via helper utilities.
-- **Export** allows saving the board to PNG, SVG, BPMN or Markdown.
-- **Data** configures live data bindings to external sources.
-- **Comment** lists discussion threads and lets you reply inline.
 - **Search** finds text across the board and can replace all matches.
 
 ### Search Tools
@@ -154,30 +142,37 @@ complete UI flow.
 - [TypeScript](https://www.typescriptlang.org/)
 - [Vite](https://vitejs.dev/)
 
-## Styling with Mirotone
+## Styling with the Miro Design System
 
-The CSS for this project imports
-[`mirotone/dist/styles.css`](https://www.mirotone.xyz/css) in
-[`src/assets/style.css`](src/assets/style.css) to match the Miro UI. When adding
-new UI elements reuse the Mirotone utility classes such as `button`,
-`button-primary` and the grid helpers so your components align with existing
-styles. Avoid custom CSS when a utility class exists. Interactive elements
-should use the wrapper components under `src/ui/components/legacy`.
+The CSS for this project imports `@mirohq/design-system-themes/light.css` in
+[`fenrick.miro.client/src/assets/style.css`](fenrick.miro.client/src/assets/style.css)
+to match the Miro UI. Components are sourced from `@mirohq/design-system`. Avoid
+custom CSS when a component or token already exists. Wrapper components in
+`fenrick.miro.client/src/ui/components` abstract the design-system primitives so
+upgrades happen in one place.
 
 ## Form Design Guidelines
 
 When creating forms use the wrapper components so your inputs and buttons match
 the rest of the UI. These guidelines help keep layouts consistent:
 
-- Use `InputField` to pair labels with their controls.
+- Use `InputField` to pair labels with their controls. Provide the input
+  component via the `as` prop and pass component props through `options`.
+- `Button` and `InputField` wrap the design-system components so events and
+  sizing tokens behave consistently.
 - Group related fields using `FormGroup` to maintain spacing and a clear
   vertical rhythm.
 - Arrange elements with the 12‑column grid classes (`cs*`/`ce*`) so forms remain
   responsive.
-- Use values from `src/ui/tokens.ts` for margins and padding instead of
+- Use values from `@mirohq/design-tokens` for margins and padding instead of
   hard‑coded numbers.
-- When customisation is needed prefer extending Mirotone variables over creating
-  bespoke CSS classes.
+- Layout wrappers such as `Panel` or `Section` expose a `padding` prop. Pass a
+  token from `@mirohq/design-tokens` so spacing stays consistent.
+- Avoid passing custom `className` or `style` props to these wrappers; spacing
+  decisions belong inside the component.
+- Keep wrapper nesting shallow; avoid unnecessary layers.
+- When customisation is needed prefer extending design-system tokens over
+  creating bespoke CSS classes.
 - Stick to the provided `Button` component and choose the `primary` variant for
   the main action. Place secondary actions on the right using the `buttons`
   wrapper as seen in the tabs.
@@ -194,17 +189,17 @@ the rest of the UI. These guidelines help keep layouts consistent:
 - Your Miro account has a
   [Developer team](https://developers.miro.com/docs/create-a-developer-team).
 - Your development environment includes
-  [Node.js](https://nodejs.org/en/download) v24 or later. The repository
-  includes a `.nvmrc` file pinned to version `24`. Use
+  [Node.js](https://nodejs.org/en/download) v20. The repository
+  includes an `.nvmrc` file pinned to version `20`. Use
   [`nvm`](https://github.com/nvm-sh/nvm) or [`volta`](https://volta.sh/) to
   install and manage this Node version.
 - All examples use `npm` as a package manager and `npx` as a package runner.
 
 ## 🏃🏽‍♂️ Run the app locally <a name="run"></a>
 
-1. Run `npm install` to install dependencies. The project includes a
-   `package-lock.json` file so everyone installs the same versions.
-2. Run `npm start` to start the development server. \
+1. Run `npm install` inside `fenrick.miro.client` to install dependencies. The
+   `package-lock.json` file ensures everyone installs the same versions.
+2. Run `npm start` from `fenrick.miro.client` to start the development server. \
    Your URL should be similar to this example:
 
 ```
@@ -250,34 +245,65 @@ The root `AGENTS.md` lists the commands to run before committing. Be sure to
 install dependencies first:
 
 ```bash
-npm install
+npm install --prefix fenrick.miro.client
+dotnet restore
 ```
 
 Then validate the codebase with:
 
 ```bash
-npm run typecheck --silent
-npm test --silent
-npm run lint --silent
-npm run stylelint --silent
-npm run prettier --silent
+npm --prefix fenrick.miro.client run typecheck --silent
+npm --prefix fenrick.miro.client run test --silent
+dotnet test fenrick.miro.tests/fenrick.miro.tests.csproj -v minimal
+npx dotnet-format --verify-no-changes fenrick.miro.server/fenrick.miro.server.csproj
+npm --prefix fenrick.miro.client run lint --silent
+npm --prefix fenrick.miro.client run stylelint --silent
+npm --prefix fenrick.miro.client run prettier --silent
 ```
 
-A Husky pre-commit hook runs these commands automatically. After cloning the
-repository run `npm run prepare` once to activate the hooks so every commit is
-validated.
+The Husky hooks live under the repository's `.husky/` folder. After cloning the
+repo run `npx husky install` from the project root to activate them so every
+commit is validated automatically. These commands perform TypeScript type
+checking, run ESLint and format files with Prettier. Execute the Vitest suite and
+`.NET` tests yourself before committing. Aim for at least 90 % line and branch coverage
+in both codebases and keep cyclomatic complexity under eight (see
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)). Sonar rules such as using
+`readonly` class fields, optional chaining, semantic HTML tags and stable React
+keys. Run these checks before committing so code conforms to the repository
+guidelines.
 
-These commands perform TypeScript type checking, execute the **Vitest** suite
-with coverage enabled, run ESLint and format files with Prettier. Aim for at
-least 90 % line and branch coverage and keep cyclomatic complexity under eight
-(see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)). ESLint enforces additional
-Sonar rules such as using `readonly` class fields, optional chaining, semantic
-HTML tags and stable React keys. Run these checks before committing so code
-conforms to the repository guidelines.
+CI merges coverage from all test shards. The build doesn't fail based on coverage
+numbers, so developers must keep both codebases above 90 % coverage
 
 With `package-lock.json` checked in you can run `npm audit` after each install
 to scan dependencies for vulnerabilities. Include the lock file in commits so
 everyone uses the exact dependency versions when installing.
+
+## Logging
+
+All runtime messages are emitted through a shared logger defined in
+[`fenrick.miro.client/src/logger.ts`](fenrick.miro.client/src/logger.ts). Set the
+`LOG_LEVEL` environment variable to `trace`, `debug`, `info`, `warn`, `error` or
+`silent` to control verbosity. It defaults to `info`.
+
+The .NET server uses **Serilog** for structured logging. Client log entries are
+automatically batched by `HttpLogSink` and forwarded via `POST /api/logs` so
+both sides share the same log stream.
+
+Data persistence is handled by **Entity Framework Core**. Development and tests
+default to SQLite while production uses the Npgsql provider with a
+**PostgreSQL** backend via `EfUserStore`. Database schemas are maintained through
+EF Core migrations applied automatically on startup.
+
+Several new C# utilities (`ExcelLoader`, `LayoutEngine`, `InMemoryTemplateStore` and
+`ObjectMatcher`) are early prototypes. TODO markers outline the remaining work
+to match the JavaScript implementations.
+
+Example:
+
+```bash
+LOG_LEVEL=debug npm --prefix fenrick.miro.client start
+```
 
 ## Commit message checks
 
@@ -291,24 +317,31 @@ npm run commitlint -- --edit $(git rev-parse --verify HEAD)
 
 The CI pipeline also enforces commitlint via
 [`\.github/workflows/commitlint.yml`](.github/workflows/commitlint.yml).
+All Node jobs point to `fenrick.miro.client/package.json` so caching and
+dependency installs run from that directory.
 
 ## 🗂️ Folder structure <a name="folder"></a>
 
 ```
 .
-├── src
-│   ├── core
-│   │   ├── graph
-│   │   ├── layout
-│   │   └── utils
-│   ├── ui
-│   │   ├── components
-│   │   ├── hooks
-│   │   └── pages
-│   └── app
+├── fenrick.miro.server/
+│   └── src
+│       ├── Api
+│       ├── Domain
+│       └── Services
+├── fenrick.miro.client/
+│   ├── src
+│   │   ├── app
+│   │   ├── board
+│   │   ├── core
+│   │   ├── ui
+│   │   └── assets
+│   ├── index.html // entry point specified as App URL
+│   └── app.html   // panel view loaded by the SDK
+├── fenrick.miro.api/
+├── fenrick.miro.services/
 ├── public         // icons and i18n JSON
-├── scripts        // build helpers
-└── index.html     // entry point specified as App URL
+└── scripts        // build helpers
 ```
 
 ## 📚 Additional Design Docs
@@ -318,12 +351,34 @@ The CI pipeline also enforces commitlint via
 - [Tab Overview](docs/TABS.md) describes the sidebar tabs and their purpose.
 - [Deployment & Build Guide](docs/DEPLOYMENT.md) explains how to build and host
   the bundle.
+- [Aspire Quick Start](docs/ASPIRE.md) shows how to run the .NET AppHost
+  locally or in Docker.
+- [Server Modules](docs/SERVER_MODULES.md) details the planned .NET API layout.
+- [Miro API Costs](docs/MIRO_API_COSTS.md) explains why we cache shapes and avoid expensive board calls.
+- [ShapesController](docs/SERVER_MODULES.md#3-controllers) handles create, update and delete of Miro widgets via the backend cache.
 - [Components Catalogue](docs/COMPONENTS.md) documents reusable React
   components.
 - [Design Foundation](docs/FOUNDATION.md) explains tokens and theming rules.
 - [Code Style](docs/CODE_STYLE.md) outlines formatting and naming rules.
 - [UI Patterns](docs/PATTERNS.md) shows common layouts and best practices.
 - [Excel Import](docs/EXCEL_IMPORT.md) details workbook loading and sync.
+
+## Storybook
+
+Run the component explorer to preview the UI library. Storybook exposes
+interactive examples for each component and includes a toolbar toggle for the
+design-system light and dark themes. Add stories for any new UI element so
+reviewers can verify visuals.
+
+```bash
+npm run storybook
+```
+
+Generate a static Storybook site for publishing with:
+
+```bash
+npm run build-storybook
+```
 
 ## Docker Image
 
@@ -345,6 +400,11 @@ Run the helper script to reproduce the GitHub Actions pipeline locally. It
 executes lint checks, type verification, unit tests, the production build and
 the Storybook build in sequence. Semantic release is intentionally skipped.
 
+Pull requests trigger the `client-*` and `server-dotnet.yml` workflows to run
+linters, type checks and unit tests. Pushes to `main` additionally invoke
+`repo-sonar.yml`, `repo-codeql.yml` and `repo-release.yml` for coverage,
+static analysis and packaging tasks.
+
 ```bash
 npm run ci:local
 ```
@@ -353,8 +413,8 @@ npm run ci:local
 
 Release notes are generated by
 [semantic-release](https://github.com/semantic-release/semantic-release) and
-appended to `CHANGELOG.md` in the repository root. When submitting a pull
-request, add a bullet under the **Unreleased** heading summarising your change.
+appended to `CHANGELOG.md` in the repository root. Manual updates are no longer
+required.
 
 ## 🫱🏻‍🫲🏽 Contributing <a name="contributing"></a>
 
