@@ -97,7 +97,7 @@ jobs:
       - name: Audit dependencies
         run: npm audit --omit=dev --audit-level=moderate
       - name: Download artefact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: build
           path: dist
@@ -148,7 +148,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Use previous artefact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: build
           path: dist
