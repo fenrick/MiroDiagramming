@@ -1,5 +1,5 @@
 import { createServer } from 'node:http';
-import { afterAll, beforeAll, expect, test } from 'vitest';
+import { afterAll, beforeAll, expect, test, vi } from 'vitest';
 import { HttpLogSink } from '../src/log-sink';
 
 let server: ReturnType<typeof createServer>;
@@ -38,5 +38,49 @@ test('HttpLogSink posts log entries to backend', async () => {
 
   expect(status).toBe(202);
 
+  global.fetch = originalFetch;
+});
+
+test('HttpLogSink warns on non-2xx responses', async () => {
+  const entry = {
+    timestamp: new Date().toISOString(),
+    level: 'info',
+    message: 'pong',
+  };
+
+  const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+  const originalFetch = global.fetch;
+  global.fetch = async () => new Response(null, { status: 500 });
+
+  process.env.NODE_ENV = 'development';
+  const sink = new HttpLogSink(url);
+  await sink.store([entry]);
+
+  expect(warnSpy).toHaveBeenCalled();
+
+  warnSpy.mockRestore();
+  global.fetch = originalFetch;
+});
+
+test('HttpLogSink logs network failures', async () => {
+  const entry = {
+    timestamp: new Date().toISOString(),
+    level: 'info',
+    message: 'pong',
+  };
+
+  const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+  const originalFetch = global.fetch;
+  global.fetch = async () => {
+    throw new Error('network down');
+  };
+
+  process.env.NODE_ENV = 'development';
+  const sink = new HttpLogSink(url);
+  await sink.store([entry]);
+
+  expect(errorSpy).toHaveBeenCalled();
+
+  errorSpy.mockRestore();
   global.fetch = originalFetch;
 });
