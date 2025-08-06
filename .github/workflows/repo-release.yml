@@ -62,7 +62,7 @@ jobs:
       - run: npm ci --prefer-offline --no-audit
         working-directory: fenrick.miro.client
       - name: Download artefact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: build
           path: fenrick.miro.client/dist
@@ -114,7 +114,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Use previous artefact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: build
           path: dist
