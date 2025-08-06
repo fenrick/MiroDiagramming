@@ -2,6 +2,8 @@ namespace Fenrick.Miro.Server.Services;
 
 using Domain;
 
+using Serilog.Events;
+
 using ILogger = Serilog.ILogger;
 
 /// <summary>
@@ -16,10 +18,24 @@ public class SerilogSink(ILogger logger) : ILogSink
     {
         foreach (ClientLogEntry e in entries)
         {
-            this.loggerInstance.ForContext($"Source", $"Client")
-                .ForContext($"Level", e.Level)
-                .ForContext($"Context", e.Context, destructureObjects: true)
-                .Information($"{{Message}}", e.Message);
+            LogEventLevel level = MapLevel(e.Level);
+
+            this.loggerInstance.ForContext("Source", "Client")
+                .ForContext("Level", e.Level)
+                .ForContext("Context", e.Context, destructureObjects: true)
+                .Write(level, "{Message}", e.Message);
         }
     }
+
+    private static LogEventLevel MapLevel(string level) =>
+        level.ToLowerInvariant() switch
+        {
+            "trace" => LogEventLevel.Verbose,
+            "debug" => LogEventLevel.Debug,
+            "info" => LogEventLevel.Information,
+            "warn" => LogEventLevel.Warning,
+            "error" => LogEventLevel.Error,
+            "fatal" => LogEventLevel.Fatal,
+            _ => LogEventLevel.Information,
+        };
 }
