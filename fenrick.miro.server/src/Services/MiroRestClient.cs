@@ -42,7 +42,37 @@ public class MiroRestClient(
             ? await this.store.RetrieveAsync(userId, ct).ConfigureAwait(false)
             : null;
         var token = info?.Token;
-        using var message = new HttpRequestMessage(
+        using HttpRequestMessage message = CreateRequestMessage(request, token);
+        using HttpResponseMessage response =
+            await this.httpClient.SendAsync(message, ct).ConfigureAwait(false);
+        using HttpContent responseContent = response.Content;
+        if (response.StatusCode is HttpStatusCode.Unauthorized && userId != null)
+        {
+            var refreshed =
+                await this.refresher.RefreshAsync(userId, ct).ConfigureAwait(false);
+            if (refreshed != null && info != null)
+            {
+                await this.store
+                    .StoreAsync(new UserInfo(info.Id, info.Name, refreshed), ct)
+                    .ConfigureAwait(false);
+                using HttpRequestMessage retryMessage = CreateRequestMessage(request, refreshed);
+                using HttpResponseMessage retryResponse = await this.httpClient
+                    .SendAsync(retryMessage, ct)
+                    .ConfigureAwait(false);
+                using HttpContent retryContent = retryResponse.Content;
+                var retryBody =
+                    await retryContent.ReadAsStringAsync(ct).ConfigureAwait(false);
+                return new MiroResponse((int)retryResponse.StatusCode, retryBody);
+            }
+        }
+
+        var body = await responseContent.ReadAsStringAsync(ct).ConfigureAwait(false);
+        return new MiroResponse((int)response.StatusCode, body);
+    }
+
+    private static HttpRequestMessage CreateRequestMessage(MiroRequest request, string? token)
+    {
+        var message = new HttpRequestMessage(
             new HttpMethod(request.Method),
             new Uri(request.Path, UriKind.Relative))
         {
@@ -59,39 +89,6 @@ public class MiroRestClient(
                 new AuthenticationHeaderValue($"Bearer", token);
         }
 
-        using (HttpResponseMessage response =
-            await this.httpClient.SendAsync(message, ct).ConfigureAwait(false))
-        {
-            if (response.StatusCode is HttpStatusCode.Unauthorized && userId != null)
-            {
-                var refreshed =
-                    await this.refresher.RefreshAsync(userId, ct).ConfigureAwait(false);
-                if (refreshed != null && info != null)
-                {
-                    await this.store
-                        .StoreAsync(new UserInfo(info.Id, info.Name, refreshed), ct)
-                        .ConfigureAwait(false);
-                    response.Dispose();
-                    using var retry = new HttpRequestMessage(
-                        new HttpMethod(request.Method),
-                        new Uri(request.Path, UriKind.Relative))
-                    {
-                        Content = message.Content,
-                    };
-                    retry.Headers.Authorization =
-                        new AuthenticationHeaderValue($"Bearer", refreshed);
-                    using (HttpResponseMessage retryResponse =
-                        await this.httpClient.SendAsync(retry, ct).ConfigureAwait(false))
-                    {
-                        var retryBody =
-                            await retryResponse.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
-                        return new MiroResponse((int)retryResponse.StatusCode, retryBody);
-                    }
-                }
-            }
-
-            var body = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
-            return new MiroResponse((int)response.StatusCode, body);
-        }
+        return message;
     }
 }
