@@ -59,34 +59,39 @@ public class MiroRestClient(
                 new AuthenticationHeaderValue($"Bearer", token);
         }
 
-        using HttpResponseMessage response =
-            await this.httpClient.SendAsync(message, ct).ConfigureAwait(false);
-        if (response.StatusCode is HttpStatusCode.Unauthorized && userId != null)
+        using (HttpResponseMessage response =
+            await this.httpClient.SendAsync(message, ct).ConfigureAwait(false))
         {
-            var refreshed =
-                await this.refresher.RefreshAsync(userId, ct).ConfigureAwait(false);
-            if (refreshed != null && info != null)
+            if (response.StatusCode is HttpStatusCode.Unauthorized && userId != null)
             {
-                await this.store
-                    .StoreAsync(new UserInfo(info.Id, info.Name, refreshed), ct)
-                    .ConfigureAwait(false);
-                response.Dispose();
-                using var retry = new HttpRequestMessage(
-                    new HttpMethod(request.Method),
-                    new Uri(request.Path, UriKind.Relative))
+                var refreshed =
+                    await this.refresher.RefreshAsync(userId, ct).ConfigureAwait(false);
+                if (refreshed != null && info != null)
                 {
-                    Content = message.Content,
-                };
-                retry.Headers.Authorization =
-                    new AuthenticationHeaderValue($"Bearer", refreshed);
-                using HttpResponseMessage retryResponse =
-                    await this.httpClient.SendAsync(retry, ct).ConfigureAwait(false);
-                var retryBody =
-                    await retryResponse.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
-                return new MiroResponse((int)retryResponse.StatusCode, retryBody);
+                    await this.store
+                        .StoreAsync(new UserInfo(info.Id, info.Name, refreshed), ct)
+                        .ConfigureAwait(false);
+                    response.Dispose();
+                    using var retry = new HttpRequestMessage(
+                        new HttpMethod(request.Method),
+                        new Uri(request.Path, UriKind.Relative))
+                    {
+                        Content = message.Content,
+                    };
+                    retry.Headers.Authorization =
+                        new AuthenticationHeaderValue($"Bearer", refreshed);
+                    using (HttpResponseMessage retryResponse =
+                        await this.httpClient.SendAsync(retry, ct).ConfigureAwait(false))
+                    {
+                        var retryBody =
+                            await retryResponse.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
+                        return new MiroResponse((int)retryResponse.StatusCode, retryBody);
+                    }
+                }
             }
+
+            var body = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
+            return new MiroResponse((int)response.StatusCode, body);
         }
-        var body = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
-        return new MiroResponse((int)response.StatusCode, body);
     }
 }
