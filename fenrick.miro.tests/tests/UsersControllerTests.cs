@@ -22,7 +22,12 @@ public class UsersControllerTests
         var received = new List<UserInfo>();
         var store = new StubStore(received.Add);
         var controller = new UsersController(store);
-        var info = new UserInfo($"u1", $"Bob", $"t1");
+        var info = new UserInfo(
+            $"u1",
+            $"Bob",
+            $"t1",
+            $"r1",
+            DateTimeOffset.UnixEpoch);
 
         IActionResult result = controller.Register(info);
 

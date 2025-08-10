@@ -3,6 +3,7 @@ using System;
 using Fenrick.Miro.Server.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fenrick.Miro.Server.Migrations
 {
     [DbContext(typeof(MiroDbContext))]
-    partial class MiroDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250810073244_AddUserTokens")]
+    partial class AddUserTokens
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.7");

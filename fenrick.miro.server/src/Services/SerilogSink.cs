@@ -1,5 +1,7 @@
 namespace Fenrick.Miro.Server.Services;
 
+#pragma warning disable MA0165
+
 using Domain;
 
 using Serilog.Events;
@@ -20,22 +22,24 @@ public class SerilogSink(ILogger logger) : ILogSink
         {
             LogEventLevel level = MapLevel(e.Level);
 
-            this.loggerInstance.ForContext($"Source", $"Client")
-                .ForContext($"Level", e.Level)
-                .ForContext($"Context", e.Context, destructureObjects: true)
+            this.loggerInstance.ForContext("Source", "Client")
+                .ForContext("Level", e.Level)
+                .ForContext("Context", e.Context, destructureObjects: true)
                 .Write(level, "{Message}", e.Message);
         }
     }
 
     private static LogEventLevel MapLevel(string level) =>
-        level.ToLowerInvariant() switch
+            level.ToLowerInvariant() switch
         {
-            $"trace" => LogEventLevel.Verbose,
-            $"debug" => LogEventLevel.Debug,
-            $"info" => LogEventLevel.Information,
-            $"warn" => LogEventLevel.Warning,
-            $"error" => LogEventLevel.Error,
-            $"fatal" => LogEventLevel.Fatal,
+            "trace" => LogEventLevel.Verbose,
+            "debug" => LogEventLevel.Debug,
+            "info" => LogEventLevel.Information,
+            "warn" => LogEventLevel.Warning,
+            "error" => LogEventLevel.Error,
+            "fatal" => LogEventLevel.Fatal,
             _ => LogEventLevel.Information,
         };
 }
+
+#pragma warning restore MA0165

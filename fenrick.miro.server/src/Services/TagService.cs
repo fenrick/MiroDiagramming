@@ -1,5 +1,7 @@
 namespace Fenrick.Miro.Server.Services;
 
+#pragma warning disable MA0165
+
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -26,11 +28,11 @@ public class TagService(IMiroClient client, ILogger<TagService>? log = null) : I
     public async Task<IReadOnlyList<TagInfo>> GetTagsAsync(string boardId,
         CancellationToken ct = default)
     {
-        ArgumentNullException.ThrowIfNullOrEmpty(boardId);
+        ArgumentException.ThrowIfNullOrEmpty(boardId);
 
         MiroResponse res = await this.client
             .SendAsync(
-                new MiroRequest("GET", $"/boards/{boardId}/tags", Body: null),
+                new MiroRequest($"GET", $"/boards/{boardId}/tags", Body: null),
                 ct).ConfigureAwait(false);
 
         if (res.Status is < 200 or > 299)
@@ -51,7 +53,7 @@ public class TagService(IMiroClient client, ILogger<TagService>? log = null) : I
         catch (JsonException ex)
         {
             Log.DeserializationFailed(this.logger, boardId, ex);
-            throw new InvalidOperationException("Malformed tag JSON response.", ex);
+            throw new InvalidOperationException($"Malformed tag JSON response.", ex);
         }
     }
 
@@ -70,3 +72,5 @@ public class TagService(IMiroClient client, ILogger<TagService>? log = null) : I
                 "Failed to deserialize tags for board {BoardId}.");
     }
 }
+
+#pragma warning restore MA0165
