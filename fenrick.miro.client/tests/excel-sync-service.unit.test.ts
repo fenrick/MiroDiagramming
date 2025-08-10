@@ -18,6 +18,7 @@ vi.mock('../src/board/templates', () => ({
 vi.mock('../src/board/element-utils', () => ({ applyElementToItem: vi.fn() }));
 
 describe('ExcelSyncService', () => {
+  beforeEach(() => vi.clearAllMocks());
   test('registerMapping and getWidgetId round-trip', () => {
     const svc = new ExcelSyncService();
     svc.registerMapping('r1', 'w1');
@@ -89,6 +90,8 @@ describe('ExcelSyncService', () => {
     const result = await svc.findWidget('r1', 'foo');
     expect(result).toEqual({ id: 'w1' });
     expect(api.getShape).toHaveBeenCalledWith('w1');
+    expect(searchShapes).not.toHaveBeenCalled();
+    expect(searchGroups).not.toHaveBeenCalled();
   });
 
   test('findWidget searches shapes then groups', async () => {
