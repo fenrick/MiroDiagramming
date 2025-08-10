@@ -31,11 +31,11 @@ public class EfUserStoreTests
                 .Options;
         using var context = new MiroDbContext(options);
         var store = new EfUserStore(context);
-        var info = new UserInfo($"u1", $"Bob", $"t1");
+        var info = new UserInfo($"u1", $"Bob", $"t1", $"r1", DateTimeOffset.UnixEpoch);
 
         store.Store(info);
 
-        Assert.Equal($"t1", store.Retrieve($"u1")?.Token);
+        Assert.Equal($"t1", store.Retrieve($"u1")?.AccessToken);
     }
 
     [Fact]
@@ -47,12 +47,12 @@ public class EfUserStoreTests
                 .Options;
         using var context = new MiroDbContext(options);
         var store = new EfUserStore(context);
-        var info = new UserInfo($"u1", $"Bob", $"t1");
+        var info = new UserInfo($"u1", $"Bob", $"t1", $"r1", DateTimeOffset.UnixEpoch);
         store.Store(info);
 
-        store.Store(new UserInfo($"u1", $"Bob", $"t2"));
+        store.Store(new UserInfo($"u1", $"Bob", $"t2", $"r1", DateTimeOffset.UnixEpoch));
 
-        Assert.Equal($"t2", store.Retrieve($"u1")?.Token);
+        Assert.Equal($"t2", store.Retrieve($"u1")?.AccessToken);
     }
 
     [Fact]
@@ -64,7 +64,7 @@ public class EfUserStoreTests
                 .Options;
         using var context = new MiroDbContext(options);
         var store = new EfUserStore(context);
-        store.Store(new UserInfo($"u1", $"Bob", $"t1"));
+        store.Store(new UserInfo($"u1", $"Bob", $"t1", $"r1", DateTimeOffset.UnixEpoch));
 
         store.Delete($"u1");
 
@@ -106,11 +106,11 @@ public class EfUserStoreTests
                 .Options;
         var context = new MiroDbContext(options);
         var store = new EfUserStore(context);
-        var info = new UserInfo($"u1", $"Bob", $"t1");
+        var info = new UserInfo($"u1", $"Bob", $"t1", $"r1", DateTimeOffset.UnixEpoch);
 
         await store.StoreAsync(info).ConfigureAwait(false);
         UserInfo? fetched = await store.RetrieveAsync($"u1").ConfigureAwait(false);
-        Assert.Equal($"t1", fetched?.Token);
+        Assert.Equal($"t1", fetched?.AccessToken);
 
         await store.DeleteAsync($"u1").ConfigureAwait(false);
         Assert.Null(await store.RetrieveAsync($"u1").ConfigureAwait(false));

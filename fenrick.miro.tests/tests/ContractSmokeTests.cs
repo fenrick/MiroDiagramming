@@ -1,8 +1,7 @@
 
-#nullable enable
-
 namespace Fenrick.Miro.Tests;
 
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
@@ -36,20 +35,25 @@ public class ContractSmokeTests(WebApplicationFactory<Program> factory)
     public async Task EndpointsReturnSuccessAsync()
     {
         HttpResponseMessage cacheResponse =
-            await this.client.GetAsync($"/api/cache/board");
+            await this.client.GetAsync($"/api/cache/board").ConfigureAwait(false);
         cacheResponse.EnsureSuccessStatusCode();
 
-        UserInfo user = new($"id", $"name", $"token");
+        UserInfo user = new(
+            $"id",
+            $"name",
+            $"token",
+            $"refresh",
+            DateTimeOffset.UnixEpoch);
         HttpResponseMessage userResponse =
-            await this.client.PostAsJsonAsync($"/api/users", user);
+            await this.client.PostAsJsonAsync($"/api/users", user).ConfigureAwait(false);
         Assert.Equal(HttpStatusCode.Accepted, userResponse.StatusCode);
 
         MiroRequest[] batch = [new($"GET", $"/ping", Body: null)];
         HttpResponseMessage batchResponse =
-            await this.client.PostAsJsonAsync($"/api/batch", batch);
+            await this.client.PostAsJsonAsync($"/api/batch", batch).ConfigureAwait(false);
         batchResponse.EnsureSuccessStatusCode();
         List<MiroResponse>? body =
-            await batchResponse.Content.ReadFromJsonAsync<List<MiroResponse>>();
+            await batchResponse.Content.ReadFromJsonAsync<List<MiroResponse>>().ConfigureAwait(false);
         Assert.NotNull(body);
         Assert.Single(body!);
     }

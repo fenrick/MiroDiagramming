@@ -1,5 +1,7 @@
 namespace Fenrick.Miro.Server.Data;
 
+using System;
+
 /// <summary>
 ///     Database record storing user authentication details.
 /// </summary>
@@ -11,6 +13,12 @@ public class UserEntity
     /// <summary>Display name of the user.</summary>
     public required string Name { get; set; }
 
-    /// <summary>OAuth token used for API requests.</summary>
-    public required string Token { get; set; }
+    /// <summary>OAuth access token used for API requests.</summary>
+    public required string AccessToken { get; set; }
+
+    /// <summary>OAuth refresh token used to renew the access token.</summary>
+    public required string RefreshToken { get; set; }
+
+    /// <summary>Expiry instant of the current access token.</summary>
+    public DateTimeOffset ExpiresAt { get; set; }
 }

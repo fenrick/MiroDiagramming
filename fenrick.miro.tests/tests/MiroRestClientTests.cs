@@ -23,7 +23,10 @@ public class MiroRestClientTests
         var httpClient =
             new HttpClient(handler) { BaseAddress = new Uri($"http://x") };
         var store = new InMemoryUserStore();
-        await store.StoreAsync(new UserInfo($"u1", $"Bob", $"tok")).ConfigureAwait(false);
+        await store
+            .StoreAsync(
+                new UserInfo($"u1", $"Bob", $"tok", $"r1", DateTimeOffset.UnixEpoch)).ConfigureAwait(false)
+;
         var ctx = new DefaultHttpContext();
         ctx.Request.Headers[$"X-User-Id"] = $"u1";
         var client = new MiroRestClient(
@@ -45,7 +48,10 @@ public class MiroRestClientTests
         var handler = new SequenceHandler();
         var httpClient = new HttpClient(handler) { BaseAddress = new Uri($"http://x") };
         var store = new InMemoryUserStore();
-        await store.StoreAsync(new UserInfo($"u1", $"Bob", $"old")).ConfigureAwait(false);
+        await store
+            .StoreAsync(
+                new UserInfo($"u1", $"Bob", $"old", $"r1", DateTimeOffset.UnixEpoch)).ConfigureAwait(false)
+;
         var refresher = new StubRefresher($"new");
         var ctx = new DefaultHttpContext();
         ctx.Request.Headers[$"X-User-Id"] = $"u1";
@@ -59,7 +65,9 @@ public class MiroRestClientTests
 
         Assert.Equal(2, handler.CallCount);
         Assert.Equal($"new", handler.LastRequest?.Headers.Authorization?.Parameter);
-        Assert.Equal($"new", (await store.RetrieveAsync($"u1", ctx.RequestAborted).ConfigureAwait(false))?.Token);
+        Assert.Equal(
+            $"new",
+            (await store.RetrieveAsync($"u1", ctx.RequestAborted).ConfigureAwait(false))?.AccessToken);
         Assert.True(refresher.Called);
     }
 
@@ -98,10 +106,11 @@ public class MiroRestClientTests
     {
         public bool Called { get; private set; }
 
-        public Task<string?> RefreshAsync(string userId, CancellationToken ct = default)
+        public Task<UserInfo?> RefreshAsync(UserInfo info, CancellationToken ct = default)
         {
             this.Called = true;
-            return Task.FromResult<string?>(token);
+            return Task.FromResult<UserInfo?>(
+                new(info.Id, info.Name, token, info.RefreshToken, info.ExpiresAt));
         }
     }
 }

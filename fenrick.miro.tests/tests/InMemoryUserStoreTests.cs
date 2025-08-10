@@ -22,29 +22,29 @@ public class InMemoryUserStoreTests
     public void StoreAndRetrieveUser()
     {
         var store = new InMemoryUserStore();
-        var info = new UserInfo($"u1", $"Bob", $"t1");
+        var info = new UserInfo($"u1", $"Bob", $"t1", $"r1", DateTimeOffset.UnixEpoch);
         store.Store(info);
 
-        Assert.Equal($"t1", store.Retrieve($"u1")?.Token);
+        Assert.Equal($"t1", store.Retrieve($"u1")?.AccessToken);
     }
 
     [Fact]
     public void StoreUpdatesExistingUser()
     {
         var store = new InMemoryUserStore();
-        var info = new UserInfo($"u1", $"Bob", $"t1");
+        var info = new UserInfo($"u1", $"Bob", $"t1", $"r1", DateTimeOffset.UnixEpoch);
         store.Store(info);
 
-        store.Store(new UserInfo($"u1", $"Bob", $"t2"));
+        store.Store(new UserInfo($"u1", $"Bob", $"t2", $"r1", DateTimeOffset.UnixEpoch));
 
-        Assert.Equal($"t2", store.Retrieve($"u1")?.Token);
+        Assert.Equal($"t2", store.Retrieve($"u1")?.AccessToken);
     }
 
     [Fact]
     public void DeleteRemovesUser()
     {
         var store = new InMemoryUserStore();
-        store.Store(new UserInfo($"u1", $"Bob", $"t1"));
+        store.Store(new UserInfo($"u1", $"Bob", $"t1", $"r1", DateTimeOffset.UnixEpoch));
 
         store.Delete($"u1");
 
@@ -71,11 +71,11 @@ public class InMemoryUserStoreTests
     public async Task AsyncMethodsWorkAsync()
     {
         var store = new InMemoryUserStore();
-        var info = new UserInfo($"u1", $"Bob", $"t1");
+        var info = new UserInfo($"u1", $"Bob", $"t1", $"r1", DateTimeOffset.UnixEpoch);
         await store.StoreAsync(info).ConfigureAwait(false);
 
         UserInfo? fetched = await store.RetrieveAsync($"u1").ConfigureAwait(false);
-        Assert.Equal($"t1", fetched?.Token);
+        Assert.Equal($"t1", fetched?.AccessToken);
 
         await store.DeleteAsync($"u1").ConfigureAwait(false);
 

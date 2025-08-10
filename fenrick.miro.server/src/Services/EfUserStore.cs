@@ -28,7 +28,12 @@ public class EfUserStore(MiroDbContext context) : IUserStore
         UserEntity? entity = this.db.Users.Find(userId);
         return entity is null
             ? null
-            : new UserInfo(entity.Id, entity.Name, entity.Token);
+            : new UserInfo(
+                entity.Id,
+                entity.Name,
+                entity.AccessToken,
+                entity.RefreshToken,
+                entity.ExpiresAt);
     }
 
     /// <inheritdoc />
@@ -45,7 +50,12 @@ public class EfUserStore(MiroDbContext context) : IUserStore
             .ConfigureAwait(false);
         return entity is null
             ? null
-            : new UserInfo(entity.Id, entity.Name, entity.Token);
+            : new UserInfo(
+                entity.Id,
+                entity.Name,
+                entity.AccessToken,
+                entity.RefreshToken,
+                entity.ExpiresAt);
     }
 
     /// <inheritdoc />
@@ -60,12 +70,22 @@ public class EfUserStore(MiroDbContext context) : IUserStore
         UserEntity? entity = this.db.Users.Find(info.Id);
         if (entity is null)
         {
-            this.db.Users.Add(new UserEntity { Id = info.Id, Name = info.Name, Token = info.Token });
+            this.db.Users.Add(
+                new UserEntity
+                {
+                    Id = info.Id,
+                    Name = info.Name,
+                    AccessToken = info.AccessToken,
+                    RefreshToken = info.RefreshToken,
+                    ExpiresAt = info.ExpiresAt,
+                });
         }
         else
         {
             entity.Name = info.Name;
-            entity.Token = info.Token;
+            entity.AccessToken = info.AccessToken;
+            entity.RefreshToken = info.RefreshToken;
+            entity.ExpiresAt = info.ExpiresAt;
         }
 
         this.db.SaveChanges();
@@ -86,12 +106,21 @@ public class EfUserStore(MiroDbContext context) : IUserStore
         {
             await this.db.Users
                 .AddAsync(
-                    new UserEntity { Id = info.Id, Name = info.Name, Token = info.Token }, ct).ConfigureAwait(false);
+                    new UserEntity
+                    {
+                        Id = info.Id,
+                        Name = info.Name,
+                        AccessToken = info.AccessToken,
+                        RefreshToken = info.RefreshToken,
+                        ExpiresAt = info.ExpiresAt,
+                    }, ct).ConfigureAwait(false);
         }
         else
         {
             entity.Name = info.Name;
-            entity.Token = info.Token;
+            entity.AccessToken = info.AccessToken;
+            entity.RefreshToken = info.RefreshToken;
+            entity.ExpiresAt = info.ExpiresAt;
         }
 
         await this.db.SaveChangesAsync(ct).ConfigureAwait(false);
