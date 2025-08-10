@@ -6,14 +6,23 @@ vi.stubGlobal('miro', {
   board: { getUserInfo: vi.fn().mockResolvedValue({ id: 'u1' }) },
 });
 
-beforeEach(() => (fetch as unknown as vi.Mock).mockReset());
+beforeEach(() => {
+  (fetch as unknown as vi.Mock).mockReset();
+  (fetch as unknown as vi.Mock).mockResolvedValue({
+    json: vi.fn().mockResolvedValue([]),
+  });
+});
 
 test('createShape sends single payload', async () => {
   const api = new ShapeClient('b1', '/api');
   const shape: ShapeData = { shape: 'rect', x: 0, y: 0, width: 1, height: 1 };
-  await api.createShape(shape);
+  (fetch as vi.Mock).mockResolvedValueOnce({
+    json: vi.fn().mockResolvedValue([{ body: '{}' }]),
+  });
+  const result = await api.createShape(shape);
   expect((fetch as vi.Mock).mock.calls).toHaveLength(1);
   expect(JSON.parse((fetch as vi.Mock).mock.calls[0][1].body)).toHaveLength(1);
+  expect(result).toBeDefined();
 });
 
 test('createShapes posts all shapes in one request', async () => {
@@ -25,9 +34,13 @@ test('createShapes posts all shapes in one request', async () => {
     width: 1,
     height: 1,
   }));
-  await api.createShapes(shapes);
+  (fetch as vi.Mock).mockResolvedValueOnce({
+    json: vi.fn().mockResolvedValue(shapes.map(() => ({ body: '{}' }))),
+  });
+  const res = await api.createShapes(shapes);
   expect((fetch as vi.Mock).mock.calls).toHaveLength(1);
   expect(JSON.parse((fetch as vi.Mock).mock.calls[0][1].body)).toHaveLength(25);
+  expect(res).toHaveLength(25);
 });
 
 test('updateShape sends PUT request', async () => {

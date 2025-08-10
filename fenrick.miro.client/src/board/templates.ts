@@ -8,6 +8,7 @@ import type {
   ShapeType,
   TextStyle,
 } from '@mirohq/websdk-types';
+import { ShapeClient, type ShapeData } from '../core/utils/shape-client';
 import connectorJson from '../../../templates/connectorTemplates.json';
 import templatesJson from '../../../templates/shapeTemplates.json';
 
@@ -64,6 +65,10 @@ export class TemplateManager {
     connectorJson as ConnectorTemplateCollection;
   private readonly aliasMap: Record<string, string> = {};
   private readonly connectorAliasMap: Record<string, string> = {};
+  private readonly api = new ShapeClient(
+    ((globalThis as unknown as { miro?: { board?: { info?: { id: string } } } })
+      .miro?.board?.info?.id ?? '') as string,
+  );
 
   private constructor() {
     Object.entries(this.templates).forEach(([key, def]) =>
@@ -133,19 +138,49 @@ export class TemplateManager {
       throw new Error(`Template '${name}' not found`);
     }
 
-    const created: GroupableItem[] = [];
+    const shapes = this.buildShapes(template, label, x, y);
+    if (!shapes.length) {
+      return undefined;
+    }
+    const results = await this.api.createShapes(shapes);
+    const items = await this.fetchCreatedItems(results, frame);
+    if (items.length > 1) {
+      return (await miro.board.group({ items })) as Group;
+    }
+
+    return items[0];
+  }
+
+  private buildShapes(
+    template: TemplateDefinition,
+    label: string,
+    x: number,
+    y: number,
+  ): ShapeData[] {
+    const shapes: ShapeData[] = [];
     for (const el of template.elements) {
-      const item = await this.createElement(el, label, x, y, frame);
-      if (item) {
-        created.push(item);
+      const data = this.createElement(el, label, x, y);
+      if (data) {
+        shapes.push(data);
       }
     }
+    return shapes;
+  }
 
-    if (created.length > 1) {
-      return await miro.board.group({ items: created });
+  private async fetchCreatedItems(
+    results: Record<string, unknown>[],
+    frame?: Frame,
+  ): Promise<GroupableItem[]> {
+    const items: GroupableItem[] = [];
+    for (const r of results) {
+      const item = (((await miro.board.get({ id: r.id })) as GroupableItem[]) ??
+        [])[0];
+      if (item) {
+        frame?.add(item);
+        items.push(item);
+      }
     }
-
-    return created[0];
+    return items;
   }
 
   /**
@@ -199,54 +234,51 @@ export class TemplateManager {
     return m ? parseFloat(m[1]) : value;
   }
 
-  /** Create a shape widget for a template element. */
-  private async createShapeWidget(
+  /** Create shape data for a template element. */
+  private createShapeData(
     element: TemplateElement,
     label: string,
     x: number,
     y: number,
-    frame?: Frame,
-  ): Promise<GroupableItem> {
+  ): ShapeData {
     const style: Partial<ShapeStyle> & Record<string, unknown> =
       this.resolveStyle(element.style ?? {});
     if (element.fill && !style.fillColor) {
       style.fillColor = this.resolveToken(element.fill) as string;
     }
-    // TODO migrate creation to ShapeClient to avoid direct board API calls
-    const shape = await miro.board.createShape({
+    return {
       shape: element.shape as ShapeType,
       x,
       y,
-      width: element.width,
-      height: element.height,
+      width: element.width ?? 0,
+      height: element.height ?? 0,
       rotation: element.rotation ?? 0,
-      content: (element.text ?? '{{label}}').replace('{{label}}', label),
-      style: style as Partial<ShapeStyle>,
-    });
-    frame?.add(shape);
-    return shape;
+      text: (element.text ?? '{{label}}').replace('{{label}}', label),
+      style,
+    };
   }
 
-  /** Create a text widget for a template element. */
-  private async createTextWidget(
+  /** Create text data for a template element. */
+  private createTextData(
     element: TemplateElement,
     label: string,
     x: number,
     y: number,
-    frame?: Frame,
-  ): Promise<GroupableItem> {
+  ): ShapeData {
     const style: Partial<TextStyle> & Record<string, unknown> = {
       textAlign: 'center',
       ...this.resolveStyle(element.style ?? {}),
     };
-    const text = await miro.board.createText({
-      content: element.text?.replace('{{label}}', label) ?? label,
+    return {
+      shape: 'text',
       x,
       y,
-      style: style as Partial<TextStyle>,
-    });
-    frame?.add(text);
-    return text;
+      width: element.width ?? 0,
+      height: element.height ?? 0,
+      rotation: element.rotation ?? 0,
+      text: element.text?.replace('{{label}}', label) ?? label,
+      style,
+    };
   }
 
   private getElementType(
@@ -261,18 +293,17 @@ export class TemplateManager {
     return undefined;
   }
 
-  private async createElement(
+  private createElement(
     element: TemplateElement,
     label: string,
     x: number,
     y: number,
-    frame?: Frame,
-  ): Promise<GroupableItem | undefined> {
+  ): ShapeData | undefined {
     switch (this.getElementType(element)) {
       case 'shape':
-        return this.createShapeWidget(element, label, x, y, frame);
+        return this.createShapeData(element, label, x, y);
       case 'text':
-        return this.createTextWidget(element, label, x, y, frame);
+        return this.createTextData(element, label, x, y);
       default:
         return undefined;
     }
