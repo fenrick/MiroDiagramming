@@ -1,7 +1,7 @@
 import http, { type Server } from 'node:http';
 import { AddressInfo } from 'node:net';
 import { afterAll, beforeAll, expect, test, vi } from 'vitest';
-import { AuthClient, registerCurrentUser } from '../src/user-auth';
+import { AuthClient, registerWithCurrentUser } from '../src/user-auth';
 
 let server: Server;
 let url: string;
@@ -39,7 +39,7 @@ test('registerCurrentUser sends token to server', async () => {
     status = r.status;
     return r;
   };
-  await registerCurrentUser(client);
+  await registerWithCurrentUser(client);
   expect(status).toBe(202);
   global.fetch = originalFetch;
 });

@@ -1,3 +1,4 @@
+import { apiFetch } from './api-fetch';
 import type { CardData } from './cards';
 
 /** HTTP client for the cards API. */
@@ -17,7 +18,7 @@ export class CardClient {
     if (typeof fetch !== 'function') {
       return;
     }
-    await fetch(this.url, {
+    await apiFetch(this.url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(cards),

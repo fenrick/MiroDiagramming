@@ -1,3 +1,5 @@
+import { apiFetch } from './core/utils/api-fetch';
+
 export interface ClientLogEntry {
   timestamp: string;
   level: string;
@@ -26,7 +28,7 @@ export class HttpLogSink implements LogSink {
       return;
     }
     try {
-      const response = await fetch(this.url, {
+      const response = await apiFetch(this.url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(entries),

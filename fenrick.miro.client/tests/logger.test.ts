@@ -11,6 +11,10 @@ afterEach(() => {
   delete (global as { fetch?: unknown }).fetch;
 });
 
+vi.stubGlobal('miro', {
+  board: { getUserInfo: vi.fn().mockResolvedValue({ id: 'u1' }) },
+});
+
 test('defaults to info level', async () => {
   delete process.env.LOG_LEVEL;
   const { log } = await import('../src/logger');

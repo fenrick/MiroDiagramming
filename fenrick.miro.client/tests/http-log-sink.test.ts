@@ -5,6 +5,10 @@ import { HttpLogSink } from '../src/log-sink';
 let server: ReturnType<typeof createServer>;
 let url: string;
 
+vi.stubGlobal('miro', {
+  board: { getUserInfo: vi.fn().mockResolvedValue({ id: 'u1' }) },
+});
+
 beforeAll(async () => {
   server = createServer((_, res) => {
     res.statusCode = 202;
