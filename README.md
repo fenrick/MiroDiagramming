@@ -5,6 +5,33 @@ on a Miro board. The application uses the **Eclipse Layout Kernel (ELK)** to
 arrange nodes and edges automatically. Shapes are generated from templates and
 each element can carry metadata that controls its appearance and placement.
 
+## Quickstart
+
+### Prerequisites
+
+- Node.js 20.x
+- .NET 9 SDK
+- `dotnet workload install aspire`
+
+### Environment
+
+Copy `fenrick.miro.client/.env.example` to `fenrick.miro.client/.env` and adjust the values as needed. `VITE_PORT` sets the client dev server port and `LOG_LEVEL` controls log verbosity. During development, the client proxies API requests to the backend using the Aspire-provided `services__server__https__0` or `services__server__http__0` environment variables.
+
+### Development
+
+Run both the server and client together:
+
+```bash
+dotnet run --project fenrick.miro.apphost
+```
+
+Run them separately:
+
+```bash
+(cd fenrick.miro.client && npm run dev)
+dotnet run --project fenrick.miro.server
+```
+
 ## Uploading JSON Content
 
 1. Click the app icon on your Miro board.
