@@ -28,6 +28,7 @@ IResourceBuilder<IResourceWithConnectionString> db =
 IResourceBuilder<ProjectResource> serverApi = builder.AddProject<fenrick_miro_server>($"server")
                        .WithReference(db)
                        .WaitFor(db)
+                       .WithEnvironment($"DatabaseProvider", chosen)
                        .WithExternalHttpEndpoints();
 
 // 5. Front-end waits for the API

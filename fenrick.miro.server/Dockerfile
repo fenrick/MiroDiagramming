@@ -25,4 +25,5 @@ RUN dotnet publish "./fenrick.miro.server.csproj" -c "$BUILD_CONFIGURATION" -o /
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 CMD curl -f http://localhost:8080/health/livez || exit 1
 ENTRYPOINT ["dotnet", "Fenrick.Miro.Server.dll"]
