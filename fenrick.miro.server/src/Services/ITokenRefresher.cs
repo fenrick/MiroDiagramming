@@ -3,8 +3,6 @@ namespace Fenrick.Miro.Server.Services;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Domain;
-
 /// <summary>
 ///     Provides access token refresh logic for expired tokens.
 /// </summary>
@@ -13,8 +11,8 @@ public interface ITokenRefresher
     /// <summary>
     ///     Request updated OAuth tokens for the specified user.
     /// </summary>
-    /// <param name="info">Current user details and tokens.</param>
+    /// <param name="userId">Identifier of the user.</param>
     /// <param name="ct">Cancellation token to abort the operation.</param>
-    /// <returns>The refreshed details or <see langword="null"/> if refresh failed.</returns>
-    public Task<UserInfo?> RefreshAsync(UserInfo info, CancellationToken ct = default);
+    /// <returns>The refreshed access token or <see langword="null"/> if refresh failed.</returns>
+    public Task<string?> RefreshAsync(string userId, CancellationToken ct = default);
 }
