@@ -34,26 +34,43 @@ Browser
           ▲                 │
           │                 ▼
         Graph Processor  ◄─ Data Sources (REST/CSV/Graph)
-                         ▲
-                         └── OAuth tokens via browser
+                         │
+                         └─► Data store (Miro item ids)
 ```
 
-The add-on is **client-only**. All persistence is handled by Miro boards.
-Loading Excel workbooks from Microsoft Graph uses a client-side OAuth flow that
-acquires tokens in the browser—no server component stores credentials.
+The React GUI communicates with a **.NET 9** server for all Miro REST API calls.
+OAuth tokens are obtained during browser login, then stored securely by the
+server and retrieved for each request. Tokens are persisted by
+<code>EfUserStore</code> in **PostgreSQL** using
+**Entity Framework Core**. Templates are stored via
+<code>EfTemplateStore</code> using the same database. The existing
+web API embedded in the GUI continues to handle UX events and simple actions.
+EF Core migrations run on startup to keep the schema in sync with the model.
+The server also persists the ids of created Miro items so they can be
+synchronised or referenced later.
+<!-- TODO build a richer .NET object model to persist board state beyond item ids -->
+<!-- TODO design a simple DTO layer shared between the React client and .NET server
+     and translate it into concrete Miro REST calls -->
+
+```
+React GUI ──► .NET 9 Server ──► Miro REST API
+                   │
+                   └─► Data store (Miro item ids)
+```
 
 ---
 
 ## 3 Layering
 
-```
-Data        → Graph Normalisation → Layout Engine → Board Rendering → UI Orchestration
-(src/core)     (src/core)            (src/core)      (src/board)       (src/ui)
+-``` Data → Graph Normalisation → Layout Engine → Board Rendering → UI
+Orchestration (fenrick.miro.client/src/core) (fenrick.miro.client/src/core)
+(fenrick.miro.client/src/core) (fenrick.miro.client/src/board) (fenrick.miro.client/src/ui)
+
 ```
 
-- **Pure Core** (src/core) – framework-agnostic logic.
-- **Board Adapter** (src/board) – converts domain objects to Miro widgets.
-- **UI Shell** (src/ui) – React views built with Mirotone CSS wrappers.
+- **Pure Core** (`fenrick.miro.client/src/core`) – framework-agnostic logic.
+- **Board Adapter** (`fenrick.miro.client/src/board`) – converts domain objects to Miro widgets.
+- **UI Shell** (`fenrick.miro.client/src/ui`) – React views built with design-system wrappers.
 - **Infrastructure** (scripts, .github) – build, lint, test, release automation.
 
 ---
@@ -61,21 +78,14 @@ Data        → Graph Normalisation → Layout Engine → Board Rendering → UI
 ## 4 Repository Map
 
 ```
-src/
-  core/        graph/, layout/, utils/
-  board/       BoardBuilder, CardProcessor
-  # Detailed per-file descriptions:
-  # - [CORE_MODULES.md](CORE_MODULES.md)
-  # - [BOARD_MODULES.md](BOARD_MODULES.md)
-  # - [UI_MODULES.md](UI_MODULES.md)
-  # - [APP_MODULES.md](APP_MODULES.md)
-  ui/          components/, hooks/, pages/
-  app/         entry + routing
-tests/         mirrors src
-.storybook/    MDX docs & live examples
-public/        icons, i18n JSON
-scripts/       build helpers
-docs/          *.md (this file, components, foundation …)
+
+fenrick.miro.server/ src/{Api,Domain,Services} fenrick.miro.client/
+src/{app,board,core,ui,assets} fenrick.miro.api/ src/ (future public API)
+fenrick.miro.services/ src/ (shared cross-cutting services)
+fenrick.miro.tests/ .NET unit tests fenrick.miro.client/tests/ Node/React
+tests docs/ \*.md (this file, components, foundation …) scripts/ build helpers
+public/ icons, i18n JSON templates/ default widget templates
+
 ```
 
 ---
@@ -96,20 +106,22 @@ Complexity limits enforced automatically by **SonarQube** gate.
 
 ## 6 Quality, Testing & CI/CD
 
-| Stage      | Gate                        | Threshold          |
-| ---------- | --------------------------- | ------------------ |
-| Pre-commit | ESLint, Stylelint, Prettier | zero errors        |
-| Unit       | Vitest (coverage v8)        | 90 % line & branch |
-| UI         | manual visual & a11y review | no critical issues |
-| Metrics    | SonarQube                   | cyclomatic ≤ 8     |
+| Stage      | Gate                        | Threshold            |
+| ---------- | --------------------------- | -------------------- |
+| Pre-commit | ESLint, Stylelint, Prettier | zero errors          |
+| Unit       | `npm test`, `dotnet test`   | ≥ 90 % line & branch |
+| UI         | manual visual & a11y review | no critical issues   |
+| Metrics    | SonarQube                   | cyclomatic ≤ 8       |
 
 **Workflow** (GitHub Actions)
 
-1. Restore Node dependencies from cache.
-2. Lint, type-check, unit tests (Node 24).
+1. Restore Node and .NET dependencies from cache.
+2. Lint, type-check and unit tests for both codebases (Node 20, .NET 9).
 3. Build Storybook and a feature-flagged bundle for staging.
-4. SonarQube analysis and budget checks (configured by
-   [sonar-project.properties](../sonar-project.properties)).
+4. SonarQube build scan using
+   [dotnet-sonarscanner](https://docs.sonarsource.com/sonarqube/latest/analyzing-source-code/scanners/sonarscanner-for-msbuild/)
+   with the `dotnet test` run between the `begin` and `end` steps so coverage
+   reports are uploaded automatically.
 5. Semantic-release creates Git tag, changelog and Chrome-Store zip.
 6. Automatic rollback uses the previously published artefact (see
    **DEPLOYMENT.md** for details).
@@ -118,26 +130,32 @@ Complexity limits enforced automatically by **SonarQube** gate.
 
 ## 7 Automated Code Review & Enforcement
 
-- CI checks fail pull requests if complexity, coverage or lint targets fall
-  short.
+- Both the Node and .NET code must maintain ≥ 90 % coverage with cyclomatic
+  complexity under eight.
+
+- CI checks fail pull requests if complexity or lint targets fall short. Coverage
+  from all test shards is merged for reporting only; the build does not fail
+  automatically when coverage falls below 90 %.
 - **Conventional Commits** enforced by commit-lint.
 - Every PR must pass all CI gates; manual reviewers are optional.
-- **CodeQL** scan adds static-analysis findings to the check suite (workflow:
-  [.github/workflows/codeql.yml](../.github/workflows/codeql.yml)).
+- **CodeQL** scan adds static-analysis findings to the check suite for
+  JavaScript, GitHub Actions and C# projects (job `codeql` in
+  [repo-codeql.yml](../.github/workflows/repo-codeql.yml)).
 
 ---
 
 ## 8 Security & Threat Model (summary)
 
-| Asset         | Threat                           | Mitigation                                                        |
-| ------------- | -------------------------------- | ----------------------------------------------------------------- |
-| Board content | Malicious SVG / script injection | Deep schema validation, CSP sandbox in iframe                     |
-| Layout Worker | DOS via oversized graphs         | Node cap 5 000, timeout 5 s                                       |
-| Supply-chain  | Malicious dependency             | SLSA-compliant provenance, `npm audit` blocks build               |
-| User data     | Privacy breach                   | No external storage; all data stays on Miro board                 |
-| OAuth tokens  | Leakage or misuse                | Tokens held in browser memory only, scope limited to `Files.Read` |
+| Asset         | Threat                           | Mitigation                                                                          |
+| ------------- | -------------------------------- | ----------------------------------------------------------------------------------- |
+| Board content | Malicious SVG / script injection | Deep schema validation, CSP sandbox in iframe                                       |
+| Layout Worker | DOS via oversized graphs         | Node cap 5 000, timeout 5 s                                                         |
+| Supply-chain  | Malicious dependency             | SLSA-compliant provenance, `npm audit` blocks build                                 |
+| User data     | Privacy breach                   | No external storage; all data stays on Miro board                                   |
+| OAuth tokens  | Leakage or misuse                | Tokens stored on the server in an encrypted data store; the GUI never persists them |
 
-_Tokens are acquired via browser OAuth; no server stores credentials._
+_Tokens are acquired via browser OAuth and forwarded to the .NET 9 server. The
+server encrypts tokens at rest and attaches them to API requests._
 
 ---
 
@@ -188,6 +206,12 @@ _Tokens are acquired via browser OAuth; no server stores credentials._
 
 - Worker pool size = CPU cores − 1 (max 4).
 - IndexedDB caches ELK layouts keyed by graph hash.
+- TODO evaluate cross-compiling the Java ELK library to .NET or WASM for
+  consistent server/client layout behaviour. Consider **IKVM** to run the
+  original Java bytecode directly on .NET.
+- TODO research .NET ports of the Eclipse Layout Kernel; none found so far so cross-compilation may be required.
+- TODO explore official or community .NET wrappers for the Miro REST API so
+  server calls can rely on typed endpoints rather than manual JSON handling.
 - Diff-sync on board updates – never full re-render.
 - WebAssembly ELK optional behind feature flag.
 - Telemetry (posthog-js) tracks layout duration and error rate; thresholds feed
@@ -197,12 +221,13 @@ _Tokens are acquired via browser OAuth; no server stores credentials._
 
 ## 13 Observability & Monitoring
 
-| Concern       | Tool         | Signal                      |
-| ------------- | ------------ | --------------------------- |
-| JS errors     | Sentry       | Error rate, stack trace     |
-| Performance   | Datadog RUM  | Layout time, FPS            |
-| Feature flags | LaunchDarkly | Error delta versus baseline |
-| Accessibility | manual QA    | Issues logged per build     |
+| Concern       | Tool         | Signal                          |
+| ------------- | ------------ | ------------------------------- |
+| JS errors     | Sentry       | Error rate, stack trace         |
+| Performance   | Datadog RUM  | Layout time, FPS                |
+| Feature flags | LaunchDarkly | Error delta versus baseline     |
+| Client logs   | Serilog      | `HttpLogSink` posts `/api/logs` |
+| Accessibility | manual QA    | Issues logged per build         |
 
 Deployment, rollback and monitoring hooks are documented in **DEPLOYMENT.md**.
 
@@ -227,6 +252,5 @@ See [CODE_STYLE.md](CODE_STYLE.md) for detailed style rules.
 - File names: PascalCase.tsx for React, kebab-case.ts for util.
 - Import order: std → vendor → local, alphabetical within group.
 - No raw grid-column in style blocks (enforced by custom ESLint rule).
-- PR template checklist: coverage, complexity, a11y, dark-mode snapshot,
-  CHANGELOG entry. Add a bullet under the `Unreleased` heading when submitting a
-  pull request.
+- PR template checklist: coverage, complexity, a11y, dark-mode snapshot.
+```

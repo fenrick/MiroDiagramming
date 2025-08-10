@@ -1,0 +1,89 @@
+{
+  "name": "fenrick.miro.client",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Miro diagramming plugin template",
+  "keywords": [
+    "React",
+    "TypeScript",
+    "Miro Web SDK",
+    "Vite"
+  ],
+  "license": "Unlicense",
+  "engines": {
+    "node": "^20"
+  },
+  "scripts": {
+    "dev": "vite",
+    "start": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
+    "prettier": "prettier '**/*.{js,jsx,ts,tsx,md,json,yml,yaml,html,css}' --write",
+    "prettier:check": "prettier '**/*.{js,jsx,ts,tsx,md,json,yml,yaml,html,css}' --check",
+    "typecheck": "tsc --noEmit",
+    "pretest": "npm install",
+    "test": "vitest run --coverage",
+    "test-shard": "vitest run --coverage",
+    "stylelint": "stylelint 'src/**/*.css'",
+    "build-storybook": "storybook build",
+    "semantic-release": "semantic-release",
+    "commitlint": "commitlint --color",
+    "storybook": "storybook dev -p 6006"
+  },
+  "dependencies": {
+    "@mirohq/design-system": "^1.0.23",
+    "@stitches/react": "^1.2.8",
+    "d3-dsv": "^3.0.1",
+    "elkjs": "^0.10.0",
+    "exceljs": "^4.4.0",
+    "pino": "^9.7.0",
+    "react-dropzone": "^14.3.8",
+    "safe-regex": "^2.1.1"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@mirohq/websdk-types": "^2.16.1",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@storybook/addon-docs": "^8",
+    "@storybook/addon-essentials": "^8.6.14",
+    "@storybook/addon-links": "^8.6.14",
+    "@storybook/addon-viewport": "^8",
+    "@storybook/blocks": "^8",
+    "@storybook/react-vite": "^8.6.14",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/d3-dsv": "^3.0.7",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.1.0",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@typescript-eslint/eslint-plugin": "^8",
+    "@typescript-eslint/parser": "^8",
+    "@vitejs/plugin-react": "^4.7.0",
+    "@vitest/coverage-istanbul": "^3.2.4",
+    "eslint": "^9.31.0",
+    "eslint-plugin-react": "^7.37.5",
+    "husky": "^9.1.7",
+    "jsdom": "^26.1.0",
+    "prettier": "^3.6.2",
+    "semantic-release": "^24.2.7",
+    "storybook": "^8.6.14",
+    "stylelint": "^16.22.0",
+    "stylelint-config-standard": "^38.0.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.38.0",
+    "vite": "^6.3.5",
+    "vitest": "^3.2.4"
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  }
+}

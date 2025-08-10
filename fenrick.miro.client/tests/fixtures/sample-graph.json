@@ -1,0 +1,84 @@
+{
+  "nodes": [
+    { "id": "n1", "label": "Customer", "type": "Business" },
+    { "id": "n2", "label": "Sales Rep", "type": "Business" },
+    { "id": "n3", "label": "Order Management", "type": "Business" },
+    { "id": "n4", "label": "Order Service", "type": "Business" },
+    { "id": "n5", "label": "CRM Application", "type": "Application" },
+    { "id": "n6", "label": "Auth Service", "type": "Application" },
+    { "id": "n7", "label": "Order Data", "type": "Application" },
+    { "id": "n8", "label": "Web Server", "type": "Technology" },
+    { "id": "n9", "label": "Database Server", "type": "Technology" },
+    { "id": "n10", "label": "Database Service", "type": "Technology" },
+    { "id": "n11", "label": "Migration Project", "type": "Implementation" },
+    { "id": "n12", "label": "Increase Sales", "type": "Motivation" }
+  ],
+  "edges": [
+    {
+      "from": "n1",
+      "to": "n3",
+      "label": "triggers",
+      "metadata": { "template": "flow" }
+    },
+    {
+      "from": "n2",
+      "to": "n3",
+      "label": "assigned to",
+      "metadata": { "template": "assignment" }
+    },
+    {
+      "from": "n3",
+      "to": "n4",
+      "label": "realizes",
+      "metadata": { "template": "realization" }
+    },
+    {
+      "from": "n3",
+      "to": "n6",
+      "label": "uses",
+      "metadata": { "template": "access" }
+    },
+    {
+      "from": "n6",
+      "to": "n5",
+      "label": "realized by",
+      "metadata": { "template": "realization" }
+    },
+    {
+      "from": "n5",
+      "to": "n7",
+      "label": "writes",
+      "metadata": { "template": "access" }
+    },
+    {
+      "from": "n5",
+      "to": "n8",
+      "label": "deployed on",
+      "metadata": { "template": "assignment" }
+    },
+    {
+      "from": "n7",
+      "to": "n9",
+      "label": "stored on",
+      "metadata": { "template": "assignment" }
+    },
+    {
+      "from": "n9",
+      "to": "n10",
+      "label": "realizes",
+      "metadata": { "template": "realization" }
+    },
+    {
+      "from": "n11",
+      "to": "n5",
+      "label": "implements",
+      "metadata": { "template": "realization" }
+    },
+    {
+      "from": "n12",
+      "to": "n11",
+      "label": "influences",
+      "metadata": { "template": "influence" }
+    }
+  ]
+}

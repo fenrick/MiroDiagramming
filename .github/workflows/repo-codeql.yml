@@ -1,0 +1,40 @@
+name: repo-codeql
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  security-events: write
+
+env:
+  DOTNET_VERSION: "9.0.x"
+
+jobs:
+  codeql:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: actions
+            build-mode: none
+          - language: javascript-typescript
+            build-mode: none
+          - language: csharp
+            build-mode: manual
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+      - if: matrix.language == 'csharp'
+        run: dotnet build fenrick.miro.server/fenrick.miro.server.csproj --configuration Release
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
