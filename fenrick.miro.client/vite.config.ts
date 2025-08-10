@@ -1,5 +1,4 @@
 import react from '@vitejs/plugin-react';
-import plugin from '@vitejs/plugin-react';
 import dns from 'dns';
 import fs from 'fs';
 
@@ -37,7 +36,7 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },
     },
-    plugins: [react(), plugin()],
+    plugins: [react()],
     server: {
       port: parseInt(env.VITE_PORT),
       proxy: {
