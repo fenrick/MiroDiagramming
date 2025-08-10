@@ -21,5 +21,10 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - name: Restore
         run: dotnet restore fenrick.miro.slnx
-      - name: Test
-        run: dotnet test fenrick.miro.slnx
+      - name: Test with coverage
+        run: dotnet test fenrick.miro.slnx -p:CollectCoverage=true -p:CoverletOutputFormat=cobertura -p:ExcludeByAttribute=GeneratedCode
+      - name: Upload coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: server-coverage
+          path: '**/coverage.cobertura.xml'
