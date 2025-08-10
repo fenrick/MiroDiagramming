@@ -17,6 +17,7 @@ export function mockBoard(
   const board = {
     getSelection: vi.fn().mockResolvedValue([]),
     info: { id },
+    getUserInfo: vi.fn().mockResolvedValue({ id: 'u1', name: 'Test' }),
     ...overrides,
   } as unknown as BoardLike;
   (globalThis as { miro?: { board?: BoardLike } }).miro = { board };

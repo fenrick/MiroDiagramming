@@ -1,6 +1,6 @@
 import { expect, test, vi } from 'vitest';
 
-import { AuthClient, registerCurrentUser } from '../src/user-auth';
+import { AuthClient, registerWithCurrentUser } from '../src/user-auth';
 
 test('registerCurrentUser posts auth details', async () => {
   const client = new AuthClient('/api/users');
@@ -12,7 +12,7 @@ test('registerCurrentUser posts auth details', async () => {
   (global as unknown as { fetch: unknown }).fetch = fetchMock;
   (global as unknown as { miro: unknown }).miro = { board: boardMock };
 
-  await registerCurrentUser(client);
+  await registerWithCurrentUser(client);
 
   expect(fetchMock).toHaveBeenCalledWith(
     '/api/users',
@@ -34,7 +34,7 @@ test('registerCurrentUser retries on failure', async () => {
     },
   };
   const client = new AuthClient('/api/users');
-  const promise = registerCurrentUser(client);
+  const promise = registerWithCurrentUser(client);
   await vi.runAllTimersAsync();
   await promise;
   expect(fetchMock).toHaveBeenCalledTimes(2);

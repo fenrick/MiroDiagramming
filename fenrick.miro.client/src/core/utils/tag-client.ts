@@ -1,3 +1,5 @@
+import { apiFetch } from './api-fetch';
+
 export interface TagInfo {
   id: string;
   title: string;
@@ -20,7 +22,7 @@ export class TagClient {
     if (typeof fetch !== 'function') {
       return [];
     }
-    const res = await fetch(this.url);
+    const res = await apiFetch(this.url);
     if (!res.ok) {
       return [];
     }

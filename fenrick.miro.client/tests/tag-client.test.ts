@@ -2,6 +2,9 @@ import { beforeEach, expect, test, vi } from 'vitest';
 import { TagClient } from '../src/core/utils/tag-client';
 
 vi.stubGlobal('fetch', vi.fn());
+vi.stubGlobal('miro', {
+  board: { getUserInfo: vi.fn().mockResolvedValue({ id: 'u1' }) },
+});
 
 beforeEach(() => (fetch as unknown as vi.Mock).mockReset());
 

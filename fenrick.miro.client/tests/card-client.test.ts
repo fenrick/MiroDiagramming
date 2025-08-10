@@ -3,6 +3,9 @@ import { CardClient } from '../src/core/utils/card-client';
 import type { CardData } from '../src/core/utils/cards';
 
 vi.stubGlobal('fetch', vi.fn());
+vi.stubGlobal('miro', {
+  board: { getUserInfo: vi.fn().mockResolvedValue({ id: 'u1' }) },
+});
 
 beforeEach(() => (fetch as unknown as vi.Mock).mockReset());
 

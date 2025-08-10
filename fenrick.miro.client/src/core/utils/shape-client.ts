@@ -1,4 +1,6 @@
 /** Data describing a Miro shape widget. */
+import { apiFetch } from './api-fetch';
+
 export interface ShapeData {
   shape: string;
   x: number;
@@ -38,7 +40,7 @@ export class ShapeClient {
     if (typeof fetch !== 'function') {
       return;
     }
-    await fetch(this.url, {
+    await apiFetch(this.url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(shapes),
@@ -50,7 +52,7 @@ export class ShapeClient {
     if (typeof fetch !== 'function') {
       return;
     }
-    await fetch(`${this.url}/${id}`, {
+    await apiFetch(`${this.url}/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(shape),
@@ -62,7 +64,7 @@ export class ShapeClient {
     if (typeof fetch !== 'function') {
       return;
     }
-    await fetch(`${this.url}/${id}`, { method: 'DELETE' });
+    await apiFetch(`${this.url}/${id}`, { method: 'DELETE' });
   }
 
   /** Retrieve a shape widget by identifier. */
@@ -72,7 +74,7 @@ export class ShapeClient {
     if (typeof fetch !== 'function') {
       return undefined;
     }
-    const res = await fetch(`${this.url}/${id}`);
+    const res = await apiFetch(`${this.url}/${id}`);
     if (!res.ok) {
       return undefined;
     }

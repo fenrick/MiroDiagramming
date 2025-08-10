@@ -4,6 +4,9 @@ import { CardProcessor } from '../src/board/card-processor';
 import { TagClient } from '../src/core/utils/tag-client';
 
 vi.stubGlobal('fetch', vi.fn());
+vi.stubGlobal('miro', {
+  board: { getUserInfo: vi.fn().mockResolvedValue({ id: 'u1' }) },
+});
 
 beforeEach(() => (fetch as unknown as vi.Mock).mockReset());
 

@@ -3,8 +3,10 @@
  *
  * @property id - Unique identifier returned by Miro.
  * @property name - Display name of the user.
- * @property token - OAuth token scoped for REST API calls.
+ * @property token - ID token proving user identity.
  */
+import { apiFetch } from './core/utils/api-fetch';
+
 export interface AuthDetails {
   id: string;
   name: string;
@@ -25,7 +27,7 @@ export class AuthClient {
       return;
     }
 
-    const res = await fetch(this.url, {
+    const res = await apiFetch(this.url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(details),
@@ -61,11 +63,11 @@ export class AuthClient {
 }
 
 /**
- * Obtain the current Miro token and forward it to the server.
+ * Obtain the current Miro ID token and forward it to the server.
  *
  * @throws Error when the Miro SDK is unavailable.
  */
-export async function registerCurrentUser(
+export async function registerWithCurrentUser(
   client = new AuthClient(),
 ): Promise<void> {
   if (typeof miro === 'undefined' || !miro.board) {
