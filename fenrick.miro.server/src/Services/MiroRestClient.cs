@@ -46,17 +46,14 @@ public class MiroRestClient(
         using HttpResponseMessage response =
             await this.httpClient.SendAsync(message, ct).ConfigureAwait(false);
         using HttpContent responseContent = response.Content;
-        if (response.StatusCode is HttpStatusCode.Unauthorized && userId != null && info != null)
+        if (response.StatusCode is HttpStatusCode.Unauthorized && userId != null)
         {
-            UserInfo? refreshed =
-                await this.refresher.RefreshAsync(info, ct).ConfigureAwait(false);
+            string? refreshed =
+                await this.refresher.RefreshAsync(userId, ct).ConfigureAwait(false);
             if (refreshed != null)
             {
-                await this.store
-                    .StoreAsync(refreshed, ct)
-                    .ConfigureAwait(false);
                 using HttpRequestMessage retryMessage =
-                    CreateRequestMessage(request, refreshed.AccessToken);
+                    CreateRequestMessage(request, refreshed);
                 using HttpResponseMessage retryResponse = await this.httpClient
                     .SendAsync(retryMessage, ct)
                     .ConfigureAwait(false);

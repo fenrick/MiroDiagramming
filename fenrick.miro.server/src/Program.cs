@@ -1,4 +1,7 @@
+using System;
+
 using Fenrick.Miro.Server.Data;
+using Fenrick.Miro.Server.Services;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +24,13 @@ IServiceCollection services = builder.Services;
 
 services.AddControllers();
 services.AddOpenApi();
+services.AddHttpClient();
+services.AddHttpClient<IMiroClient, MiroRestClient>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["Miro:RestBase"]!);
+});
+services.AddScoped<ITokenRefresher, MiroTokenRefresher>();
+services.AddScoped<IUserStore, EfUserStore>();
 
 // -------------  DbContext registration -------------
 var provider = builder.Configuration.GetValue($"DatabaseProvider", $"sqlite");
