@@ -23,22 +23,26 @@ public class MiroRestClientTests
         var httpClient =
             new HttpClient(handler) { BaseAddress = new Uri($"http://x") };
         var store = new InMemoryUserStore();
-        await store
-            .StoreAsync(
-                new UserInfo($"u1", $"Bob", $"tok", $"r1", DateTimeOffset.UnixEpoch));
+        await store.StoreAsync(new UserInfo(
+            $"u1",
+            $"Bob",
+            $"tok",
+            $"r1",
+            DateTimeOffset.UtcNow.AddHours(1)));
         var ctx = new DefaultHttpContext();
         ctx.Request.Headers[$"X-User-Id"] = $"u1";
+        var refresher = new StubRefresher($"none");
         var client = new MiroRestClient(
             httpClient,
             store,
             new HttpContextAccessor { HttpContext = ctx },
-            new StubRefresher($"none"));
+            refresher);
 
-        await client.SendAsync(new MiroRequest($"GET", $"/", Body: null),
-            ctx.RequestAborted);
+        await client.SendAsync(new MiroRequest($"GET", $"/", Body: null), ctx.RequestAborted);
 
         Assert.Equal($"Bearer", handler.Request?.Headers.Authorization?.Scheme);
         Assert.Equal($"tok", handler.Request?.Headers.Authorization?.Parameter);
+        Assert.Equal(0, refresher.Calls);
     }
 
     [Fact]
@@ -47,9 +51,12 @@ public class MiroRestClientTests
         var handler = new SequenceHandler();
         var httpClient = new HttpClient(handler) { BaseAddress = new Uri($"http://x") };
         var store = new InMemoryUserStore();
-        await store
-            .StoreAsync(
-                new UserInfo($"u1", $"Bob", $"old", $"r1", DateTimeOffset.UnixEpoch));
+        await store.StoreAsync(new UserInfo(
+            $"u1",
+            $"Bob",
+            $"old",
+            $"r1",
+            DateTimeOffset.UtcNow.AddHours(1)));
         var refresher = new StubRefresher($"new", store);
         var ctx = new DefaultHttpContext();
         ctx.Request.Headers[$"X-User-Id"] = $"u1";
@@ -66,17 +73,52 @@ public class MiroRestClientTests
         Assert.Equal(
             $"new",
             (await store.RetrieveAsync($"u1", ctx.RequestAborted))?.AccessToken);
-        Assert.True(refresher.Called);
+        Assert.Equal(1, refresher.Calls);
+    }
+
+    [Fact]
+    public async Task SendAsyncRefreshesTokenProactivelyAsync()
+    {
+        var handler = new StubHandler();
+        var httpClient =
+            new HttpClient(handler) { BaseAddress = new Uri($"http://x") };
+        var store = new InMemoryUserStore();
+        await store.StoreAsync(new UserInfo(
+            $"u1",
+            $"Bob",
+            $"old",
+            $"r1",
+            DateTimeOffset.UtcNow.AddSeconds(30)));
+        var refresher = new StubRefresher($"new", store);
+        var ctx = new DefaultHttpContext();
+        ctx.Request.Headers[$"X-User-Id"] = $"u1";
+        var client = new MiroRestClient(
+            httpClient,
+            store,
+            new HttpContextAccessor { HttpContext = ctx },
+            refresher);
+
+        await client.SendAsync(new MiroRequest($"GET", $"/", Body: null), ctx.RequestAborted);
+
+        Assert.Equal(1, handler.CallCount);
+        Assert.Equal($"new", handler.Request?.Headers.Authorization?.Parameter);
+        Assert.Equal(
+            $"new",
+            (await store.RetrieveAsync($"u1", ctx.RequestAborted))?.AccessToken);
+        Assert.Equal(1, refresher.Calls);
     }
 
     private sealed class StubHandler : HttpMessageHandler
     {
+        public int CallCount { get; private set; }
+
         public HttpRequestMessage? Request { get; private set; }
 
         protected override Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request,
             CancellationToken cancellationToken)
         {
+            this.CallCount++;
             this.Request = request;
             return Task.FromResult(
                 new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent($"{{}}") });
@@ -102,19 +144,19 @@ public class MiroRestClientTests
 
     private sealed class StubRefresher(string token, IUserStore? store = null) : ITokenRefresher
     {
-        public bool Called { get; private set; }
+        public int Calls { get; private set; }
 
         public async Task<string?> RefreshAsync(string userId, CancellationToken ct = default)
         {
-            this.Called = true;
+            this.Calls++;
             if (store != null)
             {
-                UserInfo? info = await store.RetrieveAsync(userId, ct);
+                UserInfo? info = await store.RetrieveAsync(userId, ct).ConfigureAwait(false);
                 if (info != null)
                 {
                     await store.StoreAsync(
                         info with { AccessToken = token },
-                        ct);
+                        ct).ConfigureAwait(false);
                 }
             }
 
