@@ -30,21 +30,38 @@ export class ShapeClient {
     return `${this.baseUrl}/${this.boardId}/shapes`;
   }
 
-  /** Create a single shape widget. */
-  public async createShape(shape: ShapeData): Promise<void> {
-    await this.createShapes([shape]);
+  /**
+   * Create a single shape widget.
+   *
+   * @param shape - Shape definition.
+   * @returns The created shape description.
+   */
+  public async createShape(
+    shape: ShapeData,
+  ): Promise<Record<string, unknown> | undefined> {
+    const res = await this.createShapes([shape]);
+    return res[0];
   }
 
-  /** Create multiple shapes in one request. */
-  public async createShapes(shapes: ShapeData[]): Promise<void> {
+  /**
+   * Create multiple shapes in one request.
+   *
+   * @param shapes - Shape definitions to create.
+   * @returns Created shape descriptions.
+   */
+  public async createShapes(
+    shapes: ShapeData[],
+  ): Promise<Record<string, unknown>[]> {
     if (typeof fetch !== 'function') {
-      return;
+      return [];
     }
-    await apiFetch(this.url, {
+    const res = await apiFetch(this.url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(shapes),
     });
+    const data = (await res.json()) as Array<{ body: string }>;
+    return data.map(r => JSON.parse(r.body) as Record<string, unknown>);
   }
 
   /** Update an existing shape. */
