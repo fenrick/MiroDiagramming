@@ -12,6 +12,7 @@ each element can carry metadata that controls its appearance and placement.
 - Node.js 20.x
 - .NET 9 SDK
 - `dotnet workload install aspire`
+- Python 3.11 with [Poetry](https://python-poetry.org/)
 
 ### Environment
 
@@ -381,6 +382,7 @@ dependency installs run from that directory.
 - [Aspire Quick Start](docs/ASPIRE.md) shows how to run the .NET AppHost
   locally or in Docker.
 - [Server Modules](docs/SERVER_MODULES.md) details the planned .NET API layout.
+- [Python Service Architecture](docs/python-architecture.md) covers FastAPI modules, caching and Miro API integration.
 - [Miro API Costs](docs/MIRO_API_COSTS.md) explains why we cache shapes and avoid expensive board calls.
 - [ShapesController](docs/SERVER_MODULES.md#3-controllers) handles create, update and delete of Miro widgets via the backend cache.
 - [Components Catalogue](docs/COMPONENTS.md) documents reusable React

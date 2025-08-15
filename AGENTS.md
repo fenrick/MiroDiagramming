@@ -11,7 +11,7 @@ fenrick.miro.[module]/
 └── tests/    – unit and integration tests
 ```
 
-Backend code is **C# (nullable enabled)**. Frontend code is **TypeScript + React**.
+Backend code is primarily **C# (nullable enabled)** with a small **FastAPI** service in **Python 3.11**. Frontend code is **TypeScript + React**.
 
 ## Object-Oriented Design Principles — **Mandatory**
 
@@ -84,6 +84,12 @@ All rules are configured in `.editorconfig`; the build runs with `-warnaserror`.
 
 * Prettier
 
+### Python
+
+* **Ruff** – lint and fix PEP 8 issues
+* **Black** – code formatter (line length 88)
+* **Mypy** – static type checking
+
 ## Development Commands
 
 ### Backend
@@ -104,6 +110,14 @@ npm --prefix web/client run lint
 npm --prefix web/client run stylelint
 npm --prefix web/client run prettier
 npm --prefix web/client run test
+```
+
+### Python
+
+``` bash
+poetry install
+poetry run pre-commit run --files [changed files]
+poetry run pytest
 ```
 
 ## Git Hooks
@@ -135,13 +149,14 @@ Types include `feat`, `fix`, `docs`, `test`, `refactor`, `chore`.
 * `docs/DEPLOYMENT.md` – build & CI/CD
 
 * `CONTRIBUTING.md` – PR workflow, onboarding
+* `docs/python-architecture.md` – FastAPI modules and data flow
 
 ## Summary
 
 | Area      | Requirement                                  |
 | --------- | -------------------------------------------- |
 | Structure | `src/` and `tests/` folders                  |
-| Language  | C# (.NET Aspire) + React (TypeScript)        |
+| Language  | C# (.NET Aspire) + React (TypeScript) + Python (FastAPI) |
 | Design    | SOLID, composition over inheritance          |
 | Testing   | TDD, ≥ 90 % coverage                         |
 | Analysis  | Roslyn analyzers, ESLint, Stylelint          |
