@@ -14,11 +14,12 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
 from .api.routers.auth import router as auth_router
-from .queue import ChangeQueue
+from .api.routers.shapes import router as shapes_router
+from .queue import get_change_queue
 from .services.miro_client import MiroClient
 
 
-change_queue = ChangeQueue()
+change_queue = get_change_queue()
 """Global queue used by the background worker."""
 
 
@@ -52,6 +53,7 @@ if static_dir.exists():
     app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 app.include_router(auth_router)
+app.include_router(shapes_router)
 
 
 @app.get("/", response_class=HTMLResponse)  # type: ignore[misc]
