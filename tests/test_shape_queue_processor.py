@@ -1,5 +1,4 @@
-"""Tests for the change queue and worker."""
-
+"""Translation of ``ShapeQueueProcessorTests`` for the Python queue implementation."""
 from __future__ import annotations
 
 import asyncio
