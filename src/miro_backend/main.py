@@ -5,9 +5,13 @@ from __future__ import annotations
 import asyncio
 import contextlib
 from contextlib import asynccontextmanager
+from pathlib import Path
 from typing import AsyncIterator
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
 
 from .queue import ChangeQueue
 from .services.miro_client import MiroClient
@@ -31,7 +35,24 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
             await worker
 
 
+BASE_DIR = Path(__file__).resolve().parents[2]
 app = FastAPI(lifespan=lifespan)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.mount("/static", StaticFiles(directory=BASE_DIR / "web/client/dist"), name="static")
+
+
+@app.get("/", response_class=HTMLResponse)
+async def root() -> HTMLResponse:
+    """Redirect browsers to the built front-end."""
+    return HTMLResponse('<script>window.location.href="/static/index.html"</script>')
 
 
 @app.get("/health")

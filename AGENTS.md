@@ -99,11 +99,11 @@ dotnet test  fenrick.miro.slnx
 
 ``` bash
 npm install
-npm --prefix fenrick.miro.client run typecheck
-npm --prefix fenrick.miro.client run lint
-npm --prefix fenrick.miro.client run stylelint
-npm --prefix fenrick.miro.client run prettier
-npm --prefix fenrick.miro.client run test
+npm --prefix web/client run typecheck
+npm --prefix web/client run lint
+npm --prefix web/client run stylelint
+npm --prefix web/client run prettier
+npm --prefix web/client run test
 ```
 
 ## Git Hooks

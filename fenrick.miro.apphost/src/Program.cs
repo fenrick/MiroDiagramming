@@ -32,7 +32,7 @@ IResourceBuilder<ProjectResource> serverApi = builder.AddProject<fenrick_miro_se
                        .WithExternalHttpEndpoints();
 
 // 5. Front-end waits for the API
-builder.AddNpmApp($"client", $"../fenrick.miro.client")
+builder.AddNpmApp($"client", $"../web/client")
        .WithReference(serverApi)
        .WaitFor(serverApi)
        .WithEnvironment($"BROWSER", $"none")
