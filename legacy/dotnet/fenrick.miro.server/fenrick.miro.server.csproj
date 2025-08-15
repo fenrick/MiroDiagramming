@@ -12,13 +12,13 @@
   <ItemGroup>
     <PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.4.0" />
     <PackageReference Include="CommunityToolkit.Aspire.Microsoft.EntityFrameworkCore.Sqlite" Version="9.6.0" />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.7" />
-    <PackageReference Include="Microsoft.Extensions.ApiDescription.Server" Version="9.0.7">
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.ApiDescription.Server" Version="9.0.8">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
 
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.7">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -39,16 +39,16 @@
     <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="9.0.0" PrivateAssets="all" />
     <PackageReference Include="ConfigureAwaitChecker.Analyzer" Version="5.0.0.1" PrivateAssets="all" />
     <PackageReference Include="AsyncFixer" Version="1.6.0" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Analyzers" Version="9.0.7" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Analyzers" Version="9.0.8" PrivateAssets="all" />
     <PackageReference Include="Meziantou.Analyzer" Version="2.0.208" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers" Version="3.3.1" PrivateAssets="all" />
     <PackageReference Include="ErrorProne.NET.CoreAnalyzers" Version="0.1.2" PrivateAssets="all" />
     <PackageReference Include="SonarAnalyzer.CSharp" Version="10.15.0.120848" PrivateAssets="all" />
     <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
     <!-- Override vulnerable runtime dependencies -->
-    <PackageReference Include="System.Text.Json" Version="9.0.7" />
+    <PackageReference Include="System.Text.Json" Version="9.0.8" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
-    <PackageReference Include="System.IO.Packaging" Version="9.0.7" />
+    <PackageReference Include="System.IO.Packaging" Version="9.0.8" />
   </ItemGroup>
 </Project>
