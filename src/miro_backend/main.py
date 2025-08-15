@@ -14,6 +14,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
 from .api.routers.auth import router as auth_router
+from .api.routers.oauth import router as oauth_router
 from .api.routers.logs import router as logs_router
 from .api.routers.cache import router as cache_router
 from .queue import ChangeQueue
@@ -62,6 +63,7 @@ if static_dir.exists():
     app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 app.include_router(auth_router)
+app.include_router(oauth_router)
 app.include_router(logs_router)
 app.include_router(cards_router)
 app.include_router(cache_router)

@@ -21,3 +21,18 @@ class MiroClient:
         self, card_id: str, payload: dict[str, Any]
     ) -> None:  # pragma: no cover - stub
         """Update a card on the board."""
+
+    async def exchange_code(
+        self, code: str, redirect_uri: str
+    ) -> dict[str, Any]:  # pragma: no cover - stub
+        """Exchange an OAuth code for tokens."""
+        raise NotImplementedError
+
+
+_client = MiroClient()
+
+
+def get_miro_client() -> MiroClient:
+    """Provide the global Miro client instance."""
+
+    return _client
