@@ -31,6 +31,22 @@
 4. Repository reads from the SQLite cache; on a miss it fetches from the Miro API and updates the cache.
 5. Service returns DTOs to the router, which serialises the response back to the client.
 
+## API Endpoints
+
+- `GET /api/auth/status` – verify that OAuth tokens exist for the supplied `X-User-Id`.
+- `POST /api/batch` – enqueue a batch of board operations for asynchronous processing.
+- `GET /api/cache/{boardId}` – return the cached state for a board.
+- `POST /api/cards` – queue creation of multiple cards.
+- `POST /api/logs` – ingest client log entries for diagnostics.
+- `GET /oauth/login` / `GET /oauth/callback` – complete the OAuth handshake and persist tokens.
+- `GET /api/boards/{boardId}/shapes/{itemId}` – retrieve a shape owned by the caller.
+- `POST /api/boards/{boardId}/shapes` – create a new shape on a board.
+- `PUT /api/boards/{boardId}/shapes/{itemId}` – update an existing shape.
+- `DELETE /api/boards/{boardId}/shapes/{itemId}` – delete a shape.
+- `GET /api/boards/{boardId}/tags` – list all tags for a board.
+- `POST /api/users` – persist user tokens and metadata.
+- `POST /api/webhook` – accept webhook events from Miro for background processing.
+
 ## User Store
 
 - An in-memory, thread-safe store keeps OAuth tokens keyed by user ID. It acts as a

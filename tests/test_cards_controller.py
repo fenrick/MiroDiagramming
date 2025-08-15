@@ -8,6 +8,7 @@ from pathlib import Path
 from fastapi.testclient import TestClient
 
 from miro_backend.queue import ChangeTask, CreateNode
+from miro_backend.queue.provider import get_change_queue
 
 
 class StubQueue:
@@ -33,7 +34,7 @@ def test_post_cards_enqueues_tasks(tmp_path: Path) -> None:
 
     app_module = importlib.import_module("miro_backend.main")
     queue = StubQueue()
-    app_module.change_queue = queue  # type: ignore[attr-defined]
+    app_module.app.dependency_overrides[get_change_queue] = lambda: queue
 
     with TestClient(app_module.app) as client:
         response = client.post(
@@ -41,6 +42,7 @@ def test_post_cards_enqueues_tasks(tmp_path: Path) -> None:
             json=[{"id": "c1", "title": "t"}],
         )
         assert response.status_code == 202
+    app_module.app.dependency_overrides.clear()
 
     assert len(queue.tasks) == 1
     task = queue.tasks[0]

@@ -1,6 +1,7 @@
 """Queue utilities for processing board changes."""
 
 from .change_queue import ChangeQueue
+from .provider import get_change_queue
 from .tasks import (
     ChangeTask,
     CreateNode,
@@ -9,17 +10,6 @@ from .tasks import (
     UpdateShape,
     DeleteShape,
 )
-
-_queue = ChangeQueue()
-
-
-def get_change_queue() -> ChangeQueue:
-    """Provide the global change queue instance."""
-
-    return _queue
-
-from .provider import get_change_queue
-from .tasks import ChangeTask, CreateNode, UpdateCard
 
 __all__ = [
     "ChangeQueue",
