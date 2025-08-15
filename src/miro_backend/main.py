@@ -9,10 +9,22 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
+import logfire
+
 from .queue import get_change_queue
 from .services.miro_client import MiroClient
 
 change_queue = get_change_queue()
+
+# Configure logfire before application startup so instrumentation works from the
+# beginning of execution.
+logfire.configure(send_to_logfire=False, service_name="miro-backend")
+
+# Instrument SQLite and SQLAlchemy before handling any requests.
+from .db.session import engine  # noqa: E402
+
+logfire.instrument_sqlite3()  # span instrumentation for sqlite3 driver
+logfire.instrument_sqlalchemy(engine)  # span instrumentation for SQLAlchemy engine
 
 # Routers are imported after the queue to avoid circular dependencies.
 from .api.routers.auth import router as auth_router  # noqa: E402
@@ -28,21 +40,27 @@ from .api.routers.webhook import router as webhook_router  # noqa: E402
 
 
 @asynccontextmanager
+@logfire.instrument("application lifespan", allow_generator=True)  # type: ignore[misc]
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     """Start a background worker that processes queued changes."""
 
     client = MiroClient()
     worker = asyncio.create_task(change_queue.worker(client))
     try:
+        logfire.info("change worker started")  # event for worker start
         yield
     finally:
         worker.cancel()
         with contextlib.suppress(asyncio.CancelledError):
             await worker
+        logfire.info("change worker stopped")  # event for worker shutdown
 
 
 BASE_DIR = Path(__file__).resolve().parents[2]
 app = FastAPI(lifespan=lifespan)
+
+# Instrument FastAPI so requests generate spans and logs
+logfire.instrument_fastapi(app)
 
 app.add_middleware(
     CORSMiddleware,

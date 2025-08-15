@@ -12,6 +12,10 @@ fastapi = "^0.111.0"
 pydantic = ">=2.0"
 sqlalchemy = "^2.0"
 alembic = "^1.13"
+logfire = "^4.3.3"
+opentelemetry-instrumentation-fastapi = "^0.57b0"
+opentelemetry-instrumentation-sqlalchemy = "^0.57b0"
+opentelemetry-instrumentation-sqlite3 = "^0.57b0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.2"

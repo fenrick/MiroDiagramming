@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 
+import logfire
 from fastapi import Depends
 from sqlalchemy.orm import Session
 
@@ -18,11 +19,13 @@ class LogRepository(Repository[LogEntry]):
     def __init__(self, session: Session) -> None:
         super().__init__(session, LogEntry)
 
+    @logfire.instrument("add log entries")  # type: ignore[misc]
     def add_all(self, entries: Sequence[LogEntry]) -> None:
         """Persist multiple log entries in a single transaction."""
 
         self.session.add_all(entries)
         self.session.commit()
+        logfire.info("log entries persisted", count=len(entries))  # event: bulk insert
 
 
 def get_log_repository(session: Session = Depends(get_session)) -> LogRepository:
