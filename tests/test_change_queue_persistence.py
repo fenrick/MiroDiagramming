@@ -4,9 +4,12 @@ from __future__ import annotations
 
 from unittest import mock
 
+from pathlib import Path
+
 import pytest
 
 from miro_backend.queue import ChangeQueue
+from miro_backend.queue.persistence import QueuePersistence
 from miro_backend.queue.tasks import CreateNode
 
 
@@ -15,6 +18,7 @@ async def test_enqueue_dequeue_persists() -> None:
     """Enqueue and dequeue should call persistence hooks."""
 
     persistence = mock.AsyncMock()
+    persistence.load = mock.Mock(return_value=[])
     queue = ChangeQueue(persistence=persistence)
     task = CreateNode(node_id="n1", data={})
 
@@ -23,3 +27,22 @@ async def test_enqueue_dequeue_persists() -> None:
 
     await queue.dequeue()
     persistence.delete.assert_awaited_once_with(task)
+
+
+@pytest.mark.asyncio()  # type: ignore[misc]
+async def test_tasks_survive_restart(tmp_path: Path) -> None:
+    """Tasks persisted to disk should reload after a restart."""
+
+    db_path = tmp_path / "tasks.db"
+    persistence = QueuePersistence(db_path)
+
+    queue = ChangeQueue(persistence=persistence)
+    task = CreateNode(node_id="n1", data={})
+    await queue.enqueue(task)
+
+    restored = ChangeQueue(persistence=persistence)
+    loaded = await restored.dequeue()
+    assert loaded == task
+
+    empty = ChangeQueue(persistence=persistence)
+    assert empty._queue.empty()
