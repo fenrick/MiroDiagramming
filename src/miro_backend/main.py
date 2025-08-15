@@ -14,6 +14,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
 from .api.routers.auth import router as auth_router
+from .api.routers.webhook import router as webhook_router
 from .queue import ChangeQueue
 from .services.miro_client import MiroClient
 
@@ -52,6 +53,7 @@ if static_dir.exists():
     app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 app.include_router(auth_router)
+app.include_router(webhook_router)
 
 
 @app.get("/", response_class=HTMLResponse)  # type: ignore[misc]
