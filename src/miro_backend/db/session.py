@@ -7,6 +7,7 @@ models and is referenced by Alembic during migration generation.
 
 from collections.abc import Iterator
 
+import logfire
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
@@ -30,6 +31,7 @@ SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 """Factory for ``Session`` instances."""
 
 
+@logfire.instrument("database session", allow_generator=True)  # type: ignore[misc]
 def get_session() -> Iterator[Session]:
     """Yield a database session and ensure it is closed.
 
@@ -38,6 +40,8 @@ def get_session() -> Iterator[Session]:
 
     session = SessionLocal()
     try:
+        logfire.info("session opened")  # event: session creation
         yield session
     finally:
         session.close()
+        logfire.info("session closed")  # event: session cleanup
