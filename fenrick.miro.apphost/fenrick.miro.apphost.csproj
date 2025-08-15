@@ -21,7 +21,7 @@
     <PackageReference Include="ConfigureAwaitChecker.Analyzer" Version="5.0.0.1" PrivateAssets="all" />
     <PackageReference Include="AsyncFixer" Version="1.6.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Analyzers" Version="9.0.7" PrivateAssets="all" />
-    <PackageReference Include="Meziantou.Analyzer" Version="2.0.208" PrivateAssets="all" />
+    <PackageReference Include="Meziantou.Analyzer" Version="2.0.212" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.PerformanceSensitiveAnalyzers" Version="3.3.1" PrivateAssets="all" />
     <PackageReference Include="ErrorProne.NET.CoreAnalyzers" Version="0.1.2" PrivateAssets="all" />
     <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers" Version="17.14.15">
