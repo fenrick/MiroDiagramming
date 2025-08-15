@@ -1,5 +1,8 @@
 # Quick Tools
 
+[![CI Python](https://github.com/fenrick/MiroDiagramming/actions/workflows/ci.yml/badge.svg?branch=main&job=python)](https://github.com/fenrick/MiroDiagramming/actions/workflows/ci.yml?query=branch%3Amain)
+[![CI Node](https://github.com/fenrick/MiroDiagramming/actions/workflows/ci.yml/badge.svg?branch=main&job=node)](https://github.com/fenrick/MiroDiagramming/actions/workflows/ci.yml?query=branch%3Amain)
+
 Quick Tools imports graphs or cards from JSON or Excel files and builds diagrams
 on a Miro board. The application uses the **Eclipse Layout Kernel (ELK)** to
 arrange nodes and edges automatically. Shapes are generated from templates and
@@ -274,7 +277,6 @@ install dependencies first:
 
 ```bash
 npm install --prefix web/client
-dotnet restore
 ```
 
 Then validate the codebase with:
@@ -282,7 +284,6 @@ Then validate the codebase with:
 ```bash
 npm --prefix web/client run typecheck --silent
 npm --prefix web/client run test --silent
-dotnet test fenrick.miro.tests/fenrick.miro.tests.csproj -v minimal
 npx dotnet-format --verify-no-changes fenrick.miro.server/fenrick.miro.server.csproj
 npm --prefix web/client run lint --silent
 npm --prefix web/client run stylelint --silent

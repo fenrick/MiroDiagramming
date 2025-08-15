@@ -110,7 +110,7 @@ Complexity limits enforced automatically by **SonarQube** gate.
 | Stage      | Gate                        | Threshold            |
 | ---------- | --------------------------- | -------------------- |
 | Pre-commit | ESLint, Stylelint, Prettier | zero errors          |
-| Unit       | `npm test`, `dotnet test`   | ≥ 90 % line & branch |
+| Unit       | `npm test`                  | ≥ 90 % line & branch |
 | UI         | manual visual & a11y review | no critical issues   |
 | Metrics    | SonarQube                   | cyclomatic ≤ 8       |
 
@@ -121,7 +121,7 @@ Complexity limits enforced automatically by **SonarQube** gate.
 3. Build Storybook and a feature-flagged bundle for staging.
 4. SonarQube build scan using
    [dotnet-sonarscanner](https://docs.sonarsource.com/sonarqube/latest/analyzing-source-code/scanners/sonarscanner-for-msbuild/)
-   with the `dotnet test` run between the `begin` and `end` steps so coverage
+   with the unit tests executed between the `begin` and `end` steps so coverage
    reports are uploaded automatically.
 5. Semantic-release creates Git tag, changelog and Chrome-Store zip.
 6. Automatic rollback uses the previously published artefact (see
