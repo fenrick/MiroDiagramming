@@ -41,6 +41,8 @@
 - Routers or services enqueue long-running jobs (e.g. board sync or webhook processing).
 - A dedicated worker consumes the queue, reusing the same services and repositories as the web layer.
 - Failures are retried with exponential backoff and logged with full context.
+- Pending tasks are persisted to SQLite so they survive process restarts.
+- On startup the queue reloads any stored tasks before accepting new work.
 
 ## Static Assets and CORS
 

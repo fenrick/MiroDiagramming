@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 from .change_queue import ChangeQueue
+from .persistence import QueuePersistence
 
-_change_queue = ChangeQueue()
+_change_queue = ChangeQueue(persistence=QueuePersistence())
 
 
 def get_change_queue() -> ChangeQueue:

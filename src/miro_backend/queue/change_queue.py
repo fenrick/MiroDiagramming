@@ -14,20 +14,28 @@ class ChangeQueue:
     def __init__(self, persistence: Any | None = None) -> None:
         self._queue: asyncio.Queue[ChangeTask] = asyncio.Queue()
         self._persistence = persistence
+        self._lock = asyncio.Lock()
+        if self._persistence is not None:
+            for task in self._persistence.load():
+                self._queue.put_nowait(task)
 
     async def enqueue(self, task: ChangeTask) -> None:
         """Add ``task`` to the queue and persist it if supported."""
 
         if self._persistence is not None:
-            await self._persistence.save(task)
-        await self._queue.put(task)
+            async with self._lock:
+                await self._persistence.save(task)
+                await self._queue.put(task)
+        else:
+            await self._queue.put(task)
 
     async def dequeue(self) -> ChangeTask:
         """Retrieve the next task from the queue and remove persisted state."""
 
         task = await self._queue.get()
         if self._persistence is not None:
-            await self._persistence.delete(task)
+            async with self._lock:
+                await self._persistence.delete(task)
         return task
 
     # ------------------------------------------------------------------
