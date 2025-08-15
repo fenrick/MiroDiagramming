@@ -20,6 +20,7 @@ security-significant or process change.
 | Design tokens, colour, spacing, typography      | **FOUNDATION.md** |
 | CI/CD, hosting, rollback, environment settings  | **DEPLOYMENT.md** |
 | Sidebar tab flows, validation, keyboard support | **TABS.md**       |
+| Python service architecture                      | **python-architecture.md** |
 
 ---
 
