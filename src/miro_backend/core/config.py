@@ -10,6 +10,7 @@ class Settings(BaseModel):
 
     app_name: str = "Miro Backend"
     database_url: str = "sqlite:///./app.db"
+    webhook_secret: str = "dev-secret"
 
 
 settings = Settings()
