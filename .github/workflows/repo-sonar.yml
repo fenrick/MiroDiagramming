@@ -12,7 +12,7 @@ env:
 
 jobs:
   repo-sonar:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -33,19 +33,23 @@ jobs:
       - name: Run node unit tests
         run: npm run test
         working-directory: web/client
-      - name: Begin sonar-scanner
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Python dependencies
+        run: |
+          pip install fastapi "uvicorn[standard]" pydantic sqlalchemy alembic pytest pytest-cov pytest-asyncio httpx
+      - name: Run Python tests
+        run: pytest
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@v2
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        shell: powershell
-        run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin `
-            /k:"fenrick_MiroDiagraming" /o:"fenrick" `
-            /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
-            /d:sonar.host.url="https://sonarcloud.io" `
-            /d:sonar.javascript.lcov.reportPaths="${{ github.workspace }}/web/client/coverage/lcov.info"
-      - name: End sonar-scanner
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        shell: powershell
-        run: |
-          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+        with:
+          args: >
+            -Dsonar.projectKey=fenrick_MiroDiagraming
+            -Dsonar.organization=fenrick
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.javascript.lcov.reportPaths=web/client/coverage/lcov.info
+            -Dsonar.python.coverage.reportPaths=coverage.xml
