@@ -31,6 +31,11 @@
 4. Repository reads from the SQLite cache; on a miss it fetches from the Miro API and updates the cache.
 5. Service returns DTOs to the router, which serialises the response back to the client.
 
+## User Store
+
+- An in-memory, thread-safe store keeps OAuth tokens keyed by user ID. It acts as a
+  temporary solution until a persistent repository is implemented.
+
 ## Background Queue
 
 - Routers or services enqueue long-running jobs (e.g. board sync or webhook processing).

@@ -13,6 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
+from .api.routers.auth import router as auth_router
 from .queue import ChangeQueue
 from .services.miro_client import MiroClient
 
@@ -46,16 +47,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/static", StaticFiles(directory=BASE_DIR / "web/client/dist"), name="static")
+static_dir = BASE_DIR / "web/client/dist"
+if static_dir.exists():
+    app.mount("/static", StaticFiles(directory=static_dir), name="static")
+
+app.include_router(auth_router)
 
 
-@app.get("/", response_class=HTMLResponse)
+@app.get("/", response_class=HTMLResponse)  # type: ignore[misc]
 async def root() -> HTMLResponse:
     """Redirect browsers to the built front-end."""
     return HTMLResponse('<script>window.location.href="/static/index.html"</script>')
 
 
-@app.get("/health")
+@app.get("/health")  # type: ignore[misc]
 async def health() -> dict[str, str]:
     """Basic health check endpoint."""
     return {"status": "ok"}
