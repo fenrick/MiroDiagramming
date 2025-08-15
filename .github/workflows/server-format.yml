@@ -2,6 +2,8 @@ name: server-format
 
 on:
   push:
+    paths:
+      - 'legacy/**'
 
 permissions: write-all
 
