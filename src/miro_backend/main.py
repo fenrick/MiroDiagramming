@@ -14,6 +14,12 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
 from .api.routers.auth import router as auth_router
+from .api.routers.shapes import router as shapes_router
+from .queue import get_change_queue
+from .services.miro_client import MiroClient
+
+
+change_queue = get_change_queue()
 from .api.routers.oauth import router as oauth_router
 from .api.routers.logs import router as logs_router
 from .api.routers.cache import router as cache_router
@@ -63,6 +69,7 @@ if static_dir.exists():
     app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 app.include_router(auth_router)
+app.include_router(shapes_router)
 app.include_router(oauth_router)
 app.include_router(logs_router)
 app.include_router(cards_router)
