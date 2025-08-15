@@ -14,6 +14,8 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
 from .api.routers.auth import router as auth_router
+from .api.routers.cache import router as cache_router
+from .queue import ChangeQueue
 from .api.routers.batch import router as batch_router
 from .queue.provider import get_change_queue
 from .services.miro_client import MiroClient
@@ -53,6 +55,7 @@ if static_dir.exists():
     app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 app.include_router(auth_router)
+app.include_router(cache_router)
 app.include_router(batch_router)
 
 
