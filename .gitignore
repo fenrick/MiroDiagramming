@@ -21,3 +21,9 @@ dotnet-install.sh
 **/obj/
 **/coverage
 /.vs
+
+# legacy dotnet build artifacts
+legacy/dotnet/**/bin/
+legacy/dotnet/**/obj/
+legacy/dotnet/**/coverage/
+legacy/dotnet/.vs
