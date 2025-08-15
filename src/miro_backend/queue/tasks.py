@@ -40,3 +40,35 @@ class UpdateCard(ChangeTask):
 
     async def apply(self, client: Any) -> None:
         await client.update_card(self.card_id, self.payload)
+
+
+class CreateShape(ChangeTask):
+    """Create a new shape on a board."""
+
+    board_id: str
+    shape_id: str
+    data: dict[str, Any]
+
+    async def apply(self, client: Any) -> None:
+        await client.create_shape(self.board_id, self.shape_id, self.data)
+
+
+class UpdateShape(ChangeTask):
+    """Update an existing shape."""
+
+    board_id: str
+    shape_id: str
+    data: dict[str, Any]
+
+    async def apply(self, client: Any) -> None:
+        await client.update_shape(self.board_id, self.shape_id, self.data)
+
+
+class DeleteShape(ChangeTask):
+    """Delete a shape from a board."""
+
+    board_id: str
+    shape_id: str
+
+    async def apply(self, client: Any) -> None:
+        await client.delete_shape(self.board_id, self.shape_id)
