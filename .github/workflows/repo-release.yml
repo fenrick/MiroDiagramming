@@ -20,24 +20,24 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-          cache-dependency-path: fenrick.miro.client/package-lock.json
+          cache-dependency-path: web/client/package-lock.json
       - name: Cache Storybook
         uses: actions/cache@v4
         with:
-          path: fenrick.miro.client/node_modules/.cache/storybook
-          key: ${{ runner.os }}-storybook-${{ hashFiles('fenrick.miro.client/package-lock.json') }}
+          path: web/client/node_modules/.cache/storybook
+          key: ${{ runner.os }}-storybook-${{ hashFiles('web/client/package-lock.json') }}
           restore-keys: ${{ runner.os }}-storybook-
       - name: Build Storybook
         run: npm run build-storybook
-        working-directory: fenrick.miro.client
+        working-directory: web/client
       - name: Verify Storybook
         run: test -d storybook-static
-        working-directory: fenrick.miro.client
+        working-directory: web/client
       - name: Upload artefact
         uses: actions/upload-artifact@v4
         with:
           name: build
-          path: fenrick.miro.client/dist
+          path: web/client/dist
 
   release:
     needs: build
@@ -50,21 +50,21 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-          cache-dependency-path: fenrick.miro.client/package-lock.json
+          cache-dependency-path: web/client/package-lock.json
       - run: corepack enable
-        working-directory: fenrick.miro.client
+        working-directory: web/client
       - run: npm ci --prefer-offline --no-audit
-        working-directory: fenrick.miro.client
+        working-directory: web/client
       - name: Download artefact
         uses: actions/download-artifact@v4
         with:
           name: build
-          path: fenrick.miro.client/dist
+          path: web/client/dist
       - name: Semantic release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
-        working-directory: fenrick.miro.client
+        working-directory: web/client
       - name: Check release tag
         id: release_tag
         run: |

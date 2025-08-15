@@ -203,7 +203,7 @@ automatically.
 Some teams host the React bundle alongside an ASP.NET Core API. The backend
 publishes to a `publish/` directory and serves static files from the `wwwroot`
 folder. When `dotnet publish` runs the front‑end build output is copied from
-`web/client/dist` into `fenrick.miro.server/wwwroot` so front-end assets
+`web/client/dist` into `legacy/dotnet/fenrick.miro.server/wwwroot` so front-end assets
 and API endpoints share the same origin.
 
 ### 12.1 Environment variables
@@ -228,7 +228,7 @@ dotnet publish -c Release -o publish --nologo
 Run the app locally with:
 
 ```bash
-dotnet run --project fenrick.miro.apphost/fenrick.miro.apphost.csproj
+dotnet run --project legacy/dotnet/fenrick.miro.apphost/fenrick.miro.apphost.csproj
 ```
 
 The front-end build creates `web/client/dist`. During `dotnet publish`

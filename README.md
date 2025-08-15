@@ -26,14 +26,14 @@ Copy `web/client/.env.example` to `web/client/.env` and adjust the values as nee
 Run both the server and client together:
 
 ```bash
-dotnet run --project fenrick.miro.apphost
+dotnet run --project legacy/dotnet/fenrick.miro.apphost
 ```
 
 Run them separately:
 
 ```bash
 (cd web/client && npm run dev)
-dotnet run --project fenrick.miro.server
+dotnet run --project legacy/dotnet/fenrick.miro.server
 ```
 
 ## Uploading JSON Content
@@ -284,7 +284,7 @@ Then validate the codebase with:
 ```bash
 npm --prefix web/client run typecheck --silent
 npm --prefix web/client run test --silent
-npx dotnet-format --verify-no-changes fenrick.miro.server/fenrick.miro.server.csproj
+npx dotnet-format --verify-no-changes legacy/dotnet/fenrick.miro.server/fenrick.miro.server.csproj
 npm --prefix web/client run lint --silent
 npm --prefix web/client run stylelint --silent
 npm --prefix web/client run prettier --silent
@@ -353,11 +353,8 @@ dependency installs run from that directory.
 
 ```
 .
-├── fenrick.miro.server/
-│   └── src
-│       ├── Api
-│       ├── Domain
-│       └── Services
+├── docs/
+├── src/miro_backend/
 ├── web/client/
 │   ├── src
 │   │   ├── app
@@ -367,10 +364,9 @@ dependency installs run from that directory.
 │   │   └── assets
 │   ├── index.html // entry point specified as App URL
 │   └── app.html   // panel view loaded by the SDK
-├── fenrick.miro.api/
-├── fenrick.miro.services/
-├── public         // icons and i18n JSON
-└── scripts        // build helpers
+├── tests/
+├── legacy/dotnet/
+└── templates/
 ```
 
 ## 📚 Additional Design Docs

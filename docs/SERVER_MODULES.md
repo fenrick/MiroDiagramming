@@ -12,7 +12,7 @@ project structure and main controllers.
 ## 1 Proposed Repository Layout
 
 ```
-fenrick.miro.server/
+legacy/dotnet/fenrick.miro.server/
   src/                .NET 9 API project
     Api/              controllers and middleware
     Domain/           entities and data models
@@ -24,17 +24,17 @@ web/client/
     board/            board adapter utilities
     core/             domain logic used by the client
     ui/               React components
-fenrick.miro.tests/   unit tests for .NET code
+legacy/dotnet/fenrick.miro.tests/   unit tests for .NET code
 web/client/tests/       Node tests
 ```
 
-All server modules live under `fenrick.miro.server/src/` with matching tests
-under `fenrick.miro.tests/`. The Node code resides in
+All server modules live under `legacy/dotnet/fenrick.miro.server/src/` with matching tests
+under `legacy/dotnet/fenrick.miro.tests/`. The Node code resides in
 `web/client/src/` to emphasise the front‑end role.
 
 ## 2 IDE Configuration
 
- `fenrick.miro.server/fenrick.miro.server.csproj` – .NET 9 Web API project.
+ `legacy/dotnet/fenrick.miro.server/fenrick.miro.server.csproj` – .NET 9 Web API project.
  `package.json` in `web/client/` – Node workspace for the React client.
 
 Each tool can open only its relevant folder, but the repository still builds end
@@ -59,13 +59,13 @@ The API exposes five controller types:
    without calling `board.get`. TODO: expose a lookup endpoint once the cache
    supports persistence.
 
-Each controller resides under `fenrick.miro.server/src/Api/` and is covered by
+Each controller resides under `legacy/dotnet/fenrick.miro.server/src/Api/` and is covered by
 dedicated unit tests.
 
 ## 4 Shared Contracts
 
 Models used by both the server and client live in
-`fenrick.miro.server/src/Domain/`. These include board metadata, webhook
+`legacy/dotnet/fenrick.miro.server/src/Domain/`. These include board metadata, webhook
 payloads and diagram definitions. The React code imports the TypeScript
 declarations generated from the C# records, ensuring a single source of truth
 for all data shapes.

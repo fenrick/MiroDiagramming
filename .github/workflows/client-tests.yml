@@ -17,19 +17,19 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-          cache-dependency-path: fenrick.miro.client/package-lock.json
+          cache-dependency-path: web/client/package-lock.json
       - run: corepack enable
-        working-directory: fenrick.miro.client
+        working-directory: web/client
       - run: npm ci --prefer-offline --no-audit
-        working-directory: fenrick.miro.client
+        working-directory: web/client
       - name: Node tests
         run: npm run test
-        working-directory: fenrick.miro.client
+        working-directory: web/client
       - name: Upload coverage
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
           name: coverage
-          path: fenrick.miro.client/coverage/*
+          path: web/client/coverage/*
           include-hidden-files: true
           retention-days: 1

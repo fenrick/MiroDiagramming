@@ -8,7 +8,7 @@ Introduce the built-in AppHost, how to extend it with external services and how 
 
 ## 1 AppHost overview
 
-`fenrick.miro.apphost` starts the server via `DistributedApplication.CreateBuilder`. Add services like Redis or PostgreSQL using the host builder APIs.
+`legacy/dotnet/fenrick.miro.apphost` starts the server via `DistributedApplication.CreateBuilder`. Add services like Redis or PostgreSQL using the host builder APIs.
 
 ```csharp
 var builder = DistributedApplication.CreateBuilder(args);
@@ -30,7 +30,7 @@ The server persists data in **PostgreSQL** using the `Microsoft.EntityFrameworkC
 The Aspire dashboard listens on port `18888`. Set the `DOTNET_DASHBOARD_PORT` environment variable to change it. The example below runs the dashboard on port `3000`:
 
 ```bash
-DOTNET_DASHBOARD_PORT=3000 dotnet run --project fenrick.miro.apphost
+DOTNET_DASHBOARD_PORT=3000 dotnet run --project legacy/dotnet/fenrick.miro.apphost
 ```
 
 Point a browser to `http://localhost:3000` to inspect service logs and metrics.
@@ -40,7 +40,7 @@ Point a browser to `http://localhost:3000` to inspect service logs and metrics.
 Build the application host with the Dockerfile located in the server project:
 
 ```bash
-docker build -t miro-apphost -f fenrick.miro.server/Dockerfile .
+docker build -t miro-apphost -f legacy/dotnet/fenrick.miro.server/Dockerfile .
 ```
 
 Run the container, configuring connections to Redis and PostgreSQL as needed:

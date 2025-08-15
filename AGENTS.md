@@ -95,7 +95,7 @@ All rules are configured in `.editorconfig`; the build runs with `-warnaserror`.
 ### Backend
 
 ``` bash
-dotnet format fenrick.miro.slnx
+dotnet format legacy/dotnet/fenrick.miro.slnx
 ```
 
 ### Frontend

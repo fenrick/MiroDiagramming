@@ -80,12 +80,12 @@ Orchestration (web/client/src/core) (web/client/src/core)
 
 ```
 
-fenrick.miro.server/ src/{Api,Domain,Services} web/client/
-src/{app,board,core,ui,assets} fenrick.miro.api/ src/ (future public API)
-fenrick.miro.services/ src/ (shared cross-cutting services)
-fenrick.miro.tests/ .NET unit tests web/client/tests/ Node/React
-tests docs/ \*.md (this file, components, foundation …) scripts/ build helpers
-public/ icons, i18n JSON templates/ default widget templates
+docs/                 project documentation
+src/miro_backend/     FastAPI service
+web/client/           React front-end
+tests/                Python unit tests
+legacy/dotnet/        archived .NET implementation
+templates/            default widget templates
 
 ```
 

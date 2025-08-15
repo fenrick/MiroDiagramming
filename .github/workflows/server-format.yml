@@ -19,4 +19,4 @@ jobs:
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
       - name: Format check
-        run: dotnet format --verify-no-changes fenrick.miro.slnx
+        run: dotnet format --verify-no-changes legacy/dotnet/fenrick.miro.slnx
