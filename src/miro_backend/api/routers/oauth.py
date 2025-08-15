@@ -1,0 +1,86 @@
+"""OAuth login and callback endpoints."""
+
+from __future__ import annotations
+
+import base64
+import uuid
+from datetime import datetime, timedelta, timezone
+from urllib.parse import quote
+
+from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import RedirectResponse
+from pydantic import BaseModel
+
+from ...schemas.user_info import UserInfo
+from ...services.miro_client import MiroClient, get_miro_client
+from ...services.user_store import UserStore, get_user_store
+
+router = APIRouter(prefix="/oauth", tags=["oauth"])
+
+
+class OAuthConfig(BaseModel):
+    """Configuration for OAuth integration."""
+
+    auth_base: str = "https://miro.com"
+    client_id: str = ""
+    client_secret: str = ""
+    redirect_uri: str = ""
+
+
+def get_oauth_config() -> OAuthConfig:
+    """Provide default OAuth configuration."""
+
+    return OAuthConfig()
+
+
+@router.get("/login", response_class=RedirectResponse)  # type: ignore[misc]
+def login(
+    user_id: str = Query(alias="userId"),
+    return_url: str | None = Query(default=None, alias="returnUrl"),
+    cfg: OAuthConfig = Depends(get_oauth_config),
+) -> RedirectResponse:
+    """Redirect the user to Miro's OAuth consent screen."""
+
+    state = (
+        base64.urlsafe_b64encode(uuid.uuid4().bytes).decode().rstrip("=")
+        + ":"
+        + user_id
+    )
+    url = (
+        f"{cfg.auth_base}/oauth/authorize"
+        "?response_type=code"
+        f"&client_id={quote(cfg.client_id)}"
+        f"&redirect_uri={quote(cfg.redirect_uri)}"
+        f"&state={quote(state)}"
+        "&scope=boards:read boards:write"
+    )
+    return RedirectResponse(url)
+
+
+@router.get("/callback", response_class=RedirectResponse)  # type: ignore[misc]
+async def callback(
+    code: str,
+    state: str,
+    client: MiroClient = Depends(get_miro_client),
+    store: UserStore = Depends(get_user_store),
+    cfg: OAuthConfig = Depends(get_oauth_config),
+) -> RedirectResponse:
+    """Exchange the code for tokens and store them."""
+
+    parts = state.split(":", 1)
+    if len(parts) != 2 or not parts[1]:
+        raise HTTPException(status_code=400, detail="Invalid state")
+    user_id = parts[1]
+    tokens = await client.exchange_code(code, cfg.redirect_uri)
+    expires_in = int(tokens.get("expires_in", 0))
+    expires_at = datetime.now(timezone.utc) + timedelta(seconds=expires_in)
+    store.store(
+        UserInfo(
+            id=user_id,
+            name="<name>",
+            access_token=tokens["access_token"],
+            refresh_token=tokens["refresh_token"],
+            expires_at=expires_at,
+        )
+    )
+    return RedirectResponse("/app.html")
