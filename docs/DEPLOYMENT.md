@@ -67,7 +67,6 @@ add-on runs entirely in the browser.
 ### 5.1 Local production build
 
 ```bash
-dotnet build fenrick.miro.server/fenrick.miro.server.csproj -c Release
 ```
 
 ### 5.2 First-time deploy to Vercel
@@ -87,7 +86,6 @@ base URL**.
 ### 5.3 Subsequent deploys (CI)
 
 ```bash
-dotnet build fenrick.miro.server/fenrick.miro.server.csproj -c Release
 vercel deploy --prod --confirm
 ```
 
@@ -148,9 +146,9 @@ If any step fails, do not promote to production.
 Push → GitHub Action
         ├─ Prettier, ESLint, Stylelint, Typecheck
         ├─ dotnet format check
-        ├─ Unit tests (`npm test`, `dotnet test`, parallel shards)
+        ├─ Unit tests (`npm test`, parallel shards)
         ├─ Merge coverage from both suites
-        ├─ Sonar build scan (dotnet-sonarscanner with dotnet test)
+        ├─ Sonar build scan (dotnet-sonarscanner)
         ├─ CodeQL scan (JavaScript, Actions and C#)
         ├─ Build Storybook
         ├─ Build add-on bundle
@@ -223,7 +221,6 @@ Define these variables in the hosting environment:
 ### 12.2 Build & publish
 
 ```bash
-dotnet restore
 npm --prefix ../web/client run build
 dotnet publish -c Release -o publish --nologo
 ```

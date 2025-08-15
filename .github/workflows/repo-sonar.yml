@@ -9,7 +9,6 @@ permissions: write-all
 
 env:
   NODE_VERSION: 20
-  DOTNET_VERSION: "9.0.x"
 
 jobs:
   repo-sonar:
@@ -34,10 +33,6 @@ jobs:
       - name: Run node unit tests
         run: npm run test
         working-directory: fenrick.miro.client
-      - uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-      - run: dotnet tool install --global dotnet-coverage
       - name: Begin sonar-scanner
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -47,14 +42,7 @@ jobs:
             /k:"fenrick_MiroDiagraming" /o:"fenrick" `
             /d:sonar.token="${{ secrets.SONAR_TOKEN }}" `
             /d:sonar.host.url="https://sonarcloud.io" `
-            /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml `
             /d:sonar.javascript.lcov.reportPaths="${{ github.workspace }}/fenrick.miro.client/coverage/lcov.info"
-      - name: Build
-        shell: powershell
-        run: dotnet build --no-incremental
-      - name: Test coverage
-        shell: powershell
-        run: dotnet-coverage collect "dotnet test" -f xml -o "coverage.xml"
       - name: End sonar-scanner
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

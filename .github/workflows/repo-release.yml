@@ -9,7 +9,6 @@ permissions: write-all
 
 env:
   NODE_VERSION: 20
-  DOTNET_VERSION: "9.0.x"
 
 jobs:
   build:
@@ -22,17 +21,12 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
           cache-dependency-path: fenrick.miro.client/package-lock.json
-      - uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
       - name: Cache Storybook
         uses: actions/cache@v4
         with:
           path: fenrick.miro.client/node_modules/.cache/storybook
           key: ${{ runner.os }}-storybook-${{ hashFiles('fenrick.miro.client/package-lock.json') }}
           restore-keys: ${{ runner.os }}-storybook-
-      - name: Build server and client
-        run: dotnet build fenrick.miro.server/fenrick.miro.server.csproj -c Release
       - name: Build Storybook
         run: npm run build-storybook
         working-directory: fenrick.miro.client

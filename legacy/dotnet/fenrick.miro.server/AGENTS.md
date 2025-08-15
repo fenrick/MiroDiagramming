@@ -4,9 +4,7 @@ Target **.NET 9**. Source files live under `src/`. Unit tests are in
 `fenrick.miro.tests`. Before committing run:
 
 ```bash
-dotnet restore
 dotnet format
-dotnet test fenrick.miro.tests/fenrick.miro.tests.csproj -v minimal
 ```
 
 Develop using rigorous TDD. Begin with small TODO notes, write failing unit

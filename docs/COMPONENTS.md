@@ -258,7 +258,7 @@ Failing any item blocks the CI gate.
 | Stage             | Tool                      | Pass threshold          |
 | ----------------- | ------------------------- | ----------------------- |
 | Lint              | ESLint + Stylelint        | 0 errors                |
-| Unit tests        | `npm test`, `dotnet test` | ≥ 90 % lines & branches |
+| Unit tests        | `npm test`                | ≥ 90 % lines & branches |
 | Visual regression | manual screenshot review  | no visual diffs         |
 | Accessibility     | manual a11y review        | 0 critical              |
 
