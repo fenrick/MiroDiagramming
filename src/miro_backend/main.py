@@ -13,13 +13,16 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
-from .api.routers.auth import router as auth_router
 from .queue import ChangeQueue
 from .services.miro_client import MiroClient
 
 
-change_queue = ChangeQueue()
+change_queue: ChangeQueue = ChangeQueue()
 """Global queue used by the background worker."""
+
+# Routers are imported after the queue to avoid circular dependencies.
+from .api.routers.auth import router as auth_router  # noqa: E402
+from .api.routers.cards import router as cards_router  # noqa: E402
 
 
 @asynccontextmanager
@@ -52,6 +55,7 @@ if static_dir.exists():
     app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 app.include_router(auth_router)
+app.include_router(cards_router)
 
 
 @app.get("/", response_class=HTMLResponse)  # type: ignore[misc]
