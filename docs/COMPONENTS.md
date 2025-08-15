@@ -10,7 +10,7 @@ Explains how to:
 - Adopt the **@mirohq/design-system** components to ensure 100% alignment with
   Miro visuals.
 - Use **@mirohq/design-system** components directly for new features.
-- Use the lightweight wrapper components in `fenrick.miro.client/src/ui/components`
+- Use the lightweight wrapper components in `web/client/src/ui/components`
   for simplified markup.
 - Meet the accessibility, performance and quality gates defined in
   **ARCHITECTURE.md** and **FOUNDATION.md**.
@@ -26,7 +26,7 @@ Explains how to:
 ### 1.1 Bootstrap CSS once
 
 Include the stylesheet exactly once—ideally in
-`fenrick.miro.client/src/app/index.tsx`:
+`web/client/src/app/index.tsx`:
 
 ```tsx
 import '@mirohq/design-system-themes/light.css';
@@ -62,7 +62,7 @@ nested tab sets.
 
 The design system expects container elements to declare their own padding. To
 preserve the existing API and layering, small wrappers live under
-`fenrick.miro.client/src/ui/components` (e.g. `Panel`, `Section`, `ActionBar`). Each
+`web/client/src/ui/components` (e.g. `Panel`, `Section`, `ActionBar`). Each
 wrapper accepts a `padding` prop that maps to numeric values from
 `@mirohq/design-tokens`:
 
@@ -77,7 +77,7 @@ underlying design-system primitives. This keeps styling decisions inside the
 component. Keep nesting shallow to avoid unnecessary DOM layers.
 
 Common form controls such as `Button`, `InputField` and `Select` are provided
-under `fenrick.miro.client/src/ui/components`.
+under `web/client/src/ui/components`.
 
 `InputField` composes a label with a form control. Pass the control component
 via the `as` prop and provide its props through `options`:
