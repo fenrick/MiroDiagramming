@@ -13,9 +13,10 @@ each element can carry metadata that controls its appearance and placement.
 ### Prerequisites
 
 - Node.js 20.x
-- .NET 9 SDK
-- `dotnet workload install aspire`
 - Python 3.11 with [Poetry](https://python-poetry.org/)
+
+> The previous .NET implementation lives under `legacy/dotnet/`. See
+> [legacy/dotnet/README.md](legacy/dotnet/README.md) for historical context.
 
 ### Environment
 
@@ -23,17 +24,16 @@ Copy `web/client/.env.example` to `web/client/.env` and adjust the values as nee
 
 ### Development
 
-Run both the server and client together:
+Start the FastAPI server:
 
 ```bash
-dotnet run --project legacy/dotnet/fenrick.miro.apphost
+poetry run uvicorn src.miro_backend.main:app --reload --port 8000
 ```
 
-Run them separately:
+Start the React client:
 
 ```bash
 (cd web/client && npm run dev)
-dotnet run --project legacy/dotnet/fenrick.miro.server
 ```
 
 ## Uploading JSON Content
@@ -284,7 +284,6 @@ Then validate the codebase with:
 ```bash
 npm --prefix web/client run typecheck --silent
 npm --prefix web/client run test --silent
-npx dotnet-format --verify-no-changes legacy/dotnet/fenrick.miro.server/fenrick.miro.server.csproj
 npm --prefix web/client run lint --silent
 npm --prefix web/client run stylelint --silent
 npm --prefix web/client run prettier --silent
@@ -293,9 +292,9 @@ npm --prefix web/client run prettier --silent
 The Husky hooks live under the repository's `.husky/` folder. After cloning the
 repo run `npx husky install` from the project root to activate them so every
 commit is validated automatically. These commands perform TypeScript type
-checking, run ESLint and format files with Prettier. Execute the Vitest suite and
-`.NET` tests yourself before committing. Aim for at least 90 % line and branch coverage
-in both codebases and keep cyclomatic complexity under eight (see
+checking, run ESLint and format files with Prettier. Execute the Vitest suite
+yourself before committing. Aim for at least 90 % line and branch coverage and
+keep cyclomatic complexity under eight (see
 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)). Sonar rules such as using
 `readonly` class fields, optional chaining, semantic HTML tags and stable React
 keys. Run these checks before committing so code conforms to the repository
