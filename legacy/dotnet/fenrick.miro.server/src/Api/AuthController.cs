@@ -1,5 +1,6 @@
 namespace Fenrick.Miro.Server.Api;
 
+using System;
 using Microsoft.AspNetCore.Mvc;
 
 using Services;
@@ -7,6 +8,7 @@ using Services;
 /// <summary>
 ///     Exposes authentication status for the calling user.
 /// </summary>
+[Obsolete("Replaced by FastAPI auth router.")]
 [ApiController]
 [Route($"api/auth")]
 public class AuthController(IUserStore store) : ControllerBase
