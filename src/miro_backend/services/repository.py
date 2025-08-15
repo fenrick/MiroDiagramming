@@ -8,9 +8,11 @@ business logic.
 from __future__ import annotations
 
 from collections.abc import Sequence
-from typing import Generic, TypeVar
+from typing import Any, Generic, TypeVar
 
 from sqlalchemy.orm import Session
+
+from ..models import CacheEntry
 
 ModelT = TypeVar("ModelT")
 
@@ -45,6 +47,12 @@ class Repository(Generic[ModelT]):
         """Return all entities of the repository type."""
 
         return self.session.query(self.model).all()
+
+    def get_board_state(self, board_id: str) -> dict[str, Any] | None:
+        """Return cached board state for ``board_id`` if present."""
+
+        entry = self.session.query(CacheEntry).filter_by(key=board_id).one_or_none()
+        return entry.value if entry else None
 
     # ------------------------------------------------------------------
     # Delete operations

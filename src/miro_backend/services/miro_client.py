@@ -36,3 +36,18 @@ class MiroClient:
         self, board_id: str, shape_id: str
     ) -> None:  # pragma: no cover - stub
         """Delete ``shape_id`` from ``board_id``."""
+        
+    async def exchange_code(
+        self, code: str, redirect_uri: str
+    ) -> dict[str, Any]:  # pragma: no cover - stub
+        """Exchange an OAuth code for tokens."""
+        raise NotImplementedError
+
+
+_client = MiroClient()
+
+
+def get_miro_client() -> MiroClient:
+    """Provide the global Miro client instance."""
+
+    return _client
