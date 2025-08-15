@@ -2,20 +2,12 @@
 
 from __future__ import annotations
 
-import miro_backend.main as main
 from fastapi import APIRouter, Depends, status
-from typing import cast
 
-from ...queue import ChangeQueue
+from ...queue import ChangeQueue, get_change_queue
 from ...schemas.card_create import CardCreate
 
 router = APIRouter(prefix="/api/cards", tags=["cards"])
-
-
-def get_change_queue() -> ChangeQueue:
-    """Provide the application's change queue."""
-
-    return cast(ChangeQueue, main.change_queue)
 
 
 @router.post("", status_code=status.HTTP_202_ACCEPTED)  # type: ignore[misc]
