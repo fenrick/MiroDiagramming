@@ -21,8 +21,14 @@ from .queue.provider import get_change_queue
 from .services.miro_client import MiroClient
 
 
+change_queue: ChangeQueue = ChangeQueue()
 change_queue = get_change_queue()
+
 """Global queue used by the background worker."""
+
+# Routers are imported after the queue to avoid circular dependencies.
+from .api.routers.auth import router as auth_router  # noqa: E402
+from .api.routers.cards import router as cards_router  # noqa: E402
 
 
 @asynccontextmanager
@@ -55,6 +61,7 @@ if static_dir.exists():
     app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
 app.include_router(auth_router)
+app.include_router(cards_router)
 app.include_router(cache_router)
 app.include_router(batch_router)
 
