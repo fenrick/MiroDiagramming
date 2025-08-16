@@ -45,7 +45,7 @@ async def post_webhook(
         body = await request.body()
         with logfire.span("verify signature"):
             if signature is None or not _verify_signature(
-                settings.webhook_secret, body, signature
+                settings.webhook_secret.get_secret_value(), body, signature
             ):
                 logfire.warning(
                     "invalid webhook signature"
