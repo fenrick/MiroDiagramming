@@ -52,22 +52,29 @@ class DBUserStore(UserStore):  # type: ignore[misc]
 
     def store(self, info: UserInfo) -> None:
         with self._factory() as session:
-            session.add(
-                User(
-                    user_id=info.id,
-                    name=info.name,
-                    access_token=info.access_token,
-                    refresh_token=info.refresh_token,
-                    expires_at=info.expires_at,
-                )
-            )
+            user = session.query(User).filter_by(user_id=info.id).one_or_none()
+            if user is None:
+                user = User(user_id=info.id, name=info.name)
+                session.add(user)
+            user.name = info.name
+            user.access_token = info.access_token
+            user.refresh_token = info.refresh_token
+            user.expires_at = info.expires_at
             session.commit()
 
 
 class StubMiroClient(MiroClient):  # type: ignore[misc]
     """Stubbed Miro client returning fixed tokens."""
 
-    async def exchange_code(self, code: str, redirect_uri: str) -> dict[str, int | str]:
+    async def exchange_code(
+        self,
+        code: str,
+        redirect_uri: str,
+        token_url: str,
+        client_id: str,
+        client_secret: str,
+        timeout_seconds: float | None = None,
+    ) -> dict[str, int | str]:
         return {
             "access_token": "access_token",
             "refresh_token": "refresh_token",
