@@ -8,15 +8,7 @@ import contextlib
 import pytest
 
 from miro_backend.queue import ChangeQueue, CreateNode
-
-
-class RetryAfterError(Exception):
-    """Error carrying ``retry_after`` and ``status`` for backoff."""
-
-    def __init__(self, retry_after: float) -> None:
-        super().__init__("retry later")
-        self.status = 429
-        self.retry_after = retry_after
+from miro_backend.services.errors import HttpError, RateLimitedError
 
 
 class FlakyClient:
@@ -32,7 +24,23 @@ class FlakyClient:
     ) -> None:
         self.calls += 1
         if self.calls < 3:
-            raise RetryAfterError(self._retry_after)
+            raise RateLimitedError(retry_after=self._retry_after)
+        self.created.append((node_id, data))
+
+
+class UnstableClient:
+    """Client that returns a transient server error before succeeding."""
+
+    def __init__(self) -> None:
+        self.calls = 0
+        self.created: list[tuple[str, dict[str, int]]] = []
+
+    async def create_node(
+        self, node_id: str, data: dict[str, int], _token: str
+    ) -> None:
+        self.calls += 1
+        if self.calls < 3:
+            raise HttpError(503)
         self.created.append((node_id, data))
 
 
@@ -68,3 +76,44 @@ async def test_worker_respects_retry_after_backoff(
     assert client.calls == 3
     assert duration >= retry_delay * 2
     assert duration < 1
+
+
+@pytest.mark.asyncio()  # type: ignore[misc]
+async def test_worker_retries_on_transient_server_error(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    queue = ChangeQueue()
+    client = UnstableClient()
+    delays: list[float] = []
+
+    async def _token(*_: object) -> str:
+        return "t"
+
+    real_sleep = asyncio.sleep
+
+    async def fake_sleep(delay: float) -> None:
+        if delay:
+            delays.append(delay)
+        await real_sleep(0)
+
+    monkeypatch.setattr(
+        "miro_backend.queue.change_queue.get_valid_access_token", _token
+    )
+    monkeypatch.setattr("miro_backend.queue.change_queue.asyncio.sleep", fake_sleep)
+    monkeypatch.setattr(
+        "miro_backend.queue.change_queue.random.uniform", lambda _a, _b: 0
+    )
+
+    worker = asyncio.create_task(queue.worker(object(), client))
+    try:
+        await queue.enqueue(CreateNode(node_id="n1", data={"x": 1}, user_id="u1"))
+        while not client.created:
+            await real_sleep(0)
+    finally:
+        worker.cancel()
+        with contextlib.suppress(asyncio.CancelledError):
+            await worker
+
+    assert client.created == [("n1", {"x": 1})]
+    assert client.calls == 3
+    assert delays == [2, 4]
