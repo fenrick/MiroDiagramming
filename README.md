@@ -20,7 +20,7 @@ each element can carry metadata that controls its appearance and placement.
 
 ### Environment
 
-Copy `web/client/.env.example` to `web/client/.env` and adjust the values as needed. `VITE_PORT` sets the client dev server port and `LOG_LEVEL` controls log verbosity. During development, the client proxies API requests to the backend using the Aspire-provided `services__server__https__0` or `services__server__http__0` environment variables.
+Copy `web/client/.env.example` to `web/client/.env` and adjust the values as needed. `VITE_PORT` sets the client dev server port, `LOG_LEVEL` controls log verbosity, and `VITE_BACKEND_URL` specifies the backend API (defaults to `http://localhost:8000`).
 
 ### Development
 
