@@ -10,6 +10,7 @@ oauth_auth_base: https://miro.com  # Base URL for OAuth authorisation (optional)
 oauth_token_url: https://api.miro.com/v1/oauth/token  # OAuth token endpoint (optional)
 oauth_scope: "boards:read boards:write"  # Scopes requested during OAuth (optional)
 webhook_secret: change-me
+redirect_uri: https://example.com/oauth/callback
 oauth_auth_base: https://miro.com/oauth/authorize
 oauth_token_url: https://api.miro.com/v1/oauth/token
 oauth_scope: boards:read boards:write

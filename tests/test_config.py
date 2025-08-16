@@ -73,6 +73,17 @@ def test_missing_secrets_raise_error(monkeypatch: pytest.MonkeyPatch) -> None:
         Settings()
 
 
+def test_missing_redirect_uri_raises_error(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Unsetting redirect URI triggers a validation error."""
+
+    monkeypatch.delenv("MIRO_REDIRECT_URI", raising=False)
+
+    with pytest.raises(ValidationError):
+        Settings()
+
+
 def test_creates_default_files_when_missing(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
