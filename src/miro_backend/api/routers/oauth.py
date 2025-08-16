@@ -18,6 +18,7 @@ from ...core.exceptions import BadRequestError
 from ...db.session import get_session
 from ...models.user import User
 from ...schemas.user_info import UserInfo
+from ...services import crypto
 from ...services.miro_client import MiroClient, get_miro_client
 from ...services.user_store import UserStore, get_user_store
 from sqlalchemy.orm import Session
@@ -111,8 +112,8 @@ async def callback(
         user = User(user_id=user_id, name=user_id)
         session.add(user)
     user.name = user_id
-    user.access_token = tokens["access_token"]
-    user.refresh_token = tokens["refresh_token"]
+    user.access_token = crypto.encrypt(tokens["access_token"])
+    user.refresh_token = crypto.encrypt(tokens["refresh_token"])
     user.expires_at = expires_at
     session.commit()
     store.store(

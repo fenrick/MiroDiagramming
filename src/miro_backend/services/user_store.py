@@ -12,6 +12,7 @@ from sqlalchemy.orm import Session
 from ..db.session import get_session
 from ..models.user import User
 from ..schemas.user_info import UserInfo
+from . import crypto
 
 
 class UserStore(Protocol):
@@ -53,8 +54,8 @@ class DbUserStore(UserStore):
         return UserInfo(
             id=record.user_id,
             name=record.name,
-            access_token=record.access_token,
-            refresh_token=record.refresh_token,
+            access_token=crypto.decrypt(record.access_token),
+            refresh_token=crypto.decrypt(record.refresh_token),
             expires_at=record.expires_at.replace(tzinfo=timezone.utc),
         )
 
@@ -64,15 +65,15 @@ class DbUserStore(UserStore):
             record = User(
                 user_id=info.id,
                 name=info.name,
-                access_token=info.access_token,
-                refresh_token=info.refresh_token,
+                access_token=crypto.encrypt(info.access_token),
+                refresh_token=crypto.encrypt(info.refresh_token),
                 expires_at=info.expires_at,
             )
             self._session.add(record)
         else:
             record.name = info.name
-            record.access_token = info.access_token
-            record.refresh_token = info.refresh_token
+            record.access_token = crypto.encrypt(info.access_token)
+            record.refresh_token = crypto.encrypt(info.refresh_token)
             record.expires_at = info.expires_at
         self._session.commit()
 

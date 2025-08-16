@@ -209,27 +209,22 @@ class MiroClient:
 
     async def refresh_token(
         self, refresh_token: str
-    ) -> dict[str, Any]:  # pragma: no cover - stub
-        """Call Miro's token refresh endpoint.
+    ) -> dict[str, Any]:  # pragma: no cover - external call
+        """Refresh an access token using ``refresh_token``."""
 
-        Parameters
-        ----------
-        refresh_token:
-            Refresh token issued by Miro.
-
-        Returns
-        -------
-        dict[str, Any]
-            Mapping containing an ``access_token``, optional ``refresh_token``, and
-            ``expires_in`` lifetime in seconds.
-
-        Raises
-        ------
-        NotImplementedError
-            This base implementation is a stub; subclass to provide behaviour.
-        """
-
-        raise NotImplementedError
+        async with httpx.AsyncClient(timeout=settings.http_timeout_seconds) as client:
+            response = await client.post(
+                settings.oauth_token_url,
+                data={
+                    "grant_type": "refresh_token",
+                    "refresh_token": refresh_token,
+                    "client_id": settings.client_id,
+                    "client_secret": settings.client_secret.get_secret_value(),
+                },
+                headers={"Content-Type": "application/x-www-form-urlencoded"},
+            )
+            response.raise_for_status()
+            return cast(dict[str, Any], response.json())
 
 
 _client = MiroClient()
