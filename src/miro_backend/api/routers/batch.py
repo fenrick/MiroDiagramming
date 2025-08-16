@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, status
+import logfire
 
 from ...queue.change_queue import ChangeQueue
 from ...queue.provider import get_change_queue
@@ -18,5 +19,7 @@ async def post_batch(
 ) -> BatchResponse:
     """Validate ``request`` and enqueue its operations."""
 
-    count = await enqueue_operations(request.operations, queue)
-    return BatchResponse(enqueued=count)
+    with logfire.span("post batch"):
+        count = await enqueue_operations(request.operations, queue)
+        logfire.info("batch operations enqueued", count=count)  # event after enqueuing
+        return BatchResponse(enqueued=count)

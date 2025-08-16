@@ -21,20 +21,15 @@ if args.config:
     os.environ["MIRO_CONFIG_FILE"] = args.config
 
 from .core.config import settings  # noqa: E402
+from .core.exceptions import add_exception_handlers  # noqa: E402
+from .core.logging import configure_logging, setup_fastapi  # noqa: E402
 from .queue import get_change_queue  # noqa: E402
 from .services.miro_client import MiroClient  # noqa: E402
 
 change_queue = get_change_queue()
 
-# Configure logfire before application startup so instrumentation works from the
-# beginning of execution.
-logfire.configure(send_to_logfire=False, service_name="miro-backend")
-
-# Instrument SQLite and SQLAlchemy before handling any requests.
-from .db.session import engine  # noqa: E402
-
-logfire.instrument_sqlite3()  # span instrumentation for sqlite3 driver
-logfire.instrument_sqlalchemy(engine)  # span instrumentation for SQLAlchemy engine
+# Configure structured logging and database instrumentation.
+configure_logging()
 
 # Routers are imported after the queue to avoid circular dependencies.
 from .api.routers.auth import router as auth_router  # noqa: E402
@@ -69,8 +64,9 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
 BASE_DIR = Path(__file__).resolve().parents[2]
 app = FastAPI(lifespan=lifespan)
 
-# Instrument FastAPI so requests generate spans and logs
-logfire.instrument_fastapi(app)
+# Instrument FastAPI and register middleware and handlers
+setup_fastapi(app)
+add_exception_handlers(app)
 
 app.add_middleware(
     CORSMiddleware,
@@ -99,10 +95,16 @@ app.include_router(batch_router)
 @app.get("/", response_class=HTMLResponse)  # type: ignore[misc]
 async def root() -> HTMLResponse:
     """Redirect browsers to the built front-end."""
-    return HTMLResponse('<script>window.location.href="/static/index.html"</script>')
+    with logfire.span("root redirect"):
+        logfire.info("redirecting to frontend")  # event for root redirect
+        return HTMLResponse(
+            '<script>window.location.href="/static/index.html"</script>'
+        )
 
 
 @app.get("/health")  # type: ignore[misc]
 async def health() -> dict[str, str]:
     """Basic health check endpoint."""
-    return {"status": "ok"}
+    with logfire.span("health check"):
+        logfire.info("health ok")  # event for health status
+        return {"status": "ok"}

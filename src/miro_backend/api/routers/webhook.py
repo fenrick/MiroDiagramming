@@ -6,7 +6,11 @@ import asyncio
 import hashlib
 import hmac
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Request, Response, status
+from fastapi import APIRouter, Depends, Header, Request, Response, status
+
+import logfire
+
+from ...core.exceptions import BadRequestError, UnauthorizedError
 
 from ...core.config import settings
 from ...schemas.webhook import WebhookPayload
@@ -37,16 +41,28 @@ async def post_webhook(
 ) -> Response:
     """Validate ``signature`` and enqueue the webhook payload."""
 
-    body = await request.body()
-    if signature is None or not _verify_signature(
-        settings.webhook_secret, body, signature
-    ):
-        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid signature")
+    with logfire.span("webhook received"):
+        body = await request.body()
+        with logfire.span("verify signature"):
+            if signature is None or not _verify_signature(
+                settings.webhook_secret, body, signature
+            ):
+                logfire.warning(
+                    "invalid webhook signature"
+                )  # warn when signature invalid
+                raise UnauthorizedError("Invalid signature")
 
-    try:
-        payload = WebhookPayload.model_validate_json(body.decode())
-    except Exception as exc:  # noqa: BLE001 - broad to return generic error
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Invalid payload") from exc
+        try:
+            with logfire.span("parse webhook payload"):
+                payload = WebhookPayload.model_validate_json(body.decode())
+        except Exception as exc:  # noqa: BLE001 - broad to return generic error
+            logfire.warning(
+                "invalid webhook payload"
+            )  # warn when payload cannot be parsed
+            raise BadRequestError("Invalid payload") from exc
 
-    await queue.put(payload)
-    return Response(status_code=status.HTTP_202_ACCEPTED)
+        await queue.put(payload)
+        logfire.info(
+            "webhook queued", events=len(payload.events)
+        )  # event after enqueue
+        return Response(status_code=status.HTTP_202_ACCEPTED)
