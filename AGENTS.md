@@ -37,8 +37,6 @@ Additional OO practices
 
 * **Encapsulation:** expose the minimal public surface; keep internals private or `internal`.
 
-> _Tip_: Use **Roslynator** and **Meziantou.Analyzer** design‐rules to spot violations early.
-
 ## Workflow Expectations
 
 ### Test-Driven Development (TDD)
@@ -70,18 +68,6 @@ Additional OO practices
 * **Black** – code formatter (line length 88)
 * **Mypy** – static type checking
 
-### .NET (Roslyn)
-
-* **Microsoft.CodeAnalysis.NetAnalyzers** – core rules
-
-* **AsyncFixer, ConfigureAwaitChecker** – safe async
-
-* **Meziantou.Analyzer** – allocation, struct, immutability
-
-* **Roslynator** – design and readability helpers
-
-All rules are configured in `.editorconfig`; the build runs with `-warnaserror`.
-
 ### Frontend
 
 * ESLint (typescript-eslint)
@@ -111,9 +97,7 @@ npm --prefix web/client run prettier
 npm --prefix web/client run test
 ```
 
-### Archived .NET
-
-See [legacy/dotnet/AGENTS.md](legacy/dotnet/AGENTS.md) for archival component commands such as `dotnet format` and `dotnet test`.
+Archived **.NET** components have their own guidelines and commands; see [legacy/dotnet/AGENTS.md](legacy/dotnet/AGENTS.md).
 
 ## Git Hooks
 
@@ -155,6 +139,6 @@ Types include `feat`, `fix`, `docs`, `test`, `refactor`, `chore`.
 | Language  | Python (FastAPI) + React (TypeScript); archived .NET |
 | Design    | SOLID, composition over inheritance          |
 | Testing   | TDD, ≥ 90 % coverage                         |
-| Analysis  | Ruff, Black, Mypy; Roslyn analyzers; ESLint; Stylelint |
+| Analysis  | Ruff, Black, Mypy; ESLint; Stylelint |
 | Commits   | Conventional Commits                         |
 | Build     | Typed, documented, formatted, analyzer-clean |
