@@ -2,7 +2,11 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
+
+import httpx
+
+from miro_backend.core.config import settings
 
 
 class MiroClient:
@@ -36,12 +40,75 @@ class MiroClient:
         self, board_id: str, shape_id: str
     ) -> None:  # pragma: no cover - stub
         """Delete ``shape_id`` from ``board_id``."""
-        
-    async def exchange_code(
-        self, code: str, redirect_uri: str
-    ) -> dict[str, Any]:  # pragma: no cover - stub
-        """Exchange an OAuth code for tokens."""
-        raise NotImplementedError
+
+    async def exchange_code(self, code: str, redirect_uri: str) -> dict[str, Any]:
+        """Exchange an OAuth code for access and refresh tokens.
+
+        Parameters
+        ----------
+        code:
+            The authorization code issued by Miro after user consent.
+        redirect_uri:
+            The redirect URI used in the authorization request.
+
+        Returns
+        -------
+        dict[str, Any]
+            Parsed JSON response containing token information.
+
+        Raises
+        ------
+        httpx.HTTPError
+            If the HTTP request fails or returns a non-success status.
+        """
+
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                "https://api.miro.com/v1/oauth/token",
+                data={
+                    "grant_type": "authorization_code",
+                    "code": code,
+                    "redirect_uri": redirect_uri,
+                    "client_id": settings.client_id,
+                    "client_secret": settings.client_secret.get_secret_value(),
+                },
+                headers={"Content-Type": "application/x-www-form-urlencoded"},
+            )
+            response.raise_for_status()
+            return cast(dict[str, Any], response.json())
+
+    async def refresh_token(self, refresh_token: str) -> dict[str, Any]:
+        """Refresh OAuth access using a refresh token.
+
+        Parameters
+        ----------
+        refresh_token:
+            The refresh token previously issued by Miro.
+
+        Returns
+        -------
+        dict[str, Any]
+            Parsed JSON response containing new token data.
+
+        Raises
+        ------
+        httpx.HTTPError
+            If the HTTP request fails or returns a non-success status.
+        """
+
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                "https://api.miro.com/v1/oauth/token",
+                data={
+                    "grant_type": "refresh_token",
+                    "refresh_token": refresh_token,
+                    "client_id": settings.client_id,
+                    "client_secret": settings.client_secret.get_secret_value(),
+                },
+                headers={"Content-Type": "application/x-www-form-urlencoded"},
+            )
+            response.raise_for_status()
+            return cast(dict[str, Any], response.json())
 
 
 _client = MiroClient()
