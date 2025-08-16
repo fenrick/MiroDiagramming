@@ -60,6 +60,11 @@ class Settings(BaseSettings):
         alias="MIRO_REDIRECT_URI",
         description="Callback URL registered with Miro for OAuth redirects.",
     )
+    encryption_key: str | None = Field(
+        default=None,
+        alias="MIRO_ENCRYPTION_KEY",
+        description="Base64-encoded 32-byte key for encrypting tokens.",
+    )
     logfire_service_name: str = Field(
         default="miro-backend",
         alias="MIRO_LOGFIRE_SERVICE_NAME",

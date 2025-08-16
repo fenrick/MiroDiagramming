@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
+from typing import cast
 
 from sqlalchemy.orm import Session
 
 from ..models.user import User
 from .miro_client import MiroClient
+from . import crypto
 
 REFRESH_MARGIN = timedelta(seconds=30)
 
@@ -33,21 +35,23 @@ async def get_valid_access_token(
     user = session.query(User).filter(User.user_id == user_id).one_or_none()
     if user is None:
         raise ValueError(f"Unknown user_id {user_id!r}")  # pragma: no cover
-
+    access = crypto.decrypt(user.access_token)
+    refresh = crypto.decrypt(user.refresh_token)
     expires_at = (
         user.expires_at
         if user.expires_at.tzinfo is not None
         else user.expires_at.replace(tzinfo=timezone.utc)
     )
     if expires_at - datetime.now(timezone.utc) > REFRESH_MARGIN:
-        return user.access_token
+        return access
 
-    tokens = await client.refresh_token(user.refresh_token)
-    user.access_token = tokens["access_token"]
-    if refresh := tokens.get("refresh_token"):
-        user.refresh_token = refresh
+    tokens = await client.refresh_token(refresh)
+    access_new = cast(str, tokens["access_token"])
+    user.access_token = crypto.encrypt(access_new)
+    if refresh_new := tokens.get("refresh_token"):
+        user.refresh_token = crypto.encrypt(refresh_new)
     expires_in = int(tokens.get("expires_in", 0))
     user.expires_at = datetime.now(timezone.utc) + timedelta(seconds=expires_in)
     session.commit()
 
-    return user.access_token
+    return access_new

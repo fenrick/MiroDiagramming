@@ -17,13 +17,10 @@ def test_defaults_used_when_no_overrides(
     """Defaults are applied when no env or file provided."""
 
     monkeypatch.setenv("MIRO_CONFIG_FILE", str(tmp_path / "missing.yaml"))
-    for var in (
-        "MIRO_CLIENT_ID",
-        "MIRO_CLIENT_SECRET",
-        "MIRO_WEBHOOK_SECRET",
-        "MIRO_REDIRECT_URI",
-    ):
-        monkeypatch.delenv(var, raising=False)
+    monkeypatch.setenv("MIRO_CLIENT_ID", "id")
+    monkeypatch.setenv("MIRO_CLIENT_SECRET", "secret")
+    monkeypatch.setenv("MIRO_WEBHOOK_SECRET", "hook")
+    monkeypatch.setenv("MIRO_REDIRECT_URI", "http://redirect")
 
     settings = Settings()
     assert settings.database_url == "sqlite:///./app.db"
