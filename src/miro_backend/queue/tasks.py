@@ -18,6 +18,7 @@ class ChangeTask(BaseModel, ABC):
     """Abstract base class for all change tasks."""
 
     user_id: str
+    job_id: str | None = None
 
     @abstractmethod
     async def apply(
