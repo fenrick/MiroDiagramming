@@ -6,6 +6,7 @@ cors_origins:
 client_id: your-client-id
 client_secret: your-client-secret
 webhook_secret: change-me
+redirect_uri: https://example.com/oauth/callback
 logfire_service_name: miro-backend
 logfire_send_to_logfire: false
 http_timeout_seconds: 10.0

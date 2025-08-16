@@ -24,6 +24,7 @@ class Settings(BaseSettings):
     client_id: str
     client_secret: SecretStr
     webhook_secret: SecretStr
+    redirect_uri: str
     logfire_service_name: str = "miro-backend"
     logfire_send_to_logfire: bool = False
     http_timeout_seconds: float = 10.0
