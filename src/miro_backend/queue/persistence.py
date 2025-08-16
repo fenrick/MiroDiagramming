@@ -1,18 +1,22 @@
+"""Persistence layer for change queue using SQLAlchemy."""
+
 from __future__ import annotations
 
 import asyncio
-import json
-import sqlite3
-from pathlib import Path
-from typing import Any, Type, cast
+from typing import Any, Type
 
+from sqlalchemy import Integer, String, Text, select
+from sqlalchemy.orm import Mapped, mapped_column
+
+from ..db.session import Base, SessionLocal, engine
+from ..models.idempotency import Idempotency
 from .tasks import (
     ChangeTask,
     CreateNode,
-    UpdateCard,
     CreateShape,
-    UpdateShape,
     DeleteShape,
+    UpdateCard,
+    UpdateShape,
 )
 
 _TASK_TYPES: dict[str, Type[ChangeTask]] = {
@@ -24,57 +28,39 @@ _TASK_TYPES: dict[str, Type[ChangeTask]] = {
 }
 
 
+class _QueuedTask(Base):
+    """ORM model for persisted queue tasks."""
+
+    __tablename__ = "queue_tasks"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    type: Mapped[str] = mapped_column(String, nullable=False)
+    payload: Mapped[str] = mapped_column(Text, nullable=False)
+
+
 class QueuePersistence:
-    """Store pending change tasks in a SQLite database."""
+    """Store pending change tasks and idempotent responses in the main DB."""
 
-    def __init__(self, path: str | Path = "queue.db") -> None:
-        self._path = Path(path)
-        self._path.parent.mkdir(parents=True, exist_ok=True)
-        self._init_db()
+    def __init__(self, _path: str | None = None) -> None:  # noqa: D401 - path unused
+        # Ensure tables exist on initialisation.
+        Base.metadata.create_all(bind=engine)
 
-    def _init_db(self) -> None:
-        with sqlite3.connect(self._path) as conn:
-            conn.execute(
-                """
-                CREATE TABLE IF NOT EXISTS tasks (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    type TEXT NOT NULL,
-                    payload TEXT NOT NULL
-                )
-                """
-            )
-            conn.execute(
-                """
-                CREATE TABLE IF NOT EXISTS idempotency (
-                    key TEXT PRIMARY KEY,
-                    response TEXT NOT NULL,
-                    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-                )
-                """
-            )
-            conn.commit()
-            conn.execute(
-                """
-                CREATE TABLE IF NOT EXISTS responses (
-                    key TEXT PRIMARY KEY,
-                    payload TEXT NOT NULL
-                )
-                """
-            )
-            conn.commit()
-
+    # ------------------------------------------------------------------
+    # Task persistence
+    # ------------------------------------------------------------------
     async def save(self, task: ChangeTask) -> None:
         """Persist ``task`` to the database."""
 
         await asyncio.to_thread(self._insert, task)
 
     def _insert(self, task: ChangeTask) -> None:
-        with sqlite3.connect(self._path) as conn:
-            conn.execute(
-                "INSERT INTO tasks (type, payload) VALUES (?, ?)",
-                (task.__class__.__name__, task.model_dump_json()),
+        with SessionLocal() as session:
+            session.add(
+                _QueuedTask(
+                    type=task.__class__.__name__, payload=task.model_dump_json()
+                )
             )
-            conn.commit()
+            session.commit()
 
     async def delete(self, task: ChangeTask) -> None:
         """Remove ``task`` from the database."""
@@ -82,40 +68,50 @@ class QueuePersistence:
         await asyncio.to_thread(self._delete_one, task)
 
     def _delete_one(self, task: ChangeTask) -> None:
-        with sqlite3.connect(self._path) as conn:
-            conn.execute(
-                "DELETE FROM tasks WHERE id IN (SELECT id FROM tasks WHERE type = ? AND payload = ? LIMIT 1)",
-                (task.__class__.__name__, task.model_dump_json()),
+        with SessionLocal() as session:
+            stmt = (
+                select(_QueuedTask)
+                .where(
+                    _QueuedTask.type == task.__class__.__name__,
+                    _QueuedTask.payload == task.model_dump_json(),
+                )
+                .limit(1)
             )
-            conn.commit()
+            record = session.execute(stmt).scalar_one_or_none()
+            if record is not None:
+                session.delete(record)
+                session.commit()
 
     def load(self) -> list[ChangeTask]:
         """Return all persisted tasks in FIFO order."""
 
-        with sqlite3.connect(self._path) as conn:
-            cursor = conn.execute("SELECT type, payload FROM tasks ORDER BY id")
-            rows = cursor.fetchall()
-
+        with SessionLocal() as session:
+            records = session.execute(
+                select(_QueuedTask).order_by(_QueuedTask.id)
+            ).scalars()
+            rows = list(records)
         tasks: list[ChangeTask] = []
-        for type_name, payload in rows:
-            cls = _TASK_TYPES.get(type_name)
+        for row in rows:
+            cls = _TASK_TYPES.get(row.type)
             if cls is None:
                 continue
-            tasks.append(cls.model_validate_json(payload))
+            tasks.append(cls.model_validate_json(row.payload))
         return tasks
 
+    # ------------------------------------------------------------------
+    # Idempotent responses
+    # ------------------------------------------------------------------
     async def get_response(self, key: str) -> dict[str, Any] | None:
         """Return a stored response for ``key`` if present."""
 
         return await asyncio.to_thread(self._get_response, key)
 
     def _get_response(self, key: str) -> dict[str, Any] | None:
-        with sqlite3.connect(self._path) as conn:
-            cursor = conn.execute("SELECT payload FROM responses WHERE key = ?", (key,))
-            row = cursor.fetchone()
-        if row is None:
-            return None
-        return cast(dict[str, Any], json.loads(row[0]))
+        with SessionLocal() as session:
+            result = session.get(Idempotency, key)
+            if result is None:
+                return None
+            return result.response
 
     async def save_response(self, key: str, response: dict[str, Any]) -> None:
         """Persist ``response`` under ``key``."""
@@ -123,38 +119,13 @@ class QueuePersistence:
         await asyncio.to_thread(self._save_response, key, response)
 
     def _save_response(self, key: str, response: dict[str, Any]) -> None:
-        with sqlite3.connect(self._path) as conn:
-            conn.execute(
-                "INSERT OR REPLACE INTO responses (key, payload) VALUES (?, ?)",
-                (key, json.dumps(response)),
-            )
-            conn.commit()
+        with SessionLocal() as session:
+            session.merge(Idempotency(key=key, response=response))
+            session.commit()
 
+    # Backwards-compatible aliases
     async def save_idempotent(self, key: str, response: dict[str, Any]) -> None:
-        """Persist ``response`` for an idempotency ``key``."""
-
-        await asyncio.to_thread(self._insert_idempotent, key, response)
-
-    def _insert_idempotent(self, key: str, response: dict[str, Any]) -> None:
-        with sqlite3.connect(self._path) as conn:
-            conn.execute(
-                "INSERT OR REPLACE INTO idempotency (key, response) VALUES (?, ?)",
-                (key, json.dumps(response)),
-            )
-            conn.commit()
+        await self.save_response(key, response)
 
     async def get_idempotent(self, key: str) -> dict[str, Any] | None:
-        """Return a cached response for ``key`` if present."""
-
-        return await asyncio.to_thread(self._select_idempotent, key)
-
-    def _select_idempotent(self, key: str) -> dict[str, Any] | None:
-        with sqlite3.connect(self._path) as conn:
-            cursor = conn.execute(
-                "SELECT response FROM idempotency WHERE key = ?",
-                (key,),
-            )
-            row = cursor.fetchone()
-        if row is None:
-            return None
-        return cast(dict[str, Any], json.loads(row[0]))
+        return await self.get_response(key)

@@ -44,8 +44,12 @@ class Repository(Generic[ModelT]):
     # Read operations
     # ------------------------------------------------------------------
     @logfire.instrument("get model")  # type: ignore[misc]
-    def get(self, id_: int) -> ModelT | None:
-        """Return an entity by primary key if present."""
+    def get(self, id_: Any) -> ModelT | None:
+        """Return an entity by primary key if present.
+
+        ``id_`` may be of any type supported by the underlying model, such as an
+        ``int``, ``str`` or ``UUID``.
+        """
 
         result = self.session.get(self.model, id_)
         logfire.info("entity retrieved", id=id_)  # event: retrieval

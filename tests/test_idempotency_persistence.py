@@ -2,19 +2,16 @@
 
 from __future__ import annotations
 
-from pathlib import Path
-
 import pytest
 
 from miro_backend.queue.persistence import QueuePersistence
 
 
 @pytest.mark.asyncio()  # type: ignore[misc]
-async def test_save_and_get_idempotent(tmp_path: Path) -> None:
+async def test_save_and_get_idempotent() -> None:
     """Saving and retrieving by key should round-trip the response."""
 
-    db = tmp_path / "idem.db"
-    persistence = QueuePersistence(db)
+    persistence = QueuePersistence()
     data = {"ok": True}
 
     await persistence.save_idempotent("k1", data)
@@ -22,9 +19,9 @@ async def test_save_and_get_idempotent(tmp_path: Path) -> None:
 
 
 @pytest.mark.asyncio()  # type: ignore[misc]
-async def test_get_idempotent_missing(tmp_path: Path) -> None:
+async def test_get_idempotent_missing() -> None:
     """Missing keys should return ``None``."""
 
-    persistence = QueuePersistence(tmp_path / "idem.db")
+    persistence = QueuePersistence()
 
     assert await persistence.get_idempotent("missing") is None

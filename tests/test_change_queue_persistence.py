@@ -4,8 +4,6 @@ from __future__ import annotations
 
 from unittest import mock
 
-from pathlib import Path
-
 import pytest
 
 from miro_backend.queue import ChangeQueue
@@ -30,11 +28,10 @@ async def test_enqueue_dequeue_persists() -> None:
 
 
 @pytest.mark.asyncio()  # type: ignore[misc]
-async def test_tasks_survive_restart(tmp_path: Path) -> None:
+async def test_tasks_survive_restart() -> None:
     """Tasks persisted to disk should reload after a restart."""
 
-    db_path = tmp_path / "tasks.db"
-    persistence = QueuePersistence(db_path)
+    persistence = QueuePersistence()
 
     queue = ChangeQueue(persistence=persistence)
     task = CreateNode(node_id="n1", data={}, user_id="u1")
