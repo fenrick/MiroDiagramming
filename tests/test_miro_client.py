@@ -21,7 +21,14 @@ async def test_exchange_code(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(httpx, "AsyncClient", lambda *args, **kwargs: async_client)
 
     client = MiroClient()
-    res = await client.exchange_code("c", "redir")
+    res = await client.exchange_code(
+        "c",
+        "redir",
+        "https://api.miro.com/v1/oauth/token",
+        settings.client_id,
+        settings.client_secret.get_secret_value(),
+        None,
+    )
 
     assert res == {"ok": True}
     assert captured == {
