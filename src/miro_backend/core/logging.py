@@ -27,8 +27,12 @@ class RequestIdMiddleware(BaseHTTPMiddleware):  # type: ignore[misc]
 @logfire.instrument("configure logging")  # type: ignore[misc]
 def configure_logging() -> None:
     """Configure logfire and database instrumentation."""
+    from .config import settings
 
-    logfire.configure(send_to_logfire=False, service_name="miro-backend")
+    logfire.configure(
+        send_to_logfire=settings.logfire_send_to_logfire,
+        service_name=settings.logfire_service_name,
+    )
     from ..db.session import engine  # imported lazily
 
     logfire.instrument_sqlite3()

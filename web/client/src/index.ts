@@ -1,6 +1,6 @@
 import { DiagramApp } from './app/diagram-app';
 import { apiFetch } from './core/utils/api-fetch';
-import { log } from './logger';
+import * as log from './logger';
 import { registerWithCurrentUser } from './user-auth';
 
 async function start(): Promise<void> {

@@ -1,4 +1,4 @@
-import { log } from '../logger';
+import * as log from '../logger';
 import { boardCache } from './board-cache';
 import type { BoardLike, BoardQueryLike } from './types';
 

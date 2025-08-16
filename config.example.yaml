@@ -6,3 +6,5 @@ cors_origins:
 miro_client_id: your-client-id
 miro_client_secret: your-client-secret
 webhook_secret: change-me
+logfire_service_name: miro-backend
+logfire_send_to_logfire: false

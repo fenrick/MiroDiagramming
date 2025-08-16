@@ -7,7 +7,7 @@ vi.mock('../src/app/diagram-app', () => ({
   },
 }));
 
-import { log } from '../src/logger';
+import * as log from '../src/logger';
 
 test('logs error when initialization fails', async () => {
   const errorSpy = jest.spyOn(log, 'error').mockImplementation(() => {});

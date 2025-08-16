@@ -12,7 +12,7 @@ import type {
   NodeData,
   PositionedNode,
 } from '../core/graph';
-import { log } from '../logger';
+import * as log from '../logger';
 import { maybeSync } from './board';
 import { boardCache } from './board-cache';
 import { createConnector } from './connector-utils';

@@ -1,6 +1,7 @@
 import { createServer } from 'node:http';
 import { afterAll, beforeAll, expect, test, vi } from 'vitest';
 import { HttpLogSink } from '../src/log-sink';
+import * as logfire from 'logfire';
 
 let server: ReturnType<typeof createServer>;
 let url: string;
@@ -52,7 +53,7 @@ test('HttpLogSink warns on non-2xx responses', async () => {
     message: 'pong',
   };
 
-  const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+  const warnSpy = vi.spyOn(logfire, 'warning').mockImplementation(() => {});
   const originalFetch = global.fetch;
   global.fetch = async () => new Response(null, { status: 500 });
 
@@ -73,7 +74,7 @@ test('HttpLogSink logs network failures', async () => {
     message: 'pong',
   };
 
-  const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+  const errorSpy = vi.spyOn(logfire, 'error').mockImplementation(() => {});
   const originalFetch = global.fetch;
   global.fetch = async () => {
     throw new Error('network down');
