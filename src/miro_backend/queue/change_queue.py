@@ -34,6 +34,12 @@ class ChangeQueue:
                 logfire.info("loaded persisted task", task=task)
                 self._queue.put_nowait(task)
 
+    @property
+    def persistence(self) -> Any | None:
+        """Return the persistence layer used by this queue."""
+
+        return self._persistence
+
     @logfire.instrument("enqueue task {task=}")  # type: ignore[misc]
     async def enqueue(self, task: ChangeTask) -> None:
         """Add ``task`` to the queue and persist it if supported."""
