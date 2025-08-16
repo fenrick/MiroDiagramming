@@ -1,4 +1,5 @@
 import { apiFetch } from './core/utils/api-fetch';
+import { error as logError, warning as logWarning } from 'logfire';
 
 export interface ClientLogEntry {
   timestamp: string;
@@ -34,14 +35,12 @@ export class HttpLogSink implements LogSink {
         body: JSON.stringify(entries),
       });
       if (!response.ok) {
-        // eslint-disable-next-line no-console
-        console.warn(
-          `HttpLogSink received unexpected status: ${response.status}`,
-        );
+        logWarning('HttpLogSink received unexpected status', {
+          status: response.status,
+        });
       }
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('HttpLogSink failed to store log entries', error);
+      logError('HttpLogSink failed to store log entries', { error });
       /* avoid crashing on network errors */
     }
   }

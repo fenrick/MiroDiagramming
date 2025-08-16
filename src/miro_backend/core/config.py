@@ -22,6 +22,8 @@ class Settings(BaseSettings):
     miro_client_id: str = ""
     miro_client_secret: str = ""
     webhook_secret: str = "dev-secret"
+    logfire_service_name: str = "miro-backend"
+    logfire_send_to_logfire: bool = False
 
     model_config = SettingsConfigDict(env_prefix="MIRO_", extra="ignore")
 

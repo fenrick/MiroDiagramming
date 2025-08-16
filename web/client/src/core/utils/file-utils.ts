@@ -1,4 +1,4 @@
-import { log } from '../../logger';
+import * as log from '../../logger';
 
 /**
  * Read the contents of a `File` as UTF-8 text.

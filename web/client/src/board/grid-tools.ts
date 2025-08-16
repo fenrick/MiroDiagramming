@@ -16,7 +16,7 @@ export interface GridOptions {
   sortOrientation?: 'horizontal' | 'vertical';
 }
 
-import { log } from '../logger';
+import * as log from '../logger';
 /**
  * Minimal abstraction of the board API used for selection and grouping.
  * Allows injection of a mock implementation in tests.
