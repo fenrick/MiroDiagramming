@@ -28,6 +28,7 @@ from .core.logging import configure_logging, setup_fastapi  # noqa: E402
 from .core.security import setup_security  # noqa: E402
 from .core.telemetry import setup_telemetry  # noqa: E402
 from .queue import get_change_queue  # noqa: E402
+from .queue.change_queue import change_queue_length  # noqa: E402
 from .services.miro_client import MiroClient  # noqa: E402
 
 change_queue = get_change_queue()
@@ -98,6 +99,7 @@ app.include_router(cache_router)
 app.include_router(batch_router)
 
 instrumentator = Instrumentator().instrument(app)
+instrumentator.registry.register(change_queue_length)
 
 
 @app.get("/metrics")  # type: ignore[misc]

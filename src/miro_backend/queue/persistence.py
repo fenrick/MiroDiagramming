@@ -43,6 +43,15 @@ class QueuePersistence:
                 )
                 """
             )
+            conn.execute(
+                """
+                CREATE TABLE IF NOT EXISTS idempotency (
+                    key TEXT PRIMARY KEY,
+                    response TEXT NOT NULL,
+                    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+                )
+                """
+            )
             conn.commit()
             conn.execute(
                 """
@@ -120,3 +129,32 @@ class QueuePersistence:
                 (key, json.dumps(response)),
             )
             conn.commit()
+
+    async def save_idempotent(self, key: str, response: dict[str, Any]) -> None:
+        """Persist ``response`` for an idempotency ``key``."""
+
+        await asyncio.to_thread(self._insert_idempotent, key, response)
+
+    def _insert_idempotent(self, key: str, response: dict[str, Any]) -> None:
+        with sqlite3.connect(self._path) as conn:
+            conn.execute(
+                "INSERT OR REPLACE INTO idempotency (key, response) VALUES (?, ?)",
+                (key, json.dumps(response)),
+            )
+            conn.commit()
+
+    async def get_idempotent(self, key: str) -> dict[str, Any] | None:
+        """Return a cached response for ``key`` if present."""
+
+        return await asyncio.to_thread(self._select_idempotent, key)
+
+    def _select_idempotent(self, key: str) -> dict[str, Any] | None:
+        with sqlite3.connect(self._path) as conn:
+            cursor = conn.execute(
+                "SELECT response FROM idempotency WHERE key = ?",
+                (key,),
+            )
+            row = cursor.fetchone()
+        if row is None:
+            return None
+        return cast(dict[str, Any], json.loads(row[0]))
