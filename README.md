@@ -424,10 +424,10 @@ Run the helper script to reproduce the GitHub Actions pipeline locally. It
 executes lint checks, type verification, unit tests, the production build and
 the Storybook build in sequence. Semantic release is intentionally skipped.
 
-Pull requests trigger the `client-*` workflows and the `ci.yml` workflow—which
-runs Python and Node jobs—to execute linters, type checks and unit tests.
-Pushes to `main` additionally invoke `repo-sonar.yml`, `repo-codeql.yml` and
-`repo-release.yml` for coverage, static analysis and packaging tasks.
+Pull requests trigger the unified `ci.yml` workflow to run linting, type checks,
+unit tests and production builds for both the Python backend and the React
+client. Pushes to `main` additionally invoke `repo-sonar.yml`, `repo-codeql.yml`
+and `repo-release.yml` for coverage, static analysis and packaging tasks.
 
 ```bash
 npm run ci:local
