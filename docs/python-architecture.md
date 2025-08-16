@@ -72,6 +72,15 @@
 cs/alerts.
 - A global fallback handler reports unhandled exceptions and returns a 500 response without leaking internals.
 
+## Observability
+
+- Prometheus scrapes `GET /metrics` for request counters and latency histograms.
+- Traces are exported via OpenTelemetry using either OTLP or Jaeger exporters.
+- Configure collector endpoints with the following environment variables:
+  - `OTEL_EXPORTER_OTLP_ENDPOINT` – HTTP endpoint for an OTLP collector.
+  - `JAEGER_AGENT_HOST` / `JAEGER_AGENT_PORT` – Jaeger agent host and port.
+- Metrics, logs and traces share the same request ID for cohesive diagnostics through Logfire.
+
 ## Security
 
 - Enforce HTTPS and HSTS at the edge.

@@ -16,6 +16,7 @@ logfire = "^4.3.3"
 opentelemetry-instrumentation-fastapi = "^0.57b0"
 opentelemetry-instrumentation-sqlalchemy = "^0.57b0"
 opentelemetry-instrumentation-sqlite3 = "^0.57b0"
+prometheus-fastapi-instrumentator = "^6.1.0"
 pydantic-settings = "^2.10.1"
 pyyaml = "^6.0.2"
 
