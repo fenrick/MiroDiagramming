@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import sqlite3
 from pathlib import Path
-from typing import Type
+from typing import Any, Type, cast
 
 from .tasks import (
     ChangeTask,
@@ -39,6 +40,15 @@ class QueuePersistence:
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     type TEXT NOT NULL,
                     payload TEXT NOT NULL
+                )
+                """
+            )
+            conn.execute(
+                """
+                CREATE TABLE IF NOT EXISTS idempotency (
+                    key TEXT PRIMARY KEY,
+                    response TEXT NOT NULL,
+                    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
                 )
                 """
             )
@@ -84,3 +94,32 @@ class QueuePersistence:
                 continue
             tasks.append(cls.model_validate_json(payload))
         return tasks
+
+    async def save_idempotent(self, key: str, response: dict[str, Any]) -> None:
+        """Persist ``response`` for an idempotency ``key``."""
+
+        await asyncio.to_thread(self._insert_idempotent, key, response)
+
+    def _insert_idempotent(self, key: str, response: dict[str, Any]) -> None:
+        with sqlite3.connect(self._path) as conn:
+            conn.execute(
+                "INSERT OR REPLACE INTO idempotency (key, response) VALUES (?, ?)",
+                (key, json.dumps(response)),
+            )
+            conn.commit()
+
+    async def get_idempotent(self, key: str) -> dict[str, Any] | None:
+        """Return a cached response for ``key`` if present."""
+
+        return await asyncio.to_thread(self._select_idempotent, key)
+
+    def _select_idempotent(self, key: str) -> dict[str, Any] | None:
+        with sqlite3.connect(self._path) as conn:
+            cursor = conn.execute(
+                "SELECT response FROM idempotency WHERE key = ?",
+                (key,),
+            )
+            row = cursor.fetchone()
+        if row is None:
+            return None
+        return cast(dict[str, Any], json.loads(row[0]))
