@@ -5,11 +5,13 @@ from __future__ import annotations
 from collections.abc import Iterator
 from urllib.parse import parse_qs, urlparse
 
+import base64
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
 from miro_backend.api.routers import oauth
+from miro_backend.core.security import sign_state, verify_state
 from miro_backend.db.session import engine
 from miro_backend.main import app
 from miro_backend.models.user import User
@@ -115,7 +117,7 @@ def client_store_db() -> (
 def test_login_redirects_to_miro(
     client_store: tuple[TestClient, InMemoryUserStore, StubClient, oauth.OAuthConfig]
 ) -> None:
-    client, _, _, _ = client_store
+    client, _, _, cfg = client_store
     res = client.get("/oauth/login", params={"userId": "u1"}, allow_redirects=False)
     assert res.status_code == 307
     loc = res.headers["location"]
@@ -127,16 +129,19 @@ def test_login_redirects_to_miro(
     assert q["redirect_uri"] == ["http://redir"]
     assert q["response_type"] == ["code"]
     assert q["scope"] == [SCOPE]
-    assert q["state"][0].endswith(":u1")
+    nonce, user_id = verify_state(cfg.client_secret, q["state"][0])
+    assert user_id == "u1"
+    assert nonce
 
 
 def test_callback_exchanges_code_and_stores_tokens(
     client_store: tuple[TestClient, InMemoryUserStore, StubClient, oauth.OAuthConfig]
 ) -> None:
-    client, store, stub, _ = client_store
+    client, store, stub, cfg = client_store
+    state = sign_state(cfg.client_secret, "n", "u1")
     res = client.get(
         "/oauth/callback",
-        params={"code": "c", "state": "x:u1"},
+        params={"code": "c", "state": state},
         allow_redirects=False,
     )
     assert res.status_code == 307
@@ -148,12 +153,23 @@ def test_callback_exchanges_code_and_stores_tokens(
     assert stub.calls == [("c", "http://redir")]
 
 
-def test_callback_rejects_invalid_state(
+def test_callback_rejects_state_with_invalid_signature(
     client_store: tuple[TestClient, InMemoryUserStore, StubClient, oauth.OAuthConfig]
 ) -> None:
-    client, store, stub, _ = client_store
+    client, store, stub, cfg = client_store
+    state = sign_state(cfg.client_secret, "n", "u1")
+    decoded = base64.urlsafe_b64decode(state + "=" * (-len(state) % 4)).decode()
+    nonce, user_id, sig = decoded.split(":")
+    bad_sig = ("0" if sig[0] != "0" else "1") + sig[1:]
+    bad_state = (
+        base64.urlsafe_b64encode(f"{nonce}:{user_id}:{bad_sig}".encode())
+        .decode()
+        .rstrip("=")
+    )
     res = client.get(
-        "/oauth/callback", params={"code": "c", "state": "bad"}, allow_redirects=False
+        "/oauth/callback",
+        params={"code": "c", "state": bad_state},
+        allow_redirects=False,
     )
     assert res.status_code == 400
     assert store.retrieve("u1") is None
@@ -165,16 +181,18 @@ def test_callback_upserts_user_record(
         TestClient, InMemoryUserStore, CountingStub, oauth.OAuthConfig
     ]
 ) -> None:
-    client, store, stub, _ = client_store_db
+    client, store, stub, cfg = client_store_db
+    state = sign_state(cfg.client_secret, "n", "u1")
     res = client.get(
         "/oauth/callback",
-        params={"code": "c1", "state": "x:u1"},
+        params={"code": "c1", "state": state},
         allow_redirects=False,
     )
     assert res.status_code == 307
+    state2 = sign_state(cfg.client_secret, "n2", "u1")
     res = client.get(
         "/oauth/callback",
-        params={"code": "c2", "state": "x:u1"},
+        params={"code": "c2", "state": state2},
         allow_redirects=False,
     )
     assert res.status_code == 307
