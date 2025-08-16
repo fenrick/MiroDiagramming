@@ -18,10 +18,10 @@ class MemoryPersistence:
     def __init__(self) -> None:
         self.responses: dict[str, dict[str, int]] = {}
 
-    async def get_response(self, key: str) -> dict[str, int] | None:
+    async def get_idempotent(self, key: str) -> dict[str, int] | None:
         return self.responses.get(key)
 
-    async def save_response(self, key: str, response: dict[str, int]) -> None:
+    async def save_idempotent(self, key: str, response: dict[str, int]) -> None:
         self.responses[key] = response
 
 

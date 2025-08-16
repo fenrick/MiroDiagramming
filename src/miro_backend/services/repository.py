@@ -44,7 +44,7 @@ class Repository(Generic[ModelT]):
     # Read operations
     # ------------------------------------------------------------------
     @logfire.instrument("get model")  # type: ignore[misc]
-    def get(self, id_: int) -> ModelT | None:
+    def get(self, id_: Any) -> ModelT | None:
         """Return an entity by primary key if present."""
 
         result = self.session.get(self.model, id_)
