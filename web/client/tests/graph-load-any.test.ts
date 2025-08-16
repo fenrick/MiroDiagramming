@@ -6,12 +6,12 @@ interface ReaderEvent {
 
 describe('loadAnyGraph', () => {
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
     delete (global as { FileReader?: unknown }).FileReader;
   });
 
   test('parses graph data and resets cache', async () => {
-    const resetSpy = jest.spyOn(defaultBuilder, 'reset');
+    const resetSpy = vi.spyOn(defaultBuilder, 'reset');
 
     class FR {
       onload: ((e: ReaderEvent) => void) | null = null;

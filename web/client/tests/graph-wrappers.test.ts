@@ -5,10 +5,10 @@ import { defaultBuilder, graphService } from '../src/core/graph';
  */
 
 describe('graph service methods', () => {
-  afterEach(() => jest.restoreAllMocks());
+  afterEach(() => vi.restoreAllMocks());
 
   test('findNode delegates to default builder', async () => {
-    const spy = jest
+    const spy = vi
       .spyOn(defaultBuilder, 'findNode')
       .mockResolvedValue('x' as unknown);
     const result = await graphService.findNode('t', 'l');
@@ -17,7 +17,7 @@ describe('graph service methods', () => {
   });
 
   test('createNode delegates to default builder', async () => {
-    const spy = jest
+    const spy = vi
       .spyOn(defaultBuilder, 'createNode')
       .mockResolvedValue('n' as unknown);
     const result = await graphService.createNode(
@@ -29,7 +29,7 @@ describe('graph service methods', () => {
   });
 
   test('createEdges delegates to default builder', async () => {
-    const spy = jest
+    const spy = vi
       .spyOn(defaultBuilder, 'createEdges')
       .mockResolvedValue(['e'] as unknown as string[]);
     const result = await graphService.createEdges(
@@ -42,13 +42,13 @@ describe('graph service methods', () => {
   });
 
   test('syncAll delegates to default builder', async () => {
-    const spy = jest.spyOn(defaultBuilder, 'syncAll').mockResolvedValue();
+    const spy = vi.spyOn(defaultBuilder, 'syncAll').mockResolvedValue();
     await graphService.syncAll([] as unknown as Array<unknown>);
     expect(spy).toHaveBeenCalled();
   });
 
   test('resetBoardCache calls builder.reset', () => {
-    const spy = jest.spyOn(defaultBuilder, 'reset');
+    const spy = vi.spyOn(defaultBuilder, 'reset');
     graphService.resetBoardCache();
     expect(spy).toHaveBeenCalled();
   });

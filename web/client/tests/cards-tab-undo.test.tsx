@@ -1,6 +1,6 @@
 /** @vitest-environment jsdom */
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 import React from 'react';
 import { CardProcessor } from '../src/board/card-processor';
 import * as uiUtils from '../src/ui/hooks/ui-utils';

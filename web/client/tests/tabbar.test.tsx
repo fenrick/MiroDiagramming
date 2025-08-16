@@ -1,15 +1,12 @@
 /** @vitest-environment jsdom */
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 import React from 'react';
 import { App } from '../src/app/App';
 
 beforeEach(() => {
   (globalThis as { miro?: { board?: unknown } }).miro = {
-    board: {
-      getSelection: jest.fn().mockResolvedValue([]),
-      ui: { on: jest.fn() },
-    },
+    board: { getSelection: vi.fn().mockResolvedValue([]), ui: { on: vi.fn() } },
   };
 });
 

@@ -1,6 +1,6 @@
 /** @vitest-environment jsdom */
 import { fireEvent, render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 /* eslint-disable no-var */
 import React from 'react';
 import { FramesTab } from '../src/ui/pages/FramesTab';

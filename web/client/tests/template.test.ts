@@ -11,33 +11,33 @@ describe('createFromTemplate', () => {
   beforeEach(() => {
     global.miro = {
       board: {
-        get: jest.fn(),
-        group: jest
+        get: vi.fn(),
+        group: vi
           .fn()
           .mockResolvedValue({
             type: 'group',
-            getItems: jest.fn().mockResolvedValue([]),
-            setMetadata: jest.fn(),
-            sync: jest.fn(),
+            getItems: vi.fn().mockResolvedValue([]),
+            setMetadata: vi.fn(),
+            sync: vi.fn(),
             id: 'g1',
           }),
       },
     } as unknown as GlobalWithMiro['miro'];
-    jest
-      .spyOn(ShapeClient.prototype, 'createShapes')
-      .mockResolvedValue([{ id: 's1' }]);
-    (global.miro.board.get as jest.Mock).mockResolvedValue([
+    vi.spyOn(ShapeClient.prototype, 'createShapes').mockResolvedValue([
+      { id: 's1' },
+    ]);
+    (global.miro.board.get as vi.Mock).mockResolvedValue([
       {
         type: 'shape',
-        setMetadata: jest.fn(),
-        getMetadata: jest.fn(),
-        sync: jest.fn(),
+        setMetadata: vi.fn(),
+        getMetadata: vi.fn(),
+        sync: vi.fn(),
         id: 's1',
       },
     ]);
   });
 
-  afterEach(() => jest.restoreAllMocks());
+  afterEach(() => vi.restoreAllMocks());
 
   test('creates a single shape with correct style', async () => {
     const widget = await templateManager.createFromTemplate(
@@ -47,7 +47,7 @@ describe('createFromTemplate', () => {
       0,
     );
     expect(widget.type).toBe('shape');
-    const args = (ShapeClient.prototype.createShapes as jest.Mock).mock
+    const args = (ShapeClient.prototype.createShapes as vi.Mock).mock
       .calls[0][0][0];
     expect(args.shape).toBe('round_rectangle');
     expect(args.style.fillColor).toBe('#B5A9FF');
@@ -63,26 +63,26 @@ describe('createFromTemplate', () => {
         { text: 'test' },
       ],
     };
-    (ShapeClient.prototype.createShapes as jest.Mock).mockResolvedValue([
+    (ShapeClient.prototype.createShapes as vi.Mock).mockResolvedValue([
       { id: 's1' },
       { id: 't1' },
     ]);
-    (global.miro.board.get as jest.Mock)
+    (global.miro.board.get as vi.Mock)
       .mockResolvedValueOnce([
         {
           type: 'shape',
-          setMetadata: jest.fn(),
-          getMetadata: jest.fn(),
-          sync: jest.fn(),
+          setMetadata: vi.fn(),
+          getMetadata: vi.fn(),
+          sync: vi.fn(),
           id: 's1',
         },
       ])
       .mockResolvedValueOnce([
         {
           type: 'text',
-          setMetadata: jest.fn(),
-          getMetadata: jest.fn(),
-          sync: jest.fn(),
+          setMetadata: vi.fn(),
+          getMetadata: vi.fn(),
+          sync: vi.fn(),
           id: 't1',
         },
       ]);
@@ -94,7 +94,7 @@ describe('createFromTemplate', () => {
     );
     expect(widget.type).toBe('group');
     expect(ShapeClient.prototype.createShapes).toHaveBeenCalled();
-    const items = (global.miro.board.group as jest.Mock).mock.calls[0][0].items;
+    const items = (global.miro.board.group as vi.Mock).mock.calls[0][0].items;
     expect(items).toHaveLength(2);
   });
 
@@ -108,18 +108,18 @@ describe('createFromTemplate', () => {
       ],
     };
     const frame = {
-      add: jest.fn(),
+      add: vi.fn(),
     } as unknown as import('@mirohq/websdk-types').Frame;
-    (ShapeClient.prototype.createShapes as jest.Mock).mockResolvedValue([
+    (ShapeClient.prototype.createShapes as vi.Mock).mockResolvedValue([
       { id: 's1' },
       { id: 't1' },
     ]);
-    (global.miro.board.get as jest.Mock)
+    (global.miro.board.get as vi.Mock)
       .mockResolvedValueOnce([
-        { type: 'shape', id: 's1', setMetadata: jest.fn(), sync: jest.fn() },
+        { type: 'shape', id: 's1', setMetadata: vi.fn(), sync: vi.fn() },
       ])
       .mockResolvedValueOnce([
-        { type: 'text', id: 't1', setMetadata: jest.fn(), sync: jest.fn() },
+        { type: 'text', id: 't1', setMetadata: vi.fn(), sync: vi.fn() },
       ]);
     const widget = await templateManager.createFromTemplate(
       'withFrame',
@@ -136,11 +136,11 @@ describe('createFromTemplate', () => {
     (
       templateManager as unknown as { templates: Record<string, unknown> }
     ).templates.textOnly = { elements: [{ text: 'T' }] };
-    (ShapeClient.prototype.createShapes as jest.Mock).mockResolvedValue([
+    (ShapeClient.prototype.createShapes as vi.Mock).mockResolvedValue([
       { id: 't1' },
     ]);
-    (global.miro.board.get as jest.Mock).mockResolvedValueOnce([
-      { type: 'text', id: 't1', setMetadata: jest.fn(), sync: jest.fn() },
+    (global.miro.board.get as vi.Mock).mockResolvedValueOnce([
+      { type: 'text', id: 't1', setMetadata: vi.fn(), sync: vi.fn() },
     ]);
     const widget = await templateManager.createFromTemplate(
       'textOnly',
@@ -158,13 +158,13 @@ describe('createFromTemplate', () => {
       elements: [{ shape: 'ellipse', width: 10, height: 10 }],
     };
     const frame = {
-      add: jest.fn(),
+      add: vi.fn(),
     } as unknown as import('@mirohq/websdk-types').Frame;
-    (ShapeClient.prototype.createShapes as jest.Mock).mockResolvedValue([
+    (ShapeClient.prototype.createShapes as vi.Mock).mockResolvedValue([
       { id: 's1' },
     ]);
-    (global.miro.board.get as jest.Mock).mockResolvedValueOnce([
-      { type: 'shape', id: 's1', setMetadata: jest.fn(), sync: jest.fn() },
+    (global.miro.board.get as vi.Mock).mockResolvedValueOnce([
+      { type: 'shape', id: 's1', setMetadata: vi.fn(), sync: vi.fn() },
     ]);
     const widget = await templateManager.createFromTemplate(
       'frameSingle',
@@ -184,11 +184,11 @@ describe('createFromTemplate', () => {
     ).templates.fillStyle = {
       elements: [{ shape: 'rect', fill: '#fff', style: {} }],
     };
-    (ShapeClient.prototype.createShapes as jest.Mock).mockResolvedValue([
+    (ShapeClient.prototype.createShapes as vi.Mock).mockResolvedValue([
       { id: 's1' },
     ]);
-    (global.miro.board.get as jest.Mock).mockResolvedValueOnce([
-      { type: 'shape', id: 's1', setMetadata: jest.fn(), sync: jest.fn() },
+    (global.miro.board.get as vi.Mock).mockResolvedValueOnce([
+      { type: 'shape', id: 's1', setMetadata: vi.fn(), sync: vi.fn() },
     ]);
     const widget = await templateManager.createFromTemplate(
       'fillStyle',
@@ -197,7 +197,7 @@ describe('createFromTemplate', () => {
       0,
     );
     const args = (
-      ShapeClient.prototype.createShapes as jest.Mock
+      ShapeClient.prototype.createShapes as vi.Mock
     ).mock.calls.pop()[0][0];
     expect(args.style.fillColor).toBe('#fff');
     expect(widget.type).toBe('shape');

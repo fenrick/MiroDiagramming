@@ -7,7 +7,7 @@ import { GraphProcessor } from '../src/core/graph/graph-processor';
  */
 
 describe('GraphProcessor.processFile', () => {
-  afterEach(() => jest.restoreAllMocks());
+  afterEach(() => vi.restoreAllMocks());
 
   test('throws on invalid file', async () => {
     const gp = new GraphProcessor();
@@ -23,8 +23,8 @@ describe('GraphProcessor.processFile', () => {
       GraphProcessor['processGraph']
     >[0];
     // Stub out loadAnyGraph and internal processGraph
-    jest.spyOn(graphService, 'loadAnyGraph').mockResolvedValue(mockGraph);
-    const processSpy = jest
+    vi.spyOn(graphService, 'loadAnyGraph').mockResolvedValue(mockGraph);
+    const processSpy = vi
       .spyOn(
         gp as unknown as {
           processGraph: (g: unknown, o?: unknown) => Promise<void>;

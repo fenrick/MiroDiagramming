@@ -5,8 +5,8 @@ import { clearActiveFrame, registerFrame } from '../src/board/frame-utils';
 describe('frame-utils', () => {
   test('registerFrame creates frame and records it', async () => {
     const builder = {
-      createFrame: jest.fn().mockResolvedValue({ id: 'f' }),
-      setFrame: jest.fn(),
+      createFrame: vi.fn().mockResolvedValue({ id: 'f' }),
+      setFrame: vi.fn(),
     } as unknown as BoardBuilder;
     const list: Array<Frame> = [] as unknown as Array<Frame>;
     const frame = await registerFrame(
@@ -23,7 +23,7 @@ describe('frame-utils', () => {
   });
 
   test('clearActiveFrame resets builder state', () => {
-    const builder = { setFrame: jest.fn() } as unknown as BoardBuilder;
+    const builder = { setFrame: vi.fn() } as unknown as BoardBuilder;
     clearActiveFrame(builder);
     expect(builder.setFrame).toHaveBeenCalledWith(undefined);
   });

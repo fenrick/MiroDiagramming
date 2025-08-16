@@ -1,7 +1,7 @@
 /** @vitest-environment jsdom */
 import { colors } from '@mirohq/design-tokens';
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 import React from 'react';
 import { App } from '../src/app/App';
 import { GraphProcessor } from '../src/core/graph/graph-processor';
@@ -17,13 +17,13 @@ describe('App UI integration', () => {
   beforeEach(() => {
     global.miro = {
       board: {
-        notifications: { showError: jest.fn().mockResolvedValue(undefined) },
+        notifications: { showError: vi.fn().mockResolvedValue(undefined) },
       },
     };
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
     delete global.miro;
   });
 
@@ -35,7 +35,7 @@ describe('App UI integration', () => {
   }
 
   test('renders and processes diagram file', async () => {
-    const spy = jest
+    const spy = vi
       .spyOn(GraphProcessor.prototype, 'processFile')
       .mockResolvedValue(undefined);
     render(React.createElement(App));
@@ -60,8 +60,8 @@ describe('App UI integration', () => {
 
   test('shows error notification', async () => {
     const error = new Error('fail');
-    jest.spyOn(console, 'error').mockImplementation(() => {});
-    const spy = jest
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    const spy = vi
       .spyOn(GraphProcessor.prototype, 'processFile')
       .mockRejectedValue(error);
     render(React.createElement(App));
@@ -76,7 +76,7 @@ describe('App UI integration', () => {
   });
 
   test('withFrame option forwards frame title', async () => {
-    const spy = jest
+    const spy = vi
       .spyOn(GraphProcessor.prototype, 'processFile')
       .mockResolvedValue(undefined);
     render(React.createElement(App));
@@ -99,8 +99,8 @@ describe('App UI integration', () => {
   });
 
   test('undoLastImport helper calls undo and clears state', async () => {
-    const proc = { undoLast: jest.fn().mockResolvedValue(undefined) } as {
-      undoLast: jest.Mock;
+    const proc = { undoLast: vi.fn().mockResolvedValue(undefined) } as {
+      undoLast: vi.Mock;
     };
     let cleared = false;
     await undoLastImport(proc, () => {

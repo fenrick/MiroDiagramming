@@ -12,13 +12,13 @@ describe('createEdges', () => {
   beforeEach(() => {
     global.miro = {
       board: {
-        get: jest.fn().mockResolvedValue([]),
-        createConnector: jest
+        get: vi.fn().mockResolvedValue([]),
+        createConnector: vi
           .fn()
           .mockResolvedValue({
-            setMetadata: jest.fn(),
-            getMetadata: jest.fn(),
-            sync: jest.fn(),
+            setMetadata: vi.fn(),
+            getMetadata: vi.fn(),
+            sync: vi.fn(),
             id: 'c1',
             start: {},
             end: {},
@@ -28,7 +28,7 @@ describe('createEdges', () => {
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
     graphService.resetBoardCache();
   });
 
@@ -56,7 +56,7 @@ describe('createEdges', () => {
     );
     expect(connectors).toHaveLength(1);
     expect(global.miro.board.createConnector).toHaveBeenCalled();
-    const args = (global.miro.board.createConnector as jest.Mock).mock
+    const args = (global.miro.board.createConnector as vi.Mock).mock
       .calls[0][0];
     expect(args.style).toBeDefined();
   });
@@ -91,7 +91,7 @@ describe('createEdges', () => {
       nodeMap,
       [hint as unknown],
     );
-    const args = (global.miro.board.createConnector as jest.Mock).mock
+    const args = (global.miro.board.createConnector as vi.Mock).mock
       .calls[0][0];
     expect(args.start.position).toEqual(hint.startPosition);
     expect(args.end.position).toEqual(hint.endPosition);
@@ -107,7 +107,7 @@ describe('createEdges', () => {
       edges as unknown as Array<{ from: string; to: string; label?: string }>,
       nodeMap,
     );
-    const args = (global.miro.board.createConnector as jest.Mock).mock
+    const args = (global.miro.board.createConnector as vi.Mock).mock
       .calls[0][0];
     expect(args.captions?.[0].content).toBe('L');
   });

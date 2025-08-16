@@ -1,6 +1,6 @@
 /** @vitest-environment jsdom */
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 import React from 'react';
 import * as resizeTools from '../src/board/resize-tools';
 import { ResizeTab } from '../src/ui/pages/ResizeTab';
@@ -8,19 +8,19 @@ import { ResizeTab } from '../src/ui/pages/ResizeTab';
 // Helper to provide a mock Miro board API
 function setupBoard(): void {
   (globalThis as { miro?: { board?: unknown } }).miro = {
-    board: { getSelection: jest.fn().mockResolvedValue([]) },
+    board: { getSelection: vi.fn().mockResolvedValue([]) },
   };
 }
 
 describe('ResizeTab extra coverage', () => {
   beforeEach(() => setupBoard());
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
     delete (globalThis as { miro?: unknown }).miro;
   });
 
   test('shows warning when size exceeds viewport limit', async () => {
-    const spy = jest
+    const spy = vi
       .spyOn(resizeTools, 'applySizeToSelection')
       .mockResolvedValue(undefined as unknown as void);
     render(React.createElement(ResizeTab));
@@ -37,10 +37,11 @@ describe('ResizeTab extra coverage', () => {
   });
 
   test('keyboard shortcuts copy and apply size', async () => {
-    jest
-      .spyOn(resizeTools, 'copySizeFromSelection')
-      .mockResolvedValue({ width: 20, height: 30 });
-    const applySpy = jest
+    vi.spyOn(resizeTools, 'copySizeFromSelection').mockResolvedValue({
+      width: 20,
+      height: 30,
+    });
+    const applySpy = vi
       .spyOn(resizeTools, 'applySizeToSelection')
       .mockResolvedValue(undefined as unknown as void);
     render(React.createElement(ResizeTab));

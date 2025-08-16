@@ -6,8 +6,8 @@ import { useSelection } from '../src/ui/hooks/use-selection';
 describe('useSelection', () => {
   test('fetches initial selection', async () => {
     const board: BoardLike = {
-      getSelection: jest.fn().mockResolvedValue([{ id: 1 }]),
-      ui: { on: jest.fn(), off: jest.fn() },
+      getSelection: vi.fn().mockResolvedValue([{ id: 1 }]),
+      ui: { on: vi.fn(), off: vi.fn() },
     };
     const { result } = renderHook(() => useSelection(board));
     await act(async () => await Promise.resolve());
@@ -17,15 +17,15 @@ describe('useSelection', () => {
   test('updates when event fires', async () => {
     let cb: (ev: { items: unknown[] }) => void = () => {};
     const board: BoardLike = {
-      getSelection: jest
+      getSelection: vi
         .fn()
         .mockResolvedValueOnce([])
         .mockResolvedValueOnce([{ id: 2 }]),
       ui: {
-        on: jest.fn().mockImplementation((_, fn) => {
+        on: vi.fn().mockImplementation((_, fn) => {
           cb = fn;
         }),
-        off: jest.fn(),
+        off: vi.fn(),
       },
     };
     const { result, unmount } = renderHook(() => useSelection(board));
@@ -45,7 +45,7 @@ describe('useSelection', () => {
 
   test('works with board lacking ui API', async () => {
     const board: BoardLike = {
-      getSelection: jest.fn().mockResolvedValue([{ id: 3 }]),
+      getSelection: vi.fn().mockResolvedValue([{ id: 3 }]),
     };
     const { result } = renderHook(() => useSelection(board));
     await act(async () => await Promise.resolve());

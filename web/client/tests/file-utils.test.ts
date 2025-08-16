@@ -6,14 +6,14 @@ interface ReaderEvent {
 
 describe('file utils', () => {
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
     delete (global as { FileReader?: unknown }).FileReader;
   });
 
   test('readFileAsText uses text method when available', async () => {
     const file = {
       name: 'file.txt',
-      text: jest.fn().mockResolvedValue('abc'),
+      text: vi.fn().mockResolvedValue('abc'),
     } as unknown as File;
     const result = await fileUtils.readFileAsText(file);
     expect(result).toBe('abc');
