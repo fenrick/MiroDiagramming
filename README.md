@@ -13,7 +13,7 @@ each element can carry metadata that controls its appearance and placement.
 ### Prerequisites
 
 - Node.js 20.x
-- Python 3.11 with [Poetry](https://python-poetry.org/)
+- Python 3.11
 
 > The previous .NET implementation lives under `legacy/dotnet/`. See
 > [legacy/dotnet/README.md](legacy/dotnet/README.md) for historical context.
@@ -215,16 +215,8 @@ the rest of the UI. These guidelines help keep layouts consistent:
 
 ## ✅ Prerequisites <a name="prerequisites"></a>
 
-- You have a [Miro account](https://miro.com/signup/).
-- You're [signed in to Miro](https://miro.com/login/).
-- Your Miro account has a
-  [Developer team](https://developers.miro.com/docs/create-a-developer-team).
-- Your development environment includes
-  [Node.js](https://nodejs.org/en/download) v20. The repository
-  includes an `.nvmrc` file pinned to version `20`. Use
-  [`nvm`](https://github.com/nvm-sh/nvm) or [`volta`](https://volta.sh/) to
-  install and manage this Node version.
-- All examples use `npm` as a package manager and `npx` as a package runner.
+- Node.js 20.x
+- Python 3.11
 
 ## 🏃🏽‍♂️ Run the app locally <a name="run"></a>
 
@@ -314,14 +306,21 @@ All runtime messages are emitted through a shared logger defined in
 `LOG_LEVEL` environment variable to `trace`, `debug`, `info`, `warn`, `error` or
 `silent` to control verbosity. It defaults to `info`.
 
-The .NET server uses **Serilog** for structured logging. Client log entries are
-automatically batched by `HttpLogSink` and forwarded via `POST /api/logs` so
-both sides share the same log stream.
+The FastAPI server uses **Logfire** for structured logging. Client log entries
+are posted to `/api/logs` so both sides share the same log stream.
 
-Data persistence is handled by **Entity Framework Core**. Development and tests
-default to SQLite while production uses the Npgsql provider with a
-**PostgreSQL** backend via `EfUserStore`. Database schemas are maintained through
-EF Core migrations applied automatically on startup.
+Data persistence is handled by **SQLAlchemy**. Development and tests use SQLite
+while production targets PostgreSQL through the same models. Database schemas
+are maintained with Alembic migrations applied automatically on startup.
+
+## Change queue, cache, and logging
+
+API routes enqueue change tasks which a background worker applies using the Miro
+REST API. A lightweight SQLite cache stores board snapshots so lookups through
+`/api/cache/{board_id}` avoid redundant API calls.
+
+`core/logging.py` wires Logfire into FastAPI, SQLAlchemy, and SQLite and adds a
+request ID middleware so every request is traceable end to end.
 
 Several new C# utilities (`ExcelLoader`, `LayoutEngine`, `InMemoryTemplateStore` and
 `ObjectMatcher`) are early prototypes. TODO markers outline the remaining work
