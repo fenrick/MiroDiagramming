@@ -67,6 +67,19 @@ class Repository(Generic[ModelT]):
         logfire.info("board state fetched", board_id=board_id)  # event: cache lookup
         return entry.value if entry else None
 
+    @logfire.instrument("set board state")  # type: ignore[misc]
+    def set_board_state(self, board_id: str, state: dict[str, Any]) -> None:
+        """Persist ``state`` for ``board_id`` in the cache."""
+
+        entry = self.session.query(CacheEntry).filter_by(key=board_id).one_or_none()
+        if entry is None:
+            entry = CacheEntry(key=board_id, value=state)
+            self.session.add(entry)
+        else:
+            entry.value = state
+        self.session.commit()
+        logfire.info("board state saved", board_id=board_id)  # event: cache upsert
+
     # ------------------------------------------------------------------
     # Delete operations
     # ------------------------------------------------------------------
