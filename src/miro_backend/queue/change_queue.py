@@ -17,6 +17,41 @@ from prometheus_client import Gauge
 from .tasks import ChangeTask
 
 
+# ---------------------------------------------------------------------------
+# Rate limiting utilities
+# ---------------------------------------------------------------------------
+
+
+class _TokenBucket:
+    """Simple token bucket for soft per-user rate limiting."""
+
+    def __init__(self, reservoir: int, refresh_interval_ms: int) -> None:
+        self._reservoir = reservoir
+        self._interval = refresh_interval_ms / 1000 if refresh_interval_ms > 0 else 0
+        self._tokens = reservoir
+        self._last = asyncio.get_running_loop().time()
+        self._lock = asyncio.Lock()
+
+    async def acquire(self) -> None:
+        """Wait until a token is available and consume it."""
+
+        if self._interval == 0:
+            return
+        while True:
+            async with self._lock:
+                now = asyncio.get_running_loop().time()
+                elapsed = now - self._last
+                if elapsed >= self._interval:
+                    refill = int(elapsed / self._interval)
+                    self._tokens = min(self._reservoir, self._tokens + refill)
+                    self._last = now
+                if self._tokens > 0:
+                    self._tokens -= 1
+                    return
+                wait = self._interval - elapsed
+            await asyncio.sleep(wait)
+
+
 # Prometheus gauge tracking queued change tasks. Registered in ``main`` to avoid
 # reliance on the default registry and ensure exposure via ``/metrics``.
 change_queue_length = Gauge(
@@ -29,10 +64,19 @@ change_queue_length = Gauge(
 class ChangeQueue:
     """A thin wrapper around :class:`asyncio.Queue` with persistence hooks."""
 
-    def __init__(self, persistence: Any | None = None) -> None:
+    def __init__(
+        self,
+        persistence: Any | None = None,
+        *,
+        bucket_reservoir: int = 1,
+        bucket_refresh_interval_ms: int = 0,
+    ) -> None:
         self._queue: asyncio.Queue[ChangeTask] = asyncio.Queue()
         self._persistence = persistence
         self._lock = asyncio.Lock()
+        self._bucket_reservoir = bucket_reservoir
+        self._bucket_interval_ms = bucket_refresh_interval_ms
+        self._buckets: dict[str, _TokenBucket] = {}
         if self._persistence is not None:
             for task in self._persistence.load():
                 # Record loading of persisted tasks on startup
@@ -87,10 +131,15 @@ class ChangeQueue:
 
         while True:
             task = await self.dequeue()
+            bucket = self._buckets.setdefault(
+                task.user_id,
+                _TokenBucket(self._bucket_reservoir, self._bucket_interval_ms),
+            )
             # Span around applying each individual task
             with logfire.span("apply task {task=}", task=task):
                 token = await get_valid_access_token(session, task.user_id, client)
                 for attempt in range(5):
+                    await bucket.acquire()
                     try:
                         await task.apply(client, token)
                         break
