@@ -75,6 +75,7 @@ async def create_shape(
 
     with logfire.span("create shape"):
         _verify_board(board_id, user_id, store)
+        assert user_id is not None
         shape = Shape(id=str(uuid4()), **payload.model_dump())
         store.create(board_id, shape)
         with logfire.span(
@@ -82,7 +83,10 @@ async def create_shape(
         ):  # span for queueing create
             await queue.enqueue(
                 CreateShape(
-                    board_id=board_id, shape_id=shape.id, data=payload.model_dump()
+                    board_id=board_id,
+                    shape_id=shape.id,
+                    data=payload.model_dump(),
+                    user_id=user_id,
                 )
             )
         logfire.info(
@@ -109,6 +113,7 @@ async def update_shape(
                 "shape missing", board_id=board_id, shape_id=shape_id
             )  # warn when shape absent for update
             raise NotFoundError("Shape not found")
+        assert user_id is not None
         shape = Shape(id=shape_id, **payload.model_dump())
         store.update(board_id, shape)
         with logfire.span(
@@ -116,7 +121,10 @@ async def update_shape(
         ):  # span for queueing update
             await queue.enqueue(
                 UpdateShape(
-                    board_id=board_id, shape_id=shape_id, data=payload.model_dump()
+                    board_id=board_id,
+                    shape_id=shape_id,
+                    data=payload.model_dump(),
+                    user_id=user_id,
                 )
             )
         logfire.info(
@@ -141,11 +149,14 @@ async def delete_shape(
             "shape missing", board_id=board_id, shape_id=shape_id
         )  # warn when shape absent for deletion
         raise NotFoundError("Shape not found")
+    assert user_id is not None
     store.delete(board_id, shape_id)
     with logfire.span(
         "enqueue shape delete", shape_id=shape_id
     ):  # span for queueing delete
-        await queue.enqueue(DeleteShape(board_id=board_id, shape_id=shape_id))
+        await queue.enqueue(
+            DeleteShape(board_id=board_id, shape_id=shape_id, user_id=user_id)
+        )
     logfire.info(
         "shape deleted", board_id=board_id, shape_id=shape_id
     )  # event after removal

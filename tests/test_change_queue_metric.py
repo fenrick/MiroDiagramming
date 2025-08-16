@@ -11,7 +11,7 @@ from miro_backend.queue import ChangeQueue
 from miro_backend.queue.tasks import CreateNode
 
 
-async def _idle_worker(_: Any) -> None:
+async def _idle_worker(_: Any, __: Any) -> None:
     await asyncio.Event().wait()
 
 
@@ -37,7 +37,7 @@ def test_change_queue_length_metric(tmp_path: Path) -> None:
 
         assert gauge() == 0.0
 
-        asyncio.run(queue.enqueue(CreateNode(node_id="n1", data={})))
+        asyncio.run(queue.enqueue(CreateNode(node_id="n1", data={}, user_id="u1")))
         assert gauge() == 1.0
 
         asyncio.run(queue.dequeue())

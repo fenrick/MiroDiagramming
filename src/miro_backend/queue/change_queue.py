@@ -6,6 +6,11 @@ import asyncio
 import random
 from typing import Any
 
+from sqlalchemy.orm import Session
+
+from ..services.miro_client import MiroClient
+from ..services.token_service import get_valid_access_token
+
 import logfire
 from prometheus_client import Gauge
 
@@ -77,16 +82,17 @@ class ChangeQueue:
     # Worker utilities
     # ------------------------------------------------------------------
     @logfire.instrument("worker loop")  # type: ignore[misc]
-    async def worker(self, client: Any) -> None:
+    async def worker(self, session: Session, client: MiroClient) -> None:
         """Continuously consume tasks and apply them using ``client``."""
 
         while True:
             task = await self.dequeue()
             # Span around applying each individual task
             with logfire.span("apply task {task=}", task=task):
+                token = await get_valid_access_token(session, task.user_id, client)
                 for attempt in range(5):
                     try:
-                        await task.apply(client)
+                        await task.apply(client, token)
                         break
                     except Exception as exc:  # noqa: BLE001 - re-raised after retries
                         status = getattr(exc, "status", None) or getattr(

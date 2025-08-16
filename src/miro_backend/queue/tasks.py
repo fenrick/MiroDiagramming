@@ -17,9 +17,13 @@ from pydantic import BaseModel
 class ChangeTask(BaseModel, ABC):
     """Abstract base class for all change tasks."""
 
+    user_id: str
+
     @abstractmethod
-    async def apply(self, client: Any) -> None:  # pragma: no cover - interface
-        """Apply the change using ``client``."""
+    async def apply(
+        self, client: Any, token: str
+    ) -> None:  # pragma: no cover - interface
+        """Apply the change using ``client`` and ``token``."""
 
 
 class CreateNode(ChangeTask):
@@ -28,8 +32,8 @@ class CreateNode(ChangeTask):
     node_id: str
     data: dict[str, Any]
 
-    async def apply(self, client: Any) -> None:
-        await client.create_node(self.node_id, self.data)
+    async def apply(self, client: Any, token: str) -> None:
+        await client.create_node(self.node_id, self.data, token)
 
 
 class UpdateCard(ChangeTask):
@@ -38,8 +42,8 @@ class UpdateCard(ChangeTask):
     card_id: str
     payload: dict[str, Any]
 
-    async def apply(self, client: Any) -> None:
-        await client.update_card(self.card_id, self.payload)
+    async def apply(self, client: Any, token: str) -> None:
+        await client.update_card(self.card_id, self.payload, token)
 
 
 class CreateShape(ChangeTask):
@@ -49,8 +53,8 @@ class CreateShape(ChangeTask):
     shape_id: str
     data: dict[str, Any]
 
-    async def apply(self, client: Any) -> None:
-        await client.create_shape(self.board_id, self.shape_id, self.data)
+    async def apply(self, client: Any, token: str) -> None:
+        await client.create_shape(self.board_id, self.shape_id, self.data, token)
 
 
 class UpdateShape(ChangeTask):
@@ -60,8 +64,8 @@ class UpdateShape(ChangeTask):
     shape_id: str
     data: dict[str, Any]
 
-    async def apply(self, client: Any) -> None:
-        await client.update_shape(self.board_id, self.shape_id, self.data)
+    async def apply(self, client: Any, token: str) -> None:
+        await client.update_shape(self.board_id, self.shape_id, self.data, token)
 
 
 class DeleteShape(ChangeTask):
@@ -70,5 +74,5 @@ class DeleteShape(ChangeTask):
     board_id: str
     shape_id: str
 
-    async def apply(self, client: Any) -> None:
-        await client.delete_shape(self.board_id, self.shape_id)
+    async def apply(self, client: Any, token: str) -> None:
+        await client.delete_shape(self.board_id, self.shape_id, token)

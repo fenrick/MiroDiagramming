@@ -40,3 +40,4 @@ async def test_create_shape_enqueues_task(
     assert isinstance(task, CreateShape)
     assert task.board_id == "b1"
     assert task.shape_id == data["id"]
+    assert task.user_id == "user-1"

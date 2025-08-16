@@ -44,7 +44,7 @@ def test_post_batch_is_idempotent(
             {"type": "update_card", "card_id": "c1", "payload": {"y": 2}},
         ]
     }
-    headers = {"Idempotency-Key": "abc123"}
+    headers = {"Idempotency-Key": "abc123", "X-User-Id": "u1"}
 
     first = client.post("/api/batch", json=body, headers=headers)
     second = client.post("/api/batch", json=body, headers=headers)

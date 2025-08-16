@@ -20,7 +20,9 @@ class DummyQueue:
     async def enqueue(self, task: object) -> None:
         self.tasks.append(task)
 
-    async def worker(self, _client: object) -> None:  # pragma: no cover - never returns
+    async def worker(
+        self, _session: object, _client: object
+    ) -> None:  # pragma: no cover - never returns
         await asyncio.Event().wait()
 
 

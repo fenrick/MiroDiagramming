@@ -53,6 +53,7 @@ def test_create_shape_enqueues_task_and_returns_shape(
     assert isinstance(task, CreateShape)
     assert task.board_id == "b1"
     assert task.data == {"content": "c"}
+    assert task.user_id == "u1"
 
 
 def test_update_shape_enqueues_task(
@@ -71,6 +72,7 @@ def test_update_shape_enqueues_task(
     task = asyncio.run(queue.dequeue())
     assert isinstance(task, UpdateShape)
     assert task.shape_id == "s1"
+    assert task.user_id == "u1"
 
 
 def test_delete_shape_enqueues_task(
@@ -85,6 +87,7 @@ def test_delete_shape_enqueues_task(
     task = asyncio.run(queue.dequeue())
     assert isinstance(task, DeleteShape)
     assert task.board_id == "b1"
+    assert task.user_id == "u1"
 
 
 def test_get_shape_enforces_board_ownership(
