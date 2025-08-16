@@ -20,7 +20,9 @@ class StubQueue:
     async def enqueue(self, task: ChangeTask) -> None:
         self.tasks.append(task)
 
-    async def worker(self, client: object) -> None:  # pragma: no cover - stub
+    async def worker(
+        self, _session: object, _client: object
+    ) -> None:  # pragma: no cover - stub
         """No-op worker used during testing."""
 
         return
@@ -40,6 +42,7 @@ def test_post_cards_enqueues_tasks(tmp_path: Path) -> None:
         response = client.post(
             "/api/cards",
             json=[{"id": "c1", "title": "t"}],
+            headers={"X-User-Id": "u1"},
         )
         assert response.status_code == 202
     app_module.app.dependency_overrides.clear()
@@ -49,3 +52,4 @@ def test_post_cards_enqueues_tasks(tmp_path: Path) -> None:
     assert isinstance(task, CreateNode)
     assert task.node_id == "c1"
     assert task.data["title"] == "t"
+    assert task.user_id == "u1"

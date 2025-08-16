@@ -20,9 +20,9 @@ class CardCreate(BaseModel):
     fields: list[dict[str, Any]] | None = None
     taskStatus: str | None = None
 
-    def to_task(self) -> ChangeTask:
-        """Convert this definition into a :class:`ChangeTask`."""
+    def to_task(self, user_id: str) -> ChangeTask:
+        """Convert this definition into a :class:`ChangeTask` for ``user_id``."""
 
         payload = self.model_dump(exclude_none=True)
         node_id = payload.pop("id", "")
-        return CreateNode(node_id=node_id, data=payload)
+        return CreateNode(node_id=node_id, data=payload, user_id=user_id)

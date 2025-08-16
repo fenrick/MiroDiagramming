@@ -20,6 +20,7 @@ _IDEMPOTENCY_CACHE: dict[str, BatchResponse] = {}
 async def post_batch(
     request: BatchRequest,
     queue: ChangeQueue = Depends(get_change_queue),
+    user_id: str = Header(alias="X-User-Id"),
     idempotency_key: str | None = Header(default=None, alias="Idempotency-Key"),
 ) -> BatchResponse:
     """Validate ``request`` and enqueue its operations.
@@ -37,17 +38,17 @@ async def post_batch(
             if existing is not None:
                 return BatchResponse.model_validate(existing)
 
-        count = await enqueue_operations(request.operations, queue)
+        count = await enqueue_operations(request.operations, queue, user_id)
         response = BatchResponse(enqueued=count)
         logfire.info("batch operations enqueued", count=count)  # event after enqueuing
         if idempotency_key is not None:
             _IDEMPOTENCY_CACHE[idempotency_key] = response
-            
+
         response = BatchResponse(enqueued=count)
 
         if idempotency_key and queue.persistence is not None:
             await queue.persistence.save_response(
                 idempotency_key, response.model_dump()
             )
-            
+
         return response

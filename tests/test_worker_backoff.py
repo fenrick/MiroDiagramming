@@ -27,7 +27,9 @@ class FlakyClient:
         self.calls = 0
         self.created: list[tuple[str, dict[str, int]]] = []
 
-    async def create_node(self, node_id: str, data: dict[str, int]) -> None:
+    async def create_node(
+        self, node_id: str, data: dict[str, int], _token: str
+    ) -> None:
         self.calls += 1
         if self.calls < 3:
             raise RetryAfterError(self._retry_after)
@@ -35,14 +37,23 @@ class FlakyClient:
 
 
 @pytest.mark.asyncio()  # type: ignore[misc]
-async def test_worker_respects_retry_after_backoff() -> None:
+async def test_worker_respects_retry_after_backoff(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     queue = ChangeQueue()
     retry_delay = 0.1
     client = FlakyClient(retry_delay)
 
-    worker = asyncio.create_task(queue.worker(client))
+    async def _token(*_: object) -> str:
+        return "t"
+
+    monkeypatch.setattr(
+        "miro_backend.queue.change_queue.get_valid_access_token", _token
+    )
+
+    worker = asyncio.create_task(queue.worker(object(), client))
     try:
-        await queue.enqueue(CreateNode(node_id="n1", data={"x": 1}))
+        await queue.enqueue(CreateNode(node_id="n1", data={"x": 1}, user_id="u1"))
         loop = asyncio.get_running_loop()
         start = loop.time()
         while not client.created:

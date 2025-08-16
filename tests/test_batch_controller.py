@@ -10,7 +10,6 @@ from fastapi.testclient import TestClient
 from miro_backend.main import app
 from miro_backend.queue.provider import get_change_queue
 from miro_backend.queue.tasks import CreateNode, UpdateCard
-from .utils.queues import DummyQueue
 
 
 class MemoryPersistence:
@@ -56,12 +55,14 @@ def test_post_batch_enqueues_tasks(client_queue: tuple[TestClient, DummyQueue]) 
             {"type": "update_card", "card_id": "c1", "payload": {"y": 2}},
         ]
     }
-    response = client.post("/api/batch", json=body)
+    response = client.post("/api/batch", json=body, headers={"X-User-Id": "u1"})
     assert response.status_code == 202
     assert response.json() == {"enqueued": 2}
     assert len(queue.tasks) == 2
     assert isinstance(queue.tasks[0], CreateNode)
     assert isinstance(queue.tasks[1], UpdateCard)
+    assert queue.tasks[0].user_id == "u1"
+    assert queue.tasks[1].user_id == "u1"
 
 
 def test_post_batch_validates_payload(
@@ -69,7 +70,7 @@ def test_post_batch_validates_payload(
 ) -> None:
     client, _ = client_queue
     body = {"operations": [{"type": "create_node", "node_id": "n1"}]}
-    response = client.post("/api/batch", json=body)
+    response = client.post("/api/batch", json=body, headers={"X-User-Id": "u1"})
     assert response.status_code == 422
 
 
@@ -80,7 +81,11 @@ def test_post_batch_returns_cached_response(
     assert queue.persistence is not None
     queue.persistence.responses["key1"] = {"enqueued": 3}
     body = {"operations": [{"type": "create_node", "node_id": "n1", "data": {"x": 1}}]}
-    response = client.post("/api/batch", json=body, headers={"Idempotency-Key": "key1"})
+    response = client.post(
+        "/api/batch",
+        json=body,
+        headers={"Idempotency-Key": "key1", "X-User-Id": "u1"},
+    )
     assert response.status_code == 202
     assert response.json() == {"enqueued": 3}
     assert len(queue.tasks) == 0
@@ -97,7 +102,11 @@ def test_post_batch_saves_idempotent_response(
             {"type": "update_card", "card_id": "c1", "payload": {"y": 2}},
         ]
     }
-    response = client.post("/api/batch", json=body, headers={"Idempotency-Key": key})
+    response = client.post(
+        "/api/batch",
+        json=body,
+        headers={"Idempotency-Key": key, "X-User-Id": "u1"},
+    )
     assert response.status_code == 202
     assert response.json() == {"enqueued": 2}
     assert queue.persistence is not None

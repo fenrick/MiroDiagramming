@@ -7,10 +7,6 @@ from typing import Any, cast
 
 import httpx
 
-from miro_backend.core.config import settings
-
-import httpx
-
 from ..core.config import settings
 
 
@@ -29,13 +25,17 @@ class MiroClient:
         self._token_provider = token_provider
         self._base_url = "https://api.miro.com/v2"
 
-    def _auth_headers(self) -> dict[str, str]:
-        token = self._token or (
-            self._token_provider() if self._token_provider else None
+    def _auth_headers(self, access_token: str | None = None) -> dict[str, str]:
+        token = (
+            access_token
+            or self._token
+            or (self._token_provider() if self._token_provider else None)
         )
         return {"Authorization": f"Bearer {token}"} if token else {}
 
-    async def create_node(self, node_id: str, data: dict[str, Any]) -> None:
+    async def create_node(
+        self, node_id: str, data: dict[str, Any], access_token: str
+    ) -> None:
         """Create a graph node.
 
         Parameters
@@ -52,10 +52,12 @@ class MiroClient:
             await client.put(
                 f"/graph/nodes/{node_id}",
                 json=data,
-                headers=self._auth_headers(),
+                headers=self._auth_headers(access_token),
             )
 
-    async def update_card(self, card_id: str, payload: dict[str, Any]) -> None:
+    async def update_card(
+        self, card_id: str, payload: dict[str, Any], access_token: str
+    ) -> None:
         """Update an existing card.
 
         Parameters
@@ -72,11 +74,15 @@ class MiroClient:
             await client.patch(
                 f"/cards/{card_id}",
                 json=payload,
-                headers=self._auth_headers(),
+                headers=self._auth_headers(access_token),
             )
 
     async def create_shape(
-        self, board_id: str, shape_id: str, data: dict[str, Any]
+        self,
+        board_id: str,
+        shape_id: str,
+        data: dict[str, Any],
+        access_token: str,
     ) -> None:
         """Create a shape on ``board_id`` with ``shape_id``.
 
@@ -96,11 +102,15 @@ class MiroClient:
             await client.put(
                 f"/boards/{board_id}/shapes/{shape_id}",
                 json=data,
-                headers=self._auth_headers(),
+                headers=self._auth_headers(access_token),
             )
 
     async def update_shape(
-        self, board_id: str, shape_id: str, data: dict[str, Any]
+        self,
+        board_id: str,
+        shape_id: str,
+        data: dict[str, Any],
+        access_token: str,
     ) -> None:
         """Update ``shape_id`` on ``board_id``.
 
@@ -120,10 +130,12 @@ class MiroClient:
             await client.patch(
                 f"/boards/{board_id}/shapes/{shape_id}",
                 json=data,
-                headers=self._auth_headers(),
+                headers=self._auth_headers(access_token),
             )
 
-    async def delete_shape(self, board_id: str, shape_id: str) -> None:
+    async def delete_shape(
+        self, board_id: str, shape_id: str, access_token: str
+    ) -> None:
         """Delete ``shape_id`` from ``board_id``.
 
         Parameters
@@ -139,7 +151,7 @@ class MiroClient:
         ) as client:
             await client.delete(
                 f"/boards/{board_id}/shapes/{shape_id}",
-                headers=self._auth_headers(),
+                headers=self._auth_headers(access_token),
             )
 
     async def exchange_code(self, code: str, redirect_uri: str) -> dict[str, Any]:

@@ -8,6 +8,7 @@ class DummyQueue:
 
     def __init__(self) -> None:
         self.tasks: list[object] = []
+        self.persistence: object | None = None
 
     async def enqueue(self, task: object) -> None:
         self.tasks.append(task)

@@ -30,6 +30,7 @@ from .core.telemetry import setup_telemetry  # noqa: E402
 from .queue import get_change_queue  # noqa: E402
 from .queue.change_queue import change_queue_length  # noqa: E402
 from .services.miro_client import MiroClient  # noqa: E402
+from .db.session import SessionLocal  # noqa: E402
 
 change_queue = get_change_queue()
 
@@ -55,7 +56,8 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     """Start a background worker that processes queued changes."""
 
     client = MiroClient()
-    worker = asyncio.create_task(change_queue.worker(client))
+    session = SessionLocal()
+    worker = asyncio.create_task(change_queue.worker(session, client))
     try:
         logfire.info("change worker started")  # event for worker start
         yield
@@ -63,6 +65,7 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
         worker.cancel()
         with contextlib.suppress(asyncio.CancelledError):
             await worker
+        session.close()
         logfire.info("change worker stopped")  # event for worker shutdown
 
 

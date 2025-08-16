@@ -59,19 +59,27 @@ class DummyAsyncClient:
     [
         (
             "create_shape",
-            ("b1", "s1", {"x": 1}),
+            ("b1", "s1", {"x": 1}, "tok"),
             ("PUT", "/boards/b1/shapes/s1", {"x": 1}),
         ),
         (
             "update_shape",
-            ("b1", "s1", {"y": 2}),
+            ("b1", "s1", {"y": 2}, "tok"),
             ("PATCH", "/boards/b1/shapes/s1", {"y": 2}),
         ),
-        ("delete_shape", ("b1", "s1"), ("DELETE", "/boards/b1/shapes/s1", None)),
-        ("update_card", ("c1", {"title": "t"}), ("PATCH", "/cards/c1", {"title": "t"})),
+        (
+            "delete_shape",
+            ("b1", "s1", "tok"),
+            ("DELETE", "/boards/b1/shapes/s1", None),
+        ),
+        (
+            "update_card",
+            ("c1", {"title": "t"}, "tok"),
+            ("PATCH", "/cards/c1", {"title": "t"}),
+        ),
         (
             "create_node",
-            ("n1", {"kind": "card"}),
+            ("n1", {"kind": "card"}, "tok"),
             ("PUT", "/graph/nodes/n1", {"kind": "card"}),
         ),
     ],

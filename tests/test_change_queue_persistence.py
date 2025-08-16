@@ -20,7 +20,7 @@ async def test_enqueue_dequeue_persists() -> None:
     persistence = mock.AsyncMock()
     persistence.load = mock.Mock(return_value=[])
     queue = ChangeQueue(persistence=persistence)
-    task = CreateNode(node_id="n1", data={})
+    task = CreateNode(node_id="n1", data={}, user_id="u1")
 
     await queue.enqueue(task)
     persistence.save.assert_awaited_once_with(task)
@@ -37,7 +37,7 @@ async def test_tasks_survive_restart(tmp_path: Path) -> None:
     persistence = QueuePersistence(db_path)
 
     queue = ChangeQueue(persistence=persistence)
-    task = CreateNode(node_id="n1", data={})
+    task = CreateNode(node_id="n1", data={}, user_id="u1")
     await queue.enqueue(task)
 
     restored = ChangeQueue(persistence=persistence)

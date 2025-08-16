@@ -1,5 +1,4 @@
 """Utilities for obtaining valid access tokens."""
-"""Helpers for ensuring OAuth access tokens remain valid."""
 
 from __future__ import annotations
 
@@ -11,6 +10,7 @@ from ..models.user import User
 from .miro_client import MiroClient
 
 REFRESH_MARGIN = timedelta(seconds=30)
+
 
 async def get_valid_access_token(
     session: Session, user_id: str, client: MiroClient
@@ -49,5 +49,5 @@ async def get_valid_access_token(
     expires_in = int(tokens.get("expires_in", 0))
     user.expires_at = datetime.now(timezone.utc) + timedelta(seconds=expires_in)
     session.commit()
-    
+
     return user.access_token
