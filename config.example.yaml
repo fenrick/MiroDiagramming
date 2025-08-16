@@ -1,0 +1,8 @@
+# Example configuration for the Miro backend service
+# Copy to `config.yaml` and adjust values for your environment.
+database_url: sqlite:///./app.db
+cors_origins:
+  - "https://example.com"
+miro_client_id: your-client-id
+miro_client_secret: your-client-secret
+webhook_secret: change-me
