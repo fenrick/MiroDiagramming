@@ -12,7 +12,7 @@ from miro_backend.main import app
 from miro_backend.queue.change_queue import ChangeQueue
 from miro_backend.queue.persistence import SqlAlchemyQueuePersistence
 from miro_backend.queue.provider import get_change_queue
-from miro_backend.db.session import Base
+from miro_backend.db.session import Base, engine as db_engine
 
 
 @pytest.fixture  # type: ignore[misc]
@@ -21,6 +21,7 @@ def client(tmp_path: Path) -> TestClient:
         f"sqlite:///{tmp_path/'queue.db'}", connect_args={"check_same_thread": False}
     )
     Base.metadata.create_all(bind=engine)
+    Base.metadata.create_all(bind=db_engine)
     Session = sessionmaker(bind=engine, autoflush=False, autocommit=False)
     persistence = SqlAlchemyQueuePersistence(Session)
     queue = ChangeQueue(persistence=persistence)
@@ -28,6 +29,7 @@ def client(tmp_path: Path) -> TestClient:
     client = TestClient(app)
     yield client
     app.dependency_overrides.clear()
+    Base.metadata.drop_all(bind=db_engine)
 
 
 def test_post_batch_is_idempotent_across_reloads(

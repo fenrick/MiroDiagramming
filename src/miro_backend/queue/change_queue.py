@@ -10,6 +10,8 @@ from sqlalchemy.orm import Session
 
 from ..services.miro_client import MiroClient
 from ..services.token_service import get_valid_access_token
+from ..models import Job
+from ..services.repository import Repository
 
 import logfire
 from prometheus_client import Gauge
@@ -135,6 +137,14 @@ class ChangeQueue:
                 task.user_id,
                 _TokenBucket(self._bucket_reservoir, self._bucket_interval_ms),
             )
+            job_repo: Repository[Job] | None = None
+            job: Job | None = None
+            if task.job_id is not None:
+                job_repo = Repository(session, Job)
+                job = job_repo.get(task.job_id)
+                if job is not None and job.status == "queued":
+                    job.status = "running"
+                    session.commit()
             # Span around applying each individual task
             with logfire.span("apply task {task=}", task=task):
                 token = await get_valid_access_token(session, task.user_id, client)
@@ -142,19 +152,40 @@ class ChangeQueue:
                     await bucket.acquire()
                     try:
                         await task.apply(client, token)
+                        if job is not None:
+                            results = job.results or {
+                                "total": 0,
+                                "operations": [],
+                            }
+                            results["operations"].append({"status": "succeeded"})
+                            job.results = results
+                            if len(results["operations"]) >= results.get("total", 0):
+                                job.status = "succeeded"
+                            session.commit()
                         break
                     except Exception as exc:  # noqa: BLE001 - re-raised after retries
                         status = getattr(exc, "status", None) or getattr(
                             exc, "status_code", None
                         )
-                        if status not in {429} and not (
+                        retryable = status in {429} or (
                             isinstance(status, int) and 500 <= status < 600
-                        ):
-                            raise
-                        if attempt == 4:
-                            logfire.error(
-                                "task failed after retries", task=task, error=exc
-                            )
+                        )
+                        if not retryable or attempt == 4:
+                            if job is not None:
+                                results = job.results or {
+                                    "total": 0,
+                                    "operations": [],
+                                }
+                                results["operations"].append(
+                                    {"status": "failed", "error": str(exc)}
+                                )
+                                job.results = results
+                                job.status = "failed"
+                                session.commit()
+                            if retryable and attempt == 4:
+                                logfire.error(
+                                    "task failed after retries", task=task, error=exc
+                                )
                             raise
                         retry_after = getattr(exc, "retry_after", None)
                         delay = (
