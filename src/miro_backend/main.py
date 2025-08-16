@@ -1,5 +1,7 @@
+import argparse
 import asyncio
 import contextlib
+import os
 from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import AsyncIterator
@@ -11,8 +13,16 @@ from fastapi.staticfiles import StaticFiles
 
 import logfire
 
-from .queue import get_change_queue
-from .services.miro_client import MiroClient
+# Parse configuration file argument before importing modules that rely on it.
+parser = argparse.ArgumentParser(add_help=False)
+parser.add_argument("--config")
+args, _ = parser.parse_known_args()
+if args.config:
+    os.environ["MIRO_CONFIG_FILE"] = args.config
+
+from .core.config import settings  # noqa: E402
+from .queue import get_change_queue  # noqa: E402
+from .services.miro_client import MiroClient  # noqa: E402
 
 change_queue = get_change_queue()
 
@@ -64,7 +74,7 @@ logfire.instrument_fastapi(app)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=settings.cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
