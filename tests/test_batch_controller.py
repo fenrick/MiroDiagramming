@@ -10,6 +10,7 @@ from fastapi.testclient import TestClient
 from miro_backend.main import app
 from miro_backend.queue.provider import get_change_queue
 from miro_backend.queue.tasks import CreateNode, UpdateCard
+from .utils.queues import DummyQueue
 
 
 class MemoryPersistence:
