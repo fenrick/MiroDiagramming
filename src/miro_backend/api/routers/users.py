@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 from ...db.session import get_session
 from ...models.user import User
 from ...schemas.user_info import UserInfo
+from ...services import crypto
 from ...services.repository import Repository
 
 router = APIRouter(prefix="/api/users", tags=["users"])
@@ -31,8 +32,8 @@ def create_user(info: UserInfo, session: Session = Depends(get_session)) -> User
         user = User(
             user_id=info.id,
             name=info.name,
-            access_token=info.access_token,
-            refresh_token=info.refresh_token,
+            access_token=crypto.encrypt(info.access_token),
+            refresh_token=crypto.encrypt(info.refresh_token),
             expires_at=info.expires_at,
         )
         repo.add(user)
