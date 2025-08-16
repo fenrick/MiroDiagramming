@@ -373,14 +373,12 @@ dependency installs run from that directory.
 - [Architecture](docs/ARCHITECTURE.md) explains how the source modules are
   organised.
 - [Tab Overview](docs/TABS.md) describes the sidebar tabs and their purpose.
-- [Deployment & Build Guide](docs/DEPLOYMENT.md) explains how to build and host
-  the bundle.
-- [Aspire Quick Start](docs/ASPIRE.md) shows how to run the .NET AppHost
-  locally or in Docker.
-- [Server Modules](docs/SERVER_MODULES.md) details the planned .NET API layout.
+- [Deployment Guide](docs/DEPLOYMENT.md) describes building and hosting the React client. The .NET version lives in [legacy/dotnet/docs/DEPLOYMENT.md](legacy/dotnet/docs/DEPLOYMENT.md).
+- [FastAPI Quick Start](docs/ASPIRE.md) shows how to run the Python service. The previous .NET Aspire guide lives in [legacy/dotnet/docs/ASPIRE.md](legacy/dotnet/docs/ASPIRE.md).
+- [Python Server Modules](docs/SERVER_MODULES.md) outlines the backend layout. The .NET reference resides in [legacy/dotnet/docs/SERVER_MODULES.md](legacy/dotnet/docs/SERVER_MODULES.md).
 - [Python Service Architecture](docs/python-architecture.md) covers FastAPI modules, caching and Miro API integration.
 - [Miro API Costs](docs/MIRO_API_COSTS.md) explains why we cache shapes and avoid expensive board calls.
-- [ShapesController](docs/SERVER_MODULES.md#3-controllers) handles create, update and delete of Miro widgets via the backend cache.
+- [Shapes API](docs/python-architecture.md#api-endpoints) lists routes for creating, updating and deleting Miro widgets via the backend cache.
 - [Components Catalogue](docs/COMPONENTS.md) documents reusable React
   components.
 - [Design Foundation](docs/FOUNDATION.md) explains tokens and theming rules.

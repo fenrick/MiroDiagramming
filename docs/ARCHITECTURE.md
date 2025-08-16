@@ -18,7 +18,7 @@ security-significant or process change.
 | ----------------------------------------------- | ----------------- |
 | Component APIs, props, patterns                 | **COMPONENTS.md** |
 | Design tokens, colour, spacing, typography      | **FOUNDATION.md** |
-| CI/CD, hosting, rollback, environment settings  | **DEPLOYMENT.md** |
+| CI/CD, hosting, rollback, environment settings  | **DEPLOYMENT.md** (Node) — .NET details in [legacy/dotnet/docs/DEPLOYMENT.md](../legacy/dotnet/docs/DEPLOYMENT.md) |
 | Sidebar tab flows, validation, keyboard support | **TABS.md**       |
 | Python service architecture                      | **python-architecture.md** |
 
@@ -125,7 +125,7 @@ Complexity limits enforced automatically by **SonarQube** gate.
    reports are uploaded automatically.
 5. Semantic-release creates Git tag, changelog and Chrome-Store zip.
 6. Automatic rollback uses the previously published artefact (see
-   **DEPLOYMENT.md** for details).
+   **DEPLOYMENT.md** for Node deployment details. The .NET guide lives in [legacy/dotnet/docs/DEPLOYMENT.md](../legacy/dotnet/docs/DEPLOYMENT.md).
 
 ---
 
@@ -230,7 +230,7 @@ server encrypts tokens at rest and attaches them to API requests._
 | Client logs   | Serilog      | `HttpLogSink` posts `/api/logs` |
 | Accessibility | manual QA    | Issues logged per build         |
 
-Deployment, rollback and monitoring hooks are documented in **DEPLOYMENT.md**.
+Deployment, rollback and monitoring hooks are documented in **DEPLOYMENT.md**. .NET-specific notes are in [legacy/dotnet/docs/DEPLOYMENT.md](../legacy/dotnet/docs/DEPLOYMENT.md).
 
 ---
 
