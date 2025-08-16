@@ -8,7 +8,7 @@ from shutil import copyfile
 from typing import Any, cast
 
 import yaml
-from pydantic import SecretStr, ValidationError
+from pydantic import Field, SecretStr, ValidationError
 from pydantic_settings import (
     BaseSettings,
     PydanticBaseSettingsSource,
@@ -28,9 +28,66 @@ class Settings(BaseSettings):
     logfire_service_name: str = "miro-backend"
     logfire_send_to_logfire: bool = False
     http_timeout_seconds: float = 10.0
+      
+    database_url: str = Field(
+        default="sqlite:///./app.db",
+        alias="MIRO_DATABASE_URL",
+        description="Database connection URL.",
+    )
+    cors_origins: list[str] = Field(
+        default=["*"],
+        alias="MIRO_CORS_ORIGINS",
+        description="List of allowed CORS origins.",
+    )
+    client_id: str = Field(
+        alias="MIRO_CLIENT_ID",
+        description="OAuth client identifier issued by Miro.",
+    )
+    client_secret: SecretStr = Field(
+        alias="MIRO_CLIENT_SECRET",
+        description="OAuth client secret issued by Miro.",
+    )
+    webhook_secret: SecretStr = Field(
+        alias="MIRO_WEBHOOK_SECRET",
+        description="Secret token used to verify Miro webhooks.",
+    )
+    oauth_auth_base: str = Field(
+        default="https://miro.com/oauth/authorize",
+        alias="MIRO_OAUTH_AUTH_BASE",
+        description="Base URL for the Miro OAuth authorization endpoint.",
+    )
+    oauth_token_url: str = Field(
+        default="https://api.miro.com/v1/oauth/token",
+        alias="MIRO_OAUTH_TOKEN_URL",
+        description="Miro OAuth token endpoint for exchanging authorization codes.",
+    )
+    oauth_scope: str = Field(
+        default="boards:read boards:write",
+        alias="MIRO_OAUTH_SCOPE",
+        description="Space-separated list of OAuth scopes requested.",
+    )
+    oauth_redirect_uri: str = Field(
+        alias="MIRO_REDIRECT_URI",
+        description="Callback URL registered with Miro for OAuth redirects.",
+    )
+    logfire_service_name: str = Field(
+        default="miro-backend",
+        alias="MIRO_LOGFIRE_SERVICE_NAME",
+        description="Service name reported to Logfire.",
+    )
+    logfire_send_to_logfire: bool = Field(
+        default=False,
+        alias="MIRO_LOGFIRE_SEND_TO_LOGFIRE",
+        description="Whether to send logs to Logfire.",
+    )
+    http_timeout_seconds: float = Field(
+        default=10.0,
+        alias="MIRO_HTTP_TIMEOUT_SECONDS",
+        description="Default timeout in seconds for outbound HTTP requests.",
+    )
 
     model_config = SettingsConfigDict(
-        env_prefix="MIRO_", env_file=".env", extra="ignore"
+        env_file=".env", extra="ignore", populate_by_name=True
     )
 
     @classmethod

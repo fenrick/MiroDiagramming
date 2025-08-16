@@ -5,8 +5,16 @@ cors_origins:
   - "https://example.com"
 client_id: your-client-id
 client_secret: your-client-secret
+redirect_uri: http://localhost:8000/oauth/callback  # OAuth callback URL
+oauth_auth_base: https://miro.com  # Base URL for OAuth authorisation (optional)
+oauth_token_url: https://api.miro.com/v1/oauth/token  # OAuth token endpoint (optional)
+oauth_scope: "boards:read boards:write"  # Scopes requested during OAuth (optional)
 webhook_secret: change-me
 redirect_uri: https://example.com/oauth/callback
+oauth_auth_base: https://miro.com/oauth/authorize
+oauth_token_url: https://api.miro.com/v1/oauth/token
+oauth_scope: boards:read boards:write
+oauth_redirect_uri: https://example.com/oauth/callback
 logfire_service_name: miro-backend
 logfire_send_to_logfire: false
-http_timeout_seconds: 10.0
+http_timeout_seconds: 10.0  # HTTP client timeout for Miro API calls

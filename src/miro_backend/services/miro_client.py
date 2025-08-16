@@ -7,10 +7,6 @@ from typing import Any, cast
 
 import httpx
 
-from miro_backend.core.config import settings
-
-import httpx
-
 from ..core.config import settings
 
 
@@ -142,8 +138,16 @@ class MiroClient:
                 headers=self._auth_headers(),
             )
 
-    async def exchange_code(self, code: str, redirect_uri: str) -> dict[str, Any]:
-        """Exchange an OAuth code for access and refresh tokens.
+    async def exchange_code(
+        self,
+        code: str,
+        redirect_uri: str,
+        token_url: str,
+        client_id: str,
+        client_secret: str,
+        timeout_seconds: float | None = None,
+    ) -> dict[str, Any]:
+        """Exchange an OAuth ``code`` for access and refresh tokens.
 
         Parameters
         ----------
@@ -151,6 +155,14 @@ class MiroClient:
             The authorization code issued by Miro after user consent.
         redirect_uri:
             The redirect URI used in the authorization request.
+        token_url:
+            Endpoint for exchanging the code for tokens.
+        client_id:
+            OAuth client identifier.
+        client_secret:
+            OAuth client secret.
+        timeout_seconds:
+            Optional request timeout override in seconds.
 
         Returns
         -------
@@ -163,15 +175,16 @@ class MiroClient:
             If the HTTP request fails or returns a non-success status.
         """
 
-        async with httpx.AsyncClient() as client:
+        timeout = timeout_seconds or settings.http_timeout_seconds
+        async with httpx.AsyncClient(timeout=timeout) as client:
             response = await client.post(
-                "https://api.miro.com/v1/oauth/token",
+                token_url,
                 data={
                     "grant_type": "authorization_code",
                     "code": code,
                     "redirect_uri": redirect_uri,
-                    "client_id": settings.client_id,
-                    "client_secret": settings.client_secret.get_secret_value(),
+                    "client_id": client_id,
+                    "client_secret": client_secret,
                 },
                 headers={"Content-Type": "application/x-www-form-urlencoded"},
             )
