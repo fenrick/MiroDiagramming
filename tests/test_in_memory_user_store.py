@@ -1,8 +1,25 @@
-"""Placeholder for ported tests from InMemoryUserStoreTests.cs."""
+"""Tests for the in-memory user store."""
 
-import pytest
+from __future__ import annotations
+
+from datetime import datetime, timezone
+
+from miro_backend.schemas.user_info import UserInfo
+from miro_backend.services.user_store import InMemoryUserStore
 
 
-@pytest.mark.skip("Test not yet ported from C#")  # type: ignore[misc]
-def test_placeholder() -> None:
-    assert True
+def test_store_and_retrieve_user_info() -> None:
+    """Stored user info should be retrievable by its identifier."""
+
+    store = InMemoryUserStore()
+    assert store.retrieve("u1") is None
+
+    info = UserInfo(
+        id="u1",
+        name="Test",
+        access_token="a",
+        refresh_token="r",
+        expires_at=datetime.now(timezone.utc),
+    )
+    store.store(info)
+    assert store.retrieve("u1") == info
