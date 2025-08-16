@@ -23,7 +23,7 @@ cryptography = "^42.0.5"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.2"
-black = "^24.4"
+black = "^25.0.0"
 ruff = "^0.4"
 mypy = "^1.10"
 pre-commit = "^3.7"
