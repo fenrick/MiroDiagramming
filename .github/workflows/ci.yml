@@ -64,3 +64,10 @@ jobs:
       - name: Verify generated client
         run: git diff --exit-code -- src/generated
         working-directory: web/client
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Docker image
+        run: docker build . -f Dockerfile

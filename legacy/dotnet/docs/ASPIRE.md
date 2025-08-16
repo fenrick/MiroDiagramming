@@ -37,10 +37,10 @@ Point a browser to `http://localhost:3000` to inspect service logs and metrics.
 
 ## 3 Docker image
 
-Build the application host with the Dockerfile located in the server project:
+Build the application host with the Dockerfile located in `legacy/dotnet/`:
 
 ```bash
-docker build -t miro-apphost -f legacy/dotnet/fenrick.miro.server/Dockerfile .
+docker build -t miro-apphost -f legacy/dotnet/Dockerfile .
 ```
 
 Run the container, configuring connections to Redis and PostgreSQL as needed:

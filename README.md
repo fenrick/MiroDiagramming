@@ -403,19 +403,21 @@ Generate a static Storybook site for publishing with:
 npm run build-storybook
 ```
 
-## Docker Image
+## Docker Compose
 
-The project can be packaged as a container image. Build and run using:
+Run the full stack with Docker Compose:
 
 ```bash
-docker build -t miro-diagramming .
-docker run --rm -p 8080:80 miro-diagramming
+docker compose up --build
 ```
 
-Tagged releases push the image to the GitHub Container Registry automatically.
-The workflow builds a standard `linux/amd64` image via
-`docker/build-push-action@v5`; QEMU is unnecessary as no cross-platform
-emulation is performed.
+The backend exposes <http://localhost:8000> and the client is served from
+<http://localhost:3000>. The backend container mounts the local `src/` folder and
+runs `uvicorn` with `--reload`, so changes to Python files trigger a hot reload.
+SQLite data is stored in the named `sqlite_data` volume.
+
+Tagged releases still publish a production image to the GitHub Container
+Registry via the existing release workflow.
 
 ## Local CI Build
 
