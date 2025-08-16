@@ -16,6 +16,8 @@ from miro_backend.models.user import User
 from miro_backend.services.miro_client import MiroClient
 from miro_backend.services.user_store import InMemoryUserStore, get_user_store
 
+SCOPE = "boards:read boards:write"
+
 
 class StubClient(MiroClient):  # type: ignore[misc]
     """Fake client capturing exchange calls."""
@@ -61,7 +63,9 @@ class CountingStub(MiroClient):  # type: ignore[misc]
 
 
 @pytest.fixture  # type: ignore[misc]
-def client_store() -> Iterator[tuple[TestClient, InMemoryUserStore, StubClient]]:
+def client_store() -> (
+    Iterator[tuple[TestClient, InMemoryUserStore, StubClient, oauth.OAuthConfig]]
+):
     store = InMemoryUserStore()
     stub = StubClient()
     cfg = oauth.OAuthConfig(
@@ -69,6 +73,9 @@ def client_store() -> Iterator[tuple[TestClient, InMemoryUserStore, StubClient]]
         client_id="id",
         client_secret="secret",
         redirect_uri="http://redir",
+        scope=SCOPE,
+        token_url="http://token",
+        timeout_seconds=60,
         scope="boards:read boards:write",
         token_url="http://token",
         timeout_seconds=1.0,
@@ -78,13 +85,15 @@ def client_store() -> Iterator[tuple[TestClient, InMemoryUserStore, StubClient]]
     app.dependency_overrides[oauth.get_oauth_config] = lambda: cfg
     User.__table__.create(bind=engine, checkfirst=True)
     client = TestClient(app)
-    yield client, store, stub
+    yield client, store, stub, cfg
     app.dependency_overrides.clear()
     User.__table__.drop(bind=engine)
 
 
 @pytest.fixture  # type: ignore[misc]
-def client_store_db() -> Iterator[tuple[TestClient, InMemoryUserStore, CountingStub]]:
+def client_store_db() -> (
+    Iterator[tuple[TestClient, InMemoryUserStore, CountingStub, oauth.OAuthConfig]]
+):
     store = InMemoryUserStore()
     stub = CountingStub()
     cfg = oauth.OAuthConfig(
@@ -92,6 +101,9 @@ def client_store_db() -> Iterator[tuple[TestClient, InMemoryUserStore, CountingS
         client_id="id",
         client_secret="secret",
         redirect_uri="http://redir",
+        scope=SCOPE,
+        token_url="http://token",
+        timeout_seconds=60,
         scope="boards:read boards:write",
         token_url="http://token",
         timeout_seconds=1.0,
@@ -101,15 +113,15 @@ def client_store_db() -> Iterator[tuple[TestClient, InMemoryUserStore, CountingS
     app.dependency_overrides[oauth.get_oauth_config] = lambda: cfg
     User.__table__.create(bind=engine, checkfirst=True)
     client = TestClient(app)
-    yield client, store, stub
+    yield client, store, stub, cfg
     app.dependency_overrides.clear()
     User.__table__.drop(bind=engine)
 
 
 def test_login_redirects_to_miro(
-    client_store: tuple[TestClient, InMemoryUserStore, StubClient]
+    client_store: tuple[TestClient, InMemoryUserStore, StubClient, oauth.OAuthConfig]
 ) -> None:
-    client, _, _ = client_store
+    client, _, _, _ = client_store
     res = client.get("/oauth/login", params={"userId": "u1"}, allow_redirects=False)
     assert res.status_code == 307
     loc = res.headers["location"]
@@ -120,14 +132,14 @@ def test_login_redirects_to_miro(
     assert q["client_id"] == ["id"]
     assert q["redirect_uri"] == ["http://redir"]
     assert q["response_type"] == ["code"]
-    assert q["scope"] == ["boards:read boards:write"]
+    assert q["scope"] == [SCOPE]
     assert q["state"][0].endswith(":u1")
 
 
 def test_callback_exchanges_code_and_stores_tokens(
-    client_store: tuple[TestClient, InMemoryUserStore, StubClient]
+    client_store: tuple[TestClient, InMemoryUserStore, StubClient, oauth.OAuthConfig]
 ) -> None:
-    client, store, stub = client_store
+    client, store, stub, _ = client_store
     res = client.get(
         "/oauth/callback",
         params={"code": "c", "state": "x:u1"},
@@ -143,9 +155,9 @@ def test_callback_exchanges_code_and_stores_tokens(
 
 
 def test_callback_rejects_invalid_state(
-    client_store: tuple[TestClient, InMemoryUserStore, StubClient]
+    client_store: tuple[TestClient, InMemoryUserStore, StubClient, oauth.OAuthConfig]
 ) -> None:
-    client, store, stub = client_store
+    client, store, stub, _ = client_store
     res = client.get(
         "/oauth/callback", params={"code": "c", "state": "bad"}, allow_redirects=False
     )
@@ -155,9 +167,11 @@ def test_callback_rejects_invalid_state(
 
 
 def test_callback_upserts_user_record(
-    client_store_db: tuple[TestClient, InMemoryUserStore, CountingStub]
+    client_store_db: tuple[
+        TestClient, InMemoryUserStore, CountingStub, oauth.OAuthConfig
+    ]
 ) -> None:
-    client, store, stub = client_store_db
+    client, store, stub, _ = client_store_db
     res = client.get(
         "/oauth/callback",
         params={"code": "c1", "state": "x:u1"},
