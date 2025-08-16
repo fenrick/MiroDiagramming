@@ -1,7 +1,7 @@
 # Development Guidelines
 
 > **Context**
-> The codebase began as a Node-based service but now targets a full-stack **.NET Aspire backend** with a **React (TypeScript) frontend**. All new work follows the patterns, conventions, and tooling described below.
+> The codebase began as a Node-based service but now centers on a **FastAPI (Python 3.11) backend** with a **React (TypeScript) frontend**. Legacy **.NET** components remain only for reference; see [legacy/dotnet/AGENTS.md](legacy/dotnet/AGENTS.md) for their guidelines. All new work follows the patterns, conventions, and tooling described below.
 
 ## Project Structure
 
@@ -11,7 +11,7 @@ fenrick.miro.[module]/
 └── tests/    – unit and integration tests
 ```
 
-Backend code is primarily **C# (nullable enabled)** with a small **FastAPI** service in **Python 3.11**. Frontend code is **TypeScript + React**.
+Backend code is primarily **Python 3.11 (FastAPI)**. Archived **.NET** components live under `legacy/dotnet/` and follow [legacy/dotnet/AGENTS.md](legacy/dotnet/AGENTS.md). Frontend code is **TypeScript + React**.
 
 ## Object-Oriented Design Principles — **Mandatory**
 
@@ -64,6 +64,12 @@ Additional OO practices
 
 ## Static Analysis
 
+### Python
+
+* **Ruff** – lint and fix PEP 8 issues
+* **Black** – code formatter (line length 88)
+* **Mypy** – static type checking
+
 ### .NET (Roslyn)
 
 * **Microsoft.CodeAnalysis.NetAnalyzers** – core rules
@@ -84,13 +90,15 @@ All rules are configured in `.editorconfig`; the build runs with `-warnaserror`.
 
 * Prettier
 
+## Development Commands
+
 ### Python
 
-* **Ruff** – lint and fix PEP 8 issues
-* **Black** – code formatter (line length 88)
-* **Mypy** – static type checking
-
-## Development Commands
+``` bash
+poetry install
+poetry run pre-commit run --files [changed files]
+poetry run pytest
+```
 
 ### Frontend
 
@@ -103,13 +111,9 @@ npm --prefix web/client run prettier
 npm --prefix web/client run test
 ```
 
-### Python
+### Archived .NET
 
-``` bash
-poetry install
-poetry run pre-commit run --files [changed files]
-poetry run pytest
-```
+See [legacy/dotnet/AGENTS.md](legacy/dotnet/AGENTS.md) for archival component commands such as `dotnet format` and `dotnet test`.
 
 ## Git Hooks
 
@@ -141,15 +145,16 @@ Types include `feat`, `fix`, `docs`, `test`, `refactor`, `chore`.
 
 * `CONTRIBUTING.md` – PR workflow, onboarding
 * `docs/python-architecture.md` – FastAPI modules and data flow
+* `legacy/dotnet/AGENTS.md` – archived C# guidelines
 
 ## Summary
 
 | Area      | Requirement                                  |
 | --------- | -------------------------------------------- |
 | Structure | `src/` and `tests/` folders                  |
-| Language  | C# (.NET Aspire) + React (TypeScript) + Python (FastAPI) |
+| Language  | Python (FastAPI) + React (TypeScript); archived .NET |
 | Design    | SOLID, composition over inheritance          |
 | Testing   | TDD, ≥ 90 % coverage                         |
-| Analysis  | Roslyn analyzers, ESLint, Stylelint          |
+| Analysis  | Ruff, Black, Mypy; Roslyn analyzers; ESLint; Stylelint |
 | Commits   | Conventional Commits                         |
 | Build     | Typed, documented, formatted, analyzer-clean |
