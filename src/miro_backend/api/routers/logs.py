@@ -4,7 +4,10 @@ from __future__ import annotations
 
 from typing import Sequence
 
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, Response, status
+import logfire
+
+from ...core.exceptions import PayloadTooLargeError
 
 from ...models.log_entry import LogEntry
 from ...schemas.log_entry import LogEntryIn
@@ -30,20 +33,24 @@ def capture_logs(
         Repository used to store entries.
     """
 
-    if len(entries) > MAX_BATCH:
-        raise HTTPException(
-            status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
-            detail="too many log entries",
-        )
+    with logfire.span("capture logs"):
+        if len(entries) > MAX_BATCH:
+            logfire.warning(
+                "too many log entries", count=len(entries)
+            )  # warn when batch exceeds limit
+            raise PayloadTooLargeError("too many log entries")
 
-    models = [
-        LogEntry(
-            timestamp=e.timestamp,
-            level=e.level,
-            message=e.message,
-            context=e.context,
-        )
-        for e in entries
-    ]
-    repo.add_all(models)
-    return Response(status_code=status.HTTP_202_ACCEPTED)
+        models = [
+            LogEntry(
+                timestamp=e.timestamp,
+                level=e.level,
+                message=e.message,
+                context=e.context,
+            )
+            for e in entries
+        ]
+        repo.add_all(models)
+        logfire.info(
+            "log entries stored", count=len(models)
+        )  # event for successful ingestion
+        return Response(status_code=status.HTTP_202_ACCEPTED)

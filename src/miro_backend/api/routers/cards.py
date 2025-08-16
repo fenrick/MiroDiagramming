@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, status
+import logfire
 
 from ...queue import ChangeQueue, get_change_queue
 from ...schemas.card_create import CardCreate
@@ -17,6 +18,8 @@ async def create_cards(
 ) -> dict[str, int]:
     """Queue tasks that create the supplied ``cards``."""
 
-    for card in cards:
-        await queue.enqueue(card.to_task())
-    return {"accepted": len(cards)}
+    with logfire.span("create cards", count=len(cards)):
+        for card in cards:
+            await queue.enqueue(card.to_task())
+        logfire.info("cards queued", count=len(cards))  # event after enqueuing tasks
+        return {"accepted": len(cards)}

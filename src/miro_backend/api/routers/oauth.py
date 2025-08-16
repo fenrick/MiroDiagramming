@@ -7,9 +7,13 @@ import uuid
 from datetime import datetime, timedelta, timezone
 from urllib.parse import quote
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, Query
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
+
+import logfire
+
+from ...core.exceptions import BadRequestError
 
 from ...schemas.user_info import UserInfo
 from ...services.miro_client import MiroClient, get_miro_client
@@ -54,6 +58,8 @@ def login(
         f"&state={quote(state)}"
         "&scope=boards:read boards:write"
     )
+    with logfire.span("oauth login"):
+        logfire.info("redirecting for oauth", user_id=user_id)  # event before redirect
     return RedirectResponse(url)
 
 
@@ -69,9 +75,13 @@ async def callback(
 
     parts = state.split(":", 1)
     if len(parts) != 2 or not parts[1]:
-        raise HTTPException(status_code=400, detail="Invalid state")
+        logfire.warning(
+            "invalid oauth state", state=state
+        )  # warn about malformed state
+        raise BadRequestError("Invalid state")
     user_id = parts[1]
-    tokens = await client.exchange_code(code, cfg.redirect_uri)
+    with logfire.span("oauth callback", user_id=user_id):
+        tokens = await client.exchange_code(code, cfg.redirect_uri)
     expires_in = int(tokens.get("expires_in", 0))
     expires_at = datetime.now(timezone.utc) + timedelta(seconds=expires_in)
     store.store(
@@ -83,4 +93,7 @@ async def callback(
             expires_at=expires_at,
         )
     )
+    logfire.info(
+        "oauth tokens stored", user_id=user_id
+    )  # event after persisting tokens
     return RedirectResponse("/app.html")
