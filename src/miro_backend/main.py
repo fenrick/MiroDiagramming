@@ -48,6 +48,7 @@ from .api.routers.limits import router as limits_router  # noqa: E402
 from .api.routers.shapes import router as shapes_router  # noqa: E402
 from .api.routers.tags import router as tags_router  # noqa: E402
 from .api.routers.users import router as users_router  # noqa: E402
+from .api.routers.jobs import router as jobs_router  # noqa: E402
 from .api.routers.webhook import router as webhook_router  # noqa: E402
 
 
@@ -102,6 +103,7 @@ app.include_router(cards_router)
 app.include_router(cache_router)
 app.include_router(batch_router)
 app.include_router(limits_router)
+app.include_router(jobs_router)
 
 instrumentator = Instrumentator().instrument(app)
 instrumentator.registry.register(change_queue_length)

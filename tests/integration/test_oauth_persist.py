@@ -21,6 +21,7 @@ from miro_backend.models.user import User
 from miro_backend.schemas.user_info import UserInfo
 from miro_backend.services.miro_client import MiroClient
 from miro_backend.services.user_store import UserStore, get_user_store
+from miro_backend.core.security import sign_state
 
 
 @asynccontextmanager
@@ -114,8 +115,9 @@ async def test_callback_persists_tokens(tmp_path: Path) -> None:
             async with httpx.AsyncClient(
                 transport=transport, base_url="http://test"
             ) as client:
+                state = sign_state("test-client-secret", "x", "u1")
                 res = await client.get(
-                    "/oauth/callback", params={"code": "c", "state": "x:u1"}
+                    "/oauth/callback", params={"code": "c", "state": state}
                 )
         assert res.status_code == 307
         assert res.headers["location"] == "/app.html"

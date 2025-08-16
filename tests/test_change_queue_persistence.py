@@ -7,9 +7,12 @@ from unittest import mock
 from pathlib import Path
 
 import pytest
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
+from miro_backend.db.session import Base
 from miro_backend.queue import ChangeQueue
-from miro_backend.queue.persistence import QueuePersistence
+from miro_backend.queue.persistence import SqlAlchemyQueuePersistence
 from miro_backend.queue.tasks import CreateNode
 
 
@@ -33,8 +36,12 @@ async def test_enqueue_dequeue_persists() -> None:
 async def test_tasks_survive_restart(tmp_path: Path) -> None:
     """Tasks persisted to disk should reload after a restart."""
 
-    db_path = tmp_path / "tasks.db"
-    persistence = QueuePersistence(db_path)
+    engine = create_engine(
+        f"sqlite:///{tmp_path/'tasks.db'}", connect_args={"check_same_thread": False}
+    )
+    Base.metadata.create_all(bind=engine)
+    Session = sessionmaker(bind=engine, autoflush=False, autocommit=False)
+    persistence = SqlAlchemyQueuePersistence(Session)
 
     queue = ChangeQueue(persistence=persistence)
     task = CreateNode(node_id="n1", data={}, user_id="u1")

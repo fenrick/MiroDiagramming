@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 from .change_queue import ChangeQueue
-from .persistence import QueuePersistence
+from .persistence import SqlAlchemyQueuePersistence
 
-_change_queue = ChangeQueue(persistence=QueuePersistence())
+_change_queue = ChangeQueue(persistence=SqlAlchemyQueuePersistence())
 
 
 def get_change_queue() -> ChangeQueue:

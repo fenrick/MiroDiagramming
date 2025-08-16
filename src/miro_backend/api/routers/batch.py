@@ -34,7 +34,7 @@ async def post_batch(
 
     with logfire.span("post batch"):
         if idempotency_key and queue.persistence is not None:
-            existing = await queue.persistence.get_response(idempotency_key)
+            existing = await queue.persistence.get_idempotent(idempotency_key)
             if existing is not None:
                 return BatchResponse.model_validate(existing)
 
@@ -47,7 +47,7 @@ async def post_batch(
         response = BatchResponse(enqueued=count)
 
         if idempotency_key and queue.persistence is not None:
-            await queue.persistence.save_response(
+            await queue.persistence.save_idempotent(
                 idempotency_key, response.model_dump()
             )
 
