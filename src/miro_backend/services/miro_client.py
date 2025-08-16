@@ -8,6 +8,7 @@ from typing import Any, cast
 import httpx
 
 from ..core.config import settings
+from .errors import HttpError, RateLimitedError
 
 
 TokenProvider = Callable[[], str | None]
@@ -33,6 +34,23 @@ class MiroClient:
         )
         return {"Authorization": f"Bearer {token}"} if token else {}
 
+    def _raise_for_status(self, response: httpx.Response) -> None:
+        """Raise typed errors for problematic HTTP responses."""
+
+        if response.status_code == 429:
+            retry_after_header = response.headers.get("Retry-After")
+            retry_after: float | None = None
+            if retry_after_header is not None:
+                try:
+                    retry_after = float(retry_after_header)
+                except ValueError:
+                    pass
+            raise RateLimitedError(retry_after=retry_after)
+        if 500 <= response.status_code < 600:
+            raise HttpError(response.status_code)
+        if response.status_code >= 400:
+            response.raise_for_status()
+
     async def create_node(
         self, node_id: str, data: dict[str, Any], access_token: str
     ) -> None:
@@ -49,11 +67,12 @@ class MiroClient:
         async with httpx.AsyncClient(
             base_url=self._base_url, timeout=settings.http_timeout_seconds
         ) as client:
-            await client.put(
+            response = await client.put(
                 f"/graph/nodes/{node_id}",
                 json=data,
                 headers=self._auth_headers(access_token),
             )
+            self._raise_for_status(response)
 
     async def update_card(
         self, card_id: str, payload: dict[str, Any], access_token: str
@@ -71,11 +90,12 @@ class MiroClient:
         async with httpx.AsyncClient(
             base_url=self._base_url, timeout=settings.http_timeout_seconds
         ) as client:
-            await client.patch(
+            response = await client.patch(
                 f"/cards/{card_id}",
                 json=payload,
                 headers=self._auth_headers(access_token),
             )
+            self._raise_for_status(response)
 
     async def create_shape(
         self,
@@ -99,11 +119,12 @@ class MiroClient:
         async with httpx.AsyncClient(
             base_url=self._base_url, timeout=settings.http_timeout_seconds
         ) as client:
-            await client.put(
+            response = await client.put(
                 f"/boards/{board_id}/shapes/{shape_id}",
                 json=data,
                 headers=self._auth_headers(access_token),
             )
+            self._raise_for_status(response)
 
     async def update_shape(
         self,
@@ -127,11 +148,12 @@ class MiroClient:
         async with httpx.AsyncClient(
             base_url=self._base_url, timeout=settings.http_timeout_seconds
         ) as client:
-            await client.patch(
+            response = await client.patch(
                 f"/boards/{board_id}/shapes/{shape_id}",
                 json=data,
                 headers=self._auth_headers(access_token),
             )
+            self._raise_for_status(response)
 
     async def delete_shape(
         self, board_id: str, shape_id: str, access_token: str
@@ -149,10 +171,11 @@ class MiroClient:
         async with httpx.AsyncClient(
             base_url=self._base_url, timeout=settings.http_timeout_seconds
         ) as client:
-            await client.delete(
+            response = await client.delete(
                 f"/boards/{board_id}/shapes/{shape_id}",
                 headers=self._auth_headers(access_token),
             )
+            self._raise_for_status(response)
 
     async def exchange_code(
         self,
@@ -204,7 +227,7 @@ class MiroClient:
                 },
                 headers={"Content-Type": "application/x-www-form-urlencoded"},
             )
-            response.raise_for_status()
+            self._raise_for_status(response)
             return cast(dict[str, Any], response.json())
 
     async def refresh_token(
@@ -223,7 +246,7 @@ class MiroClient:
                 },
                 headers={"Content-Type": "application/x-www-form-urlencoded"},
             )
-            response.raise_for_status()
+            self._raise_for_status(response)
             return cast(dict[str, Any], response.json())
 
 
