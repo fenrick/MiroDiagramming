@@ -26,6 +26,7 @@ class Settings(BaseSettings):
     webhook_secret: SecretStr
     logfire_service_name: str = "miro-backend"
     logfire_send_to_logfire: bool = False
+    http_timeout_seconds: float = 10.0
 
     model_config = SettingsConfigDict(
         env_prefix="MIRO_", env_file=".env", extra="ignore"
