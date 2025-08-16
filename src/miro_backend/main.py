@@ -6,12 +6,14 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import AsyncIterator
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
 import logfire
+from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
+from prometheus_fastapi_instrumentator import Instrumentator
 
 # Parse configuration file argument before importing modules that rely on it.
 parser = argparse.ArgumentParser(add_help=False)
@@ -23,6 +25,7 @@ if args.config:
 from .core.config import settings  # noqa: E402
 from .core.exceptions import add_exception_handlers  # noqa: E402
 from .core.logging import configure_logging, setup_fastapi  # noqa: E402
+from .core.telemetry import setup_telemetry  # noqa: E402
 from .queue import get_change_queue  # noqa: E402
 from .services.miro_client import MiroClient  # noqa: E402
 
@@ -66,6 +69,7 @@ app = FastAPI(lifespan=lifespan)
 
 # Instrument FastAPI and register middleware and handlers
 setup_fastapi(app)
+setup_telemetry(app)
 add_exception_handlers(app)
 
 app.add_middleware(
@@ -90,6 +94,18 @@ app.include_router(logs_router)
 app.include_router(cards_router)
 app.include_router(cache_router)
 app.include_router(batch_router)
+
+instrumentator = Instrumentator().instrument(app)
+
+
+@app.get("/metrics")  # type: ignore[misc]
+async def metrics() -> Response:
+    """Expose Prometheus metrics."""
+    with logfire.span("prometheus scrape"):
+        return Response(
+            generate_latest(instrumentator.registry),
+            media_type=CONTENT_TYPE_LATEST,
+        )
 
 
 @app.get("/", response_class=HTMLResponse)  # type: ignore[misc]
