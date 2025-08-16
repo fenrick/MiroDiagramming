@@ -19,97 +19,91 @@ describe('GraphProcessor', () => {
   beforeEach(() => {
     global.miro = {
       board: {
-        get: jest.fn().mockResolvedValue([]),
-        getSelection: jest.fn().mockResolvedValue([]),
-        findEmptySpace: jest
+        get: vi.fn().mockResolvedValue([]),
+        getSelection: vi.fn().mockResolvedValue([]),
+        findEmptySpace: vi
           .fn()
           .mockResolvedValue({ x: 0, y: 0, width: 100, height: 100 }),
         viewport: {
-          get: jest
+          get: vi
             .fn()
             .mockResolvedValue({ x: 0, y: 0, width: 1000, height: 1000 }),
-          set: jest.fn().mockResolvedValue({}),
-          zoomTo: jest.fn(),
+          set: vi.fn().mockResolvedValue({}),
+          zoomTo: vi.fn(),
         },
-        createConnector: jest
+        createConnector: vi
           .fn()
           .mockResolvedValue({
-            setMetadata: jest.fn(),
-            getMetadata: jest.fn(),
-            sync: jest.fn(),
+            setMetadata: vi.fn(),
+            getMetadata: vi.fn(),
+            sync: vi.fn(),
             id: 'c1',
           }),
-        createShape: jest
+        createShape: vi
           .fn()
           .mockResolvedValue({
-            setMetadata: jest.fn(),
-            getMetadata: jest.fn(),
-            sync: jest.fn(),
+            setMetadata: vi.fn(),
+            getMetadata: vi.fn(),
+            sync: vi.fn(),
             id: 's1',
             type: 'shape',
           }),
-        createText: jest
+        createText: vi
           .fn()
           .mockResolvedValue({
-            setMetadata: jest.fn(),
-            getMetadata: jest.fn(),
-            sync: jest.fn(),
+            setMetadata: vi.fn(),
+            getMetadata: vi.fn(),
+            sync: vi.fn(),
             id: 't1',
             type: 'text',
           }),
-        createFrame: jest.fn().mockResolvedValue({ add: jest.fn(), id: 'f1' }),
-        group: jest
+        createFrame: vi.fn().mockResolvedValue({ add: vi.fn(), id: 'f1' }),
+        group: vi
           .fn()
           .mockResolvedValue({
             type: 'group',
-            getItems: jest.fn().mockResolvedValue([]),
-            setMetadata: jest.fn(),
-            sync: jest.fn(),
+            getItems: vi.fn().mockResolvedValue([]),
+            setMetadata: vi.fn(),
+            sync: vi.fn(),
             id: 'g1',
           }),
       },
     };
     graphService.resetBoardCache();
-    jest
-      .spyOn(templateManager, 'createFromTemplate')
-      .mockResolvedValue({
-        type: 'shape',
-        setMetadata: jest.fn(),
-        getMetadata: jest.fn(),
-        getItems: jest.fn(),
-        sync: jest.fn(),
-        id: 's1',
-      } as unknown);
+    vi.spyOn(templateManager, 'createFromTemplate').mockResolvedValue({
+      type: 'shape',
+      setMetadata: vi.fn(),
+      getMetadata: vi.fn(),
+      getItems: vi.fn(),
+      sync: vi.fn(),
+      id: 's1',
+    } as unknown);
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
     graphService.resetBoardCache();
   });
 
   it('processGraph runs without throwing and syncs items once after validation', async () => {
-    const spy = jest
-      .spyOn(BoardBuilder.prototype, 'syncAll')
-      .mockResolvedValue();
+    const spy = vi.spyOn(BoardBuilder.prototype, 'syncAll').mockResolvedValue();
     await processor.processGraph(sample as unknown);
     expect(spy).toHaveBeenCalledTimes(1);
   });
 
   it('delegates work to helper methods', async () => {
     const gp = new GraphProcessor();
-    const frameSpy = jest
+    const frameSpy = vi
       .spyOn(frameUtils, 'registerFrame')
       .mockResolvedValue(undefined as unknown as Frame);
-    jest.spyOn(frameUtils, 'clearActiveFrame').mockImplementation(() => {});
-    const nodeSpy = jest.spyOn(gp as unknown, 'createNodes');
-    const connectorSpy = jest.spyOn(gp as unknown, 'createConnectorsAndZoom');
+    vi.spyOn(frameUtils, 'clearActiveFrame').mockImplementation(() => {});
+    const nodeSpy = vi.spyOn(gp as unknown, 'createNodes');
+    const connectorSpy = vi.spyOn(gp as unknown, 'createConnectorsAndZoom');
 
-    jest
-      .spyOn(layoutEngine, 'layoutGraph')
-      .mockResolvedValue({
-        nodes: { n1: { x: 0, y: 0, width: 10, height: 10 } },
-        edges: [],
-      });
+    vi.spyOn(layoutEngine, 'layoutGraph').mockResolvedValue({
+      nodes: { n1: { x: 0, y: 0, width: 10, height: 10 } },
+      edges: [],
+    });
 
     const simpleGraph = {
       nodes: [{ id: 'n1', label: 'A', type: 'Motivation' }],
@@ -123,7 +117,7 @@ describe('GraphProcessor', () => {
   });
 
   it('forwards layout options', async () => {
-    const spy = jest
+    const spy = vi
       .spyOn(layoutEngine, 'layoutGraph')
       .mockResolvedValue({ nodes: {}, edges: [] } as unknown);
     const simpleGraph = { nodes: [], edges: [] };
@@ -146,16 +140,14 @@ describe('GraphProcessor', () => {
       edges: [],
     };
     // Mock layout with a single node to make dimensions deterministic
-    jest
-      .spyOn(layoutEngine, 'layoutGraph')
-      .mockResolvedValue({
-        nodes: { n1: { x: 0, y: 0, width: 10, height: 10 } },
-        edges: [],
-      });
+    vi.spyOn(layoutEngine, 'layoutGraph').mockResolvedValue({
+      nodes: { n1: { x: 0, y: 0, width: 10, height: 10 } },
+      edges: [],
+    });
 
     await processor.processGraph(simpleGraph as unknown);
 
-    const createArgs = (global.miro.board.createFrame as jest.Mock).mock
+    const createArgs = (global.miro.board.createFrame as vi.Mock).mock
       .calls[0][0];
     expect(createArgs.width).toBe(210);
     expect(createArgs.height).toBe(210);
@@ -182,12 +174,10 @@ describe('GraphProcessor', () => {
       nodes: [{ id: 'n1', label: 'A', type: 'Motivation' }],
       edges: [],
     };
-    jest
-      .spyOn(layoutEngine, 'layoutGraph')
-      .mockResolvedValue({
-        nodes: { n1: { x: 0, y: 0, width: 10, height: 10 } },
-        edges: [],
-      });
+    vi.spyOn(layoutEngine, 'layoutGraph').mockResolvedValue({
+      nodes: { n1: { x: 0, y: 0, width: 10, height: 10 } },
+      edges: [],
+    });
 
     await processor.processGraph(simpleGraph as unknown, {
       createFrame: false,
@@ -205,12 +195,10 @@ describe('GraphProcessor', () => {
       ],
       edges: [],
     };
-    jest
-      .spyOn(layoutEngine, 'layoutGraph')
-      .mockResolvedValue({
-        nodes: { n1: { x: 0, y: 0, width: 10, height: 10 } },
-        edges: [],
-      });
+    vi.spyOn(layoutEngine, 'layoutGraph').mockResolvedValue({
+      nodes: { n1: { x: 0, y: 0, width: 10, height: 10 } },
+      edges: [],
+    });
 
     await processor.processGraph(simpleGraph as unknown);
 

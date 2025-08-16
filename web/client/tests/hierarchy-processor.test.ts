@@ -9,13 +9,13 @@ declare const global: GlobalWithMiro;
 
 describe('HierarchyProcessor', () => {
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
     delete global.miro;
   });
 
   test('processFile loads data and delegates', async () => {
     const proc = new HierarchyProcessor();
-    const spy = jest
+    const spy = vi
       .spyOn(
         proc as unknown as {
           processHierarchy: (r: unknown, o?: unknown) => Promise<void>;
@@ -25,7 +25,7 @@ describe('HierarchyProcessor', () => {
       .mockResolvedValue();
     const file = {
       name: 'h.json',
-      text: jest
+      text: vi
         .fn()
         .mockResolvedValue('[{"id":"n","label":"L","type":"Motivation"}]'),
     } as unknown as File;
@@ -39,28 +39,26 @@ describe('HierarchyProcessor', () => {
   test('processHierarchy creates widgets and zooms', async () => {
     global.miro = {
       board: {
-        get: jest.fn().mockResolvedValue([]),
-        findEmptySpace: jest
+        get: vi.fn().mockResolvedValue([]),
+        findEmptySpace: vi
           .fn()
           .mockResolvedValue({ x: 0, y: 0, width: 100, height: 100 }),
         viewport: {
-          get: jest
+          get: vi
             .fn()
             .mockResolvedValue({ x: 0, y: 0, width: 100, height: 100 }),
-          zoomTo: jest.fn(),
+          zoomTo: vi.fn(),
         },
-        createFrame: jest.fn().mockResolvedValue({ add: jest.fn(), id: 'f1' }),
+        createFrame: vi.fn().mockResolvedValue({ add: vi.fn(), id: 'f1' }),
       },
     };
-    jest
-      .spyOn(templateManager, 'createFromTemplate')
-      .mockResolvedValue({
-        type: 'shape',
-        setMetadata: jest.fn(),
-        getItems: jest.fn().mockResolvedValue([]),
-        sync: jest.fn(),
-        id: 's1',
-      } as unknown);
+    vi.spyOn(templateManager, 'createFromTemplate').mockResolvedValue({
+      type: 'shape',
+      setMetadata: vi.fn(),
+      getItems: vi.fn().mockResolvedValue([]),
+      sync: vi.fn(),
+      id: 's1',
+    } as unknown);
     const proc = new HierarchyProcessor();
     await proc.processHierarchy([{ id: 'n', label: 'L', type: 'Motivation' }]);
     expect(global.miro.board.viewport.zoomTo).toHaveBeenCalled();
@@ -69,29 +67,27 @@ describe('HierarchyProcessor', () => {
   test('processHierarchy groups parent and children', async () => {
     global.miro = {
       board: {
-        get: jest.fn().mockResolvedValue([]),
-        findEmptySpace: jest
+        get: vi.fn().mockResolvedValue([]),
+        findEmptySpace: vi
           .fn()
           .mockResolvedValue({ x: 0, y: 0, width: 100, height: 100 }),
         viewport: {
-          get: jest
+          get: vi
             .fn()
             .mockResolvedValue({ x: 0, y: 0, width: 100, height: 100 }),
-          zoomTo: jest.fn(),
+          zoomTo: vi.fn(),
         },
-        createFrame: jest.fn().mockResolvedValue({ add: jest.fn(), id: 'f1' }),
-        group: jest.fn().mockResolvedValue({ id: 'g1', type: 'group' }),
+        createFrame: vi.fn().mockResolvedValue({ add: vi.fn(), id: 'f1' }),
+        group: vi.fn().mockResolvedValue({ id: 'g1', type: 'group' }),
       },
     } as unknown as GlobalWithMiro;
-    jest
-      .spyOn(templateManager, 'createFromTemplate')
-      .mockResolvedValue({
-        type: 'shape',
-        setMetadata: jest.fn(),
-        getItems: jest.fn().mockResolvedValue([]),
-        sync: jest.fn(),
-        id: 's1',
-      } as unknown);
+    vi.spyOn(templateManager, 'createFromTemplate').mockResolvedValue({
+      type: 'shape',
+      setMetadata: vi.fn(),
+      getItems: vi.fn().mockResolvedValue([]),
+      sync: vi.fn(),
+      id: 's1',
+    } as unknown);
     const proc = new HierarchyProcessor();
     await proc.processHierarchy([
       {
@@ -102,7 +98,7 @@ describe('HierarchyProcessor', () => {
       },
     ]);
     expect(
-      (global.miro.board.group as jest.Mock).mock.calls[0][0].items.length,
+      (global.miro.board.group as vi.Mock).mock.calls[0][0].items.length,
     ).toBe(2);
   });
 });

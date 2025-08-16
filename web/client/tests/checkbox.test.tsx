@@ -1,10 +1,9 @@
 /**
  * Integration test for the Checkbox component.
  *
- * @jest-environment jsdom
  */
 import { fireEvent, render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 import React from 'react';
 import { Checkbox } from '../src/ui/components/Checkbox';
 
@@ -22,7 +21,7 @@ test('renders label connected via htmlFor', () => {
 });
 
 test('triggers onChange when toggled on', () => {
-  const handler = jest.fn();
+  const handler = vi.fn();
   render(
     <Checkbox
       label='Option'
@@ -36,7 +35,7 @@ test('triggers onChange when toggled on', () => {
 });
 
 test('triggers onChange when toggled off', () => {
-  const handler = jest.fn();
+  const handler = vi.fn();
   render(
     <Checkbox
       label='Option'

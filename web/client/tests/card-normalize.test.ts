@@ -10,7 +10,7 @@ interface ReaderEvent {
 
 describe('CardLoader normalization', () => {
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
     delete (global as { FileReader?: unknown }).FileReader;
   });
 

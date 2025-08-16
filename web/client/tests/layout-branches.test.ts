@@ -7,7 +7,7 @@ import { layoutEngine } from '../src/core/layout/elk-layout';
  */
 
 test('layoutGraph handles metadata and missing sections', async () => {
-  const layoutSpy = jest
+  const layoutSpy = vi
     .spyOn(ELK.prototype, 'layout')
     .mockImplementation(async (g: unknown) => {
       // Validate that metadata dimensions are passed through
@@ -55,7 +55,7 @@ test('layoutGraph handles metadata and missing sections', async () => {
 });
 
 test('layoutGraph uses defaults when layout values missing', async () => {
-  const layoutSpy = jest
+  const layoutSpy = vi
     .spyOn(ELK.prototype, 'layout')
     .mockResolvedValue({ children: [{ id: 'n2' }], edges: [] } as unknown);
   const graph = {
@@ -72,7 +72,7 @@ test('layoutGraph uses defaults when layout values missing', async () => {
 });
 
 test('layoutGraph uses template dimensions when metadata absent', async () => {
-  const spy = jest
+  const spy = vi
     .spyOn(ELK.prototype, 'layout')
     .mockImplementation(async (g: unknown) => {
       expect(g.children[0].width).toBe(160);
@@ -90,9 +90,10 @@ test('layoutGraph uses template dimensions when metadata absent', async () => {
 });
 
 test('layoutGraph handles missing edge sections array', async () => {
-  jest
-    .spyOn(ELK.prototype, 'layout')
-    .mockResolvedValue({ children: [], edges: undefined } as unknown);
+  vi.spyOn(ELK.prototype, 'layout').mockResolvedValue({
+    children: [],
+    edges: undefined,
+  } as unknown);
   const result = await layoutEngine.layoutGraph({
     nodes: [],
     edges: [],

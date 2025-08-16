@@ -2,7 +2,7 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { describe, expect, test } from 'vitest';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 import templatesJson from '../../templates/shapeTemplates.json';
 import type { TemplateDefinition } from '../src/board/templates';
 import { templateManager } from '../src/board/templates';

@@ -14,8 +14,8 @@ describe('format-tools', () => {
   };
 
   test('applyStylePreset updates style', async () => {
-    const item = { style: {}, sync: jest.fn() };
-    const board = { getSelection: jest.fn().mockResolvedValue([item]) };
+    const item = { style: {}, sync: vi.fn() };
+    const board = { getSelection: vi.fn().mockResolvedValue([item]) };
     await applyStylePreset(preset, board);
     expect(item.style).toEqual({
       color: preset.fontColor,
@@ -27,8 +27,8 @@ describe('format-tools', () => {
   });
 
   test('applyStylePreset handles items without style', async () => {
-    const item = { sync: jest.fn() };
-    const board = { getSelection: jest.fn().mockResolvedValue([item]) };
+    const item = { sync: vi.fn() };
+    const board = { getSelection: vi.fn().mockResolvedValue([item]) };
     await applyStylePreset(preset, board);
     expect(item.style).toEqual({
       color: preset.fontColor,

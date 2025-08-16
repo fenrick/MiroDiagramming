@@ -10,7 +10,6 @@ describe('index entrypoint', () =>
     await import('../src/index');
     const { DiagramApp } = await import('../src/app/diagram-app');
     expect(DiagramApp.getInstance).toHaveBeenCalled();
-    const instance = (DiagramApp.getInstance as jest.Mock).mock.results[0]
-      .value;
+    const instance = (DiagramApp.getInstance as vi.Mock).mock.results[0].value;
     expect(instance.init).toHaveBeenCalled();
   }));

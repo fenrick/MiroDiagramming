@@ -11,14 +11,14 @@ describe('showError', () => {
   beforeEach(() => {
     global.miro = {
       board: {
-        notifications: { showError: jest.fn().mockResolvedValue(undefined) },
+        notifications: { showError: vi.fn().mockResolvedValue(undefined) },
       },
     };
-    jest.spyOn(log, 'error').mockImplementation(() => {});
+    vi.spyOn(log, 'error').mockImplementation(() => {});
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
     delete global.miro;
   });
 
@@ -34,7 +34,7 @@ describe('showError', () => {
     const long = 'a'.repeat(90);
     await showError(long);
     expect(log.error).toHaveBeenCalledWith(long);
-    const arg = (global.miro.board.notifications.showError as jest.Mock).mock
+    const arg = (global.miro.board.notifications.showError as vi.Mock).mock
       .calls[0][0];
     expect(arg.length).toBeLessThanOrEqual(80);
     expect(arg.endsWith('...')).toBe(true);

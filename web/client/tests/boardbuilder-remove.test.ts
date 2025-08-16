@@ -8,12 +8,12 @@ declare const global: GlobalWithMiro;
 
 describe('BoardBuilder.removeItems', () => {
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
     delete global.miro;
   });
 
   test('removes provided items from board', async () => {
-    const remove = jest.fn();
+    const remove = vi.fn();
     global.miro = { board: { remove } };
     const builder = new BoardBuilder();
     const items = [{}, {}];

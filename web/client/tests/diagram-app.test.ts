@@ -11,7 +11,7 @@ declare const global: GlobalWithMiro;
  */
 describe('DiagramApp', () => {
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
     delete global.miro;
   });
 
@@ -22,8 +22,8 @@ describe('DiagramApp', () => {
   });
 
   test('init registers handlers and opens panel for commands', async () => {
-    const openPanel = jest.fn().mockResolvedValue(undefined);
-    const on = jest.fn((e: string, cb: () => Promise<void>) => {
+    const openPanel = vi.fn().mockResolvedValue(undefined);
+    const on = vi.fn((e: string, cb: () => Promise<void>) => {
       if (e === 'icon:click' || e === 'custom:edit-metadata') {
         cb();
       }

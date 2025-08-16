@@ -23,7 +23,7 @@ describe('LayoutEngine', () => {
   });
 
   test('layoutGraph forwards options', async () => {
-    const spy = jest
+    const spy = vi
       .spyOn(ELK.prototype, 'layout')
       .mockResolvedValue({ children: [], edges: [] } as unknown);
     const graph = { nodes: [], edges: [] };

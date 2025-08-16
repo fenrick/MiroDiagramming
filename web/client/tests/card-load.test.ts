@@ -6,7 +6,7 @@ interface ReaderEvent {
 
 describe('loadCards', () => {
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
     delete (global as { FileReader?: unknown }).FileReader;
   });
 

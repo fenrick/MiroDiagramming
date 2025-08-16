@@ -11,12 +11,12 @@ interface ReaderEvent {
 
 describe('loadGraph', () => {
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
     delete (global as { FileReader?: unknown }).FileReader;
   });
 
   test('parses valid file and resets cache', async () => {
-    const resetSpy = jest.spyOn(defaultBuilder, 'reset');
+    const resetSpy = vi.spyOn(defaultBuilder, 'reset');
 
     // Minimal FileReader mock that returns valid graph JSON
     class FR {

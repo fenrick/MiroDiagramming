@@ -1,6 +1,6 @@
 /** @vitest-environment jsdom */
 import { fireEvent, render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 import React from 'react';
 import { InputField } from '../src/ui/components/InputField';
 
@@ -19,7 +19,7 @@ test('renders label and input', () => {
 });
 
 test('calls onValueChange with value', () => {
-  const handler = jest.fn();
+  const handler = vi.fn();
   render(
     <InputField
       label='Age'

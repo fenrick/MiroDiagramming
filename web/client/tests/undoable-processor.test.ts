@@ -19,7 +19,7 @@ class Dummy extends UndoableProcessor<BaseItem> {
 describe('UndoableProcessor', () => {
   test('undoLast removes widgets', async () => {
     const builder = new BoardBuilder();
-    const remove = jest.spyOn(builder, 'removeItems').mockResolvedValue();
+    const remove = vi.spyOn(builder, 'removeItems').mockResolvedValue();
     const proc = new Dummy(builder);
     const item = {} as BaseItem;
     proc.add(item);
@@ -29,7 +29,7 @@ describe('UndoableProcessor', () => {
 
   test('undoLast handles empty list', async () => {
     const builder = new BoardBuilder();
-    const remove = jest.spyOn(builder, 'removeItems').mockResolvedValue();
+    const remove = vi.spyOn(builder, 'removeItems').mockResolvedValue();
     const proc = new Dummy(builder);
     await proc.undoLast();
     expect(remove).not.toHaveBeenCalled();
@@ -44,10 +44,10 @@ describe('UndoableProcessor', () => {
 
   test('syncOrUndo rolls back on failure', async () => {
     const builder = new BoardBuilder();
-    const sync = jest
+    const sync = vi
       .spyOn(builder, 'syncAll')
       .mockRejectedValue(new Error('fail'));
-    const remove = jest.spyOn(builder, 'removeItems').mockResolvedValue();
+    const remove = vi.spyOn(builder, 'removeItems').mockResolvedValue();
     const proc = new Dummy(builder);
     proc.add({} as BaseItem);
     await expect(proc.doSync([{} as BaseItem])).rejects.toThrow('fail');

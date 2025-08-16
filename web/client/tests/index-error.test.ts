@@ -10,7 +10,7 @@ vi.mock('../src/app/diagram-app', () => ({
 import * as log from '../src/logger';
 
 test('logs error when initialization fails', async () => {
-  const errorSpy = jest.spyOn(log, 'error').mockImplementation(() => {});
+  const errorSpy = vi.spyOn(log, 'error').mockImplementation(() => {});
   await import('../src/index');
   expect(errorSpy).toHaveBeenCalled();
 });

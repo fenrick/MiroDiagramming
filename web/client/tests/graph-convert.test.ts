@@ -48,59 +48,59 @@ describe('graph conversion helpers', () => {
 
 describe('processor conversions', () => {
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
     delete global.miro;
   });
 
   test('GraphProcessor converts hierarchy input', async () => {
     global.miro = {
       board: {
-        get: jest.fn().mockResolvedValue([]),
-        getSelection: jest.fn().mockResolvedValue([]),
-        findEmptySpace: jest
+        get: vi.fn().mockResolvedValue([]),
+        getSelection: vi.fn().mockResolvedValue([]),
+        findEmptySpace: vi
           .fn()
           .mockResolvedValue({ x: 0, y: 0, width: 100, height: 100 }),
         viewport: {
-          get: jest
+          get: vi
             .fn()
             .mockResolvedValue({ x: 0, y: 0, width: 100, height: 100 }),
-          zoomTo: jest.fn(),
-          set: jest.fn(),
+          zoomTo: vi.fn(),
+          set: vi.fn(),
         },
-        createConnector: jest
+        createConnector: vi
           .fn()
           .mockResolvedValue({
-            setMetadata: jest.fn(),
-            getMetadata: jest.fn(),
-            sync: jest.fn(),
+            setMetadata: vi.fn(),
+            getMetadata: vi.fn(),
+            sync: vi.fn(),
             id: 'c1',
           }),
-        createShape: jest
+        createShape: vi
           .fn()
           .mockResolvedValue({
-            setMetadata: jest.fn(),
-            getMetadata: jest.fn(),
-            sync: jest.fn(),
+            setMetadata: vi.fn(),
+            getMetadata: vi.fn(),
+            sync: vi.fn(),
             id: 's1',
             type: 'shape',
           }),
-        createText: jest
+        createText: vi
           .fn()
           .mockResolvedValue({
-            setMetadata: jest.fn(),
-            getMetadata: jest.fn(),
-            sync: jest.fn(),
+            setMetadata: vi.fn(),
+            getMetadata: vi.fn(),
+            sync: vi.fn(),
             id: 't1',
             type: 'text',
           }),
-        createFrame: jest.fn().mockResolvedValue({ add: jest.fn(), id: 'f1' }),
-        group: jest
+        createFrame: vi.fn().mockResolvedValue({ add: vi.fn(), id: 'f1' }),
+        group: vi
           .fn()
           .mockResolvedValue({
             type: 'group',
-            getItems: jest.fn().mockResolvedValue([]),
-            setMetadata: jest.fn(),
-            sync: jest.fn(),
+            getItems: vi.fn().mockResolvedValue([]),
+            setMetadata: vi.fn(),
+            sync: vi.fn(),
             id: 'g1',
           }),
       },
@@ -114,7 +114,7 @@ describe('processor conversions', () => {
         children: [{ id: 'c', label: 'C', type: 'Motivation' }],
       },
     ];
-    const spy = jest
+    const spy = vi
       .spyOn(layoutEngine, 'layoutGraph')
       .mockResolvedValue({
         nodes: {
@@ -138,56 +138,56 @@ describe('processor conversions', () => {
   test('GraphProcessor uses nested layout for box algorithm', async () => {
     global.miro = {
       board: {
-        get: jest.fn().mockResolvedValue([]),
-        getSelection: jest.fn().mockResolvedValue([]),
-        findEmptySpace: jest
+        get: vi.fn().mockResolvedValue([]),
+        getSelection: vi.fn().mockResolvedValue([]),
+        findEmptySpace: vi
           .fn()
           .mockResolvedValue({ x: 0, y: 0, width: 100, height: 100 }),
         viewport: {
-          get: jest
+          get: vi
             .fn()
             .mockResolvedValue({ x: 0, y: 0, width: 100, height: 100 }),
-          zoomTo: jest.fn(),
-          set: jest.fn(),
+          zoomTo: vi.fn(),
+          set: vi.fn(),
         },
-        createShape: jest
+        createShape: vi
           .fn()
           .mockResolvedValue({
             id: 's1',
             type: 'shape',
-            setMetadata: jest.fn(),
-            getMetadata: jest.fn(),
-            sync: jest.fn(),
+            setMetadata: vi.fn(),
+            getMetadata: vi.fn(),
+            sync: vi.fn(),
           }),
-        createText: jest
+        createText: vi
           .fn()
           .mockResolvedValue({
             id: 't1',
             type: 'text',
-            setMetadata: jest.fn(),
-            getMetadata: jest.fn(),
-            sync: jest.fn(),
+            setMetadata: vi.fn(),
+            getMetadata: vi.fn(),
+            sync: vi.fn(),
           }),
-        group: jest
+        group: vi
           .fn()
           .mockResolvedValue({
             id: 'g1',
             type: 'group',
-            getItems: jest.fn().mockResolvedValue([]),
-            setMetadata: jest.fn(),
-            sync: jest.fn(),
+            getItems: vi.fn().mockResolvedValue([]),
+            setMetadata: vi.fn(),
+            sync: vi.fn(),
           }),
-        createFrame: jest.fn().mockResolvedValue({ add: jest.fn(), id: 'f1' }),
+        createFrame: vi.fn().mockResolvedValue({ add: vi.fn(), id: 'f1' }),
       },
     } as unknown as GlobalWithMiro;
 
     const gp = new GraphProcessor();
-    const layoutSpy = jest
+    const layoutSpy = vi
       .spyOn(nestedLayout, 'layoutHierarchy')
       .mockResolvedValue({
         nodes: { p: { x: 0, y: 0, width: 10, height: 10 } },
       });
-    const hierSpy = jest.spyOn(layoutEngine, 'layoutGraph');
+    const hierSpy = vi.spyOn(layoutEngine, 'layoutGraph');
     const graph = {
       nodes: [{ id: 'p', label: 'P', type: 'Motivation' }],
       edges: [],
@@ -202,48 +202,46 @@ describe('processor conversions', () => {
   test('HierarchyProcessor converts graph input', async () => {
     global.miro = {
       board: {
-        get: jest.fn().mockResolvedValue([]),
-        getSelection: jest.fn().mockResolvedValue([]),
-        findEmptySpace: jest
+        get: vi.fn().mockResolvedValue([]),
+        getSelection: vi.fn().mockResolvedValue([]),
+        findEmptySpace: vi
           .fn()
           .mockResolvedValue({ x: 0, y: 0, width: 100, height: 100 }),
         viewport: {
-          get: jest
+          get: vi
             .fn()
             .mockResolvedValue({ x: 0, y: 0, width: 100, height: 100 }),
-          zoomTo: jest.fn(),
+          zoomTo: vi.fn(),
         },
-        createFrame: jest.fn().mockResolvedValue({ add: jest.fn(), id: 'f1' }),
-        group: jest.fn().mockResolvedValue({ id: 'g1', type: 'group' }),
-        createShape: jest
+        createFrame: vi.fn().mockResolvedValue({ add: vi.fn(), id: 'f1' }),
+        group: vi.fn().mockResolvedValue({ id: 'g1', type: 'group' }),
+        createShape: vi
           .fn()
           .mockResolvedValue({
-            setMetadata: jest.fn(),
-            getMetadata: jest.fn(),
-            sync: jest.fn(),
+            setMetadata: vi.fn(),
+            getMetadata: vi.fn(),
+            sync: vi.fn(),
             id: 's1',
             type: 'shape',
           }),
-        createText: jest
+        createText: vi
           .fn()
           .mockResolvedValue({
-            setMetadata: jest.fn(),
-            getMetadata: jest.fn(),
-            sync: jest.fn(),
+            setMetadata: vi.fn(),
+            getMetadata: vi.fn(),
+            sync: vi.fn(),
             id: 't1',
             type: 'text',
           }),
       },
     } as unknown as GlobalWithMiro;
-    jest
-      .spyOn(templateManager, 'createFromTemplate')
-      .mockResolvedValue({
-        type: 'shape',
-        setMetadata: jest.fn(),
-        getItems: jest.fn().mockResolvedValue([]),
-        sync: jest.fn(),
-        id: 's1',
-      } as unknown);
+    vi.spyOn(templateManager, 'createFromTemplate').mockResolvedValue({
+      type: 'shape',
+      setMetadata: vi.fn(),
+      getItems: vi.fn().mockResolvedValue([]),
+      sync: vi.fn(),
+      id: 's1',
+    } as unknown);
     const proc = new HierarchyProcessor();
     const graph = {
       nodes: [
@@ -252,7 +250,7 @@ describe('processor conversions', () => {
       ],
       edges: [{ from: 'p', to: 'c' }],
     };
-    const spy = jest
+    const spy = vi
       .spyOn(nestedLayout, 'layoutHierarchy')
       .mockResolvedValue({
         nodes: {

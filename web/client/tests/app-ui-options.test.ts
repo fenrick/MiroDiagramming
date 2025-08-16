@@ -1,6 +1,6 @@
 /** @vitest-environment jsdom */
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 import React from 'react';
 import { App } from '../src/app/App';
 import { GraphProcessor } from '../src/core/graph/graph-processor';
@@ -14,7 +14,7 @@ function selectFile(): File {
 
 describe('App layout options and undo button', () => {
   test('updates layout options and passes them to processor', async () => {
-    const procSpy = jest
+    const procSpy = vi
       .spyOn(GraphProcessor.prototype, 'processFile')
       .mockResolvedValue(undefined);
     render(React.createElement(App));

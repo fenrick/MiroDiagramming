@@ -1,6 +1,6 @@
 /** @vitest-environment jsdom */
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 import React from 'react';
 import * as formatTools from '../src/board/format-tools';
 import * as styleTools from '../src/board/style-tools';

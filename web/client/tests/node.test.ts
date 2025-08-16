@@ -9,24 +9,22 @@ declare const global: GlobalWithMiro;
 
 describe('createNode', () => {
   beforeEach(() => {
-    global.miro = { board: { get: jest.fn().mockResolvedValue([]) } };
-    jest
-      .spyOn(templateManager, 'createFromTemplate')
-      .mockResolvedValue({
-        type: 'shape',
-        setMetadata: jest.fn(),
-        getMetadata: jest.fn(),
-        getItems: jest.fn().mockResolvedValue([]),
-        sync: jest.fn(),
-        id: 's1',
-      } as unknown as { type: string; setMetadata: jest.Mock } & Record<
-        string,
-        unknown
-      >);
+    global.miro = { board: { get: vi.fn().mockResolvedValue([]) } };
+    vi.spyOn(templateManager, 'createFromTemplate').mockResolvedValue({
+      type: 'shape',
+      setMetadata: vi.fn(),
+      getMetadata: vi.fn(),
+      getItems: vi.fn().mockResolvedValue([]),
+      sync: vi.fn(),
+      id: 's1',
+    } as unknown as { type: string; setMetadata: vi.Mock } & Record<
+      string,
+      unknown
+    >);
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
     graphService.resetBoardCache();
   });
 
@@ -45,14 +43,14 @@ describe('createNode', () => {
     const existing = {
       type: 'shape',
       style: {},
-      setMetadata: jest.fn(),
-      getMetadata: jest
+      setMetadata: vi.fn(),
+      getMetadata: vi
         .fn()
         .mockResolvedValue({ type: 'Motivation', label: 'L' }),
-      sync: jest.fn(),
+      sync: vi.fn(),
       id: 'sExisting',
     } as Record<string, unknown>;
-    (global.miro.board.get as jest.Mock).mockResolvedValueOnce([existing]);
+    (global.miro.board.get as vi.Mock).mockResolvedValueOnce([existing]);
     const result = await graphService.createNode(node, pos);
     expect(result).not.toBe(existing);
   });

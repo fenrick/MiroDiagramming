@@ -30,12 +30,12 @@ describe('grid-tools', () => {
 
   test('applyGridLayout positions widgets', async () => {
     const items = [
-      { x: 0, y: 0, width: 10, height: 10, sync: jest.fn(), title: 'b' },
-      { x: 0, y: 0, width: 10, height: 10, sync: jest.fn(), title: 'a' },
+      { x: 0, y: 0, width: 10, height: 10, sync: vi.fn(), title: 'b' },
+      { x: 0, y: 0, width: 10, height: 10, sync: vi.fn(), title: 'a' },
     ];
     const board = {
-      getSelection: jest.fn().mockResolvedValue(items),
-      group: jest.fn(),
+      getSelection: vi.fn().mockResolvedValue(items),
+      group: vi.fn(),
     } as BoardLike;
     await applyGridLayout(
       { cols: 1, padding: 5, sortByName: true, groupResult: true },
@@ -51,12 +51,10 @@ describe('grid-tools', () => {
 
   test('applyGridLayout handles groups as single items', async () => {
     const items = [
-      { x: 0, y: 0, width: 10, height: 10, sync: jest.fn(), type: 'group' },
-      { x: 0, y: 0, width: 10, height: 10, sync: jest.fn() },
+      { x: 0, y: 0, width: 10, height: 10, sync: vi.fn(), type: 'group' },
+      { x: 0, y: 0, width: 10, height: 10, sync: vi.fn() },
     ];
-    const board: BoardLike = {
-      getSelection: jest.fn().mockResolvedValue(items),
-    };
+    const board: BoardLike = { getSelection: vi.fn().mockResolvedValue(items) };
     await applyGridLayout({ cols: 2, padding: 5 }, board);
     expect(items[1].x).toBe(15);
     expect(items[1].y).toBe(0);
@@ -64,18 +62,16 @@ describe('grid-tools', () => {
 
   test('applyGridLayout returns early with empty selection', async () => {
     const board: BoardLike = {
-      getSelection: jest.fn().mockResolvedValue([]),
-      group: jest.fn(),
+      getSelection: vi.fn().mockResolvedValue([]),
+      group: vi.fn(),
     };
     await applyGridLayout({ cols: 1, padding: 0, groupResult: true }, board);
     expect(board.group).not.toHaveBeenCalled();
   });
 
   test('applyGridLayout skips grouping when API missing', async () => {
-    const items = [{ x: 0, y: 0, width: 10, height: 10, sync: jest.fn() }];
-    const board: BoardLike = {
-      getSelection: jest.fn().mockResolvedValue(items),
-    };
+    const items = [{ x: 0, y: 0, width: 10, height: 10, sync: vi.fn() }];
+    const board: BoardLike = { getSelection: vi.fn().mockResolvedValue(items) };
     await applyGridLayout({ cols: 1, padding: 0, groupResult: true }, board);
     expect(items[0].x).toBe(0);
   });
@@ -87,7 +83,7 @@ describe('grid-tools', () => {
         y: 0,
         width: 10,
         height: 10,
-        sync: jest.fn(),
+        sync: vi.fn(),
         text: { plainText: 'b' },
       },
       {
@@ -95,13 +91,13 @@ describe('grid-tools', () => {
         y: 0,
         width: 10,
         height: 10,
-        sync: jest.fn(),
+        sync: vi.fn(),
         text: { plainText: 'a' },
       },
     ];
     const board: BoardLike = {
-      getSelection: jest.fn().mockResolvedValue(items),
-      group: jest.fn(),
+      getSelection: vi.fn().mockResolvedValue(items),
+      group: vi.fn(),
     };
     await applyGridLayout(
       { cols: 1, padding: 0, sortByName: true, groupResult: false },
@@ -113,14 +109,14 @@ describe('grid-tools', () => {
 
   test('applyGridLayout sorts vertically when requested', async () => {
     const items = [
-      { x: 0, y: 0, width: 10, height: 10, sync: jest.fn(), title: 'b' },
-      { x: 0, y: 0, width: 10, height: 10, sync: jest.fn(), title: 'a' },
-      { x: 0, y: 0, width: 10, height: 10, sync: jest.fn(), title: 'd' },
-      { x: 0, y: 0, width: 10, height: 10, sync: jest.fn(), title: 'c' },
+      { x: 0, y: 0, width: 10, height: 10, sync: vi.fn(), title: 'b' },
+      { x: 0, y: 0, width: 10, height: 10, sync: vi.fn(), title: 'a' },
+      { x: 0, y: 0, width: 10, height: 10, sync: vi.fn(), title: 'd' },
+      { x: 0, y: 0, width: 10, height: 10, sync: vi.fn(), title: 'c' },
     ];
     const board: BoardLike = {
-      getSelection: jest.fn().mockResolvedValue(items),
-      group: jest.fn(),
+      getSelection: vi.fn().mockResolvedValue(items),
+      group: vi.fn(),
     };
     await applyGridLayout(
       { cols: 2, padding: 5, sortByName: true, sortOrientation: 'vertical' },
@@ -134,12 +130,10 @@ describe('grid-tools', () => {
 
   test('applyGridLayout handles frames', async () => {
     const items = [
-      { x: 0, y: 0, width: 30, height: 20, sync: jest.fn(), type: 'frame' },
-      { x: 0, y: 0, width: 10, height: 10, sync: jest.fn(), type: 'shape' },
+      { x: 0, y: 0, width: 30, height: 20, sync: vi.fn(), type: 'frame' },
+      { x: 0, y: 0, width: 10, height: 10, sync: vi.fn(), type: 'shape' },
     ];
-    const board: BoardLike = {
-      getSelection: jest.fn().mockResolvedValue(items),
-    };
+    const board: BoardLike = { getSelection: vi.fn().mockResolvedValue(items) };
     await applyGridLayout({ cols: 2, padding: 5 }, board);
     expect(items[1].x).toBe(35);
     expect(items[1].y).toBe(0);
@@ -147,12 +141,10 @@ describe('grid-tools', () => {
 
   test('applyGridLayout ignores unsupported items', async () => {
     const items = [
-      { x: 0, y: 0, width: 10, height: 10, sync: jest.fn() },
+      { x: 0, y: 0, width: 10, height: 10, sync: vi.fn() },
       { foo: 'bar' },
     ];
-    const board: BoardLike = {
-      getSelection: jest.fn().mockResolvedValue(items),
-    };
+    const board: BoardLike = { getSelection: vi.fn().mockResolvedValue(items) };
     await applyGridLayout({ cols: 1, padding: 5 }, board);
     expect(items[0].x).toBe(0);
     expect(items[0].y).toBe(0);

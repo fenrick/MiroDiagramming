@@ -18,7 +18,7 @@ const makeBoard = () => {
       assigneeId: 'u1',
       createdBy: 'c1',
       lastModifiedBy: 'm1',
-      sync: jest.fn(),
+      sync: vi.fn(),
     },
     {
       type: 'card',
@@ -28,7 +28,7 @@ const makeBoard = () => {
       assignee: 'u2',
       createdBy: 'c2',
       lastModifiedBy: 'm2',
-      sync: jest.fn(),
+      sync: vi.fn(),
     },
     {
       type: 'sticky_note',
@@ -37,7 +37,7 @@ const makeBoard = () => {
       style: { fillColor: '#00f' },
       createdBy: 'c3',
       lastModifiedBy: 'm3',
-      sync: jest.fn(),
+      sync: vi.fn(),
     },
     {
       type: 'shape',
@@ -45,7 +45,7 @@ const makeBoard = () => {
       style: { fillColor: '#0f0' },
       createdBy: 'c1',
       lastModifiedBy: 'm2',
-      sync: jest.fn(),
+      sync: vi.fn(),
     },
     {
       type: 'text',
@@ -53,7 +53,7 @@ const makeBoard = () => {
       style: { backgroundColor: '#fff' },
       createdBy: 'c1',
       lastModifiedBy: 'm3',
-      sync: jest.fn(),
+      sync: vi.fn(),
     },
     {
       type: 'shape',
@@ -63,12 +63,12 @@ const makeBoard = () => {
       assigneeId: 'u1',
       createdBy: 'c4',
       lastModifiedBy: 'm1',
-      sync: jest.fn(),
+      sync: vi.fn(),
     },
   ];
   const board: BoardQueryLike = {
-    getSelection: jest.fn().mockResolvedValue(items.slice(0, 2)),
-    get: jest.fn(async ({ type }) =>
+    getSelection: vi.fn().mockResolvedValue(items.slice(0, 2)),
+    get: vi.fn(async ({ type }) =>
       type === 'widget' ? items : items.filter(i => i.type === type),
     ),
   } as unknown as BoardQueryLike;
@@ -158,7 +158,7 @@ describe('search-tools', () => {
     );
     expect(cs).toHaveLength(1);
     expect(cs[0].item).toBe(items[0]);
-    (board.get as jest.Mock).mockClear();
+    (board.get as vi.Mock).mockClear();
     const sel = await searchBoardContent(
       { query: 'hello', inSelection: true },
       board,
@@ -222,12 +222,12 @@ describe('search-tools', () => {
 
   test('replaceBoardContent skips widgets lacking text fields', async () => {
     const items = [
-      { type: 'shape', sync: jest.fn() },
-      { type: 'sticky_note', plainText: 'hello', sync: jest.fn() },
+      { type: 'shape', sync: vi.fn() },
+      { type: 'sticky_note', plainText: 'hello', sync: vi.fn() },
     ];
     const board: BoardQueryLike = {
-      getSelection: jest.fn().mockResolvedValue([]),
-      get: jest.fn().mockResolvedValue(items),
+      getSelection: vi.fn().mockResolvedValue([]),
+      get: vi.fn().mockResolvedValue(items),
     } as unknown as BoardQueryLike;
     const count = await replaceBoardContent(
       { query: 'hello', replacement: 'hi' },

@@ -1,6 +1,6 @@
 /** @vitest-environment jsdom */
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import '@testing-library/jest-dom/vitest';
 import React from 'react';
 import { GraphProcessor } from '../src/core/graph/graph-processor';
 import { DiagramsTab } from '../src/ui/pages/DiagramsTab';
@@ -17,11 +17,11 @@ describe('DiagramsTab', () => {
   afterEach(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     delete (globalThis as any).miro;
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   test('processes diagram file', async () => {
-    const spy = jest
+    const spy = vi
       .spyOn(GraphProcessor.prototype, 'processFile')
       .mockResolvedValue(undefined as unknown as void);
     render(<DiagramsTab />);

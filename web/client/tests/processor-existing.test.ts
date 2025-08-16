@@ -10,7 +10,7 @@ declare const global: GlobalWithMiro;
 
 describe('GraphProcessor with existing nodes', () => {
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
     delete global.miro;
   });
 
@@ -21,55 +21,53 @@ describe('GraphProcessor with existing nodes', () => {
       type: 'shape',
       x: 5,
       y: 6,
-      sync: jest.fn(),
-      setMetadata: jest.fn(),
-      getMetadata: jest.fn(),
+      sync: vi.fn(),
+      setMetadata: vi.fn(),
+      getMetadata: vi.fn(),
     } as Record<string, unknown>;
     global.miro = {
       board: {
-        getSelection: jest.fn().mockResolvedValue([shape]),
-        get: jest.fn().mockResolvedValue([]),
-        findEmptySpace: jest
+        getSelection: vi.fn().mockResolvedValue([shape]),
+        get: vi.fn().mockResolvedValue([]),
+        findEmptySpace: vi
           .fn()
           .mockResolvedValue({ x: 0, y: 0, width: 100, height: 100 }),
         viewport: {
-          get: jest
+          get: vi
             .fn()
             .mockResolvedValue({ x: 0, y: 0, width: 1000, height: 1000 }),
-          zoomTo: jest.fn(),
-          set: jest.fn(),
+          zoomTo: vi.fn(),
+          set: vi.fn(),
         },
-        createConnector: jest
+        createConnector: vi
           .fn()
           .mockResolvedValue({
-            setMetadata: jest.fn(),
-            getMetadata: jest.fn(),
-            sync: jest.fn(),
+            setMetadata: vi.fn(),
+            getMetadata: vi.fn(),
+            sync: vi.fn(),
             id: 'c',
           }),
-        createShape: jest.fn(),
-        createText: jest.fn(),
-        createFrame: jest.fn().mockResolvedValue({ id: 'f' }),
-        group: jest
+        createShape: vi.fn(),
+        createText: vi.fn(),
+        createFrame: vi.fn().mockResolvedValue({ id: 'f' }),
+        group: vi
           .fn()
           .mockResolvedValue({
             type: 'group',
-            getItems: jest.fn().mockResolvedValue([]),
+            getItems: vi.fn().mockResolvedValue([]),
           }),
       },
     };
-    jest
-      .spyOn(BoardBuilder.prototype, 'findNodeInSelection')
-      .mockResolvedValue(shape as unknown);
-    jest
-      .spyOn(BoardBuilder.prototype, 'createNode')
-      .mockResolvedValue(shape as unknown);
-    jest
-      .spyOn(layoutEngine, 'layoutGraph')
-      .mockResolvedValue({
-        nodes: { n1: { x: 0, y: 0, width: 10, height: 10 } },
-        edges: [],
-      });
+    vi.spyOn(BoardBuilder.prototype, 'findNodeInSelection').mockResolvedValue(
+      shape as unknown,
+    );
+    vi.spyOn(BoardBuilder.prototype, 'createNode').mockResolvedValue(
+      shape as unknown,
+    );
+    vi.spyOn(layoutEngine, 'layoutGraph').mockResolvedValue({
+      nodes: { n1: { x: 0, y: 0, width: 10, height: 10 } },
+      edges: [],
+    });
     const graph = { nodes: [{ id: 'n1', label: 'L', type: 'T' }], edges: [] };
     await processor.processGraph(graph as unknown, {
       existingMode: 'ignore',
@@ -86,47 +84,47 @@ describe('GraphProcessor with existing nodes', () => {
       type: 'shape',
       x: 10,
       y: 20,
-      sync: jest.fn(),
-      setMetadata: jest.fn(),
-      getMetadata: jest.fn(),
+      sync: vi.fn(),
+      setMetadata: vi.fn(),
+      getMetadata: vi.fn(),
     } as Record<string, unknown>;
     global.miro = {
       board: {
-        getSelection: jest.fn().mockResolvedValue([shape]),
-        get: jest.fn().mockResolvedValue([]),
-        findEmptySpace: jest
+        getSelection: vi.fn().mockResolvedValue([shape]),
+        get: vi.fn().mockResolvedValue([]),
+        findEmptySpace: vi
           .fn()
           .mockResolvedValue({ x: 0, y: 0, width: 100, height: 100 }),
         viewport: {
-          get: jest
+          get: vi
             .fn()
             .mockResolvedValue({ x: 0, y: 0, width: 1000, height: 1000 }),
-          zoomTo: jest.fn(),
-          set: jest.fn(),
+          zoomTo: vi.fn(),
+          set: vi.fn(),
         },
-        createConnector: jest
+        createConnector: vi
           .fn()
           .mockResolvedValue({
-            setMetadata: jest.fn(),
-            getMetadata: jest.fn(),
-            sync: jest.fn(),
+            setMetadata: vi.fn(),
+            getMetadata: vi.fn(),
+            sync: vi.fn(),
             id: 'c',
           }),
-        createShape: jest.fn(),
-        createText: jest.fn(),
-        createFrame: jest.fn().mockResolvedValue({ id: 'f' }),
-        group: jest
+        createShape: vi.fn(),
+        createText: vi.fn(),
+        createFrame: vi.fn().mockResolvedValue({ id: 'f' }),
+        group: vi
           .fn()
           .mockResolvedValue({
             type: 'group',
-            getItems: jest.fn().mockResolvedValue([]),
+            getItems: vi.fn().mockResolvedValue([]),
           }),
       },
     };
-    jest
-      .spyOn(BoardBuilder.prototype, 'findNodeInSelection')
-      .mockResolvedValue(shape as unknown);
-    const spy = jest
+    vi.spyOn(BoardBuilder.prototype, 'findNodeInSelection').mockResolvedValue(
+      shape as unknown,
+    );
+    const spy = vi
       .spyOn(layoutEngine, 'layoutGraph')
       .mockImplementation(async g => {
         expect((g as { nodes: unknown[] }).nodes[0]).toHaveProperty('metadata');
