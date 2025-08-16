@@ -16,12 +16,12 @@ class MemoryPersistence:
     """In-memory store for idempotency responses."""
 
     def __init__(self) -> None:
-        self.responses: dict[str, dict[str, int]] = {}
+        self.responses: dict[str, dict[str, object]] = {}
 
-    async def get_response(self, key: str) -> dict[str, int] | None:
+    async def get_response(self, key: str) -> dict[str, object] | None:
         return self.responses.get(key)
 
-    async def save_response(self, key: str, response: dict[str, int]) -> None:
+    async def save_response(self, key: str, response: dict[str, object]) -> None:
         self.responses[key] = response
 
 
@@ -57,7 +57,9 @@ def test_post_batch_enqueues_tasks(client_queue: tuple[TestClient, DummyQueue]) 
     }
     response = client.post("/api/batch", json=body, headers={"X-User-Id": "u1"})
     assert response.status_code == 202
-    assert response.json() == {"enqueued": 2}
+    data = response.json()
+    assert data["enqueued"] == 2
+    assert "job_id" in data
     assert len(queue.tasks) == 2
     assert isinstance(queue.tasks[0], CreateNode)
     assert isinstance(queue.tasks[1], UpdateCard)
@@ -79,7 +81,7 @@ def test_post_batch_returns_cached_response(
 ) -> None:
     client, queue = client_queue
     assert queue.persistence is not None
-    queue.persistence.responses["key1"] = {"enqueued": 3}
+    queue.persistence.responses["key1"] = {"enqueued": 3, "job_id": "j1"}
     body = {"operations": [{"type": "create_node", "node_id": "n1", "data": {"x": 1}}]}
     response = client.post(
         "/api/batch",
@@ -87,7 +89,7 @@ def test_post_batch_returns_cached_response(
         headers={"Idempotency-Key": "key1", "X-User-Id": "u1"},
     )
     assert response.status_code == 202
-    assert response.json() == {"enqueued": 3}
+    assert response.json() == {"enqueued": 3, "job_id": "j1"}
     assert len(queue.tasks) == 0
 
 
@@ -108,6 +110,10 @@ def test_post_batch_saves_idempotent_response(
         headers={"Idempotency-Key": key, "X-User-Id": "u1"},
     )
     assert response.status_code == 202
-    assert response.json() == {"enqueued": 2}
+    data = response.json()
+    assert data["enqueued"] == 2
+    assert "job_id" in data
     assert queue.persistence is not None
-    assert queue.persistence.responses[key] == {"enqueued": 2}
+    stored = queue.persistence.responses[key]
+    assert stored["enqueued"] == 2
+    assert "job_id" in stored

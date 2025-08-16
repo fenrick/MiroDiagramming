@@ -38,13 +38,13 @@ async def post_batch(
             if existing is not None:
                 return BatchResponse.model_validate(existing)
 
-        count = await enqueue_operations(request.operations, queue, user_id)
-        response = BatchResponse(enqueued=count)
-        logfire.info("batch operations enqueued", count=count)  # event after enqueuing
+        job_id, count = await enqueue_operations(request.operations, queue, user_id)
+        response = BatchResponse(job_id=job_id, enqueued=count)
+        logfire.info(
+            "batch operations enqueued", count=count, job_id=job_id
+        )  # event after enqueuing
         if idempotency_key is not None:
             _IDEMPOTENCY_CACHE[idempotency_key] = response
-
-        response = BatchResponse(enqueued=count)
 
         if idempotency_key and queue.persistence is not None:
             await queue.persistence.save_response(

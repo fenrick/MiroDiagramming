@@ -87,12 +87,19 @@ class ChangeQueue:
 
         while True:
             task = await self.dequeue()
+            if self._persistence is not None and task.job_id:
+                await self._persistence.update_job_status(task.job_id, "running")
             # Span around applying each individual task
             with logfire.span("apply task {task=}", task=task):
                 token = await get_valid_access_token(session, task.user_id, client)
                 for attempt in range(5):
                     try:
                         await task.apply(client, token)
+                        if self._persistence is not None and task.job_id:
+                            await self._persistence.add_job_result(
+                                task.job_id,
+                                {"index": task.index, "status": "succeeded"},
+                            )
                         break
                     except Exception as exc:  # noqa: BLE001 - re-raised after retries
                         status = getattr(exc, "status", None) or getattr(
@@ -101,11 +108,29 @@ class ChangeQueue:
                         if status not in {429} and not (
                             isinstance(status, int) and 500 <= status < 600
                         ):
+                            if self._persistence is not None and task.job_id:
+                                await self._persistence.add_job_result(
+                                    task.job_id,
+                                    {
+                                        "index": task.index,
+                                        "status": "failed",
+                                        "error": str(exc),
+                                    },
+                                )
                             raise
                         if attempt == 4:
                             logfire.error(
                                 "task failed after retries", task=task, error=exc
                             )
+                            if self._persistence is not None and task.job_id:
+                                await self._persistence.add_job_result(
+                                    task.job_id,
+                                    {
+                                        "index": task.index,
+                                        "status": "failed",
+                                        "error": str(exc),
+                                    },
+                                )
                             raise
                         retry_after = getattr(exc, "retry_after", None)
                         delay = (

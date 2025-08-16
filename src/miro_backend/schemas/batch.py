@@ -41,4 +41,5 @@ class BatchRequest(BaseModel):
 class BatchResponse(BaseModel):
     """Summary of enqueued operations."""
 
+    job_id: str
     enqueued: int

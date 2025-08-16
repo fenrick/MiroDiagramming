@@ -62,6 +62,18 @@ class QueuePersistence:
                 """
             )
             conn.commit()
+            conn.execute(
+                """
+                CREATE TABLE IF NOT EXISTS jobs (
+                    id TEXT PRIMARY KEY,
+                    status TEXT NOT NULL,
+                    total INTEGER NOT NULL,
+                    completed INTEGER NOT NULL DEFAULT 0,
+                    results TEXT NOT NULL
+                )
+                """
+            )
+            conn.commit()
 
     async def save(self, task: ChangeTask) -> None:
         """Persist ``task`` to the database."""
@@ -158,3 +170,81 @@ class QueuePersistence:
         if row is None:
             return None
         return cast(dict[str, Any], json.loads(row[0]))
+
+    async def create_job(self, job_id: str, total: int) -> None:
+        """Persist a new job with ``status='queued'``."""
+
+        await asyncio.to_thread(self._create_job, job_id, total)
+
+    def _create_job(self, job_id: str, total: int) -> None:
+        with sqlite3.connect(self._path) as conn:
+            conn.execute(
+                "INSERT INTO jobs (id, status, total, completed, results) VALUES (?, 'queued', ?, 0, '[]')",
+                (job_id, total),
+            )
+            conn.commit()
+
+    async def update_job_status(self, job_id: str, status: str) -> None:
+        """Update the ``status`` of an existing job."""
+
+        await asyncio.to_thread(self._update_job_status, job_id, status)
+
+    def _update_job_status(self, job_id: str, status: str) -> None:
+        with sqlite3.connect(self._path) as conn:
+            conn.execute(
+                "UPDATE jobs SET status = ? WHERE id = ?",
+                (status, job_id),
+            )
+            conn.commit()
+
+    async def add_job_result(self, job_id: str, result: dict[str, Any]) -> None:
+        """Append ``result`` for ``job_id`` and update status progression."""
+
+        await asyncio.to_thread(self._add_job_result, job_id, result)
+
+    def _add_job_result(self, job_id: str, result: dict[str, Any]) -> None:
+        with sqlite3.connect(self._path) as conn:
+            cursor = conn.execute(
+                "SELECT status, total, completed, results FROM jobs WHERE id = ?",
+                (job_id,),
+            )
+            row = cursor.fetchone()
+            if row is None:
+                return
+            status, total, completed, results_json = row
+            results = json.loads(results_json)
+            results.append(result)
+            completed += 1
+            if status != "failed":
+                if result.get("status") == "failed":
+                    status = "failed"
+                elif completed >= total:
+                    status = "succeeded"
+                else:
+                    status = "running"
+            conn.execute(
+                "UPDATE jobs SET status = ?, completed = ?, results = ? WHERE id = ?",
+                (status, completed, json.dumps(results), job_id),
+            )
+            conn.commit()
+
+    async def get_job(self, job_id: str) -> dict[str, Any] | None:
+        """Return the persisted record for ``job_id`` if present."""
+
+        return await asyncio.to_thread(self._get_job, job_id)
+
+    def _get_job(self, job_id: str) -> dict[str, Any] | None:
+        with sqlite3.connect(self._path) as conn:
+            cursor = conn.execute(
+                "SELECT status, results FROM jobs WHERE id = ?",
+                (job_id,),
+            )
+            row = cursor.fetchone()
+        if row is None:
+            return None
+        status, results_json = row
+        return {
+            "job_id": job_id,
+            "status": status,
+            "results": cast(list[dict[str, Any]], json.loads(results_json)),
+        }
