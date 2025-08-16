@@ -17,7 +17,8 @@
   "scripts": {
     "dev": "vite",
     "start": "vite",
-    "build": "tsc -b && vite build --outDir dist",
+    "generate-client": "tsx ../../scripts/generate-client.ts",
+    "build": "npm run generate-client && tsc -b && vite build --outDir dist",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "prettier": "prettier '**/*.{js,jsx,ts,tsx,md,json,yml,yaml,html,css}' --write",
@@ -82,7 +83,9 @@
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.38.0",
     "vite": "^6.3.5",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "openapi-typescript": "^7.9.1",
+    "tsx": "^4.20.4"
   },
   "commitlint": {
     "extends": [
