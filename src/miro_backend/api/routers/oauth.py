@@ -15,6 +15,7 @@ import logfire
 
 from ...core.config import settings
 from ...core.exceptions import BadRequestError
+from ...core.security import sign_state, verify_state
 from ...db.session import get_session
 from ...models.user import User
 from ...schemas.user_info import UserInfo
@@ -59,11 +60,8 @@ def login(
 ) -> RedirectResponse:
     """Redirect the user to Miro's OAuth consent screen."""
 
-    state = (
-        base64.urlsafe_b64encode(uuid.uuid4().bytes).decode().rstrip("=")
-        + ":"
-        + user_id
-    )
+    nonce = base64.urlsafe_b64encode(uuid.uuid4().bytes).decode().rstrip("=")
+    state = sign_state(cfg.client_secret, nonce, user_id)
     url = (
         f"{cfg.auth_base}/oauth/authorize"
         "?response_type=code"
@@ -88,13 +86,11 @@ async def callback(
 ) -> RedirectResponse:
     """Exchange the code for tokens and store them."""
 
-    parts = state.split(":", 1)
-    if len(parts) != 2 or not parts[1]:
-        logfire.warning(
-            "invalid oauth state", state=state
-        )  # warn about malformed state
+    try:
+        _, user_id = verify_state(cfg.client_secret, state)
+    except ValueError:
+        logfire.warning("invalid oauth state", state=state)
         raise BadRequestError("Invalid state")
-    user_id = parts[1]
     with logfire.span("oauth callback", user_id=user_id):
         tokens = await client.exchange_code(
             code,
