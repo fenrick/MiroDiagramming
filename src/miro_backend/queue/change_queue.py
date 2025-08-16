@@ -7,8 +7,18 @@ import random
 from typing import Any
 
 import logfire
+from prometheus_client import Gauge
 
 from .tasks import ChangeTask
+
+
+# Prometheus gauge tracking queued change tasks. Registered in ``main`` to avoid
+# reliance on the default registry and ensure exposure via ``/metrics``.
+change_queue_length = Gauge(
+    "change_queue_length",
+    "Number of change tasks pending in the queue",
+    registry=None,
+)
 
 
 class ChangeQueue:
@@ -39,6 +49,9 @@ class ChangeQueue:
             logfire.info("enqueue without persistence", task=task)
             await self._queue.put(task)
 
+        # Update metric after task enqueued
+        change_queue_length.set(self._queue.qsize())
+
     @logfire.instrument("dequeue task")  # type: ignore[misc]
     async def dequeue(self) -> ChangeTask:
         """Retrieve the next task from the queue and remove persisted state."""
@@ -50,6 +63,8 @@ class ChangeQueue:
             async with self._lock:
                 logfire.info("removing task from persistence", task=task)
                 await self._persistence.delete(task)
+        # Update metric after removing task
+        change_queue_length.set(self._queue.qsize())
         return task
 
     # ------------------------------------------------------------------
