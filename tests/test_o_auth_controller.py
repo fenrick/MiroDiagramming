@@ -23,7 +23,15 @@ class StubClient(MiroClient):  # type: ignore[misc]
     def __init__(self) -> None:
         self.calls: list[tuple[str, str]] = []
 
-    async def exchange_code(self, code: str, redirect_uri: str) -> dict[str, int | str]:
+    async def exchange_code(
+        self,
+        code: str,
+        redirect_uri: str,
+        token_url: str,
+        client_id: str,
+        client_secret: str,
+        timeout_seconds: float | None = None,
+    ) -> dict[str, int | str]:
         self.calls.append((code, redirect_uri))
         return {"access_token": "tok", "refresh_token": "ref", "expires_in": 3600}
 
@@ -34,7 +42,15 @@ class CountingStub(MiroClient):  # type: ignore[misc]
     def __init__(self) -> None:
         self.calls: list[tuple[str, str]] = []
 
-    async def exchange_code(self, code: str, redirect_uri: str) -> dict[str, int | str]:
+    async def exchange_code(
+        self,
+        code: str,
+        redirect_uri: str,
+        token_url: str,
+        client_id: str,
+        client_secret: str,
+        timeout_seconds: float | None = None,
+    ) -> dict[str, int | str]:
         self.calls.append((code, redirect_uri))
         n = len(self.calls)
         return {
@@ -53,6 +69,9 @@ def client_store() -> Iterator[tuple[TestClient, InMemoryUserStore, StubClient]]
         client_id="id",
         client_secret="secret",
         redirect_uri="http://redir",
+        scope="boards:read boards:write",
+        token_url="http://token",
+        timeout_seconds=1.0,
     )
     app.dependency_overrides[get_user_store] = lambda: store
     app.dependency_overrides[oauth.get_miro_client] = lambda: stub
@@ -73,6 +92,9 @@ def client_store_db() -> Iterator[tuple[TestClient, InMemoryUserStore, CountingS
         client_id="id",
         client_secret="secret",
         redirect_uri="http://redir",
+        scope="boards:read boards:write",
+        token_url="http://token",
+        timeout_seconds=1.0,
     )
     app.dependency_overrides[get_user_store] = lambda: store
     app.dependency_overrides[oauth.get_miro_client] = lambda: stub
