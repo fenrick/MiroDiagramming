@@ -11,8 +11,19 @@ import miro_backend.core.config as config
 from miro_backend.core.config import Settings
 
 
-def test_defaults_used_when_no_overrides() -> None:
+def test_defaults_used_when_no_overrides(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     """Defaults are applied when no env or file provided."""
+
+    monkeypatch.setenv("MIRO_CONFIG_FILE", str(tmp_path / "missing.yaml"))
+    for var in (
+        "MIRO_CLIENT_ID",
+        "MIRO_CLIENT_SECRET",
+        "MIRO_WEBHOOK_SECRET",
+        "MIRO_REDIRECT_URI",
+    ):
+        monkeypatch.delenv(var, raising=False)
 
     settings = Settings()
     assert settings.database_url == "sqlite:///./app.db"
@@ -62,23 +73,29 @@ def test_env_overrides_yaml(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> 
     assert settings.logfire_send_to_logfire is True
 
 
-def test_missing_secrets_raise_error(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_missing_secrets_raise_error(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     """Omitting required secrets raises a validation error."""
 
+    monkeypatch.chdir(tmp_path)
     monkeypatch.delenv("MIRO_CLIENT_ID", raising=False)
     monkeypatch.delenv("MIRO_CLIENT_SECRET", raising=False)
     monkeypatch.delenv("MIRO_WEBHOOK_SECRET", raising=False)
+    monkeypatch.setenv("MIRO_CONFIG_FILE", str(tmp_path / "missing.yaml"))
 
     with pytest.raises(ValidationError):
         Settings()
 
 
 def test_missing_redirect_uri_raises_error(
-    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """Unsetting redirect URI triggers a validation error."""
 
+    monkeypatch.chdir(tmp_path)
     monkeypatch.delenv("MIRO_REDIRECT_URI", raising=False)
+    monkeypatch.setenv("MIRO_CONFIG_FILE", str(tmp_path / "missing.yaml"))
 
     with pytest.raises(ValidationError):
         Settings()

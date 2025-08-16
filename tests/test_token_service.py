@@ -1,19 +1,15 @@
-from collections.abc import Iterator
+from __future__ import annotations
+
 from datetime import datetime, timedelta, timezone
-from typing import Any, cast
+from typing import Any, Iterator, cast
 
 import pytest
 from sqlalchemy.orm import Session
 
-from __future__ import annotations
-
-from datetime import datetime, timedelta, timezone
-
-import pytest
-
 from miro_backend.db.session import Base, SessionLocal, engine
 from miro_backend.models.user import User
 from miro_backend.services.token_service import get_valid_access_token
+
 
 @pytest.fixture(autouse=True)  # type: ignore[misc]
 def setup_db() -> Iterator[None]:
@@ -89,7 +85,8 @@ async def test_refreshes_token_when_expiring(session: Session) -> None:
         timezone.utc
     )
     assert client.called_with == ["r1"]
-    
+
+
 class StubClient:
     async def refresh_token(self, refresh_token: str) -> dict[str, str | int]:
         return {

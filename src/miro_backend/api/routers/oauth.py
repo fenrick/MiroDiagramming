@@ -43,6 +43,7 @@ def get_oauth_config() -> OAuthConfig:
     return OAuthConfig(
         client_id=settings.client_id,
         client_secret=settings.client_secret.get_secret_value(),
+        redirect_uri=settings.oauth_redirect_uri,
         scope="boards:read boards:write",
         token_url="https://api.miro.com/v1/oauth/token",
         timeout_seconds=settings.http_timeout_seconds,

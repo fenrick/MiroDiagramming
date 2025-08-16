@@ -76,9 +76,6 @@ def client_store() -> (
         scope=SCOPE,
         token_url="http://token",
         timeout_seconds=60,
-        scope="boards:read boards:write",
-        token_url="http://token",
-        timeout_seconds=1.0,
     )
     app.dependency_overrides[get_user_store] = lambda: store
     app.dependency_overrides[oauth.get_miro_client] = lambda: stub
@@ -104,9 +101,6 @@ def client_store_db() -> (
         scope=SCOPE,
         token_url="http://token",
         timeout_seconds=60,
-        scope="boards:read boards:write",
-        token_url="http://token",
-        timeout_seconds=1.0,
     )
     app.dependency_overrides[get_user_store] = lambda: store
     app.dependency_overrides[oauth.get_miro_client] = lambda: stub
