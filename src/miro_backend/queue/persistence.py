@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import sqlite3
 from pathlib import Path
-from typing import Type
+from typing import Any, Type, cast
 
 from .tasks import (
     ChangeTask,
@@ -38,6 +39,15 @@ class QueuePersistence:
                 CREATE TABLE IF NOT EXISTS tasks (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     type TEXT NOT NULL,
+                    payload TEXT NOT NULL
+                )
+                """
+            )
+            conn.commit()
+            conn.execute(
+                """
+                CREATE TABLE IF NOT EXISTS responses (
+                    key TEXT PRIMARY KEY,
                     payload TEXT NOT NULL
                 )
                 """
@@ -84,3 +94,29 @@ class QueuePersistence:
                 continue
             tasks.append(cls.model_validate_json(payload))
         return tasks
+
+    async def get_response(self, key: str) -> dict[str, Any] | None:
+        """Return a stored response for ``key`` if present."""
+
+        return await asyncio.to_thread(self._get_response, key)
+
+    def _get_response(self, key: str) -> dict[str, Any] | None:
+        with sqlite3.connect(self._path) as conn:
+            cursor = conn.execute("SELECT payload FROM responses WHERE key = ?", (key,))
+            row = cursor.fetchone()
+        if row is None:
+            return None
+        return cast(dict[str, Any], json.loads(row[0]))
+
+    async def save_response(self, key: str, response: dict[str, Any]) -> None:
+        """Persist ``response`` under ``key``."""
+
+        await asyncio.to_thread(self._save_response, key, response)
+
+    def _save_response(self, key: str, response: dict[str, Any]) -> None:
+        with sqlite3.connect(self._path) as conn:
+            conn.execute(
+                "INSERT OR REPLACE INTO responses (key, payload) VALUES (?, ?)",
+                (key, json.dumps(response)),
+            )
+            conn.commit()
