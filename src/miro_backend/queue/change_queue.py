@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import random
 from typing import Any
 
 import logfire
@@ -62,4 +63,34 @@ class ChangeQueue:
             task = await self.dequeue()
             # Span around applying each individual task
             with logfire.span("apply task {task=}", task=task):
-                await task.apply(client)
+                for attempt in range(5):
+                    try:
+                        await task.apply(client)
+                        break
+                    except Exception as exc:  # noqa: BLE001 - re-raised after retries
+                        status = getattr(exc, "status", None) or getattr(
+                            exc, "status_code", None
+                        )
+                        if status not in {429} and not (
+                            isinstance(status, int) and 500 <= status < 600
+                        ):
+                            raise
+                        if attempt == 4:
+                            logfire.error(
+                                "task failed after retries", task=task, error=exc
+                            )
+                            raise
+                        retry_after = getattr(exc, "retry_after", None)
+                        delay = (
+                            float(retry_after)
+                            if retry_after is not None
+                            else 2 ** (attempt + 1) + random.uniform(0, 1)
+                        )
+                        logfire.warning(
+                            "retrying task",
+                            attempt=attempt + 1,
+                            delay=delay,
+                            task=task,
+                            error=exc,
+                        )
+                        await asyncio.sleep(delay)
