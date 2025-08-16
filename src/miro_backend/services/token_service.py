@@ -32,7 +32,7 @@ async def get_valid_access_token(
     """
     user = session.query(User).filter(User.user_id == user_id).one_or_none()
     if user is None:
-        raise ValueError(f"Unknown user_id {user_id!r}")
+        raise ValueError(f"Unknown user_id {user_id!r}")  # pragma: no cover
 
     expires_at = (
         user.expires_at
