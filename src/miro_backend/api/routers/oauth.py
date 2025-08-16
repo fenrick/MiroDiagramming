@@ -14,10 +14,12 @@ from pydantic import BaseModel
 import logfire
 
 from ...core.exceptions import BadRequestError
-
+from ...db.session import get_session
+from ...models.user import User
 from ...schemas.user_info import UserInfo
 from ...services.miro_client import MiroClient, get_miro_client
 from ...services.user_store import UserStore, get_user_store
+from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/oauth", tags=["oauth"])
 
@@ -70,6 +72,7 @@ async def callback(
     client: MiroClient = Depends(get_miro_client),
     store: UserStore = Depends(get_user_store),
     cfg: OAuthConfig = Depends(get_oauth_config),
+    session: Session = Depends(get_session),
 ) -> RedirectResponse:
     """Exchange the code for tokens and store them."""
 
@@ -82,12 +85,22 @@ async def callback(
     user_id = parts[1]
     with logfire.span("oauth callback", user_id=user_id):
         tokens = await client.exchange_code(code, cfg.redirect_uri)
-    expires_in = int(tokens.get("expires_in", 0))
-    expires_at = datetime.now(timezone.utc) + timedelta(seconds=expires_in)
+    expires_at = datetime.now(timezone.utc) + timedelta(
+        seconds=int(tokens["expires_in"])
+    )
+    user = session.query(User).filter_by(user_id=user_id).one_or_none()
+    if user is None:
+        user = User(user_id=user_id, name=user_id)
+        session.add(user)
+    user.name = user_id
+    user.access_token = tokens["access_token"]
+    user.refresh_token = tokens["refresh_token"]
+    user.expires_at = expires_at
+    session.commit()
     store.store(
         UserInfo(
             id=user_id,
-            name="<name>",
+            name=user_id,
             access_token=tokens["access_token"],
             refresh_token=tokens["refresh_token"],
             expires_at=expires_at,
