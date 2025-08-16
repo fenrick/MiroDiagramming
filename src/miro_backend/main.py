@@ -25,6 +25,7 @@ if args.config:
 from .core.config import settings  # noqa: E402
 from .core.exceptions import add_exception_handlers  # noqa: E402
 from .core.logging import configure_logging, setup_fastapi  # noqa: E402
+from .core.security import setup_security  # noqa: E402
 from .core.telemetry import setup_telemetry  # noqa: E402
 from .queue import get_change_queue  # noqa: E402
 from .services.miro_client import MiroClient  # noqa: E402
@@ -69,6 +70,7 @@ app = FastAPI(lifespan=lifespan)
 
 # Instrument FastAPI and register middleware and handlers
 setup_fastapi(app)
+setup_security(app)
 setup_telemetry(app)
 add_exception_handlers(app)
 

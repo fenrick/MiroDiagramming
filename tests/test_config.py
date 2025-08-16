@@ -1,9 +1,13 @@
 """Tests for application configuration loading."""
 
 from pathlib import Path
+import importlib
+import shutil
 
 import pytest
+from pydantic import ValidationError
 
+import miro_backend.core.config as config
 from miro_backend.core.config import Settings
 
 
@@ -56,3 +60,40 @@ def test_env_overrides_yaml(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> 
     settings = Settings()
     assert settings.database_url == "sqlite:///env.db"
     assert settings.logfire_send_to_logfire is True
+
+
+def test_missing_secrets_raise_error(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Omitting required secrets raises a validation error."""
+
+    monkeypatch.delenv("MIRO_CLIENT_ID", raising=False)
+    monkeypatch.delenv("MIRO_CLIENT_SECRET", raising=False)
+    monkeypatch.delenv("MIRO_WEBHOOK_SECRET", raising=False)
+
+    with pytest.raises(ValidationError):
+        Settings()
+
+
+def test_creates_default_files_when_missing(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Default files are generated when none are present."""
+
+    for var in ("MIRO_CLIENT_ID", "MIRO_CLIENT_SECRET", "MIRO_WEBHOOK_SECRET"):
+        monkeypatch.delenv(var, raising=False)
+
+    root = Path(__file__).resolve().parents[1]
+    shutil.copy(root / ".env.example", tmp_path / ".env.example")
+    shutil.copy(root / "config.example.yaml", tmp_path / "config.example.yaml")
+    monkeypatch.chdir(tmp_path)
+
+    with pytest.raises(RuntimeError):
+        importlib.reload(config)
+
+    assert (tmp_path / ".env").exists()
+    assert (tmp_path / "config.yaml").exists()
+
+    monkeypatch.chdir(root)
+    monkeypatch.setenv("MIRO_CLIENT_ID", "test-client-id")
+    monkeypatch.setenv("MIRO_CLIENT_SECRET", "test-client-secret")
+    monkeypatch.setenv("MIRO_WEBHOOK_SECRET", "test-webhook-secret")
+    importlib.reload(config)

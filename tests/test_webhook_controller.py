@@ -18,7 +18,8 @@ from miro_backend.schemas.webhook import WebhookEvent, WebhookPayload
 
 
 def _sign(body: bytes) -> str:
-    return hmac.new(settings.webhook_secret.encode(), body, hashlib.sha256).hexdigest()
+    secret = settings.webhook_secret.get_secret_value().encode()
+    return hmac.new(secret, body, hashlib.sha256).hexdigest()
 
 
 # mypy struggles with pytest decorators
