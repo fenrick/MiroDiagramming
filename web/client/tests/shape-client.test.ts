@@ -71,3 +71,16 @@ test('getShape fetches widget', async () => {
   expect(call[0]).toBe('/api/b4/shapes/s9');
   expect(result).toEqual({ id: 's9' });
 });
+
+test('applyOperations posts batch ops', async () => {
+  const api = new ShapeClient('b5', '/api');
+  (fetch as vi.Mock).mockResolvedValueOnce({
+    json: vi.fn().mockResolvedValue({ jobId: 'j1' }),
+  });
+  const res = await api.applyOperations([{ op: 'create' }], 'key');
+  expect((fetch as vi.Mock).mock.calls[0][0]).toBe('/api/b5/ops');
+  expect((fetch as vi.Mock).mock.calls[0][1].headers['Idempotency-Key']).toBe(
+    'key',
+  );
+  expect(res).toEqual({ jobId: 'j1' });
+});
