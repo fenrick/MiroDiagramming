@@ -97,4 +97,29 @@ export class ShapeClient {
     }
     return (await res.json()) as Record<string, unknown>;
   }
+
+  /**
+   * Submit a batch of board operations.
+   *
+   * @param ops - Operations to apply.
+   * @param idempotencyKey - Unique key to enforce idempotent retries.
+   * @returns Server job information.
+   */
+  public async applyOperations(
+    ops: ReadonlyArray<unknown>,
+    idempotencyKey: string,
+  ): Promise<{ jobId: string }> {
+    if (typeof fetch !== 'function') {
+      return { jobId: '' };
+    }
+    const res = await apiFetch(`${this.baseUrl}/${this.boardId}/ops`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Idempotency-Key': idempotencyKey,
+      },
+      body: JSON.stringify(ops),
+    });
+    return (await res.json()) as { jobId: string };
+  }
 }

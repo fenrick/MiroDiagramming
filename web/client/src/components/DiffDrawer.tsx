@@ -1,0 +1,86 @@
+import React from 'react';
+import { Button } from '../ui/components/Button';
+import { ShapeClient } from '../core/utils/shape-client';
+import type { DiffResult } from '../board/computeDiff';
+
+export interface DiffDrawerProps<T extends { id?: string }> {
+  /** Identifier of the target board. */
+  readonly boardId: string;
+  /** Diffed changes to display and apply. */
+  readonly diff: DiffResult<T>;
+  /** Invoked when the drawer should close. */
+  readonly onClose: () => void;
+  /** Optional callback receiving the resulting job identifier. */
+  readonly onApplied?: (jobId: string) => void;
+}
+
+/**
+ * Drawer listing pending board changes and allowing batch submission.
+ */
+export function DiffDrawer<T extends { id?: string }>({
+  boardId,
+  diff,
+  onClose,
+  onApplied,
+}: DiffDrawerProps<T>): React.JSX.Element {
+  const total = diff.creates.length + diff.updates.length + diff.deletes.length;
+
+  const applyChanges = React.useCallback(async () => {
+    if (total === 0) {
+      return;
+    }
+    const client = new ShapeClient(boardId);
+    const ops = [
+      ...diff.creates.map(d => ({ op: 'create', data: d })),
+      ...diff.updates.map(d => ({ op: 'update', id: d.id, data: d })),
+      ...diff.deletes.map(d => ({ op: 'delete', id: d.id })),
+    ];
+    const idempotencyKey = crypto.randomUUID();
+    const { jobId } = await client.applyOperations(ops, idempotencyKey);
+    onApplied?.(jobId);
+  }, [boardId, diff, onApplied, total]);
+
+  React.useEffect(() => {
+    const handleKey = (e: KeyboardEvent): void => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        onClose();
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        void applyChanges();
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [applyChanges, onClose]);
+
+  return (
+    <aside className='diff-drawer'>
+      <h2>Pending changes</h2>
+      <ul>
+        {diff.creates.map((c, i) => (
+          <li key={`c${i}`}>Create {(c as { id?: string }).id ?? i}</li>
+        ))}
+        {diff.updates.map((u, i) => (
+          <li key={`u${i}`}>Update {(u as { id?: string }).id ?? i}</li>
+        ))}
+        {diff.deletes.map((d, i) => (
+          <li key={`d${i}`}>Delete {(d as { id?: string }).id ?? i}</li>
+        ))}
+      </ul>
+      <div className='drawer-actions'>
+        <Button
+          variant='secondary'
+          onClick={onClose}>
+          Cancel
+        </Button>
+        <Button
+          onClick={() => void applyChanges()}
+          disabled={total === 0}
+          title={total === 0 ? 'No changes' : undefined}>
+          {`Apply ${total} changes`}
+        </Button>
+      </div>
+    </aside>
+  );
+}
