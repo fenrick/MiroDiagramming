@@ -1,7 +1,7 @@
 import React from 'react';
 import { useJob } from '../core/hooks/useJob';
 import { useFocusTrap } from '../core/hooks/useFocusTrap';
-import { Button } from '../ui/components/Button';
+import { Button, Checkbox } from '../ui/components';
 
 interface JobDrawerProps {
   /** Identifier of the job to display. */
@@ -85,14 +85,11 @@ export function JobDrawer({
         className='custom-visually-hidden'>
         {announcement}
       </div>
-      <label>
-        <input
-          type='checkbox'
-          checked={closeOnDone}
-          onChange={e => setCloseOnDone(e.target.checked)}
-        />
-        Close when done
-      </label>
+      <Checkbox
+        label='Close when done'
+        value={closeOnDone}
+        onChange={setCloseOnDone}
+      />
       <ul>
         {job?.operations
           .filter(op => !hiddenOps.has(op.id))
