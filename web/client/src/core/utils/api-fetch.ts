@@ -1,7 +1,7 @@
 import { context, propagation } from '@opentelemetry/api';
 import { span } from 'logfire';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '';
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL ?? '';
 
 /**
  * Augment fetch calls with the current user's identifier.
