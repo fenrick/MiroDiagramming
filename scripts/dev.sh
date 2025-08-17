@@ -4,6 +4,7 @@ set -euo pipefail
 export PYTHONPATH="$(pwd):${PYTHONPATH:-}"
 
 # Apply database migrations
+echo "Applying database migrations..."
 poetry run alembic upgrade head
 
 # Start FastAPI backend
