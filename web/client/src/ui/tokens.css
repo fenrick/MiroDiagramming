@@ -1,0 +1,15 @@
+:root {
+  --space-100: 8px; /* base-8 rhythm */
+  --space-200: 16px;
+  --space-300: 24px;
+  --font-200: 14px; /* body */
+  --font-300: 16px; /* large body */
+  --radius-200: 8px;
+}
+
+.h2 {
+  font:
+    600 var(--font-300) / 1.3 system-ui,
+    sans-serif;
+  margin: var(--space-200) 0;
+}

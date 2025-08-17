@@ -20,7 +20,7 @@ export type CheckboxProps = Readonly<
  * It exposes a boolean `value` prop and triggers `onChange` when toggled.
  */
 const StyledGroup = styled(Flex, {
-  marginBottom: '16px',
+  marginBottom: 'var(--space-200)',
   position: 'relative',
 });
 

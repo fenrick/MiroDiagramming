@@ -21,7 +21,7 @@ export type InputFieldProps = Readonly<
 
 /** Single component combining label and input control. */
 const StyledFormField = styled(Form.Field, {
-  marginBottom: '16px',
+  marginBottom: 'var(--space-200)',
   position: 'relative',
 });
 
