@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSyncStore } from '../core/state/sync-store';
+import { apiFetch } from '../core/utils/api-fetch';
 
 const POLL_INTERVAL_MS = 5000;
 const NEAR_LIMIT_THRESHOLD = 10;
@@ -13,7 +14,7 @@ export function SyncStatusBar(): JSX.Element {
     activeJobs,
     state,
     setState,
-    setRemainingCredits,
+    setQueue,
     backoffSeconds,
     setBackoffSeconds,
   } = useSyncStore();
@@ -21,16 +22,17 @@ export function SyncStatusBar(): JSX.Element {
   useEffect(() => {
     let cancelled = false;
     const applyLimits = (data: {
-      remaining: number;
-      retryAfter?: number;
+      queue_length: number;
+      bucket_fill: Record<string, number>;
     }): void => {
-      setRemainingCredits(data.remaining);
-      setBackoffSeconds(data.retryAfter ?? null);
-      if (data.retryAfter && data.retryAfter > 0) {
+      setQueue(data.queue_length);
+      const lowest = Math.min(...Object.values(data.bucket_fill));
+      setBackoffSeconds(null);
+      if (lowest <= 0) {
         setState('rateLimited');
         return;
       }
-      if (data.remaining <= NEAR_LIMIT_THRESHOLD) {
+      if (lowest <= NEAR_LIMIT_THRESHOLD) {
         setState('nearLimit');
         return;
       }
@@ -39,13 +41,13 @@ export function SyncStatusBar(): JSX.Element {
 
     const poll = async (): Promise<void> => {
       try {
-        const res = await fetch('/limits');
+        const res = await apiFetch('/api/limits');
         if (!res.ok) {
           throw new Error('status ' + res.status);
         }
         const data = (await res.json()) as {
-          remaining: number;
-          retryAfter?: number;
+          queue_length: number;
+          bucket_fill: Record<string, number>;
         };
         if (!cancelled) {
           applyLimits(data);
@@ -63,7 +65,7 @@ export function SyncStatusBar(): JSX.Element {
       cancelled = true;
       clearInterval(id);
     };
-  }, [setBackoffSeconds, setRemainingCredits, setState]);
+  }, [setBackoffSeconds, setQueue, setState]);
 
   const remaining = queue + activeJobs;
   let content: JSX.Element | string;
