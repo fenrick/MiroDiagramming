@@ -10,6 +10,7 @@
  * @param message - The text to display.
  */
 import * as log from '../../logger';
+import { getErrorToastMessage } from '../microcopy';
 
 export async function showError(message: string): Promise<void> {
   const trimmed = message.length > 80 ? `${message.slice(0, 77)}...` : message;
@@ -21,4 +22,14 @@ export async function showError(message: string): Promise<void> {
   }
   log.info('Showing error notification');
   await miro.board.notifications.showError(trimmed);
+}
+
+/**
+ * Display a standardised error message for a given HTTP status code.
+ *
+ * @param status - HTTP status returned from an API request.
+ */
+export async function showApiError(status: number): Promise<void> {
+  const message = getErrorToastMessage(status);
+  await showError(message);
 }
