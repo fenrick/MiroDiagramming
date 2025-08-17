@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { Button, Callout } from '@mirohq/design-system';
 import { useAuthStatus } from '../core/hooks/useAuthStatus';
 
 /**
@@ -17,10 +18,16 @@ export const AuthBanner: React.FC = () => {
   const message =
     status === 'unauthorized' ? 'Sign in to Miro' : 'Session expired';
   return (
-    <div role='alert'>
-      <span>{message}</span>
-      <button onClick={signIn}>Sign in to Miro</button>
-    </div>
+    <Callout
+      variant='warning'
+      dismissible={false}>
+      <Callout.Content>
+        <Callout.Description>{message}</Callout.Description>
+      </Callout.Content>
+      <Callout.Actions>
+        <Button onClick={signIn}>Sign in to Miro</Button>
+      </Callout.Actions>
+    </Callout>
   );
 };
 
