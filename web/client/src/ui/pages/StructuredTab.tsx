@@ -37,6 +37,7 @@ import {
   useAdvancedToggle,
   useDiagramCreate,
 } from '../hooks/use-diagram-create';
+import { BoardLoader } from '../../components/BoardLoader';
 
 /**
  * Queue the first file from a drop event for import.
@@ -98,6 +99,7 @@ const LAYOUT_DESCRIPTIONS: Record<LayoutChoice, string> = {
 // eslint-disable-next-line complexity
 export const StructuredTab: React.FC = () => {
   const [importQueue, setImportQueue] = React.useState<File[]>([]);
+  const [boardId, setBoardId] = React.useState<string | null>(null);
   const [layoutChoice, setLayoutChoice] =
     React.useState<LayoutChoice>('Layered');
   const [showAdvanced, setShowAdvanced] = React.useState(false);
@@ -117,6 +119,24 @@ export const StructuredTab: React.FC = () => {
   >(undefined);
 
   useAdvancedToggle(setShowAdvanced);
+
+  React.useEffect(() => {
+    let cancelled = false;
+    const load = async (): Promise<void> => {
+      try {
+        const info = await globalThis.miro?.board?.getInfo?.();
+        if (!cancelled && info?.id) {
+          setBoardId(String(info.id));
+        }
+      } catch {
+        // ignore SDK absence
+      }
+    };
+    void load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const handleFiles = React.useCallback(
     (droppedFiles: File[]): void =>
@@ -379,6 +399,10 @@ export const StructuredTab: React.FC = () => {
           </Grid.Item>
         </Grid>
       )}
+      <section style={{ marginTop: space[200] }}>
+        <h3>Read cached shapes</h3>
+        {boardId && <BoardLoader boardId={boardId} />}
+      </section>
     </TabPanel>
   );
 };

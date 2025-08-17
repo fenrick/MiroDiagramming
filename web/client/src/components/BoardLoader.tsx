@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { apiFetch } from '../core/utils/api-fetch';
+import { Button } from '../ui/components/Button';
 
 interface BoardLoaderProps {
   readonly boardId: string;
@@ -17,6 +18,14 @@ export function BoardLoader({ boardId }: BoardLoaderProps): JSX.Element {
   const [shapes, setShapes] = useState<ShapeSnapshot[]>([]);
   const [version, setVersion] = useState(0);
   const [loading, setLoading] = useState(true);
+
+  const SkeletonRow = (): JSX.Element => (
+    <div
+      data-testid='skeleton'
+      className='skeleton'
+      style={{ height: 20, marginBottom: 8 }}
+    />
+  );
 
   const fetchShapes = useCallback(
     async (since: number): Promise<void> => {
@@ -50,7 +59,6 @@ export function BoardLoader({ boardId }: BoardLoaderProps): JSX.Element {
 
   useEffect(() => {
     void load(version);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const refresh = async (): Promise<void> => {
@@ -64,11 +72,7 @@ export function BoardLoader({ boardId }: BoardLoaderProps): JSX.Element {
     return (
       <div className='board-loader'>
         {Array.from({ length: 3 }, (_, i) => (
-          <div
-            data-testid='skeleton'
-            key={i}
-            style={{ background: '#ccc', height: 20, marginBottom: 8 }}
-          />
+          <SkeletonRow key={i} />
         ))}
       </div>
     );
@@ -78,11 +82,7 @@ export function BoardLoader({ boardId }: BoardLoaderProps): JSX.Element {
     return (
       <div className='board-loader'>
         <div>No items yet. Create shapes or import.</div>
-        <button
-          type='button'
-          onClick={refresh}>
-          Refresh board
-        </button>
+        <Button onClick={refresh}>Refresh board</Button>
       </div>
     );
   }
@@ -94,11 +94,7 @@ export function BoardLoader({ boardId }: BoardLoaderProps): JSX.Element {
           <li key={String(s.id)}>{String(s.id)}</li>
         ))}
       </ul>
-      <button
-        type='button'
-        onClick={refresh}>
-        Refresh board
-      </button>
+      <Button onClick={refresh}>Refresh board</Button>
     </div>
   );
 }
