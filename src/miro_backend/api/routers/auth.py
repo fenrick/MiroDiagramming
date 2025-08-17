@@ -18,12 +18,15 @@ router = APIRouter(prefix="/api/auth", tags=["auth"])
 def get_status(
     user_id: str | None = Header(default=None, alias="X-User-Id"),
     store: UserStore = Depends(get_user_store),
+    debug_auth: str | None = Header(default=None, alias="X-Debug-Auth"),
 ) -> Response:
     """Return 200 when tokens exist for the provided ``X-User-Id`` header."""
     with logfire.span("auth status"):
         if user_id is None or user_id.strip() == "":
             logfire.warning("missing user id header")  # warn about absent user id
             raise BadRequestError("X-User-Id header required")
+        if debug_auth == "expired":
+            raise NotFoundError("User tokens not found")
         if store.retrieve(user_id) is None:
             logfire.warning(
                 "user tokens not found", user_id=user_id
