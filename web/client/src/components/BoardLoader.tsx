@@ -59,7 +59,7 @@ export function BoardLoader({ boardId }: BoardLoaderProps): JSX.Element {
 
   useEffect(() => {
     void load(version);
-  }, []);
+  }, [load, version]);
 
   const refresh = async (): Promise<void> => {
     await apiFetch(`/api/boards/${boardId}/shapes/refresh`, { method: 'POST' });

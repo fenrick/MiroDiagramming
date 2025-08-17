@@ -51,8 +51,27 @@ body {
 .scrollable .buttons {
   position: sticky;
   bottom: 0;
-  padding-block: var(--space-300);
+  padding-block: var(--space-200);
   background: #fff;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-100);
+}
+
+@media (width >= 480px) {
+  .buttons {
+    flex-direction: row;
+  }
+  .buttons button {
+    width: auto;
+  }
+}
+
+.buttons button {
+  width: 100%;
 }
 
 button:focus-visible {
@@ -202,4 +221,22 @@ button:focus-visible {
 
 .diff-delete {
   background: var(--colors-red-700);
+}
+
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sync-status-bar {
+  position: fixed;
+  bottom: var(--space-100);
+  right: var(--space-100);
+  padding: var(--space-100) var(--space-150);
+  background: var(--colors-gray-900);
+  color: var(--colors-white);
+  border-radius: var(--radii-100);
+  box-shadow: var(--shadows-100);
+  font-size: var(--fontSize-200);
 }
