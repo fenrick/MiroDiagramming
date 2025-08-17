@@ -11,7 +11,7 @@
   --space-large: var(--space-400);
   --space-xlarge: var(--space-500);
   --indigoAlpha40: var(--colors-alpha-gray-400);
-  --indigo700: var(--colors-blue-700);
+  --accent-color: var(--colors-blue-700);
   --green700: var(--colors-green-700);
   --red700: var(--colors-red-700);
   --red600: var(--colors-red-600);
@@ -56,7 +56,7 @@ body {
 }
 
 button:focus-visible {
-  outline: 2px solid var(--indigo700);
+  outline: 2px solid var(--accent-color);
   outline-offset: 2px;
 }
 
@@ -149,4 +149,57 @@ button:focus-visible {
   position: absolute;
   top: var(--space-100);
   right: var(--space-100);
+}
+
+.skeleton {
+  background-color: var(--colors-gray-200);
+  color: transparent;
+}
+
+.toast-container {
+  position: fixed;
+  bottom: var(--space-100);
+  right: var(--space-100);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-50);
+  z-index: 1000;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: var(--space-100);
+  background: var(--colors-background-neutrals);
+  color: var(--primary-text-color);
+  border-radius: var(--radii-100);
+  padding: var(--space-xsmall) var(--space-small);
+}
+
+.toast-thumb {
+  width: 24px;
+  height: 24px;
+  object-fit: cover;
+  border-radius: var(--radii-50);
+}
+
+.diff-chip {
+  display: inline-block;
+  padding: 0 var(--space-50);
+  border-radius: var(--radii-100);
+  font-size: var(--font-size-200);
+  color: var(--white);
+  margin-right: var(--space-50);
+}
+
+.diff-create {
+  background: var(--colors-green-700);
+}
+
+.diff-update {
+  background: var(--colors-blue-700);
+}
+
+.diff-delete {
+  background: var(--colors-red-700);
 }

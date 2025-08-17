@@ -4,6 +4,9 @@ import '@testing-library/jest-dom/vitest';
 import React from 'react';
 import { CardProcessor } from '../src/board/card-processor';
 import { CardsTab } from '../src/ui/pages/CardsTab';
+import { pushToast } from '../src/ui/components/Toast';
+
+vi.mock('../src/ui/components/Toast', () => ({ pushToast: vi.fn() }));
 
 vi.mock('../src/board/card-processor');
 
@@ -11,12 +14,7 @@ describe('CardsTab extra paths', () => {
   // TODO extend to test server-backed card lookups once card cache is persistent
   beforeEach(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (globalThis as any).miro = {
-      board: {
-        ui: { on: vi.fn() },
-        notifications: { showError: vi.fn().mockResolvedValue(undefined) },
-      },
-    };
+    (globalThis as any).miro = { board: { ui: { on: vi.fn() } } };
   });
 
   afterEach(() => {
@@ -63,9 +61,6 @@ describe('CardsTab extra paths', () => {
     await act(async () =>
       fireEvent.click(screen.getByRole('button', { name: /create cards/i })),
     );
-    expect(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (globalThis as any).miro.board.notifications.showError,
-    ).toHaveBeenCalledWith('Error: fail');
+    expect(pushToast).toHaveBeenCalledWith({ message: 'Error: fail' });
   });
 });

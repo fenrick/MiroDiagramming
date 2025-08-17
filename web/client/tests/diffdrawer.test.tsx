@@ -73,4 +73,21 @@ describe('DiffDrawer', () => {
     await userEvent.tab();
     expect(cancel).toHaveFocus();
   });
+
+  test('renders chips for each change type', () => {
+    render(
+      <DiffDrawer
+        boardId='b1'
+        diff={{
+          creates: [{ id: 'c1' }],
+          updates: [{ id: 'u1' }],
+          deletes: [{ id: 'd1' }],
+        }}
+        onClose={() => {}}
+      />,
+    );
+    expect(screen.getByText('Create')).toHaveClass('diff-chip', 'diff-create');
+    expect(screen.getByText('Update')).toHaveClass('diff-chip', 'diff-update');
+    expect(screen.getByText('Delete')).toHaveClass('diff-chip', 'diff-delete');
+  });
 });

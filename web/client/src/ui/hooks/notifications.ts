@@ -11,6 +11,7 @@
  */
 import * as log from '../../logger';
 import { getErrorToastMessage } from '../microcopy';
+import { pushToast } from '../components/Toast';
 
 export async function showError(message: string): Promise<void> {
   const trimmed = message.length > 80 ? `${message.slice(0, 77)}...` : message;
@@ -21,7 +22,7 @@ export async function showError(message: string): Promise<void> {
     log.debug('Trimmed long error message');
   }
   log.info('Showing error notification');
-  await miro.board.notifications.showError(trimmed);
+  pushToast({ message: trimmed });
 }
 
 /**

@@ -1,4 +1,5 @@
 import React from 'react';
+import { pushToast } from '../../ui/components/Toast';
 
 /**
  * Definition of an optimistic operation applied to the board.
@@ -14,6 +15,8 @@ export interface OptimisticOp {
   commit: () => Promise<void>;
   /** Revert the local change if committing fails. */
   rollback: () => void | Promise<void>;
+  /** Optional thumbnail used in failure toasts. */
+  thumbnailUrl?: string;
 }
 
 const wait = (ms: number): Promise<void> =>
@@ -36,7 +39,9 @@ export function useOptimisticOps(): (op: OptimisticOp) => Promise<void> {
     } catch {
       await wait(150);
       await op.rollback();
-      await miro.board.notifications.showError('Operation failed', {
+      pushToast({
+        message: 'Operation failed',
+        thumbnailUrl: op.thumbnailUrl,
         action: {
           label: 'Try again',
           callback: () => {

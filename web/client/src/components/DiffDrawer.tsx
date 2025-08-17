@@ -52,13 +52,22 @@ export function DiffDrawer<T extends { id?: string }>({
       <h2>Pending changes</h2>
       <ul>
         {diff.creates.map((c, i) => (
-          <li key={`c${i}`}>Create {(c as { id?: string }).id ?? i}</li>
+          <li key={`c${i}`}>
+            <span className='diff-chip diff-create'>Create</span>
+            {(c as { id?: string }).id ?? i}
+          </li>
         ))}
         {diff.updates.map((u, i) => (
-          <li key={`u${i}`}>Update {(u as { id?: string }).id ?? i}</li>
+          <li key={`u${i}`}>
+            <span className='diff-chip diff-update'>Update</span>
+            {(u as { id?: string }).id ?? i}
+          </li>
         ))}
         {diff.deletes.map((d, i) => (
-          <li key={`d${i}`}>Delete {(d as { id?: string }).id ?? i}</li>
+          <li key={`d${i}`}>
+            <span className='diff-chip diff-delete'>Delete</span>
+            {(d as { id?: string }).id ?? i}
+          </li>
         ))}
       </ul>
       <div className='drawer-actions'>
