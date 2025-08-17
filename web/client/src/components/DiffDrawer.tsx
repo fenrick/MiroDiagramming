@@ -45,7 +45,7 @@ export function DiffDrawer<T extends { id?: string }>({
 
   return (
     <aside
-      className='diff-drawer'
+      className='diff-drawer scrollable'
       ref={trapRef}
       role='dialog'
       aria-modal='true'>
@@ -54,25 +54,37 @@ export function DiffDrawer<T extends { id?: string }>({
         {diff.creates.map((c, i) => (
           <li key={`c${i}`}>
             <span className='diff-chip diff-create'>Create</span>
-            {(c as { id?: string }).id ?? i}
+            <span
+              className='truncate'
+              title={String((c as { id?: string }).id ?? i)}>
+              {(c as { id?: string }).id ?? i}
+            </span>
           </li>
         ))}
         {diff.updates.map((u, i) => (
           <li key={`u${i}`}>
             <span className='diff-chip diff-update'>Update</span>
-            {(u as { id?: string }).id ?? i}
+            <span
+              className='truncate'
+              title={String((u as { id?: string }).id ?? i)}>
+              {(u as { id?: string }).id ?? i}
+            </span>
           </li>
         ))}
         {diff.deletes.map((d, i) => (
           <li key={`d${i}`}>
             <span className='diff-chip diff-delete'>Delete</span>
-            {(d as { id?: string }).id ?? i}
+            <span
+              className='truncate'
+              title={String((d as { id?: string }).id ?? i)}>
+              {(d as { id?: string }).id ?? i}
+            </span>
           </li>
         ))}
       </ul>
-      <div className='drawer-actions'>
+      <div className='buttons'>
         <Button
-          variant='secondary'
+          variant='tertiary'
           onClick={onClose}>
           Cancel
         </Button>

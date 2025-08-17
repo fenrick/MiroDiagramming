@@ -1,4 +1,5 @@
 import React from 'react';
+import { Button } from './Button';
 
 /** A single toast notification. */
 export interface ToastOptions {
@@ -61,13 +62,14 @@ export const ToastContainer: React.FC = () => {
           )}
           <span>{t.message}</span>
           {t.action && (
-            <button
+            <Button
+              variant='tertiary'
               onClick={() => {
                 t.action?.callback();
                 remove(t.id);
               }}>
               {t.action.label}
-            </button>
+            </Button>
           )}
         </div>
       ))}

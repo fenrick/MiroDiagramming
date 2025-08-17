@@ -1,6 +1,7 @@
 import React from 'react';
 import { useJob } from '../core/hooks/useJob';
 import { useFocusTrap } from '../core/hooks/useFocusTrap';
+import { Button } from '../ui/components/Button';
 
 interface JobDrawerProps {
   /** Identifier of the job to display. */
@@ -74,8 +75,9 @@ export function JobDrawer({
   }
 
   return (
-    <div
+    <aside
       ref={trapRef}
+      className='scrollable'
       role='dialog'
       aria-modal='true'>
       <div
@@ -99,17 +101,28 @@ export function JobDrawer({
               key={op.id}
               id={`job-op-${op.id}`}
               tabIndex={-1}>
-              <span>{op.id}</span>
+              <span
+                className='truncate'
+                title={op.id}>
+                {op.id}
+              </span>
               <span>{op.status}</span>
               {op.status === 'failed' && (
                 <>
-                  <button>Retry</button>
-                  <button>Details</button>
+                  <Button variant='tertiary'>Retry</Button>
+                  <Button variant='ghost'>Details</Button>
                 </>
               )}
             </li>
           ))}
       </ul>
-    </div>
+      <div className='buttons'>
+        <Button
+          variant='tertiary'
+          onClick={onClose}>
+          Close
+        </Button>
+      </div>
+    </aside>
   );
 }

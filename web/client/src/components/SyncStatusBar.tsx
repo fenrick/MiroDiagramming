@@ -27,11 +27,11 @@ export function SyncStatusBar(): JSX.Element {
     }): void => {
       setQueue(data.queue_length);
       const lowest = Math.min(...Object.values(data.bucket_fill));
-      setBackoffSeconds(null);
       if (lowest <= 0) {
         setState('rateLimited');
         return;
       }
+      setBackoffSeconds(null);
       if (lowest <= NEAR_LIMIT_THRESHOLD) {
         setState('nearLimit');
         return;
@@ -67,13 +67,29 @@ export function SyncStatusBar(): JSX.Element {
     };
   }, [setBackoffSeconds, setQueue, setState]);
 
+  useEffect(() => {
+    if (state === 'rateLimited' && backoffSeconds === null) {
+      setBackoffSeconds(12);
+    } else if (state !== 'rateLimited') {
+      setBackoffSeconds(null);
+    }
+  }, [state, backoffSeconds, setBackoffSeconds]);
+
+  useEffect(() => {
+    if (backoffSeconds === null || backoffSeconds <= 0) {
+      return;
+    }
+    const id = setTimeout(() => setBackoffSeconds(backoffSeconds - 1), 1000);
+    return () => clearTimeout(id);
+  }, [backoffSeconds, setBackoffSeconds]);
+
   const remaining = queue + activeJobs;
   let content: JSX.Element | string;
 
   if (state === 'disconnected') {
     content = 'Disconnected';
   } else if (state === 'rateLimited') {
-    content = `Pausing for ${backoffSeconds ?? 0}s (auto-resume)`;
+    content = `Pausing (auto-resume in ${backoffSeconds ?? 0}s)`;
   } else if (state === 'nearLimit') {
     content = 'Slowing to avoid limits';
   } else if (remaining > 0) {

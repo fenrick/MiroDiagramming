@@ -55,14 +55,22 @@ describe('SyncStatusBar', () => {
   });
 
   test('shows rate limited when bucket empty', async () => {
+    vi.useFakeTimers();
     (apiFetch as unknown as vi.Mock).mockResolvedValue({
       ok: true,
       json: async () => ({ queue_length: 0, bucket_fill: { user: 0 } }),
     } as Response);
     render(<SyncStatusBar />);
     expect(
-      await screen.findByText('Pausing for 0s (auto-resume)'),
+      await screen.findByText('Pausing (auto-resume in 12s)'),
     ).toBeInTheDocument();
+    await act(async () => {
+      vi.advanceTimersByTime(1000);
+    });
+    expect(
+      await screen.findByText('Pausing (auto-resume in 11s)'),
+    ).toBeInTheDocument();
+    vi.useRealTimers();
   });
 
   test('shows disconnected on fetch error', async () => {
