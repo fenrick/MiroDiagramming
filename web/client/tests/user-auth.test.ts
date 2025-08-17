@@ -40,3 +40,11 @@ test('registerCurrentUser retries on failure', async () => {
   expect(fetchMock).toHaveBeenCalledTimes(2);
   vi.useRealTimers();
 });
+
+test('registerCurrentUser warns and returns when Miro SDK missing', async () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+  await expect(registerWithCurrentUser()).resolves.toBeUndefined();
+  expect(warn).toHaveBeenCalledWith(
+    'Miro SDK not loaded; are you opening index.html outside Miro?',
+  );
+});

@@ -19,7 +19,18 @@ export class DiagramApp {
   /** Register UI handlers with the Miro board. */
   public async init(): Promise<void> {
     log.info('Initialising Miro UI handlers');
-    if (typeof miro === 'undefined' || !miro?.board?.ui) {
+    if (
+      typeof window === 'undefined' ||
+      typeof (window as Window & { miro?: unknown }).miro === 'undefined'
+    ) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        'Miro SDK not loaded; are you opening index.html outside Miro?',
+      );
+      return;
+    }
+    if (!miro?.board?.ui) {
+      log.error('Miro board UI not available');
       throw new Error('Miro SDK not available');
     }
     miro.board.ui.on('icon:click', async () => {
