@@ -69,8 +69,29 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
         logfire.info("change worker stopped")  # event for worker shutdown
 
 
+TAGS_METADATA = [
+    {"name": "auth", "description": "Authentication operations"},
+    {
+        "name": "batch",
+        "description": "Submit operations in bulk; supports idempotency and job tracking.",
+    },
+    {"name": "cache", "description": "Cache management endpoints"},
+    {"name": "cards", "description": "Card operations"},
+    {"name": "logs", "description": "Application log streaming"},
+    {"name": "oauth", "description": "OAuth utilities"},
+    {"name": "shapes", "description": "Shape operations"},
+    {"name": "tags", "description": "Board tag management"},
+    {"name": "users", "description": "User operations"},
+    {"name": "webhook", "description": "Webhook handlers"},
+    {"name": "jobs", "description": "Background job status endpoints"},
+]
+
 BASE_DIR = Path(__file__).resolve().parents[2]
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(
+    lifespan=lifespan,
+    servers=[{"url": settings.server_url}],
+    openapi_tags=TAGS_METADATA,
+)
 
 # Instrument FastAPI and register middleware and handlers
 setup_fastapi(app)

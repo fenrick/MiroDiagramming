@@ -21,7 +21,12 @@ async def post_batch(
     request: BatchRequest,
     queue: ChangeQueue = Depends(get_change_queue),
     user_id: str = Header(alias="X-User-Id"),
-    idempotency_key: str | None = Header(default=None, alias="Idempotency-Key"),
+    idempotency_key: str | None = Header(
+        default=None,
+        alias="Idempotency-Key",
+        description="Unique key to ensure idempotent requests.",
+        example="req-123",
+    ),
 ) -> BatchResponse:
     """Validate ``request`` and enqueue its operations.
 

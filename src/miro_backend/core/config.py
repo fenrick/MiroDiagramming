@@ -29,6 +29,11 @@ class Settings(BaseSettings):
         alias="MIRO_CORS_ORIGINS",
         description="List of allowed CORS origins.",
     )
+    server_url: str = Field(
+        default="http://localhost:8000",
+        alias="MIRO_SERVER_URL",
+        description="Base URL for this service exposed in OpenAPI docs.",
+    )
     client_id: str = Field(
         alias="MIRO_CLIENT_ID",
         description="OAuth client identifier issued by Miro.",
