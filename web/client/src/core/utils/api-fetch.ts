@@ -1,7 +1,7 @@
 import { context, propagation } from '@opentelemetry/api';
 import { span } from 'logfire';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? '';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL ?? '';
 
 /**
  * Augment fetch calls with the current user's identifier.
@@ -21,7 +21,7 @@ export async function apiFetch(
     propagation.inject(context.active(), headers, {
       set: (key, value) => headers.set(key, value),
     });
-    const url = typeof input === 'string' ? `${API_BASE_URL}${input}` : input;
+    const url = typeof input === 'string' ? `${BACKEND_URL}${input}` : input;
     return fetch(url, { ...init, headers });
   });
 }
