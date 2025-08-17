@@ -80,10 +80,10 @@ export const StyleTab: React.FC = () => {
               data-testid='adjust-preview'
               style={{
                 display: 'inline-block',
-                width: '24px',
-                height: '24px',
+                width: 'var(--size-thumb)',
+                height: 'var(--size-thumb)',
                 marginLeft: space[200],
-                border: `1px solid ${colors['gray-200']}`,
+                border: `var(--border-widths-sm) solid ${colors['gray-200']}`,
                 backgroundColor: preview,
               }}
             />
@@ -183,7 +183,7 @@ export const StyleTab: React.FC = () => {
                       borderWidth: style.borderWidth,
                       borderStyle: 'solid',
                       display: 'inline-block',
-                      padding: '0 4px',
+                      padding: `0 var(--space-50)`,
                     }}>
                     {preset.label}
                   </Button>

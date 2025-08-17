@@ -1,4 +1,8 @@
-import { IconButton, IconQuestionMarkCircle } from '@mirohq/design-system';
+import {
+  IconButton,
+  IconQuestionMarkCircle,
+  styled,
+} from '@mirohq/design-system';
 import React from 'react';
 import { Tooltip } from './Tooltip';
 
@@ -13,14 +17,14 @@ export interface PageHelpProps {
  * Displays a question mark icon with a tooltip describing the page.
  *
  * Position this component inside a relatively positioned container so the icon
- * overlays the top-right corner via CSS class `page-help`.
+ * overlays the top-right corner.
  */
 export function PageHelp({
   content,
   ariaLabel = 'Help',
 }: PageHelpProps): React.JSX.Element {
   return (
-    <div className='page-help'>
+    <Container>
       <Tooltip
         content={content}
         side='left'
@@ -32,6 +36,12 @@ export function PageHelp({
           <IconQuestionMarkCircle />
         </IconButton>
       </Tooltip>
-    </div>
+    </Container>
   );
 }
+
+const Container = styled('div', {
+  position: 'absolute',
+  top: 'var(--space-100)',
+  right: 'var(--space-100)',
+});

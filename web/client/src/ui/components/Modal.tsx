@@ -1,4 +1,5 @@
 import React from 'react';
+import { styled } from '@mirohq/design-system';
 import { Button } from './Button';
 
 export interface ModalProps {
@@ -101,13 +102,12 @@ export function Modal({
 
   // Close the modal when the backdrop is activated via mouse or keyboard
   return (
-    <div className='custom-modal-container'>
-      <div
+    <Container>
+      <Backdrop
         role='button'
         tabIndex={0}
         aria-label='Close modal'
         data-testid='modal-backdrop'
-        className='custom-modal-backdrop'
         onClick={e => {
           if (e.target === e.currentTarget) {
             onClose();
@@ -123,14 +123,14 @@ export function Modal({
           }
         }}
       />
-      <dialog
+      <Dialog
         role='dialog'
         open
         aria-label={title}
         aria-modal='true'
-        className={`custom-modal custom-modal-${size}`}
-        ref={ref}>
-        <header className='custom-modal-header'>
+        ref={ref}
+        size={size}>
+        <Header>
           <h3>{title}</h3>
           <Button
             variant='secondary'
@@ -138,9 +138,44 @@ export function Modal({
             onClick={onClose}>
             ×
           </Button>
-        </header>
-        <div className='custom-modal-content'>{children}</div>
-      </dialog>
-    </div>
+        </Header>
+        <Content>{children}</Content>
+      </Dialog>
+    </Container>
   );
 }
+
+const Container = styled('div', { position: 'fixed', inset: 0, zIndex: 1000 });
+
+const Backdrop = styled('div', {
+  position: 'absolute',
+  inset: 0,
+  background: 'var(--colors-background-alpha-neutrals-overlay-subtle)',
+  border: 'none',
+});
+
+const Dialog = styled('dialog', {
+  position: 'relative',
+  margin: 'auto',
+  border: 'none',
+  borderRadius: 'var(--radii-100)',
+  background: 'var(--colors-background-neutrals)',
+  color: 'var(--primary-text-color)',
+  padding: 'var(--space-medium)',
+  maxWidth: 'var(--size-modal-medium)',
+  variants: {
+    size: {
+      small: { width: 'var(--size-modal-small)' },
+      medium: { width: 'var(--size-modal-medium)' },
+    },
+  },
+});
+
+const Header = styled('header', {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginBottom: 'var(--space-small)',
+});
+
+const Content = styled('div', { overflowY: 'auto' });

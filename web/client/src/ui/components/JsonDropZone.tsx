@@ -1,12 +1,9 @@
 import { IconSquareArrowIn, Text } from '@mirohq/design-system';
-import { space as dsSpace } from '@mirohq/design-tokens';
 import React from 'react';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { useDropzone } from 'react-dropzone';
 import { getDropzoneStyle } from '../hooks/ui-utils';
 import { Button } from './Button';
-
-// Provide semantic spacing aliases until the design tokens include them.
-const space = { ...dsSpace, small: dsSpace[200] } as const;
 
 export type JsonDropZoneProps = Readonly<{
   /** Callback invoked with selected files. */
@@ -47,35 +44,36 @@ export function JsonDropZone({
         aria-label='File drop area'
         aria-describedby='dropzone-instructions'>
         {/* hidden input ensures keyboard selection triggers the drop handler */}
-        <input
-          className='custom-visually-hidden'
-          data-testid='file-input'
-          onChange={onChange}
-          aria-label='JSON file input'
-          {...fileInputProps}
-        />
+        <VisuallyHidden asChild>
+          <input
+            data-testid='file-input'
+            onChange={onChange}
+            aria-label='JSON file input'
+            {...fileInputProps}
+          />
+        </VisuallyHidden>
         {dropzone.isDragAccept ? (
-          <p style={{ margin: space.small }}>Drop your JSON file here</p>
+          <p style={{ margin: 'var(--space-200)' }}>Drop your JSON file here</p>
         ) : (
-          <div style={{ padding: space[200] }}>
+          <div style={{ padding: 'var(--space-200)' }}>
             <Button
               variant='primary'
               iconPosition='start'
               icon={<IconSquareArrowIn />}>
               <Text>Select JSON file</Text>
             </Button>
-            <p style={{ marginTop: space.small }}>
+            <p style={{ marginTop: 'var(--space-200)' }}>
               Or drop your JSON file here
             </p>
           </div>
         )}
       </div>
-      <p
-        id='dropzone-instructions'
-        className='custom-visually-hidden'>
-        Press Enter to open the file picker or drop a JSON file on the area
-        above.
-      </p>
+      <VisuallyHidden asChild>
+        <p id='dropzone-instructions'>
+          Press Enter to open the file picker or drop a JSON file on the area
+          above.
+        </p>
+      </VisuallyHidden>
     </>
   );
 }

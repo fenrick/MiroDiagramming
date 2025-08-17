@@ -1,7 +1,14 @@
 import { Grid, IconArrowArcLeft, IconPlus, Text } from '@mirohq/design-system';
 import React from 'react';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { CardProcessor } from '../../board/card-processor';
-import { Button, ButtonToolbar, Checkbox, InputField } from '../components';
+import {
+  Button,
+  ButtonToolbar,
+  Checkbox,
+  DroppedFileList,
+  InputField,
+} from '../components';
 import { StickyActions } from '../StickyActions';
 import { JsonDropZone } from '../components/JsonDropZone';
 import { PageHelp } from '../components/PageHelp';
@@ -70,15 +77,17 @@ export const CardsTab: React.FC = () => {
       {files.length > 0 && (
         <Grid columns={2}>
           <Grid.Item>
-            <ul className='custom-dropped-files'>
+            <DroppedFileList>
               {files.map(file => (
                 <li key={`${file.name}-${file.lastModified}`}>{file.name}</li>
               ))}
-            </ul>
+            </DroppedFileList>
           </Grid.Item>
           <Grid.Item>
             <fieldset>
-              <legend className='custom-visually-hidden'>Card options</legend>
+              <VisuallyHidden asChild>
+                <legend>Card options</legend>
+              </VisuallyHidden>
               <Checkbox
                 label='Wrap items in frame'
                 value={withFrame}

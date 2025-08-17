@@ -1,4 +1,10 @@
-import { DropdownMenu, IconButton, IconFunnel } from '@mirohq/design-system';
+import {
+  DropdownMenu,
+  Flex,
+  IconButton,
+  IconFunnel,
+} from '@mirohq/design-system';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import React from 'react';
 import { InputField } from './InputField';
 
@@ -63,8 +69,13 @@ export function FilterDropdown({
           Whole word
         </DropdownMenu.SwitchItem>
         <DropdownMenu.Separator />
-        <div className='custom-form-group-small'>
-          <legend className='custom-visually-hidden'>Widget Types</legend>
+        <Flex
+          direction='column'
+          gap={100}
+          css={{ marginBottom: 'var(--space-200)' }}>
+          <VisuallyHidden asChild>
+            <legend>Widget Types</legend>
+          </VisuallyHidden>
           <div>
             {['shape', 'card', 'sticky_note', 'text'].map(t => (
               <DropdownMenu.CheckboxItem
@@ -75,7 +86,7 @@ export function FilterDropdown({
               </DropdownMenu.CheckboxItem>
             ))}
           </div>
-        </div>
+        </Flex>
         <InputField
           label='Tag IDs'
           value={tagIds}

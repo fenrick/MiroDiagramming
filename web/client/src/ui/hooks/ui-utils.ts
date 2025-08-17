@@ -10,7 +10,7 @@ const dropzoneStyles = {
   flexDirection: 'column',
   justifyContent: 'center',
   textAlign: 'center',
-  border: `3px dashed ${colors['alpha-black-400']}`,
+  border: `var(--border-widths-md) dashed ${colors['alpha-black-400']}`,
   color: colors['gray-700'],
   fontWeight: fontWeights.semibold,
   fontSize: fontSizes[200],

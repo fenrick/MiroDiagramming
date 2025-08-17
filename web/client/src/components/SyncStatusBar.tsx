@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { styled } from '@mirohq/design-system';
 import { useSyncStore } from '../core/state/sync-store';
 import { apiFetch } from '../core/utils/api-fetch';
 
@@ -94,23 +95,36 @@ export function SyncStatusBar(): JSX.Element {
   } else if (state === 'nearLimit') {
     content = 'Slowing to avoid limits';
   } else if (remaining > 0) {
-    progress = (
-      <div
-        data-testid='sync-progress'
-        className='skeleton sync-progress'
-      />
-    );
+    progress = <Progress data-testid='sync-progress' />;
     content = `Syncing ${remaining} changes…`;
   } else {
     content = 'All changes saved';
   }
 
   return (
-    <div
-      className='sync-status-bar'
-      role='status'>
+    <StatusBar role='status'>
       {progress}
       {content}
-    </div>
+    </StatusBar>
   );
 }
+
+const StatusBar = styled('div', {
+  position: 'absolute',
+  bottom: 'var(--space-100)',
+  right: 'var(--space-100)',
+  padding: 'var(--space-100) var(--space-150)',
+  background: 'var(--colors-gray-900)',
+  color: 'var(--colors-white)',
+  borderRadius: 'var(--radii-100)',
+  boxShadow: 'var(--shadows-100)',
+  fontSize: 'var(--fontSize-200)',
+});
+
+const Progress = styled('div', {
+  width: '100%',
+  height: 'var(--space-100)',
+  borderRadius: 'var(--radii-100)',
+  marginBottom: 'var(--space-100)',
+  backgroundColor: 'var(--colors-gray-200)',
+});
