@@ -6,25 +6,21 @@ import React from 'react';
 import { App } from '../src/app/App';
 import { GraphProcessor } from '../src/core/graph/graph-processor';
 import { getDropzoneStyle, undoLastImport } from '../src/ui/hooks/ui-utils';
+import { pushToast } from '../src/ui/components/Toast';
 
-interface GlobalWithMiro {
-  miro?: { board?: Record<string, unknown> };
-}
-
-declare const global: GlobalWithMiro;
+vi.mock('../src/ui/components/Toast', () => ({ pushToast: vi.fn() }));
 
 describe('App UI integration', () => {
   beforeEach(() => {
-    global.miro = {
-      board: {
-        notifications: { showError: vi.fn().mockResolvedValue(undefined) },
-      },
-    };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (global as any).miro = { board: {} };
+    vi.clearAllMocks();
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
-    delete global.miro;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    delete (global as any).miro;
   });
 
   function selectFile(): File {
@@ -70,9 +66,7 @@ describe('App UI integration', () => {
     const button = screen.getByRole('button', { name: /create diagram/i });
     await act(async () => fireEvent.click(button));
     expect(spy).toHaveBeenCalled();
-    expect(global.miro.board.notifications.showError).toHaveBeenCalledWith(
-      'Error: fail',
-    );
+    expect(pushToast).toHaveBeenCalledWith({ message: 'Error: fail' });
   });
 
   test('withFrame option forwards frame title', async () => {

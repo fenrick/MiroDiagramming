@@ -1,0 +1,76 @@
+import React from 'react';
+
+/** A single toast notification. */
+export interface ToastOptions {
+  /** Message to display. */
+  message: string;
+  /** Optional thumbnail image URL. */
+  thumbnailUrl?: string;
+  /** Optional action button. */
+  action?: { label: string; callback: () => void };
+}
+
+interface Toast extends ToastOptions {
+  id: string;
+}
+
+const listeners = new Set<(t: Toast) => void>();
+
+/** Emit a toast to all listeners. */
+export function pushToast(opts: ToastOptions): void {
+  const toast: Toast = { id: crypto.randomUUID(), ...opts };
+  listeners.forEach(l => l(toast));
+}
+
+/**
+ * Container rendering toast notifications in the bottom-right corner.
+ */
+export const ToastContainer: React.FC = () => {
+  const [toasts, setToasts] = React.useState<Toast[]>([]);
+
+  React.useEffect(() => {
+    const listener = (t: Toast) => {
+      setToasts(prev => {
+        const next = [...prev, t];
+        return next.slice(-3);
+      });
+      setTimeout(() => {
+        setToasts(prev => prev.filter(to => to.id !== t.id));
+      }, 5000);
+    };
+    listeners.add(listener);
+    return () => listeners.delete(listener);
+  }, []);
+
+  const remove = (id: string) =>
+    setToasts(prev => prev.filter(t => t.id !== id));
+
+  return (
+    <div className='toast-container'>
+      {toasts.map(t => (
+        <div
+          key={t.id}
+          className='toast'
+          role='alert'>
+          {t.thumbnailUrl && (
+            <img
+              className='toast-thumb'
+              src={t.thumbnailUrl}
+              alt=''
+            />
+          )}
+          <span>{t.message}</span>
+          {t.action && (
+            <button
+              onClick={() => {
+                t.action?.callback();
+                remove(t.id);
+              }}>
+              {t.action.label}
+            </button>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+};

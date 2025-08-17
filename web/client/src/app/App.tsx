@@ -6,6 +6,7 @@ import { AuthBanner } from '../components/AuthBanner';
 import { EditMetadataModal, IntroScreen } from '../ui/components';
 import { Paragraph } from '../ui/components/Paragraph';
 import { ExcelDataProvider } from '../ui/hooks/excel-data-context';
+import { ToastContainer } from '../ui/components/Toast';
 
 import { type Tab, TAB_DATA } from '../ui/pages/tabs';
 
@@ -80,6 +81,7 @@ function AppShell(): React.JSX.Element {
           isOpen={showMeta}
           onClose={() => setShowMeta(false)}
         />
+        <ToastContainer />
       </ExcelDataProvider>
     </div>
   );
