@@ -10,6 +10,7 @@ from sqlalchemy import delete
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import Session, sessionmaker
 
+from ..core.config import settings
 from ..db.session import SessionLocal
 from ..models import Idempotency
 
@@ -54,7 +55,7 @@ async def cleanup_idempotency() -> None:
             deleted = await asyncio.to_thread(purge_expired_idempotency)
             if deleted:
                 logfire.info("removed stale idempotency rows", extra={"count": deleted})
-            await asyncio.sleep(60 * 60 * 24)
+            await asyncio.sleep(settings.idempotency_cleanup_seconds)
     except asyncio.CancelledError:
         logfire.info("idempotency cleanup stopped")
         raise

@@ -95,6 +95,11 @@ class Settings(BaseSettings):
         alias="MIRO_BUCKET_REFRESH_MS",
         description="Interval in milliseconds for refilling the token bucket.",
     )
+    idempotency_cleanup_seconds: float = Field(
+        default=60 * 60 * 24,
+        alias="MIRO_IDEMPOTENCY_CLEANUP_SECONDS",
+        description="Interval in seconds between idempotency cleanup runs.",
+    )
 
     model_config = SettingsConfigDict(
         env_file="config/.env", extra="ignore", populate_by_name=True
