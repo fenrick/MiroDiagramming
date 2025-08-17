@@ -24,6 +24,8 @@ test('polls until job completes', async () => {
   await Promise.resolve();
   await vi.advanceTimersByTimeAsync(1000);
   await Promise.resolve();
+  expect(spy).toHaveBeenNthCalledWith(1, '/api/jobs/1');
+  expect(spy).toHaveBeenNthCalledWith(2, '/api/jobs/1');
   expect(spy).toHaveBeenCalledTimes(2);
   expect(result.current?.status).toBe('done');
 });
@@ -37,6 +39,7 @@ test('returns cached result for duplicate job id', async () => {
   const { result, unmount } = renderHook(() => useJob('1'));
   await Promise.resolve();
   await vi.runAllTimersAsync();
+  expect(spy).toHaveBeenCalledWith('/api/jobs/1');
   expect(spy).toHaveBeenCalledTimes(1);
   expect(result.current?.status).toBe('done');
   unmount();
