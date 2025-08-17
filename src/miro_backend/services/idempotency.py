@@ -35,7 +35,13 @@ def purge_expired_idempotency(
                 delete(Idempotency).where(Idempotency.created_at < cutoff)
             )
             session.commit()
-        except OperationalError:
+        except OperationalError as exc:
+            logfire.warning(
+                "failed to purge expired idempotency rows",
+                ttl_seconds=int(ttl.total_seconds()),
+                session=str(session.bind),
+                error=exc,
+            )
             return 0
         return result.rowcount or 0
 
