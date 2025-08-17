@@ -3,6 +3,7 @@ import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import type { ExcelRow } from '../core/utils/excel-loader';
 import { AuthBanner } from '../components/AuthBanner';
+import { SyncStatusBar } from '../components/SyncStatusBar';
 import { EditMetadataModal, IntroScreen } from '../ui/components';
 import { Paragraph } from '../ui/components/Paragraph';
 import { ExcelDataProvider } from '../ui/hooks/excel-data-context';
@@ -75,6 +76,7 @@ function AppShell(): React.JSX.Element {
             ))}
           </Tabs.List>
         </Tabs>
+        <SyncStatusBar />
         <Paragraph>{current[3]}</Paragraph>
         <CurrentComp />
         <EditMetadataModal
