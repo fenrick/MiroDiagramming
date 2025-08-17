@@ -41,6 +41,7 @@
     "exceljs": "^4.4.0",
     "logfire": "^0.9.0",
     "@opentelemetry/api": "^1.9.0",
+    "@mirohq/websdk-react-hooks": "^0.0.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-dropzone": "^14.3.8",

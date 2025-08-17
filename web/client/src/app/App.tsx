@@ -1,6 +1,5 @@
-import { createTheme, Tabs, themes } from '@mirohq/design-system';
+import { Tabs } from '@mirohq/design-system';
 import * as React from 'react';
-import { createRoot } from 'react-dom/client';
 import type { ExcelRow } from '../core/utils/excel-loader';
 import { AuthBanner } from '../components/AuthBanner';
 import { SyncStatusBar } from '../components/SyncStatusBar';
@@ -11,8 +10,6 @@ import { ToastContainer } from '../ui/components/Toast';
 import { PanelShell } from '../ui/PanelShell';
 
 import { type Tab, TAB_DATA } from '../ui/pages/tabs';
-
-const lightThemeClassName = createTheme(themes.light);
 
 /**
  * React entry component that renders the file selection and mode
@@ -107,10 +104,3 @@ export const App: React.FC = () => {
     </PanelShell>
   );
 };
-
-const container = document.getElementById('root');
-if (container) {
-  container.classList += lightThemeClassName;
-  const root = createRoot(container);
-  root.render(<App />);
-}
