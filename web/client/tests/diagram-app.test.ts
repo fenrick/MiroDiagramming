@@ -41,8 +41,11 @@ describe('DiagramApp', () => {
     });
   });
 
-  test('init throws when miro is undefined', async () =>
-    await expect(DiagramApp.getInstance().init()).rejects.toThrow(
-      'Miro SDK not available',
-    ));
+  test('init warns and returns when miro is undefined', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    await expect(DiagramApp.getInstance().init()).resolves.toBeUndefined();
+    expect(warn).toHaveBeenCalledWith(
+      'Miro SDK not loaded; are you opening index.html outside Miro?',
+    );
+  });
 });
