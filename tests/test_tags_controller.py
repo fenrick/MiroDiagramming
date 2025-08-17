@@ -25,19 +25,19 @@ def teardown_module() -> None:
 
 def _create_board_with_tags() -> int:
     session = SessionLocal()
-    board = Board(name="test-board")
+    board = Board(board_id="b1", owner_id="user-1", name="test-board")
     session.add(board)
     session.commit()
-    board_id = int(board.id)
+    board_pk = int(board.id)
     session.add_all(
         [
-            Tag(board_id=board_id, name="beta"),
-            Tag(board_id=board_id, name="alpha"),
+            Tag(board_id=board_pk, name="beta"),
+            Tag(board_id=board_pk, name="alpha"),
         ]
     )
     session.commit()
     session.close()
-    return board_id
+    return board_pk
 
 
 def test_list_tags_sorted_by_name() -> None:

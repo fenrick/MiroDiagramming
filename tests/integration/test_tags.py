@@ -24,17 +24,17 @@ async def test_list_tags_sorted(
     client, _queue = client_queue
     Base.metadata.create_all(bind=engine)
     session = SessionLocal()
-    board = Board(name="test-board")
+    board = Board(board_id="b1", owner_id="user-1", name="test-board")
     session.add(board)
     session.commit()
-    board_id = int(board.id)
+    board_pk = int(board.id)
     session.add_all(
-        [Tag(board_id=board_id, name="beta"), Tag(board_id=board_id, name="alpha")]
+        [Tag(board_id=board_pk, name="beta"), Tag(board_id=board_pk, name="alpha")]
     )
     session.commit()
     session.close()
 
-    response = await client.get(f"/api/boards/{board_id}/tags")
+    response = await client.get(f"/api/boards/{board_pk}/tags")
     Base.metadata.drop_all(bind=engine)
     assert response.status_code == 200
     data = response.json()
