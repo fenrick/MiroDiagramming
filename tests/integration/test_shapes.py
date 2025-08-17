@@ -7,6 +7,7 @@ import pytest
 
 from typing import TYPE_CHECKING
 
+from miro_backend.db.session import Base, SessionLocal, engine
 from miro_backend.queue.tasks import CreateShape
 from miro_backend.schemas.shape import ShapeCreate
 from miro_backend.services.shape_store import get_shape_store
@@ -23,8 +24,11 @@ async def test_create_shape_enqueues_task(
     """Creating a shape should persist it and enqueue a change task."""
 
     client, queue = client_queue
-    store = get_shape_store()
+    Base.metadata.create_all(bind=engine)
+    session = SessionLocal()
+    store = get_shape_store(session)
     store.add_board("b1", "user-1")
+    session.close()
 
     payload = ShapeCreate(content="box").model_dump()
     response = await client.post(
@@ -39,5 +43,13 @@ async def test_create_shape_enqueues_task(
     task = queue.tasks[0]
     assert isinstance(task, CreateShape)
     assert task.board_id == "b1"
-    assert task.shape_id == data["id"]
+    shape_id = data["id"]
+    assert task.shape_id == shape_id
     assert task.user_id == "user-1"
+
+    restored_session = SessionLocal()
+    restored = get_shape_store(restored_session).get("b1", shape_id)
+    restored_session.close()
+    Base.metadata.drop_all(bind=engine)
+    assert restored is not None
+    assert restored.content == "box"

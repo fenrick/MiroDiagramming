@@ -5,6 +5,11 @@ from __future__ import annotations
 from threading import Lock
 from typing import Protocol
 
+from fastapi import Depends
+from sqlalchemy.orm import Session
+
+from ..db.session import get_session
+from ..models import Board, Shape as ShapeModel
 from ..schemas.shape import Shape
 
 
@@ -73,10 +78,88 @@ class InMemoryShapeStore(ShapeStore):
                 self._boards[board_id].pop(shape_id, None)
 
 
-_store = InMemoryShapeStore()
+class DbShapeStore(ShapeStore):
+    """Database-backed implementation of :class:`ShapeStore`."""
+
+    def __init__(self, session: Session) -> None:
+        self._session = session
+
+    def add_board(self, board_id: str, owner_id: str) -> None:
+        board = (
+            self._session.query(Board).filter(Board.board_id == board_id).one_or_none()
+        )
+        if board is None:
+            board = Board(board_id=board_id, owner_id=owner_id)
+            self._session.add(board)
+        else:
+            board.owner_id = owner_id
+        self._session.commit()
+
+    def board_owner(self, board_id: str) -> str | None:
+        board = (
+            self._session.query(Board).filter(Board.board_id == board_id).one_or_none()
+        )
+        return board.owner_id if board else None
+
+    def list(self, board_id: str) -> list[Shape]:
+        records = (
+            self._session.query(ShapeModel)
+            .filter(ShapeModel.board_id == board_id)
+            .all()
+        )
+        return [Shape(id=r.shape_id, **r.payload) for r in records]
+
+    def get(self, board_id: str, shape_id: str) -> Shape | None:
+        record = (
+            self._session.query(ShapeModel)
+            .filter(
+                ShapeModel.board_id == board_id,
+                ShapeModel.shape_id == shape_id,
+            )
+            .one_or_none()
+        )
+        if record is None:
+            return None
+        return Shape(id=record.shape_id, **record.payload)
+
+    def create(self, board_id: str, shape: Shape) -> None:
+        record = ShapeModel(
+            board_id=board_id,
+            shape_id=shape.id,
+            payload=shape.model_dump(exclude={"id"}),
+        )
+        self._session.merge(record)
+        self._session.commit()
+
+    def update(self, board_id: str, shape: Shape) -> None:
+        record = (
+            self._session.query(ShapeModel)
+            .filter(
+                ShapeModel.board_id == board_id,
+                ShapeModel.shape_id == shape.id,
+            )
+            .one_or_none()
+        )
+        if record is None:
+            return
+        record.payload = shape.model_dump(exclude={"id"})
+        self._session.commit()
+
+    def delete(self, board_id: str, shape_id: str) -> None:
+        record = (
+            self._session.query(ShapeModel)
+            .filter(
+                ShapeModel.board_id == board_id,
+                ShapeModel.shape_id == shape_id,
+            )
+            .one_or_none()
+        )
+        if record is not None:
+            self._session.delete(record)
+            self._session.commit()
 
 
-def get_shape_store() -> ShapeStore:
-    """Provide the global shape store instance."""
+def get_shape_store(session: Session = Depends(get_session)) -> ShapeStore:
+    """FastAPI dependency provider for :class:`ShapeStore`."""
 
-    return _store
+    return DbShapeStore(session)
