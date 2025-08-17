@@ -8,18 +8,10 @@ from fastapi.testclient import TestClient
 from miro_backend.queue import ChangeQueue
 from miro_backend.queue.provider import get_change_queue
 from miro_backend.schemas.user_info import UserInfo
-from miro_backend.services.rate_limiter import get_rate_limiter
 from miro_backend.services.user_store import (
     InMemoryUserStore,
     get_user_store,
 )
-
-
-class DummyLimiter:
-    """Stub limiter returning fixed bucket fills."""
-
-    def bucket_fill(self) -> dict[str, int]:
-        return {"user": 1}
 
 
 def setup_app() -> Any:
@@ -32,7 +24,6 @@ def setup_app() -> Any:
     queue.worker = _idle_worker
     app_module.change_queue = queue  # type: ignore[attr-defined]
     app_module.app.dependency_overrides[get_change_queue] = lambda: queue
-    app_module.app.dependency_overrides[get_rate_limiter] = lambda: DummyLimiter()
     return app_module
 
 
