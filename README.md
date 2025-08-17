@@ -24,16 +24,10 @@ Copy `web/client/.env.example` to `web/client/.env` and adjust the values as nee
 
 ### Development
 
-Start the FastAPI server:
+Run migrations and start both the FastAPI server and Vite dev server:
 
 ```bash
-poetry run uvicorn src.miro_backend.main:app --reload --port 8000
-```
-
-Start the React client:
-
-```bash
-(cd web/client && npm run dev)
+./scripts/dev.sh
 ```
 
 ## Uploading JSON Content
@@ -263,6 +257,14 @@ scopes:
    https://github.com/horeaporutiu/app-examples-template/assets/10428517/b23d9c4c-e785-43f9-a72e-fa5d82c7b019
 
 ## Testing
+
+Run the backend test suite:
+
+```bash
+./scripts/test.sh
+```
+
+The script creates a temporary SQLite database and runs `pytest -q`.
 
 The root `AGENTS.md` lists the commands to run before committing. Be sure to
 install dependencies first:

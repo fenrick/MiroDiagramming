@@ -4,7 +4,9 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, Header, status
 import logfire
+from sqlalchemy.orm import Session
 
+from ...db.session import get_session
 from ...queue.change_queue import ChangeQueue
 from ...queue.provider import get_change_queue
 from ...schemas.batch import BatchRequest, BatchResponse
@@ -20,6 +22,7 @@ _IDEMPOTENCY_CACHE: dict[str, BatchResponse] = {}
 async def post_batch(
     request: BatchRequest,
     queue: ChangeQueue = Depends(get_change_queue),
+    session: Session = Depends(get_session),
     user_id: str = Header(alias="X-User-Id"),
     idempotency_key: str | None = Header(default=None, alias="Idempotency-Key"),
 ) -> BatchResponse:
@@ -34,20 +37,20 @@ async def post_batch(
 
     with logfire.span("post batch"):
         if idempotency_key and queue.persistence is not None:
-            existing = await queue.persistence.get_response(idempotency_key)
+            existing = await queue.persistence.get_idempotent(idempotency_key)
             if existing is not None:
                 return BatchResponse.model_validate(existing)
 
-        count = await enqueue_operations(request.operations, queue, user_id)
-        response = BatchResponse(enqueued=count)
+        job_id, count = await enqueue_operations(
+            request.operations, queue, user_id, session
+        )
+        response = BatchResponse(enqueued=count, job_id=job_id)
         logfire.info("batch operations enqueued", count=count)  # event after enqueuing
         if idempotency_key is not None:
             _IDEMPOTENCY_CACHE[idempotency_key] = response
 
-        response = BatchResponse(enqueued=count)
-
         if idempotency_key and queue.persistence is not None:
-            await queue.persistence.save_response(
+            await queue.persistence.save_idempotent(
                 idempotency_key, response.model_dump()
             )
 

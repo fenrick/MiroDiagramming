@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Iterator
+from typing import Any
 
 import pytest
 from fastapi.testclient import TestClient
@@ -10,18 +11,19 @@ from fastapi.testclient import TestClient
 from miro_backend.main import app
 from miro_backend.queue.provider import get_change_queue
 from miro_backend.queue.tasks import CreateNode, UpdateCard
+from miro_backend.db.session import Base, engine
 
 
 class MemoryPersistence:
     """In-memory store for idempotency responses."""
 
     def __init__(self) -> None:
-        self.responses: dict[str, dict[str, int]] = {}
+        self.responses: dict[str, dict[str, Any]] = {}
 
-    async def get_response(self, key: str) -> dict[str, int] | None:
+    async def get_idempotent(self, key: str) -> dict[str, Any] | None:
         return self.responses.get(key)
 
-    async def save_response(self, key: str, response: dict[str, int]) -> None:
+    async def save_idempotent(self, key: str, response: dict[str, Any]) -> None:
         self.responses[key] = response
 
 
@@ -39,12 +41,14 @@ class DummyQueue:
 # mypy struggles with pytest fixtures
 @pytest.fixture  # type: ignore[misc]
 def client_queue() -> Iterator[tuple[TestClient, DummyQueue]]:
+    Base.metadata.create_all(bind=engine)
     persistence = MemoryPersistence()
     queue = DummyQueue(persistence=persistence)
     app.dependency_overrides[get_change_queue] = lambda: queue
     client = TestClient(app)
     yield client, queue
     app.dependency_overrides.clear()
+    Base.metadata.drop_all(bind=engine)
 
 
 def test_post_batch_enqueues_tasks(client_queue: tuple[TestClient, DummyQueue]) -> None:
@@ -57,7 +61,9 @@ def test_post_batch_enqueues_tasks(client_queue: tuple[TestClient, DummyQueue]) 
     }
     response = client.post("/api/batch", json=body, headers={"X-User-Id": "u1"})
     assert response.status_code == 202
-    assert response.json() == {"enqueued": 2}
+    data = response.json()
+    assert data["enqueued"] == 2
+    assert isinstance(data["job_id"], str)
     assert len(queue.tasks) == 2
     assert isinstance(queue.tasks[0], CreateNode)
     assert isinstance(queue.tasks[1], UpdateCard)
@@ -79,7 +85,7 @@ def test_post_batch_returns_cached_response(
 ) -> None:
     client, queue = client_queue
     assert queue.persistence is not None
-    queue.persistence.responses["key1"] = {"enqueued": 3}
+    queue.persistence.responses["key1"] = {"enqueued": 3, "job_id": "j1"}
     body = {"operations": [{"type": "create_node", "node_id": "n1", "data": {"x": 1}}]}
     response = client.post(
         "/api/batch",
@@ -87,7 +93,7 @@ def test_post_batch_returns_cached_response(
         headers={"Idempotency-Key": "key1", "X-User-Id": "u1"},
     )
     assert response.status_code == 202
-    assert response.json() == {"enqueued": 3}
+    assert response.json() == {"enqueued": 3, "job_id": "j1"}
     assert len(queue.tasks) == 0
 
 
@@ -108,6 +114,8 @@ def test_post_batch_saves_idempotent_response(
         headers={"Idempotency-Key": key, "X-User-Id": "u1"},
     )
     assert response.status_code == 202
-    assert response.json() == {"enqueued": 2}
+    data = response.json()
+    assert data["enqueued"] == 2
+    assert isinstance(data["job_id"], str)
     assert queue.persistence is not None
-    assert queue.persistence.responses[key] == {"enqueued": 2}
+    assert queue.persistence.responses[key] == data

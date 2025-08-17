@@ -44,7 +44,7 @@ class Repository(Generic[ModelT]):
     # Read operations
     # ------------------------------------------------------------------
     @logfire.instrument("get model")  # type: ignore[misc]
-    def get(self, id_: int) -> ModelT | None:
+    def get(self, id_: Any) -> ModelT | None:
         """Return an entity by primary key if present."""
 
         result = self.session.get(self.model, id_)
@@ -66,6 +66,19 @@ class Repository(Generic[ModelT]):
         entry = self.session.query(CacheEntry).filter_by(key=board_id).one_or_none()
         logfire.info("board state fetched", board_id=board_id)  # event: cache lookup
         return entry.value if entry else None
+
+    @logfire.instrument("set board state")  # type: ignore[misc]
+    def set_board_state(self, board_id: str, snapshot: dict[str, Any]) -> None:
+        """Store ``snapshot`` as the cached state for ``board_id``."""
+
+        entry = self.session.query(CacheEntry).filter_by(key=board_id).one_or_none()
+        if entry is None:
+            entry = CacheEntry(key=board_id, value=snapshot)
+            self.session.add(entry)
+        else:
+            entry.value = snapshot
+        self.session.commit()
+        logfire.info("board state updated", board_id=board_id)
 
     # ------------------------------------------------------------------
     # Delete operations

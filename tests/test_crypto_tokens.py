@@ -11,6 +11,7 @@ from miro_backend.models.user import User
 from miro_backend.services.miro_client import MiroClient
 from miro_backend.services.user_store import InMemoryUserStore, get_user_store
 from miro_backend.core import config
+from miro_backend.core.security import sign_state
 from miro_backend.services import crypto as crypto_module
 
 
@@ -27,7 +28,7 @@ class StubClient(MiroClient):  # type: ignore[misc]
         return {"access_token": "tok", "refresh_token": "ref", "expires_in": 3600}
 
 
-def setup_app() -> tuple[TestClient, InMemoryUserStore]:
+def setup_app() -> tuple[TestClient, InMemoryUserStore, oauth.OAuthConfig]:
     app = FastAPI()
     app.include_router(oauth.router)
     store = InMemoryUserStore()
@@ -44,19 +45,20 @@ def setup_app() -> tuple[TestClient, InMemoryUserStore]:
     app.dependency_overrides[get_user_store] = lambda: store
     app.dependency_overrides[oauth.get_miro_client] = lambda: stub
     app.dependency_overrides[oauth.get_oauth_config] = lambda: cfg
-    return TestClient(app), store
+    return TestClient(app), store, cfg
 
 
 def test_tokens_are_encrypted() -> None:
     key = Fernet.generate_key().decode()
     config.settings.encryption_key = key
     reload(crypto_module)
-    client, _ = setup_app()
+    client, _, cfg = setup_app()
     User.__table__.create(bind=engine, checkfirst=True)
     try:
+        state = sign_state(cfg.client_secret, "x", "u1")
         res = client.get(
             "/oauth/callback",
-            params={"code": "c", "state": "x:u1"},
+            params={"code": "c", "state": state},
             allow_redirects=False,
         )
         assert res.status_code == 307
