@@ -21,8 +21,8 @@ export function StickyActions({
         position: 'sticky',
         bottom: 0,
         background: 'var(--mds-surface, #fff)',
-        paddingTop: 12,
-        paddingBottom: 12,
+        paddingTop: 'var(--space-200)',
+        paddingBottom: 'var(--space-200)',
       }}>
       {children}
     </div>

@@ -16,8 +16,8 @@ describe('StickyActions', () => {
       position: 'sticky',
       bottom: '0px',
       background: 'var(--mds-surface, #fff)',
-      paddingTop: '12px',
-      paddingBottom: '12px',
+      paddingTop: 'var(--space-200)',
+      paddingBottom: 'var(--space-200)',
     });
   });
 });
