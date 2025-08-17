@@ -37,6 +37,8 @@ class QueuedTask(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     type: Mapped[str] = mapped_column(String, index=True)
     payload: Mapped[str] = mapped_column(Text)
+    status: Mapped[str] = mapped_column(String, default="queued", index=True)
+    attempts: Mapped[int] = mapped_column(Integer, default=0)
 
 
 class SqlAlchemyQueuePersistence:
@@ -78,7 +80,12 @@ class SqlAlchemyQueuePersistence:
     def load(self) -> list[ChangeTask]:
         with self._session_factory() as session:
             try:
-                rows = session.query(QueuedTask).order_by(QueuedTask.id).all()
+                rows = (
+                    session.query(QueuedTask)
+                    .filter_by(status="queued")
+                    .order_by(QueuedTask.id)
+                    .all()
+                )
             except OperationalError:
                 return []
         tasks: list[ChangeTask] = []
@@ -88,6 +95,39 @@ class SqlAlchemyQueuePersistence:
                 continue
             tasks.append(cls.model_validate_json(row.payload))
         return tasks
+
+    async def mark_completed(self, task: ChangeTask) -> None:
+        """Mark ``task`` as completed in persistence."""
+
+        await asyncio.to_thread(self._mark_completed, task)
+
+    def _mark_completed(self, task: ChangeTask) -> None:
+        with self._session_factory() as session:
+            row = (
+                session.query(QueuedTask)
+                .filter_by(type=task.__class__.__name__, payload=task.model_dump_json())
+                .first()
+            )
+            if row is not None:
+                row.status = "completed"
+                session.commit()
+
+    async def reset_to_queued(self, task: ChangeTask) -> None:
+        """Reset ``task`` to queued state and increment its attempt count."""
+
+        await asyncio.to_thread(self._reset_to_queued, task)
+
+    def _reset_to_queued(self, task: ChangeTask) -> None:
+        with self._session_factory() as session:
+            row = (
+                session.query(QueuedTask)
+                .filter_by(type=task.__class__.__name__, payload=task.model_dump_json())
+                .first()
+            )
+            if row is not None:
+                row.status = "queued"
+                row.attempts = (row.attempts or 0) + 1
+                session.commit()
 
     async def save_idempotent(self, key: str, response: dict[str, Any]) -> None:
         await asyncio.to_thread(self._save_idempotent, key, response)

@@ -114,18 +114,30 @@ class ChangeQueue:
 
     @logfire.instrument("dequeue task")  # type: ignore[misc]
     async def dequeue(self) -> ChangeTask:
-        """Retrieve the next task from the queue and remove persisted state."""
+        """Retrieve the next task from the queue."""
 
         task = await self._queue.get()
         logfire.info("task dequeued", task=task)
-        if self._persistence is not None:
-            # Remove task from persistence after dequeue
-            async with self._lock:
-                logfire.info("removing task from persistence", task=task)
-                await self._persistence.delete(task)
         # Update metric after removing task
         change_queue_length.set(self._queue.qsize())
         return task
+
+    async def mark_task_succeeded(self, task: ChangeTask) -> None:
+        """Remove ``task`` from persistence after successful processing."""
+
+        if self._persistence is None:
+            return
+        async with self._lock:
+            await self._persistence.mark_completed(task)
+            await self._persistence.delete(task)
+
+    async def mark_task_failed(self, task: ChangeTask) -> None:
+        """Reset ``task`` to queued state on failure."""
+
+        if self._persistence is None:
+            return
+        async with self._lock:
+            await self._persistence.reset_to_queued(task)
 
     def bucket_fill(self) -> dict[str, int]:
         """Return remaining tokens per user."""
@@ -204,6 +216,7 @@ class ChangeQueue:
                             if len(results["operations"]) >= results.get("total", 0):
                                 job.status = "succeeded"
                             session.commit()
+                        await self.mark_task_succeeded(task)
                         break
                     except Exception as exc:  # noqa: BLE001 - re-raised after retries
                         status = getattr(exc, "status", None) or getattr(
@@ -228,6 +241,7 @@ class ChangeQueue:
                                 logfire.error(
                                     "task failed after retries", task=task, error=exc
                                 )
+                            await self.mark_task_failed(task)
                             raise
                         retry_after = getattr(exc, "retry_after", None)
                         delay = (
