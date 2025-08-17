@@ -9,6 +9,7 @@ import { applyGridLayout, GridOptions } from '../../board/grid-tools';
 import { applySpacingLayout, SpacingOptions } from '../../board/spacing-tools';
 import {
   Button,
+  ButtonToolbar,
   Checkbox,
   InputField,
   SelectField,
@@ -118,7 +119,7 @@ export const ArrangeTab: React.FC = () => {
           </Grid.Item>
         )}
         <Grid.Item>
-          <div className='buttons'>
+          <ButtonToolbar className='toolbar'>
             <Button
               onClick={applyGrid}
               variant='primary'
@@ -126,7 +127,7 @@ export const ArrangeTab: React.FC = () => {
               icon={<IconGrid />}>
               <Text>Arrange Grid</Text>
             </Button>
-          </div>
+          </ButtonToolbar>
         </Grid.Item>
 
         <Grid.Item>
@@ -152,7 +153,7 @@ export const ArrangeTab: React.FC = () => {
               onValueChange={v => updateSpacing(v)}
               placeholder='Distance'
             />
-            <div className='buttons'>
+            <ButtonToolbar className='toolbar'>
               <Button
                 onClick={applySpacing}
                 variant='primary'
@@ -160,7 +161,7 @@ export const ArrangeTab: React.FC = () => {
                 icon={<IconChevronRightDouble />}>
                 <Text>Distribute</Text>
               </Button>
-            </div>
+            </ButtonToolbar>
           </div>
         </Grid.Item>
       </Grid>

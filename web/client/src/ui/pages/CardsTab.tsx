@@ -1,7 +1,7 @@
 import { Grid, IconArrowArcLeft, IconPlus, Text } from '@mirohq/design-system';
 import React from 'react';
 import { CardProcessor } from '../../board/card-processor';
-import { Button, Checkbox, InputField } from '../components';
+import { Button, ButtonToolbar, Checkbox, InputField } from '../components';
 import { JsonDropZone } from '../components/JsonDropZone';
 import { PageHelp } from '../components/PageHelp';
 import { TabPanel } from '../components/TabPanel';
@@ -94,7 +94,7 @@ export const CardsTab: React.FC = () => {
             </fieldset>
           </Grid.Item>
           <Grid.Item>
-            <div className='buttons'>
+            <ButtonToolbar className='toolbar'>
               <Button
                 onClick={handleCreate}
                 variant='primary'
@@ -102,13 +102,6 @@ export const CardsTab: React.FC = () => {
                 iconPosition='start'>
                 <Text>Create Cards</Text>
               </Button>
-              {progress > 0 && progress < 100 && (
-                <progress
-                  value={progress}
-                  max={100}
-                />
-              )}
-              {error && <p className='error'>{error}</p>}
               {showUndo && (
                 <Button
                   onClick={() =>
@@ -129,7 +122,14 @@ export const CardsTab: React.FC = () => {
                   <Text>Undo Last Import</Text>
                 </Button>
               )}
-            </div>
+            </ButtonToolbar>
+            {progress > 0 && progress < 100 && (
+              <progress
+                value={progress}
+                max={100}
+              />
+            )}
+            {error && <p className='error'>{error}</p>}
           </Grid.Item>
         </Grid>
       )}

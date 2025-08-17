@@ -1,4 +1,4 @@
-import { Button as DSButton, styled } from '@mirohq/design-system';
+import { Button as DSButton } from '@mirohq/design-system';
 import { CSS } from '@stitches/react';
 import React from 'react';
 
@@ -24,10 +24,6 @@ export type ButtonProps = Readonly<
     css?: CSS;
   }
 >;
-
-const baseMargin = { margin: '0 var(--space-small) var(--space-small) 0' };
-
-const StyledDSButton = styled(DSButton, baseMargin);
 
 function getIconSlots(
   icon: React.ReactNode,
@@ -69,7 +65,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const { start, end } = getIconSlots(icon, iconPosition);
 
     return (
-      <StyledDSButton
+      <DSButton
         ref={ref}
         variant={variant}
         size={finalSize}
@@ -78,7 +74,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {start}
         <DSButton.Label>{children}</DSButton.Label>
         {end}
-      </StyledDSButton>
+      </DSButton>
     );
   },
 );

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button } from '../ui/components/Button';
+import { ButtonToolbar } from '../ui/components/ButtonToolbar';
 import { ShapeClient } from '../core/utils/shape-client';
 import { useFocusTrap } from '../core/hooks/useFocusTrap';
 import type { DiffResult } from '../board/computeDiff';
@@ -82,7 +83,7 @@ export function DiffDrawer<T extends { id?: string }>({
           </li>
         ))}
       </ul>
-      <div className='buttons'>
+      <ButtonToolbar className='toolbar'>
         <Button
           variant='tertiary'
           onClick={onClose}>
@@ -94,7 +95,7 @@ export function DiffDrawer<T extends { id?: string }>({
           title={total === 0 ? 'No changes' : undefined}>
           {`Apply ${total} changes`}
         </Button>
-      </div>
+      </ButtonToolbar>
     </aside>
   );
 }

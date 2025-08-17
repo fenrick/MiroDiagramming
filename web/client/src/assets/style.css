@@ -54,35 +54,11 @@ body {
   width: 320px;
 }
 
-.scrollable .buttons {
+.scrollable .toolbar {
   position: sticky;
   bottom: 0;
   padding-block: var(--space-200);
   background: #fff;
-}
-
-.buttons {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-100);
-}
-
-@media (width >= 480px) {
-  .buttons {
-    flex-direction: row;
-  }
-  .buttons button {
-    width: auto;
-  }
-}
-
-.buttons button {
-  width: 100%;
-}
-
-button:focus-visible {
-  outline: 2px solid var(--accent-color);
-  outline-offset: 2px;
 }
 
 .custom-dropped-files {
@@ -148,7 +124,7 @@ button:focus-visible {
   background: var(--colors-background-neutrals);
   color: var(--primary-text-color);
   padding: var(--space-medium);
-  max-width: 400px;
+  max-width: 320px;
 }
 
 .custom-modal-small {
@@ -156,7 +132,7 @@ button:focus-visible {
 }
 
 .custom-modal-medium {
-  width: 400px;
+  width: 320px;
 }
 
 .custom-modal-header {

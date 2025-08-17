@@ -10,7 +10,7 @@ import {
   lockSelectedFrames,
   renameSelectedFrames,
 } from '../../board/frame-tools';
-import { Button, InputField } from '../components';
+import { Button, ButtonToolbar, InputField } from '../components';
 import { PageHelp } from '../components/PageHelp';
 import { TabPanel } from '../components/TabPanel';
 import type { TabTuple } from './tab-definitions';
@@ -38,7 +38,7 @@ export const FramesTab: React.FC = () => {
           />
         </Grid.Item>
         <Grid.Item>
-          <div className='buttons'>
+          <ButtonToolbar className='toolbar'>
             <Button
               onClick={rename}
               variant='primary'
@@ -46,13 +46,13 @@ export const FramesTab: React.FC = () => {
               icon={<IconPen />}>
               <Text>Rename Frames</Text>
             </Button>
-          </div>
+          </ButtonToolbar>
         </Grid.Item>
         <Grid.Item>
           <Heading level={2}>Lock Frames</Heading>
         </Grid.Item>
         <Grid.Item>
-          <div className='buttons'>
+          <ButtonToolbar className='toolbar'>
             <Button
               onClick={lock}
               variant='secondary'
@@ -60,7 +60,7 @@ export const FramesTab: React.FC = () => {
               icon={<IconLockClosed />}>
               <Text>Lock Selected</Text>
             </Button>
-          </div>
+          </ButtonToolbar>
         </Grid.Item>
       </Grid>
     </TabPanel>

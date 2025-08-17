@@ -25,6 +25,7 @@ import {
 } from '../../core/utils/unit-utils';
 import {
   Button,
+  ButtonToolbar,
   InputField,
   Paragraph,
   SelectField,
@@ -210,7 +211,7 @@ export const ResizeTab: React.FC = () => {
           </div>
         </Grid.Item>
       </Grid>
-      <div className='buttons'>
+      <ButtonToolbar className='toolbar'>
         <Button
           onClick={apply}
           variant='primary'
@@ -225,7 +226,7 @@ export const ResizeTab: React.FC = () => {
           icon={copiedSize ? <IconArrowArcLeft /> : <IconSquaresTwoOverlap />}>
           <Text>{copiedSize ? 'Reset Copy' : 'Copy Size'}</Text>
         </Button>
-      </div>
+      </ButtonToolbar>
     </TabPanel>
   );
 };

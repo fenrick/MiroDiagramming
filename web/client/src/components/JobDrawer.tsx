@@ -1,7 +1,7 @@
 import React from 'react';
 import { useJob } from '../core/hooks/useJob';
 import { useFocusTrap } from '../core/hooks/useFocusTrap';
-import { Button, Checkbox } from '../ui/components';
+import { Button, ButtonToolbar, Checkbox } from '../ui/components';
 
 interface JobDrawerProps {
   /** Identifier of the job to display. */
@@ -114,13 +114,13 @@ export function JobDrawer({
             </li>
           ))}
       </ul>
-      <div className='buttons'>
+      <ButtonToolbar className='toolbar'>
         <Button
           variant='tertiary'
           onClick={onClose}>
           Close
         </Button>
-      </div>
+      </ButtonToolbar>
     </aside>
   );
 }

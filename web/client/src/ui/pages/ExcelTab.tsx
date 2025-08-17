@@ -10,6 +10,7 @@ import {
 } from '../../core/utils/excel-loader';
 import {
   Button,
+  ButtonToolbar,
   Checkbox,
   InputField,
   Paragraph,
@@ -521,7 +522,7 @@ function ExcelTabView({
               </li>
             ))}
           </ul>
-          <div className='buttons'>
+          <ButtonToolbar className='toolbar'>
             <Button
               onClick={handleCreate}
               variant='primary'
@@ -534,7 +535,7 @@ function ExcelTabView({
               variant='secondary'>
               Apply changes
             </Button>
-          </div>
+          </ButtonToolbar>
         </>
       )}
       <RowInspector
