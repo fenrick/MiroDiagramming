@@ -1,4 +1,11 @@
-import { Form, Grid, Heading, IconSlidersX, Text } from '@mirohq/design-system';
+import {
+  Form,
+  Grid,
+  Heading,
+  IconSlidersX,
+  Slider,
+  Text,
+} from '@mirohq/design-system';
 import { colors, space } from '@mirohq/design-tokens';
 import React from 'react';
 import { applyStylePreset, presetStyle } from '../../board/format-tools';
@@ -49,32 +56,25 @@ export const StyleTab: React.FC = () => {
       setBaseColor(colour);
     }
   }, []);
-  const sliderId = React.useId();
   return (
     <TabPanel tabId='style'>
       <PageHelp content='Lighten or darken the fill colour of selected shapes' />
       <Grid columns={2}>
         <Grid.Item>
           <Form.Field>
-            <Form.Label htmlFor={sliderId}>Adjust fill</Form.Label>
-            <input
-              id={sliderId}
-              data-testid='adjust-slider'
-              type='range'
-              min='-100'
-              max='100'
-              list='adjust-marks'
+            <Form.Label>Adjust fill</Form.Label>
+            <Slider
+              aria-label='Adjust fill'
+              min={-100}
+              max={100}
+              step={1}
               value={adjust}
-              onChange={e => setAdjust(Number(e.target.value))}
-            />
-            <datalist id='adjust-marks'>
-              {[-100, -50, 0, 50, 100].map(n => (
-                <option
-                  key={n}
-                  value={n}
-                />
-              ))}
-            </datalist>
+              onValueChange={setAdjust}>
+              <Slider.Track>
+                <Slider.Range />
+              </Slider.Track>
+              <Slider.Thumb />
+            </Slider>
             <span
               data-testid='adjust-preview'
               style={{
