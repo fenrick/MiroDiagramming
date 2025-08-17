@@ -1,5 +1,10 @@
 import { beforeEach, expect, test, vi } from 'vitest';
 import { ShapeClient, type ShapeData } from '../src/core/utils/shape-client';
+vi.mock('logfire', () => ({
+  span: (_: string, fn: () => unknown) => fn(),
+  warning: vi.fn(),
+  error: vi.fn(),
+}));
 
 vi.stubGlobal('fetch', vi.fn());
 vi.stubGlobal('miro', {
@@ -20,8 +25,10 @@ test('createShape sends single payload', async () => {
     json: vi.fn().mockResolvedValue([{ body: '{}' }]),
   });
   const result = await api.createShape(shape);
+  const call = (fetch as vi.Mock).mock.calls[0];
   expect((fetch as vi.Mock).mock.calls).toHaveLength(1);
-  expect(JSON.parse((fetch as vi.Mock).mock.calls[0][1].body)).toHaveLength(1);
+  expect(JSON.parse(call[1].body)).toHaveLength(1);
+  expect(call[1].headers.get('Idempotency-Key')).toBeDefined();
   expect(result).toBeDefined();
 });
 
@@ -38,8 +45,10 @@ test('createShapes posts all shapes in one request', async () => {
     json: vi.fn().mockResolvedValue(shapes.map(() => ({ body: '{}' }))),
   });
   const res = await api.createShapes(shapes);
+  const call = (fetch as vi.Mock).mock.calls[0];
   expect((fetch as vi.Mock).mock.calls).toHaveLength(1);
-  expect(JSON.parse((fetch as vi.Mock).mock.calls[0][1].body)).toHaveLength(25);
+  expect(JSON.parse(call[1].body)).toHaveLength(25);
+  expect(call[1].headers.get('Idempotency-Key')).toBeDefined();
   expect(res).toHaveLength(25);
 });
 

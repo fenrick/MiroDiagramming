@@ -18,9 +18,10 @@ export class CardClient {
     if (typeof fetch !== 'function') {
       return;
     }
+    const key = crypto.randomUUID?.() ?? String(Date.now()) + Math.random();
     await apiFetch(this.url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Idempotency-Key': key },
       body: JSON.stringify(cards),
     });
   }

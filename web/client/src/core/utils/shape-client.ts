@@ -55,9 +55,10 @@ export class ShapeClient {
     if (typeof fetch !== 'function') {
       return [];
     }
+    const key = crypto.randomUUID?.() ?? String(Date.now()) + Math.random();
     const res = await apiFetch(this.url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 'Idempotency-Key': key },
       body: JSON.stringify(shapes),
     });
     const data = (await res.json()) as Array<{ body: string }>;
