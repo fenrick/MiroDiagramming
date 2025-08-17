@@ -1,4 +1,5 @@
 import React from 'react';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { useJob } from '../core/hooks/useJob';
 import { useFocusTrap } from '../core/hooks/useFocusTrap';
 import { Button, ButtonToolbar, Checkbox } from '../ui/components';
@@ -83,12 +84,13 @@ export function JobDrawer({
       role='dialog'
       aria-modal='true'>
       <ScrollArea>
-        <div
-          aria-live='polite'
-          role='status'
-          className='custom-visually-hidden'>
-          {announcement}
-        </div>
+        <VisuallyHidden asChild>
+          <div
+            aria-live='polite'
+            role='status'>
+            {announcement}
+          </div>
+        </VisuallyHidden>
         <Checkbox
           label='Close when done'
           value={closeOnDone}

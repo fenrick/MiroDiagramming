@@ -1,4 +1,5 @@
 import React from 'react';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import introText from '../intro.md?raw';
 import { Button } from './Button';
 import { Markdown } from './Markdown';
@@ -22,7 +23,7 @@ export function IntroScreen({ onStart }: IntroScreenProps): React.JSX.Element {
         className='intro-screen'
         data-testid='intro-screen'>
         <Markdown source={introText} />
-        <span className='custom-visually-hidden'>Welcome to Quick Tools</span>
+        <VisuallyHidden>Welcome to Quick Tools</VisuallyHidden>
         <Button
           variant='primary'
           onClick={onStart}

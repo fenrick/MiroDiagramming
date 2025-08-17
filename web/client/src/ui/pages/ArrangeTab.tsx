@@ -15,6 +15,7 @@ import {
   SelectField,
   SelectOption,
 } from '../components';
+import { Flex } from '@mirohq/design-system';
 import { PageHelp } from '../components/PageHelp';
 import { TabPanel } from '../components/TabPanel';
 import type { TabTuple } from './tab-definitions';
@@ -134,7 +135,10 @@ export const ArrangeTab: React.FC = () => {
         </Grid.Item>
 
         <Grid.Item>
-          <div className='custom-form-group-small'>
+          <Flex
+            direction='column'
+            gap={100}
+            css={{ marginBottom: 'var(--space-200)' }}>
             <SelectField
               label='Axis'
               value={spacing.axis}
@@ -167,7 +171,7 @@ export const ArrangeTab: React.FC = () => {
                 </Button>
               </ButtonToolbar>
             </StickyActions>
-          </div>
+          </Flex>
         </Grid.Item>
       </Grid>
     </TabPanel>

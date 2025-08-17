@@ -1,10 +1,31 @@
 :root {
+  --space-xxsmall: var(--space-50);
+  --space-xsmall: var(--space-100);
+  --space-small: var(--space-200);
+  --space-medium: var(--space-300);
+  --space-large: var(--space-400);
+  --space-xlarge: var(--space-500);
   --space-100: 8px; /* base-8 rhythm */
   --space-200: 16px;
   --space-300: 24px;
   --font-200: 14px; /* body */
   --font-300: 16px; /* large body */
+  --font-size-large: var(--fontSize-250);
+  --font-weight-bold: var(--font-weights-semibold);
   --radius-200: 8px;
+  --indigoAlpha40: var(--colors-alpha-gray-400);
+  --accent-color: var(--colors-blue-700);
+  --green700: var(--colors-green-700);
+  --red700: var(--colors-red-700);
+  --red600: var(--colors-red-600);
+  --white: var(--white);
+  --black: var(--black);
+  --primary-text-color: var(--colors-gray-900);
+  --size-drawer: 320px;
+  --size-modal-small: 300px;
+  --size-modal-medium: 320px;
+  --size-thumb: 24px;
+  --size-dropped-files-max: 80px;
 }
 
 .h2 {

@@ -1,4 +1,6 @@
 import React from 'react';
+import { Flex } from '@mirohq/design-system';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { Button } from './Button';
 
 export interface SegmentedOption {
@@ -21,8 +23,12 @@ export function SegmentedControl({
   options,
 }: SegmentedControlProps): React.JSX.Element {
   return (
-    <fieldset className='custom-segment'>
-      <legend className='custom-visually-hidden'>Layout type</legend>
+    <Flex
+      as='fieldset'
+      gap={50}>
+      <VisuallyHidden asChild>
+        <legend>Layout type</legend>
+      </VisuallyHidden>
       {options.map(opt => (
         <Button
           key={opt.value}
@@ -31,6 +37,6 @@ export function SegmentedControl({
           {opt.label}
         </Button>
       ))}
-    </fieldset>
+    </Flex>
   );
 }

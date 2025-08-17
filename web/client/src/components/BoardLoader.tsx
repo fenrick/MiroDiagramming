@@ -1,6 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { apiFetch } from '../core/utils/api-fetch';
 import { Button } from '../ui/components/Button';
+import { styled } from '@mirohq/design-system';
+
+const Skeleton = styled('div', {
+  backgroundColor: 'var(--colors-gray-200)',
+  color: 'transparent',
+  height: 'var(--space-250)',
+  marginBottom: 'var(--space-100)',
+});
 
 interface BoardLoaderProps {
   readonly boardId: string;
@@ -19,13 +27,7 @@ export function BoardLoader({ boardId }: BoardLoaderProps): JSX.Element {
   const [version, setVersion] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  const SkeletonRow = (): JSX.Element => (
-    <div
-      data-testid='skeleton'
-      className='skeleton'
-      style={{ height: 20, marginBottom: 8 }}
-    />
-  );
+  const SkeletonRow = (): JSX.Element => <Skeleton data-testid='skeleton' />;
 
   const fetchShapes = useCallback(
     async (since: number): Promise<void> => {

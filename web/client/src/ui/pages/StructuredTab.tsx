@@ -1,6 +1,7 @@
 import { Grid, IconArrowArcLeft, IconPlus, Text } from '@mirohq/design-system';
 import { space } from '@mirohq/design-tokens';
 import React from 'react';
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import {
   ExistingNodeMode,
   GraphProcessor,
@@ -25,6 +26,7 @@ import {
   Button,
   ButtonToolbar,
   Checkbox,
+  DroppedFileList,
   InputField,
   SelectField,
   SelectOption,
@@ -174,17 +176,17 @@ export const StructuredTab: React.FC = () => {
       {importQueue.length > 0 && (
         <Grid columns={2}>
           <Grid.Item>
-            <ul className='custom-dropped-files'>
+            <DroppedFileList>
               {importQueue.map(file => (
                 <li key={`${file.name}-${file.lastModified}`}>{file.name}</li>
               ))}
-            </ul>
+            </DroppedFileList>
           </Grid.Item>
           <Grid.Item>
             <fieldset>
-              <legend className='custom-visually-hidden'>
-                Diagram options
-              </legend>
+              <VisuallyHidden asChild>
+                <legend>Diagram options</legend>
+              </VisuallyHidden>
               <SelectField
                 label='Layout type'
                 value={layoutChoice}
