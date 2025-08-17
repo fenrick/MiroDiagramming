@@ -68,7 +68,9 @@ function AppShell(): React.JSX.Element {
             {TAB_DATA.map(t => (
               <Tabs.Trigger
                 key={t[1]}
-                value={t[1]}>
+                value={t[1]}
+                className='truncate'
+                title={t[2]}>
                 {t[2]}
               </Tabs.Trigger>
             ))}

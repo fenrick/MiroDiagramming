@@ -17,8 +17,8 @@ export interface ModalProps {
 /**
  * Accessible modal dialog with focus trap and Escape key handling.
  *
- * Uses the native `<dialog>` element which has an implicit
- * `dialog` role, so no explicit ARIA role is set.
+ * Uses the native `<dialog>` element and sets an explicit
+ * `dialog` role for assistive technologies.
  */
 export function Modal({
   title,
@@ -124,6 +124,7 @@ export function Modal({
         }}
       />
       <dialog
+        role='dialog'
         open
         aria-label={title}
         aria-modal='true'
