@@ -3,7 +3,7 @@ import * as React from 'react';
 import type { ExcelRow } from '../core/utils/excel-loader';
 import { AuthBanner } from '../components/AuthBanner';
 import { SyncStatusBar } from '../components/SyncStatusBar';
-import { EditMetadataModal, IntroScreen } from '../ui/components';
+import { EditMetadataModal, IntroScreen, Tooltip } from '../ui/components';
 import { Paragraph } from '../ui/components/Paragraph';
 import { ExcelDataProvider } from '../ui/hooks/excel-data-context';
 import { ToastContainer } from '../ui/components/Toast';
@@ -70,9 +70,10 @@ function AppShell(): React.JSX.Element {
               <Tabs.Trigger
                 key={t[1]}
                 value={t[1]}
-                className='truncate'
-                title={t[2]}>
-                {t[2]}
+                aria-label={t[2]}>
+                <Tooltip content={t[2]}>
+                  <span className='truncate'>{t[2]}</span>
+                </Tooltip>
               </Tabs.Trigger>
             ))}
           </Tabs.List>
