@@ -9,7 +9,7 @@ from typing import AsyncIterator
 
 from fastapi import FastAPI, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from typing import Awaitable, Callable
 from fastapi.staticfiles import StaticFiles
 
@@ -190,14 +190,12 @@ async def metrics() -> Response:
         )
 
 
-@app.get("/", response_class=HTMLResponse)  # type: ignore[misc]
-async def root() -> HTMLResponse:
+@app.get("/", response_class=RedirectResponse)  # type: ignore[misc]
+async def root() -> RedirectResponse:
     """Redirect browsers to the built front-end."""
     with logfire.span("root redirect"):
         logfire.info("redirecting to frontend")  # event for root redirect
-        return HTMLResponse(
-            '<script>window.location.href="/static/index.html"</script>'
-        )
+        return RedirectResponse(url="/static/index.html")
 
 
 @app.get("/health")  # type: ignore[misc]
