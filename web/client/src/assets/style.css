@@ -185,16 +185,6 @@ button:focus-visible {
   z-index: 1000;
 }
 
-.toast {
-  display: flex;
-  align-items: center;
-  gap: var(--space-100);
-  background: var(--colors-background-neutrals);
-  color: var(--primary-text-color);
-  border-radius: var(--radii-100);
-  padding: var(--space-xsmall) var(--space-small);
-}
-
 .toast-thumb {
   width: 24px;
   height: 24px;

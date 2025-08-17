@@ -1,4 +1,5 @@
 import React from 'react';
+import { Callout } from '@mirohq/design-system';
 import { Button } from './Button';
 
 /** A single toast notification. */
@@ -49,29 +50,33 @@ export const ToastContainer: React.FC = () => {
   return (
     <div className='toast-container'>
       {toasts.map(t => (
-        <div
+        <Callout
           key={t.id}
-          className='toast'
-          role='alert'>
-          {t.thumbnailUrl && (
-            <img
-              className='toast-thumb'
-              src={t.thumbnailUrl}
-              alt=''
-            />
-          )}
-          <span>{t.message}</span>
+          role='alert'
+          dismissible={false}>
+          <Callout.Content>
+            {t.thumbnailUrl && (
+              <img
+                className='toast-thumb'
+                src={t.thumbnailUrl}
+                alt=''
+              />
+            )}
+            <Callout.Description>{t.message}</Callout.Description>
+          </Callout.Content>
           {t.action && (
-            <Button
-              variant='tertiary'
-              onClick={() => {
-                t.action?.callback();
-                remove(t.id);
-              }}>
-              {t.action.label}
-            </Button>
+            <Callout.Actions>
+              <Button
+                variant='tertiary'
+                onClick={() => {
+                  t.action?.callback();
+                  remove(t.id);
+                }}>
+                {t.action.label}
+              </Button>
+            </Callout.Actions>
           )}
-        </div>
+        </Callout>
       ))}
     </div>
   );
