@@ -16,7 +16,7 @@ export type SelectFieldProps = Readonly<
 
 /** Single component combining label and select control. */
 const StyledFormField = styled(Form.Field, {
-  marginBottom: '16px',
+  marginBottom: 'var(--space-200)',
   position: 'relative',
 });
 

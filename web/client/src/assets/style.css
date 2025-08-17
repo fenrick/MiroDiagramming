@@ -1,3 +1,4 @@
+@import '../ui/tokens.css';
 @import '@mirohq/design-tokens/tokens.css';
 @import '@mirohq/design-system-themes/base.css';
 @import '@mirohq/design-system-themes/light.css';
