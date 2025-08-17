@@ -1,5 +1,9 @@
 ## unreleased
 
+### Bug Fixes
+
+* enable soft token-bucket limiter for production queue
+
 ## [1.18.1](https://github.com/fenrick/MiroDiagramming/compare/v1.18.0...v1.18.1) (2025-07-19)
 
 
