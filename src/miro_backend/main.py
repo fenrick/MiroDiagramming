@@ -29,6 +29,7 @@ from .core.security import setup_security  # noqa: E402
 from .core.telemetry import setup_telemetry  # noqa: E402
 from .queue import get_change_queue  # noqa: E402
 from .queue.change_queue import change_queue_length  # noqa: E402
+from .queue.persistence import cleanup_idempotency  # noqa: E402
 from .services.miro_client import MiroClient  # noqa: E402
 from .db.session import SessionLocal  # noqa: E402
 
@@ -58,13 +59,17 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     client = MiroClient()
     session = SessionLocal()
     worker = asyncio.create_task(change_queue.worker(session, client))
+    cleanup = asyncio.create_task(cleanup_idempotency())
     try:
         logfire.info("change worker started")  # event for worker start
         yield
     finally:
         worker.cancel()
+        cleanup.cancel()
         with contextlib.suppress(asyncio.CancelledError):
             await worker
+        with contextlib.suppress(asyncio.CancelledError):
+            await cleanup
         session.close()
         logfire.info("change worker stopped")  # event for worker shutdown
 

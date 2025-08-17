@@ -6,6 +6,8 @@ import sqlite3
 from pathlib import Path
 from typing import Any, Type, cast
 
+import logfire
+
 from .tasks import (
     ChangeTask,
     CreateNode,
@@ -158,3 +160,32 @@ class QueuePersistence:
         if row is None:
             return None
         return cast(dict[str, Any], json.loads(row[0]))
+
+
+def purge_expired_idempotency(
+    path: str | Path = "queue.db", *, older_than_hours: int = 48
+) -> None:
+    """Remove idempotency records older than ``older_than_hours``."""
+
+    with sqlite3.connect(path) as conn:
+        cursor = conn.execute(
+            "DELETE FROM idempotency WHERE created_at < datetime('now', ?)",
+            (f"-{older_than_hours} hours",),
+        )
+        conn.commit()
+    logfire.info("purged idempotency rows", count=cursor.rowcount)
+
+
+async def cleanup_idempotency(
+    path: str | Path = "queue.db",
+    *,
+    older_than_hours: int = 48,
+    interval_hours: int = 24,
+) -> None:
+    """Continuously purge stale idempotency records every ``interval_hours``."""
+
+    while True:
+        await asyncio.to_thread(
+            purge_expired_idempotency, path, older_than_hours=older_than_hours
+        )
+        await asyncio.sleep(interval_hours * 60 * 60)
