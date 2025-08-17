@@ -17,7 +17,7 @@ import {
   tweakOpacity,
 } from '../../board/style-tools';
 import { adjustColor } from '../../core/utils/color-utils';
-import { Button, InputField } from '../components';
+import { Button, ButtonToolbar, InputField } from '../components';
 import { PageHelp } from '../components/PageHelp';
 import { TabPanel } from '../components/TabPanel';
 import { useSelection } from '../hooks/use-selection';
@@ -129,7 +129,7 @@ export const StyleTab: React.FC = () => {
           />
         </Grid.Item>
         <Grid.Item>
-          <div className='buttons'>
+          <ButtonToolbar className='toolbar'>
             <Button
               onClick={apply}
               type='button'
@@ -156,13 +156,13 @@ export const StyleTab: React.FC = () => {
               variant='ghost'>
               <Text>Copy Fill</Text>
             </Button>
-          </div>
+          </ButtonToolbar>
         </Grid.Item>
         <Grid.Item>
           <Heading level={2}>Style presets</Heading>
         </Grid.Item>
         <Grid.Item>
-          <div className='buttons'>
+          <ButtonToolbar className='toolbar'>
             {STYLE_PRESET_NAMES.map(name => {
               const preset = stylePresets[name];
               const style = presetStyle(preset);
@@ -185,7 +185,7 @@ export const StyleTab: React.FC = () => {
                 </Button>
               );
             })}
-          </div>
+          </ButtonToolbar>
         </Grid.Item>
       </Grid>
     </TabPanel>

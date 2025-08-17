@@ -17,3 +17,4 @@ export { FilterDropdown } from './FilterDropdown';
 export { FormGroup } from './FormGroup';
 export { Tooltip } from './Tooltip';
 export { PageHelp } from './PageHelp';
+export { ButtonToolbar } from './ButtonToolbar';

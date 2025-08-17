@@ -23,6 +23,7 @@ import {
 import { ASPECT_RATIOS, AspectRatioId } from '../../core/utils/aspect-ratio';
 import {
   Button,
+  ButtonToolbar,
   Checkbox,
   InputField,
   SelectField,
@@ -369,7 +370,7 @@ export const StructuredTab: React.FC = () => {
             </fieldset>
           </Grid.Item>
           <Grid.Item>
-            <div className='buttons'>
+            <ButtonToolbar className='toolbar'>
               <Button
                 onClick={handleCreate}
                 variant='primary'
@@ -377,13 +378,6 @@ export const StructuredTab: React.FC = () => {
                 icon={<IconPlus />}>
                 <Text>Create Diagram</Text>
               </Button>
-              {progress > 0 && progress < 100 && (
-                <progress
-                  value={progress}
-                  max={100}
-                />
-              )}
-              {error && <p className='error'>{error}</p>}
               {lastProc && (
                 <Button
                   onClick={() =>
@@ -395,7 +389,14 @@ export const StructuredTab: React.FC = () => {
                   <Text>Undo Last Import</Text>
                 </Button>
               )}
-            </div>
+            </ButtonToolbar>
+            {progress > 0 && progress < 100 && (
+              <progress
+                value={progress}
+                max={100}
+              />
+            )}
+            {error && <p className='error'>{error}</p>}
           </Grid.Item>
         </Grid>
       )}

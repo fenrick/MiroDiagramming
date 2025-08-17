@@ -9,6 +9,7 @@ import React from 'react';
 import type { SearchOptions } from '../../board/search-tools';
 import {
   Button,
+  ButtonToolbar,
   FilterDropdown,
   InputField,
   Paragraph,
@@ -178,7 +179,7 @@ export const SearchTab: React.FC = () => {
           </Paragraph>
         </Grid.Item>
         <Grid.Item>
-          <div className='buttons'>
+          <ButtonToolbar className='toolbar'>
             <Button
               onClick={nextMatch}
               disabled={!results.length}
@@ -202,7 +203,7 @@ export const SearchTab: React.FC = () => {
               iconPosition='start'>
               <Text>Replace All</Text>
             </Button>
-          </div>
+          </ButtonToolbar>
         </Grid.Item>
       </Grid>
     </TabPanel>
