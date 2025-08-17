@@ -86,12 +86,12 @@ class Settings(BaseSettings):
         description="Default timeout in seconds for outbound HTTP requests.",
     )
     bucket_reservoir: int = Field(
-        default=10,
+        default=1,
         alias="MIRO_BUCKET_RESERVOIR",
         description="Maximum number of tokens in the soft rate limiter.",
     )
     bucket_refresh_ms: int = Field(
-        default=1000,
+        default=600,
         alias="MIRO_BUCKET_REFRESH_MS",
         description="Interval in milliseconds for refilling the token bucket.",
     )
