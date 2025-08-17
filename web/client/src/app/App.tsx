@@ -2,6 +2,7 @@ import { createTheme, Tabs, themes } from '@mirohq/design-system';
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import type { ExcelRow } from '../core/utils/excel-loader';
+import { AuthBanner } from '../components/AuthBanner';
 import { EditMetadataModal, IntroScreen } from '../ui/components';
 import { Paragraph } from '../ui/components/Paragraph';
 import { ExcelDataProvider } from '../ui/hooks/excel-data-context';
@@ -57,6 +58,7 @@ function AppShell(): React.JSX.Element {
           setLabelColumn,
           setTemplateColumn,
         }}>
+        <AuthBanner />
         <Tabs
           value={tab}
           onChange={id => setTab(id as Tab)}

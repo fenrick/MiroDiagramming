@@ -12,7 +12,7 @@ vi.mock('../src/app/diagram-app', () => ({
   },
 }));
 
-test('opens login panel when not authorised', async () => {
+test('does not open login panel when not authorised', async () => {
   const openPanel = vi.fn();
   vi.stubGlobal('miro', {
     board: {
@@ -23,5 +23,5 @@ test('opens login panel when not authorised', async () => {
 
   await import('../src/index');
 
-  expect(openPanel).toHaveBeenCalledWith({ url: '/oauth/login?userId=7' });
+  expect(openPanel).not.toHaveBeenCalled();
 });
