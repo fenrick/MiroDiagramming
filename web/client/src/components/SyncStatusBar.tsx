@@ -85,24 +85,22 @@ export function SyncStatusBar(): JSX.Element {
 
   const remaining = queue + activeJobs;
   let content: JSX.Element | string;
+  let progress: JSX.Element | null = null;
 
   if (state === 'disconnected') {
     content = 'Disconnected';
   } else if (state === 'rateLimited') {
-    content = `Pausing (auto-resume in ${backoffSeconds ?? 0}s)`;
+    content = `Paused for ${backoffSeconds ?? 0}s (auto-resume)`;
   } else if (state === 'nearLimit') {
     content = 'Slowing to avoid limits';
   } else if (remaining > 0) {
-    content = (
-      <span>
-        <span
-          role='img'
-          aria-label='loading'>
-          ⏳
-        </span>{' '}
-        {remaining} items remaining
-      </span>
+    progress = (
+      <div
+        data-testid='sync-progress'
+        className='skeleton sync-progress'
+      />
     );
+    content = `Syncing ${remaining} changes…`;
   } else {
     content = 'All changes saved';
   }
@@ -111,6 +109,7 @@ export function SyncStatusBar(): JSX.Element {
     <div
       className='sync-status-bar'
       role='status'>
+      {progress}
       {content}
     </div>
   );

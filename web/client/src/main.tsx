@@ -7,13 +7,15 @@ import { App } from './app/App';
 
 const lightThemeClassName = createTheme(themes.light);
 
+const isInMiro = typeof window !== 'undefined' && (window as any).miro;
+if (!isInMiro) {
+  console.warn('Miro SDK not found; open inside a Miro board.');
+}
+
 const container = document.getElementById('root');
 if (container) {
   container.classList += lightThemeClassName;
   const root = createRoot(container);
-  root.render(
-    <MiroProvider>
-      <App />
-    </MiroProvider>,
-  );
+  const app = <App />;
+  root.render(isInMiro ? <MiroProvider>{app}</MiroProvider> : app);
 }

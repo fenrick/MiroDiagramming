@@ -20,6 +20,17 @@ export type InputFieldProps = Readonly<
 // and typography remain consistent across the app.
 
 /** Single component combining label and input control. */
+const StyledFormField = styled(Form.Field, {
+  marginBottom: 'var(--space-200)',
+  position: 'relative',
+});
+
+const StyledLabel = styled(Form.Label, { marginBottom: 'var(--space-xsmall)' });
+
+const StyledInput = styled(Input, {
+  paddingLeft: 'var(--space-small)',
+  paddingRight: 'var(--space-small)',
+});
 
 export const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(
   function InputField({ label, onValueChange, id, ...props }, ref) {

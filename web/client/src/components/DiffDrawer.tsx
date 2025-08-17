@@ -46,11 +46,11 @@ export function DiffDrawer<T extends { id?: string }>({
 
   return (
     <aside
-      className='diff-drawer scrollable'
+      className='drawer diff-drawer scrollable'
       ref={trapRef}
       role='dialog'
       aria-modal='true'>
-      <h2>Pending changes</h2>
+      <h2 className='h2'>Pending changes</h2>
       <ul>
         {diff.creates.map((c, i) => (
           <li key={`c${i}`}>

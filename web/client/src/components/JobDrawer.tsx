@@ -77,11 +77,12 @@ export function JobDrawer({
   return (
     <aside
       ref={trapRef}
-      className='scrollable'
+      className='drawer scrollable'
       role='dialog'
       aria-modal='true'>
       <div
         aria-live='polite'
+        role='status'
         className='custom-visually-hidden'>
         {announcement}
       </div>

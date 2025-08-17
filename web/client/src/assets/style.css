@@ -1,3 +1,4 @@
+@import '../ui/tokens.css';
 @import '@mirohq/design-tokens/tokens.css';
 @import '@mirohq/design-system-themes/base.css';
 @import '@mirohq/design-system-themes/light.css';
@@ -46,6 +47,11 @@ body {
   flex: 1;
   overflow-y: auto;
   padding: var(--space-200);
+  position: relative;
+}
+
+.drawer {
+  width: 320px;
 }
 
 .scrollable .toolbar {
@@ -161,16 +167,6 @@ body {
   z-index: 1000;
 }
 
-.toast {
-  display: flex;
-  align-items: center;
-  gap: var(--space-100);
-  background: var(--colors-background-neutrals);
-  color: var(--primary-text-color);
-  border-radius: var(--radii-100);
-  padding: var(--space-xsmall) var(--space-small);
-}
-
 .toast-thumb {
   width: 24px;
   height: 24px;
@@ -206,7 +202,7 @@ body {
 }
 
 .sync-status-bar {
-  position: fixed;
+  position: absolute;
   bottom: var(--space-100);
   right: var(--space-100);
   padding: var(--space-100) var(--space-150);
@@ -215,4 +211,11 @@ body {
   border-radius: var(--radii-100);
   box-shadow: var(--shadows-100);
   font-size: var(--fontSize-200);
+}
+
+.sync-progress {
+  width: 100%;
+  height: 8px;
+  border-radius: var(--radii-100);
+  margin-bottom: var(--space-100);
 }

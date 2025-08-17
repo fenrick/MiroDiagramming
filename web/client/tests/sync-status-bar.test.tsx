@@ -39,7 +39,8 @@ describe('SyncStatusBar', () => {
       json: async () => ({ queue_length: 2, bucket_fill: { user: 100 } }),
     } as Response);
     render(<SyncStatusBar />);
-    expect(await screen.findByText('2 items remaining')).toBeInTheDocument();
+    expect(await screen.findByText('Syncing 2 changes…')).toBeInTheDocument();
+    expect(screen.getByTestId('sync-progress')).toBeInTheDocument();
   });
 
   test('shows near limit warning', async () => {
@@ -64,13 +65,13 @@ describe('SyncStatusBar', () => {
     } as Response);
     render(<SyncStatusBar />);
     expect(
-      await screen.findByText('Pausing (auto-resume in 12s)'),
+      await screen.findByText('Paused for 12s (auto-resume)'),
     ).toBeInTheDocument();
     await act(async () => {
       vi.advanceTimersByTime(1000);
     });
     expect(
-      await screen.findByText('Pausing (auto-resume in 11s)'),
+      await screen.findByText('Paused for 11s (auto-resume)'),
     ).toBeInTheDocument();
     vi.useRealTimers();
   });
@@ -90,7 +91,7 @@ describe('SyncStatusBar', () => {
     await act(async () => {
       useSyncStore.getState().setQueue(1);
     });
-    expect(await screen.findByText('1 items remaining')).toBeInTheDocument();
+    expect(await screen.findByText('Syncing 1 changes…')).toBeInTheDocument();
     await act(async () => {
       useSyncStore.getState().setQueue(0);
     });
