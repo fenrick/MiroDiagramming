@@ -87,7 +87,7 @@ class Settings(BaseSettings):
     )
 
     model_config = SettingsConfigDict(
-        env_file=".env", extra="ignore", populate_by_name=True
+        env_file="config/.env", extra="ignore", populate_by_name=True
     )
 
     @classmethod
@@ -113,11 +113,11 @@ class Settings(BaseSettings):
     def _yaml_config_settings() -> dict[str, Any]:
         """Read settings from a YAML file if it exists.
 
-        The path defaults to ``config.yaml`` but may be overridden by the
+        The path defaults to ``config/config.yaml`` but may be overridden by the
         ``MIRO_CONFIG_FILE`` environment variable.
         """
 
-        path_str = os.getenv("MIRO_CONFIG_FILE", "config.yaml")
+        path_str = os.getenv("MIRO_CONFIG_FILE", "config/config.yaml")
         path = Path(path_str)
         if path.is_file():
             with path.open(encoding="utf-8") as fh:
@@ -138,15 +138,17 @@ def _create_default_config_files() -> list[str]:
     """
 
     created: list[str] = []
-    config_path = Path(os.getenv("MIRO_CONFIG_FILE", "config.yaml"))
-    config_example = Path("config.example.yaml")
+    config_path = Path(os.getenv("MIRO_CONFIG_FILE", "config/config.yaml"))
+    config_example = Path("config/config.example.yaml")
     if not config_path.exists() and config_example.exists():
+        config_path.parent.mkdir(parents=True, exist_ok=True)
         copyfile(config_example, config_path)
         created.append(str(config_path))
 
-    env_path = Path(".env")
-    env_example = Path(".env.example")
+    env_path = Path("config/.env")
+    env_example = Path("config/.env.example")
     if not env_path.exists() and env_example.exists():
+        env_path.parent.mkdir(parents=True, exist_ok=True)
         copyfile(env_example, env_path)
         created.append(str(env_path))
 

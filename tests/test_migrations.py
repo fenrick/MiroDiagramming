@@ -17,7 +17,7 @@ def test_alembic_upgrade_creates_tables(
     db_url = f"sqlite:///{db_path}"
     monkeypatch.setenv("MIRO_DATABASE_URL", db_url)
     importlib.reload(app_config)
-    config = Config("alembic.ini")
+    config = Config("config/alembic.ini")
     config.set_main_option("sqlalchemy.url", db_url)
     command.upgrade(config, "head")
     assert db_path.exists()

@@ -18,7 +18,7 @@ RUN poetry config virtualenvs.create false \
 
 # Copy application source
 COPY src ./src
-COPY config.example.yaml ./config.example.yaml
+COPY config/ ./config/
 
 # Expose application port
 EXPOSE 8000

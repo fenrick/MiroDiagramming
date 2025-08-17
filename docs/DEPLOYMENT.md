@@ -27,12 +27,12 @@ See your hosting provider's documentation for setting environment variables. CI/
 
 ## 4. Backend Secrets
 
-The FastAPI backend loads required secrets from environment variables or an `.env` file via `pydantic-settings`.
+The FastAPI backend loads required secrets from environment variables or a `config/.env` file via `pydantic-settings`.
 
 ### Local development
 
-On first run the backend will create `.env` and `config.yaml` from their example files and exit.
-Populate `.env` with values for:
+On first run the backend will create `config/.env` and `config/config.yaml` from their example files and exit.
+Populate `config/.env` with values for:
    - `MIRO_CLIENT_ID`
    - `MIRO_CLIENT_SECRET`
    - `MIRO_WEBHOOK_SECRET`
