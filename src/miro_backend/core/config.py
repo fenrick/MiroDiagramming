@@ -29,6 +29,11 @@ class Settings(BaseSettings):
         alias="MIRO_CORS_ORIGINS",
         description="List of allowed CORS origins.",
     )
+    api_url: str = Field(
+        default="",
+        alias="MIRO_API_URL",
+        description="Server URL advertised in the OpenAPI document.",
+    )
     client_id: str = Field(
         alias="MIRO_CLIENT_ID",
         description="OAuth client identifier issued by Miro.",
