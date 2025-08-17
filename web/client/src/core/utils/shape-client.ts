@@ -12,6 +12,14 @@ export interface ShapeData {
   style?: Record<string, unknown>;
 }
 
+/** Snapshot of shapes cached by the server. */
+export interface ShapeSnapshot {
+  /** Cache version identifier. */
+  version: number;
+  /** List of shapes in the snapshot. */
+  shapes: Record<string, unknown>[];
+}
+
 /**
  * Minimal HTTP client for the shapes API. The server performs
  * any necessary chunking when forwarding to Miro.
@@ -96,5 +104,32 @@ export class ShapeClient {
       return undefined;
     }
     return (await res.json()) as Record<string, unknown>;
+  }
+
+  /**
+   * Retrieve shapes from the server cache.
+   *
+   * @param since - Optional cache version to request deltas from.
+   * @param refresh - When `true`, instructs the server to refresh its cache from
+   *   the vendor.
+   * @returns Snapshot containing the latest version and shapes.
+   */
+  public async getShapes(
+    since?: number,
+    refresh = false,
+  ): Promise<ShapeSnapshot> {
+    if (typeof fetch !== 'function') {
+      return { version: since ?? 0, shapes: [] };
+    }
+    const params = new URLSearchParams();
+    if (since !== undefined) {
+      params.set('since', since.toString());
+    }
+    if (refresh) {
+      params.set('refresh', 'true');
+    }
+    const url = `${this.url}?${params.toString()}`.replace(/\?$/, '');
+    const res = await apiFetch(url);
+    return (await res.json()) as ShapeSnapshot;
   }
 }

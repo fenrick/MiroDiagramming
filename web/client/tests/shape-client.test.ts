@@ -1,6 +1,8 @@
 import { beforeEach, expect, test, vi } from 'vitest';
 import { ShapeClient, type ShapeData } from '../src/core/utils/shape-client';
 
+vi.mock('logfire', () => ({ span: (_n: string, fn: () => unknown) => fn() }));
+
 vi.stubGlobal('fetch', vi.fn());
 vi.stubGlobal('miro', {
   board: { getUserInfo: vi.fn().mockResolvedValue({ id: 'u1' }) },
@@ -70,4 +72,16 @@ test('getShape fetches widget', async () => {
   const call = (fetch as vi.Mock).mock.calls[0];
   expect(call[0]).toBe('/api/b4/shapes/s9');
   expect(result).toEqual({ id: 's9' });
+});
+
+test('getShapes fetches snapshot', async () => {
+  const api = new ShapeClient('b5', '/api');
+  (fetch as vi.Mock).mockResolvedValueOnce({
+    json: vi.fn().mockResolvedValue({ version: 2, shapes: [{ id: 's1' }] }),
+  });
+  const res = await api.getShapes(1);
+  const call = (fetch as vi.Mock).mock.calls[0];
+  expect(call[0]).toBe('/api/b5/shapes?since=1');
+  expect(res.version).toBe(2);
+  expect(res.shapes).toHaveLength(1);
 });
