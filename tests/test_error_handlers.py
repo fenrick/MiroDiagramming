@@ -6,7 +6,7 @@ import importlib
 
 from fastapi.testclient import TestClient
 
-from miro_backend.db.session import Base, engine
+from miro_backend.db.session import Base, SessionLocal, engine
 from miro_backend.queue import ChangeQueue
 from miro_backend.services.shape_store import get_shape_store
 
@@ -38,8 +38,10 @@ def test_not_found_error_returns_typed_response() -> None:
 def test_forbidden_error_returns_typed_response() -> None:
     """Unauthorized access should return structured 403 responses."""
 
-    store = get_shape_store()
+    session = SessionLocal()
+    store = get_shape_store(session)
     store.add_board("board1", "owner1")
+    session.close()
     app_module = importlib.import_module("miro_backend.main")
     app_module.change_queue = ChangeQueue()  # type: ignore[attr-defined]
     with TestClient(app_module.app) as client:
