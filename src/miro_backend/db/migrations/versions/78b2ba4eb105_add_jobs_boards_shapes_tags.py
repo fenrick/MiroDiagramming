@@ -44,26 +44,19 @@ def upgrade() -> None:  # pragma: no cover - migration code
     op.create_table(
         "tags",
         sa.Column("id", sa.Integer(), primary_key=True, autoincrement=True),
-        sa.Column(
-            "board_id",
-            sa.Integer(),
-            sa.ForeignKey("boards.id", ondelete="CASCADE"),
-            nullable=False,
-        ),
+        sa.Column("board_id", sa.Integer(), nullable=False),
         sa.Column("name", sa.String(), nullable=False),
     )
     op.create_index(op.f("ix_tags_board_id"), "tags", ["board_id"], unique=False)
     op.create_index(op.f("ix_tags_name"), "tags", ["name"], unique=False)
+    op.create_foreign_key(
+        None, "tags", "boards", ["board_id"], ["id"], ondelete="CASCADE"
+    )
 
     op.create_table(
         "shapes",
-        sa.Column(
-            "board_id",
-            sa.String(),
-            sa.ForeignKey("boards.board_id", ondelete="CASCADE"),
-            primary_key=True,
-        ),
-        sa.Column("shape_id", sa.String(), primary_key=True),
+        sa.Column("board_id", sa.String(), nullable=False),
+        sa.Column("shape_id", sa.String(), nullable=False),
         sa.Column("payload", sa.JSON(), nullable=False),
         sa.Column(
             "updated_at",
@@ -71,6 +64,10 @@ def upgrade() -> None:  # pragma: no cover - migration code
             server_default=sa.func.now(),
             nullable=False,
         ),
+        sa.PrimaryKeyConstraint("board_id", "shape_id"),
+    )
+    op.create_foreign_key(
+        None, "shapes", "boards", ["board_id"], ["board_id"], ondelete="CASCADE"
     )
 
 
