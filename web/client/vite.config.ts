@@ -41,7 +41,12 @@ export default defineConfig(({ mode }) => {
       port: parseInt(env.VITE_PORT),
       proxy: {
         '/api': {
-          target: env.VITE_API_BASE_URL,
+          target: env.VITE_BACKEND_URL,
+          changeOrigin: true,
+          secure: false,
+        },
+        '/oauth': {
+          target: env.VITE_BACKEND_URL,
           changeOrigin: true,
           secure: false,
         },
