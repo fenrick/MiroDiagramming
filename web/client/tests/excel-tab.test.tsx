@@ -77,6 +77,19 @@ vi.mock('../src/core/utils/excel-loader', () => {
     GraphExcelLoader: class {},
   };
 });
+vi.mock('../src/core/utils/api-fetch', () => ({
+  apiFetch: vi.fn(async () => ({
+    ok: true,
+    json: async () => ({ jobId: 'job-123' }),
+  })),
+}));
+vi.mock('../src/core/hooks/useJob', () => ({
+  useJob: () => ({
+    id: 'job-123',
+    status: 'working',
+    operations: [{ id: 'op1', status: 'working' }],
+  }),
+}));
 
 describe('ExcelTab', () => {
   test('handles local file drop', async () => {
@@ -95,5 +108,23 @@ describe('ExcelTab', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Fetch File' })),
     );
     expect(remoteFetchMock).toHaveBeenCalledWith('url');
+  });
+
+  test('applies changes via diff drawer and shows job progress', async () => {
+    render(<ExcelTab />);
+
+    fireEvent.change(screen.getByLabelText('Data source'), {
+      target: { value: 'sheet:Sheet1' },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Load Rows' }));
+    fireEvent.click(screen.getByLabelText('Row 1'));
+    fireEvent.click(screen.getByRole('button', { name: 'Apply changes' }));
+    expect(screen.getByText('Pending changes')).toBeInTheDocument();
+    await act(async () => {
+      await fireEvent.click(
+        screen.getByRole('button', { name: 'Apply 1 changes' }),
+      );
+    });
+    expect(screen.getByLabelText('Close when done')).toBeInTheDocument();
   });
 });

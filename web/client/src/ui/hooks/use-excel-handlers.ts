@@ -111,7 +111,17 @@ export function useExcelCreate({
     } catch (e) {
       await showError(String(e));
     }
-  }, [file, idColumn, labelColumn, rows, selected, template, templateColumn]);
+  }, [
+    file,
+    graphProcessor,
+    idColumn,
+    labelColumn,
+    rows,
+    selected,
+    setRows,
+    template,
+    templateColumn,
+  ]);
 }
 
 /**

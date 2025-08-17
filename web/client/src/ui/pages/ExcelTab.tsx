@@ -18,6 +18,14 @@ import {
 } from '../components';
 import { PageHelp } from '../components/PageHelp';
 import { RowInspector } from '../components/RowInspector';
+import { DiffDrawer } from '../../components/DiffDrawer';
+import { JobDrawer } from '../../components/JobDrawer';
+import { computeDiff, DiffResult } from '../../board/computeDiff';
+import {
+  mapRowsToNodes,
+  ColumnMapping,
+  NodeDefinition,
+} from '../../core/data-mapper';
 
 // prettier-ignore
 type LoaderStateDispatch = React.Dispatch<React.SetStateAction<ExcelLoader | GraphExcelLoader>>;
@@ -135,7 +143,59 @@ async function handleDrop(
 /** Sidebar tab for importing nodes from Excel files. */
 export const ExcelTab: React.FC = () => {
   const state = useExcelTabState();
-  return <ExcelTabView {...state} />;
+  const [diff, setDiff] = React.useState<DiffResult<NodeDefinition> | null>(
+    null,
+  );
+  const [jobId, setJobId] = React.useState('');
+  const boardId = ((
+    globalThis as { miro?: { board?: { info?: { id: string } } } }
+  ).miro?.board?.info?.id ?? '') as string;
+
+  const handleApplyChanges = React.useCallback(() => {
+    const mapping: ColumnMapping = {
+      idColumn: state.idColumn || undefined,
+      labelColumn: state.labelColumn || undefined,
+      templateColumn: state.templateColumn || undefined,
+    };
+    const chosen = state.rows.filter((_, i) => state.selected.has(i));
+    const nodes = mapRowsToNodes(chosen, mapping).map(n => ({
+      ...n,
+      type: state.templateColumn ? n.type : state.template,
+    }));
+    setDiff(computeDiff<NodeDefinition>([], nodes));
+  }, [
+    state.idColumn,
+    state.labelColumn,
+    state.templateColumn,
+    state.template,
+    state.rows,
+    state.selected,
+  ]);
+
+  return (
+    <>
+      <ExcelTabView
+        {...state}
+        handleApplyChanges={handleApplyChanges}
+      />
+      {diff && (
+        <DiffDrawer
+          boardId={boardId}
+          diff={diff}
+          onClose={() => setDiff(null)}
+          onApplied={id => {
+            setDiff(null);
+            setJobId(id);
+          }}
+        />
+      )}
+      <JobDrawer
+        jobId={jobId}
+        isOpen={jobId !== ''}
+        onClose={() => setJobId('')}
+      />
+    </>
+  );
 };
 
 interface ExcelTabState {
@@ -233,19 +293,19 @@ function useExcelTabHandlers(state: ReturnType<typeof useExcelTabData>) {
   const fetchRemote = React.useCallback(
     (): Promise<void> =>
       handleRemote(remote, setLoader, setFile, setSource, setRows, setSelected),
-    [remote],
+    [remote, setFile, setLoader, setRows, setSelected, setSource],
   );
 
   const columns = React.useMemo(() => Object.keys(rows[0] ?? {}), [rows]);
 
   const loadRows = React.useCallback(
     (): void => loadRowsFromSource(loader, source, setRows, setSelected),
-    [loader, source],
+    [loader, source, setRows, setSelected],
   );
 
   const toggle = React.useCallback(
     (idx: number): void => setSelected(prev => toggleSelection(prev, idx)),
-    [],
+    [setSelected],
   );
 
   const syncUpdate = useExcelSync();
@@ -328,6 +388,7 @@ function ExcelTabView({
   setLabelColumn: (s: string) => void;
   setTemplateColumn: (s: string) => void;
   setIdColumn: (s: string) => void;
+  handleApplyChanges: () => void;
 }): React.JSX.Element {
   return (
     <TabPanel tabId='excel'>
@@ -467,6 +528,11 @@ function ExcelTabView({
               iconPosition='start'
               icon={<IconPlus />}>
               <Text>Create Nodes</Text>
+            </Button>
+            <Button
+              onClick={handleApplyChanges}
+              variant='secondary'>
+              Apply changes
             </Button>
           </div>
         </>
