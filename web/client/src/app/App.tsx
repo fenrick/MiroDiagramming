@@ -8,6 +8,7 @@ import { EditMetadataModal, IntroScreen } from '../ui/components';
 import { Paragraph } from '../ui/components/Paragraph';
 import { ExcelDataProvider } from '../ui/hooks/excel-data-context';
 import { ToastContainer } from '../ui/components/Toast';
+import { PanelShell } from '../ui/PanelShell';
 
 import { type Tab, TAB_DATA } from '../ui/pages/tabs';
 
@@ -96,10 +97,14 @@ function AppShell(): React.JSX.Element {
  */
 export const App: React.FC = () => {
   const [started, setStarted] = React.useState(false);
-  return started ? (
-    <AppShell />
-  ) : (
-    <IntroScreen onStart={() => setStarted(true)} />
+  return (
+    <PanelShell>
+      {started ? (
+        <AppShell />
+      ) : (
+        <IntroScreen onStart={() => setStarted(true)} />
+      )}
+    </PanelShell>
   );
 };
 
