@@ -26,13 +26,13 @@ export function SyncStatusBar(): JSX.Element {
       bucket_fill: Record<string, number>;
     }): void => {
       setQueue(data.queue_length);
-      const lowest = Math.min(...Object.values(data.bucket_fill));
       setBackoffSeconds(null);
-      if (lowest <= 0) {
+      const fills = Object.values(data.bucket_fill);
+      if (fills.some(fill => fill <= 0)) {
         setState('rateLimited');
         return;
       }
-      if (lowest <= NEAR_LIMIT_THRESHOLD) {
+      if (fills.some(fill => fill <= NEAR_LIMIT_THRESHOLD)) {
         setState('nearLimit');
         return;
       }
