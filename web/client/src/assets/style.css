@@ -145,3 +145,48 @@ body {
   top: var(--space-100);
   right: var(--space-100);
 }
+
+button:focus-visible {
+  outline: 2px solid var(--colors-blue-700);
+  outline-offset: 2px;
+}
+
+.custom-drawer-container {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+}
+
+.custom-drawer-backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--colors-background-alpha-neutrals-overlay-subtle);
+  border: none;
+}
+
+.custom-drawer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 300px;
+  max-width: 80%;
+  background: var(--colors-background-neutrals);
+  color: var(--primary-text-color);
+  padding: var(--space-medium);
+  box-shadow: var(--shadows-medium);
+  display: flex;
+  flex-direction: column;
+}
+
+.custom-drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-small);
+}
+
+.custom-drawer-content {
+  flex: 1;
+  overflow-y: auto;
+}

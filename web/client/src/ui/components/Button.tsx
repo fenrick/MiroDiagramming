@@ -27,7 +27,13 @@ export type ButtonProps = Readonly<
 
 const baseMargin = { margin: '0 var(--space-small) var(--space-small) 0' };
 
-const StyledDSButton = styled(DSButton, baseMargin);
+const StyledDSButton = styled(DSButton, {
+  ...baseMargin,
+  '&:focus-visible': {
+    outline: '2px solid var(--colors-blue-700)',
+    outlineOffset: '2px',
+  },
+});
 
 function getIconSlots(
   icon: React.ReactNode,
@@ -60,6 +66,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       iconPosition = 'start',
       css,
       children,
+      onKeyDown,
+      onClick,
       ...props
     },
     ref,
@@ -68,12 +76,25 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     const { start, end } = getIconSlots(icon, iconPosition);
 
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>): void => {
+      onKeyDown?.(e);
+      if (e.defaultPrevented) {
+        return;
+      }
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        onClick?.(e as unknown as React.MouseEvent<HTMLButtonElement>);
+      }
+    };
+
     return (
       <StyledDSButton
         ref={ref}
         variant={variant}
         size={finalSize}
         css={css}
+        onKeyDown={handleKeyDown}
+        onClick={onClick}
         {...props}>
         {start}
         <DSButton.Label>{children}</DSButton.Label>
