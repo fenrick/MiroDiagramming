@@ -43,22 +43,8 @@ body {
   overflow: hidden;
 }
 
-.scrollable {
-  flex: 1;
-  overflow-y: auto;
-  padding: var(--space-200);
-  position: relative;
-}
-
 .drawer {
   width: 320px;
-}
-
-.scrollable .toolbar {
-  position: sticky;
-  bottom: 0;
-  padding-block: var(--space-200);
-  background: #fff;
 }
 
 .custom-dropped-files {

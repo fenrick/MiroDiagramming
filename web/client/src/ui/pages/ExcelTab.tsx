@@ -41,6 +41,7 @@ import {
 } from '../hooks/use-excel-handlers';
 import { useExcelSync } from '../hooks/use-excel-sync';
 import type { TabTuple } from './tab-definitions';
+import { StickyActions } from '../StickyActions';
 
 /**
  * Remote workbook loader with error handling.
@@ -522,20 +523,22 @@ function ExcelTabView({
               </li>
             ))}
           </ul>
-          <ButtonToolbar className='toolbar'>
-            <Button
-              onClick={handleCreate}
-              variant='primary'
-              iconPosition='start'
-              icon={<IconPlus />}>
-              <Text>Create Nodes</Text>
-            </Button>
-            <Button
-              onClick={handleApplyChanges}
-              variant='secondary'>
-              Apply changes
-            </Button>
-          </ButtonToolbar>
+          <StickyActions>
+            <ButtonToolbar>
+              <Button
+                onClick={handleCreate}
+                variant='primary'
+                iconPosition='start'
+                icon={<IconPlus />}>
+                <Text>Create Nodes</Text>
+              </Button>
+              <Button
+                onClick={handleApplyChanges}
+                variant='secondary'>
+                Apply changes
+              </Button>
+            </ButtonToolbar>
+          </StickyActions>
         </>
       )}
       <RowInspector

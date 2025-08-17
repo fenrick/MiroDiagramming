@@ -2,6 +2,7 @@ import React from 'react';
 import introText from '../intro.md?raw';
 import { Button } from './Button';
 import { Markdown } from './Markdown';
+import { ScrollArea } from '../ScrollArea';
 
 export interface IntroScreenProps {
   /** Called when the user chooses to start the app. */
@@ -16,17 +17,19 @@ export interface IntroScreenProps {
  */
 export function IntroScreen({ onStart }: IntroScreenProps): React.JSX.Element {
   return (
-    <div
-      className='intro-screen scrollable'
-      data-testid='intro-screen'>
-      <Markdown source={introText} />
-      <span className='custom-visually-hidden'>Welcome to Quick Tools</span>
-      <Button
-        variant='primary'
-        onClick={onStart}
-        data-testid='start-button'>
-        Start
-      </Button>
-    </div>
+    <ScrollArea>
+      <div
+        className='intro-screen'
+        data-testid='intro-screen'>
+        <Markdown source={introText} />
+        <span className='custom-visually-hidden'>Welcome to Quick Tools</span>
+        <Button
+          variant='primary'
+          onClick={onStart}
+          data-testid='start-button'>
+          Start
+        </Button>
+      </div>
+    </ScrollArea>
   );
 }

@@ -4,6 +4,8 @@ import { ButtonToolbar } from '../ui/components/ButtonToolbar';
 import { ShapeClient } from '../core/utils/shape-client';
 import { useFocusTrap } from '../core/hooks/useFocusTrap';
 import type { DiffResult } from '../board/computeDiff';
+import { ScrollArea } from '../ui/ScrollArea';
+import { StickyActions } from '../ui/StickyActions';
 
 export interface DiffDrawerProps<T extends { id?: string }> {
   /** Identifier of the target board. */
@@ -46,56 +48,60 @@ export function DiffDrawer<T extends { id?: string }>({
 
   return (
     <aside
-      className='drawer diff-drawer scrollable'
+      className='drawer diff-drawer'
       ref={trapRef}
       role='dialog'
       aria-modal='true'>
-      <h2 className='h2'>Pending changes</h2>
-      <ul>
-        {diff.creates.map((c, i) => (
-          <li key={`c${i}`}>
-            <span className='diff-chip diff-create'>Create</span>
-            <span
-              className='truncate'
-              title={String((c as { id?: string }).id ?? i)}>
-              {(c as { id?: string }).id ?? i}
-            </span>
-          </li>
-        ))}
-        {diff.updates.map((u, i) => (
-          <li key={`u${i}`}>
-            <span className='diff-chip diff-update'>Update</span>
-            <span
-              className='truncate'
-              title={String((u as { id?: string }).id ?? i)}>
-              {(u as { id?: string }).id ?? i}
-            </span>
-          </li>
-        ))}
-        {diff.deletes.map((d, i) => (
-          <li key={`d${i}`}>
-            <span className='diff-chip diff-delete'>Delete</span>
-            <span
-              className='truncate'
-              title={String((d as { id?: string }).id ?? i)}>
-              {(d as { id?: string }).id ?? i}
-            </span>
-          </li>
-        ))}
-      </ul>
-      <ButtonToolbar className='toolbar'>
-        <Button
-          variant='tertiary'
-          onClick={onClose}>
-          Cancel
-        </Button>
-        <Button
-          onClick={() => void applyChanges()}
-          disabled={total === 0}
-          title={total === 0 ? 'No changes' : undefined}>
-          {`Apply ${total} changes`}
-        </Button>
-      </ButtonToolbar>
+      <ScrollArea>
+        <h2 className='h2'>Pending changes</h2>
+        <ul>
+          {diff.creates.map((c, i) => (
+            <li key={`c${i}`}>
+              <span className='diff-chip diff-create'>Create</span>
+              <span
+                className='truncate'
+                title={String((c as { id?: string }).id ?? i)}>
+                {(c as { id?: string }).id ?? i}
+              </span>
+            </li>
+          ))}
+          {diff.updates.map((u, i) => (
+            <li key={`u${i}`}>
+              <span className='diff-chip diff-update'>Update</span>
+              <span
+                className='truncate'
+                title={String((u as { id?: string }).id ?? i)}>
+                {(u as { id?: string }).id ?? i}
+              </span>
+            </li>
+          ))}
+          {diff.deletes.map((d, i) => (
+            <li key={`d${i}`}>
+              <span className='diff-chip diff-delete'>Delete</span>
+              <span
+                className='truncate'
+                title={String((d as { id?: string }).id ?? i)}>
+                {(d as { id?: string }).id ?? i}
+              </span>
+            </li>
+          ))}
+        </ul>
+        <StickyActions>
+          <ButtonToolbar>
+            <Button
+              variant='tertiary'
+              onClick={onClose}>
+              Cancel
+            </Button>
+            <Button
+              onClick={() => void applyChanges()}
+              disabled={total === 0}
+              title={total === 0 ? 'No changes' : undefined}>
+              {`Apply ${total} changes`}
+            </Button>
+          </ButtonToolbar>
+        </StickyActions>
+      </ScrollArea>
     </aside>
   );
 }

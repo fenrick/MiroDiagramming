@@ -24,6 +24,7 @@ import {
   useReplaceCurrent,
 } from '../hooks/use-search-handlers';
 import type { TabTuple } from './tab-definitions';
+import { StickyActions } from '../StickyActions';
 
 /**
  * Sidebar tab providing board wide search and replace.
@@ -179,31 +180,33 @@ export const SearchTab: React.FC = () => {
           </Paragraph>
         </Grid.Item>
         <Grid.Item>
-          <ButtonToolbar className='toolbar'>
-            <Button
-              onClick={nextMatch}
-              disabled={!results.length}
-              variant='secondary'
-              icon={<IconChevronRight />}
-              iconPosition='start'>
-              <Text>Next</Text>
-            </Button>
-            <Button
-              onClick={replaceCurrent}
-              disabled={!results.length}
-              variant='secondary'
-              icon={<IconPen />}
-              iconPosition='start'>
-              <Text>Replace</Text>
-            </Button>
-            <Button
-              onClick={replaceAll}
-              variant='primary'
-              icon={<IconArrowRight />}
-              iconPosition='start'>
-              <Text>Replace All</Text>
-            </Button>
-          </ButtonToolbar>
+          <StickyActions>
+            <ButtonToolbar>
+              <Button
+                onClick={nextMatch}
+                disabled={!results.length}
+                variant='secondary'
+                icon={<IconChevronRight />}
+                iconPosition='start'>
+                <Text>Next</Text>
+              </Button>
+              <Button
+                onClick={replaceCurrent}
+                disabled={!results.length}
+                variant='secondary'
+                icon={<IconPen />}
+                iconPosition='start'>
+                <Text>Replace</Text>
+              </Button>
+              <Button
+                onClick={replaceAll}
+                variant='primary'
+                icon={<IconArrowRight />}
+                iconPosition='start'>
+                <Text>Replace All</Text>
+              </Button>
+            </ButtonToolbar>
+          </StickyActions>
         </Grid.Item>
       </Grid>
     </TabPanel>
