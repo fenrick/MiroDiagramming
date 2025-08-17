@@ -1,8 +1,10 @@
 import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom/vitest';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { beforeEach, expect, test, vi } from 'vitest';
 import { DiffDrawer } from '../src/components/DiffDrawer';
+import { ShapeClient } from '../src/core/utils/shape-client';
 
 describe('DiffDrawer', () => {
   beforeEach(() => {
@@ -23,11 +25,9 @@ describe('DiffDrawer', () => {
   });
 
   test('applies changes and returns job id', async () => {
-    const fetchMock = vi
-      .spyOn(globalThis, 'fetch')
-      .mockResolvedValue({
-        json: () => Promise.resolve({ jobId: 'j1' }),
-      } as Response);
+    const applySpy = vi
+      .spyOn(ShapeClient.prototype, 'applyOperations')
+      .mockResolvedValue({ jobId: 'j1' });
     const onApplied = vi.fn();
     render(
       <DiffDrawer
@@ -40,7 +40,7 @@ describe('DiffDrawer', () => {
     await userEvent.click(
       screen.getByRole('button', { name: /Apply 1 changes/ }),
     );
-    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(applySpy).toHaveBeenCalledTimes(1);
     expect(onApplied).toHaveBeenCalledWith('j1');
   });
 
@@ -55,5 +55,22 @@ describe('DiffDrawer', () => {
     );
     await userEvent.keyboard('{Escape}');
     expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  test('tab cycles within drawer', async () => {
+    render(
+      <DiffDrawer
+        boardId='b1'
+        diff={{ creates: [], updates: [], deletes: [{ id: '1' }] }}
+        onClose={() => {}}
+      />,
+    );
+    const cancel = screen.getByRole('button', { name: 'Cancel' });
+    const apply = screen.getByRole('button', { name: /Apply/ });
+    expect(cancel).toHaveFocus();
+    await userEvent.tab();
+    expect(apply).toHaveFocus();
+    await userEvent.tab();
+    expect(cancel).toHaveFocus();
   });
 });

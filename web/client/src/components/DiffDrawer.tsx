@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from '../ui/components/Button';
 import { ShapeClient } from '../core/utils/shape-client';
+import { useFocusTrap } from '../core/hooks/useFocusTrap';
 import type { DiffResult } from '../board/computeDiff';
 
 export interface DiffDrawerProps<T extends { id?: string }> {
@@ -40,22 +41,14 @@ export function DiffDrawer<T extends { id?: string }>({
     onApplied?.(jobId);
   }, [boardId, diff, onApplied, total]);
 
-  React.useEffect(() => {
-    const handleKey = (e: KeyboardEvent): void => {
-      if (e.key === 'Escape') {
-        e.preventDefault();
-        onClose();
-      } else if (e.key === 'Enter') {
-        e.preventDefault();
-        void applyChanges();
-      }
-    };
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
-  }, [applyChanges, onClose]);
+  const trapRef = useFocusTrap<HTMLDivElement>(true, onClose);
 
   return (
-    <aside className='diff-drawer'>
+    <aside
+      className='diff-drawer'
+      ref={trapRef}
+      role='dialog'
+      aria-modal='true'>
       <h2>Pending changes</h2>
       <ul>
         {diff.creates.map((c, i) => (

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useJob } from '../core/hooks/useJob';
+import { useFocusTrap } from '../core/hooks/useFocusTrap';
 
 interface JobDrawerProps {
   /** Identifier of the job to display. */
@@ -21,6 +22,8 @@ export function JobDrawer({
   const job = useJob(jobId);
   const [closeOnDone, setCloseOnDone] = React.useState(true);
   const [hiddenOps, setHiddenOps] = React.useState<Set<string>>(new Set());
+  const trapRef = useFocusTrap<HTMLDivElement>(isOpen, onClose);
+  const [announcement, setAnnouncement] = React.useState('');
 
   React.useEffect(() => {
     if (!job) {
@@ -54,12 +57,32 @@ export function JobDrawer({
     }
   }, [job, closeOnDone, onClose]);
 
+  React.useEffect(() => {
+    if (job) {
+      if (job.status === 'working') {
+        setAnnouncement(`Syncing ${job.operations.length} changes…`);
+      } else if (job.status === 'done') {
+        setAnnouncement('All changes synced');
+      } else if (job.status === 'failed' || job.status === 'partial') {
+        setAnnouncement('Sync failed');
+      }
+    }
+  }, [job]);
+
   if (!isOpen) {
     return null;
   }
 
   return (
-    <div role='dialog'>
+    <div
+      ref={trapRef}
+      role='dialog'
+      aria-modal='true'>
+      <div
+        aria-live='polite'
+        className='custom-visually-hidden'>
+        {announcement}
+      </div>
       <label>
         <input
           type='checkbox'

@@ -55,6 +55,11 @@ body {
   background: #fff;
 }
 
+button:focus-visible {
+  outline: 2px solid var(--indigo700);
+  outline-offset: 2px;
+}
+
 .custom-dropped-files {
   list-style: none;
   padding: var(--space-50) var(--space-100);

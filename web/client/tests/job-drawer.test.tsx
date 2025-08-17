@@ -96,3 +96,25 @@ test('focuses first failed operation on failure', async () => {
   const item = screen.getByText('x').closest('li');
   expect(item).toHaveFocus();
 });
+
+test('announces job start', () => {
+  job = {
+    id: '6',
+    status: 'working',
+    operations: [
+      { id: 'a', status: 'pending' },
+      { id: 'b', status: 'pending' },
+      { id: 'c', status: 'pending' },
+      { id: 'd', status: 'pending' },
+      { id: 'e', status: 'pending' },
+    ],
+  };
+  render(
+    <JobDrawer
+      jobId='6'
+      isOpen
+      onClose={() => {}}
+    />,
+  );
+  expect(screen.getByText('Syncing 5 changes…')).toBeInTheDocument();
+});
