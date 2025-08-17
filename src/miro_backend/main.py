@@ -6,9 +6,10 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import AsyncIterator
 
-from fastapi import FastAPI, Response
+from fastapi import FastAPI, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, JSONResponse
+from typing import Awaitable, Callable
 from fastapi.staticfiles import StaticFiles
 
 import logfire
@@ -31,6 +32,7 @@ from .queue import get_change_queue  # noqa: E402
 from .queue.change_queue import change_queue_length  # noqa: E402
 from .services.miro_client import MiroClient  # noqa: E402
 from .db.session import SessionLocal  # noqa: E402
+from .services.debug import consume_debug_429, set_debug_429  # noqa: E402
 
 change_queue = get_change_queue()
 
@@ -78,6 +80,24 @@ setup_fastapi(app)
 setup_security(app)
 setup_telemetry(app)
 add_exception_handlers(app)
+
+
+@app.middleware("http")  # type: ignore[misc]
+async def debug_middleware(
+    request: Request, call_next: Callable[[Request], Awaitable[Response]]
+) -> Response:
+    header = request.headers.get("X-Debug-429")
+    if header is not None:
+        with contextlib.suppress(ValueError):
+            set_debug_429(int(header))
+        return await call_next(request)
+    if consume_debug_429():
+        return JSONResponse(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            content={"detail": "debug 429"},
+        )
+    return await call_next(request)
+
 
 app.add_middleware(
     CORSMiddleware,
