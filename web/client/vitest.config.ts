@@ -4,6 +4,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
+    setupFiles: ['tests/setupTests.ts'],
     coverage: {
       provider: 'istanbul',
       reporter: ['text', 'lcov'],
