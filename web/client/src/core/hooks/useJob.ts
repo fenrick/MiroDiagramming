@@ -49,7 +49,7 @@ export function useJob(jobId: string): Job | undefined {
 
     async function poll(): Promise<void> {
       try {
-        const res = await apiFetch(`/jobs/${jobId}`);
+        const res = await apiFetch(`/api/jobs/${jobId}`);
         const data = (await res.json()) as Job;
         jobCache.set(jobId, data);
         if (!cancelled) {
