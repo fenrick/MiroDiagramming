@@ -1,5 +1,5 @@
 import * as log from '../src/logger';
-import { showError } from '../src/ui/hooks/notifications';
+import { showApiError, showError } from '../src/ui/hooks/notifications';
 
 interface GlobalWithMiro {
   miro?: { board?: Record<string, unknown> };
@@ -38,5 +38,20 @@ describe('showError', () => {
       .calls[0][0];
     expect(arg.length).toBeLessThanOrEqual(80);
     expect(arg.endsWith('...')).toBe(true);
+  });
+
+  test('maps status codes to messages', async () => {
+    await showApiError(429);
+    expect(global.miro.board.notifications.showError).toHaveBeenCalledWith(
+      'We\u2019re hitting the API limit. I\u2019ll retry shortly.',
+    );
+    await showApiError(401);
+    expect(global.miro.board.notifications.showError).toHaveBeenCalledWith(
+      'Miro session expired. Please sign in again.',
+    );
+    await showApiError(503);
+    expect(global.miro.board.notifications.showError).toHaveBeenCalledWith(
+      'Miro is having trouble. We\u2019ll retry in a moment.',
+    );
   });
 });
