@@ -36,9 +36,8 @@ describe('SyncStatusBar', () => {
   test('shows syncing with remaining items', async () => {
     (apiFetch as unknown as vi.Mock).mockResolvedValue({
       ok: true,
-      json: async () => ({ queue_length: 0, bucket_fill: { user: 100 } }),
+      json: async () => ({ queue_length: 2, bucket_fill: { user: 100 } }),
     } as Response);
-    useSyncStore.getState().setQueue(2);
     render(<SyncStatusBar />);
     expect(await screen.findByText('2 items remaining')).toBeInTheDocument();
   });
@@ -46,7 +45,10 @@ describe('SyncStatusBar', () => {
   test('shows near limit warning', async () => {
     (apiFetch as unknown as vi.Mock).mockResolvedValue({
       ok: true,
-      json: async () => ({ queue_length: 0, bucket_fill: { user: 1 } }),
+      json: async () => ({
+        queue_length: 0,
+        bucket_fill: { primary: 100, secondary: 1 },
+      }),
     } as Response);
     render(<SyncStatusBar />);
     expect(
