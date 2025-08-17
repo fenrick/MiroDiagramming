@@ -34,6 +34,6 @@ def test_root_redirect(tmp_path: Path) -> None:
     app_module = importlib.import_module("miro_backend.main")
     app_module.change_queue = ChangeQueue()  # type: ignore[attr-defined]
     with TestClient(app_module.app) as client:
-        response = client.get("/")
-        assert response.status_code == 200
-        assert "window.location.href" in response.text
+        response = client.get("/", follow_redirects=False)
+        assert response.status_code == 307
+        assert response.headers["location"] == "/static/index.html"
