@@ -30,6 +30,7 @@ from .core.telemetry import setup_telemetry  # noqa: E402
 from .queue import get_change_queue  # noqa: E402
 from .queue.change_queue import change_queue_length  # noqa: E402
 from .services.miro_client import MiroClient  # noqa: E402
+from .services.idempotency import cleanup_idempotency  # noqa: E402
 from .db.session import SessionLocal  # noqa: E402
 
 change_queue = get_change_queue()
@@ -55,20 +56,26 @@ from .api.routers.webhook import router as webhook_router  # noqa: E402
 @asynccontextmanager
 @logfire.instrument("application lifespan", allow_generator=True)  # type: ignore[misc]
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
-    """Start a background worker that processes queued changes."""
+    """Start background workers for queue processing and idempotency cleanup."""
 
     client = MiroClient()
     session = SessionLocal()
     worker = asyncio.create_task(change_queue.worker(session, client))
+    cleanup_task = asyncio.create_task(cleanup_idempotency())
     try:
         logfire.info("change worker started")  # event for worker start
+        logfire.info("idempotency cleanup started")  # event for cleanup start
         yield
     finally:
         worker.cancel()
+        cleanup_task.cancel()
         with contextlib.suppress(asyncio.CancelledError):
             await worker
+        with contextlib.suppress(asyncio.CancelledError):
+            await cleanup_task
         session.close()
         logfire.info("change worker stopped")  # event for worker shutdown
+        logfire.info("idempotency cleanup stopped")  # event for cleanup shutdown
 
 
 BASE_DIR = Path(__file__).resolve().parents[2]
