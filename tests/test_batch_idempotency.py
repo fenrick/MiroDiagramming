@@ -51,7 +51,8 @@ def test_post_batch_is_idempotent_across_reloads(
 
     async def drain(q: ChangeQueue) -> None:
         while not q._queue.empty():
-            await q.dequeue()
+            task = await q.dequeue()
+            await q.mark_task_succeeded(task)
 
     asyncio.run(drain(queue))
 
