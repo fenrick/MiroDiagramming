@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 
 from ..services.miro_client import MiroClient
 from ..services.token_service import get_valid_access_token
-from ..models import Job
+from ..models import CacheEntry, Job
 from ..services.repository import Repository
 
 import logfire
@@ -72,6 +72,7 @@ class ChangeQueue:
         *,
         bucket_reservoir: int = 1,
         bucket_refresh_interval_ms: int = 0,
+        refresh_debounce_ms: int = 500,
     ) -> None:
         self._queue: asyncio.Queue[ChangeTask] = asyncio.Queue()
         self._persistence = persistence
@@ -79,6 +80,8 @@ class ChangeQueue:
         self._bucket_reservoir = bucket_reservoir
         self._bucket_interval_ms = bucket_refresh_interval_ms
         self._buckets: dict[str, _TokenBucket] = {}
+        self._refresh_delay = refresh_debounce_ms / 1000
+        self._refresh_tasks: dict[str, asyncio.Task[None]] = {}
         if self._persistence is not None:
             for task in self._persistence.load():
                 # Record loading of persisted tasks on startup
@@ -125,6 +128,38 @@ class ChangeQueue:
         return task
 
     # ------------------------------------------------------------------
+    # Cache refresh utilities
+    # ------------------------------------------------------------------
+    def _schedule_refresh(
+        self,
+        board_id: str,
+        session: Session,
+        client: MiroClient,
+        token: str,
+    ) -> None:
+        existing = self._refresh_tasks.get(board_id)
+        if existing is not None:
+            existing.cancel()
+        self._refresh_tasks[board_id] = asyncio.create_task(
+            self._refresh_board_cache(board_id, session, client, token)
+        )
+
+    async def _refresh_board_cache(
+        self,
+        board_id: str,
+        session: Session,
+        client: MiroClient,
+        token: str,
+    ) -> None:
+        try:
+            await asyncio.sleep(self._refresh_delay)
+            snapshot = await client.get_board(board_id, token)  # type: ignore[attr-defined]
+            repo: Repository[CacheEntry] = Repository(session, CacheEntry)
+            repo.set_board_state(board_id, snapshot)
+        except asyncio.CancelledError:
+            pass
+
+    # ------------------------------------------------------------------
     # Worker utilities
     # ------------------------------------------------------------------
     @logfire.instrument("worker loop")  # type: ignore[misc]
@@ -148,10 +183,12 @@ class ChangeQueue:
             # Span around applying each individual task
             with logfire.span("apply task {task=}", task=task):
                 token = await get_valid_access_token(session, task.user_id, client)
+                succeeded = False
                 for attempt in range(5):
                     await bucket.acquire()
                     try:
                         await task.apply(client, token)
+                        succeeded = True
                         if job is not None:
                             results = job.results or {
                                 "total": 0,
@@ -201,3 +238,7 @@ class ChangeQueue:
                             error=exc,
                         )
                         await asyncio.sleep(delay)
+                if succeeded:
+                    board_id = getattr(task, "board_id", None)
+                    if board_id is not None:
+                        self._schedule_refresh(board_id, session, client, token)
