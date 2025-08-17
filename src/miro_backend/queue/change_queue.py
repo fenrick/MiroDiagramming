@@ -127,6 +127,11 @@ class ChangeQueue:
         change_queue_length.set(self._queue.qsize())
         return task
 
+    def bucket_fill(self) -> dict[str, int]:
+        """Return remaining tokens per user."""
+
+        return {user: bucket._tokens for user, bucket in self._buckets.items()}
+
     # ------------------------------------------------------------------
     # Cache refresh utilities
     # ------------------------------------------------------------------
