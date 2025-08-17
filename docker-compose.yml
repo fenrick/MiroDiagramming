@@ -7,7 +7,7 @@ services:
       - "8000:8000"
     volumes:
       - ./src:/app/src
-      - ./config.example.yaml:/app/config.yaml:ro
+      - ./config:/app/config
       - sqlite_data:/data
     environment:
       - MIRO_DATABASE_URL=sqlite:////data/app.db

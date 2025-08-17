@@ -107,15 +107,19 @@ def test_creates_default_files_when_missing(
         monkeypatch.delenv(var, raising=False)
 
     root = Path(__file__).resolve().parents[1]
-    shutil.copy(root / ".env.example", tmp_path / ".env.example")
-    shutil.copy(root / "config.example.yaml", tmp_path / "config.example.yaml")
+    example_dir = tmp_path / "config"
+    example_dir.mkdir()
+    shutil.copy(root / "config" / ".env.example", example_dir / ".env.example")
+    shutil.copy(
+        root / "config" / "config.example.yaml", example_dir / "config.example.yaml"
+    )
     monkeypatch.chdir(tmp_path)
 
     with pytest.raises(RuntimeError):
         importlib.reload(config)
 
-    assert (tmp_path / ".env").exists()
-    assert (tmp_path / "config.yaml").exists()
+    assert (tmp_path / "config/.env").exists()
+    assert (tmp_path / "config/config.yaml").exists()
 
     monkeypatch.chdir(root)
     monkeypatch.setenv("MIRO_CLIENT_ID", "test-client-id")
