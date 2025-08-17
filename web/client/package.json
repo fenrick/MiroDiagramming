@@ -45,7 +45,7 @@
     "react-dom": "^18.3.1",
     "react-dropzone": "^14.3.8",
     "safe-regex": "^2.1.1",
-    "zustand": "^4.5.2"
+    "zustand": "^5.0.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
