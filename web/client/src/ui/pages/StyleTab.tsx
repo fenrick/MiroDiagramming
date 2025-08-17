@@ -18,6 +18,7 @@ import {
 } from '../../board/style-tools';
 import { adjustColor } from '../../core/utils/color-utils';
 import { Button, ButtonToolbar, InputField } from '../components';
+import { StickyActions } from '../StickyActions';
 import { PageHelp } from '../components/PageHelp';
 import { TabPanel } from '../components/TabPanel';
 import { useSelection } from '../hooks/use-selection';
@@ -129,63 +130,67 @@ export const StyleTab: React.FC = () => {
           />
         </Grid.Item>
         <Grid.Item>
-          <ButtonToolbar className='toolbar'>
-            <Button
-              onClick={apply}
-              type='button'
-              variant='primary'
-              icon={<IconSlidersX />}
-              iconPosition='start'>
-              <Text>Apply</Text>
-            </Button>
-            <Button
-              onClick={applyOpacity}
-              type='button'
-              variant='secondary'>
-              <Text>Opacity</Text>
-            </Button>
-            <Button
-              onClick={applyBorder}
-              type='button'
-              variant='secondary'>
-              <Text>Border</Text>
-            </Button>
-            <Button
-              onClick={copyFill}
-              type='button'
-              variant='ghost'>
-              <Text>Copy Fill</Text>
-            </Button>
-          </ButtonToolbar>
+          <StickyActions>
+            <ButtonToolbar>
+              <Button
+                onClick={apply}
+                type='button'
+                variant='primary'
+                icon={<IconSlidersX />}
+                iconPosition='start'>
+                <Text>Apply</Text>
+              </Button>
+              <Button
+                onClick={applyOpacity}
+                type='button'
+                variant='secondary'>
+                <Text>Opacity</Text>
+              </Button>
+              <Button
+                onClick={applyBorder}
+                type='button'
+                variant='secondary'>
+                <Text>Border</Text>
+              </Button>
+              <Button
+                onClick={copyFill}
+                type='button'
+                variant='ghost'>
+                <Text>Copy Fill</Text>
+              </Button>
+            </ButtonToolbar>
+          </StickyActions>
         </Grid.Item>
         <Grid.Item>
           <Heading level={2}>Style presets</Heading>
         </Grid.Item>
         <Grid.Item>
-          <ButtonToolbar className='toolbar'>
-            {STYLE_PRESET_NAMES.map(name => {
-              const preset = stylePresets[name];
-              const style = presetStyle(preset);
-              return (
-                <Button
-                  key={name}
-                  onClick={() => applyStylePreset(preset)}
-                  type='button'
-                  variant='secondary'
-                  css={{
-                    color: style.color,
-                    backgroundColor: style.fillColor,
-                    borderColor: style.borderColor,
-                    borderWidth: style.borderWidth,
-                    borderStyle: 'solid',
-                    display: 'inline-block',
-                    padding: '0 4px',
-                  }}>
-                  {preset.label}
-                </Button>
-              );
-            })}
-          </ButtonToolbar>
+          <StickyActions>
+            <ButtonToolbar>
+              {STYLE_PRESET_NAMES.map(name => {
+                const preset = stylePresets[name];
+                const style = presetStyle(preset);
+                return (
+                  <Button
+                    key={name}
+                    onClick={() => applyStylePreset(preset)}
+                    type='button'
+                    variant='secondary'
+                    css={{
+                      color: style.color,
+                      backgroundColor: style.fillColor,
+                      borderColor: style.borderColor,
+                      borderWidth: style.borderWidth,
+                      borderStyle: 'solid',
+                      display: 'inline-block',
+                      padding: '0 4px',
+                    }}>
+                    {preset.label}
+                  </Button>
+                );
+              })}
+            </ButtonToolbar>
+          </StickyActions>
         </Grid.Item>
       </Grid>
     </TabPanel>

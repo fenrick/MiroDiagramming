@@ -8,6 +8,7 @@ import { Paragraph } from '../ui/components/Paragraph';
 import { ExcelDataProvider } from '../ui/hooks/excel-data-context';
 import { ToastContainer } from '../ui/components/Toast';
 import { PanelShell } from '../ui/PanelShell';
+import { ScrollArea } from '../ui/ScrollArea';
 
 import { type Tab, TAB_DATA } from '../ui/pages/tabs';
 
@@ -46,7 +47,7 @@ function AppShell(): React.JSX.Element {
   const CurrentComp = current[4];
 
   return (
-    <div className='scrollable'>
+    <ScrollArea>
       <ExcelDataProvider
         value={{
           rows,
@@ -85,7 +86,7 @@ function AppShell(): React.JSX.Element {
         />
         <ToastContainer />
       </ExcelDataProvider>
-    </div>
+    </ScrollArea>
   );
 }
 

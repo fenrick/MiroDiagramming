@@ -2,6 +2,8 @@ import React from 'react';
 import { useJob } from '../core/hooks/useJob';
 import { useFocusTrap } from '../core/hooks/useFocusTrap';
 import { Button, ButtonToolbar, Checkbox } from '../ui/components';
+import { ScrollArea } from '../ui/ScrollArea';
+import { StickyActions } from '../ui/StickyActions';
 
 interface JobDrawerProps {
   /** Identifier of the job to display. */
@@ -77,50 +79,54 @@ export function JobDrawer({
   return (
     <aside
       ref={trapRef}
-      className='drawer scrollable'
+      className='drawer'
       role='dialog'
       aria-modal='true'>
-      <div
-        aria-live='polite'
-        role='status'
-        className='custom-visually-hidden'>
-        {announcement}
-      </div>
-      <Checkbox
-        label='Close when done'
-        value={closeOnDone}
-        onChange={setCloseOnDone}
-      />
-      <ul>
-        {job?.operations
-          .filter(op => !hiddenOps.has(op.id))
-          .map(op => (
-            <li
-              key={op.id}
-              id={`job-op-${op.id}`}
-              tabIndex={-1}>
-              <span
-                className='truncate'
-                title={op.id}>
-                {op.id}
-              </span>
-              <span>{op.status}</span>
-              {op.status === 'failed' && (
-                <>
-                  <Button variant='tertiary'>Retry</Button>
-                  <Button variant='ghost'>Details</Button>
-                </>
-              )}
-            </li>
-          ))}
-      </ul>
-      <ButtonToolbar className='toolbar'>
-        <Button
-          variant='tertiary'
-          onClick={onClose}>
-          Close
-        </Button>
-      </ButtonToolbar>
+      <ScrollArea>
+        <div
+          aria-live='polite'
+          role='status'
+          className='custom-visually-hidden'>
+          {announcement}
+        </div>
+        <Checkbox
+          label='Close when done'
+          value={closeOnDone}
+          onChange={setCloseOnDone}
+        />
+        <ul>
+          {job?.operations
+            .filter(op => !hiddenOps.has(op.id))
+            .map(op => (
+              <li
+                key={op.id}
+                id={`job-op-${op.id}`}
+                tabIndex={-1}>
+                <span
+                  className='truncate'
+                  title={op.id}>
+                  {op.id}
+                </span>
+                <span>{op.status}</span>
+                {op.status === 'failed' && (
+                  <>
+                    <Button variant='tertiary'>Retry</Button>
+                    <Button variant='ghost'>Details</Button>
+                  </>
+                )}
+              </li>
+            ))}
+        </ul>
+        <StickyActions>
+          <ButtonToolbar>
+            <Button
+              variant='tertiary'
+              onClick={onClose}>
+              Close
+            </Button>
+          </ButtonToolbar>
+        </StickyActions>
+      </ScrollArea>
     </aside>
   );
 }

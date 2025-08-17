@@ -18,6 +18,7 @@ import {
 import { PageHelp } from '../components/PageHelp';
 import { TabPanel } from '../components/TabPanel';
 import type { TabTuple } from './tab-definitions';
+import { StickyActions } from '../StickyActions';
 
 /**
  * Combines grid and spacing tools into a single sidebar tab.
@@ -119,15 +120,17 @@ export const ArrangeTab: React.FC = () => {
           </Grid.Item>
         )}
         <Grid.Item>
-          <ButtonToolbar className='toolbar'>
-            <Button
-              onClick={applyGrid}
-              variant='primary'
-              iconPosition='start'
-              icon={<IconGrid />}>
-              <Text>Arrange Grid</Text>
-            </Button>
-          </ButtonToolbar>
+          <StickyActions>
+            <ButtonToolbar>
+              <Button
+                onClick={applyGrid}
+                variant='primary'
+                iconPosition='start'
+                icon={<IconGrid />}>
+                <Text>Arrange Grid</Text>
+              </Button>
+            </ButtonToolbar>
+          </StickyActions>
         </Grid.Item>
 
         <Grid.Item>
@@ -153,15 +156,17 @@ export const ArrangeTab: React.FC = () => {
               onValueChange={v => updateSpacing(v)}
               placeholder='Distance'
             />
-            <ButtonToolbar className='toolbar'>
-              <Button
-                onClick={applySpacing}
-                variant='primary'
-                iconPosition='start'
-                icon={<IconChevronRightDouble />}>
-                <Text>Distribute</Text>
-              </Button>
-            </ButtonToolbar>
+            <StickyActions>
+              <ButtonToolbar>
+                <Button
+                  onClick={applySpacing}
+                  variant='primary'
+                  iconPosition='start'
+                  icon={<IconChevronRightDouble />}>
+                  <Text>Distribute</Text>
+                </Button>
+              </ButtonToolbar>
+            </StickyActions>
           </div>
         </Grid.Item>
       </Grid>

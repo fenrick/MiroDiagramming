@@ -35,6 +35,7 @@ import { PageHelp } from '../components/PageHelp';
 import { TabPanel } from '../components/TabPanel';
 import { useSelection } from '../hooks/use-selection';
 import type { TabTuple } from './tab-definitions';
+import { StickyActions } from '../StickyActions';
 
 /** Predefined button sizes used by the quick presets. */
 const PRESET_SIZES: Record<'S' | 'M' | 'L', Size> = {
@@ -211,22 +212,26 @@ export const ResizeTab: React.FC = () => {
           </div>
         </Grid.Item>
       </Grid>
-      <ButtonToolbar className='toolbar'>
-        <Button
-          onClick={apply}
-          variant='primary'
-          iconPosition='start'
-          icon={<IconChevronRightDouble />}>
-          <Text>Apply Size</Text>
-        </Button>
-        <Button
-          onClick={copiedSize ? resetCopy : copy}
-          variant='secondary'
-          iconPosition='start'
-          icon={copiedSize ? <IconArrowArcLeft /> : <IconSquaresTwoOverlap />}>
-          <Text>{copiedSize ? 'Reset Copy' : 'Copy Size'}</Text>
-        </Button>
-      </ButtonToolbar>
+      <StickyActions>
+        <ButtonToolbar>
+          <Button
+            onClick={apply}
+            variant='primary'
+            iconPosition='start'
+            icon={<IconChevronRightDouble />}>
+            <Text>Apply Size</Text>
+          </Button>
+          <Button
+            onClick={copiedSize ? resetCopy : copy}
+            variant='secondary'
+            iconPosition='start'
+            icon={
+              copiedSize ? <IconArrowArcLeft /> : <IconSquaresTwoOverlap />
+            }>
+            <Text>{copiedSize ? 'Reset Copy' : 'Copy Size'}</Text>
+          </Button>
+        </ButtonToolbar>
+      </StickyActions>
     </TabPanel>
   );
 };

@@ -2,6 +2,7 @@ import { Grid, IconArrowArcLeft, IconPlus, Text } from '@mirohq/design-system';
 import React from 'react';
 import { CardProcessor } from '../../board/card-processor';
 import { Button, ButtonToolbar, Checkbox, InputField } from '../components';
+import { StickyActions } from '../StickyActions';
 import { JsonDropZone } from '../components/JsonDropZone';
 import { PageHelp } from '../components/PageHelp';
 import { TabPanel } from '../components/TabPanel';
@@ -94,35 +95,37 @@ export const CardsTab: React.FC = () => {
             </fieldset>
           </Grid.Item>
           <Grid.Item>
-            <ButtonToolbar className='toolbar'>
-              <Button
-                onClick={handleCreate}
-                variant='primary'
-                icon={<IconPlus />}
-                iconPosition='start'>
-                <Text>Create Cards</Text>
-              </Button>
-              {showUndo && (
+            <StickyActions>
+              <ButtonToolbar>
                 <Button
-                  onClick={() =>
-                    undoLastImport(lastProc, () => setLastProc(undefined))
-                  }
-                  variant='secondary'>
-                  Undo import (⌘Z)
+                  onClick={handleCreate}
+                  variant='primary'
+                  icon={<IconPlus />}
+                  iconPosition='start'>
+                  <Text>Create Cards</Text>
                 </Button>
-              )}
-              {lastProc && (
-                <Button
-                  onClick={() =>
-                    undoLastImport(lastProc, () => setLastProc(undefined))
-                  }
-                  variant='secondary'
-                  iconPosition='start'
-                  icon={<IconArrowArcLeft />}>
-                  <Text>Undo Last Import</Text>
-                </Button>
-              )}
-            </ButtonToolbar>
+                {showUndo && (
+                  <Button
+                    onClick={() =>
+                      undoLastImport(lastProc, () => setLastProc(undefined))
+                    }
+                    variant='secondary'>
+                    Undo import (⌘Z)
+                  </Button>
+                )}
+                {lastProc && (
+                  <Button
+                    onClick={() =>
+                      undoLastImport(lastProc, () => setLastProc(undefined))
+                    }
+                    variant='secondary'
+                    iconPosition='start'
+                    icon={<IconArrowArcLeft />}>
+                    <Text>Undo Last Import</Text>
+                  </Button>
+                )}
+              </ButtonToolbar>
+            </StickyActions>
             {progress > 0 && progress < 100 && (
               <progress
                 value={progress}
