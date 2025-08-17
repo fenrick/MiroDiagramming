@@ -27,11 +27,16 @@ function wrapper({ children }: { children: React.ReactNode }) {
 }
 
 describe('useExcelSync', () => {
-  beforeEach(() =>
+  beforeEach(() => {
     (ExcelSyncService as unknown as vi.Mock).mockImplementation(() => ({
       updateShapesFromExcel: vi.fn().mockResolvedValue(undefined),
-    })),
-  );
+    }));
+    (
+      globalThis as unknown as {
+        miro: { board: { notifications: { showError: vi.Mock } } };
+      }
+    ).miro = { board: { notifications: { showError: vi.fn() } } };
+  });
 
   test('updates rows and widgets', async () => {
     const { result } = renderHook(() => useExcelSync(), { wrapper });

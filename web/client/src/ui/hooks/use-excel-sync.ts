@@ -1,5 +1,6 @@
 import React from 'react';
 import { ExcelSyncService } from '../../core/excel-sync-service';
+import { useOptimisticOps } from '../../core/hooks/useOptimisticOps';
 import type { ExcelRow } from '../../core/utils/excel-loader';
 import { useExcelData } from './excel-data-context';
 
@@ -12,18 +13,31 @@ export function useExcelSync(): (
 ) => Promise<void> {
   const ctx = useExcelData();
   const serviceRef = React.useRef<ExcelSyncService>(new ExcelSyncService());
+  const enqueue = useOptimisticOps();
+
   return React.useCallback(
     async (index: number, updated: ExcelRow): Promise<void> => {
       if (!ctx) {
         return;
       }
-      ctx.setRows(prev => prev.map((r, i) => (i === index ? updated : r)));
-      await serviceRef.current.updateShapesFromExcel([updated], {
-        idColumn: ctx.idColumn,
-        labelColumn: ctx.labelColumn,
-        templateColumn: ctx.templateColumn,
+      const prev = ctx.rows[index];
+      await enqueue({
+        apply: () =>
+          ctx.setRows(prevRows =>
+            prevRows.map((r, i) => (i === index ? updated : r)),
+          ),
+        rollback: () =>
+          ctx.setRows(prevRows =>
+            prevRows.map((r, i) => (i === index ? prev : r)),
+          ),
+        commit: () =>
+          serviceRef.current.updateShapesFromExcel([updated], {
+            idColumn: ctx.idColumn,
+            labelColumn: ctx.labelColumn,
+            templateColumn: ctx.templateColumn,
+          }),
       });
     },
-    [ctx],
+    [ctx, enqueue],
   );
 }
