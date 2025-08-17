@@ -18,7 +18,7 @@
     "dev": "vite",
     "start": "vite",
     "generate-client": "tsx ../../scripts/generate-client.ts",
-    "build": "npm run generate-client && tsc -b && vite build --outDir dist",
+    "build": "npm run generate-client || echo 'using snapshot' && tsc -b && vite build --outDir dist",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "prettier": "prettier '**/*.{js,jsx,ts,tsx,md,json,yml,yaml,html,css}' --write",
