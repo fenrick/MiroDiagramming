@@ -1,8 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { createElement } from 'react';
+import { render } from '@testing-library/react';
+import React from 'react';
+import { App } from './App';
 
 describe('App boot', () => {
   it('renders without crashing', () => {
-    expect(createElement('div')).toBeTruthy();
+    const { container } = render(<App />);
+    expect(container).toBeTruthy();
   });
 });

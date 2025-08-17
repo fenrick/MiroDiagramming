@@ -1,6 +1,5 @@
-import { createTheme, Tabs, themes } from '@mirohq/design-system';
+import { Tabs } from '@mirohq/design-system';
 import * as React from 'react';
-import { createRoot } from 'react-dom/client';
 import type { ExcelRow } from '../core/utils/excel-loader';
 import { AuthBanner } from '../components/AuthBanner';
 import { SyncStatusBar } from '../components/SyncStatusBar';
@@ -8,10 +7,9 @@ import { EditMetadataModal, IntroScreen } from '../ui/components';
 import { Paragraph } from '../ui/components/Paragraph';
 import { ExcelDataProvider } from '../ui/hooks/excel-data-context';
 import { ToastContainer } from '../ui/components/Toast';
+import { PanelShell } from '../ui/PanelShell';
 
 import { type Tab, TAB_DATA } from '../ui/pages/tabs';
-
-const lightThemeClassName = createTheme(themes.light);
 
 /**
  * React entry component that renders the file selection and mode
@@ -96,16 +94,13 @@ function AppShell(): React.JSX.Element {
  */
 export const App: React.FC = () => {
   const [started, setStarted] = React.useState(false);
-  return started ? (
-    <AppShell />
-  ) : (
-    <IntroScreen onStart={() => setStarted(true)} />
+  return (
+    <PanelShell>
+      {started ? (
+        <AppShell />
+      ) : (
+        <IntroScreen onStart={() => setStarted(true)} />
+      )}
+    </PanelShell>
   );
 };
-
-const container = document.getElementById('root');
-if (container) {
-  container.classList += lightThemeClassName;
-  const root = createRoot(container);
-  root.render(<App />);
-}
