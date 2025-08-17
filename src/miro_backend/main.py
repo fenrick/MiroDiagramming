@@ -4,6 +4,7 @@ import contextlib
 import os
 from contextlib import asynccontextmanager
 from pathlib import Path
+from textwrap import dedent
 from typing import AsyncIterator
 
 from fastapi import FastAPI, Response
@@ -53,6 +54,43 @@ from .api.routers.jobs import router as jobs_router  # noqa: E402
 from .api.routers.webhook import router as webhook_router  # noqa: E402
 
 
+OPENAPI_TAGS = [
+    {
+        "name": "batch",
+        "description": (
+            "Submit multiple operations in one request.\n\n"
+            + dedent(
+                """\
+                Example with idempotency:
+
+                ```bash
+                curl -X POST /api/batch \\
+                  -H 'X-User-Id: user-123' \\
+                  -H 'Idempotency-Key: 123e4567-e89b-12d3-a456-426614174000' \\
+                  -d '{"operations": [{"type": "create_node", "node_id": "n1", "data": {}}]}'
+                ```
+                """
+            )
+        ),
+    },
+    {
+        "name": "jobs",
+        "description": (
+            "Query background job status.\n\n"
+            + dedent(
+                """\
+                Example:
+
+                ```bash
+                curl /api/jobs/job-123
+                ```
+                """
+            )
+        ),
+    },
+]
+
+
 @asynccontextmanager
 @logfire.instrument("application lifespan", allow_generator=True)  # type: ignore[misc]
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
@@ -79,7 +117,13 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
 
 
 BASE_DIR = Path(__file__).resolve().parents[2]
-app = FastAPI(lifespan=lifespan)
+app = FastAPI(
+    lifespan=lifespan,
+    title="Miro Backend",
+    version="0.1.0",
+    openapi_tags=OPENAPI_TAGS,
+    servers=[{"url": settings.api_url}],
+)
 
 # Instrument FastAPI and register middleware and handlers
 setup_fastapi(app)
