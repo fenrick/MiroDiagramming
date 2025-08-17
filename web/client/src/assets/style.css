@@ -49,6 +49,10 @@ body {
   padding: var(--space-200);
 }
 
+.drawer {
+  width: 320px;
+}
+
 .scrollable .buttons {
   position: sticky;
   bottom: 0;
