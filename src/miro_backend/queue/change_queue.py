@@ -255,7 +255,7 @@ class ChangeQueue:
                         )
                         retryable = (
                             network_error
-                            or status in {429}
+                            or status in {429, 409}
                             or (isinstance(status, int) and 500 <= status < 600)
                         )
                         if retryable:
