@@ -4,13 +4,15 @@ from __future__ import annotations
 
 from typing import Any
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 from ..queue import CreateNode, ChangeTask
 
 
 class CardCreate(BaseModel):
     """Data describing a card to be created on the board."""
+
+    model_config = ConfigDict(extra="forbid")
 
     id: str | None = None
     title: str
