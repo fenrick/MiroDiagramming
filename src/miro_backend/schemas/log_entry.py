@@ -6,7 +6,7 @@ from datetime import datetime
 from html import escape
 from typing import Any
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 MAX_MESSAGE_LEN = 1024
 MAX_CONTEXT_ITEMS = 20
@@ -15,6 +15,8 @@ MAX_CONTEXT_VALUE_LEN = 1024
 
 class LogEntryIn(BaseModel):
     """Log entry received from the client application."""
+
+    model_config = ConfigDict(extra="forbid")
 
     timestamp: datetime
     level: str = Field(max_length=16)
