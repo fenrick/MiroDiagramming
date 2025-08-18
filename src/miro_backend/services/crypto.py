@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import cast
 
-from cryptography.fernet import Fernet, MultiFernet
+from cryptography.fernet import Fernet, MultiFernet, InvalidToken
 
 from ..core.config import settings
 
@@ -34,9 +34,15 @@ def decrypt(token: str) -> str:
     """Decrypt ``token`` using the configured key.
 
     When no encryption key is configured, the token is returned unchanged.
+
+    Raises:
+        ValueError: If the token cannot be decrypted with the configured key.
     """
 
     if _fernet is None:
         return token
-    result = _fernet.decrypt(token.encode())
+    try:
+        result = _fernet.decrypt(token.encode())
+    except InvalidToken as exc:
+        raise ValueError("invalid encrypted token") from exc
     return cast(bytes, result).decode()
