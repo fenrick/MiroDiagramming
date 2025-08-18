@@ -1,5 +1,5 @@
 from __future__ import annotations
-
+import asyncio
 from datetime import datetime, timedelta, timezone
 from typing import Any, Iterator, cast
 
@@ -123,3 +123,33 @@ async def test_get_valid_access_token_refreshes_expired_tokens() -> None:
     finally:
         session.close()
         Base.metadata.drop_all(bind=engine)
+
+
+@pytest.mark.asyncio()  # type: ignore[misc]
+async def test_refresh_token_called_once_concurrently(session: Session) -> None:
+    user = User(
+        user_id="u3",
+        name="Test",
+        access_token="old",
+        refresh_token="ref",
+        expires_at=datetime.now(timezone.utc) + timedelta(seconds=1),
+    )
+    session.add(user)
+    session.commit()
+
+    class SlowClient:
+        def __init__(self) -> None:
+            self.calls: list[str] = []
+
+        async def refresh_token(self, refresh_token: str) -> dict[str, Any]:
+            self.calls.append(refresh_token)
+            await asyncio.sleep(0.1)
+            return {"access_token": "new", "expires_in": 60}
+
+    client = SlowClient()
+    tokens = await asyncio.gather(
+        *(get_valid_access_token(session, "u3", cast(Any, client)) for _ in range(5))
+    )
+
+    assert tokens == ["new"] * 5
+    assert client.calls == ["ref"]
