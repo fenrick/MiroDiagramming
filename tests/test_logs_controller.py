@@ -56,7 +56,7 @@ def test_capture_rejects_large_batch(client: TestClient) -> None:
             "level": "info",
             "message": "m",
         }
-    ] * 101
+    ] * 1001
 
     response = client.post("/api/logs", json=payload)
     assert response.status_code == 413
