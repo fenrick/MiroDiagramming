@@ -51,6 +51,12 @@ class DummyAsyncClient:
         self.record["call"] = ("DELETE", url, headers, None)
         return httpx.Response(204)
 
+    async def request(self, method: str, url: str, **kwargs: Any) -> httpx.Response:
+        """Dispatch generic request to verb-specific handlers."""
+
+        func = getattr(self, method.lower())
+        return await func(url, **kwargs)
+
 
 @pytest.mark.integration  # type: ignore[misc]
 @pytest.mark.asyncio  # type: ignore[misc]

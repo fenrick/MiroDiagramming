@@ -15,7 +15,7 @@ from ..models import CacheEntry, Job
 from ..services.repository import Repository
 
 import logfire
-from prometheus_client import Gauge
+from prometheus_client import Gauge, Counter
 
 from .tasks import ChangeTask
 
@@ -60,6 +60,19 @@ class _TokenBucket:
 change_queue_length = Gauge(
     "change_queue_length",
     "Number of change tasks pending in the queue",
+    registry=None,
+)
+
+task_retries = Counter(
+    "change_task_retries_total",
+    "Retries by task type",
+    ["type"],
+    registry=None,
+)
+task_dlq = Counter(
+    "change_task_dlq_total",
+    "Tasks sent to DLQ",
+    ["type"],
     registry=None,
 )
 
@@ -245,7 +258,9 @@ class ChangeQueue:
                             or status in {429}
                             or (isinstance(status, int) and 500 <= status < 600)
                         )
-                        if not retryable or attempt == 4:
+                        if retryable:
+                            task_retries.labels(type=task.__class__.__name__).inc()
+                        if not retryable:
                             if job is not None:
                                 results = job.results or {
                                     "total": 0,
@@ -257,18 +272,44 @@ class ChangeQueue:
                                 job.results = results
                                 job.status = "failed"
                                 session.commit()
-                            if retryable and attempt == 4:
-                                logfire.error(
-                                    "task failed after retries",
-                                    task=task,
-                                    error=exc,
-                                )
-                            else:
-                                logfire.error(
-                                    "permanent task failure", task=task, error=exc
-                                )
+                            logfire.error(
+                                "permanent task failure", task=task, error=exc
+                            )
                             await self.mark_task_failed(task)
                             raise
+                        if attempt == 4:
+                            if job is not None:
+                                results = job.results or {
+                                    "total": 0,
+                                    "operations": [],
+                                }
+                                results["operations"].append(
+                                    {"status": "failed", "error": str(exc)}
+                                )
+                                job.results = results
+                                job.status = "failed"
+                                session.commit()
+                            logfire.error(
+                                "task failed after retries",
+                                task=task,
+                                error=exc,
+                            )
+                            if self._persistence is not None:
+                                from .persistence import DeadLetterTask
+                                from ..db.session import SessionLocal
+
+                                with SessionLocal() as s:
+                                    s.add(
+                                        DeadLetterTask(
+                                            type=task.__class__.__name__,
+                                            payload=task.model_dump_json(),
+                                            error=str(exc),
+                                        )
+                                    )
+                                    s.commit()
+                                await self.mark_task_succeeded(task)
+                            task_dlq.labels(type=task.__class__.__name__).inc()
+                            break
                         retry_after = getattr(exc, "retry_after", None)
                         delay = (
                             float(retry_after)
