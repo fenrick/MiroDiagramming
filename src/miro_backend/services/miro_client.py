@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from datetime import datetime, timezone
+from email.utils import parsedate_to_datetime
 from typing import Any, cast
 
 import httpx
@@ -44,7 +46,16 @@ class MiroClient:
                 try:
                     retry_after = float(retry_after_header)
                 except ValueError:
-                    pass
+                    try:
+                        retry_at = parsedate_to_datetime(retry_after_header)
+                    except (TypeError, ValueError):
+                        pass
+                    else:
+                        delta = (
+                            retry_at.astimezone(timezone.utc)
+                            - datetime.now(timezone.utc)
+                        ).total_seconds()
+                        retry_after = max(0.0, delta)
             raise RateLimitedError(retry_after=retry_after)
         if 500 <= response.status_code < 600:
             raise HttpError(response.status_code)
