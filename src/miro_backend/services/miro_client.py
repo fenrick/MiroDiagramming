@@ -62,6 +62,20 @@ class MiroClient:
         if response.status_code >= 400:
             response.raise_for_status()
 
+    async def _request(self, method: str, url: str, **kwargs: Any) -> httpx.Response:
+        """Make an HTTP request and translate connection errors."""
+
+        timeout = kwargs.pop("timeout", settings.http_timeout_seconds)
+        try:
+            async with httpx.AsyncClient(
+                base_url=self._base_url, timeout=timeout
+            ) as client:
+                response = await client.request(method, url, **kwargs)
+        except httpx.RequestError as exc:  # pragma: no cover - network failure
+            raise HttpError(status=503, message=str(exc)) from exc
+        self._raise_for_status(response)
+        return response
+
     async def create_node(
         self, node_id: str, data: dict[str, Any], access_token: str
     ) -> None:
@@ -75,15 +89,12 @@ class MiroClient:
             Attributes for the node.
         """
 
-        async with httpx.AsyncClient(
-            base_url=self._base_url, timeout=settings.http_timeout_seconds
-        ) as client:
-            response = await client.put(
-                f"/graph/nodes/{node_id}",
-                json=data,
-                headers=self._auth_headers(access_token),
-            )
-            self._raise_for_status(response)
+        await self._request(
+            "PUT",
+            f"/graph/nodes/{node_id}",
+            json=data,
+            headers=self._auth_headers(access_token),
+        )
 
     async def update_card(
         self, card_id: str, payload: dict[str, Any], access_token: str
@@ -98,15 +109,12 @@ class MiroClient:
             Changes to apply to the card.
         """
 
-        async with httpx.AsyncClient(
-            base_url=self._base_url, timeout=settings.http_timeout_seconds
-        ) as client:
-            response = await client.patch(
-                f"/cards/{card_id}",
-                json=payload,
-                headers=self._auth_headers(access_token),
-            )
-            self._raise_for_status(response)
+        await self._request(
+            "PATCH",
+            f"/cards/{card_id}",
+            json=payload,
+            headers=self._auth_headers(access_token),
+        )
 
     async def create_shape(
         self,
@@ -127,15 +135,12 @@ class MiroClient:
             Shape attributes to send to Miro.
         """
 
-        async with httpx.AsyncClient(
-            base_url=self._base_url, timeout=settings.http_timeout_seconds
-        ) as client:
-            response = await client.put(
-                f"/boards/{board_id}/shapes/{shape_id}",
-                json=data,
-                headers=self._auth_headers(access_token),
-            )
-            self._raise_for_status(response)
+        await self._request(
+            "PUT",
+            f"/boards/{board_id}/shapes/{shape_id}",
+            json=data,
+            headers=self._auth_headers(access_token),
+        )
 
     async def update_shape(
         self,
@@ -156,15 +161,12 @@ class MiroClient:
             Updated attributes for the shape.
         """
 
-        async with httpx.AsyncClient(
-            base_url=self._base_url, timeout=settings.http_timeout_seconds
-        ) as client:
-            response = await client.patch(
-                f"/boards/{board_id}/shapes/{shape_id}",
-                json=data,
-                headers=self._auth_headers(access_token),
-            )
-            self._raise_for_status(response)
+        await self._request(
+            "PATCH",
+            f"/boards/{board_id}/shapes/{shape_id}",
+            json=data,
+            headers=self._auth_headers(access_token),
+        )
 
     async def delete_shape(
         self, board_id: str, shape_id: str, access_token: str
@@ -179,14 +181,11 @@ class MiroClient:
             Identifier of the shape to delete.
         """
 
-        async with httpx.AsyncClient(
-            base_url=self._base_url, timeout=settings.http_timeout_seconds
-        ) as client:
-            response = await client.delete(
-                f"/boards/{board_id}/shapes/{shape_id}",
-                headers=self._auth_headers(access_token),
-            )
-            self._raise_for_status(response)
+        await self._request(
+            "DELETE",
+            f"/boards/{board_id}/shapes/{shape_id}",
+            headers=self._auth_headers(access_token),
+        )
 
     async def exchange_code(
         self,
@@ -226,39 +225,38 @@ class MiroClient:
         """
 
         timeout = timeout_seconds or settings.http_timeout_seconds
-        async with httpx.AsyncClient(timeout=timeout) as client:
-            response = await client.post(
-                token_url,
-                data={
-                    "grant_type": "authorization_code",
-                    "code": code,
-                    "redirect_uri": redirect_uri,
-                    "client_id": client_id,
-                    "client_secret": client_secret,
-                },
-                headers={"Content-Type": "application/x-www-form-urlencoded"},
-            )
-            self._raise_for_status(response)
-            return cast(dict[str, Any], response.json())
+        response = await self._request(
+            "POST",
+            token_url,
+            data={
+                "grant_type": "authorization_code",
+                "code": code,
+                "redirect_uri": redirect_uri,
+                "client_id": client_id,
+                "client_secret": client_secret,
+            },
+            headers={"Content-Type": "application/x-www-form-urlencoded"},
+            timeout=timeout,
+        )
+        return cast(dict[str, Any], response.json())
 
     async def refresh_token(
         self, refresh_token: str
     ) -> dict[str, Any]:  # pragma: no cover - external call
         """Refresh an access token using ``refresh_token``."""
 
-        async with httpx.AsyncClient(timeout=settings.http_timeout_seconds) as client:
-            response = await client.post(
-                settings.oauth_token_url,
-                data={
-                    "grant_type": "refresh_token",
-                    "refresh_token": refresh_token,
-                    "client_id": settings.client_id,
-                    "client_secret": settings.client_secret.get_secret_value(),
-                },
-                headers={"Content-Type": "application/x-www-form-urlencoded"},
-            )
-            self._raise_for_status(response)
-            return cast(dict[str, Any], response.json())
+        response = await self._request(
+            "POST",
+            settings.oauth_token_url,
+            data={
+                "grant_type": "refresh_token",
+                "refresh_token": refresh_token,
+                "client_id": settings.client_id,
+                "client_secret": settings.client_secret.get_secret_value(),
+            },
+            headers={"Content-Type": "application/x-www-form-urlencoded"},
+        )
+        return cast(dict[str, Any], response.json())
 
 
 _client = MiroClient()
