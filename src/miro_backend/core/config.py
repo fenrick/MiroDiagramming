@@ -62,7 +62,7 @@ class Settings(BaseSettings):
         description="Space-separated list of OAuth scopes requested.",
     )
     oauth_redirect_uri: str = Field(
-        alias="MIRO_REDIRECT_URI",
+        alias="MIRO_OAUTH_REDIRECT_URI",
         description="Callback URL registered with Miro for OAuth redirects.",
     )
     encryption_key: str | None = Field(

@@ -20,7 +20,7 @@ def test_defaults_used_when_no_overrides(
     monkeypatch.setenv("MIRO_CLIENT_ID", "id")
     monkeypatch.setenv("MIRO_CLIENT_SECRET", "secret")
     monkeypatch.setenv("MIRO_WEBHOOK_SECRET", "hook")
-    monkeypatch.setenv("MIRO_REDIRECT_URI", "http://redirect")
+    monkeypatch.setenv("MIRO_OAUTH_REDIRECT_URI", "http://redirect")
 
     settings = Settings()
     assert settings.database_url == "sqlite:///./app.db"
@@ -91,7 +91,7 @@ def test_missing_redirect_uri_raises_error(
     """Unsetting redirect URI triggers a validation error."""
 
     monkeypatch.chdir(tmp_path)
-    monkeypatch.delenv("MIRO_REDIRECT_URI", raising=False)
+    monkeypatch.delenv("MIRO_OAUTH_REDIRECT_URI", raising=False)
     monkeypatch.setenv("MIRO_CONFIG_FILE", str(tmp_path / "missing.yaml"))
 
     with pytest.raises(ValidationError):
