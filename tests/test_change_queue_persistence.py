@@ -21,6 +21,7 @@ async def test_enqueue_dequeue_persists() -> None:
     """Ensure persistence helpers are invoked for success."""
 
     persistence = mock.AsyncMock()
+    persistence.save = mock.AsyncMock(return_value=1)
     persistence.claim_next = mock.AsyncMock(return_value=None)
     queue = ChangeQueue(persistence=persistence)
     task = CreateNode(node_id="n1", data={}, user_id="u1")
@@ -33,8 +34,8 @@ async def test_enqueue_dequeue_persists() -> None:
     persistence.delete.assert_not_called()
 
     await queue.mark_task_succeeded(task)
-    persistence.mark_completed.assert_awaited_once_with(task)
-    persistence.delete.assert_awaited_once_with(task)
+    persistence.mark_completed.assert_awaited_once_with(1)
+    persistence.delete.assert_awaited_once_with(1)
 
 
 @pytest.mark.asyncio()  # type: ignore[misc]

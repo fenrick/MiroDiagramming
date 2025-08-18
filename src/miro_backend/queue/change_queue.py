@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import random
-from typing import Any
+from typing import Any, cast
 
 from sqlalchemy.orm import Session
 
@@ -97,7 +97,8 @@ class ChangeQueue:
             # Persist task then enqueue so it survives restarts
             async with self._lock:
                 logfire.info("persisting task", task=task)
-                await self._persistence.save(task)
+                task_id = await self._persistence.save(task)
+                setattr(task, "_db_id", task_id)
                 await self._queue.put(task)
         else:
             # Queue task without persistence
@@ -112,11 +113,16 @@ class ChangeQueue:
         """Retrieve the next task from the queue."""
 
         if self._queue.empty() and self._persistence is not None:
-            claimed: ChangeTask | None = await self._persistence.claim_next()
+            claimed = cast(
+                tuple[int, ChangeTask] | None,
+                await self._persistence.claim_next(),
+            )
             if claimed is not None:
-                logfire.info("task claimed", task=claimed)
+                task_id, task = claimed
+                setattr(task, "_db_id", task_id)
+                logfire.info("task claimed", task=task)
                 change_queue_length.set(self._queue.qsize())
-                return claimed
+                return task
         task = await self._queue.get()
         logfire.info("task dequeued", task=task)
         # Update metric after removing task
@@ -128,17 +134,23 @@ class ChangeQueue:
 
         if self._persistence is None:
             return
+        task_id = getattr(task, "_db_id", None)
+        if task_id is None:
+            return
         async with self._lock:
-            await self._persistence.mark_completed(task)
-            await self._persistence.delete(task)
+            await self._persistence.mark_completed(task_id)
+            await self._persistence.delete(task_id)
 
     async def mark_task_failed(self, task: ChangeTask) -> None:
         """Reset ``task`` to queued state on failure."""
 
         if self._persistence is None:
             return
+        task_id = getattr(task, "_db_id", None)
+        if task_id is None:
+            return
         async with self._lock:
-            await self._persistence.reset_to_queued(task)
+            await self._persistence.reset_to_queued(task_id)
 
     def bucket_fill(self) -> dict[str, int]:
         """Return remaining tokens per user."""

@@ -3,11 +3,12 @@
 from __future__ import annotations
 
 import asyncio
+from datetime import datetime
 from typing import Any, Type
 
-from sqlalchemy import Integer, String, Text
-from sqlalchemy.orm import Mapped, Session, mapped_column, sessionmaker
+from sqlalchemy import DateTime, Integer, String, Text, func
 from sqlalchemy.exc import OperationalError
+from sqlalchemy.orm import Mapped, Session, mapped_column, sessionmaker
 
 from ..db.session import Base, SessionLocal
 from ..models import Idempotency
@@ -38,6 +39,7 @@ class QueuedTask(Base):
     type: Mapped[str] = mapped_column(String, index=True)
     payload: Mapped[str] = mapped_column(Text)
     status: Mapped[str] = mapped_column(String, default="queued", index=True)
+    claimed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     attempts: Mapped[int] = mapped_column(Integer, default=0)
 
 
@@ -50,29 +52,27 @@ class SqlAlchemyQueuePersistence:
         if engine is not None:
             Base.metadata.create_all(bind=engine)
 
-    async def save(self, task: ChangeTask) -> None:
-        await asyncio.to_thread(self._save, task)
+    async def save(self, task: ChangeTask) -> int:
+        return await asyncio.to_thread(self._save, task)
 
-    def _save(self, task: ChangeTask) -> None:
+    def _save(self, task: ChangeTask) -> int:
         with self._session_factory() as session:
-            session.add(
-                QueuedTask(
-                    type=task.__class__.__name__,
-                    payload=task.model_dump_json(),
-                )
+            row = QueuedTask(
+                type=task.__class__.__name__,
+                payload=task.model_dump_json(),
+                status="queued",
+                attempts=0,
             )
+            session.add(row)
             session.commit()
+            return row.id
 
-    async def delete(self, task: ChangeTask) -> None:
-        await asyncio.to_thread(self._delete, task)
+    async def delete(self, task_id: int) -> None:
+        await asyncio.to_thread(self._delete, task_id)
 
-    def _delete(self, task: ChangeTask) -> None:
+    def _delete(self, task_id: int) -> None:
         with self._session_factory() as session:
-            row = (
-                session.query(QueuedTask)
-                .filter_by(type=task.__class__.__name__, payload=task.model_dump_json())
-                .first()
-            )
+            row = session.get(QueuedTask, task_id)
             if row is not None:
                 session.delete(row)
                 session.commit()
@@ -96,59 +96,60 @@ class SqlAlchemyQueuePersistence:
             tasks.append(cls.model_validate_json(row.payload))
         return tasks
 
-    async def claim_next(self) -> ChangeTask | None:
+    async def claim_next(self) -> tuple[int, ChangeTask] | None:
         return await asyncio.to_thread(self._claim_next)
 
-    def _claim_next(self) -> ChangeTask | None:
+    def _claim_next(self) -> tuple[int, ChangeTask] | None:
         with self._session_factory() as session:
             try:
-                row = (
+                dialect = session.bind.dialect.name if session.bind is not None else ""
+                query = (
                     session.query(QueuedTask)
                     .filter_by(status="queued")
                     .order_by(QueuedTask.id)
-                    .first()
                 )
+                if dialect == "postgresql":
+                    row = query.with_for_update(skip_locked=True).first()
+                else:
+                    row = query.first()
             except OperationalError:
                 return None
             if row is None:
                 return None
-            row.status = "running"
-            session.commit()
+            row.status = "processing"
+            row.claimed_at = func.now()
+            session.flush()
             cls = _TASK_TYPES.get(row.type)
             if cls is None:
+                session.commit()
                 return None
-            return cls.model_validate_json(row.payload)
+            task = cls.model_validate_json(row.payload)
+            session.commit()
+            return row.id, task
 
-    async def mark_completed(self, task: ChangeTask) -> None:
-        """Mark ``task`` as completed in persistence."""
+    async def mark_completed(self, task_id: int) -> None:
+        """Mark ``task_id`` as completed in persistence."""
 
-        await asyncio.to_thread(self._mark_completed, task)
+        await asyncio.to_thread(self._mark_completed, task_id)
 
-    def _mark_completed(self, task: ChangeTask) -> None:
+    def _mark_completed(self, task_id: int) -> None:
         with self._session_factory() as session:
-            row = (
-                session.query(QueuedTask)
-                .filter_by(type=task.__class__.__name__, payload=task.model_dump_json())
-                .first()
-            )
+            row = session.get(QueuedTask, task_id)
             if row is not None:
                 row.status = "completed"
                 session.commit()
 
-    async def reset_to_queued(self, task: ChangeTask) -> None:
-        """Reset ``task`` to queued state and increment its attempt count."""
+    async def reset_to_queued(self, task_id: int) -> None:
+        """Reset ``task_id`` to queued state and increment its attempt count."""
 
-        await asyncio.to_thread(self._reset_to_queued, task)
+        await asyncio.to_thread(self._reset_to_queued, task_id)
 
-    def _reset_to_queued(self, task: ChangeTask) -> None:
+    def _reset_to_queued(self, task_id: int) -> None:
         with self._session_factory() as session:
-            row = (
-                session.query(QueuedTask)
-                .filter_by(type=task.__class__.__name__, payload=task.model_dump_json())
-                .first()
-            )
+            row = session.get(QueuedTask, task_id)
             if row is not None:
                 row.status = "queued"
+                row.claimed_at = None
                 row.attempts = (row.attempts or 0) + 1
                 session.commit()
 
