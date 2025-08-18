@@ -43,6 +43,17 @@ class QueuedTask(Base):
     attempts: Mapped[int] = mapped_column(Integer, default=0)
 
 
+class DeadLetterTask(Base):
+    """Persisted representation of tasks sent to the dead letter queue."""
+
+    __tablename__ = "dead_letter_tasks"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    type: Mapped[str] = mapped_column(String, index=True)
+    payload: Mapped[str] = mapped_column(Text)
+    error: Mapped[str] = mapped_column(Text)
+
+
 class SqlAlchemyQueuePersistence:
     """Store queue state and idempotent responses in the main database."""
 

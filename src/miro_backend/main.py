@@ -30,7 +30,11 @@ from .core.logging import configure_logging, setup_fastapi  # noqa: E402
 from .core.security import setup_security  # noqa: E402
 from .core.telemetry import setup_telemetry  # noqa: E402
 from .queue import get_change_queue  # noqa: E402
-from .queue.change_queue import change_queue_length  # noqa: E402
+from .queue.change_queue import (  # noqa: E402
+    change_queue_length,
+    task_dlq,
+    task_retries,
+)
 from .services.miro_client import MiroClient  # noqa: E402
 from .services.idempotency import cleanup_idempotency  # noqa: E402
 from .db.session import SessionLocal  # noqa: E402
@@ -178,6 +182,8 @@ app.include_router(jobs_router)
 
 instrumentator = Instrumentator().instrument(app)
 instrumentator.registry.register(change_queue_length)
+instrumentator.registry.register(task_retries)
+instrumentator.registry.register(task_dlq)
 
 
 @app.get("/metrics")  # type: ignore[misc]
