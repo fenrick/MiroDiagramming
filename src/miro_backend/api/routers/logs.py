@@ -15,7 +15,7 @@ from ...services.log_repository import LogRepository, get_log_repository
 
 router = APIRouter(prefix="/api/logs", tags=["logs"])
 
-MAX_BATCH = 100
+MAX_LOG_ENTRIES = 1000
 
 
 @router.post("/", status_code=status.HTTP_202_ACCEPTED, response_class=Response)  # type: ignore[misc]
@@ -34,11 +34,13 @@ def capture_logs(
     """
 
     with logfire.span("capture logs"):
-        if len(entries) > MAX_BATCH:
+        if len(entries) > MAX_LOG_ENTRIES:
             logfire.warning(
                 "too many log entries", count=len(entries)
             )  # warn when batch exceeds limit
-            raise PayloadTooLargeError("too many log entries")
+            raise PayloadTooLargeError(
+                f"Maximum {MAX_LOG_ENTRIES} log entries per request"
+            )
 
         models = [
             LogEntry(
