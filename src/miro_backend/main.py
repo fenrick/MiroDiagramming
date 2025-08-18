@@ -45,6 +45,13 @@ change_queue = get_change_queue()
 # Configure structured logging and database instrumentation.
 configure_logging()
 
+# Validate encryption key at startup.
+try:
+    from .services import crypto as _crypto  # noqa: F401
+except ValueError as exc:
+    logfire.error("invalid encryption key", error=str(exc))
+    raise
+
 # Routers are imported after the queue to avoid circular dependencies.
 from .api.routers.auth import router as auth_router  # noqa: E402
 from .api.routers.batch import router as batch_router  # noqa: E402
