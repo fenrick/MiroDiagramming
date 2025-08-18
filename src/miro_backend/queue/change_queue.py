@@ -6,6 +6,7 @@ import asyncio
 import random
 from typing import Any, cast
 
+import httpx
 from sqlalchemy.orm import Session
 
 from ..services.miro_client import MiroClient
@@ -235,8 +236,14 @@ class ChangeQueue:
                         status = getattr(exc, "status", None) or getattr(
                             exc, "status_code", None
                         )
-                        retryable = status in {429} or (
-                            isinstance(status, int) and 500 <= status < 600
+                        network_error = (
+                            isinstance(exc, httpx.HTTPError)
+                            and getattr(exc, "response", None) is None
+                        )
+                        retryable = (
+                            network_error
+                            or status in {429}
+                            or (isinstance(status, int) and 500 <= status < 600)
                         )
                         if not retryable or attempt == 4:
                             if job is not None:
@@ -252,7 +259,13 @@ class ChangeQueue:
                                 session.commit()
                             if retryable and attempt == 4:
                                 logfire.error(
-                                    "task failed after retries", task=task, error=exc
+                                    "task failed after retries",
+                                    task=task,
+                                    error=exc,
+                                )
+                            else:
+                                logfire.error(
+                                    "permanent task failure", task=task, error=exc
                                 )
                             await self.mark_task_failed(task)
                             raise
@@ -262,8 +275,13 @@ class ChangeQueue:
                             if retry_after is not None
                             else 2 ** (attempt + 1) + random.uniform(0, 1)
                         )
+                        message = (
+                            "network error, retrying task"
+                            if network_error
+                            else "retrying task"
+                        )
                         logfire.warning(
-                            "retrying task",
+                            message,
                             attempt=attempt + 1,
                             delay=delay,
                             task=task,
