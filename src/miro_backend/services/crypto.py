@@ -4,13 +4,18 @@ from __future__ import annotations
 
 from typing import cast
 
-from cryptography.fernet import Fernet
+from cryptography.fernet import Fernet, MultiFernet
 
 from ..core.config import settings
 
-_fernet: Fernet | None = None
+_fernet: Fernet | MultiFernet | None = None
 if settings.encryption_key:
-    _fernet = Fernet(settings.encryption_key)
+    # Support comma-separated keys for rotation: "new,old"
+    keys = [k.strip() for k in settings.encryption_key.split(",") if k.strip()]
+    if len(keys) == 1:
+        _fernet = Fernet(keys[0])
+    else:
+        _fernet = MultiFernet([Fernet(k) for k in keys])
 
 
 def encrypt(text: str) -> str:
