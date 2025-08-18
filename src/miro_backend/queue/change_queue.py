@@ -82,11 +82,6 @@ class ChangeQueue:
         self._buckets: dict[str, _TokenBucket] = {}
         self._refresh_delay = refresh_debounce_ms / 1000
         self._refresh_tasks: dict[str, asyncio.Task[None]] = {}
-        if self._persistence is not None:
-            for task in self._persistence.load():
-                # Record loading of persisted tasks on startup
-                logfire.info("loaded persisted task", task=task)
-                self._queue.put_nowait(task)
 
     @property
     def persistence(self) -> Any | None:
@@ -116,6 +111,12 @@ class ChangeQueue:
     async def dequeue(self) -> ChangeTask:
         """Retrieve the next task from the queue."""
 
+        if self._queue.empty() and self._persistence is not None:
+            claimed: ChangeTask | None = await self._persistence.claim_next()
+            if claimed is not None:
+                logfire.info("task claimed", task=claimed)
+                change_queue_length.set(self._queue.qsize())
+                return claimed
         task = await self._queue.get()
         logfire.info("task dequeued", task=task)
         # Update metric after removing task

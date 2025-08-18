@@ -96,6 +96,29 @@ class SqlAlchemyQueuePersistence:
             tasks.append(cls.model_validate_json(row.payload))
         return tasks
 
+    async def claim_next(self) -> ChangeTask | None:
+        return await asyncio.to_thread(self._claim_next)
+
+    def _claim_next(self) -> ChangeTask | None:
+        with self._session_factory() as session:
+            try:
+                row = (
+                    session.query(QueuedTask)
+                    .filter_by(status="queued")
+                    .order_by(QueuedTask.id)
+                    .first()
+                )
+            except OperationalError:
+                return None
+            if row is None:
+                return None
+            row.status = "running"
+            session.commit()
+            cls = _TASK_TYPES.get(row.type)
+            if cls is None:
+                return None
+            return cls.model_validate_json(row.payload)
+
     async def mark_completed(self, task: ChangeTask) -> None:
         """Mark ``task`` as completed in persistence."""
 

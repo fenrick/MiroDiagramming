@@ -21,7 +21,7 @@ async def test_enqueue_dequeue_persists() -> None:
     """Ensure persistence helpers are invoked for success."""
 
     persistence = mock.AsyncMock()
-    persistence.load = mock.Mock(return_value=[])
+    persistence.claim_next = mock.AsyncMock(return_value=None)
     queue = ChangeQueue(persistence=persistence)
     task = CreateNode(node_id="n1", data={}, user_id="u1")
 
@@ -29,6 +29,7 @@ async def test_enqueue_dequeue_persists() -> None:
     persistence.save.assert_awaited_once_with(task)
 
     await queue.dequeue()
+    persistence.claim_next.assert_not_awaited()
     persistence.delete.assert_not_called()
 
     await queue.mark_task_succeeded(task)
@@ -59,3 +60,4 @@ async def test_tasks_survive_restart(tmp_path: Path) -> None:
 
     empty = ChangeQueue(persistence=persistence)
     assert empty._queue.empty()
+    assert await empty.persistence.claim_next() is None
