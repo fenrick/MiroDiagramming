@@ -4,9 +4,10 @@ from __future__ import annotations
 
 import asyncio
 from datetime import datetime
+from enum import StrEnum
 from typing import Any, Type
 
-from sqlalchemy import DateTime, Integer, String, Text, func
+from sqlalchemy import DateTime, Enum as SAEnum, Integer, String, Text, func
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import Mapped, Session, mapped_column, sessionmaker
 
@@ -30,6 +31,15 @@ _TASK_TYPES: dict[str, Type[ChangeTask]] = {
 }
 
 
+class TaskStatus(StrEnum):
+    """Lifecycle states for persisted tasks."""
+
+    QUEUED = "queued"
+    PROCESSING = "processing"
+    COMPLETED = "completed"
+    FAILED = "failed"
+
+
 class QueuedTask(Base):
     """Persisted representation of enqueued change tasks."""
 
@@ -38,7 +48,9 @@ class QueuedTask(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     type: Mapped[str] = mapped_column(String, index=True)
     payload: Mapped[str] = mapped_column(Text)
-    status: Mapped[str] = mapped_column(String, default="queued", index=True)
+    status: Mapped[TaskStatus] = mapped_column(
+        SAEnum(TaskStatus, native_enum=False), default=TaskStatus.QUEUED, index=True
+    )
     claimed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     attempts: Mapped[int] = mapped_column(Integer, default=0)
 
@@ -71,7 +83,7 @@ class SqlAlchemyQueuePersistence:
             row = QueuedTask(
                 type=task.__class__.__name__,
                 payload=task.model_dump_json(),
-                status="queued",
+                status=TaskStatus.QUEUED,
                 attempts=0,
             )
             session.add(row)
@@ -93,7 +105,7 @@ class SqlAlchemyQueuePersistence:
             try:
                 rows = (
                     session.query(QueuedTask)
-                    .filter_by(status="queued")
+                    .filter_by(status=TaskStatus.QUEUED)
                     .order_by(QueuedTask.id)
                     .all()
                 )
@@ -116,7 +128,7 @@ class SqlAlchemyQueuePersistence:
                 dialect = session.bind.dialect.name if session.bind is not None else ""
                 query = (
                     session.query(QueuedTask)
-                    .filter_by(status="queued")
+                    .filter_by(status=TaskStatus.QUEUED)
                     .order_by(QueuedTask.id)
                 )
                 if dialect == "postgresql":
@@ -127,7 +139,7 @@ class SqlAlchemyQueuePersistence:
                 return None
             if row is None:
                 return None
-            row.status = "processing"
+            row.status = TaskStatus.PROCESSING
             row.claimed_at = func.now()
             session.flush()
             cls = _TASK_TYPES.get(row.type)
@@ -147,7 +159,7 @@ class SqlAlchemyQueuePersistence:
         with self._session_factory() as session:
             row = session.get(QueuedTask, task_id)
             if row is not None:
-                row.status = "completed"
+                row.status = TaskStatus.COMPLETED
                 session.commit()
 
     async def reset_to_queued(self, task_id: int) -> None:
@@ -159,7 +171,7 @@ class SqlAlchemyQueuePersistence:
         with self._session_factory() as session:
             row = session.get(QueuedTask, task_id)
             if row is not None:
-                row.status = "queued"
+                row.status = TaskStatus.QUEUED
                 row.claimed_at = None
                 row.attempts = (row.attempts or 0) + 1
                 session.commit()
@@ -173,7 +185,7 @@ class SqlAlchemyQueuePersistence:
         with self._session_factory() as session:
             row = session.get(QueuedTask, task_id)
             if row is not None:
-                row.status = "failed"
+                row.status = TaskStatus.FAILED
                 session.flush()
                 session.delete(row)
                 session.commit()

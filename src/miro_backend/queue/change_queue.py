@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session
 
 from ..services.miro_client import MiroClient
 from ..services.token_service import get_valid_access_token
-from ..models import CacheEntry, Job
+from ..models import CacheEntry, Job, JobStatus
 from ..services.repository import Repository
 
 import logfire
@@ -246,8 +246,8 @@ class ChangeQueue:
             if task.job_id is not None:
                 job_repo = Repository(session, Job)
                 job = job_repo.get(task.job_id)
-                if job is not None and job.status == "queued":
-                    job.status = "running"
+                if job is not None and job.status == JobStatus.QUEUED:
+                    job.status = JobStatus.RUNNING
                     session.commit()
             # Span around applying each individual task
             with logfire.span("apply task {task=}", task=task):
@@ -273,7 +273,7 @@ class ChangeQueue:
                             results["operations"].append({"status": "succeeded"})
                             job.results = results
                             if len(results["operations"]) >= results.get("total", 0):
-                                job.status = "succeeded"
+                                job.status = JobStatus.SUCCEEDED
                             session.commit()
                         await self.mark_task_succeeded(task)
                         break
@@ -302,7 +302,7 @@ class ChangeQueue:
                                     {"status": "failed", "error": str(exc)}
                                 )
                                 job.results = results
-                                job.status = "failed"
+                                job.status = JobStatus.FAILED
                                 session.commit()
                             logfire.error(
                                 "permanent task failure", task=task, error=exc
@@ -319,7 +319,7 @@ class ChangeQueue:
                                     {"status": "failed", "error": str(exc)}
                                 )
                                 job.results = results
-                                job.status = "failed"
+                                job.status = JobStatus.FAILED
                                 session.commit()
                             logfire.error(
                                 "task failed after retries",
