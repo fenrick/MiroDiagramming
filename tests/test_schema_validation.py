@@ -10,6 +10,7 @@ from pydantic import ValidationError
 from miro_backend.schemas.tag import Tag
 from miro_backend.schemas.job import Job
 from miro_backend.schemas.user_info import UserInfo
+from miro_backend.models import JobStatus
 
 
 def test_tag_rejects_unknown_field() -> None:
@@ -25,7 +26,7 @@ def test_job_rejects_unknown_field() -> None:
     with pytest.raises(ValidationError):
         Job(
             id="j1",
-            status="queued",
+            status=JobStatus.QUEUED,
             updated_at=datetime(2024, 1, 1, tzinfo=timezone.utc),
             results=None,
             unknown="x",

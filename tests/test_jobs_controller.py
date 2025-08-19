@@ -9,7 +9,7 @@ import httpx
 import pytest
 
 from miro_backend.db.session import Base, SessionLocal, engine
-from miro_backend.models import Job
+from miro_backend.models import Job, JobStatus
 from miro_backend.queue import ChangeQueue
 from miro_backend.queue.provider import get_change_queue
 
@@ -58,11 +58,11 @@ async def test_job_status_transitions(monkeypatch: pytest.MonkeyPatch) -> None:
             with SessionLocal() as session:
                 job = session.get(Job, job_id)
                 assert job is not None
-                assert job.status == "queued"
+                assert job.status == JobStatus.QUEUED
 
             worker_session = SessionLocal()
             worker = asyncio.create_task(queue.worker(worker_session, SlowClient()))
-            statuses: list[str] = []
+            statuses: list[JobStatus] = []
             try:
                 while True:
                     await asyncio.sleep(0.02)
@@ -70,7 +70,7 @@ async def test_job_status_transitions(monkeypatch: pytest.MonkeyPatch) -> None:
                         job = session.get(Job, job_id)
                         assert job is not None
                         statuses.append(job.status)
-                        if job.status == "succeeded":
+                        if job.status == JobStatus.SUCCEEDED:
                             break
             finally:
                 worker.cancel()
@@ -78,12 +78,12 @@ async def test_job_status_transitions(monkeypatch: pytest.MonkeyPatch) -> None:
                     await worker
                 worker_session.close()
 
-            assert "running" in statuses
+            assert JobStatus.RUNNING in statuses
 
             result = await client.get(f"/api/jobs/{job_id}")
             assert result.status_code == 200
             data = result.json()
-            assert data["status"] == "succeeded"
+            assert JobStatus(data["status"]) is JobStatus.SUCCEEDED
             assert len(data["results"]["operations"]) == 2
     finally:
         app_module.app.dependency_overrides.clear()

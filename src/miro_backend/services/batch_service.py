@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 from sqlalchemy.orm import Session
 
-from ..models import Job
+from ..models import Job, JobStatus
 from ..queue.tasks import ChangeTask, CreateNode, UpdateCard
 from ..services.repository import Repository
 
@@ -40,7 +40,10 @@ async def enqueue_operations(
 
     repo: Repository[Job] = Repository(session, Job)
     job = repo.add(
-        Job(status="queued", results={"total": len(operations), "operations": []})
+        Job(
+            status=JobStatus.QUEUED,
+            results={"total": len(operations), "operations": []},
+        )
     )
 
     for op in operations:

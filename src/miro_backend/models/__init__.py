@@ -7,13 +7,14 @@ from .shape import Shape
 from .tag import Tag
 from .user import User
 from .idempotency import Idempotency
-from .job import Job
+from .job import Job, JobStatus
 
 __all__ = [
     "Board",
     "CacheEntry",
     "Idempotency",
     "Job",
+    "JobStatus",
     "LogEntry",
     "Shape",
     "Tag",

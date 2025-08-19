@@ -7,6 +7,8 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict
 
+from ..models import JobStatus
+
 
 class Job(BaseModel):
     """Representation of a background job."""
@@ -14,6 +16,6 @@ class Job(BaseModel):
     model_config = ConfigDict(extra="forbid", from_attributes=True)
 
     id: str
-    status: str
+    status: JobStatus
     results: dict[str, Any] | None = None
     updated_at: datetime
