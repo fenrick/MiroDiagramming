@@ -1,8 +1,11 @@
 # Example configuration for the Miro backend service
 # Copy to `config.yaml` and adjust values for your environment.
 database_url: sqlite:///./app.db
-cors_origins:
-  - "https://example.com"  # Explicit origins; avoid "*" in production
+cors_origins:  # Allowed domains for cross-origin requests
+  - "https://app.example.com"
+  - "https://admin.example.com"
+  # - "https://*.example.org"  # Wildcard subdomains
+  # - "*"  # Allow all origins (development only; not for production)
 client_id: your-client-id
 client_secret: your-client-secret
 webhook_secret: change-me
