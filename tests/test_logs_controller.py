@@ -8,6 +8,7 @@ from typing import Iterator
 import pytest
 from fastapi.testclient import TestClient
 
+from miro_backend.core.config import settings
 from miro_backend.db.session import Base, SessionLocal, engine
 from miro_backend.main import app
 from miro_backend.models import LogEntry
@@ -99,6 +100,38 @@ def test_capture_rejects_large_payload(client: TestClient) -> None:
             "message": "m" * 1024,
         }
         for _ in range(1000)
+    ]
+
+    response = client.post("/api/logs", json=payload)
+    assert response.status_code == 413
+
+
+def test_capture_respects_custom_entry_limit(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(settings, "log_max_entries", 1)
+    payload = [
+        {
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "level": "info",
+            "message": "m",
+        }
+    ] * 2
+
+    response = client.post("/api/logs", json=payload)
+    assert response.status_code == 413
+
+
+def test_capture_respects_custom_payload_limit(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(settings, "log_max_payload_bytes", 10)
+    payload = [
+        {
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "level": "info",
+            "message": "x" * 100,
+        }
     ]
 
     response = client.post("/api/logs", json=payload)

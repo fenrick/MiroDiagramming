@@ -80,6 +80,16 @@ class Settings(BaseSettings):
         alias="MIRO_LOGFIRE_SEND_TO_LOGFIRE",
         description="Whether to send logs to Logfire.",
     )
+    log_max_entries: int = Field(
+        default=1000,
+        alias="MIRO_LOG_MAX_ENTRIES",
+        description="Maximum number of log entries per request.",
+    )
+    log_max_payload_bytes: int = Field(
+        default=1_048_576,
+        alias="MIRO_LOG_MAX_PAYLOAD_BYTES",
+        description="Maximum size of log payload in bytes.",
+    )
     http_timeout_seconds: float = Field(
         default=10.0,
         alias="MIRO_HTTP_TIMEOUT_SECONDS",
