@@ -34,6 +34,8 @@ from .queue.change_queue import (  # noqa: E402
     change_queue_length,
     task_dlq,
     task_retries,
+    task_success,
+    task_duration,
 )
 from .services.miro_client import MiroClient  # noqa: E402
 from .services.idempotency import cleanup_idempotency  # noqa: E402
@@ -192,6 +194,8 @@ instrumentator = Instrumentator().instrument(app)
 instrumentator.registry.register(change_queue_length)
 instrumentator.registry.register(task_retries)
 instrumentator.registry.register(task_dlq)
+instrumentator.registry.register(task_success)
+instrumentator.registry.register(task_duration)
 
 
 @app.get("/metrics")  # type: ignore[misc]
