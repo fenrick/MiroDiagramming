@@ -15,7 +15,7 @@ from ..models import CacheEntry, Job
 from ..services.repository import Repository
 
 import logfire
-from prometheus_client import Gauge, Counter
+from prometheus_client import Gauge, Counter, Histogram
 
 from .tasks import ChangeTask
 
@@ -72,6 +72,20 @@ task_retries = Counter(
 task_dlq = Counter(
     "change_task_dlq_total",
     "Tasks sent to DLQ",
+    ["type"],
+    registry=None,
+)
+
+task_success = Counter(
+    "change_task_success_total",
+    "Successfully processed tasks by type",
+    ["type"],
+    registry=None,
+)
+
+task_duration = Histogram(
+    "change_task_duration_seconds",
+    "Time spent processing change tasks",
     ["type"],
     registry=None,
 )
@@ -242,7 +256,14 @@ class ChangeQueue:
                 for attempt in range(5):
                     await bucket.acquire()
                     try:
+                        loop = asyncio.get_running_loop()
+                        start = loop.time()
                         await task.apply(client, token)
+                        duration = loop.time() - start
+                        task_success.labels(type=task.__class__.__name__).inc()
+                        task_duration.labels(type=task.__class__.__name__).observe(
+                            duration
+                        )
                         succeeded = True
                         if job is not None:
                             results = job.results or {
