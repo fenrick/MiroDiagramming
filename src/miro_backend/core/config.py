@@ -110,6 +110,16 @@ class Settings(BaseSettings):
         alias="MIRO_IDEMPOTENCY_CACHE_TTL_SECONDS",
         description="Time-to-live for cached idempotent responses in seconds.",
     )
+    cache_cleanup_seconds: float = Field(
+        default=60 * 60 * 24,
+        alias="MIRO_CACHE_CLEANUP_SECONDS",
+        description="Interval in seconds between cache cleanup runs.",
+    )
+    cache_ttl_seconds: float = Field(
+        default=60 * 60 * 24,
+        alias="MIRO_CACHE_TTL_SECONDS",
+        description="Maximum age in seconds for cached board state.",
+    )
 
     model_config = SettingsConfigDict(
         env_file="config/.env", extra="ignore", populate_by_name=True
