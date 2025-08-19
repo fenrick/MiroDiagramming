@@ -3,15 +3,12 @@
  *
  * @property id - Unique identifier returned by Miro.
  * @property name - Display name of the user.
- * @property token - ID token proving user identity.
+ * @property access_token - ID token proving user identity.
+ * @property refresh_token - Token used to renew credentials.
+ * @property expires_at - Expiration timestamp of the access token.
  */
+import type { UserInfo } from './generated/user-info';
 import { apiFetch } from './core/utils/api-fetch';
-
-export interface AuthDetails {
-  id: string;
-  name: string;
-  token: string;
-}
 
 /** HTTP client for sending Miro auth details to the backend. */
 export class AuthClient {
@@ -20,9 +17,9 @@ export class AuthClient {
   /**
    * Send authentication info to the server.
    *
-   * @param details - User id, name and OAuth token.
+   * @param details - User id, name and OAuth tokens.
    */
-  public async register(details: AuthDetails): Promise<void> {
+  public async register(details: UserInfo): Promise<void> {
     if (typeof fetch !== 'function') {
       return;
     }
@@ -41,11 +38,11 @@ export class AuthClient {
   /**
    * Attempt to register a user, retrying with exponential backoff on failure.
    *
-   * @param details - User id, name and OAuth token.
+   * @param details - User id, name and OAuth tokens.
    * @param attempts - Maximum number of tries.
    */
   public async registerWithRetry(
-    details: AuthDetails,
+    details: UserInfo,
     attempts = 3,
   ): Promise<void> {
     for (let i = 0; i < attempts; i += 1) {
@@ -90,10 +87,10 @@ export async function registerWithCurrentUser(
   await client.registerWithRetry({
     id: String(user.id),
     name: user.name,
-    token,
+    access_token: token,
+    refresh_token: '',
+    expires_at: new Date().toISOString(),
   });
   // TODO: model the full OAuth exchange so tokens can be renewed via the server
   //       when they expire.
-  // TODO: share user registration DTOs with the server-side code generation
-  //       so both tiers validate the same shapes.
 }

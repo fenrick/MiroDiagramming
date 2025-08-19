@@ -9,8 +9,22 @@ let url: string;
 beforeAll(async () => {
   server = http.createServer((req, res) => {
     if (req.method === 'POST' && req.url === '/api/users') {
-      req.resume();
-      res.writeHead(202).end();
+      let body = '';
+      req.on('data', chunk => {
+        body += chunk;
+      });
+      req.on('end', () => {
+        const data = JSON.parse(body);
+        if (
+          typeof data.access_token === 'string' &&
+          typeof data.refresh_token === 'string' &&
+          typeof data.expires_at === 'string'
+        ) {
+          res.writeHead(202).end();
+        } else {
+          res.writeHead(400).end();
+        }
+      });
       return;
     }
     res.writeHead(404).end();
