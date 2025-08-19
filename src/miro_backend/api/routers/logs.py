@@ -6,6 +6,7 @@ from typing import Sequence
 
 from fastapi import APIRouter, Depends, Request, Response, status
 import logfire
+from prometheus_client import Counter, Histogram
 
 from ...core.exceptions import PayloadTooLargeError
 
@@ -17,6 +18,20 @@ router = APIRouter(prefix="/api/logs", tags=["logs"])
 
 MAX_LOG_ENTRIES = 1000
 MAX_PAYLOAD_BYTES = 1_048_576  # 1 MiB
+
+
+logs_ingested_total = Counter(
+    "logs_ingested_total",
+    "Number of log entries ingested",
+    registry=None,
+)
+
+log_batch_size_bytes = Histogram(
+    "log_batch_size_bytes",
+    "Size of log batches in bytes",
+    buckets=(256, 1024, 4096, 16384, 65536, 262144, 1048576),
+    registry=None,
+)
 
 
 @router.post("/", status_code=status.HTTP_202_ACCEPTED, response_class=Response)  # type: ignore[misc]
@@ -59,6 +74,9 @@ async def capture_logs(
             raise PayloadTooLargeError(
                 f"Maximum {MAX_LOG_ENTRIES} log entries per request"
             )
+
+        logs_ingested_total.inc(len(entries))
+        log_batch_size_bytes.observe(body_size)
 
         models = [
             LogEntry(

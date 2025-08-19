@@ -11,6 +11,10 @@ from fastapi.testclient import TestClient
 from miro_backend.db.session import Base, SessionLocal, engine
 from miro_backend.main import app
 from miro_backend.models import LogEntry
+from miro_backend.api.routers.logs import (
+    logs_ingested_total,
+    log_batch_size_bytes,
+)
 
 
 def setup_module() -> None:
@@ -47,6 +51,31 @@ def test_capture_persists_sanitised_entries(client: TestClient) -> None:
         assert entries[0].context == {"k": "&lt;v&gt;"}
     finally:
         session.close()
+
+
+def test_metrics_update_on_capture(client: TestClient) -> None:
+    logs_ingested_total.clear()
+    log_batch_size_bytes.clear()
+
+    payload = [
+        {
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "level": "INFO",
+            "message": "m",
+        }
+    ]
+
+    response = client.post("/api/logs", json=payload)
+    assert response.status_code == 202
+
+    assert logs_ingested_total._value.get() == len(payload)
+    samples = {s.name: s.value for s in log_batch_size_bytes._samples()}
+    body = response.request.body
+    if not isinstance(body, (bytes, bytearray)):
+        body = body.encode()
+    expected_size = len(body)
+    assert samples["_count"] == 1.0
+    assert samples["_sum"] == float(expected_size)
 
 
 def test_capture_rejects_large_batch(client: TestClient) -> None:
