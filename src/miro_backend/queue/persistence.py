@@ -164,6 +164,20 @@ class SqlAlchemyQueuePersistence:
                 row.attempts = (row.attempts or 0) + 1
                 session.commit()
 
+    async def mark_failed(self, task_id: int) -> None:
+        """Mark ``task_id`` as failed and remove it from persistence."""
+
+        await asyncio.to_thread(self._mark_failed, task_id)
+
+    def _mark_failed(self, task_id: int) -> None:
+        with self._session_factory() as session:
+            row = session.get(QueuedTask, task_id)
+            if row is not None:
+                row.status = "failed"
+                session.flush()
+                session.delete(row)
+                session.commit()
+
     async def save_idempotent(self, key: str, response: dict[str, Any]) -> None:
         await asyncio.to_thread(self._save_idempotent, key, response)
 

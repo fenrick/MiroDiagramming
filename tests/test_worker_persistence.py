@@ -75,7 +75,7 @@ async def test_two_workers_only_one_processes(
 
 
 class FailingClient:
-    """Client that crashes processing a node."""
+    """Client that fails permanently processing a node."""
 
     def __init__(self) -> None:
         self.calls = 0
@@ -88,10 +88,10 @@ class FailingClient:
 
 
 @pytest.mark.asyncio()  # type: ignore[misc]
-async def test_task_reclaimed_after_crash(
+async def test_task_removed_after_permanent_failure(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """A task should be reclaimed if a worker crashes before success."""
+    """A non-retryable failure should remove the task from persistence."""
 
     engine = create_engine(
         f"sqlite:///{tmp_path/'tasks.db'}", connect_args={"check_same_thread": False}
@@ -114,25 +114,7 @@ async def test_task_reclaimed_after_crash(
     with pytest.raises(RuntimeError):
         await worker1
     assert failing.calls == 1
-
-    # New worker with healthy client should reclaim the task.
-    succeeding = RecordingClient()
-    worker2 = asyncio.create_task(queue.worker(Session(), succeeding))
-    try:
-        while succeeding.calls < 1:
-            await asyncio.sleep(0)
-        await asyncio.sleep(0)
-    finally:
-        worker2.cancel()
-        with contextlib.suppress(asyncio.CancelledError):
-            await worker2
-
-    assert succeeding.calls == 1
     assert queue._queue.empty()
-    for _ in range(10):
-        if not queue.persistence.load():
-            break
-        await asyncio.sleep(0.01)
     assert queue.persistence.load() == []
 
 
