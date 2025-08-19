@@ -8,6 +8,8 @@ from typing import Any
 import pytest
 from fastapi.testclient import TestClient
 
+from miro_backend.schemas.batch import MAX_BATCH_OPERATIONS
+
 from miro_backend.main import app
 from miro_backend.queue.provider import get_change_queue
 from miro_backend.queue.tasks import CreateNode, UpdateCard
@@ -119,3 +121,17 @@ def test_post_batch_saves_idempotent_response(
     assert isinstance(data["job_id"], str)
     assert queue.persistence is not None
     assert queue.persistence.responses[key] == data
+
+
+def test_post_batch_rejects_oversized_batch(
+    client_queue: tuple[TestClient, DummyQueue]
+) -> None:
+    client, _ = client_queue
+    operations = [
+        {"type": "create_node", "node_id": str(i), "data": {}}
+        for i in range(MAX_BATCH_OPERATIONS + 1)
+    ]
+    body = {"operations": operations}
+    response = client.post("/api/batch", json=body, headers={"X-User-Id": "u1"})
+    assert response.status_code == 422
+    assert "Batch cannot exceed" in response.text

@@ -4,7 +4,10 @@ from __future__ import annotations
 
 from typing import Annotated, Any, Literal
 
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+
+MAX_BATCH_OPERATIONS = 500
 
 
 class CreateNodeOperation(BaseModel):
@@ -42,6 +45,14 @@ class BatchRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     operations: list[Operation]
+
+    @field_validator("operations")
+    @classmethod
+    def _enforce_operation_limit(cls, value: list[Operation]) -> list[Operation]:
+        if len(value) > MAX_BATCH_OPERATIONS:
+            msg = f"Batch cannot exceed {MAX_BATCH_OPERATIONS} operations"
+            raise ValueError(msg)
+        return value
 
 
 class BatchResponse(BaseModel):
