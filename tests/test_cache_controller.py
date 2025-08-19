@@ -34,7 +34,7 @@ def client_session() -> Iterator[tuple[TestClient, Session]]:
 
 
 def test_get_cache_returns_board_state(
-    client_session: tuple[TestClient, Session]
+    client_session: tuple[TestClient, Session],
 ) -> None:
     client, session = client_session
     session.add(CacheEntry(key="b1", value={"id": "b1", "name": "Board"}))
@@ -45,7 +45,7 @@ def test_get_cache_returns_board_state(
 
 
 def test_get_cache_returns_404_when_missing(
-    client_session: tuple[TestClient, Session]
+    client_session: tuple[TestClient, Session],
 ) -> None:
     client, _ = client_session
     response = client.get("/api/cache/missing")

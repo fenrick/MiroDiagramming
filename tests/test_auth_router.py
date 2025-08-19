@@ -24,7 +24,7 @@ def client_store() -> Iterator[tuple[TestClient, InMemoryUserStore]]:
 
 
 def test_get_status_returns_ok_when_user_present(
-    client_store: tuple[TestClient, InMemoryUserStore]
+    client_store: tuple[TestClient, InMemoryUserStore],
 ) -> None:
     client, store = client_store
     store.store(
@@ -41,7 +41,7 @@ def test_get_status_returns_ok_when_user_present(
 
 
 def test_get_status_returns_not_found_for_missing_user(
-    client_store: tuple[TestClient, InMemoryUserStore]
+    client_store: tuple[TestClient, InMemoryUserStore],
 ) -> None:
     client, _ = client_store
     response = client.get("/api/auth/status", headers={"X-User-Id": "u2"})
@@ -49,7 +49,7 @@ def test_get_status_returns_not_found_for_missing_user(
 
 
 def test_get_status_returns_bad_request_without_header(
-    client_store: tuple[TestClient, InMemoryUserStore]
+    client_store: tuple[TestClient, InMemoryUserStore],
 ) -> None:
     client, _ = client_store
     response = client.get("/api/auth/status")

@@ -115,7 +115,7 @@ def client_store_db() -> (
 
 
 def test_login_redirects_to_miro(
-    client_store: tuple[TestClient, InMemoryUserStore, StubClient, oauth.OAuthConfig]
+    client_store: tuple[TestClient, InMemoryUserStore, StubClient, oauth.OAuthConfig],
 ) -> None:
     client, _, _, cfg = client_store
     res = client.get("/oauth/login", params={"userId": "u1"}, allow_redirects=False)
@@ -135,7 +135,7 @@ def test_login_redirects_to_miro(
 
 
 def test_callback_exchanges_code_and_stores_tokens(
-    client_store: tuple[TestClient, InMemoryUserStore, StubClient, oauth.OAuthConfig]
+    client_store: tuple[TestClient, InMemoryUserStore, StubClient, oauth.OAuthConfig],
 ) -> None:
     client, store, stub, cfg = client_store
     state = sign_state(cfg.client_secret, "n", "u1")
@@ -154,7 +154,7 @@ def test_callback_exchanges_code_and_stores_tokens(
 
 
 def test_callback_rejects_state_with_invalid_signature(
-    client_store: tuple[TestClient, InMemoryUserStore, StubClient, oauth.OAuthConfig]
+    client_store: tuple[TestClient, InMemoryUserStore, StubClient, oauth.OAuthConfig],
 ) -> None:
     client, store, stub, cfg = client_store
     state = sign_state(cfg.client_secret, "n", "u1")
@@ -179,7 +179,7 @@ def test_callback_rejects_state_with_invalid_signature(
 def test_callback_upserts_user_record(
     client_store_db: tuple[
         TestClient, InMemoryUserStore, CountingStub, oauth.OAuthConfig
-    ]
+    ],
 ) -> None:
     client, store, stub, cfg = client_store_db
     state = sign_state(cfg.client_secret, "n", "u1")

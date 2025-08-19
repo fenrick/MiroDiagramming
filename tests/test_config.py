@@ -36,12 +36,10 @@ def test_yaml_overrides_defaults(
 
     config = tmp_path / "config.yaml"
     config.write_text(
-        (
-            "database_url: sqlite:///yaml.db\n"
-            "cors_origins:\n  - http://example.com\n"
-            "logfire_service_name: yaml-service\n"
-            "logfire_send_to_logfire: true\n"
-        ),
+        "database_url: sqlite:///yaml.db\n"
+        "cors_origins:\n  - http://example.com\n"
+        "logfire_service_name: yaml-service\n"
+        "logfire_send_to_logfire: true\n",
         encoding="utf-8",
     )
     monkeypatch.setenv("MIRO_CONFIG_FILE", str(config))
@@ -58,7 +56,7 @@ def test_env_overrides_yaml(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> 
 
     config = tmp_path / "config.yaml"
     config.write_text(
-        ("database_url: sqlite:///yaml.db\n" "logfire_send_to_logfire: false\n"),
+        "database_url: sqlite:///yaml.db\nlogfire_send_to_logfire: false\n",
         encoding="utf-8",
     )
     monkeypatch.setenv("MIRO_CONFIG_FILE", str(config))

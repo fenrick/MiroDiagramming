@@ -19,7 +19,6 @@ from prometheus_client import Gauge, Counter, Histogram
 
 from .tasks import ChangeTask
 
-
 # ---------------------------------------------------------------------------
 # Rate limiting utilities
 # ---------------------------------------------------------------------------

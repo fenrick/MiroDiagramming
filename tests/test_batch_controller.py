@@ -74,7 +74,7 @@ def test_post_batch_enqueues_tasks(client_queue: tuple[TestClient, DummyQueue]) 
 
 
 def test_post_batch_validates_payload(
-    client_queue: tuple[TestClient, DummyQueue]
+    client_queue: tuple[TestClient, DummyQueue],
 ) -> None:
     client, _ = client_queue
     body = {"operations": [{"type": "create_node", "node_id": "n1"}]}
@@ -83,7 +83,7 @@ def test_post_batch_validates_payload(
 
 
 def test_post_batch_returns_cached_response(
-    client_queue: tuple[TestClient, DummyQueue]
+    client_queue: tuple[TestClient, DummyQueue],
 ) -> None:
     client, queue = client_queue
     assert queue.persistence is not None
@@ -100,7 +100,7 @@ def test_post_batch_returns_cached_response(
 
 
 def test_post_batch_saves_idempotent_response(
-    client_queue: tuple[TestClient, DummyQueue]
+    client_queue: tuple[TestClient, DummyQueue],
 ) -> None:
     client, queue = client_queue
     key = "key2"
@@ -124,7 +124,7 @@ def test_post_batch_saves_idempotent_response(
 
 
 def test_post_batch_rejects_oversized_batch(
-    client_queue: tuple[TestClient, DummyQueue]
+    client_queue: tuple[TestClient, DummyQueue],
 ) -> None:
     client, _ = client_queue
     operations = [

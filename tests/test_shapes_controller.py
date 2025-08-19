@@ -37,7 +37,7 @@ def client_store_queue() -> (
 
 
 def test_create_shape_enqueues_task_and_returns_shape(
-    client_store_queue: tuple[TestClient, InMemoryShapeStore, ChangeQueue]
+    client_store_queue: tuple[TestClient, InMemoryShapeStore, ChangeQueue],
 ) -> None:
     client, store, queue = client_store_queue
     store.add_board("b1", "u1")
@@ -57,7 +57,7 @@ def test_create_shape_enqueues_task_and_returns_shape(
 
 
 def test_update_shape_enqueues_task(
-    client_store_queue: tuple[TestClient, InMemoryShapeStore, ChangeQueue]
+    client_store_queue: tuple[TestClient, InMemoryShapeStore, ChangeQueue],
 ) -> None:
     client, store, queue = client_store_queue
     store.add_board("b1", "u1")
@@ -76,7 +76,7 @@ def test_update_shape_enqueues_task(
 
 
 def test_delete_shape_enqueues_task(
-    client_store_queue: tuple[TestClient, InMemoryShapeStore, ChangeQueue]
+    client_store_queue: tuple[TestClient, InMemoryShapeStore, ChangeQueue],
 ) -> None:
     client, store, queue = client_store_queue
     store.add_board("b1", "u1")
@@ -91,7 +91,7 @@ def test_delete_shape_enqueues_task(
 
 
 def test_get_shape_enforces_board_ownership(
-    client_store_queue: tuple[TestClient, InMemoryShapeStore, ChangeQueue]
+    client_store_queue: tuple[TestClient, InMemoryShapeStore, ChangeQueue],
 ) -> None:
     client, store, _ = client_store_queue
     store.add_board("b1", "u1")
@@ -101,7 +101,7 @@ def test_get_shape_enforces_board_ownership(
 
 
 def test_get_shape_returns_not_found_for_missing_item(
-    client_store_queue: tuple[TestClient, InMemoryShapeStore, ChangeQueue]
+    client_store_queue: tuple[TestClient, InMemoryShapeStore, ChangeQueue],
 ) -> None:
     client, store, _ = client_store_queue
     store.add_board("b1", "u1")

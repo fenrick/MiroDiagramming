@@ -73,7 +73,6 @@ from .api.routers.users import router as users_router  # noqa: E402
 from .api.routers.jobs import router as jobs_router  # noqa: E402
 from .api.routers.webhook import router as webhook_router  # noqa: E402
 
-
 OPENAPI_TAGS = [
     {
         "name": "batch",

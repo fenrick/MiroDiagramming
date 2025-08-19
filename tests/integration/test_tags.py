@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 @pytest.mark.integration  # type: ignore[misc]
 @pytest.mark.asyncio  # type: ignore[misc]
 async def test_list_tags_sorted(
-    client_queue: tuple[httpx.AsyncClient, "DummyQueue"]
+    client_queue: tuple[httpx.AsyncClient, "DummyQueue"],
 ) -> None:
     """The endpoint should return tags sorted alphabetically."""
 

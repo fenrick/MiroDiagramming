@@ -6,7 +6,6 @@ from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-
 MAX_BATCH_OPERATIONS = 500
 
 

@@ -1,7 +1,7 @@
 """initial
 
 Revision ID: bfd3c77b385f
-Revises: 
+Revises:
 Create Date: 2025-08-16 13:19:50.738055
 
 """
@@ -10,7 +10,6 @@ from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
-
 
 # revision identifiers, used by Alembic.
 revision: str = "bfd3c77b385f"

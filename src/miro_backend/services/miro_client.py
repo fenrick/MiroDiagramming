@@ -13,7 +13,6 @@ from contextlib import asynccontextmanager
 from ..core.config import settings
 from .errors import HttpError, RateLimitedError
 
-
 TokenProvider = Callable[[], str | None]
 
 

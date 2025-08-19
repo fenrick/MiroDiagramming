@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 @pytest.mark.integration  # type: ignore[misc]
 @pytest.mark.asyncio  # type: ignore[misc]
 async def test_create_shape_enqueues_task(
-    client_queue: tuple[httpx.AsyncClient, "DummyQueue"]
+    client_queue: tuple[httpx.AsyncClient, "DummyQueue"],
 ) -> None:
     """Creating a shape should persist it and enqueue a change task."""
 

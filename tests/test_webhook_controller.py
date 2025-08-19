@@ -33,7 +33,7 @@ def client_queue() -> Iterator[tuple[TestClient, asyncio.Queue[WebhookPayload]]]
 
 
 def test_post_webhook_enqueues_event(
-    client_queue: tuple[TestClient, asyncio.Queue[WebhookPayload]]
+    client_queue: tuple[TestClient, asyncio.Queue[WebhookPayload]],
 ) -> None:
     client, queue = client_queue
     payload: dict[str, object] = {"events": [{"event": "created", "data": {"x": 1}}]}
@@ -52,7 +52,7 @@ def test_post_webhook_enqueues_event(
 
 
 def test_post_webhook_rejects_bad_signature(
-    client_queue: tuple[TestClient, asyncio.Queue[WebhookPayload]]
+    client_queue: tuple[TestClient, asyncio.Queue[WebhookPayload]],
 ) -> None:
     client, queue = client_queue
     payload: dict[str, object] = {"events": []}
@@ -67,7 +67,7 @@ def test_post_webhook_rejects_bad_signature(
 
 
 def test_post_webhook_requires_signature(
-    client_queue: tuple[TestClient, asyncio.Queue[WebhookPayload]]
+    client_queue: tuple[TestClient, asyncio.Queue[WebhookPayload]],
 ) -> None:
     client, queue = client_queue
     payload: dict[str, object] = {"events": []}
@@ -80,7 +80,7 @@ def test_post_webhook_requires_signature(
 
 
 def test_post_webhook_validates_payload(
-    client_queue: tuple[TestClient, asyncio.Queue[WebhookPayload]]
+    client_queue: tuple[TestClient, asyncio.Queue[WebhookPayload]],
 ) -> None:
     client, queue = client_queue
     body = b"not-json"
