@@ -5,6 +5,7 @@ from __future__ import annotations
 import asyncio
 from datetime import datetime, timedelta, timezone
 from typing import cast
+from weakref import WeakValueDictionary
 
 from sqlalchemy.orm import Session
 
@@ -13,7 +14,8 @@ from .miro_client import MiroClient
 from . import crypto
 
 REFRESH_MARGIN = timedelta(seconds=30)
-_locks: dict[str, asyncio.Lock] = {}
+# Weakly reference per-user locks to allow garbage collection after inactivity.
+_locks: WeakValueDictionary[str, asyncio.Lock] = WeakValueDictionary()
 
 
 async def get_valid_access_token(
@@ -35,7 +37,10 @@ async def get_valid_access_token(
     Raises:
         ValueError: If no user exists for ``user_id``.
     """
-    lock = _locks.setdefault(user_id, asyncio.Lock())
+    lock = _locks.get(user_id)
+    if lock is None:
+        lock = asyncio.Lock()
+        _locks[user_id] = lock
     async with lock:
         user = session.query(User).filter(User.user_id == user_id).one_or_none()
         if user is None:
