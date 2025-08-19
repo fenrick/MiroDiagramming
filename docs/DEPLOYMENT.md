@@ -40,3 +40,17 @@ Populate `config/.env` with values for:
 ### Continuous integration
 
 Provision the same variables through your CI secret store (e.g. GitHub Actions secrets) and expose them as environment variables at build and deploy time. Never commit real secret values to the repository.
+
+### CORS origins
+
+Configure Cross-Origin Resource Sharing in `config/config.yaml`:
+
+```yaml
+cors_origins:
+  - "https://app.example.com"
+  - "https://admin.example.com"
+  # - "https://*.example.org"  # Wildcard subdomains
+  # - "*"  # Allow all origins (development only; not for production)
+```
+
+List each allowed origin explicitly. Wildcards can match subdomains, but avoid using `"*"` in production to restrict cross-origin access.
