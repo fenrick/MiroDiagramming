@@ -60,3 +60,17 @@ def test_capture_rejects_large_batch(client: TestClient) -> None:
 
     response = client.post("/api/logs", json=payload)
     assert response.status_code == 413
+
+
+def test_capture_rejects_large_payload(client: TestClient) -> None:
+    payload = [
+        {
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "level": "info",
+            "message": "m" * 1024,
+        }
+        for _ in range(1000)
+    ]
+
+    response = client.post("/api/logs", json=payload)
+    assert response.status_code == 413
