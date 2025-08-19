@@ -10,4 +10,4 @@ class Tag(BaseModel):
     board_id: int
     name: str
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(extra="forbid", from_attributes=True)

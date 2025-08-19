@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class UserInfo(BaseModel):
@@ -15,3 +15,5 @@ class UserInfo(BaseModel):
     access_token: str
     refresh_token: str
     expires_at: datetime
+
+    model_config = ConfigDict(extra="forbid")

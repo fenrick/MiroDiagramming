@@ -11,7 +11,7 @@ from pydantic import BaseModel, ConfigDict
 class Job(BaseModel):
     """Representation of a background job."""
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(extra="forbid", from_attributes=True)
 
     id: str
     status: str
