@@ -100,6 +100,16 @@ class Settings(BaseSettings):
         alias="MIRO_IDEMPOTENCY_CLEANUP_SECONDS",
         description="Interval in seconds between idempotency cleanup runs.",
     )
+    idempotency_cache_size: int = Field(
+        default=128,
+        alias="MIRO_IDEMPOTENCY_CACHE_SIZE",
+        description="Maximum number of idempotent responses to cache in memory.",
+    )
+    idempotency_cache_ttl_seconds: float = Field(
+        default=60.0,
+        alias="MIRO_IDEMPOTENCY_CACHE_TTL_SECONDS",
+        description="Time-to-live for cached idempotent responses in seconds.",
+    )
 
     model_config = SettingsConfigDict(
         env_file="config/.env", extra="ignore", populate_by_name=True

@@ -5,7 +5,9 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, Header, status
 import logfire
 from sqlalchemy.orm import Session
+from cachetools import TTLCache
 
+from ...core.config import settings
 from ...db.session import get_session
 from ...queue.change_queue import ChangeQueue
 from ...queue.provider import get_change_queue
@@ -14,8 +16,11 @@ from ...services.batch_service import enqueue_operations
 
 router = APIRouter(prefix="/api", tags=["batch"])
 
-# Simple in-memory cache for idempotent responses
-_IDEMPOTENCY_CACHE: dict[str, BatchResponse] = {}
+# In-memory LRU/TTL cache for idempotent responses
+_IDEMPOTENCY_CACHE: TTLCache[str, BatchResponse] = TTLCache(
+    maxsize=settings.idempotency_cache_size,
+    ttl=settings.idempotency_cache_ttl_seconds,
+)
 
 
 @router.post("/batch", status_code=status.HTTP_202_ACCEPTED, response_model=BatchResponse)  # type: ignore[misc]

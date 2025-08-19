@@ -17,4 +17,6 @@ logfire_service_name: miro-backend
 logfire_send_to_logfire: false
 http_timeout_seconds: 10.0  # HTTP client timeout for Miro API calls
 idempotency_cleanup_seconds: 86400  # Interval between idempotency cleanup runs
+idempotency_cache_size: 128  # Maximum number of idempotent responses to cache
+idempotency_cache_ttl_seconds: 60.0  # TTL for idempotent response cache in seconds
 encryption_key: ""  # Base64-encoded 32-byte key for encrypting tokens (optional)
