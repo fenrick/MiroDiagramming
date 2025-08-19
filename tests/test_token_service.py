@@ -1,5 +1,8 @@
 from __future__ import annotations
+
 import asyncio
+import gc
+import weakref
 from datetime import datetime, timedelta, timezone
 from typing import Any, Iterator, cast
 
@@ -8,6 +11,7 @@ from sqlalchemy.orm import Session
 
 from miro_backend.db.session import Base, SessionLocal, engine
 from miro_backend.models.user import User
+from miro_backend.services import token_service
 from miro_backend.services.token_service import get_valid_access_token
 
 
@@ -149,6 +153,48 @@ async def test_refresh_token_called_once_concurrently(session: Session) -> None:
     client = SlowClient()
     tokens = await asyncio.gather(
         *(get_valid_access_token(session, "u3", cast(Any, client)) for _ in range(5))
+    )
+
+    assert tokens == ["new"] * 5
+    assert client.calls == ["ref"]
+
+
+@pytest.mark.asyncio()  # type: ignore[misc]
+async def test_locks_cleaned_and_recreated(session: Session) -> None:
+    user = User(
+        user_id="u_lock",
+        name="Test",
+        access_token="old",  # will trigger refresh
+        refresh_token="ref",
+        expires_at=datetime.now(timezone.utc) + timedelta(seconds=1),
+    )
+    session.add(user)
+    session.commit()
+
+    # Simulate existing lock then garbage-collect it
+    lock = asyncio.Lock()
+    token_service._locks["u_lock"] = lock
+    ref = weakref.ref(lock)
+    del lock
+    gc.collect()
+    assert ref() is None
+    assert "u_lock" not in token_service._locks
+
+    class SlowClient:
+        def __init__(self) -> None:
+            self.calls: list[str] = []
+
+        async def refresh_token(self, refresh_token: str) -> dict[str, Any]:
+            self.calls.append(refresh_token)
+            await asyncio.sleep(0.01)
+            return {"access_token": "new", "expires_in": 60}
+
+    client = SlowClient()
+    tokens = await asyncio.gather(
+        *(
+            get_valid_access_token(session, "u_lock", cast(Any, client))
+            for _ in range(5)
+        )
     )
 
     assert tokens == ["new"] * 5
