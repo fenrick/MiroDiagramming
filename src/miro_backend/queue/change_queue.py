@@ -166,6 +166,17 @@ class ChangeQueue:
         async with self._lock:
             await self._persistence.reset_to_queued(task_id)
 
+    async def ack_task_failed(self, task: ChangeTask) -> None:
+        """Remove ``task`` from persistence after permanent failure."""
+
+        if self._persistence is None:
+            return
+        task_id = getattr(task, "_db_id", None)
+        if task_id is None:
+            return
+        async with self._lock:
+            await self._persistence.mark_failed(task_id)
+
     def bucket_fill(self) -> dict[str, int]:
         """Return remaining tokens per user."""
 
@@ -275,7 +286,7 @@ class ChangeQueue:
                             logfire.error(
                                 "permanent task failure", task=task, error=exc
                             )
-                            await self.mark_task_failed(task)
+                            await self.ack_task_failed(task)
                             raise
                         if attempt == 4:
                             if job is not None:
