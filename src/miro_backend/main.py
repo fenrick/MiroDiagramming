@@ -60,7 +60,11 @@ from .api.routers.auth import router as auth_router  # noqa: E402
 from .api.routers.batch import router as batch_router  # noqa: E402
 from .api.routers.cache import router as cache_router  # noqa: E402
 from .api.routers.cards import router as cards_router  # noqa: E402
-from .api.routers.logs import router as logs_router  # noqa: E402
+from .api.routers.logs import (  # noqa: E402
+    router as logs_router,
+    logs_ingested_total,
+    log_batch_size_bytes,
+)
 from .api.routers.oauth import router as oauth_router  # noqa: E402
 from .api.routers.limits import router as limits_router  # noqa: E402
 from .api.routers.shapes import router as shapes_router  # noqa: E402
@@ -203,6 +207,8 @@ instrumentator.registry.register(task_retries)
 instrumentator.registry.register(task_dlq)
 instrumentator.registry.register(task_success)
 instrumentator.registry.register(task_duration)
+instrumentator.registry.register(logs_ingested_total)
+instrumentator.registry.register(log_batch_size_bytes)
 
 
 @app.get("/metrics")  # type: ignore[misc]
