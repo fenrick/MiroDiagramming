@@ -8,6 +8,7 @@ business logic.
 from __future__ import annotations
 
 from collections.abc import Sequence
+from datetime import datetime
 from typing import Any, Generic, TypeVar
 
 import logfire
@@ -72,11 +73,13 @@ class Repository(Generic[ModelT]):
         """Store ``snapshot`` as the cached state for ``board_id``."""
 
         entry = self.session.query(CacheEntry).filter_by(key=board_id).one_or_none()
+        now = datetime.utcnow()
         if entry is None:
-            entry = CacheEntry(key=board_id, value=snapshot)
+            entry = CacheEntry(key=board_id, value=snapshot, created_at=now)
             self.session.add(entry)
         else:
             entry.value = snapshot
+            entry.created_at = now
         self.session.commit()
         logfire.info("board state updated", board_id=board_id)
 

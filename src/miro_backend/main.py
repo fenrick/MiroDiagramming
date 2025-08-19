@@ -39,6 +39,7 @@ from .queue.change_queue import (  # noqa: E402
 )
 from .services.miro_client import MiroClient  # noqa: E402
 from .services.idempotency import cleanup_idempotency  # noqa: E402
+from .services.cache import cleanup_cache  # noqa: E402
 from .db.session import SessionLocal  # noqa: E402
 from .services.debug import consume_debug_429, set_debug_429  # noqa: E402
 
@@ -109,27 +110,33 @@ OPENAPI_TAGS = [
 @asynccontextmanager
 @logfire.instrument("application lifespan", allow_generator=True)  # type: ignore[misc]
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
-    """Start background workers for queue processing and idempotency cleanup."""
+    """Start background workers for queue processing and cache cleanup."""
 
     client = MiroClient()
     session = SessionLocal()
     worker = asyncio.create_task(change_queue.worker(session, client))
-    cleanup_task = asyncio.create_task(cleanup_idempotency())
+    idempotency_task = asyncio.create_task(cleanup_idempotency())
+    cache_task = asyncio.create_task(cleanup_cache())
     try:
         logfire.info("change worker started")  # event for worker start
         logfire.info("idempotency cleanup started")  # event for cleanup start
+        logfire.info("cache cleanup started")  # event for cache cleanup start
         yield
     finally:
         worker.cancel()
-        cleanup_task.cancel()
+        idempotency_task.cancel()
+        cache_task.cancel()
         with contextlib.suppress(asyncio.CancelledError):
             await worker
         with contextlib.suppress(asyncio.CancelledError):
-            await cleanup_task
+            await idempotency_task
+        with contextlib.suppress(asyncio.CancelledError):
+            await cache_task
         await client.aclose()
         session.close()
         logfire.info("change worker stopped")  # event for worker shutdown
         logfire.info("idempotency cleanup stopped")  # event for cleanup shutdown
+        logfire.info("cache cleanup stopped")  # event for cache cleanup shutdown
 
 
 BASE_DIR = Path(__file__).resolve().parents[2]
