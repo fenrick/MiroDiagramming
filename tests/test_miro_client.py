@@ -38,6 +38,7 @@ async def test_exchange_code(monkeypatch: pytest.MonkeyPatch) -> None:
         "client_id": settings.client_id,
         "client_secret": settings.client_secret.get_secret_value(),
     }
+    await client.aclose()
 
 
 @pytest.mark.asyncio()  # type: ignore[misc]
@@ -65,6 +66,7 @@ async def test_refresh_token(monkeypatch: pytest.MonkeyPatch) -> None:
         "client_id": settings.client_id,
         "client_secret": settings.client_secret.get_secret_value(),
     }
+    await client.aclose()
 
 
 @pytest.mark.asyncio()  # type: ignore[misc]
@@ -123,3 +125,22 @@ async def test_api_methods_delegate_to_request(
     await caller(client)
     assert captured["method"] == method
     assert captured["url"] == url
+    await client.aclose()
+
+
+@pytest.mark.asyncio()  # type: ignore[misc]
+async def test_request_reuses_single_client(monkeypatch: pytest.MonkeyPatch) -> None:
+    calls: list[int] = []
+
+    async def fake_request(
+        self: httpx.AsyncClient, *args: Any, **kwargs: Any
+    ) -> httpx.Response:
+        calls.append(id(self))
+        return httpx.Response(200, json={})
+
+    monkeypatch.setattr(httpx.AsyncClient, "request", fake_request)
+    client = MiroClient()
+    await client._request("GET", "/one")
+    await client._request("GET", "/two")
+    await client.aclose()
+    assert calls and len(set(calls)) == 1
