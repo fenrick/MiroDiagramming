@@ -8,6 +8,7 @@ from email.utils import parsedate_to_datetime
 from typing import Any, cast
 
 import httpx
+from contextlib import asynccontextmanager
 
 from ..core.config import settings
 from .errors import HttpError, RateLimitedError
@@ -27,6 +28,9 @@ class MiroClient:
         self._token = token
         self._token_provider = token_provider
         self._base_url = "https://api.miro.com/v2"
+        self._client = httpx.AsyncClient(
+            base_url=self._base_url, timeout=settings.http_timeout_seconds
+        )
 
     def _auth_headers(self, access_token: str | None = None) -> dict[str, str]:
         token = (
@@ -62,15 +66,28 @@ class MiroClient:
         if response.status_code >= 400:
             response.raise_for_status()
 
+    async def aclose(self) -> None:
+        """Close the underlying HTTP client."""
+
+        await self._client.aclose()
+
+    @asynccontextmanager
+    async def lifespan(self) -> Any:
+        """Yield the client and ensure resources are cleaned up."""
+
+        try:
+            yield self
+        finally:
+            await self.aclose()
+
     async def _request(self, method: str, url: str, **kwargs: Any) -> httpx.Response:
         """Make an HTTP request and translate connection errors."""
 
         timeout = kwargs.pop("timeout", settings.http_timeout_seconds)
         try:
-            async with httpx.AsyncClient(
-                base_url=self._base_url, timeout=timeout
-            ) as client:
-                response = await client.request(method, url, **kwargs)
+            response = await self._client.request(
+                method, url, timeout=timeout, **kwargs
+            )
         except httpx.RequestError as exc:  # pragma: no cover - network failure
             raise HttpError(status=503, message=str(exc)) from exc
         self._raise_for_status(response)

@@ -124,6 +124,7 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
             await worker
         with contextlib.suppress(asyncio.CancelledError):
             await cleanup_task
+        await client.aclose()
         session.close()
         logfire.info("change worker stopped")  # event for worker shutdown
         logfire.info("idempotency cleanup stopped")  # event for cleanup shutdown
