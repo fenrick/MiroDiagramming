@@ -17,7 +17,7 @@ from ...services.repository import Repository
 router = APIRouter(prefix="/api/users", tags=["users"])
 
 
-@router.post("", status_code=status.HTTP_201_CREATED)  # type: ignore[misc]
+@router.post("", status_code=status.HTTP_201_CREATED)
 def create_user(info: UserInfo, session: Session = Depends(get_session)) -> UserInfo:
     """Persist ``info`` and return it, rejecting duplicates."""
 

@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-from typing import cast
-
-from cryptography.fernet import Fernet, MultiFernet, InvalidToken
+from cryptography.fernet import Fernet, InvalidToken, MultiFernet
 
 from ..core.config import settings
 
@@ -27,7 +25,7 @@ def encrypt(text: str) -> str:
     if _fernet is None:
         return text
     result = _fernet.encrypt(text.encode())
-    return cast(bytes, result).decode()
+    return result.decode()
 
 
 def decrypt(token: str) -> str:
@@ -45,4 +43,4 @@ def decrypt(token: str) -> str:
         result = _fernet.decrypt(token.encode())
     except InvalidToken as exc:
         raise ValueError("invalid encrypted token") from exc
-    return cast(bytes, result).decode()
+    return result.decode()

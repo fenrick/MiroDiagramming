@@ -52,7 +52,7 @@ def get_oauth_config() -> OAuthConfig:
     )
 
 
-@router.get("/login", response_class=RedirectResponse)  # type: ignore[misc]
+@router.get("/login", response_class=RedirectResponse)
 def login(
     user_id: str = Query(alias="userId"),
     return_url: str | None = Query(default=None, alias="returnUrl"),
@@ -75,7 +75,7 @@ def login(
     return RedirectResponse(url)
 
 
-@router.get("/callback", response_class=RedirectResponse)  # type: ignore[misc]
+@router.get("/callback", response_class=RedirectResponse)
 async def callback(
     code: str,
     state: str,

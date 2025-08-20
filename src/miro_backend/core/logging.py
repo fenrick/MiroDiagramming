@@ -10,10 +10,10 @@ from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoin
 from starlette.responses import Response
 
 
-class RequestIdMiddleware(BaseHTTPMiddleware):  # type: ignore[misc]
+class RequestIdMiddleware(BaseHTTPMiddleware):
     """Attach a correlation ID to each request and log context."""
 
-    @logfire.instrument("request id middleware")  # type: ignore[misc]
+    @logfire.instrument("request id middleware")
     async def dispatch(
         self, request: Request, call_next: RequestResponseEndpoint
     ) -> Response:
@@ -24,7 +24,7 @@ class RequestIdMiddleware(BaseHTTPMiddleware):  # type: ignore[misc]
         return response
 
 
-@logfire.instrument("configure logging")  # type: ignore[misc]
+@logfire.instrument("configure logging")
 def configure_logging() -> None:
     """Configure logfire and database instrumentation."""
     from .config import settings
@@ -39,7 +39,7 @@ def configure_logging() -> None:
     logfire.instrument_sqlalchemy(engine)
 
 
-@logfire.instrument("setup fastapi")  # type: ignore[misc]
+@logfire.instrument("setup fastapi")
 def setup_fastapi(app: FastAPI) -> None:
     """Instrument FastAPI and register request ID middleware."""
 

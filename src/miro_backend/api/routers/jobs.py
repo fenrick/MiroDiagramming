@@ -13,7 +13,7 @@ from ...services.repository import Repository
 router = APIRouter(prefix="/api/jobs", tags=["jobs"])
 
 
-@router.get("/{job_id}", response_model=JobSchema)  # type: ignore[misc]
+@router.get("/{job_id}", response_model=JobSchema)
 def get_job(job_id: str, session: Session = Depends(get_session)) -> JobSchema:
     """Return the job with ``job_id`` if present."""
 

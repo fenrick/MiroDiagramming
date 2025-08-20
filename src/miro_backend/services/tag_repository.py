@@ -17,7 +17,7 @@ class TagRepository(Repository[Tag]):
     def __init__(self, session: Session) -> None:
         super().__init__(session, Tag)
 
-    @logfire.instrument("list tags for board")  # type: ignore[misc]
+    @logfire.instrument("list tags for board")
     def list_for_board(self, board_id: int) -> Sequence[Tag]:
         """Return tags for ``board_id`` sorted by name.
 

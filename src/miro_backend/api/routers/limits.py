@@ -11,7 +11,7 @@ from ...queue.provider import get_change_queue
 router = APIRouter(prefix="/api", tags=["limits"])
 
 
-@router.get("/limits", status_code=status.HTTP_200_OK)  # type: ignore[misc]
+@router.get("/limits", status_code=status.HTTP_200_OK)
 def get_limits(
     queue: ChangeQueue = Depends(get_change_queue),
     debug_limits: str | None = Header(default=None, alias="X-Debug-Limits"),

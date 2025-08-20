@@ -40,7 +40,7 @@ def _verify_board(board_id: str, user_id: str | None, store: ShapeStore) -> None
         )  # event on success
 
 
-@router.get("/{shape_id}", response_model=Shape)  # type: ignore[misc]
+@router.get("/{shape_id}", response_model=Shape)
 def get_shape(
     board_id: str,
     shape_id: str,
@@ -63,7 +63,7 @@ def get_shape(
         return shape
 
 
-@router.post("/", response_model=Shape, status_code=status.HTTP_201_CREATED)  # type: ignore[misc]
+@router.post("/", response_model=Shape, status_code=status.HTTP_201_CREATED)
 async def create_shape(
     board_id: str,
     payload: ShapeCreate,
@@ -95,7 +95,7 @@ async def create_shape(
         return shape
 
 
-@router.put("/{shape_id}", response_model=Shape)  # type: ignore[misc]
+@router.put("/{shape_id}", response_model=Shape)
 async def update_shape(
     board_id: str,
     shape_id: str,
@@ -133,7 +133,7 @@ async def update_shape(
         return shape
 
 
-@router.delete("/{shape_id}", status_code=status.HTTP_204_NO_CONTENT)  # type: ignore[misc]
+@router.delete("/{shape_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_shape(
     board_id: str,
     shape_id: str,

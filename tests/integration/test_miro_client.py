@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Awaitable, Callable
 
 import httpx
 import pytest
@@ -31,6 +31,7 @@ class DummyAsyncClient:
         *,
         json: Any | None = None,
         headers: dict[str, str] | None = None,
+        timeout: float | None = None,
     ) -> httpx.Response:
         self.record["call"] = ("PUT", url, headers, json)
         return httpx.Response(200)
@@ -41,12 +42,17 @@ class DummyAsyncClient:
         *,
         json: Any | None = None,
         headers: dict[str, str] | None = None,
+        timeout: float | None = None,
     ) -> httpx.Response:
         self.record["call"] = ("PATCH", url, headers, json)
         return httpx.Response(200)
 
     async def delete(
-        self, url: str, *, headers: dict[str, str] | None = None
+        self,
+        url: str,
+        *,
+        headers: dict[str, str] | None = None,
+        timeout: float | None = None,
     ) -> httpx.Response:
         self.record["call"] = ("DELETE", url, headers, None)
         return httpx.Response(204)
@@ -54,13 +60,15 @@ class DummyAsyncClient:
     async def request(self, method: str, url: str, **kwargs: Any) -> httpx.Response:
         """Dispatch generic request to verb-specific handlers."""
 
-        func = getattr(self, method.lower())
+        func: Callable[..., Awaitable[httpx.Response]] = getattr(
+            self, method.lower()
+        )
         return await func(url, **kwargs)
 
 
-@pytest.mark.integration  # type: ignore[misc]
-@pytest.mark.asyncio  # type: ignore[misc]
-@pytest.mark.parametrize(  # type: ignore[misc]
+@pytest.mark.integration
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
     ("method", "args", "expected"),
     [
         (

@@ -6,6 +6,7 @@ from logging.config import fileConfig
 
 from alembic import context
 from sqlalchemy import engine_from_config, pool
+from typing import Any
 
 from miro_backend.db.session import Base
 from miro_backend.core.config import settings
@@ -38,8 +39,9 @@ def run_migrations_offline() -> None:  # pragma: no cover - CLI entrypoint
 def run_migrations_online() -> None:  # pragma: no cover - CLI entrypoint
     """Run migrations in 'online' mode."""
 
+    section: dict[str, Any] = config.get_section(config.config_ini_section) or {}
     connectable = engine_from_config(
-        config.get_section(config.config_ini_section),
+        section,
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )

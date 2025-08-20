@@ -23,7 +23,9 @@ _IDEMPOTENCY_CACHE: TTLCache[str, BatchResponse] = TTLCache(
 )
 
 
-@router.post("/batch", status_code=status.HTTP_202_ACCEPTED, response_model=BatchResponse)  # type: ignore[misc]
+@router.post(
+    "/batch", status_code=status.HTTP_202_ACCEPTED, response_model=BatchResponse
+)
 async def post_batch(
     request: BatchRequest,
     queue: ChangeQueue = Depends(get_change_queue),

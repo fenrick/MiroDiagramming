@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, cast
+from typing import Any
 
 from fastapi import APIRouter, Depends, status
 import logfire
@@ -17,7 +17,7 @@ from ...services.repository import Repository
 router = APIRouter(prefix="/api/cache", tags=["cache"])
 
 
-@router.get("/{board_id}", status_code=status.HTTP_200_OK)  # type: ignore[misc]
+@router.get("/{board_id}", status_code=status.HTTP_200_OK)
 def get_board_cache(
     board_id: str, session: Session = Depends(get_session)
 ) -> dict[str, Any]:
@@ -37,4 +37,4 @@ def get_board_cache(
         logfire.info(
             "board cache hit", board_id=board_id
         )  # event when cache lookup succeeds
-        return cast(dict[str, Any], state)
+        return state

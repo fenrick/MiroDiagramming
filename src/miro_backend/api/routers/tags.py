@@ -15,7 +15,7 @@ from ...services.tag_repository import TagRepository
 router = APIRouter(prefix="/api/boards", tags=["tags"])
 
 
-@router.get("/{board_id}/tags", response_model=list[TagSchema])  # type: ignore[misc]
+@router.get("/{board_id}/tags", response_model=list[TagSchema])
 def list_tags(
     board_id: int, session: Session = Depends(get_session)
 ) -> list[TagSchema]:

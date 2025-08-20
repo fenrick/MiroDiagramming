@@ -33,7 +33,7 @@ def _verify_signature(secret: str, body: bytes, signature: str) -> bool:
     return hmac.compare_digest(expected, signature)
 
 
-@router.post("", status_code=status.HTTP_202_ACCEPTED, response_class=Response)  # type: ignore[misc]
+@router.post("", status_code=status.HTTP_202_ACCEPTED, response_class=Response)
 async def post_webhook(
     request: Request,
     signature: str | None = Header(default=None, alias="X-Miro-Signature"),
