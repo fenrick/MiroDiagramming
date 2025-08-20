@@ -116,7 +116,7 @@ class ChangeQueue:
 
         return self._persistence
 
-    @logfire.instrument("enqueue task {task=}")  # type: ignore[misc]
+    @logfire.instrument("enqueue task {task=}")
     async def enqueue(self, task: ChangeTask) -> None:
         """Add ``task`` to the queue and persist it if supported."""
 
@@ -135,7 +135,7 @@ class ChangeQueue:
         # Update metric after task enqueued
         change_queue_length.set(self._queue.qsize())
 
-    @logfire.instrument("dequeue task")  # type: ignore[misc]
+    @logfire.instrument("dequeue task")
     async def dequeue(self) -> ChangeTask:
         """Retrieve the next task from the queue."""
 
@@ -230,7 +230,7 @@ class ChangeQueue:
     # ------------------------------------------------------------------
     # Worker utilities
     # ------------------------------------------------------------------
-    @logfire.instrument("worker loop")  # type: ignore[misc]
+    @logfire.instrument("worker loop")
     async def worker(self, session: Session, client: MiroClient) -> None:
         """Continuously consume tasks and apply them using ``client``."""
 

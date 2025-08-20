@@ -58,7 +58,7 @@ def verify_state(secret: str, state: str) -> tuple[str, str]:
     return nonce, user_id
 
 
-class ProxyHttpsRedirectMiddleware(BaseHTTPMiddleware):  # type: ignore[misc]
+class ProxyHttpsRedirectMiddleware(BaseHTTPMiddleware):
     """Redirect HTTP requests to HTTPS using ``X-Forwarded-Proto``."""
 
     async def dispatch(

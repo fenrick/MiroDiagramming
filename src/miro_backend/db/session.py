@@ -30,7 +30,7 @@ SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 """Factory for ``Session`` instances."""
 
 
-@logfire.instrument("database session", allow_generator=True)  # type: ignore[misc]
+@logfire.instrument("database session", allow_generator=True)
 def get_session() -> Iterator[Session]:
     """Yield a database session and ensure it is closed.
 

@@ -19,7 +19,7 @@ class LogRepository(Repository[LogEntry]):
     def __init__(self, session: Session) -> None:
         super().__init__(session, LogEntry)
 
-    @logfire.instrument("add log entries")  # type: ignore[misc]
+    @logfire.instrument("add log entries")
     def add_all(self, entries: Sequence[LogEntry]) -> None:
         """Persist multiple log entries in a single transaction."""
 

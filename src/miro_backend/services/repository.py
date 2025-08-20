@@ -29,7 +29,7 @@ class Repository(Generic[ModelT]):
     # ------------------------------------------------------------------
     # Create / Update
     # ------------------------------------------------------------------
-    @logfire.instrument("add model")  # type: ignore[misc]
+    @logfire.instrument("add model")
     def add(self, instance: ModelT) -> ModelT:
         """Persist ``instance`` to the database."""
 
@@ -44,7 +44,7 @@ class Repository(Generic[ModelT]):
     # ------------------------------------------------------------------
     # Read operations
     # ------------------------------------------------------------------
-    @logfire.instrument("get model")  # type: ignore[misc]
+    @logfire.instrument("get model")
     def get(self, id_: Any) -> ModelT | None:
         """Return an entity by primary key if present."""
 
@@ -52,7 +52,7 @@ class Repository(Generic[ModelT]):
         logfire.info("entity retrieved", id=id_)  # event: retrieval
         return result
 
-    @logfire.instrument("list models")  # type: ignore[misc]
+    @logfire.instrument("list models")
     def list(self) -> Sequence[ModelT]:
         """Return all entities of the repository type."""
 
@@ -60,7 +60,7 @@ class Repository(Generic[ModelT]):
         logfire.info("entities listed", count=len(results))  # event: query complete
         return results
 
-    @logfire.instrument("get board state")  # type: ignore[misc]
+    @logfire.instrument("get board state")
     def get_board_state(self, board_id: str) -> dict[str, Any] | None:
         """Return cached board state for ``board_id`` if present."""
 
@@ -68,7 +68,7 @@ class Repository(Generic[ModelT]):
         logfire.info("board state fetched", board_id=board_id)  # event: cache lookup
         return entry.value if entry else None
 
-    @logfire.instrument("set board state")  # type: ignore[misc]
+    @logfire.instrument("set board state")
     def set_board_state(self, board_id: str, snapshot: dict[str, Any]) -> None:
         """Store ``snapshot`` as the cached state for ``board_id``."""
 
@@ -86,7 +86,7 @@ class Repository(Generic[ModelT]):
     # ------------------------------------------------------------------
     # Delete operations
     # ------------------------------------------------------------------
-    @logfire.instrument("delete model")  # type: ignore[misc]
+    @logfire.instrument("delete model")
     def delete(self, instance: ModelT) -> None:
         """Remove ``instance`` from the database."""
 

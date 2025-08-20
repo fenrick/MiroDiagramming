@@ -11,7 +11,7 @@ from ...schemas.card_create import CardCreate
 router = APIRouter(prefix="/api/cards", tags=["cards"])
 
 
-@router.post("", status_code=status.HTTP_202_ACCEPTED)  # type: ignore[misc]
+@router.post("", status_code=status.HTTP_202_ACCEPTED)
 async def create_cards(
     cards: list[CardCreate],
     user_id: str = Header(alias="X-User-Id"),

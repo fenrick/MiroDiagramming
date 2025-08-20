@@ -60,11 +60,13 @@ class PayloadTooLargeError(AppError):
     code = "payload_too_large"
 
 
-@logfire.instrument("handle app error")  # type: ignore[misc]
-async def handle_app_error(_: Request, exc: AppError) -> JSONResponse:
+@logfire.instrument("handle app error")
+async def handle_app_error(_: Request, exc: Exception) -> JSONResponse:
     """Convert :class:`AppError` instances into JSON responses."""
 
     # log structured details for the raised application error
+    if not isinstance(exc, AppError):  # safety guard, registered for AppError only
+        raise exc
     logfire.warning(exc.message, code=exc.code)
     return JSONResponse(
         status_code=exc.status_code,

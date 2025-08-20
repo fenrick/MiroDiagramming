@@ -111,7 +111,7 @@ OPENAPI_TAGS = [
 
 
 @asynccontextmanager
-@logfire.instrument("application lifespan", allow_generator=True)  # type: ignore[misc]
+@logfire.instrument("application lifespan", allow_generator=True)
 async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     """Start background workers for queue processing and cache cleanup."""
 
@@ -158,7 +158,7 @@ setup_telemetry(app)
 add_exception_handlers(app)
 
 
-@app.middleware("http")  # type: ignore[misc]
+@app.middleware("http")
 async def debug_middleware(
     request: Request, call_next: Callable[[Request], Awaitable[Response]]
 ) -> Response:
@@ -210,7 +210,7 @@ instrumentator.registry.register(logs_ingested_total)
 instrumentator.registry.register(log_batch_size_bytes)
 
 
-@app.get("/metrics")  # type: ignore[misc]
+@app.get("/metrics")
 async def metrics() -> Response:
     """Expose Prometheus metrics."""
     with logfire.span("prometheus scrape"):
@@ -220,7 +220,7 @@ async def metrics() -> Response:
         )
 
 
-@app.get("/", response_class=RedirectResponse)  # type: ignore[misc]
+@app.get("/", response_class=RedirectResponse)
 async def root() -> RedirectResponse:
     """Redirect browsers to the built front-end."""
     with logfire.span("root redirect"):
@@ -228,7 +228,7 @@ async def root() -> RedirectResponse:
         return RedirectResponse(url="/static/index.html")
 
 
-@app.get("/health")  # type: ignore[misc]
+@app.get("/health")
 async def health() -> dict[str, str]:
     """Basic health check endpoint."""
     with logfire.span("health check"):

@@ -14,7 +14,7 @@ router = APIRouter(prefix="/api/auth", tags=["auth"])
 
 
 # mypy struggles with FastAPI decorators
-@router.get("/status", status_code=status.HTTP_200_OK, response_class=Response)  # type: ignore[misc]
+@router.get("/status", status_code=status.HTTP_200_OK, response_class=Response)
 def get_status(
     user_id: str | None = Header(default=None, alias="X-User-Id"),
     store: UserStore = Depends(get_user_store),

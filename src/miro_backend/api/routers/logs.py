@@ -32,7 +32,7 @@ log_batch_size_bytes = Histogram(
 )
 
 
-@router.post("/", status_code=status.HTTP_202_ACCEPTED, response_class=Response)  # type: ignore[misc]
+@router.post("/", status_code=status.HTTP_202_ACCEPTED, response_class=Response)
 async def capture_logs(
     request: Request,
     entries: Sequence[LogEntryIn],
