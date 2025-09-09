@@ -914,14 +914,14 @@ i18n = ["Babel (>=2.7)"]
 
 [[package]]
 name = "logfire"
-version = "4.3.3"
+version = "4.5.0"
 description = "The best Python observability tool! 🪵🔥"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "logfire-4.3.3-py3-none-any.whl", hash = "sha256:61fac5508ee2cef49c42cc2598b109634f7b7ea2c81dddd2e3ec7f3a5a2742ee"},
-    {file = "logfire-4.3.3.tar.gz", hash = "sha256:ca11650480793f5d0760f614684bff027e5c0e08379d8b4d236acc6f6dc5ae17"},
+    {file = "logfire-4.5.0-py3-none-any.whl", hash = "sha256:d842c2e4a9b75b3d32cb4ad83acfdc34e59185bf770c9b7b2a631f835d9de26a"},
+    {file = "logfire-4.5.0.tar.gz", hash = "sha256:f4ba4229b4b19ced80a882b98b2d839c0c1fac716817b576563a1633a9e47d97"},
 ]
 
 [package.dependencies]
