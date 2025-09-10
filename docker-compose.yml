@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   backend:
     build: .
@@ -11,13 +9,19 @@ services:
       - sqlite_data:/data
     environment:
       - MIRO_DATABASE_URL=sqlite:////data/app.db
+      - DB_URL=sqlite:////data/app.db
+      - RUN_ALEMBIC=false
 
   client:
-    build: ./web/client
+    build:
+      context: .
+      dockerfile: ./web/client/Dockerfile
     ports:
       - "3000:80"
     depends_on:
       - backend
+    environment:
+      - VITE_BACKEND_URL=http://backend:8000
 
 volumes:
   sqlite_data:

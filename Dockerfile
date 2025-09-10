@@ -6,6 +6,9 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
+# Ensure Python can import from src/ for Alembic and Uvicorn
+ENV PYTHONPATH=/app/src
+
 # Install build dependencies
 RUN pip install --no-cache-dir poetry
 
@@ -24,4 +27,7 @@ COPY config/ ./config/
 EXPOSE 8000
 
 # Run the FastAPI app with hot reload enabled
-CMD ["uvicorn", "miro_backend.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+# Use an entrypoint to run migrations then start the app
+COPY docker-entrypoint.sh ./docker-entrypoint.sh
+RUN chmod +x ./docker-entrypoint.sh
+CMD ["./docker-entrypoint.sh"]

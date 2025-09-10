@@ -208,11 +208,16 @@ def load_settings() -> Settings:
     except ValidationError as exc:
         created = _create_default_config_files()
         if created:
-            files = ", ".join(created)
-            raise RuntimeError(
-                f"Created default configuration files: {files}. "
-                "Please customise them with your values and re-run."
-            ) from exc
+            # Try loading again now that defaults exist; this allows a smooth
+            # first-run experience using example values.
+            try:
+                return Settings()  # type: ignore[call-arg]
+            except ValidationError as exc2:  # pragma: no cover - defensive
+                files = ", ".join(created)
+                raise RuntimeError(
+                    f"Created default configuration files: {files}. "
+                    "Please customise them with your values and re-run."
+                ) from exc2
         raise
 
 

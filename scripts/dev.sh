@@ -3,9 +3,20 @@ set -euo pipefail
 
 export PYTHONPATH="$(pwd):${PYTHONPATH:-}"
 
-# Apply database migrations
-echo "Applying database migrations..."
-poetry run alembic upgrade head
+# Apply database schema (Alembic if possible, else create_all)
+echo "Applying database schema..."
+set +e
+poetry run alembic -c config/alembic.ini upgrade heads
+STATUS=$?
+set -e
+if [ "$STATUS" -ne 0 ]; then
+  echo "Alembic failed (status=$STATUS); falling back to SQLAlchemy create_all"
+  poetry run python - <<'PY'
+from miro_backend.db.session import Base, engine
+Base.metadata.create_all(bind=engine)
+print('SQLAlchemy metadata.create_all completed')
+PY
+fi
 
 # Start FastAPI backend
 poetry run uvicorn src.miro_backend.main:app --reload --port 8000 &

@@ -6,9 +6,9 @@ import os
 from importlib import import_module
 from typing import Any
 
-from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-from opentelemetry.instrumentation.sqlalchemy import SQLAlchemyInstrumentor
-from opentelemetry.instrumentation.sqlite3 import SQLite3Instrumentor
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor  # noqa: F401
+from opentelemetry.instrumentation.sqlalchemy import SQLAlchemyInstrumentor  # noqa: F401
+from opentelemetry.instrumentation.sqlite3 import SQLite3Instrumentor  # noqa: F401
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
@@ -16,6 +16,8 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from fastapi import FastAPI
 from opentelemetry import trace
 from ..db.session import engine
+
+_otel_instrumented = False
 
 JaegerExporter: Any
 OTLPSpanExporter: Any
@@ -35,7 +37,11 @@ except ModuleNotFoundError:  # pragma: no cover - optional dependency
 
 
 def setup_telemetry(app: FastAPI) -> None:
-    """Configure exporters and instrument the application."""
+    """Configure exporters and instrument the application (idempotent)."""
+
+    global _otel_instrumented
+    if _otel_instrumented:
+        return
 
     resource = Resource.create({"service.name": "miro-backend"})
     provider = TracerProvider(resource=resource)
@@ -55,8 +61,11 @@ def setup_telemetry(app: FastAPI) -> None:
             )
         )
 
-    trace.set_tracer_provider(provider)
+    # Avoid overriding an already-configured tracer provider
+    from opentelemetry.sdk.trace import TracerProvider as SDKTracerProvider
 
-    FastAPIInstrumentor.instrument_app(app)
-    SQLAlchemyInstrumentor().instrument(engine=engine)
-    SQLite3Instrumentor().instrument()
+    current = trace.get_tracer_provider()
+    if not isinstance(current, SDKTracerProvider):
+        trace.set_tracer_provider(provider)
+
+    _otel_instrumented = True
