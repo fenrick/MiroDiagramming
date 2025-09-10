@@ -20,7 +20,7 @@ prometheus-fastapi-instrumentator = "^6.1.0"
 pydantic-settings = "^2.10.1"
 pyyaml = "^6.0.2"
 cryptography = "^42.0.5"
-cachetools = "^5.3"
+cachetools = "^6.0.0"
 bandit = "^1.8.6"
 
 [tool.poetry.group.dev.dependencies]
