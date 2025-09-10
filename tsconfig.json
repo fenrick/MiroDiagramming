@@ -15,5 +15,5 @@
     "types": ["node"]
   },
   "include": ["src/**/*", "tests/integration/**/*"],
-  "exclude": ["node_modules", "dist", "src/web/**"]
+  "exclude": ["node_modules", "dist", "src/web/**", "src/frontend/**"]
 }
