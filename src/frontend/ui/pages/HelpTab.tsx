@@ -1,6 +1,6 @@
 import { Heading } from '@mirohq/design-system';
 import React, { useState } from 'react';
-import changelog from '../../../../../CHANGELOG.md?raw';
+import changelog from '../../../../CHANGELOG.md?raw';
 import { Button, Markdown, Paragraph } from '../components';
 import { PageHelp } from '../components/PageHelp';
 import { TabPanel } from '../components/TabPanel';
