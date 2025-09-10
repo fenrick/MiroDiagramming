@@ -39,7 +39,7 @@ src/
     cache.routes.ts        # /api/cache/:boardId
     limits.routes.ts       # /api/limits
   services/
-    miroService.ts         # direct Miro REST interactions
+    miroService.ts         # uses high-level `Miro.as(user).getBoard(...).createCardItem(...)`
   queue/
     changeQueue.ts         # in-memory queue + worker started at boot
     types.ts               # task types

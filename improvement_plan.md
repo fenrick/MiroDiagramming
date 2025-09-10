@@ -38,9 +38,9 @@ Status markers: [Done] applied, [Planned] to do.
 
 ## 3) Miro Integration
 
-8. Use official client for REST calls [Planned]
+8. Use official client for REST calls [Done]
    - Why: centralize auth/refresh; reduce manual fetch and error plumbing.
-   - Acceptance: `MiroService.createNode` uses `getMiro().as(userId)`; remove `node-fetch` dependency.
+   - Acceptance: `MiroService.createNode` uses `getMiro().as(userId).getBoard(boardId).createCardItem(...)`; removed `node-fetch`.
 
 9. Error handling/backoff for Miro calls [Planned]
    - Why: consistent retry/backoff on 429/5xx.

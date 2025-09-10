@@ -9,18 +9,8 @@ export class MiroService {
     }
     const title = (data as { title?: string }).title ?? nodeId
     const description = (data as { description?: string }).description
-    const accessToken = await getMiro().getAccessToken(userId)
-    const res = await fetch(`https://api.miro.com/v2/boards/${boardId}/cards`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ title, description }),
-    })
-    if (!res.ok) {
-      const body = await res.text()
-      throw new Error(`Miro create card failed: ${res.status} ${body}`)
-    }
+    const api = getMiro().as(userId)
+    const board = await api.getBoard(boardId)
+    await board.createCardItem({ data: { title, description } })
   }
 }
