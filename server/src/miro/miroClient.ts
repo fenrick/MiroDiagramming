@@ -1,4 +1,5 @@
 import { Miro } from '@mirohq/miro-api'
+
 import { TokenStorage } from './tokenStorage.js'
 
 let _miro: Miro | undefined
@@ -10,8 +11,7 @@ export function getMiro(): Miro {
     clientId: MIRO_CLIENT_ID,
     clientSecret: MIRO_CLIENT_SECRET,
     redirectUrl: MIRO_REDIRECT_URL,
-    storage: new TokenStorage() as any,
+    storage: new TokenStorage(),
   })
   return _miro
 }
-

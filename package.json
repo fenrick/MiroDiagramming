@@ -7,7 +7,7 @@
     "web/client"
   ],
   "scripts": {
-    "dev": "concurrently -k -n server,client -c blue,magenta \"npm:dev --workspace server\" \"npm:dev --workspace web/client\"",
+    "dev": "npm:dev --workspace server",
     "build": "npm run build --workspace web/client && npm run build --workspace server",
     "start": "npm run start --workspace server",
     "lint": "npm run lint --workspace server && npm run lint --workspace web/client",
@@ -18,4 +18,3 @@
     "concurrently": "^9.1.0"
   }
 }
-
