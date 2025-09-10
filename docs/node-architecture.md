@@ -38,14 +38,16 @@ server/                      # Node backend (new)
       webhook.ts             # webhook signature verification helpers
     routes/
       auth.routes.ts         # /auth endpoints (login, callback)
-      boards.routes.ts       # /api/boards
-      items.routes.ts        # /api/boards/:id/items
-      tags.routes.ts         # /api/boards/:id/tags
+      cards.routes.ts        # /api/cards (queue + worker pipeline)
+      boards.routes.ts       # /api/boards (planned)
+      items.routes.ts        # /api/boards/:id/items (planned)
+      tags.routes.ts         # /api/boards/:id/tags (planned)
       cache.routes.ts        # /api/cache (if retaining)
     services/
       BoardService.ts        # board orchestration (Miro + DB)
       TagService.ts          # tags orchestration
       CacheService.ts        # cache logic if retained
+      miroService.ts         # direct Miro REST interactions
     repositories/
       BoardRepo.ts           # Prisma access for Board
       TagRepo.ts             # Prisma access for Tag
@@ -178,6 +180,10 @@ Keep route semantics where possible, updating implementation:
 - `GET /api/boards/:id/tags` → TagService using DB + Miro if required
 - `POST /api/cards` and other existing routers → mirror functionality
 - `POST /api/webhook` → verify signature and enqueue work as needed
+
+Cards pipeline:
+- `POST /api/cards` accepts an array of card definitions. It enqueues tasks into an in-memory queue and returns 202 with `{ accepted }`.
+- A background worker processes tasks and creates cards via Miro REST. Include `boardId` in card definitions to route creation to a board.
 
 New auth routes:
 
