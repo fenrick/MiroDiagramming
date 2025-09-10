@@ -16,10 +16,12 @@
     "format": "prettier --check .",
     "format:write": "prettier --write .",
     "test": "vitest run",
-    "coverage": "c8 -r lcov -r text-summary npm run test"
+    "coverage": "c8 -r lcov -r text-summary npm run test",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@fastify/cookie": "^9.3.1",
+    "@fastify/cors": "^9.0.1",
     "@fastify/middie": "^9.0.2",
     "@fastify/static": "^6.12.0",
     "@mirohq/design-system": "^1.0.23",
@@ -49,6 +51,7 @@
     "@types/node-fetch": "^2.6.12",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
+    "@types/safe-regex": "^1.1.6",
     "@types/supertest": "^2.0.16",
     "@typescript-eslint/eslint-plugin": "^8.8.1",
     "@typescript-eslint/parser": "^8.8.1",

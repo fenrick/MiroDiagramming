@@ -53,10 +53,10 @@ Acceptance:
 ### Phase 4 — API Parity
 
 - Recreate Python endpoints in Node with same routes and response shapes where practical:
-  - `/api/cache/:boardId`
-  - `/api/boards/:id/tags`
-  - `/api/cards` (and related batch/shape routes if in use)
-  - `/api/webhook`
+    - `/api/cache/:boardId`
+    - `/api/boards/:id/tags`
+    - `/api/cards` (and related batch/shape routes if in use)
+    - `/api/webhook`
 - Implement services calling `miro.as(userId)` and repositories as needed
 
 Acceptance:
@@ -112,4 +112,3 @@ Acceptance:
 - OAuth works end-to-end with persisted tokens
 - Tests and coverage targets met; linters clean
 - Documentation updated; AGENTS.md points to new Node architecture
-

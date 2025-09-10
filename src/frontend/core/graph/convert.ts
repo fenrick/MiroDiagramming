@@ -12,8 +12,8 @@ export function edgesToHierarchy(graph: GraphData): HierNode[] {
   const children: Record<string, string[]> = {};
   const childSet = new Set<string>();
   for (const edge of graph.edges) {
-    children[edge.from] ??= [];
-    children[edge.from].push(edge.to);
+    const list = children[edge.from] ?? (children[edge.from] = []);
+    list.push(edge.to);
     childSet.add(edge.to);
   }
   const build = (id: string): HierNode => {

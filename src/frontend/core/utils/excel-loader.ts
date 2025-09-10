@@ -102,7 +102,8 @@ export class ExcelLoader {
     for (let r = start.row + 1; r <= end.row; r++) {
       const row: ExcelRow = {};
       for (let c = start.col; c <= end.col; c++) {
-        row[headers[c - start.col]] = ws.getRow(r).getCell(c).value ?? null;
+        const header = headers[c - start.col]!;
+        row[header] = ws.getRow(r).getCell(c).value ?? null;
       }
       rows.push(row);
     }
@@ -136,6 +137,9 @@ export class ExcelLoader {
       throw new Error(`Invalid range: ${ref}`);
     }
     const [, sCol, sRow, eCol, eRow] = match;
+    if (!sCol || !sRow || !eCol || !eRow) {
+      throw new Error(`Invalid range: ${ref}`);
+    }
     const colNum = (col: string) =>
       col
         .toUpperCase()

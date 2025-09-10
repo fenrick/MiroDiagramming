@@ -14,13 +14,13 @@ security-significant or process change.
 
 ## 1 Document Map
 
-| Topic                                           | Detailed source   |
-| ----------------------------------------------- | ----------------- |
-| Component APIs, props, patterns                 | **COMPONENTS.md** |
-| Design tokens, colour, spacing, typography      | **FOUNDATION.md** |
-| CI/CD, hosting, rollback, environment settings  | **DEPLOYMENT.md** |
-| Sidebar tab flows, validation, keyboard support | **TABS.md**       |
-| Python service architecture                      | **python-architecture.md** |
+| Topic                                           | Detailed source          |
+| ----------------------------------------------- | ------------------------ |
+| Component APIs, props, patterns                 | **COMPONENTS.md**        |
+| Design tokens, colour, spacing, typography      | **FOUNDATION.md**        |
+| CI/CD, hosting, rollback, environment settings  | **DEPLOYMENT.md**        |
+| Sidebar tab flows, validation, keyboard support | **TABS.md**              |
+| Node service architecture                       | **node-architecture.md** |
 
 ---
 
@@ -39,16 +39,16 @@ Browser
                          └─► Data store (Miro item ids)
 ```
 
-The React GUI communicates with a **FastAPI** backend for all Miro REST API calls.
+The React GUI communicates with a **Fastify** backend for all Miro REST API calls.
 OAuth tokens are obtained during browser login, stored securely by the backend,
 and retrieved for each request. Tokens and created Miro item ids are persisted
-in a **SQLite** cache. The existing web API embedded in the GUI continues to
+via **Prisma** in a SQLite cache. The existing web API embedded in the GUI continues to
 handle UX events and simple actions. The backend keeps board state in sync by
-recording the ids of created Miro items.
-For more backend detail, see [python-architecture.md](python-architecture.md).
+recording the ids of created Miro items. For more backend detail, see
+[node-architecture.md](node-architecture.md).
 
 ```
-React GUI ──► FastAPI Backend ──► Miro REST API
+React GUI ──► Fastify Backend ──► Miro REST API
                    │
                    └─► Data store (Miro item ids)
 ```
@@ -63,15 +63,15 @@ Data → Graph Normalisation → Layout Engine → Board Rendering → UI
 
 ### Frontend
 
-- **Pure Core** (`web/client/src/core`) – framework-agnostic logic.
-- **Board Adapter** (`web/client/src/board`) – converts domain objects to Miro widgets.
-- **UI Shell** (`web/client/src/ui`) – React views built with design-system wrappers.
+- **Pure Core** (`src/frontend/core`) – framework-agnostic logic.
+- **Board Adapter** (`src/frontend/board`) – converts domain objects to Miro widgets.
+- **UI Shell** (`src/frontend/ui`) – React views built with design-system wrappers.
 
 ### Backend
 
-- **API Routers** (`src/miro_backend/routers`) – FastAPI endpoints and validation.
-- **Services** (`src/miro_backend/services`) – domain logic and orchestration.
-- **Repositories** (`src/miro_backend/repositories`) – persistence and Miro API calls.
+- **API routes** (`src/routes`) – Fastify endpoints and validation.
+- **Services** (`src/services`) – domain logic and orchestration.
+- **Repositories** (`src/repositories`) – persistence and Miro API calls.
 
 - **Infrastructure** (scripts, .github) – build, lint, test, release automation.
 
@@ -80,14 +80,11 @@ Data → Graph Normalisation → Layout Engine → Board Rendering → UI
 ## 4 Repository Map
 
 ```
-
 docs/                 project documentation
-src/miro_backend/     FastAPI service
-web/client/           React front-end
-tests/                Python unit tests
-legacy/dotnet/        archived .NET implementation
+src/                  Fastify backend and React front-end
+prisma/               Prisma schema and migrations
+web/                  HTML entry points
 templates/            default widget templates
-
 ```
 
 ---
@@ -108,17 +105,17 @@ Complexity limits enforced automatically by **SonarQube** gate.
 
 ## 6 Quality, Testing & CI/CD
 
-| Stage      | Gate                                   | Threshold            |
-| ---------- | -------------------------------------- | -------------------- |
-| Pre-commit | Ruff, Black, Mypy, ESLint, Stylelint, Prettier | zero errors |
-| Unit       | `pytest`, `npm test`                   | ≥ 90 % line & branch |
-| UI         | manual visual & a11y review            | no critical issues   |
-| Metrics    | SonarQube                              | cyclomatic ≤ 8       |
+| Stage      | Gate                        | Threshold            |
+| ---------- | --------------------------- | -------------------- |
+| Pre-commit | ESLint, Prettier, typecheck | zero errors          |
+| Unit       | `npm test`                  | ≥ 90 % line & branch |
+| UI         | manual visual & a11y review | no critical issues   |
+| Metrics    | SonarQube                   | cyclomatic ≤ 8       |
 
 **Workflow** (GitHub Actions)
 
-1. Restore Python and Node dependencies from cache.
-2. Lint, type-check and unit tests for both codebases (Python 3.11, Node 20).
+1. Restore Node dependencies from cache.
+2. Lint, type-check and unit tests (Node 20).
 3. Build Storybook and a feature-flagged bundle for staging.
 4. SonarQube build scan using
    [`sonar-scanner`](https://docs.sonarsource.com/sonarqube/latest/analyzing-source-code/scan/sonarscanner/)
@@ -132,8 +129,7 @@ Complexity limits enforced automatically by **SonarQube** gate.
 
 ## 7 Automated Code Review & Enforcement
 
-- Both the Python and Node code must maintain ≥ 90 % coverage with cyclomatic
-  complexity under eight.
+- The code must maintain ≥ 90 % coverage with cyclomatic complexity under eight.
 
 - CI checks fail pull requests if complexity or lint targets fall short. Coverage
   from all test shards is merged for reporting only; the build does not fail
@@ -141,7 +137,7 @@ Complexity limits enforced automatically by **SonarQube** gate.
 - **Conventional Commits** enforced by commit-lint.
 - Every PR must pass all CI gates; manual reviewers are optional.
 - **CodeQL** scan adds static-analysis findings to the check suite for
-  JavaScript, Python and GitHub Actions (job `codeql` in
+  JavaScript and GitHub Actions (job `codeql` in
   [repo-codeql.yml](../.github/workflows/repo-codeql.yml)).
 
 ---
@@ -156,7 +152,7 @@ Complexity limits enforced automatically by **SonarQube** gate.
 | User data     | Privacy breach                   | No external storage; all data stays on Miro board                                   |
 | OAuth tokens  | Leakage or misuse                | Tokens stored on the server in an encrypted data store; the GUI never persists them |
 
-_Tokens are acquired via browser OAuth and forwarded to the FastAPI backend. The
+_Tokens are acquired via browser OAuth and forwarded to the Fastify backend. The
 backend encrypts tokens at rest and attaches them to API requests._
 
 ---
@@ -249,4 +245,7 @@ See [CODE_STYLE.md](CODE_STYLE.md) for detailed style rules.
 - Import order: std → vendor → local, alphabetical within group.
 - No raw grid-column in style blocks (enforced by custom ESLint rule).
 - PR template checklist: coverage, complexity, a11y, dark-mode snapshot.
+
+```
+
 ```

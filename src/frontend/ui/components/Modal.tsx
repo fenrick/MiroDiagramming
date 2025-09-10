@@ -64,8 +64,8 @@ export function Modal({
       if (nodes.length === 0) {
         return false;
       }
-      const first = nodes[0];
-      const last = nodes[nodes.length - 1];
+      const first = nodes[0]!;
+      const last = nodes[nodes.length - 1]!;
       const active = document.activeElement as HTMLElement;
       if (e.shiftKey && active === first) {
         last.focus();
@@ -108,12 +108,12 @@ export function Modal({
         tabIndex={0}
         aria-label='Close modal'
         data-testid='modal-backdrop'
-        onClick={e => {
+        onClick={(e: React.MouseEvent<HTMLDivElement>) => {
           if (e.target === e.currentTarget) {
             onClose();
           }
         }}
-        onKeyDown={e => {
+        onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
           if (
             e.target === e.currentTarget &&
             (e.key === 'Enter' || e.key === ' ')

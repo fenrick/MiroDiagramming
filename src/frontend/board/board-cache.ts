@@ -81,10 +81,12 @@ export class BoardCache {
     if (missing.length) {
       log.trace({ missing }, 'Fetching uncached widget types');
       // TODO replace board.get with backend service once caching implemented
-      const fetched = await Promise.all(missing.map(t => b.get({ type: t })));
+      const fetched = await Promise.all(
+        missing.map(t => b.get({ type: t })),
+      );
       for (let i = 0; i < missing.length; i += 1) {
-        const list = fetched[i];
-        this.widgets.set(missing[i], list);
+        const list = fetched[i] ?? [];
+        this.widgets.set(missing[i]!, list);
         results.push(...list);
       }
       log.info({ types: missing.length }, 'Cached widget query results');

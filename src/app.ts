@@ -1,13 +1,16 @@
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import fs from 'node:fs/promises'
+import { randomUUID } from 'node:crypto'
 
 import Fastify, { type FastifyReply, type FastifyRequest } from 'fastify'
 import fastifyCookie from '@fastify/cookie'
 import fastifyStatic from '@fastify/static'
+import fastifyCors from '@fastify/cors'
 
 import { loadEnv } from './config/env.js'
 import { createLogger } from './config/logger.js'
+import { registerErrorHandler } from './config/error-handler.js'
 import { registerAuthRoutes } from './routes/auth.routes.js'
 import { registerCardsRoutes } from './routes/cards.routes.js'
 import { registerTagsRoutes } from './routes/tags.routes.js'
@@ -18,25 +21,32 @@ import { registerWebhookRoutes } from './routes/webhook.routes.js'
 export async function buildApp() {
   const env = loadEnv()
   const logger = createLogger()
-  const app = Fastify({ logger })
-
+  const app = Fastify({ logger, genReqId: () => randomUUID() })
+  registerErrorHandler(app)
   await app.register(fastifyCookie)
+  await app.register(fastifyCors, {
+    origin: env.CORS_ORIGIN ?? false,
+    credentials: true,
+  })
 
   // Simple userId cookie for session affinity (used later for Miro OAuth)
-  app.addHook('preHandler', async (request: FastifyRequest & { userId?: string }, reply: FastifyReply) => {
-    const cookies = (request as unknown as { cookies?: Record<string, string> }).cookies
-    let userId = cookies?.userId
-    if (!userId) {
-      userId = Math.random().toString(36).slice(2)
-      reply.setCookie('userId', userId, {
-        httpOnly: true,
-        sameSite: 'lax',
-        secure: env.NODE_ENV === 'production',
-        path: '/',
-      })
-    }
-    request.userId = userId
-  })
+  app.addHook(
+    'preHandler',
+    async (request: FastifyRequest & { userId?: string }, reply: FastifyReply) => {
+      const cookies = (request as unknown as { cookies?: Record<string, string> }).cookies
+      let userId = cookies?.userId
+      if (!userId) {
+        userId = Math.random().toString(36).slice(2)
+        reply.setCookie('userId', userId, {
+          httpOnly: true,
+          sameSite: 'strict',
+          secure: env.NODE_ENV === 'production',
+          path: '/',
+        })
+      }
+      request.userId = userId
+    },
+  )
 
   app.get('/healthz', async () => ({ status: 'ok' }))
 
@@ -53,10 +63,7 @@ export async function buildApp() {
   // In production, serve the built frontend from src/web/dist
   if (process.env.NODE_ENV === 'production') {
     try {
-      const distPath = path.resolve(
-        path.dirname(fileURLToPath(import.meta.url)),
-        '../src/web/dist',
-      )
+      const distPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../src/web/dist')
       await app.register(fastifyStatic, {
         root: distPath,
         prefix: '/',
@@ -69,7 +76,9 @@ export async function buildApp() {
           return reply.code(404).send({ error: 'Not found' })
         }
         // Serve index.html for client-side routing
-        return (reply as unknown as { sendFile: (p: string) => FastifyReply }).sendFile('index.html')
+        return (reply as unknown as { sendFile: (p: string) => FastifyReply }).sendFile(
+          'index.html',
+        )
       })
     } catch {
       // Ignore if dist path is missing (dev/test mode)
@@ -85,7 +94,11 @@ export async function buildApp() {
       import('vite'),
     ])
     await app.register(middie)
-    const vite = await createServer({ root: clientRoot, server: { middlewareMode: true }, appType: 'custom' })
+    const vite = await createServer({
+      root: clientRoot,
+      server: { middlewareMode: true },
+      appType: 'custom',
+    })
     ;(app as unknown as { use: (m: unknown) => void }).use(vite.middlewares)
 
     // Fallback index.html for SPA routes, excluding API and health

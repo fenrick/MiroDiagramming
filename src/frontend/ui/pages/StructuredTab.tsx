@@ -55,7 +55,13 @@ export function handleFileDrop(
   setImportQueue: React.Dispatch<React.SetStateAction<File[]>>,
   setError: React.Dispatch<React.SetStateAction<string | null>>,
 ): void {
+  if (!droppedFiles.length) {
+    return;
+  }
   const file = droppedFiles[0];
+  if (!file) {
+    return;
+  }
   setImportQueue([file]);
   setError(null);
 }

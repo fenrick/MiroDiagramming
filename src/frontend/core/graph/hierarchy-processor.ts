@@ -134,6 +134,9 @@ export class HierarchyProcessor extends UndoableProcessor<
     offsetY: number,
   ): Promise<BaseItem | Group> {
     const pos = posMap[node.id];
+    if (!pos) {
+      throw new Error(`Missing layout for node ${node.id}`);
+    }
     const centerX = pos.x + offsetX + pos.width / 2;
     const centerY = pos.y + offsetY + pos.height / 2;
     const widget = await this.builder.createNode(node, {

@@ -58,13 +58,16 @@ async function post(event: TelemetryEvent): Promise<void> {
     return;
   }
   try {
+    const { type, ...rest } = event as TelemetryEvent & {
+      type: string;
+      [key: string]: unknown;
+    };
     const entry = {
       timestamp: new Date().toISOString(),
       level: 'info',
-      message: event.type,
-      context: { ...event },
+      message: type,
+      context: rest,
     };
-    delete entry.context.type;
     const response = await fetch('/api/logs', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -86,7 +89,7 @@ async function post(event: TelemetryEvent): Promise<void> {
 export async function diffShown(
   params: Omit<DiffShownEvent, 'type'>,
 ): Promise<void> {
-  await post({ type: 'diff_shown', ...params });
+  await post({ type: 'diff_shown', ...params } as DiffShownEvent);
 }
 
 /**
@@ -97,7 +100,7 @@ export async function diffShown(
 export async function batchSubmitted(
   params: Omit<BatchSubmittedEvent, 'type'>,
 ): Promise<void> {
-  await post({ type: 'batch_submitted', ...params });
+  await post({ type: 'batch_submitted', ...params } as BatchSubmittedEvent);
 }
 
 /**
@@ -108,7 +111,7 @@ export async function batchSubmitted(
 export async function jobCompleted(
   params: Omit<JobCompletedEvent, 'type'>,
 ): Promise<void> {
-  await post({ type: 'job_completed', ...params });
+  await post({ type: 'job_completed', ...params } as JobCompletedEvent);
 }
 
 /**
@@ -119,7 +122,10 @@ export async function jobCompleted(
 export async function rateLimitEncountered(
   params: Omit<RateLimitEncounteredEvent, 'type'>,
 ): Promise<void> {
-  await post({ type: 'rate_limit_encountered', ...params });
+  await post({
+    type: 'rate_limit_encountered',
+    ...params,
+  } as RateLimitEncounteredEvent);
 }
 
 /**

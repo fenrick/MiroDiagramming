@@ -15,13 +15,14 @@ export async function apiFetch(
   input: RequestInfo | URL,
   init: RequestInit = {},
 ): Promise<Response> {
-  return span('api fetch', async () => {
-    const user = await miro.board.getUserInfo();
-    const headers = new Headers(init.headers || {});
-    headers.set('X-User-Id', String(user.id));
-    propagation.inject(context.active(), headers, {
-      set: (key, value) => headers.set(key, value),
-    });
+  return span('api fetch', {
+    callback: async () => {
+      const user = await miro.board.getUserInfo();
+      const headers = new Headers(init.headers || {});
+      headers.set('X-User-Id', String(user.id));
+      propagation.inject(context.active(), headers, {
+        set: (carrier, key, value) => carrier.set(key, value),
+      });
     if (import.meta.env.DEV) {
       if (debugFlags.limits) {
         headers.set('X-Debug-Limits', debugFlags.limits);
@@ -34,7 +35,8 @@ export async function apiFetch(
         delete debugFlags.count429;
       }
     }
-    const url = typeof input === 'string' ? `${API_BASE_URL}${input}` : input;
-    return fetch(url, { ...init, headers });
+      const url = typeof input === 'string' ? `${API_BASE_URL}${input}` : input;
+      return fetch(url, { ...init, headers });
+    },
   });
 }

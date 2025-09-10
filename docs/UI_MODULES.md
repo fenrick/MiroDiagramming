@@ -5,13 +5,13 @@
 ## 0 Purpose
 
 This document describes the React-based UI modules under
-`web/client/src/ui/`. Components, hooks and pages form the add-on
+`src/frontend/ui/`. Components, hooks and pages form the add-on
 interface.
 
 ## 1 Directory Overview
 
 ```
-web/client/src/ui/
+src/frontend/ui/
   components/
     EditMetadataModal.tsx
     JsonDropZone.tsx

@@ -131,7 +131,7 @@ async function handleDrop(
 ): Promise<void> {
   try {
     await handleLocalDrop(files);
-    const f = files[0];
+    const f = files[0] ?? null;
     setLoader(excelLoader);
     setFile(f);
     setSource('');
@@ -383,6 +383,7 @@ function ExcelTabView({
   toggle,
   handleCreate,
   updateRow,
+  handleApplyChanges,
 }: ExcelTabState & {
   setSource: (s: string) => void;
   setRemote: (s: string) => void;

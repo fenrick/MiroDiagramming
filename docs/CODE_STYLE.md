@@ -44,10 +44,6 @@ This project enforces consistent formatting with
 
 For additional architectural guidelines see [ARCHITECTURE.md](ARCHITECTURE.md).
 
-## Python
-
-Backend scripts and services follow [PEP 8](https://peps.python.org/pep-0008/) and are formatted with [Black](https://black.readthedocs.io/en/stable/) using an 88 character line length. Lint with [Ruff](https://docs.astral.sh/ruff/) and type-check with [Mypy](https://mypy.readthedocs.io/). Document public APIs with concise docstrings and keep type hints on all function signatures. Run `poetry run pre-commit run --files <files>` before committing.
-
 ## Storybook
 
 Run the Storybook dev server during component development to preview UI changes.

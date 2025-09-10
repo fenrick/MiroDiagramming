@@ -17,13 +17,12 @@ export const registerTagsRoutes: FastifyPluginAsync = async (app) => {
     if (!board) {
       return reply.send([])
     }
-    const tags = await prisma.tag.findMany({
+    const tags = (await prisma.tag.findMany({
       where: { board_id: board.id },
       orderBy: { name: 'asc' },
-    })
+    })) as Array<{ id: number; name: string }>
     // Map to client-friendly shape
     const result = tags.map((t) => ({ id: String(t.id), title: t.name }))
     return reply.send(result)
   })
 }
-

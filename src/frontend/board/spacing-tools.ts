@@ -55,17 +55,17 @@ export async function applySpacingLayout(
     await Promise.all(
       items.map(async (item, i) => {
         item[sizeKey] = plan.size;
-        item[axis] = plan.positions[i];
+        item[axis] = plan.positions[i]!;
         await maybeSync(item);
       }),
     );
     return;
   }
+  const first = items[0]!;
+  let position = first[axis] ?? 0;
+  await moveWidget(first, axis, position);
 
-  let position = items[0][axis] ?? 0;
-  await moveWidget(items[0], axis, position);
-
-  let prev = items[0];
+  let prev: (Record<string, number> & Syncable) = first;
   for (const curr of items.slice(1)) {
     const prevSize = getDimension(prev, sizeKey);
     const currSize = getDimension(curr, sizeKey);
