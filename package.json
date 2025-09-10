@@ -46,6 +46,7 @@
     "zustand": "^5.0.0"
   },
   "devDependencies": {
+    "@commitlint/config-conventional": "^19.8.1",
     "@mirohq/websdk-types": "^2.9.0",
     "@types/node": "^20.11.30",
     "@types/node-fetch": "^2.6.12",
@@ -57,6 +58,7 @@
     "@typescript-eslint/parser": "^8.8.1",
     "@vitejs/plugin-react": "^4.7.0",
     "c8": "^9.1.0",
+    "commitlint": "^19.8.1",
     "eslint": "^9.35.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.29.1",

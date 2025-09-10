@@ -6,9 +6,6 @@ on:
   pull_request:
     types: [opened, synchronize, edited]
 
-env:
-  NODE_VERSION: 20
-
 jobs:
   commitlint:
     runs-on: ubuntu-latest
@@ -18,12 +15,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          cache-dependency-path: web/client/package-lock.json
-      - run: corepack enable
-        working-directory: web/client
-      - run: npm ci --prefer-offline --no-audit
-        working-directory: web/client
+          node-version: 20
+          cache: npm
+      - run: npm ci
       - run: npx commitlint --from=${{ github.event.pull_request.base.sha }} --to=${{ github.event.pull_request.head.sha }}
-        working-directory: web/client
