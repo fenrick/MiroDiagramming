@@ -13,8 +13,6 @@ env:
 jobs:
   release:
     runs-on: ubuntu-latest
-    outputs:
-      tag: ${{ steps.release_tag.outputs.tag }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -27,39 +25,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
-      - name: Check release tag
-        id: release_tag
-        run: |
-          git fetch --tags
-          tag=$(git tag --points-at HEAD | head -n 1)
-          if [ -n "$tag" ]; then
-            echo "tag=$tag" >> "$GITHUB_OUTPUT"
-          fi
-
-  docker-image:
-    if: needs.release.outputs.tag != ''
-    needs: release
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Login to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Extract metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ghcr.io/${{ github.repository }}
-          tags: |
-            type=raw,value=${{ needs.release.outputs.tag }}
-      - name: Build and push image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          platforms: linux/amd64
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
