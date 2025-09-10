@@ -67,15 +67,15 @@ Status markers: [Done] applied, [Planned] to do.
 
 ## 5) Queue/Worker
 
-14. Concurrency + backoff + max retries [Planned]
+14. Concurrency + backoff + max retries [Done]
    - Why: prevent infinite loops; improve throughput.
    - Acceptance: configurable concurrency; exponential backoff; dead-letter or log after N failures.
 
-15. Graceful shutdown [Planned]
+15. Graceful shutdown [Done]
    - Why: prevent task loss on exit.
    - Acceptance: handle signals; stop intake; drain queue or persist tasks; log summary.
 
-16. Structured task logs [Planned]
+16. Structured task logs [Done]
    - Why: observability.
    - Acceptance: include task id, board id, type, retry count, duration.
 

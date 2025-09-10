@@ -41,8 +41,8 @@ src/
   services/
     miroService.ts         # uses high-level `Miro.as(user).getBoard(...).createCardItem(...)`
   queue/
-    changeQueue.ts         # in-memory queue + worker started at boot
-    types.ts               # task types
+    changeQueue.ts         # in-memory queue with concurrency, retries, backoff
+    types.ts               # task types (retryCount, maxRetries, createdAt)
 src/web/                     # React frontend (dev via Vite, built by root scripts)
 prisma/
   schema.prisma            # Board, Tag, Shape, User, CacheEntry, IdempotencyEntry

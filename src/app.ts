@@ -13,6 +13,7 @@ import { loadEnv } from './config/env.js'
 import { createLogger } from './config/logger.js'
 import { registerErrorHandler } from './config/error-handler.js'
 import { getPrisma } from './config/db.js'
+import { changeQueue } from './queue/changeQueue.js'
 import { registerAuthRoutes } from './routes/auth.routes.js'
 import { registerCardsRoutes } from './routes/cards.routes.js'
 import { registerTagsRoutes } from './routes/tags.routes.js'
@@ -90,6 +91,11 @@ export async function buildApp() {
   app.addHook('onClose', async () => {
     try {
       await getPrisma().$disconnect()
+    } catch {
+      // ignore
+    }
+    try {
+      changeQueue.stop()
     } catch {
       // ignore
     }
