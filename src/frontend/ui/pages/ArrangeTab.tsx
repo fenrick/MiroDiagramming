@@ -15,6 +15,7 @@ import { PageHelp } from '../components/PageHelp'
 import { TabPanel } from '../components/TabPanel'
 import type { TabTuple } from './tab-definitions'
 import { StickyActions } from '../StickyActions'
+import { applyBracketTagsToSelectedStickies } from '../../board/sticky-tags'
 
 /**
  * Combines grid and spacing tools into a single sidebar tab.
@@ -55,6 +56,7 @@ export const ArrangeTab: React.FC = () => {
   }
   const applyGrid = async (): Promise<void> => await applyGridLayout(grid)
   const applySpacing = async (): Promise<void> => await applySpacingLayout(spacing)
+  const applyStickyTags = async (): Promise<void> => await applyBracketTagsToSelectedStickies()
 
   return (
     <TabPanel tabId="arrange">
@@ -155,6 +157,16 @@ export const ArrangeTab: React.FC = () => {
               </ButtonToolbar>
             </StickyActions>
           </Flex>
+        </Grid.Item>
+
+        <Grid.Item>
+          <StickyActions>
+            <ButtonToolbar>
+              <Button onClick={applyStickyTags} variant="secondary">
+                <Text>Apply [tags] to Stickies</Text>
+              </Button>
+            </ButtonToolbar>
+          </StickyActions>
         </Grid.Item>
       </Grid>
     </TabPanel>
