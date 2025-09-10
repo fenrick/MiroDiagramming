@@ -1,0 +1,21 @@
+{
+  "name": "miro-monorepo",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "server",
+    "web/client"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n server,client -c blue,magenta \"npm:dev --workspace server\" \"npm:dev --workspace web/client\"",
+    "build": "npm run build --workspace web/client && npm run build --workspace server",
+    "start": "npm run start --workspace server",
+    "lint": "npm run lint --workspace server && npm run lint --workspace web/client",
+    "typecheck": "npm run typecheck --workspace server && npm run typecheck --workspace web/client",
+    "test": "npm run test --workspace server && npm run test --workspace web/client"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}
+
