@@ -11,6 +11,7 @@
     "build": "vite build && tsc -p tsconfig.json",
     "start": "node dist/server.js",
     "typecheck": "tsc --noEmit",
+    "typecheck:client": "tsc -p tsconfig.client.json --noEmit",
     "lint": "eslint \"src/{app,config,miro,routes,queue,services,repositories}/**/*.ts\"",
     "format": "prettier --check .",
     "format:write": "prettier --write .",
@@ -43,6 +44,7 @@
     "zustand": "^5.0.0"
   },
   "devDependencies": {
+    "@mirohq/websdk-types": "^2.9.0",
     "@types/node": "^20.11.30",
     "@types/node-fetch": "^2.6.12",
     "@types/react": "^18.3.23",
