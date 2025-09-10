@@ -50,12 +50,12 @@ export async function buildApp() {
   await app.register(registerLimitsRoutes)
   await app.register(registerWebhookRoutes)
 
-  // In production, serve the built frontend from src/client/dist
+  // In production, serve the built frontend from src/web/dist
   if (process.env.NODE_ENV === 'production') {
     try {
       const distPath = path.resolve(
         path.dirname(fileURLToPath(import.meta.url)),
-        '../src/client/dist',
+        '../src/web/dist',
       )
       await app.register(fastifyStatic, {
         root: distPath,
@@ -78,7 +78,7 @@ export async function buildApp() {
 
   // In development (but not tests), attach Vite middleware for a single-process dev
   if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
-    const clientRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../src/client')
+    const clientRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../src/web')
     // Lazy import to avoid adding Vite to production runtime
     const [{ default: middie }, { createServer }] = await Promise.all([
       import('@fastify/middie'),

@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
-    "build": "vite build --config src/client/vite.config.ts && tsc -p tsconfig.json",
+    "build": "vite build --config src/web/vite.config.ts && tsc -p tsconfig.json",
     "start": "node dist/server.js",
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"src/{app,config,miro,routes,queue,services,repositories}/**/*.ts\"",
