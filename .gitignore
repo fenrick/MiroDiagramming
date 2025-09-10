@@ -1,34 +1,8 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# misc
-.DS_Store
-*.pem
-.idea
-
-# local env files
-.env
-config/config.yaml
+node_modules
 dist
-
-#!.yarn/cache
-.pnp.*
-tsconfig.tsbuildinfo
-
-# dotnet installer
-dotnet-install.sh
-
-# dotnet build artifacts
-**/bin/
-**/obj/
-**/coverage
-/.vs
-
-# legacy dotnet build artifacts
-legacy/dotnet/**/bin/
-legacy/dotnet/**/obj/
-legacy/dotnet/**/coverage/
-legacy/dotnet/.vs
-
+.DS_Store
+coverage
+client/node_modules
+client/dist
+.env
 __pycache__/
-
-node_modules/

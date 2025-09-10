@@ -37,12 +37,12 @@ export async function buildApp() {
   // Root route can be used for a quick sanity check
   app.get('/api', async () => ({ name: 'miro-server', ok: true }))
 
-  // In production, serve the built frontend from web/client/dist
+  // In production, serve the built frontend from client/dist
   if (process.env.NODE_ENV === 'production') {
     try {
       const distPath = path.resolve(
         path.dirname(fileURLToPath(import.meta.url)),
-        '../../web/client/dist',
+        '../client/dist',
       )
       await app.register(fastifyStatic, {
         root: distPath,
@@ -65,7 +65,7 @@ export async function buildApp() {
 
   // In development (but not tests), attach Vite middleware for a single-process dev
   if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
-    const clientRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../web/client')
+    const clientRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../client')
     // Lazy import to avoid adding Vite to production runtime
     const [{ default: middie }, { createServer }] = await Promise.all([
       import('@fastify/middie'),

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import request from 'supertest'
 
-import { buildApp } from '../../src/app.js'
+import { buildApp } from '../../../src/app.js'
 
 describe('health route', () => {
   it('returns ok', async () => {
