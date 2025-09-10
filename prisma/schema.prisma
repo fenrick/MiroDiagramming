@@ -56,3 +56,10 @@ model CacheEntry {
   value      String
   created_at DateTime @default(now())
 }
+
+model IdempotencyEntry {
+  id         Int      @id @default(autoincrement())
+  key        String   @unique
+  accepted   Int
+  created_at DateTime @default(now())
+}

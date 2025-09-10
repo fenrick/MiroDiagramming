@@ -26,8 +26,8 @@ export class TokenStorage implements Storage {
       where: { user_id: String(userId) },
       update: {
         access_token: state.accessToken,
-        refresh_token: state.refreshToken ?? null,
-        expires_at: state.tokenExpiresAt ? new Date(state.tokenExpiresAt) : null,
+        refresh_token: state.refreshToken ?? '',
+        expires_at: state.tokenExpiresAt ? new Date(state.tokenExpiresAt) : new Date(),
         name: state.userId,
       },
       create: {

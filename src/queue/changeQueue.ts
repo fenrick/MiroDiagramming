@@ -22,6 +22,8 @@ class InMemoryQueue {
 
   start() {
     if (this.running) return
+    // Avoid running the worker in tests
+    if (process.env.NODE_ENV === 'test') return
     this.running = true
     void this.loop()
   }
