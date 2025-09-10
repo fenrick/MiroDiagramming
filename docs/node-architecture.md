@@ -41,7 +41,7 @@ src/
   services/
     miroService.ts         # direct Miro REST interactions
   queue/
-    changeQueue.ts         # in-memory queue + worker
+    changeQueue.ts         # in-memory queue + worker started at boot
     types.ts               # task types
 src/web/                     # React frontend (dev via Vite, built by root scripts)
 prisma/
@@ -65,6 +65,7 @@ Additional backend env:
 
 - `PORT=4000`
 - `SESSION_SECRET` (for cookie signatures)
+- `MIRO_WEBHOOK_SECRET` (signature validation for `/api/webhook`)
 - `DATABASE_URL` (e.g., `file:./dev.db`)
 - `CORS_ORIGIN` (frontend origin during dev)
 
@@ -85,10 +86,10 @@ import { Miro } from '@mirohq/miro-api'
 
 // Provide token storage and env configuration
 export const miro = new Miro({
-  clientId: process.env.MIRO_CLIENT_ID!,
-  clientSecret: process.env.MIRO_CLIENT_SECRET!,
-  redirectUrl: process.env.MIRO_REDIRECT_URL!,
-  storage: new TokenStorage(), // see Storage below
+    clientId: process.env.MIRO_CLIENT_ID!,
+    clientSecret: process.env.MIRO_CLIENT_SECRET!,
+    redirectUrl: process.env.MIRO_REDIRECT_URL!,
+    storage: new TokenStorage(), // see Storage below
 })
 
 // Per-user API accessor
@@ -107,8 +108,8 @@ Pagination helpers (example):
 ```ts
 const api = miro.as(userId)
 for await (const board of api.getAllBoards()) {
-  // handle boards
-  break // optional to stop pagination
+    // handle boards
+    break // optional to stop pagination
 }
 ```
 
@@ -117,13 +118,13 @@ Storage interface (token persistence):
 ```ts
 // Implements the Storage interface required by Miro
 export class TokenStorage {
-  async get(userId: string) {
-    return await userTokenRepo.get(userId) // returns State | undefined
-  }
+    async get(userId: string) {
+        return await userTokenRepo.get(userId) // returns State | undefined
+    }
 
-  async set(userId: string, state: any) {
-    await userTokenRepo.set(userId, state)
-  }
+    async set(userId: string, state: any) {
+        await userTokenRepo.set(userId, state)
+    }
 }
 ```
 
@@ -131,19 +132,19 @@ OAuth flow (Fastify example):
 
 ```ts
 app.get('/auth/miro/callback', async (req, reply) => {
-  await miro.exchangeCodeForAccessToken(req.cookies.userId, (req.query as any).code)
-  reply.redirect('/')
+    await miro.exchangeCodeForAccessToken(req.cookies.userId, (req.query as any).code)
+    reply.redirect('/')
 })
 
 app.get('/', async (req, reply) => {
-  if (!(await miro.isAuthorized(req.cookies.userId))) {
-    reply.redirect(miro.getAuthUrl())
-    return
-  }
-  const api = miro.as(req.cookies.userId)
-  for await (const board of api.getAllBoards()) {
-    return reply.send(board)
-  }
+    if (!(await miro.isAuthorized(req.cookies.userId))) {
+        reply.redirect(miro.getAuthUrl())
+        return
+    }
+    const api = miro.as(req.cookies.userId)
+    for await (const board of api.getAllBoards()) {
+        return reply.send(board)
+    }
 })
 ```
 
@@ -162,6 +163,7 @@ Keep route semantics where possible, updating implementation:
 - `POST /api/webhook` → verify signature and enqueue work as needed
 
 Cards pipeline:
+
 - `POST /api/cards` accepts an array of card definitions. It enqueues tasks into an in-memory queue and returns 202 with `{ accepted }`.
 - A background worker processes tasks and creates cards via Miro REST. Include `boardId` in card definitions to route creation to a board.
 
@@ -199,7 +201,8 @@ We will map SQLAlchemy tables one-to-one and add migrations to preserve data.
 
 ## Security
 
-- HTTPS in production; secure cookies; sameSite=strict
+- HTTPS in production; secure HTTP-only cookies (`sameSite=strict`)
+- CORS via `@fastify/cors` and `CORS_ORIGIN` env
 - CSRF protection for state-changing endpoints (if applicable)
 - Input validation (zod) and output typing
 - Secrets from env; no tokens in source control

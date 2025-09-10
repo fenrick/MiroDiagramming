@@ -41,7 +41,13 @@ export const CardsTab: React.FC = () => {
   }, [lastProc]);
 
   const handleFiles = (droppedFiles: File[]): void => {
+    if (!droppedFiles.length) {
+      return;
+    }
     const file = droppedFiles[0];
+    if (!file) {
+      return;
+    }
     setFiles([file]);
   };
 

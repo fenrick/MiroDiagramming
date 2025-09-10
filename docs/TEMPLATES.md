@@ -56,12 +56,10 @@ value.
 
 ## 3 Sample Data
 
-A three-level hierarchical dataset can be found in
-[`web/client/tests/fixtures/sample-hier.json`](../web/client/tests/fixtures/sample-hier.json).
-It contains four top-level groups, each with four subgroups and four items per
-subgroup. This is useful when experimenting with the ELK-based nested layout
-algorithm. Import the JSON in the **Create** tab and choose the **Nested**
-diagram layout to see child nodes arranged inside their parents with containers
+A three-level hierarchical dataset is useful when experimenting with the
+ELK-based nested layout algorithm. Import your JSON in the **Create** tab and
+choose the **Nested** diagram layout to see child nodes arranged inside their
+parents with containers sized automatically.
 sized automatically by the ELK engine. For a description of available algorithms
 see [LAYOUT_OPTIONS.md](LAYOUT_OPTIONS.md).
 

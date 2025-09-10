@@ -104,7 +104,7 @@ export function useNextMatch(
     }
     const next = (currentIndex + 1) % results.length;
     setCurrentIndex(next);
-    const { item } = results[next];
+    const { item } = results[next]!;
     await focusOnItem(item);
   }, [currentIndex, focusOnItem, results, setCurrentIndex]);
 }
@@ -133,8 +133,12 @@ export function useReplaceCurrent(
     if (!results.length) {
       return;
     }
+    const current = results[currentIndex];
+    if (!current) {
+      return;
+    }
     const board = {
-      getSelection: async () => [results[currentIndex].item],
+      getSelection: async () => [current.item],
       get: async () => [],
     } as unknown as Parameters<typeof replaceBoardContent>[1];
     await replaceBoardContent(

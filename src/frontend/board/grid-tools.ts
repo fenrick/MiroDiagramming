@@ -71,8 +71,9 @@ export async function applyGridLayout(
   );
   await Promise.all(
     items.map(async (item: Record<string, unknown>, i: number) => {
-      item.x = first.x + positions[i].x;
-      item.y = first.y + positions[i].y;
+      const pos = positions[i]!;
+      item.x = first.x + pos.x;
+      item.y = first.y + pos.y;
       await maybeSync(item as Syncable);
     }),
   );

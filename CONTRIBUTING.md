@@ -6,28 +6,15 @@ We welcome pull requests and issues. Please read [Miro's contributing guide](htt
 
 ### Node
 
-Run the web client checks:
+Run the type checks, linters and tests:
 
 ```bash
 npm install
-npm --prefix web/client run typecheck
-npm --prefix web/client run lint
-npm --prefix web/client run stylelint
-npm --prefix web/client run prettier
-npm --prefix web/client run test
+npm run typecheck
+npm run lint
+npm run format
+npm test
 ```
-
-### Python
-
-Install dependencies and validate changes:
-
-```bash
-poetry install
-poetry run pre-commit run --files <changed files>
-poetry run pytest
-```
-
-Aim for at least **90 % line and branch coverage** and keep cyclomatic complexity below eight as described in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Commit messages
 

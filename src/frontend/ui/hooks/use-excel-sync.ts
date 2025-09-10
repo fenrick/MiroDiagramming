@@ -20,7 +20,7 @@ export function useExcelSync(): (
       if (!ctx) {
         return;
       }
-      const prev = ctx.rows[index];
+      const prev = ctx.rows[index]!;
       await enqueue({
         apply: () =>
           ctx.setRows(prevRows =>

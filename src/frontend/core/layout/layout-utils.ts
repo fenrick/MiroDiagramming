@@ -40,11 +40,15 @@ export function computeEdgeHints(
   },
 ): EdgeHint[] {
   return layout.edges.map((edge, i) => {
-    const src = layout.nodes[graph.edges[i].from];
-    const tgt = layout.nodes[graph.edges[i].to];
+    const info = graph.edges[i];
+    if (!info) {
+      return {};
+    }
+    const src = layout.nodes[info.from];
+    const tgt = layout.nodes[info.to];
     return {
-      startPosition: relativePosition(src, edge.startPoint),
-      endPosition: relativePosition(tgt, edge.endPoint),
+      startPosition: src ? relativePosition(src, edge.startPoint) : undefined,
+      endPosition: tgt ? relativePosition(tgt, edge.endPoint) : undefined,
     };
   });
 }

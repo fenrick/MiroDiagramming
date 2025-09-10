@@ -101,7 +101,7 @@ export function useExcelCreate({
       const updated = addMiroIds(chosen, mapping.idColumn ?? '', idMap);
       const merged = rows.map((r, i) => {
         const idx = indices.indexOf(i);
-        return idx >= 0 ? updated[idx] : r;
+        return idx >= 0 ? updated[idx]! : r;
       });
       setRows(merged);
       /* istanbul ignore next */
@@ -130,7 +130,10 @@ export function useExcelCreate({
  * @param files - Dropped file list from the browser.
  */
 export async function handleLocalDrop(files: File[]): Promise<void> {
-  await excelLoader.loadWorkbook(files[0]);
+  if (!files.length) {
+    return;
+  }
+  await excelLoader.loadWorkbook(files[0]!);
 }
 
 /**

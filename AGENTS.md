@@ -1,10 +1,12 @@
 # Development Guidelines
 
 Context
+
 - The app has completed migration to a single Node.js project using the official Miro Node.js API client. The React (TypeScript) frontend is served by the same Node process in development (via Vite middleware) and in production (as static assets).
 - The previous Python FastAPI backend is deprecated and removed. Any remaining Python docs are legacy reference only.
 
 Authoritative Node docs
+
 - docs/node-architecture.md – Node backend architecture and Miro integration
 - docs/migration-node-plan.md – migration plan and status
 
@@ -40,19 +42,23 @@ npm run test       # vitest
 ```
 
 Environment
+
 - Create `.env` at repo root. Minimum:
-  - `DATABASE_URL=file:./app.db`
-  - `MIRO_CLIENT_ID=...`, `MIRO_CLIENT_SECRET=...`, `MIRO_REDIRECT_URL=http://localhost:4000/auth/miro/callback`
-  - Optional: `PORT=4000`
+    - `DATABASE_URL=file:./app.db`
+    - `MIRO_CLIENT_ID=...`, `MIRO_CLIENT_SECRET=...`, `MIRO_REDIRECT_URL=http://localhost:4000/auth/miro/callback`
+    - Optional: `PORT=4000`
+    - Optional: `MIRO_WEBHOOK_SECRET=change-me` (verify `/api/webhook` signatures)
 
 ## Commits
 
 Follow Conventional Commits:
+
 ```
 type(scope): short description
 ```
 
 ## References
+
 - docs/node-architecture.md (authoritative)
 - docs/DEPLOYMENT.md
-- docs/python-architecture.md (legacy)
+- docs/archive/python-architecture.md (legacy)

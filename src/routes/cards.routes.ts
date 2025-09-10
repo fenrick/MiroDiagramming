@@ -39,7 +39,6 @@ export const registerCardsRoutes: FastifyPluginAsync = async (app) => {
       delete (data as Record<string, unknown>).id
       changeQueue.enqueue(createNodeTask(userId, nodeId, data))
     }
-    changeQueue.start()
     const accepted = cards.length
     if (idemKey) await repo.set(idemKey, accepted)
     return reply.code(202).send({ accepted })

@@ -140,7 +140,7 @@ export const SearchTab: React.FC = () => {
           <RegexSearchField
             label='Find'
             value={query}
-            onChange={v => setQuery(v)}
+            onChange={(v: string) => setQuery(v)}
             regex={regex}
             onRegexToggle={setRegex}
             placeholder='Search board text'
@@ -150,7 +150,7 @@ export const SearchTab: React.FC = () => {
           <InputField
             label='Replace'
             value={replacement}
-            onValueChange={v => setReplacement(v)}
+            onValueChange={(v: string) => setReplacement(v)}
             placeholder='Replacement text'
           />
         </Grid.Item>

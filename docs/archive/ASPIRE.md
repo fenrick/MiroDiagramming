@@ -1,7 +1,5 @@
 # FastAPI Quick Start
 
-The previous .NET Aspire guide now lives in [legacy/dotnet/docs/ASPIRE.md](../legacy/dotnet/docs/ASPIRE.md).
-
 This guide shows how to run the Python FastAPI service for local development.
 
 ## 1. Install dependencies

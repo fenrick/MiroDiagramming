@@ -34,8 +34,9 @@ export async function downloadWorkbook(
   const Excel = await loadExcelJS();
   const wb = new Excel.Workbook();
   const ws = wb.addWorksheet('Sheet1');
-  if (rows.length) {
-    ws.addRow(Object.keys(rows[0]));
+  const first = rows[0];
+  if (first) {
+    ws.addRow(Object.keys(first));
   }
   rows.forEach(r => ws.addRow(Object.values(r)));
   const data = await wb.xlsx.writeBuffer();

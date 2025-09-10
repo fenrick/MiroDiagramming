@@ -1,4 +1,4 @@
-import { colors } from '@mirohq/design-tokens';
+import { colors } from '@mirohq/design-tokens'
 import type {
   ConnectorStyle,
   Frame,
@@ -7,80 +7,80 @@ import type {
   ShapeStyle,
   ShapeType,
   TextStyle,
-} from '@mirohq/websdk-types';
-import { ShapeClient, type ShapeData } from '../core/utils/shape-client';
-import connectorJson from '../../../../templates/connectorTemplates.json';
-import templatesJson from '../../../../templates/shapeTemplates.json';
+} from '@mirohq/websdk-types'
+import { ShapeClient, type ShapeData } from '../core/utils/shape-client'
+import connectorJson from '../../../templates/connectorTemplates.json'
+import templatesJson from '../../../templates/shapeTemplates.json'
 
 /**
  * Single element of a shape template description.
  */
 export interface TemplateElement {
-  shape?: string;
+  shape?: string
   /** Hex color for the fill. Deprecated in favour of style.fillColor */
-  fill?: string;
-  width?: number;
-  height?: number;
-  rotation?: number;
-  text?: string;
-  position?: string;
+  fill?: string
+  width?: number
+  height?: number
+  rotation?: number
+  text?: string
+  position?: string
   /** Additional style properties applied to the widget */
-  style?: Record<string, unknown>;
+  style?: Record<string, unknown>
 }
 
 export interface TemplateDefinition {
-  elements: TemplateElement[];
+  elements: TemplateElement[]
   /**
    * Optional index of the element that stores metadata when grouped.
    * If omitted, metadata is applied to every element.
    */
-  masterElement?: number;
+  masterElement?: number
   /** Alternate names that refer to this template. */
-  alias?: string[];
+  alias?: string[]
 }
 
 export interface TemplateCollection {
-  [key: string]: TemplateDefinition;
+  [key: string]: TemplateDefinition
 }
 
 /** Definition for connector styling templates. */
 export interface ConnectorTemplate {
-  style?: ConnectorStyle & Record<string, unknown>;
-  shape?: 'straight' | 'elbowed' | 'curved';
-  caption?: { position?: number; textAlignVertical?: string };
+  style?: ConnectorStyle & Record<string, unknown>
+  shape?: 'straight' | 'elbowed' | 'curved'
+  caption?: { position?: number; textAlignVertical?: string }
   /** Alternative names referring to this template. */
-  alias?: string[];
+  alias?: string[]
 }
 
 export interface ConnectorTemplateCollection {
-  [key: string]: ConnectorTemplate;
+  [key: string]: ConnectorTemplate
 }
 
 export class TemplateManager {
-  private static instance: TemplateManager;
+  private static instance: TemplateManager
   public readonly templates: TemplateCollection = Object.fromEntries(
     Object.entries(templatesJson).filter(([k]) => k !== 'stylePresets'),
-  ) as TemplateCollection;
+  ) as TemplateCollection
   public readonly connectorTemplates: ConnectorTemplateCollection =
-    connectorJson as ConnectorTemplateCollection;
-  private readonly aliasMap: Record<string, string> = {};
-  private readonly connectorAliasMap: Record<string, string> = {};
+    connectorJson as ConnectorTemplateCollection
+  private readonly aliasMap: Record<string, string> = {}
+  private readonly connectorAliasMap: Record<string, string> = {}
   private readonly api = new ShapeClient(
-    ((globalThis as unknown as { miro?: { board?: { info?: { id: string } } } })
-      .miro?.board?.info?.id ?? '') as string,
-  );
+    ((globalThis as unknown as { miro?: { board?: { info?: { id: string } } } }).miro?.board?.info
+      ?.id ?? '') as string,
+  )
 
   private constructor() {
     Object.entries(this.templates).forEach(([key, def]) =>
-      def.alias?.forEach(a => {
-        this.aliasMap[a] = key;
+      def.alias?.forEach((a) => {
+        this.aliasMap[a] = key
       }),
-    );
+    )
     Object.entries(this.connectorTemplates).forEach(([key, def]) =>
-      def.alias?.forEach(a => {
-        this.connectorAliasMap[a] = key;
+      def.alias?.forEach((a) => {
+        this.connectorAliasMap[a] = key
       }),
-    );
+    )
   }
 
   /**
@@ -93,36 +93,40 @@ export class TemplateManager {
   /** Access the singleton instance. */
   public static getInstance(): TemplateManager {
     if (!TemplateManager.instance) {
-      TemplateManager.instance = new TemplateManager();
+      TemplateManager.instance = new TemplateManager()
     }
-    return TemplateManager.instance;
+    return TemplateManager.instance
   }
 
   /** Apply token and numeric resolution to style values. */
   public resolveStyle(style: Record<string, unknown>): Record<string, unknown> {
-    const result: Record<string, unknown> = {};
+    const result: Record<string, unknown> = {}
     Object.entries(style).forEach(([k, v]) => {
-      const token = this.resolveToken(v);
-      result[k] = this.parseNumeric(token);
-    });
-    return result;
+      const token = this.resolveToken(v)
+      result[k] = this.parseNumeric(token)
+    })
+    return result
   }
 
   /** Lookup a shape template by name. */
   public getTemplate(name: string): TemplateDefinition | undefined {
-    return this.templates[name] ?? this.templates[this.aliasMap[name]];
+    const direct = this.templates[name]
+    if (direct) {
+      return direct
+    }
+    const alias = this.aliasMap[name]
+    return alias ? this.templates[alias] : undefined
   }
 
   /** Retrieve a connector styling template by name. */
   public getConnectorTemplate(name: string): ConnectorTemplate | undefined {
-    const key =
-      name in this.connectorTemplates ? name : this.connectorAliasMap[name];
-    const tpl = key ? this.connectorTemplates[key] : undefined;
+    const key = name in this.connectorTemplates ? name : this.connectorAliasMap[name]
+    const tpl = key ? this.connectorTemplates[key] : undefined
     if (!tpl) {
-      return undefined;
+      return undefined
     }
-    const style = tpl.style ? this.resolveStyle(tpl.style) : undefined;
-    return { shape: 'curved', ...tpl, style };
+    const style = tpl.style ? this.resolveStyle(tpl.style) : undefined
+    return { shape: 'curved', ...tpl, style }
   }
 
   /** Instantiate board widgets described by a template. */
@@ -132,23 +136,23 @@ export class TemplateManager {
     x: number,
     y: number,
     frame?: Frame,
-  ): Promise<GroupableItem | Group> {
-    const template = this.getTemplate(name);
+  ): Promise<GroupableItem | Group | undefined> {
+    const template = this.getTemplate(name)
     if (!template) {
-      throw new Error(`Template '${name}' not found`);
+      throw new Error(`Template '${name}' not found`)
     }
 
-    const shapes = this.buildShapes(template, label, x, y);
+    const shapes = this.buildShapes(template, label, x, y)
     if (!shapes.length) {
-      return undefined;
+      return undefined
     }
-    const results = await this.api.createShapes(shapes);
-    const items = await this.fetchCreatedItems(results, frame);
+    const results = await this.api.createShapes(shapes)
+    const items = await this.fetchCreatedItems(results, frame)
     if (items.length > 1) {
-      return (await miro.board.group({ items })) as Group;
+      return (await miro.board.group({ items })) as Group
     }
 
-    return items[0];
+    return items[0]
   }
 
   private buildShapes(
@@ -157,30 +161,29 @@ export class TemplateManager {
     x: number,
     y: number,
   ): ShapeData[] {
-    const shapes: ShapeData[] = [];
+    const shapes: ShapeData[] = []
     for (const el of template.elements) {
-      const data = this.createElement(el, label, x, y);
+      const data = this.createElement(el, label, x, y)
       if (data) {
-        shapes.push(data);
+        shapes.push(data)
       }
     }
-    return shapes;
+    return shapes
   }
 
   private async fetchCreatedItems(
     results: Record<string, unknown>[],
     frame?: Frame,
   ): Promise<GroupableItem[]> {
-    const items: GroupableItem[] = [];
+    const items: GroupableItem[] = []
     for (const r of results) {
-      const item = (((await miro.board.get({ id: r.id })) as GroupableItem[]) ??
-        [])[0];
+      const item = (((await miro.board.get({ id: r.id as string })) as GroupableItem[]) ?? [])[0]
       if (item) {
-        frame?.add(item);
-        items.push(item);
+        frame?.add(item)
+        items.push(item)
       }
     }
-    return items;
+    return items
   }
 
   /**
@@ -192,18 +195,18 @@ export class TemplateManager {
    */
   private parseColorToken(path: string): string | undefined {
     if (path === 'color.white') {
-      return colors.white;
+      return colors.white
     }
     if (path === 'color.black') {
-      return colors.black;
+      return colors.black
     }
-    const match = /^color\.([a-zA-Z]+)\[(\d+)\]$/.exec(path);
+    const match = /^color\.([a-zA-Z]+)\[(\d+)\]$/.exec(path)
     if (!match) {
-      return undefined;
+      return undefined
     }
-    const [, name, shade] = match;
-    const key = `${name}-${shade}`;
-    return (colors as Record<string, string>)[key];
+    const [, name, shade] = match
+    const key = `${name}-${shade}`
+    return (colors as Record<string, string>)[key]
   }
 
   /**
@@ -214,11 +217,11 @@ export class TemplateManager {
    */
   private resolveToken(value: unknown): unknown {
     if (typeof value !== 'string' || !value.startsWith('tokens.')) {
-      return value;
+      return value
     }
-    const path = value.slice('tokens.'.length);
-    const color = this.parseColorToken(path);
-    return color ?? value;
+    const path = value.slice('tokens.'.length)
+    const color = this.parseColorToken(path)
+    return color ?? value
   }
 
   /**
@@ -228,10 +231,10 @@ export class TemplateManager {
    */
   private parseNumeric(value: unknown): unknown {
     if (typeof value !== 'string') {
-      return value;
+      return value
     }
-    const m = /^(-?\d+(?:\.\d+)?)(px)?$/.exec(value);
-    return m ? parseFloat(m[1]) : value;
+    const m = /^(-?\d+(?:\.\d+)?)(px)?$/.exec(value)
+    return m ? parseFloat(m[1]!) : value
   }
 
   /** Create shape data for a template element. */
@@ -241,10 +244,11 @@ export class TemplateManager {
     x: number,
     y: number,
   ): ShapeData {
-    const style: Partial<ShapeStyle> & Record<string, unknown> =
-      this.resolveStyle(element.style ?? {});
+    const style: Partial<ShapeStyle> & Record<string, unknown> = this.resolveStyle(
+      element.style ?? {},
+    )
     if (element.fill && !style.fillColor) {
-      style.fillColor = this.resolveToken(element.fill) as string;
+      style.fillColor = this.resolveToken(element.fill) as string
     }
     return {
       shape: element.shape as ShapeType,
@@ -255,20 +259,15 @@ export class TemplateManager {
       rotation: element.rotation ?? 0,
       text: (element.text ?? '{{label}}').replace('{{label}}', label),
       style,
-    };
+    }
   }
 
   /** Create text data for a template element. */
-  private createTextData(
-    element: TemplateElement,
-    label: string,
-    x: number,
-    y: number,
-  ): ShapeData {
+  private createTextData(element: TemplateElement, label: string, x: number, y: number): ShapeData {
     const style: Partial<TextStyle> & Record<string, unknown> = {
       textAlign: 'center',
       ...this.resolveStyle(element.style ?? {}),
-    };
+    }
     return {
       shape: 'text',
       x,
@@ -278,19 +277,17 @@ export class TemplateManager {
       rotation: element.rotation ?? 0,
       text: element.text?.replace('{{label}}', label) ?? label,
       style,
-    };
+    }
   }
 
-  private getElementType(
-    element: TemplateElement,
-  ): 'shape' | 'text' | undefined {
+  private getElementType(element: TemplateElement): 'shape' | 'text' | undefined {
     if (element.shape) {
-      return 'shape';
+      return 'shape'
     }
     if (element.text) {
-      return 'text';
+      return 'text'
     }
-    return undefined;
+    return undefined
   }
 
   private createElement(
@@ -301,21 +298,20 @@ export class TemplateManager {
   ): ShapeData | undefined {
     switch (this.getElementType(element)) {
       case 'shape':
-        return this.createShapeData(element, label, x, y);
+        return this.createShapeData(element, label, x, y)
       case 'text':
-        return this.createTextData(element, label, x, y);
+        return this.createTextData(element, label, x, y)
       default:
-        return undefined;
+        return undefined
     }
   }
 }
 
 /** Convenience reference to the raw shape template definitions. */
-export const templates = TemplateManager.getInstance().templates;
+export const templates = TemplateManager.getInstance().templates
 
 /** Convenience reference to the raw connector template definitions. */
-export const connectorTemplates =
-  TemplateManager.getInstance().connectorTemplates;
+export const connectorTemplates = TemplateManager.getInstance().connectorTemplates
 
 /** Singleton instance used throughout the app. */
-export const templateManager = TemplateManager.getInstance();
+export const templateManager = TemplateManager.getInstance()

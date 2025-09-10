@@ -169,6 +169,9 @@ export const StyleTab: React.FC = () => {
             <ButtonToolbar>
               {STYLE_PRESET_NAMES.map(name => {
                 const preset = stylePresets[name];
+                if (!preset) {
+                  return null;
+                }
                 const style = presetStyle(preset);
                 return (
                   <Button

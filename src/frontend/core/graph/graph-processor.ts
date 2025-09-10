@@ -231,7 +231,14 @@ export class GraphProcessor extends UndoableProcessor {
     const positions: Record<string, PositionedNode> = {};
     for (const node of graph.nodes) {
       const pos = layout.nodes[node.id];
-      const target = { ...pos, x: pos.x + offsetX, y: pos.y + offsetY };
+      if (!pos) {
+        throw new Error(`Missing layout for node ${node.id}`);
+      }
+      const target: PositionedNode = {
+        ...pos,
+        x: pos.x + offsetX,
+        y: pos.y + offsetY,
+      };
       const found = existing[node.id];
       let widget: BoardItem;
       if (found) {

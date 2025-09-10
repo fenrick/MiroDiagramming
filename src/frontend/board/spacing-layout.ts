@@ -19,9 +19,12 @@ export function calculateGrowthPlan(
   axis: 'x' | 'y',
   spacing: number,
 ): { size: number; positions: number[] } {
+  if (items.length === 0) {
+    return { size: 0, positions: [] };
+  }
   const sizeKey = axis === 'x' ? 'width' : 'height';
-  const first = items[0];
-  const last = items[items.length - 1];
+  const first = items[0]!;
+  const last = items[items.length - 1]!;
   /* c8 ignore next */
   const startEdge = (first[axis] ?? 0) - getDimension(first, sizeKey) / 2;
   /* c8 ignore next */

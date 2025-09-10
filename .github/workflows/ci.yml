@@ -5,24 +5,6 @@ on:
   pull_request:
 
 jobs:
-  python:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.x"
-          cache: "pip"
-          cache-dependency-path: pyproject.toml
-      - name: Install dependencies
-        run: pip install .[dev] build
-      - name: Run pre-commit
-        run: pre-commit run --files $(git ls-files)
-      - name: Run tests
-        run: pytest
-      - name: Build package
-        run: python -m build
-
   node:
     runs-on: ubuntu-latest
     steps:
@@ -30,49 +12,16 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: "npm"
-          cache-dependency-path: web/client/package-lock.json
-      - name: Install dependencies
-        run: npm ci
-        working-directory: web/client
-      - name: Lint
-        run: npm run lint
-        working-directory: web/client
-      - name: Stylelint
-        run: npm run stylelint
-        working-directory: web/client
-      - name: Prettier check
-        run: npm run prettier:check
-        working-directory: web/client
-      - name: Typecheck
-        run: npm run typecheck
-        working-directory: web/client
-      - name: Run tests
-        run: npm test
-        working-directory: web/client
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.x"
-          cache: "pip"
-          cache-dependency-path: pyproject.toml
-      - name: Install backend dependencies
-        run: |
-          pip install poetry
-          poetry install --no-root
-      - name: Start backend
-        run: |
-          uvicorn miro_backend.main:app --app-dir src &
-          sleep 3
-      - name: Build
-        run: npm run build
-        working-directory: web/client
-      - name: Verify generated client
-        run: git diff --exit-code -- src/generated
-        working-directory: web/client
-
-  docker:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Build Docker image
-        run: docker build . -f Dockerfile
+          cache: npm
+      - run: npm ci
+      - run: npx prisma generate
+        env:
+          DATABASE_URL: file:./app.db
+      - run: npx prisma migrate deploy
+        env:
+          DATABASE_URL: file:./app.db
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run typecheck:client
+      - run: npm test
+      - run: npm run build

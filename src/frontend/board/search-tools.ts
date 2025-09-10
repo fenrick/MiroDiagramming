@@ -149,7 +149,7 @@ function getParent(
 ): Record<string, unknown> | undefined {
   let ref: unknown = obj;
   for (let i = 0; i < parts.length - 1; i += 1) {
-    const part = parts[i];
+    const part = parts[i]!;
     if (isUnsafe(part) || !ref || typeof ref !== 'object') {
       return undefined;
     }
@@ -170,7 +170,7 @@ function setStringAtPath(
   if (!parent) {
     return;
   }
-  const last = parts[parts.length - 1];
+  const last = parts[parts.length - 1]!;
   if (isUnsafe(last)) {
     return;
   }

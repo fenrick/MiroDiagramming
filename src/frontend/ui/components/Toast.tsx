@@ -41,7 +41,9 @@ export const ToastContainer: React.FC = () => {
       }, 5000);
     };
     listeners.add(listener);
-    return () => listeners.delete(listener);
+    return () => {
+      listeners.delete(listener);
+    };
   }, []);
 
   const remove = (id: string) =>
@@ -53,6 +55,7 @@ export const ToastContainer: React.FC = () => {
         <Callout
           key={t.id}
           role='alert'
+          variant='neutral'
           dismissible={false}>
           <Callout.Content>
             {t.thumbnailUrl && (

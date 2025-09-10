@@ -18,7 +18,7 @@ import { type Tab, TAB_DATA } from '../ui/pages/tabs';
  * the component to be reused in tests without side effects.
  */
 function AppShell(): React.JSX.Element {
-  const [tab, setTab] = React.useState<Tab>(TAB_DATA[0][1]);
+  const [tab, setTab] = React.useState<Tab>(TAB_DATA[0]![1]);
   const [rows, setRows] = React.useState<ExcelRow[]>([]);
   const [idColumn, setIdColumn] = React.useState('');
   const [labelColumn, setLabelColumn] = React.useState('');
@@ -27,13 +27,13 @@ function AppShell(): React.JSX.Element {
     const params = new URLSearchParams(window.location.search);
     return params.get('command') === 'edit-metadata';
   });
-  const tabIds = React.useMemo(() => TAB_DATA.map(t => t[1]), []);
+  const tabIds = React.useMemo(() => TAB_DATA.map(t => t[1]!), []);
   React.useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.ctrlKey && e.altKey) {
         const idx = parseInt(e.key, 10);
         if (idx >= 1 && idx <= tabIds.length) {
-          setTab(tabIds[idx - 1]);
+          setTab(tabIds[idx - 1]!);
         }
         if (e.key.toLowerCase() === 'm') {
           setShowMeta(true);
@@ -62,7 +62,9 @@ function AppShell(): React.JSX.Element {
         <AuthBanner />
         <Tabs
           value={tab}
-          onChange={id => setTab(id as Tab)}
+          onChange={(id: string) => {
+            setTab(id as Tab);
+          }}
           variant={'tabs'}
           size='medium'>
           <Tabs.List>

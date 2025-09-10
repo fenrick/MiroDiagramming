@@ -5,13 +5,13 @@
 ## 0 Purpose
 
 This document summarises the individual TypeScript modules located under
-`web/client/src/board/`. It complements the repository map in
+`src/frontend/board/`. It complements the repository map in
 `ARCHITECTURE.md` and clarifies what each file is responsible for.
 
 ## 1 Directory Overview
 
 ```
-web/client/src/board/
+src/frontend/board/
 ```
 
 - board-builder.ts

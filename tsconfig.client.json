@@ -16,6 +16,13 @@
     "types": ["vite/client", "node"]
   },
   "include": ["src/frontend/**/*"],
-  "exclude": ["node_modules", "dist", "tests", "src/web/**"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "tests",
+    "src/web/**",
+    "src/frontend/**/*.test.*",
+    "src/frontend/stories/**"
+  ]
 }
 
