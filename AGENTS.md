@@ -1,7 +1,12 @@
 # Development Guidelines
 
-> **Context**
-> The codebase began as a Node-based service but now centers on a **FastAPI (Python 3.11) backend** with a **React (TypeScript) frontend**. Legacy **.NET** components remain only for reference; see [legacy/dotnet/AGENTS.md](legacy/dotnet/AGENTS.md) for their guidelines. All new work follows the patterns, conventions, and tooling described below.
+> Context
+> The backend is migrating to a Node.js service that uses the official Miro Node.js API client, with a React (TypeScript) frontend. Python FastAPI components are being decommissioned and treated as legacy during the transition. Legacy **.NET** components remain only for reference; see [legacy/dotnet/AGENTS.md](legacy/dotnet/AGENTS.md).
+
+For the detailed design of the new Node backend, see:
+
+- docs/node-architecture.md – Node backend architecture and Miro integration
+- docs/migration-node-plan.md – step-by-step plan to remove Python and implement Node backend
 
 ## Project Structure
 
@@ -11,7 +16,7 @@ fenrick.miro.[module]/
 └── tests/    – unit and integration tests
 ```
 
-Backend code is primarily **Python 3.11 (FastAPI)**. Archived **.NET** components live under `legacy/dotnet/` and follow [legacy/dotnet/AGENTS.md](legacy/dotnet/AGENTS.md). Frontend code is **TypeScript + React**.
+Backend code is **Node.js + TypeScript (Fastify)**. The Python FastAPI backend is legacy and will be removed after migration. Archived **.NET** components live under `legacy/dotnet/`. Frontend code is **TypeScript + React**.
 
 ## Object-Oriented Design Principles — **Mandatory**
 
@@ -62,28 +67,27 @@ Additional OO practices
 
 ## Static Analysis
 
-### Python
+### Backend (Node)
 
-* **Ruff** – lint and fix PEP 8 issues
-* **Black** – code formatter (line length 88)
-* **Mypy** – static type checking
+* ESLint (typescript-eslint) – strict rules; no unused/any
+* TypeScript (`tsc --noEmit`) – strict type checking
+* Prettier – formatting
 
 ### Frontend
 
 * ESLint (typescript-eslint)
-
 * Stylelint
-
 * Prettier
 
 ## Development Commands
 
-### Python
+### Backend (Node)
 
 ``` bash
-poetry install
-poetry run pre-commit run --files [changed files]
-poetry run pytest
+npm --prefix server install
+npm --prefix server run typecheck
+npm --prefix server run lint
+npm --prefix server run test
 ```
 
 ### Frontend
@@ -97,7 +101,7 @@ npm --prefix web/client run prettier
 npm --prefix web/client run test
 ```
 
-Archived **.NET** components have their own guidelines and commands; see [legacy/dotnet/AGENTS.md](legacy/dotnet/AGENTS.md).
+Archived **.NET** components have their own guidelines and commands; see [legacy/dotnet/AGENTS.md](legacy/dotnet/AGENTS.md). Python FastAPI docs remain available during migration (see docs/python-architecture.md) but are deprecated.
 
 ## Git Hooks
 
@@ -123,12 +127,14 @@ Types include `feat`, `fix`, `docs`, `test`, `refactor`, `chore`.
 
 * `docs/CODE_STYLE.md` – naming, formatting
 
-* `docs/ARCHITECTURE.md` – layering, complexity, analyzers
+* `docs/ARCHITECTURE.md` – layering, complexity, analyzers (historical overview)
+* `docs/node-architecture.md` – Node backend architecture and data flow (authoritative)
+* `docs/migration-node-plan.md` – migration steps from Python to Node
 
 * `docs/DEPLOYMENT.md` – build & CI/CD
 
 * `CONTRIBUTING.md` – PR workflow, onboarding
-* `docs/python-architecture.md` – FastAPI modules and data flow
+* `docs/python-architecture.md` – FastAPI modules and data flow (legacy)
 * `legacy/dotnet/AGENTS.md` – archived C# guidelines
 
 ## Summary
@@ -136,9 +142,9 @@ Types include `feat`, `fix`, `docs`, `test`, `refactor`, `chore`.
 | Area      | Requirement                                  |
 | --------- | -------------------------------------------- |
 | Structure | `src/` and `tests/` folders                  |
-| Language  | Python (FastAPI) + React (TypeScript); archived .NET |
+| Language  | Node.js (Fastify) + React (TypeScript); archived .NET |
 | Design    | SOLID, composition over inheritance          |
 | Testing   | TDD, ≥ 90 % coverage                         |
-| Analysis  | Ruff, Black, Mypy; ESLint; Stylelint |
+| Analysis  | ESLint/TS (backend & frontend); Stylelint |
 | Commits   | Conventional Commits                         |
 | Build     | Typed, documented, formatted, analyzer-clean |

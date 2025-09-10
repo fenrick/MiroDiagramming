@@ -9,8 +9,8 @@ import type {
   TextStyle,
 } from '@mirohq/websdk-types';
 import { ShapeClient, type ShapeData } from '../core/utils/shape-client';
-import connectorJson from '../../../templates/connectorTemplates.json';
-import templatesJson from '../../../templates/shapeTemplates.json';
+import connectorJson from '../../../../templates/connectorTemplates.json';
+import templatesJson from '../../../../templates/shapeTemplates.json';
 
 /**
  * Single element of a shape template description.

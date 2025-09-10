@@ -1,4 +1,4 @@
-import templatesJson from '../../../templates/shapeTemplates.json';
+import templatesJson from '../../../../templates/shapeTemplates.json';
 import type { TemplateElement } from '../board/templates';
 import { templateManager } from '../board/templates';
 
@@ -14,7 +14,7 @@ export interface StylePreset {
 /**
  * Collection of style presets indexed by name.
  *
- * Populated from {@link ../../../templates/shapeTemplates.json}. The JSON file
+ * Populated from {@link ../../../../templates/shapeTemplates.json}. The JSON file
  * uses design tokens which are resolved at runtime when applying presets.
  */
 const DEFAULT_PRESET: StylePreset = {

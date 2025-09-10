@@ -9,7 +9,7 @@ from typing import AsyncIterator
 
 from fastapi import FastAPI, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.responses import JSONResponse, RedirectResponse, FileResponse, HTMLResponse
 from typing import Awaitable, Callable
 from fastapi.staticfiles import StaticFiles
 
@@ -222,10 +222,51 @@ async def metrics() -> Response:
 
 @app.get("/", response_class=RedirectResponse)
 async def root() -> RedirectResponse:
-    """Redirect browsers to the built front-end."""
+    """Redirect browsers to the primary Miro entrypoint (app.html)."""
     with logfire.span("root redirect"):
-        logfire.info("redirecting to frontend")  # event for root redirect
-        return RedirectResponse(url="/static/index.html")
+        logfire.info("redirecting to app.html")
+        return RedirectResponse(url="/app.html")
+
+
+@app.get("/app.html")
+async def app_html() -> Response:
+    """Serve the app entry HTML expected by Miro.
+
+    Preference order:
+    1) /static/app.html if built exists
+    2) /static/index.html as a fallback
+    3) Minimal placeholder page with build hint
+    """
+    app_html_path = static_dir / "app.html"
+    index_html_path = static_dir / "index.html"
+    if app_html_path.exists():
+        # Redirect to the built asset under /static so relative URLs resolve
+        with logfire.span("redirect app.html -> /static/app.html"):
+            return RedirectResponse(url="/static/app.html")
+    if index_html_path.exists():
+        with logfire.span("redirect app.html -> /static/index.html"):
+            return RedirectResponse(url="/static/index.html")
+    with logfire.span("serve app.html placeholder"):
+        # Frontend likely not built yet; return a helpful placeholder
+        html = """
+        <!doctype html>
+        <html lang=\"en\">
+          <head>
+            <meta charset=\"utf-8\" />
+            <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />
+            <title>Miro App</title>
+            <style>body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,\"Helvetica Neue\",Arial,sans-serif;line-height:1.5;padding:2rem;max-width:720px;margin:auto;color:#222}</style>
+          </head>
+          <body>
+            <h1>Miro app frontend not built</h1>
+            <p>No built artifacts found under <code>web/client/dist</code>.</p>
+            <p>Build the frontend and try again:</p>
+            <pre>npm --prefix web/client install\nnpm --prefix web/client run build</pre>
+            <p>After building, this route will serve <code>/static/app.html</code> (or <code>index.html</code>).</p>
+          </body>
+        </html>
+        """
+        return HTMLResponse(content=html, status_code=200)
 
 
 @app.get("/health")

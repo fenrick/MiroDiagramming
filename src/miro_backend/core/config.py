@@ -95,6 +95,11 @@ class Settings(BaseSettings):
         alias="MIRO_HTTP_TIMEOUT_SECONDS",
         description="Default timeout in seconds for outbound HTTP requests.",
     )
+    use_miro_sdk: bool = Field(
+        default=False,
+        alias="MIRO_USE_SDK",
+        description="Use official Miro SDK for OAuth exchange.",
+    )
     bucket_reservoir: int = Field(
         default=1,
         alias="MIRO_BUCKET_RESERVOIR",
