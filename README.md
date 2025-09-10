@@ -1,7 +1,6 @@
 # Quick Tools
 
-[![CI Python](https://github.com/fenrick/MiroDiagramming/actions/workflows/ci.yml/badge.svg?branch=main&job=python)](https://github.com/fenrick/MiroDiagramming/actions/workflows/ci.yml?query=branch%3Amain)
-[![CI Node](https://github.com/fenrick/MiroDiagramming/actions/workflows/ci.yml/badge.svg?branch=main&job=node)](https://github.com/fenrick/MiroDiagramming/actions/workflows/ci.yml?query=branch%3Amain)
+[![CI](https://github.com/fenrick/MiroDiagramming/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/fenrick/MiroDiagramming/actions/workflows/ci.yml?query=branch%3Amain)
 
 Quick Tools imports graphs or cards from JSON or Excel files and builds diagrams
 on a Miro board. The application uses the **Eclipse Layout Kernel (ELK)** to
@@ -13,21 +12,35 @@ each element can carry metadata that controls its appearance and placement.
 ### Prerequisites
 
 - Node.js 20.x
-- Python 3.11
 
-> The previous .NET implementation lives under `legacy/dotnet/`. See
-> [legacy/dotnet/README.md](legacy/dotnet/README.md) for historical context.
+The previous Python FastAPI backend is deprecated. The app now runs as a single Node.js process that serves both the API and the React frontend.
 
 ### Environment
 
-Copy `web/client/.env.example` to `web/client/.env` and adjust the values as needed. `VITE_PORT` sets the client dev server port, `LOG_LEVEL` controls log verbosity, and `VITE_BACKEND_URL` specifies the backend API (defaults to `http://localhost:8000`).
+Create a `.env` file at the repository root. Minimum:
+
+```
+DATABASE_URL=file:./app.db
+MIRO_CLIENT_ID=your-client-id
+MIRO_CLIENT_SECRET=your-client-secret
+MIRO_REDIRECT_URL=http://localhost:4000/auth/miro/callback
+MIRO_WEBHOOK_SECRET=change-me
+```
 
 ### Development
 
-Run migrations and start both the FastAPI server and Vite dev server:
+Run a single dev process (Fastify + Vite middleware):
 
 ```bash
-./scripts/dev.sh
+npm install
+npm run dev
+```
+
+Production build and start:
+
+```bash
+npm run build
+npm start
 ```
 
 ## Uploading JSON Content
@@ -39,9 +52,7 @@ Run migrations and start both the FastAPI server and Vite dev server:
 4. Once processed, widgets are placed on the board using the selected mode.
    Cards are automatically arranged in a grid with a calculated number of
    columns. Pass `columns` when invoking the importer to override this value.
-5. See
-   [`web/client/tests/fixtures/sample-cards.json`](web/client/tests/fixtures/sample-cards.json)
-   for a cards format example.
+5. An example card structure is shown below.
 
 ### Card JSON Format
 
@@ -95,16 +106,13 @@ in the description using the `ID:` prefix.
 
 ## Sample Graph
 
-A small example is provided in
-[web/client/tests/fixtures/sample-graph.json](web/client/tests/fixtures/sample-graph.json):
-
 ```json
 {
-  "nodes": [
-    { "id": "n1", "label": "Customer", "type": "Role" },
-    { "id": "n2", "label": "Service", "type": "BusinessService" }
-  ],
-  "edges": [{ "from": "n1", "to": "n2", "label": "uses" }]
+    "nodes": [
+        { "id": "n1", "label": "Customer", "type": "Role" },
+        { "id": "n2", "label": "Service", "type": "BusinessService" }
+    ],
+    "edges": [{ "from": "n1", "to": "n2", "label": "uses" }]
 }
 ```
 
@@ -113,11 +121,7 @@ A small example is provided in
 Hierarchical data where children are contained within parent shapes can be
 visualised using the **Nested** layout option in the Diagram tab. Positions and
 container sizes are computed entirely by the ELK engine for consistent spacing.
-Nodes are sorted alphabetically by default or via a custom metadata key. A
-three‑level sample dataset is available at
-[web/client/tests/fixtures/sample-hier.json](web/client/tests/fixtures/sample-hier.json).
-Simply select **Nested** and import this file to see parent widgets sized to fit
-their children. Flat graph data is automatically converted when necessary.
+Nodes are sorted alphabetically by default or via a custom metadata key.
 
 ## Accessibility
 
@@ -159,7 +163,7 @@ complete UI flow.
 ## Setup
 
 - [Miro Web SDK](https://developers.miro.com/docs/web-sdk-reference)
-  - [miro.board.ui.openPanel()](https://developers.miro.com/docs/ui_boardui#openpanel)
+    - [miro.board.ui.openPanel()](https://developers.miro.com/docs/ui_boardui#openpanel)
 
 ## 🛠️ Tools and Technologies <a name="tools"></a>
 
@@ -170,10 +174,10 @@ complete UI flow.
 ## Styling with the Miro Design System
 
 The CSS for this project imports `@mirohq/design-system-themes/light.css` in
-[`web/client/src/assets/style.css`](web/client/src/assets/style.css)
-to match the Miro UI. Components are sourced from `@mirohq/design-system`. Avoid
-custom CSS when a component or token already exists. Wrapper components in
-`web/client/src/ui/components` abstract the design-system primitives so
+[`src/frontend/assets/style.css`](src/frontend/assets/style.css)
+to match the Miro UI. Components are sourced from `@mirohq/design-system`.
+Avoid custom CSS when a component or token already exists. Wrapper components
+in `src/frontend/ui/components` abstract the design-system primitives so
 upgrades happen in one place.
 
 ## Form Design Guidelines
@@ -210,17 +214,16 @@ the rest of the UI. These guidelines help keep layouts consistent:
 ## ✅ Prerequisites <a name="prerequisites"></a>
 
 - Node.js 20.x
-- Python 3.11
 
 ## 🏃🏽‍♂️ Run the app locally <a name="run"></a>
 
-1. Run `npm install` inside `web/client` to install dependencies. The
-   `package-lock.json` file ensures everyone installs the same versions.
-2. Run `npm start` from `web/client` to start the development server. \
-   Your URL should be similar to this example:
+1. Run `npm install` to install dependencies. The `package-lock.json` file
+   ensures everyone installs the same versions.
+2. Run `npm run dev` to start the development server. Your URL should be
+   similar to this example:
 
 ```
- http://localhost:3000
+ http://localhost:4000
 ```
 
 3. Open the
@@ -233,10 +236,10 @@ the rest of the UI. These guidelines help keep layouts consistent:
 # See https://developers.miro.com/docs/app-manifest on how to use this
 appName: JSON Diagram
 sdkVersion: SDK_V2
-sdkUri: http://localhost:3000
+sdkUri: http://localhost:4000
 scopes:
-  - boards:read
-  - boards:write
+    - boards:read
+    - boards:write
 ```
 
 4. Go back to your app home page, and under the `Permissions` section, you will
@@ -244,10 +247,10 @@ scopes:
    button. Then click on `Add` as shown in the video below. <b>In the video we
    install a different app, but the process is the same regardless of the
    app.</b>
-   > ⚠️ We recommend to install your app on a
-   > [developer team](https://developers.miro.com/docs/create-a-developer-team)
-   > while you are developing or testing apps.⚠️
-   > https://github.com/miroapp/app-examples/assets/10428517/1e6862de-8617-46ef-b265-97ff1cbfe8bf
+    > ⚠️ We recommend to install your app on a
+    > [developer team](https://developers.miro.com/docs/create-a-developer-team)
+    > while you are developing or testing apps.⚠️
+    > https://github.com/miroapp/app-examples/assets/10428517/1e6862de-8617-46ef-b265-97ff1cbfe8bf
 5. Go to your developer team, and open your boards.
 6. Click on the plus icon from the bottom section of your left sidebar. If you
    hover over it, it will say `More apps`.
@@ -261,26 +264,23 @@ scopes:
 Run the backend test suite:
 
 ```bash
-./scripts/test.sh
+npm test
 ```
-
-The script creates a temporary SQLite database and runs `pytest -q`.
 
 The root `AGENTS.md` lists the commands to run before committing. Be sure to
 install dependencies first:
 
 ```bash
-npm install --prefix web/client
+npm install
 ```
 
 Then validate the codebase with:
 
 ```bash
-npm --prefix web/client run typecheck --silent
-npm --prefix web/client run test --silent
-npm --prefix web/client run lint --silent
-npm --prefix web/client run stylelint --silent
-npm --prefix web/client run prettier --silent
+npm run typecheck --silent
+npm test --silent
+npm run lint --silent
+npm run format --silent
 ```
 
 The Husky hooks live under the repository's `.husky/` folder. After cloning the
@@ -304,16 +304,16 @@ everyone uses the exact dependency versions when installing.
 ## Logging
 
 All runtime messages are emitted through a shared logger defined in
-[`web/client/src/logger.ts`](web/client/src/logger.ts). Set the
+[`src/frontend/logger.ts`](src/frontend/logger.ts). Set the
 `LOG_LEVEL` environment variable to `trace`, `debug`, `info`, `warn`, `error` or
 `silent` to control verbosity. It defaults to `info`.
 
-The FastAPI server uses **Logfire** for structured logging. Client log entries
+The Fastify server uses **Logfire** for structured logging. Client log entries
 are posted to `/api/logs` so both sides share the same log stream.
 
-Data persistence is handled by **SQLAlchemy**. Development and tests use SQLite
+Data persistence is handled by **Prisma**. Development and tests use SQLite
 while production targets PostgreSQL through the same models. Database schemas
-are maintained with Alembic migrations applied automatically on startup.
+are maintained with Prisma migrations applied automatically before startup.
 
 ## Change queue, cache, and logging
 
@@ -321,8 +321,8 @@ API routes enqueue change tasks which a background worker applies using the Miro
 REST API. A lightweight SQLite cache stores board snapshots so lookups through
 `/api/cache/{board_id}` avoid redundant API calls.
 
-`core/logging.py` wires Logfire into FastAPI, SQLAlchemy, and SQLite and adds a
-request ID middleware so every request is traceable end to end.
+`src/config/logger.ts` wires Logfire into Fastify and adds a request ID
+context so every request is traceable end to end.
 
 Several new C# utilities (`ExcelLoader`, `LayoutEngine`, `InMemoryTemplateStore` and
 `ObjectMatcher`) are early prototypes. TODO markers outline the remaining work
@@ -331,7 +331,7 @@ to match the JavaScript implementations.
 Example:
 
 ```bash
-LOG_LEVEL=debug npm --prefix web/client start
+LOG_LEVEL=debug npm run dev
 ```
 
 ## Commit message checks
@@ -346,26 +346,19 @@ npm run commitlint -- --edit $(git rev-parse --verify HEAD)
 
 The CI pipeline also enforces commitlint via
 [`\.github/workflows/commitlint.yml`](.github/workflows/commitlint.yml).
-All Node jobs point to `web/client/package.json` so caching and
-dependency installs run from that directory.
+All Node jobs run from the repository root so caching and dependency
+installs share the same lockfile.
 
 ## 🗂️ Folder structure <a name="folder"></a>
 
 ```
 .
 ├── docs/
-├── src/miro_backend/
-├── web/client/
-│   ├── src
-│   │   ├── app
-│   │   ├── board
-│   │   ├── core
-│   │   ├── ui
-│   │   └── assets
-│   ├── index.html // entry point specified as App URL
-│   └── app.html   // panel view loaded by the SDK
+├── src/
+│   ├── config/
+│   ├── routes/
+│   └── frontend/
 ├── tests/
-├── legacy/dotnet/
 └── templates/
 ```
 
@@ -374,12 +367,9 @@ dependency installs run from that directory.
 - [Architecture](docs/ARCHITECTURE.md) explains how the source modules are
   organised.
 - [Tab Overview](docs/TABS.md) describes the sidebar tabs and their purpose.
-- [Deployment Guide](docs/DEPLOYMENT.md) describes building and hosting the React client. The .NET version lives in [legacy/dotnet/docs/DEPLOYMENT.md](legacy/dotnet/docs/DEPLOYMENT.md).
-- [FastAPI Quick Start](docs/ASPIRE.md) shows how to run the Python service. The previous .NET Aspire guide lives in [legacy/dotnet/docs/ASPIRE.md](legacy/dotnet/docs/ASPIRE.md).
-- [Python Server Modules](docs/SERVER_MODULES.md) outlines the backend layout. The .NET reference resides in [legacy/dotnet/docs/SERVER_MODULES.md](legacy/dotnet/docs/SERVER_MODULES.md).
-- [Python Service Architecture](docs/python-architecture.md) covers FastAPI modules, caching and Miro API integration.
+- [Deployment Guide](docs/DEPLOYMENT.md) describes building and hosting the React client.
+- [Node Backend Architecture](docs/node-architecture.md) explains Fastify setup and Miro integration.
 - [Miro API Costs](docs/MIRO_API_COSTS.md) explains why we cache shapes and avoid expensive board calls.
-- [Shapes API](docs/python-architecture.md#api-endpoints) lists routes for creating, updating and deleting Miro widgets via the backend cache.
 - [Components Catalogue](docs/COMPONENTS.md) documents reusable React
   components.
 - [Design Foundation](docs/FOUNDATION.md) explains tokens and theming rules.
@@ -404,22 +394,6 @@ Generate a static Storybook site for publishing with:
 npm run build-storybook
 ```
 
-## Docker Compose
-
-Run the full stack with Docker Compose:
-
-```bash
-docker compose up --build
-```
-
-The backend exposes <http://localhost:8000> and the client is served from
-<http://localhost:3000>. The backend container mounts the local `src/` folder and
-runs `uvicorn` with `--reload`, so changes to Python files trigger a hot reload.
-SQLite data is stored in the named `sqlite_data` volume.
-
-Tagged releases still publish a production image to the GitHub Container
-Registry via the existing release workflow.
-
 ## Local CI Build
 
 Run the helper script to reproduce the GitHub Actions pipeline locally. It
@@ -427,7 +401,7 @@ executes lint checks, type verification, unit tests, the production build and
 the Storybook build in sequence. Semantic release is intentionally skipped.
 
 Pull requests trigger the unified `ci.yml` workflow to run linting, type checks,
-unit tests and production builds for both the Python backend and the React
+unit tests and production builds for the Node backend and the React
 client. Pushes to `main` additionally invoke `repo-sonar.yml`, `repo-codeql.yml`
 and `repo-release.yml` for coverage, static analysis and packaging tasks.
 

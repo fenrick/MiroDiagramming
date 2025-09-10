@@ -1,18 +1,16 @@
 # Node Client Deployment Guide
 
-The .NET deployment guide has moved to [legacy/dotnet/docs/DEPLOYMENT.md](../legacy/dotnet/docs/DEPLOYMENT.md).
-
 This document covers building and hosting the React client.
 
 ## 1. Build
 
 ```bash
-npm --prefix web/client run build
+npm run build
 ```
 
 ## 2. Deploy
 
-Upload `web/client/dist/` to your static host (e.g., Vercel, Netlify or S3).
+Upload `dist/` to your static host (e.g., Vercel, Netlify or S3).
 
 ## 3. Environment Variables
 
@@ -27,15 +25,16 @@ See your hosting provider's documentation for setting environment variables. CI/
 
 ## 4. Backend Secrets
 
-The FastAPI backend loads required secrets from environment variables or a `config/.env` file via `pydantic-settings`.
+The Node backend loads required secrets from environment variables as parsed by `src/config/env.ts`.
 
 ### Local development
 
 On first run the backend will create `config/.env` and `config/config.yaml` from their example files and exit.
 Populate `config/.env` with values for:
-   - `MIRO_CLIENT_ID`
-   - `MIRO_CLIENT_SECRET`
-   - `MIRO_WEBHOOK_SECRET`
+
+- `MIRO_CLIENT_ID`
+- `MIRO_CLIENT_SECRET`
+- `MIRO_WEBHOOK_SECRET`
 
 ### Continuous integration
 
@@ -47,10 +46,10 @@ Configure Cross-Origin Resource Sharing in `config/config.yaml`:
 
 ```yaml
 cors_origins:
-  - "https://app.example.com"
-  - "https://admin.example.com"
-  # - "https://*.example.org"  # Wildcard subdomains
-  # - "*"  # Allow all origins (development only; not for production)
+    - 'https://app.example.com'
+    - 'https://admin.example.com'
+    # - "https://*.example.org"  # Wildcard subdomains
+    # - "*"  # Allow all origins (development only; not for production)
 ```
 
 List each allowed origin explicitly. Wildcards can match subdomains, but avoid using `"*"` in production to restrict cross-origin access.

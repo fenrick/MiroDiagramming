@@ -10,7 +10,7 @@ Explains how to:
 - Adopt the **@mirohq/design-system** components to ensure 100% alignment with
   Miro visuals.
 - Use **@mirohq/design-system** components directly for new features.
-- Use the lightweight wrapper components in `web/client/src/ui/components`
+- Use the lightweight wrapper components in `src/frontend/ui/components`
   for simplified markup.
 - Meet the accessibility, performance and quality gates defined in
   **ARCHITECTURE.md** and **FOUNDATION.md**.
@@ -26,10 +26,10 @@ Explains how to:
 ### 1.1 Bootstrap CSS once
 
 Include the stylesheet exactly once—ideally in
-`web/client/src/app/index.tsx`:
+`src/frontend/app/index.tsx`:
 
 ```tsx
-import '@mirohq/design-system-themes/light.css';
+import '@mirohq/design-system-themes/light.css'
 ```
 
 ---
@@ -62,13 +62,13 @@ nested tab sets.
 
 The design system expects container elements to declare their own padding. To
 preserve the existing API and layering, small wrappers live under
-`web/client/src/ui/components` (e.g. `Panel`, `Section`, `ActionBar`). Each
+`src/frontend/ui/components` (e.g. `Panel`, `Section`, `ActionBar`). Each
 wrapper accepts a `padding` prop that maps to numeric values from
 `@mirohq/design-tokens`:
 
 ```tsx
-<Panel padding='medium'>
-  <Section padding='small'>Content</Section>
+<Panel padding="medium">
+    <Section padding="small">Content</Section>
 </Panel>
 ```
 
@@ -77,18 +77,15 @@ underlying design-system primitives. This keeps styling decisions inside the
 component. Keep nesting shallow to avoid unnecessary DOM layers.
 
 Common form controls such as `Button`, `InputField` and `Select` are provided
-under `web/client/src/ui/components`.
+under `src/frontend/ui/components`.
 
 `InputField` composes a label with a form control. Pass the control component
 via the `as` prop and provide its props through `options`:
 
 ```tsx
-<InputField
-  label='Template'
-  as={Select}
-  options={{ value: tpl, onChange: setTpl }}>
-  <SelectOption value='a'>A</SelectOption>
-  <SelectOption value='b'>B</SelectOption>
+<InputField label="Template" as={Select} options={{ value: tpl, onChange: setTpl }}>
+    <SelectOption value="a">A</SelectOption>
+    <SelectOption value="b">B</SelectOption>
 </InputField>
 ```
 
@@ -106,60 +103,42 @@ via the `as` prop and provide its props through `options`:
 ### 3.1 Grid – repeat-auto layout
 
 ```tsx
-<Grid
-  columns='repeat(auto-fill, 240px)'
-  gap='16'>
-  {nodes.map((n) => (
-    <Card
-      node={n}
-      key={n.id}
-    />
-  ))}
+<Grid columns="repeat(auto-fill, 240px)" gap="16">
+    {nodes.map((n) => (
+        <Card node={n} key={n.id} />
+    ))}
 </Grid>
 ```
 
 ### 3.2 Stack – vertical forms
 
 ```tsx
-<Stack
-  gap='12'
-  direction='vertical'>
-  <Form.Field>
-    <Form.Label htmlFor='title'>Title</Form.Label>
-    <Input
-      id='title'
-      value={title}
-      onChange={(e) => setTitle(e.target.value)}
-    />
-  </Form.Field>
+<Stack gap="12" direction="vertical">
+    <Form.Field>
+        <Form.Label htmlFor="title">Title</Form.Label>
+        <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} />
+    </Form.Field>
 </Stack>
 ```
 
 ### 3.3 Cluster – right-aligned actions
 
 ```tsx
-<Cluster
-  gap='8'
-  align='right'>
-  <Button
-    ghost
-    onClick={cancel}>
-    Cancel
-  </Button>
-  <Button
-    primary
-    onClick={save}>
-    Save
-  </Button>
+<Cluster gap="8" align="right">
+    <Button ghost onClick={cancel}>
+        Cancel
+    </Button>
+    <Button primary onClick={save}>
+        Save
+    </Button>
 </Cluster>
 ```
 
 To add an icon use the `icon` prop and optionally `iconPosition='end'`:
 
 ```tsx
-import { IconActivity } from '@mirohq/design-system-icons/react';
-
-<Button icon={<IconActivity />}>Activity</Button>;
+import { IconActivity } from '@mirohq/design-system-icons/react'
+;<Button icon={<IconActivity />}>Activity</Button>
 ```
 
 ---
@@ -167,48 +146,35 @@ import { IconActivity } from '@mirohq/design-system-icons/react';
 ## 4 Sample pattern – Modal form with validation
 
 ```tsx
-<Modal
-  isOpen={show}
-  title='Create card'
-  onClose={close}>
-  <form
-    onSubmit={submit}
-    noValidate>
-    <Stack
-      gap='12'
-      direction='vertical'>
-      <Form.Field>
-        <Form.Label htmlFor='title2'>Title</Form.Label>
-        <Input
-          id='title2'
-          required
-          placeholder='Title'
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-      </Form.Field>
-      <textarea
-        className='textarea resize-auto'
-        placeholder='Description'
-        value={desc}
-        onChange={(e) => setDesc(e.target.value)}
-      />
-      <Cluster
-        gap='8'
-        align='right'>
-        <Button
-          ghost
-          onClick={close}>
-          Cancel
-        </Button>
-        <Button
-          primary
-          type='submit'>
-          Add
-        </Button>
-      </Cluster>
-    </Stack>
-  </form>
+<Modal isOpen={show} title="Create card" onClose={close}>
+    <form onSubmit={submit} noValidate>
+        <Stack gap="12" direction="vertical">
+            <Form.Field>
+                <Form.Label htmlFor="title2">Title</Form.Label>
+                <Input
+                    id="title2"
+                    required
+                    placeholder="Title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                />
+            </Form.Field>
+            <textarea
+                className="textarea resize-auto"
+                placeholder="Description"
+                value={desc}
+                onChange={(e) => setDesc(e.target.value)}
+            />
+            <Cluster gap="8" align="right">
+                <Button ghost onClick={close}>
+                    Cancel
+                </Button>
+                <Button primary type="submit">
+                    Add
+                </Button>
+            </Cluster>
+        </Stack>
+    </form>
 </Modal>
 ```
 
@@ -255,12 +221,12 @@ Failing any item blocks the CI gate.
 
 ## 8 Quality gates (automated in GitHub Actions)
 
-| Stage             | Tool                      | Pass threshold          |
-| ----------------- | ------------------------- | ----------------------- |
-| Lint              | ESLint + Stylelint        | 0 errors                |
-| Unit tests        | `npm test`                | ≥ 90 % lines & branches |
-| Visual regression | manual screenshot review  | no visual diffs         |
-| Accessibility     | manual a11y review        | 0 critical              |
+| Stage             | Tool                     | Pass threshold          |
+| ----------------- | ------------------------ | ----------------------- |
+| Lint              | ESLint + Stylelint       | 0 errors                |
+| Unit tests        | `npm test`               | ≥ 90 % lines & branches |
+| Visual regression | manual screenshot review | no visual diffs         |
+| Accessibility     | manual a11y review       | 0 critical              |
 
 ---
 
