@@ -69,7 +69,7 @@
 
 - Use exception handlers to map domain and validation errors into clear HTTP responses.
 - Structured logging captures correlation IDs and request context. Logging output ships to the central aggregator and feeds metri
-cs/alerts.
+  cs/alerts.
 - A global fallback handler reports unhandled exceptions and returns a 500 response without leaking internals.
 
 ## Observability
@@ -77,8 +77,8 @@ cs/alerts.
 - Prometheus scrapes `GET /metrics` for request counters and latency histograms.
 - Traces are exported via OpenTelemetry using either OTLP or Jaeger exporters.
 - Configure collector endpoints with the following environment variables:
-  - `OTEL_EXPORTER_OTLP_ENDPOINT` – HTTP endpoint for an OTLP collector.
-  - `JAEGER_AGENT_HOST` / `JAEGER_AGENT_PORT` – Jaeger agent host and port.
+    - `OTEL_EXPORTER_OTLP_ENDPOINT` – HTTP endpoint for an OTLP collector.
+    - `JAEGER_AGENT_HOST` / `JAEGER_AGENT_PORT` – Jaeger agent host and port.
 - Metrics, logs and traces share the same request ID for cohesive diagnostics through Logfire.
 
 ## Security
@@ -99,4 +99,3 @@ cs/alerts.
 - Provide concise docstrings and type hints for all public APIs.
 - Maintain small, single-responsibility modules and refactor shared logic into common libraries.
 - Run `pre-commit` hooks for formatting and linting (`black`, `ruff`) and enforce tests (`pytest`) in continuous integration.
-

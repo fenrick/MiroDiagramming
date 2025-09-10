@@ -5,21 +5,19 @@
  */
 export interface DebugFlags {
   /** Force the API limits endpoint to return a near limit response. */
-  limits?: string;
+  limits?: string
   /** Number of subsequent operations that should return HTTP 429. */
-  count429?: number;
+  count429?: number
   /** Force authentication to appear expired. */
-  auth?: string;
+  auth?: string
 }
 
-const params = new URLSearchParams(window.location.search);
+const params = new URLSearchParams(window.location.search)
 
 export const debugFlags: DebugFlags = import.meta.env.DEV
   ? {
       limits: params.get('debugLimits') ?? undefined,
-      count429: params.get('debug429')
-        ? Number(params.get('debug429'))
-        : undefined,
+      count429: params.get('debug429') ? Number(params.get('debug429')) : undefined,
       auth: params.get('debugAuth') ?? undefined,
     }
-  : {};
+  : {}

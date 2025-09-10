@@ -1,35 +1,35 @@
-import React from 'react';
-import { apiFetch } from '../utils/api-fetch';
+import React from 'react'
+import { apiFetch } from '../utils/api-fetch'
 
-export type JobOpStatus = 'pending' | 'working' | 'done' | 'failed';
+export type JobOpStatus = 'pending' | 'working' | 'done' | 'failed'
 
 /**
  * Operation within an asynchronous job.
  */
 export interface JobOperation {
   /** Identifier of the operation. */
-  id: string;
+  id: string
   /** Current status. */
-  status: JobOpStatus;
+  status: JobOpStatus
   /** Optional human readable message. */
-  message?: string;
+  message?: string
 }
 
-export type JobStatus = JobOpStatus | 'partial';
+export type JobStatus = JobOpStatus | 'partial'
 
 /**
  * Job containing multiple operations that run asynchronously.
  */
 export interface Job {
   /** Server generated job identifier. */
-  id: string;
+  id: string
   /** Overall status for the job. */
-  status: JobStatus;
+  status: JobStatus
   /** Operations that compose the job. */
-  operations: JobOperation[];
+  operations: JobOperation[]
 }
 
-const jobCache = new Map<string, Job>();
+const jobCache = new Map<string, Job>()
 
 /**
  * Poll the backend for the status of a job.
@@ -40,22 +40,20 @@ const jobCache = new Map<string, Job>();
  * @returns The latest job information or `undefined` if not yet available.
  */
 export function useJob(jobId: string): Job | undefined {
-  const [job, setJob] = React.useState<Job | undefined>(() =>
-    jobCache.get(jobId),
-  );
+  const [job, setJob] = React.useState<Job | undefined>(() => jobCache.get(jobId))
 
   React.useEffect(() => {
-    let cancelled = false;
+    let cancelled = false
 
     async function poll(): Promise<void> {
       try {
-        const res = await apiFetch(`/api/jobs/${jobId}`);
-        const data = (await res.json()) as Job;
-        jobCache.set(jobId, data);
+        const res = await apiFetch(`/api/jobs/${jobId}`)
+        const data = (await res.json()) as Job
+        jobCache.set(jobId, data)
         if (!cancelled) {
-          setJob(data);
+          setJob(data)
           if (data.status === 'pending' || data.status === 'working') {
-            setTimeout(poll, 1000);
+            setTimeout(poll, 1000)
           }
         }
       } catch {
@@ -64,13 +62,13 @@ export function useJob(jobId: string): Job | undefined {
     }
 
     if (!job || job.status === 'pending' || job.status === 'working') {
-      poll();
+      poll()
     }
 
     return () => {
-      cancelled = true;
-    };
-  }, [jobId, job]);
+      cancelled = true
+    }
+  }, [jobId, job])
 
-  return job;
+  return job
 }

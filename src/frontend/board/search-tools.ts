@@ -1,54 +1,49 @@
-import {
-  BoardQueryLike,
-  getBoardWithQuery,
-  maybeSync,
-  Syncable,
-} from './board';
-import { boardCache } from './board-cache';
-import safeRegex from 'safe-regex';
+import { BoardQueryLike, getBoardWithQuery, maybeSync, Syncable } from './board'
+import { boardCache } from './board-cache'
+import safeRegex from 'safe-regex'
 
 /** Search configuration. */
 export interface SearchOptions {
   /** Text to search for. */
-  query: string;
+  query: string
   /** Require exact case match. */
-  caseSensitive?: boolean;
+  caseSensitive?: boolean
   /** Match whole words only. */
-  wholeWord?: boolean;
+  wholeWord?: boolean
   /** Treat query as regular expression. */
-  regex?: boolean;
+  regex?: boolean
   /** Restrict search to specific widget types. */
-  widgetTypes?: string[];
+  widgetTypes?: string[]
   /** Only include widgets tagged with one of these IDs. */
-  tagIds?: string[];
+  tagIds?: string[]
   /** Restrict by exact background or fill colour. */
-  backgroundColor?: string;
+  backgroundColor?: string
   /** Filter by assignee ID. */
-  assignee?: string;
+  assignee?: string
   /** Filter by creator ID. */
-  creator?: string;
+  creator?: string
   /** Filter by last modifier ID. */
-  lastModifiedBy?: string;
+  lastModifiedBy?: string
   /** Limit search to the current selection. */
-  inSelection?: boolean;
+  inSelection?: boolean
 }
 
 /** Result describing the matching widget and field. */
 export interface SearchResult {
   /** Widget that matched. */
-  item: Record<string, unknown>;
+  item: Record<string, unknown>
   /** Property path containing the text. */
-  field: string;
+  field: string
 }
 
 /** Options for replacing board content. */
 export interface ReplaceOptions extends SearchOptions {
   /** Replacement text. */
-  replacement: string;
+  replacement: string
 }
 
 function escapeRegExp(str: string): string {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
 /**
@@ -61,22 +56,22 @@ function escapeRegExp(str: string): string {
  * @throws {SyntaxError} If the pattern appears unsafe.
  */
 function assertRegexSafe(pattern: string): void {
-  const repeatedGroup = /\((\w)\1+\+\)/.test(pattern);
-  const nestedQuantifier = /\(.+[+*].+\)[+*?]/.test(pattern);
+  const repeatedGroup = /\((\w)\1+\+\)/.test(pattern)
+  const nestedQuantifier = /\(.+[+*].+\)[+*?]/.test(pattern)
   if (!safeRegex(pattern) || repeatedGroup || nestedQuantifier) {
-    throw new SyntaxError('Unsafe regular expression');
+    throw new SyntaxError('Unsafe regular expression')
   }
 }
 
 function buildRegex(opts: SearchOptions): RegExp {
-  const src = opts.regex ? opts.query : escapeRegExp(opts.query);
+  const src = opts.regex ? opts.query : escapeRegExp(opts.query)
   if (src.length > 200) {
-    throw new SyntaxError('Pattern too long');
+    throw new SyntaxError('Pattern too long')
   }
-  const pattern = opts.wholeWord ? `\\b${src}\\b` : src;
-  assertRegexSafe(pattern);
-  const flags = opts.caseSensitive ? 'g' : 'gi';
-  return new RegExp(pattern, flags);
+  const pattern = opts.wholeWord ? `\\b${src}\\b` : src
+  assertRegexSafe(pattern)
+  const flags = opts.caseSensitive ? 'g' : 'gi'
+  return new RegExp(pattern, flags)
 }
 
 /**
@@ -90,108 +85,87 @@ function buildRegex(opts: SearchOptions): RegExp {
  * @param item - Record containing arbitrary widget properties.
  * @returns Array of `[path, text]` tuples for each discovered field.
  */
-function pushIfString(
-  arr: Array<[string, string]>,
-  key: string,
-  value: unknown,
-): void {
+function pushIfString(arr: Array<[string, string]>, key: string, value: unknown): void {
   if (typeof value === 'string') {
-    arr.push([key, value]);
+    arr.push([key, value])
   }
 }
 
-function pushNestedText(
-  arr: Array<[string, string]>,
-  text: Record<string, unknown>,
-): void {
-  pushIfString(arr, 'text.plainText', text.plainText);
-  pushIfString(arr, 'text.content', text.content);
+function pushNestedText(arr: Array<[string, string]>, text: Record<string, unknown>): void {
+  pushIfString(arr, 'text.plainText', text.plainText)
+  pushIfString(arr, 'text.content', text.content)
 }
 
-export function getTextFields(
-  item: Record<string, unknown>,
-): Array<[string, string]> {
-  const fields: Array<[string, string]> = [];
-  pushIfString(fields, 'title', item.title);
-  pushIfString(fields, 'content', item.content);
-  pushIfString(fields, 'plainText', item.plainText);
-  pushIfString(fields, 'description', item.description);
+export function getTextFields(item: Record<string, unknown>): Array<[string, string]> {
+  const fields: Array<[string, string]> = []
+  pushIfString(fields, 'title', item.title)
+  pushIfString(fields, 'content', item.content)
+  pushIfString(fields, 'plainText', item.plainText)
+  pushIfString(fields, 'description', item.description)
   if (typeof item.text === 'string') {
-    pushIfString(fields, 'text', item.text);
+    pushIfString(fields, 'text', item.text)
   } else if (item.text && typeof item.text === 'object') {
-    pushNestedText(fields, item.text as Record<string, unknown>);
+    pushNestedText(fields, item.text as Record<string, unknown>)
   }
-  return fields;
+  return fields
 }
 
-function getStringAtPath(
-  item: Record<string, unknown>,
-  path: string,
-): string | undefined {
-  const parts = path.split('.');
-  let ref: unknown = item;
+function getStringAtPath(item: Record<string, unknown>, path: string): string | undefined {
+  const parts = path.split('.')
+  let ref: unknown = item
   for (const p of parts) {
     if (!ref || typeof ref !== 'object') {
-      return undefined;
+      return undefined
     }
-    ref = (ref as Record<string, unknown>)[p];
+    ref = (ref as Record<string, unknown>)[p]
   }
-  return typeof ref === 'string' ? ref : undefined;
+  return typeof ref === 'string' ? ref : undefined
 }
 
 function isUnsafe(prop: string): boolean {
-  return prop === '__proto__' || prop === 'constructor';
+  return prop === '__proto__' || prop === 'constructor'
 }
 
 function getParent(
   obj: Record<string, unknown>,
   parts: string[],
 ): Record<string, unknown> | undefined {
-  let ref: unknown = obj;
+  let ref: unknown = obj
   for (let i = 0; i < parts.length - 1; i += 1) {
-    const part = parts[i]!;
+    const part = parts[i]!
     if (isUnsafe(part) || !ref || typeof ref !== 'object') {
-      return undefined;
+      return undefined
     }
-    ref = (ref as Record<string, unknown>)[part];
+    ref = (ref as Record<string, unknown>)[part]
   }
-  return typeof ref === 'object' && ref
-    ? (ref as Record<string, unknown>)
-    : undefined;
+  return typeof ref === 'object' && ref ? (ref as Record<string, unknown>) : undefined
 }
 
-function setStringAtPath(
-  item: Record<string, unknown>,
-  path: string,
-  value: string,
-): void {
-  const parts = path.split('.');
-  const parent = getParent(item, parts);
+function setStringAtPath(item: Record<string, unknown>, path: string, value: string): void {
+  const parts = path.split('.')
+  const parent = getParent(item, parts)
   if (!parent) {
-    return;
+    return
   }
-  const last = parts[parts.length - 1]!;
+  const last = parts[parts.length - 1]!
   if (isUnsafe(last)) {
-    return;
+    return
   }
-  parent[last] = value;
+  parent[last] = value
 }
 
 /**
  * Collect matching text fields from a single widget.
  */
-function collectMatches(
-  item: Record<string, unknown>,
-  pattern: RegExp,
-): SearchResult[] {
-  const matches: SearchResult[] = [];
+function collectMatches(item: Record<string, unknown>, pattern: RegExp): SearchResult[] {
+  const matches: SearchResult[] = []
   for (const [field, text] of getTextFields(item)) {
-    pattern.lastIndex = 0;
+    pattern.lastIndex = 0
     if (pattern.test(text)) {
-      matches.push({ item, field });
+      matches.push({ item, field })
     }
   }
-  return matches;
+  return matches
 }
 
 /**
@@ -202,10 +176,10 @@ async function queryBoardItems(
   board: BoardQueryLike,
 ): Promise<Record<string, unknown>[]> {
   if (opts.inSelection) {
-    return boardCache.getSelection(board);
+    return boardCache.getSelection(board)
   }
-  const types = opts.widgetTypes?.length ? opts.widgetTypes : ['widget'];
-  return boardCache.getWidgets(types, board);
+  const types = opts.widgetTypes?.length ? opts.widgetTypes : ['widget']
+  return boardCache.getWidgets(types, board)
 }
 
 /**
@@ -214,57 +188,51 @@ async function queryBoardItems(
  * Each option in {@link SearchOptions} corresponds to a simple check. The
  * returned function returns `true` only when all configured checks succeed.
  */
-function buildFilter(
-  opts: SearchOptions,
-): (item: Record<string, unknown>) => boolean {
-  const checks: Array<(i: Record<string, unknown>) => boolean> = [];
+function buildFilter(opts: SearchOptions): (item: Record<string, unknown>) => boolean {
+  const checks: Array<(i: Record<string, unknown>) => boolean> = []
 
   if (opts.widgetTypes) {
-    const types = new Set(opts.widgetTypes);
-    checks.push(i => types.has((i as { type?: string }).type ?? ''));
+    const types = new Set(opts.widgetTypes)
+    checks.push((i) => types.has((i as { type?: string }).type ?? ''))
   }
 
   if (opts.tagIds) {
-    const tagsWanted = new Set(opts.tagIds);
-    checks.push(i => {
-      const tags = (i as { tagIds?: string[] }).tagIds;
-      return Array.isArray(tags) && tags.some(id => tagsWanted.has(id));
-    });
+    const tagsWanted = new Set(opts.tagIds)
+    checks.push((i) => {
+      const tags = (i as { tagIds?: string[] }).tagIds
+      return Array.isArray(tags) && tags.some((id) => tagsWanted.has(id))
+    })
   }
 
   if (opts.backgroundColor) {
-    const colour = opts.backgroundColor.toLowerCase();
-    checks.push(i => {
-      const style = (i.style ?? {}) as Record<string, unknown>;
-      const fill = (style.fillColor ?? style.backgroundColor) as
-        | string
-        | undefined;
-      return typeof fill === 'string' && fill.toLowerCase() === colour;
-    });
+    const colour = opts.backgroundColor.toLowerCase()
+    checks.push((i) => {
+      const style = (i.style ?? {}) as Record<string, unknown>
+      const fill = (style.fillColor ?? style.backgroundColor) as string | undefined
+      return typeof fill === 'string' && fill.toLowerCase() === colour
+    })
   }
 
   if (opts.assignee) {
-    const assigneeId = opts.assignee;
-    checks.push(i => {
+    const assigneeId = opts.assignee
+    checks.push((i) => {
       const assignee =
         (i as { assignee?: string; assigneeId?: string }).assignee ??
-        (i as { assigneeId?: string }).assigneeId;
-      return assignee === assigneeId;
-    });
+        (i as { assigneeId?: string }).assigneeId
+      return assignee === assigneeId
+    })
   }
 
   if (opts.creator) {
-    const creator = opts.creator;
-    checks.push(i => (i as { createdBy?: string }).createdBy === creator);
+    const creator = opts.creator
+    checks.push((i) => (i as { createdBy?: string }).createdBy === creator)
   }
 
   if (opts.lastModifiedBy) {
-    const modifier = opts.lastModifiedBy;
-    checks.push(
-      i => (i as { lastModifiedBy?: string }).lastModifiedBy === modifier,
-    );
+    const modifier = opts.lastModifiedBy
+    checks.push((i) => (i as { lastModifiedBy?: string }).lastModifiedBy === modifier)
   }
-  return (item: Record<string, unknown>) => checks.every(fn => fn(item));
+  return (item: Record<string, unknown>) => checks.every((fn) => fn(item))
 }
 
 /**
@@ -283,18 +251,18 @@ export async function searchBoardContent(
   opts: SearchOptions,
   board?: BoardQueryLike,
 ): Promise<SearchResult[]> {
-  const b = getBoardWithQuery(board);
-  const items = await queryBoardItems(opts, b);
-  const filter = buildFilter(opts);
-  const pattern = buildRegex(opts);
-  const results: SearchResult[] = [];
+  const b = getBoardWithQuery(board)
+  const items = await queryBoardItems(opts, b)
+  const filter = buildFilter(opts)
+  const pattern = buildRegex(opts)
+  const results: SearchResult[] = []
   for (const item of items) {
     if (!filter(item)) {
-      continue;
+      continue
     }
-    results.push(...collectMatches(item, pattern));
+    results.push(...collectMatches(item, pattern))
   }
-  return results;
+  return results
 }
 
 /**
@@ -316,29 +284,29 @@ export async function replaceBoardContent(
   board?: BoardQueryLike,
   onMatch?: (item: Record<string, unknown>) => Promise<void> | void,
 ): Promise<number> {
-  const b = getBoardWithQuery(board);
-  const matches = await searchBoardContent(opts, b);
-  const pattern = buildRegex(opts);
-  let count = 0;
+  const b = getBoardWithQuery(board)
+  const matches = await searchBoardContent(opts, b)
+  const pattern = buildRegex(opts)
+  let count = 0
   for (const { item, field } of matches) {
     if (onMatch) {
-      await onMatch(item);
+      await onMatch(item)
     }
-    const current = getStringAtPath(item, field);
+    const current = getStringAtPath(item, field)
     if (current === undefined) {
-      continue;
+      continue
     }
     const updated = current.replace(pattern, () => {
-      count += 1;
-      return opts.replacement;
-    });
+      count += 1
+      return opts.replacement
+    })
     if (updated !== current) {
-      setStringAtPath(item, field, updated);
-      await maybeSync(item as Syncable);
+      setStringAtPath(item, field, updated)
+      await maybeSync(item as Syncable)
     }
   }
-  return count;
+  return count
 }
 
 // Internal export for testing.
-export { setStringAtPath as _setStringAtPath };
+export { setStringAtPath as _setStringAtPath }

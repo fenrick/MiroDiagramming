@@ -1,73 +1,73 @@
-import type { BaseItem, Connector, Group } from '@mirohq/websdk-types';
-import { BoardBuilder } from '../../board/board-builder';
-import type { HierNode } from '../layout/nested-layout';
-import { fileUtils } from '../utils/file-utils';
+import type { BaseItem, Connector, Group } from '@mirohq/websdk-types'
+import { BoardBuilder } from '../../board/board-builder'
+import type { HierNode } from '../layout/nested-layout'
+import { fileUtils } from '../utils/file-utils'
 
 export interface NodeData {
-  id: string;
-  label: string;
-  type: string;
-  metadata?: Record<string, unknown>;
+  id: string
+  label: string
+  type: string
+  metadata?: Record<string, unknown>
 }
 
 export interface EdgeData {
-  from: string;
-  to: string;
-  label?: string;
-  metadata?: Record<string, unknown>;
+  from: string
+  to: string
+  label?: string
+  metadata?: Record<string, unknown>
 }
 
 export interface GraphData {
-  nodes: NodeData[];
-  edges: EdgeData[];
+  nodes: NodeData[]
+  edges: EdgeData[]
 }
 
 export interface PositionedNode {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
+  x: number
+  y: number
+  width: number
+  height: number
 }
 
 export interface EdgeHint {
-  startPosition?: { x: number; y: number };
-  endPosition?: { x: number; y: number };
+  startPosition?: { x: number; y: number }
+  endPosition?: { x: number; y: number }
 }
 
 export class GraphService {
-  private static instance: GraphService;
-  private readonly builder = new BoardBuilder();
+  private static instance: GraphService
+  private readonly builder = new BoardBuilder()
 
   private constructor() {}
 
   /** Access the shared service instance. */
   public static getInstance(): GraphService {
     if (!GraphService.instance) {
-      GraphService.instance = new GraphService();
+      GraphService.instance = new GraphService()
     }
-    return GraphService.instance;
+    return GraphService.instance
   }
 
   /** Retrieve the default board builder. */
   public getBuilder(): BoardBuilder {
-    return this.builder;
+    return this.builder
   }
 
   /** Load and parse JSON graph data from a file. */
   public async loadGraph(file: File): Promise<GraphData> {
-    fileUtils.validateFile(file);
-    const text = await fileUtils.readFileAsText(file);
-    const data = JSON.parse(text) as unknown;
+    fileUtils.validateFile(file)
+    const text = await fileUtils.readFileAsText(file)
+    const data = JSON.parse(text) as unknown
     if (
       !data ||
       typeof data !== 'object' ||
       !Array.isArray((data as { nodes?: unknown; edges?: unknown }).nodes) ||
       !Array.isArray((data as { nodes?: unknown; edges?: unknown }).edges)
     ) {
-      throw new Error('Invalid graph data');
+      throw new Error('Invalid graph data')
     }
-    this.resetBoardCache();
-    return data as GraphData;
+    this.resetBoardCache()
+    return data as GraphData
   }
 
   /**
@@ -79,44 +79,36 @@ export class GraphService {
    * @throws {Error} If the JSON structure is not recognised.
    */
   public async loadAnyGraph(file: File): Promise<GraphData | HierNode[]> {
-    fileUtils.validateFile(file);
-    const text = await fileUtils.readFileAsText(file);
-    const data = JSON.parse(text) as unknown;
-    const isObj = data !== null && typeof data === 'object';
-    const hasNodes =
-      isObj && Array.isArray((data as { nodes?: unknown }).nodes);
-    const hasEdges =
-      isObj && Array.isArray((data as { edges?: unknown }).edges);
+    fileUtils.validateFile(file)
+    const text = await fileUtils.readFileAsText(file)
+    const data = JSON.parse(text) as unknown
+    const isObj = data !== null && typeof data === 'object'
+    const hasNodes = isObj && Array.isArray((data as { nodes?: unknown }).nodes)
+    const hasEdges = isObj && Array.isArray((data as { edges?: unknown }).edges)
     if (isObj && hasNodes && hasEdges) {
-      this.resetBoardCache();
-      return data as GraphData;
+      this.resetBoardCache()
+      return data as GraphData
     }
     if (Array.isArray(data)) {
-      this.resetBoardCache();
-      return data as HierNode[];
+      this.resetBoardCache()
+      return data as HierNode[]
     }
-    throw new Error('Invalid graph data');
+    throw new Error('Invalid graph data')
   }
 
   /** Clear caches for board lookups. */
   public resetBoardCache(): void {
-    this.builder.reset();
+    this.builder.reset()
   }
 
   /** Search for a node by type and label. */
-  public findNode(
-    type: string,
-    label: string,
-  ): Promise<BaseItem | Group | undefined> {
-    return this.builder.findNode(type, label);
+  public findNode(type: string, label: string): Promise<BaseItem | Group | undefined> {
+    return this.builder.findNode(type, label)
   }
 
   /** Create or update a node widget. */
-  public createNode(
-    node: NodeData,
-    pos: PositionedNode,
-  ): Promise<BaseItem | Group> {
-    return this.builder.createNode(node, pos);
+  public createNode(node: NodeData, pos: PositionedNode): Promise<BaseItem | Group> {
+    return this.builder.createNode(node, pos)
   }
 
   /** Create or update connectors. */
@@ -125,14 +117,14 @@ export class GraphService {
     nodeMap: Record<string, BaseItem | Group>,
     hints?: EdgeHint[],
   ): Promise<Connector[]> {
-    return this.builder.createEdges(edges, nodeMap, hints);
+    return this.builder.createEdges(edges, nodeMap, hints)
   }
 
   /** Proxy sync calls to widgets. */
   public syncAll(items: Array<BaseItem | Group | Connector>): Promise<void> {
-    return this.builder.syncAll(items);
+    return this.builder.syncAll(items)
   }
 }
 
-export const graphService = GraphService.getInstance();
-export const defaultBuilder = graphService.getBuilder();
+export const graphService = GraphService.getInstance()
+export const defaultBuilder = graphService.getBuilder()

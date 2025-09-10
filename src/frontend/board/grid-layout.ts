@@ -17,14 +17,14 @@
  * @returns Array of cell positions relative to the first item.
  */
 export interface GridConfig {
-  cols: number;
-  padding: number;
-  vertical?: boolean;
+  cols: number
+  padding: number
+  vertical?: boolean
 }
 
 export interface GridPosition {
-  x: number;
-  y: number;
+  x: number
+  y: number
 }
 
 export function calculateGrid(
@@ -33,18 +33,18 @@ export function calculateGrid(
   width: number,
   height: number,
 ): GridPosition[] {
-  const positions: GridPosition[] = [];
-  const cols = Math.max(1, config.cols);
-  const rows = Math.ceil(count / cols);
+  const positions: GridPosition[] = []
+  const cols = Math.max(1, config.cols)
+  const rows = Math.ceil(count / cols)
   for (let i = 0; i < count; i += 1) {
-    const col = config.vertical ? Math.floor(i / rows) : i % cols;
-    const row = config.vertical ? i % rows : Math.floor(i / cols);
+    const col = config.vertical ? Math.floor(i / rows) : i % cols
+    const row = config.vertical ? i % rows : Math.floor(i / cols)
     positions.push({
       x: col * (width + config.padding),
       y: row * (height + config.padding),
-    });
+    })
   }
-  return positions;
+  return positions
 }
 
 /**
@@ -57,9 +57,9 @@ export function calculateGrid(
  */
 export function calculateGridPositions(
   opts: {
-    cols: number;
-    padding: number;
-    sortOrientation?: 'horizontal' | 'vertical';
+    cols: number
+    padding: number
+    sortOrientation?: 'horizontal' | 'vertical'
   },
   count: number,
   cellWidth: number,
@@ -69,6 +69,6 @@ export function calculateGridPositions(
     cols: opts.cols,
     padding: opts.padding,
     vertical: opts.sortOrientation === 'vertical',
-  };
-  return calculateGrid(count, config, cellWidth, cellHeight);
+  }
+  return calculateGrid(count, config, cellWidth, cellHeight)
 }

@@ -1,25 +1,25 @@
-import { Heading } from '@mirohq/design-system';
-import React, { useState } from 'react';
-import changelog from '../../../../CHANGELOG.md?raw';
-import { Button, Markdown, Paragraph } from '../components';
-import { PageHelp } from '../components/PageHelp';
-import { TabPanel } from '../components/TabPanel';
-import type { TabTuple } from './tab-definitions';
+import { Heading } from '@mirohq/design-system'
+import React, { useState } from 'react'
+import changelog from '../../../../CHANGELOG.md?raw'
+import { Button, Markdown, Paragraph } from '../components'
+import { PageHelp } from '../components/PageHelp'
+import { TabPanel } from '../components/TabPanel'
+import type { TabTuple } from './tab-definitions'
 
 /** Static help page summarising diagram options and tools. */
 export const HelpTab: React.FC = () => {
-  const [showLog, setShowLog] = useState(false);
+  const [showLog, setShowLog] = useState(false)
 
   return (
-    <TabPanel tabId='help'>
-      <PageHelp content='Overview of diagram options and tools' />
+    <TabPanel tabId="help">
+      <PageHelp content="Overview of diagram options and tools" />
       <Heading level={2}>Getting Started</Heading>
       <Paragraph>
-        Use the Create tab to import diagrams or cards from a JSON file. Nodes
-        may define templates, labels and ELK options to influence placement.
+        Use the Create tab to import diagrams or cards from a JSON file. Nodes may define templates,
+        labels and ELK options to influence placement.
       </Paragraph>
       <Heading level={2}>Diagram Layout Options</Heading>
-      <ul className='list'>
+      <ul className="list">
         <li>
           <strong>Layered</strong> – Flow diagrams with layers
         </li>
@@ -43,7 +43,7 @@ export const HelpTab: React.FC = () => {
         </li>
       </ul>
       <Heading level={2}>Other Tools</Heading>
-      <ul className='list'>
+      <ul className="list">
         <li>Resize – adjust widget size or copy from selection.</li>
         <li>Frames – rename selected frames.</li>
         <li>Colours – modify fill colours.</li>
@@ -51,15 +51,16 @@ export const HelpTab: React.FC = () => {
       </ul>
       <Heading level={2}>Changelog</Heading>
       <Button
-        variant='secondary'
-        onClick={() => setShowLog(v => !v)}
-        data-testid='toggle-changelog'>
+        variant="secondary"
+        onClick={() => setShowLog((v) => !v)}
+        data-testid="toggle-changelog"
+      >
         {showLog ? 'Hide' : 'Show'} Changelog
       </Button>
       {showLog && <Markdown source={changelog} />}
     </TabPanel>
-  );
-};
+  )
+}
 
 export const tabDef: TabTuple = [
   99,
@@ -67,4 +68,4 @@ export const tabDef: TabTuple = [
   'Help',
   'Overview of diagram options and tools',
   HelpTab,
-];
+]

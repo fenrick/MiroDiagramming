@@ -25,6 +25,5 @@ jobs:
         working-directory: web/client
       - run: npm ci --prefer-offline --no-audit
         working-directory: web/client
-      - run:
-          npx commitlint --from=${{ github.event.pull_request.base.sha }} --to=${{ github.event.pull_request.head.sha }}
+      - run: npx commitlint --from=${{ github.event.pull_request.base.sha }} --to=${{ github.event.pull_request.head.sha }}
         working-directory: web/client

@@ -1,13 +1,13 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { SegmentedControl } from '../ui/components/SegmentedControl';
+import type { Meta, StoryObj } from '@storybook/react'
+import { SegmentedControl } from '../ui/components/SegmentedControl'
 
 const meta: Meta<typeof SegmentedControl> = {
   title: 'Components/SegmentedControl',
   component: SegmentedControl,
-};
-export default meta;
+}
+export default meta
 
-type Story = StoryObj<typeof SegmentedControl>;
+type Story = StoryObj<typeof SegmentedControl>
 
 export const Default: Story = {
   args: {
@@ -18,4 +18,4 @@ export const Default: Story = {
     ],
     onChange: () => {},
   },
-};
+}

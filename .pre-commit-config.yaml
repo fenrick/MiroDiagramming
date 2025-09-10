@@ -11,13 +11,8 @@ repos:
     rev: v1.10.0
     hooks:
       - id: mypy
-        additional_dependencies: [
-          "sqlalchemy",
-          "pydantic",
-          "pydantic-settings",
-          "types-PyYAML",
-          "types-cachetools",
-        ]
+        additional_dependencies:
+          ['sqlalchemy', 'pydantic', 'pydantic-settings', 'types-PyYAML', 'types-cachetools']
   - repo: local
     hooks:
       - id: pytest

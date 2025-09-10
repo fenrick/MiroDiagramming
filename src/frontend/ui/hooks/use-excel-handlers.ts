@@ -1,19 +1,15 @@
-import React from 'react';
-import { useDropzone } from 'react-dropzone';
-import { ColumnMapping, mapRowsToNodes } from '../../core/data-mapper';
-import { GraphProcessor } from '../../core/graph/graph-processor';
-import {
-  excelLoader,
-  ExcelRow,
-  graphExcelLoader,
-} from '../../core/utils/excel-loader';
-import { addMiroIds, downloadWorkbook } from '../../core/utils/workbook-writer';
-import { showError } from './notifications';
-import { getDropzoneStyle } from './ui-utils';
+import React from 'react'
+import { useDropzone } from 'react-dropzone'
+import { ColumnMapping, mapRowsToNodes } from '../../core/data-mapper'
+import { GraphProcessor } from '../../core/graph/graph-processor'
+import { excelLoader, ExcelRow, graphExcelLoader } from '../../core/utils/excel-loader'
+import { addMiroIds, downloadWorkbook } from '../../core/utils/workbook-writer'
+import { showError } from './notifications'
+import { getDropzoneStyle } from './ui-utils'
 
 export interface DropReturn {
-  dropzone: ReturnType<typeof useDropzone>;
-  style: React.CSSProperties;
+  dropzone: ReturnType<typeof useDropzone>
+  style: React.CSSProperties
 }
 
 /**
@@ -22,42 +18,38 @@ export interface DropReturn {
  * @param onDrop - Callback invoked when a valid file is dropped.
  * @returns Dropzone bindings and computed style.
  */
-export function useExcelDrop(
-  onDrop: (files: File[]) => Promise<void>,
-): DropReturn {
+export function useExcelDrop(onDrop: (files: File[]) => Promise<void>): DropReturn {
   const dropzone = useDropzone({
     accept: {
       'application/vnd.ms-excel': ['.xls'],
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [
-        '.xlsx',
-      ],
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': ['.xlsx'],
     },
     maxFiles: 1,
     onDrop: (files: File[]) => void onDrop(files),
-  });
+  })
 
   const style = React.useMemo(() => {
-    let state: Parameters<typeof getDropzoneStyle>[0] = 'base';
+    let state: Parameters<typeof getDropzoneStyle>[0] = 'base'
     if (dropzone.isDragReject) {
-      state = 'reject';
+      state = 'reject'
     } else if (dropzone.isDragAccept) {
-      state = 'accept';
+      state = 'accept'
     }
-    return getDropzoneStyle(state);
-  }, [dropzone.isDragAccept, dropzone.isDragReject]);
+    return getDropzoneStyle(state)
+  }, [dropzone.isDragAccept, dropzone.isDragReject])
 
-  return { dropzone, style };
+  return { dropzone, style }
 }
 
 interface CreateArgs {
-  rows: ExcelRow[];
-  selected: Set<number>;
-  template: string;
-  templateColumn: string;
-  idColumn: string;
-  labelColumn: string;
-  file: File | null;
-  setRows: React.Dispatch<React.SetStateAction<ExcelRow[]>>;
+  rows: ExcelRow[]
+  selected: Set<number>
+  template: string
+  templateColumn: string
+  idColumn: string
+  labelColumn: string
+  file: File | null
+  setRows: React.Dispatch<React.SetStateAction<ExcelRow[]>>
 }
 
 /**
@@ -82,34 +74,34 @@ export function useExcelCreate({
   file,
   setRows,
 }: CreateArgs): () => Promise<void> {
-  const graphProcessor = React.useMemo(() => new GraphProcessor(), []);
+  const graphProcessor = React.useMemo(() => new GraphProcessor(), [])
   return React.useCallback(async () => {
     try {
       const mapping: ColumnMapping = {
         idColumn: idColumn || undefined,
         labelColumn: labelColumn || undefined,
         templateColumn: templateColumn || undefined,
-      };
-      const indices = [...selected];
-      const chosen = rows.filter((_, i) => selected.has(i));
-      const nodes = mapRowsToNodes(chosen, mapping).map(n => ({
+      }
+      const indices = [...selected]
+      const chosen = rows.filter((_, i) => selected.has(i))
+      const nodes = mapRowsToNodes(chosen, mapping).map((n) => ({
         ...n,
         type: templateColumn ? n.type : template,
-      }));
-      await graphProcessor.processGraph({ nodes, edges: [] });
-      const idMap = graphProcessor.getNodeIdMap();
-      const updated = addMiroIds(chosen, mapping.idColumn ?? '', idMap);
+      }))
+      await graphProcessor.processGraph({ nodes, edges: [] })
+      const idMap = graphProcessor.getNodeIdMap()
+      const updated = addMiroIds(chosen, mapping.idColumn ?? '', idMap)
       const merged = rows.map((r, i) => {
-        const idx = indices.indexOf(i);
-        return idx >= 0 ? updated[idx]! : r;
-      });
-      setRows(merged);
+        const idx = indices.indexOf(i)
+        return idx >= 0 ? updated[idx]! : r
+      })
+      setRows(merged)
       /* istanbul ignore next */
       if (file) {
-        await downloadWorkbook(merged, `updated-${file.name}`);
+        await downloadWorkbook(merged, `updated-${file.name}`)
       }
     } catch (e) {
-      await showError(String(e));
+      await showError(String(e))
     }
   }, [
     file,
@@ -121,7 +113,7 @@ export function useExcelCreate({
     setRows,
     template,
     templateColumn,
-  ]);
+  ])
 }
 
 /**
@@ -131,9 +123,9 @@ export function useExcelCreate({
  */
 export async function handleLocalDrop(files: File[]): Promise<void> {
   if (!files.length) {
-    return;
+    return
   }
-  await excelLoader.loadWorkbook(files[0]!);
+  await excelLoader.loadWorkbook(files[0]!)
 }
 
 /**
@@ -142,5 +134,5 @@ export async function handleLocalDrop(files: File[]): Promise<void> {
  * @param url - URL pointing to the hosted graph JSON.
  */
 export async function fetchRemoteWorkbook(url: string): Promise<void> {
-  await graphExcelLoader.loadWorkbookFromGraph(url);
+  await graphExcelLoader.loadWorkbookFromGraph(url)
 }

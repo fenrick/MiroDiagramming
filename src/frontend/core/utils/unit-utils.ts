@@ -7,20 +7,20 @@
  * conversion between board units and physical dimensions.
  */
 export function boardUnitsToMm(units: number): number {
-  return (units * 25.4) / 96;
+  return (units * 25.4) / 96
 }
 
 /** Convert board units to inches. */
 export function boardUnitsToInches(units: number): number {
-  return units / 96;
+  return units / 96
 }
 
 /** Convert millimetres to board units. */
 export function mmToBoardUnits(mm: number): number {
-  return (mm * 96) / 25.4;
+  return (mm * 96) / 25.4
 }
 
 /** Convert inches to board units. */
 export function inchesToBoardUnits(inches: number): number {
-  return inches * 96;
+  return inches * 96
 }

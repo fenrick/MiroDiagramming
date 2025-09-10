@@ -5,12 +5,12 @@ vi.mock('../src/app/diagram-app', () => ({
       init: vi.fn().mockRejectedValue(new Error('fail')),
     })),
   },
-}));
+}))
 
-import * as log from '../src/logger';
+import * as log from '../src/logger'
 
 test('logs error when initialization fails', async () => {
-  const errorSpy = vi.spyOn(log, 'error').mockImplementation(() => {});
-  await import('../src/index');
-  expect(errorSpy).toHaveBeenCalled();
-});
+  const errorSpy = vi.spyOn(log, 'error').mockImplementation(() => {})
+  await import('../src/index')
+  expect(errorSpy).toHaveBeenCalled()
+})

@@ -17,4 +17,3 @@ export const registerCacheRoutes: FastifyPluginAsync = async (app) => {
     }
   })
 }
-

@@ -1,11 +1,11 @@
-import * as log from '../logger';
-import { BoardLike, getBoard, maybeSync, Syncable } from './board';
-import { boardCache } from './board-cache';
+import * as log from '../logger'
+import { BoardLike, getBoard, maybeSync, Syncable } from './board'
+import { boardCache } from './board-cache'
 
 /** Options for renaming selected frames. */
 export interface RenameOptions {
   /** Text prefix for the frame titles. */
-  prefix: string;
+  prefix: string
 }
 
 /**
@@ -14,42 +14,39 @@ export interface RenameOptions {
  * @param opts - Prefix configuration.
  * @param board - Optional board API override for testing.
  */
-export async function renameSelectedFrames(
-  opts: RenameOptions,
-  board?: BoardLike,
-): Promise<void> {
-  const b = getBoard(board);
-  log.info('Renaming selected frames');
-  const selection = await boardCache.getSelection(b);
+export async function renameSelectedFrames(opts: RenameOptions, board?: BoardLike): Promise<void> {
+  const b = getBoard(board)
+  log.info('Renaming selected frames')
+  const selection = await boardCache.getSelection(b)
   const frames = selection.filter(
     (
       i,
     ): i is Record<string, unknown> & {
-      x?: number;
-      y?: number;
-      type?: string;
+      x?: number
+      y?: number
+      type?: string
     } => (i as { type?: string }).type === 'frame',
-  );
+  )
   if (!frames.length) {
-    return;
+    return
   }
   frames.sort((a, b) => {
-    const ax = a.x ?? 0;
-    const bx = b.x ?? 0;
+    const ax = a.x ?? 0
+    const bx = b.x ?? 0
     if (ax === bx) {
-      const ay = a.y ?? 0;
-      const by = b.y ?? 0;
-      return ay - by;
+      const ay = a.y ?? 0
+      const by = b.y ?? 0
+      return ay - by
     }
-    return ax - bx;
-  });
+    return ax - bx
+  })
   await Promise.all(
     frames.map(async (frame, i) => {
-      frame.title = `${opts.prefix}${i}`;
-      await maybeSync(frame as Syncable);
+      frame.title = `${opts.prefix}${i}`
+      await maybeSync(frame as Syncable)
     }),
-  );
-  log.debug({ count: frames.length }, 'Frames renamed');
+  )
+  log.debug({ count: frames.length }, 'Frames renamed')
 }
 
 /**
@@ -61,17 +58,17 @@ export async function renameSelectedFrames(
  */
 interface LockableItem extends Record<string, unknown> {
   /** `true` if the widget is locked. */
-  locked?: boolean;
+  locked?: boolean
   /** Persist property changes to the board. */
-  sync?: () => Promise<void>;
+  sync?: () => Promise<void>
 }
 
 /** Frame widget subset used within this module. */
 interface FrameLike extends LockableItem {
   /** Widget type discriminator. */
-  type?: string;
+  type?: string
   /** Retrieve child widgets contained in the frame. */
-  getChildren?: () => Promise<LockableItem[]>;
+  getChildren?: () => Promise<LockableItem[]>
 }
 
 /**
@@ -80,7 +77,7 @@ interface FrameLike extends LockableItem {
  * @param item - Widget to test.
  */
 function isFrame(item: Record<string, unknown>): item is FrameLike {
-  return (item as { type?: string }).type === 'frame';
+  return (item as { type?: string }).type === 'frame'
 }
 
 /**
@@ -89,8 +86,8 @@ function isFrame(item: Record<string, unknown>): item is FrameLike {
  * @param item - Widget to lock.
  */
 async function lockItem(item: LockableItem): Promise<void> {
-  item.locked = true;
-  await maybeSync(item);
+  item.locked = true
+  await maybeSync(item)
 }
 
 /**
@@ -99,9 +96,9 @@ async function lockItem(item: LockableItem): Promise<void> {
  * @param frame - Target frame widget.
  */
 async function lockFrame(frame: FrameLike): Promise<void> {
-  await lockItem(frame);
-  const children = (await frame.getChildren?.()) ?? [];
-  await Promise.all(children.map(child => lockItem(child)));
+  await lockItem(frame)
+  const children = (await frame.getChildren?.()) ?? []
+  await Promise.all(children.map((child) => lockItem(child)))
 }
 
 /**
@@ -110,10 +107,10 @@ async function lockFrame(frame: FrameLike): Promise<void> {
  * @param board - Optional board API override for testing.
  */
 export async function lockSelectedFrames(board?: BoardLike): Promise<void> {
-  const b = getBoard(board);
-  log.info('Locking selected frames');
-  const selection = await boardCache.getSelection(b);
-  const frames = selection.filter(isFrame);
-  await Promise.all(frames.map(frame => lockFrame(frame)));
-  log.debug({ count: frames.length }, 'Frames locked');
+  const b = getBoard(board)
+  log.info('Locking selected frames')
+  const selection = await boardCache.getSelection(b)
+  const frames = selection.filter(isFrame)
+  await Promise.all(frames.map((frame) => lockFrame(frame)))
+  log.debug({ count: frames.length }, 'Frames locked')
 }

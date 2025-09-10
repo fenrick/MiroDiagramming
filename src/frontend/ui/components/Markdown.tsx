@@ -1,26 +1,18 @@
-import { marked } from 'marked';
-import React from 'react';
+import { marked } from 'marked'
+import React from 'react'
 
 export interface MarkdownProps {
   /** Markdown source to convert to HTML. */
-  readonly source: string;
+  readonly source: string
   /** Optional CSS class for the container. */
-  readonly className?: string;
+  readonly className?: string
 }
 
 /**
  * Renders Markdown content using the `marked` parser.
  * The generated HTML is injected using `dangerouslySetInnerHTML`.
  */
-export function Markdown({
-  source,
-  className,
-}: MarkdownProps): React.JSX.Element {
-  const html = React.useMemo(() => marked.parse(source), [source]);
-  return (
-    <div
-      className={className}
-      dangerouslySetInnerHTML={{ __html: html }}
-    />
-  );
+export function Markdown({ source, className }: MarkdownProps): React.JSX.Element {
+  const html = React.useMemo(() => marked.parse(source), [source])
+  return <div className={className} dangerouslySetInnerHTML={{ __html: html }} />
 }

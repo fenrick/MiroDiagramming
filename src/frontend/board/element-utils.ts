@@ -1,12 +1,6 @@
-import type {
-  BaseItem,
-  Shape,
-  ShapeStyle,
-  Text,
-  TextStyle,
-} from '@mirohq/websdk-types';
-import type { TemplateElement } from './templates';
-import { templateManager } from './templates';
+import type { BaseItem, Shape, ShapeStyle, Text, TextStyle } from '@mirohq/websdk-types'
+import type { TemplateElement } from './templates'
+import { templateManager } from './templates'
 
 /**
  * Combine an item's current style with values from a template element.
@@ -33,12 +27,11 @@ export function buildShapeStyle(
   const style: Record<string, unknown> = {
     ...(existing ?? {}),
     ...templateManager.resolveStyle(element.style ?? {}),
-  };
-  if (element.fill && style.fillColor === undefined) {
-    style.fillColor = templateManager.resolveStyle({ fillColor: element.fill })
-      .fillColor as string;
   }
-  return style as ShapeStyle;
+  if (element.fill && style.fillColor === undefined) {
+    style.fillColor = templateManager.resolveStyle({ fillColor: element.fill }).fillColor as string
+  }
+  return style as ShapeStyle
 }
 
 /**
@@ -56,29 +49,25 @@ export function buildShapeStyle(
  * applyShapeElement(widget, { text: 'Name: {{label}}' }, 'Node');
  * ```
  */
-export function applyShapeElement(
-  item: BaseItem,
-  element: TemplateElement,
-  label: string,
-): void {
+export function applyShapeElement(item: BaseItem, element: TemplateElement, label: string): void {
   if (item.type !== 'shape') {
-    return;
+    return
   }
-  const shape = item as Shape;
+  const shape = item as Shape
   const assignments: Array<[keyof TemplateElement, string]> = [
     ['shape', 'shape'],
     ['rotation', 'rotation'],
     ['width', 'width'],
     ['height', 'height'],
-  ];
+  ]
   for (const [src, dest] of assignments) {
-    const value = (element as Record<string, unknown>)[src];
+    const value = (element as Record<string, unknown>)[src]
     if (value) {
-      (shape as unknown as Record<string, unknown>)[dest] = value;
+      ;(shape as unknown as Record<string, unknown>)[dest] = value
     }
   }
-  shape.content = (element.text ?? '{{label}}').replace('{{label}}', label);
-  shape.style = buildShapeStyle(shape.style as Partial<ShapeStyle>, element);
+  shape.content = (element.text ?? '{{label}}').replace('{{label}}', label)
+  shape.style = buildShapeStyle(shape.style as Partial<ShapeStyle>, element)
 }
 
 /**
@@ -93,21 +82,17 @@ export function applyShapeElement(
  * applyTextElement(widget, { text: 'Hello {{label}}' }, 'World');
  * ```
  */
-export function applyTextElement(
-  item: BaseItem,
-  element: TemplateElement,
-  label: string,
-): void {
+export function applyTextElement(item: BaseItem, element: TemplateElement, label: string): void {
   if (item.type !== 'text') {
-    return;
+    return
   }
-  const text = item as Text;
-  text.content = (element.text ?? '{{label}}').replace('{{label}}', label);
+  const text = item as Text
+  text.content = (element.text ?? '{{label}}').replace('{{label}}', label)
   if (element.style) {
     text.style = {
       ...(text.style ?? ({} as Partial<TextStyle>)),
       ...(templateManager.resolveStyle(element.style) as Partial<TextStyle>),
-    } as TextStyle;
+    } as TextStyle
   }
 }
 
@@ -123,14 +108,10 @@ export function applyTextElement(
  * applyElementToItem(widget, { text: '{{label}}' }, 'Example');
  * ```
  */
-export function applyElementToItem(
-  item: BaseItem,
-  element: TemplateElement,
-  label: string,
-): void {
+export function applyElementToItem(item: BaseItem, element: TemplateElement, label: string): void {
   if (item.type === 'shape') {
-    applyShapeElement(item, element, label);
+    applyShapeElement(item, element, label)
   } else if (item.type === 'text') {
-    applyTextElement(item, element, label);
+    applyTextElement(item, element, label)
   }
 }

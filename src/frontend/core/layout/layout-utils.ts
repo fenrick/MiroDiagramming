@@ -10,12 +10,12 @@ export function relativePosition(
   node: { x: number; y: number; width: number; height: number },
   pt: { x: number; y: number },
 ): { x: number; y: number } {
-  return { x: (pt.x - node.x) / node.width, y: (pt.y - node.y) / node.height };
+  return { x: (pt.x - node.x) / node.width, y: (pt.y - node.y) / node.height }
 }
 
 export interface EdgeHint {
-  startPosition?: { x: number; y: number };
-  endPosition?: { x: number; y: number };
+  startPosition?: { x: number; y: number }
+  endPosition?: { x: number; y: number }
 }
 
 /**
@@ -29,42 +29,39 @@ export interface EdgeHint {
 export function computeEdgeHints(
   graph: { edges: Array<{ from: string; to: string }> },
   layout: {
-    nodes: Record<
-      string,
-      { x: number; y: number; width: number; height: number }
-    >;
+    nodes: Record<string, { x: number; y: number; width: number; height: number }>
     edges: Array<{
-      startPoint: { x: number; y: number };
-      endPoint: { x: number; y: number };
-    }>;
+      startPoint: { x: number; y: number }
+      endPoint: { x: number; y: number }
+    }>
   },
 ): EdgeHint[] {
   return layout.edges.map((edge, i) => {
-    const info = graph.edges[i];
+    const info = graph.edges[i]
     if (!info) {
-      return {};
+      return {}
     }
-    const src = layout.nodes[info.from];
-    const tgt = layout.nodes[info.to];
+    const src = layout.nodes[info.from]
+    const tgt = layout.nodes[info.to]
     return {
       startPosition: src ? relativePosition(src, edge.startPoint) : undefined,
       endPosition: tgt ? relativePosition(tgt, edge.endPoint) : undefined,
-    };
-  });
+    }
+  })
 }
 
 export interface NodePosition {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
+  x: number
+  y: number
+  width: number
+  height: number
 }
 
 export interface BoundingBox {
-  minX: number;
-  minY: number;
-  maxX: number;
-  maxY: number;
+  minX: number
+  minY: number
+  maxX: number
+  maxY: number
 }
 
 /**
@@ -73,20 +70,18 @@ export interface BoundingBox {
  * @param nodes - Mapping of node ids to absolute top-left coordinates.
  * @returns The bounding box enclosing all nodes.
  */
-export function boundingBoxFromTopLeft(
-  nodes: Record<string, NodePosition>,
-): BoundingBox {
-  let minX = Infinity;
-  let minY = Infinity;
-  let maxX = -Infinity;
-  let maxY = -Infinity;
+export function boundingBoxFromTopLeft(nodes: Record<string, NodePosition>): BoundingBox {
+  let minX = Infinity
+  let minY = Infinity
+  let maxX = -Infinity
+  let maxY = -Infinity
   Object.values(nodes).forEach(({ x, y, width, height }) => {
-    minX = Math.min(minX, x);
-    minY = Math.min(minY, y);
-    maxX = Math.max(maxX, x + width);
-    maxY = Math.max(maxY, y + height);
-  });
-  return { minX, minY, maxX, maxY };
+    minX = Math.min(minX, x)
+    minY = Math.min(minY, y)
+    maxX = Math.max(maxX, x + width)
+    maxY = Math.max(maxY, y + height)
+  })
+  return { minX, minY, maxX, maxY }
 }
 
 /**
@@ -95,22 +90,20 @@ export function boundingBoxFromTopLeft(
  * @param nodes - Mapping of node ids to absolute centre coordinates.
  * @returns The bounding box enclosing all nodes.
  */
-export function boundingBoxFromCenter(
-  nodes: Record<string, NodePosition>,
-): BoundingBox {
-  let minX = Infinity;
-  let minY = Infinity;
-  let maxX = -Infinity;
-  let maxY = -Infinity;
+export function boundingBoxFromCenter(nodes: Record<string, NodePosition>): BoundingBox {
+  let minX = Infinity
+  let minY = Infinity
+  let maxX = -Infinity
+  let maxY = -Infinity
   Object.values(nodes).forEach(({ x, y, width, height }) => {
-    const halfW = width / 2;
-    const halfH = height / 2;
-    minX = Math.min(minX, x - halfW);
-    minY = Math.min(minY, y - halfH);
-    maxX = Math.max(maxX, x + halfW);
-    maxY = Math.max(maxY, y + halfH);
-  });
-  return { minX, minY, maxX, maxY };
+    const halfW = width / 2
+    const halfH = height / 2
+    minX = Math.min(minX, x - halfW)
+    minY = Math.min(minY, y - halfH)
+    maxX = Math.max(maxX, x + halfW)
+    maxY = Math.max(maxY, y + halfH)
+  })
+  return { minX, minY, maxX, maxY }
 }
 
 /**
@@ -133,5 +126,5 @@ export function frameOffset(
   return {
     offsetX: spot.x - frameWidth / 2 + margin - bounds.minX,
     offsetY: spot.y - frameHeight / 2 + margin - bounds.minY,
-  };
+  }
 }

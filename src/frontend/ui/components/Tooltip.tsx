@@ -1,15 +1,15 @@
-import { Tooltip as DSTooltip } from '@mirohq/design-system';
-import React from 'react';
+import { Tooltip as DSTooltip } from '@mirohq/design-system'
+import React from 'react'
 
 export interface TooltipProps {
   /** Text displayed inside the tooltip. */
-  readonly content: React.ReactNode;
+  readonly content: React.ReactNode
   /** Element triggering the tooltip on hover or focus. */
-  readonly children: React.ReactElement;
+  readonly children: React.ReactElement
   /** Preferred side of the trigger to render against. @default 'top' */
-  readonly side?: 'top' | 'right' | 'bottom' | 'left';
+  readonly side?: 'top' | 'right' | 'bottom' | 'left'
   /** Alignment along the trigger axis. @default 'center' */
-  readonly align?: 'start' | 'center' | 'end';
+  readonly align?: 'start' | 'center' | 'end'
 }
 
 /**
@@ -25,21 +25,15 @@ export function Tooltip({
   align = 'center',
 }: TooltipProps): React.JSX.Element {
   return (
-    <DSTooltip.Provider
-      delayDuration={0}
-      skipDelayDuration={0}>
-      <DSTooltip
-        delayDuration={0}
-        skipDelayDuration={0}>
+    <DSTooltip.Provider delayDuration={0} skipDelayDuration={0}>
+      <DSTooltip delayDuration={0} skipDelayDuration={0}>
         <DSTooltip.Trigger asChild>{children}</DSTooltip.Trigger>
         <DSTooltip.Portal>
-          <DSTooltip.Content
-            side={side}
-            align={align}>
+          <DSTooltip.Content side={side} align={align}>
             {content}
           </DSTooltip.Content>
         </DSTooltip.Portal>
       </DSTooltip>
     </DSTooltip.Provider>
-  );
+  )
 }

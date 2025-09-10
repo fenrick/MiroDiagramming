@@ -1,119 +1,100 @@
-import React from 'react';
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
-import { useJob } from '../core/hooks/useJob';
-import { useFocusTrap } from '../core/hooks/useFocusTrap';
-import { Button, ButtonToolbar, Checkbox } from '../ui/components';
-import { ScrollArea } from '../ui/ScrollArea';
-import { StickyActions } from '../ui/StickyActions';
+import React from 'react'
+import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
+import { useJob } from '../core/hooks/useJob'
+import { useFocusTrap } from '../core/hooks/useFocusTrap'
+import { Button, ButtonToolbar, Checkbox } from '../ui/components'
+import { ScrollArea } from '../ui/ScrollArea'
+import { StickyActions } from '../ui/StickyActions'
 
 interface JobDrawerProps {
   /** Identifier of the job to display. */
-  jobId: string;
+  jobId: string
   /** Whether the drawer is visible. */
-  isOpen: boolean;
+  isOpen: boolean
   /** Callback invoked when the drawer closes. */
-  onClose: () => void;
+  onClose: () => void
 }
 
 /**
  * Drawer showing live progress for a batch job.
  */
-export function JobDrawer({
-  jobId,
-  isOpen,
-  onClose,
-}: JobDrawerProps): JSX.Element | null {
-  const job = useJob(jobId);
-  const [closeOnDone, setCloseOnDone] = React.useState(true);
-  const [hiddenOps, setHiddenOps] = React.useState<Set<string>>(new Set());
-  const trapRef = useFocusTrap<HTMLDivElement>(isOpen, onClose);
-  const [announcement, setAnnouncement] = React.useState('');
+export function JobDrawer({ jobId, isOpen, onClose }: JobDrawerProps): JSX.Element | null {
+  const job = useJob(jobId)
+  const [closeOnDone, setCloseOnDone] = React.useState(true)
+  const [hiddenOps, setHiddenOps] = React.useState<Set<string>>(new Set())
+  const trapRef = useFocusTrap<HTMLDivElement>(isOpen, onClose)
+  const [announcement, setAnnouncement] = React.useState('')
 
   React.useEffect(() => {
     if (!job) {
-      return;
+      return
     }
-    const timers: NodeJS.Timeout[] = [];
-    job.operations.forEach(op => {
+    const timers: NodeJS.Timeout[] = []
+    job.operations.forEach((op) => {
       if (op.status === 'done' && !hiddenOps.has(op.id)) {
         timers.push(
           setTimeout(() => {
-            setHiddenOps(prev => new Set(prev).add(op.id));
+            setHiddenOps((prev) => new Set(prev).add(op.id))
           }, 2000),
-        );
+        )
       }
-    });
-    return () => timers.forEach(clearTimeout);
-  }, [job, hiddenOps]);
+    })
+    return () => timers.forEach(clearTimeout)
+  }, [job, hiddenOps])
 
   React.useEffect(() => {
     if (!job) {
-      return;
+      return
     }
-    const done = job.status === 'done';
-    const failed = job.status === 'failed' || job.status === 'partial';
+    const done = job.status === 'done'
+    const failed = job.status === 'failed' || job.status === 'partial'
     if (failed) {
-      const first = job.operations.find(op => op.status === 'failed');
-      const el = first ? document.getElementById(`job-op-${first.id}`) : null;
-      el?.focus();
+      const first = job.operations.find((op) => op.status === 'failed')
+      const el = first ? document.getElementById(`job-op-${first.id}`) : null
+      el?.focus()
     } else if (done && closeOnDone) {
-      onClose();
+      onClose()
     }
-  }, [job, closeOnDone, onClose]);
+  }, [job, closeOnDone, onClose])
 
   React.useEffect(() => {
     if (job) {
       if (job.status === 'working') {
-        setAnnouncement(`Syncing ${job.operations.length} changes…`);
+        setAnnouncement(`Syncing ${job.operations.length} changes…`)
       } else if (job.status === 'done') {
-        setAnnouncement('All changes synced');
+        setAnnouncement('All changes synced')
       } else if (job.status === 'failed' || job.status === 'partial') {
-        setAnnouncement('Sync failed');
+        setAnnouncement('Sync failed')
       }
     }
-  }, [job]);
+  }, [job])
 
   if (!isOpen) {
-    return null;
+    return null
   }
 
   return (
-    <aside
-      ref={trapRef}
-      className='drawer'
-      role='dialog'
-      aria-modal='true'>
+    <aside ref={trapRef} className="drawer" role="dialog" aria-modal="true">
       <ScrollArea>
         <VisuallyHidden asChild>
-          <div
-            aria-live='polite'
-            role='status'>
+          <div aria-live="polite" role="status">
             {announcement}
           </div>
         </VisuallyHidden>
-        <Checkbox
-          label='Close when done'
-          value={closeOnDone}
-          onChange={setCloseOnDone}
-        />
+        <Checkbox label="Close when done" value={closeOnDone} onChange={setCloseOnDone} />
         <ul>
           {job?.operations
-            .filter(op => !hiddenOps.has(op.id))
-            .map(op => (
-              <li
-                key={op.id}
-                id={`job-op-${op.id}`}
-                tabIndex={-1}>
-                <span
-                  className='truncate'
-                  title={op.id}>
+            .filter((op) => !hiddenOps.has(op.id))
+            .map((op) => (
+              <li key={op.id} id={`job-op-${op.id}`} tabIndex={-1}>
+                <span className="truncate" title={op.id}>
                   {op.id}
                 </span>
                 <span>{op.status}</span>
                 {op.status === 'failed' && (
                   <>
-                    <Button variant='tertiary'>Retry</Button>
-                    <Button variant='ghost'>Details</Button>
+                    <Button variant="tertiary">Retry</Button>
+                    <Button variant="ghost">Details</Button>
                   </>
                 )}
               </li>
@@ -121,14 +102,12 @@ export function JobDrawer({
         </ul>
         <StickyActions>
           <ButtonToolbar>
-            <Button
-              variant='tertiary'
-              onClick={onClose}>
+            <Button variant="tertiary" onClick={onClose}>
               Close
             </Button>
           </ButtonToolbar>
         </StickyActions>
       </ScrollArea>
     </aside>
-  );
+  )
 }

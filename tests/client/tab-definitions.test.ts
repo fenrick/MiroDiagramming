@@ -1,4 +1,4 @@
-import { COMMANDS } from '../src/ui/pages/tab-definitions';
+import { COMMANDS } from '../src/ui/pages/tab-definitions'
 
 describe('tab-definitions', () => {
   test('includes edit-metadata command', () => {
@@ -6,6 +6,6 @@ describe('tab-definitions', () => {
       id: 'edit-metadata',
       label: 'Edit Metadata',
       shortcut: 'Ctrl+Alt+M',
-    });
-  });
-});
+    })
+  })
+})

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 
 /**
  * Anchors action elements to the bottom of a panel while allowing
@@ -10,11 +10,7 @@ import React from 'react';
  * @param children React nodes to render inside the sticky container.
  * @returns A container that keeps its children fixed to the panel bottom.
  */
-export function StickyActions({
-  children,
-}: {
-  children: React.ReactNode;
-}): React.JSX.Element {
+export function StickyActions({ children }: { children: React.ReactNode }): React.JSX.Element {
   return (
     <div
       style={{
@@ -23,8 +19,9 @@ export function StickyActions({
         background: 'var(--mds-surface, #fff)',
         paddingTop: 'var(--space-200)',
         paddingBottom: 'var(--space-200)',
-      }}>
+      }}
+    >
       {children}
     </div>
-  );
+  )
 }

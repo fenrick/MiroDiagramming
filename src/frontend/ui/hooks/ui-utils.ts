@@ -1,8 +1,8 @@
-import { colors, fontSizes, fontWeights } from '@mirohq/design-tokens';
-import type React from 'react';
-import { CardProcessor } from '../../board/card-processor';
-import { GraphProcessor } from '../../core/graph/graph-processor';
-import { HierarchyProcessor } from '../../core/graph/hierarchy-processor';
+import { colors, fontSizes, fontWeights } from '@mirohq/design-tokens'
+import type React from 'react'
+import { CardProcessor } from '../../board/card-processor'
+import { GraphProcessor } from '../../core/graph/graph-processor'
+import { HierarchyProcessor } from '../../core/graph/hierarchy-processor'
 
 const dropzoneStyles = {
   display: 'flex',
@@ -14,7 +14,7 @@ const dropzoneStyles = {
   color: colors['gray-700'],
   fontWeight: fontWeights.semibold,
   fontSize: fontSizes[200],
-} as const;
+} as const
 
 /** Undo last import and reset state helper. */
 export async function undoLastImport(
@@ -22,25 +22,25 @@ export async function undoLastImport(
   clear: () => void,
 ): Promise<void> {
   if (!proc) {
-    return;
+    return
   }
-  await proc.undoLast();
-  clear();
+  await proc.undoLast()
+  clear()
 }
 
 /**
  * Compute the inline style for the dropzone element.
  * The border colour changes based on drag-and-drop state.
  */
-export type DropzoneState = 'base' | 'accept' | 'reject';
+export type DropzoneState = 'base' | 'accept' | 'reject'
 
 export function getDropzoneStyle(state: DropzoneState): React.CSSProperties {
-  let borderColor: string = colors['alpha-black-400'];
+  let borderColor: string = colors['alpha-black-400']
   if (state === 'accept') {
-    borderColor = colors['green-700'];
+    borderColor = colors['green-700']
   }
   if (state === 'reject') {
-    borderColor = colors['red-700'];
+    borderColor = colors['red-700']
   }
-  return { ...dropzoneStyles, borderColor };
+  return { ...dropzoneStyles, borderColor }
 }

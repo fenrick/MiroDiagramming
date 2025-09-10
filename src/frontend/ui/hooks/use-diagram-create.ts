@@ -1,8 +1,8 @@
-import React from 'react';
-import { GraphProcessor } from '../../core/graph/graph-processor';
-import { HierarchyProcessor } from '../../core/graph/hierarchy-processor';
-import { ElkAlgorithm, UserLayoutOptions } from '../../core/layout/elk-options';
-import { showError } from './notifications';
+import React from 'react'
+import { GraphProcessor } from '../../core/graph/graph-processor'
+import { HierarchyProcessor } from '../../core/graph/hierarchy-processor'
+import { ElkAlgorithm, UserLayoutOptions } from '../../core/layout/elk-options'
+import { showError } from './notifications'
 
 /** Configuration options controlling diagram creation. */
 
@@ -13,18 +13,18 @@ export type LayoutChoice =
   | 'Nested'
   | 'Radial'
   | 'Box'
-  | 'Rect Packing';
+  | 'Rect Packing'
 
 /** Options controlling how diagrams are created. */
 interface CreateOptions {
-  layoutChoice: LayoutChoice;
-  showAdvanced: boolean;
-  withFrame: boolean;
-  frameTitle: string;
-  layoutOpts: UserLayoutOptions;
-  nestedPadding: number;
-  nestedTopSpacing: number;
-  existingMode: import('../../core/graph/graph-processor').ExistingNodeMode;
+  layoutChoice: LayoutChoice
+  showAdvanced: boolean
+  withFrame: boolean
+  frameTitle: string
+  layoutOpts: UserLayoutOptions
+  nestedPadding: number
+  nestedTopSpacing: number
+  existingMode: import('../../core/graph/graph-processor').ExistingNodeMode
 }
 
 /**
@@ -46,51 +46,51 @@ export function useDiagramCreate(
   setError: React.Dispatch<React.SetStateAction<string | null>>,
   setLastProc: React.Dispatch<GraphProcessor | HierarchyProcessor | undefined>,
 ): () => Promise<void> {
-  const graphProcessor = React.useMemo(() => new GraphProcessor(), []);
-  const hierarchyProcessor = React.useMemo(() => new HierarchyProcessor(), []);
+  const graphProcessor = React.useMemo(() => new GraphProcessor(), [])
+  const hierarchyProcessor = React.useMemo(() => new HierarchyProcessor(), [])
 
   return React.useCallback(async () => {
-    setProgress(0);
-    setError(null);
+    setProgress(0)
+    setError(null)
     for (const file of importQueue) {
       try {
         if (opts.layoutChoice === 'Nested') {
-          setLastProc(hierarchyProcessor);
+          setLastProc(hierarchyProcessor)
           await hierarchyProcessor.processFile(file, {
             createFrame: opts.withFrame,
             frameTitle: opts.frameTitle || undefined,
             padding: opts.nestedPadding,
             topSpacing: opts.nestedTopSpacing,
-          });
+          })
         } else {
-          setLastProc(graphProcessor);
+          setLastProc(graphProcessor)
           const algorithmMap: Record<LayoutChoice, ElkAlgorithm> = {
-            'Layered': 'layered',
-            'Tree': 'mrtree',
-            'Grid': 'force',
-            'Nested': 'rectpacking',
-            'Radial': 'radial',
-            'Box': 'box',
+            Layered: 'layered',
+            Tree: 'mrtree',
+            Grid: 'force',
+            Nested: 'rectpacking',
+            Radial: 'radial',
+            Box: 'box',
             'Rect Packing': 'rectpacking',
-          };
+          }
           const selectedAlg = opts.showAdvanced
             ? opts.layoutOpts.algorithm
-            : algorithmMap[opts.layoutChoice];
+            : algorithmMap[opts.layoutChoice]
           await graphProcessor.processFile(file, {
             createFrame: opts.withFrame,
             frameTitle: opts.frameTitle || undefined,
             layout: { ...opts.layoutOpts, algorithm: selectedAlg },
             existingMode: opts.existingMode,
-          });
+          })
         }
-        setProgress(100);
+        setProgress(100)
       } catch (e) {
-        const msg = String(e);
-        setError(msg);
-        await showError(msg);
+        const msg = String(e)
+        setError(msg)
+        await showError(msg)
       }
     }
-    setImportQueue([]);
+    setImportQueue([])
   }, [
     importQueue,
     opts,
@@ -100,7 +100,7 @@ export function useDiagramCreate(
     setImportQueue,
     setLastProc,
     setProgress,
-  ]);
+  ])
 }
 
 /**
@@ -108,17 +108,15 @@ export function useDiagramCreate(
  *
  * @param setShow - State setter controlling visibility of the panel.
  */
-export function useAdvancedToggle(
-  setShow: React.Dispatch<React.SetStateAction<boolean>>,
-): void {
+export function useAdvancedToggle(setShow: React.Dispatch<React.SetStateAction<boolean>>): void {
   React.useEffect(() => {
     const handler = (e: KeyboardEvent): void => {
       if ((e.metaKey || e.ctrlKey) && e.key === '/') {
-        e.preventDefault();
-        setShow(v => !v);
+        e.preventDefault()
+        setShow((v) => !v)
       }
-    };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
-  }, [setShow]);
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [setShow])
 }

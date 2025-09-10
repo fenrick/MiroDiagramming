@@ -1,15 +1,15 @@
 /** Data describing a Miro shape widget. */
-import { apiFetch } from './api-fetch';
+import { apiFetch } from './api-fetch'
 
 export interface ShapeData {
-  shape: string;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-  rotation?: number;
-  text?: string;
-  style?: Record<string, unknown>;
+  shape: string
+  x: number
+  y: number
+  width: number
+  height: number
+  rotation?: number
+  text?: string
+  style?: Record<string, unknown>
 }
 
 /**
@@ -27,7 +27,7 @@ export class ShapeClient {
   ) {}
 
   private get url(): string {
-    return `${this.baseUrl}/${this.boardId}/shapes`;
+    return `${this.baseUrl}/${this.boardId}/shapes`
   }
 
   /**
@@ -36,11 +36,9 @@ export class ShapeClient {
    * @param shape - Shape definition.
    * @returns The created shape description.
    */
-  public async createShape(
-    shape: ShapeData,
-  ): Promise<Record<string, unknown> | undefined> {
-    const res = await this.createShapes([shape]);
-    return res[0];
+  public async createShape(shape: ShapeData): Promise<Record<string, unknown> | undefined> {
+    const res = await this.createShapes([shape])
+    return res[0]
   }
 
   /**
@@ -49,54 +47,50 @@ export class ShapeClient {
    * @param shapes - Shape definitions to create.
    * @returns Created shape descriptions.
    */
-  public async createShapes(
-    shapes: ShapeData[],
-  ): Promise<Record<string, unknown>[]> {
+  public async createShapes(shapes: ShapeData[]): Promise<Record<string, unknown>[]> {
     if (typeof fetch !== 'function') {
-      return [];
+      return []
     }
-    const key = crypto.randomUUID?.() ?? String(Date.now()) + Math.random();
+    const key = crypto.randomUUID?.() ?? String(Date.now()) + Math.random()
     const res = await apiFetch(this.url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Idempotency-Key': key },
       body: JSON.stringify(shapes),
-    });
-    const data = (await res.json()) as Array<{ body: string }>;
-    return data.map(r => JSON.parse(r.body) as Record<string, unknown>);
+    })
+    const data = (await res.json()) as Array<{ body: string }>
+    return data.map((r) => JSON.parse(r.body) as Record<string, unknown>)
   }
 
   /** Update an existing shape. */
   public async updateShape(id: string, shape: ShapeData): Promise<void> {
     if (typeof fetch !== 'function') {
-      return;
+      return
     }
     await apiFetch(`${this.url}/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(shape),
-    });
+    })
   }
 
   /** Delete a shape widget from the board. */
   public async deleteShape(id: string): Promise<void> {
     if (typeof fetch !== 'function') {
-      return;
+      return
     }
-    await apiFetch(`${this.url}/${id}`, { method: 'DELETE' });
+    await apiFetch(`${this.url}/${id}`, { method: 'DELETE' })
   }
 
   /** Retrieve a shape widget by identifier. */
-  public async getShape(
-    id: string,
-  ): Promise<Record<string, unknown> | undefined> {
+  public async getShape(id: string): Promise<Record<string, unknown> | undefined> {
     if (typeof fetch !== 'function') {
-      return undefined;
+      return undefined
     }
-    const res = await apiFetch(`${this.url}/${id}`);
+    const res = await apiFetch(`${this.url}/${id}`)
     if (!res.ok) {
-      return undefined;
+      return undefined
     }
-    return (await res.json()) as Record<string, unknown>;
+    return (await res.json()) as Record<string, unknown>
   }
 
   /**
@@ -111,7 +105,7 @@ export class ShapeClient {
     idempotencyKey: string,
   ): Promise<{ jobId: string }> {
     if (typeof fetch !== 'function') {
-      return { jobId: '' };
+      return { jobId: '' }
     }
     const res = await apiFetch(`${this.baseUrl}/${this.boardId}/ops`, {
       method: 'POST',
@@ -120,7 +114,7 @@ export class ShapeClient {
         'Idempotency-Key': idempotencyKey,
       },
       body: JSON.stringify(ops),
-    });
-    return (await res.json()) as { jobId: string };
+    })
+    return (await res.json()) as { jobId: string }
   }
 }

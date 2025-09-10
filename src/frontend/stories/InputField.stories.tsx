@@ -1,14 +1,14 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { InputField } from '../ui/components/InputField';
+import type { Meta, StoryObj } from '@storybook/react'
+import { InputField } from '../ui/components/InputField'
 
 const meta: Meta<typeof InputField> = {
   title: 'Components/InputField',
   component: InputField,
-};
-export default meta;
+}
+export default meta
 
-type Story = StoryObj<typeof InputField>;
+type Story = StoryObj<typeof InputField>
 
 export const Default: Story = {
   args: { label: 'Name', placeholder: 'Enter text', onValueChange: () => {} },
-};
+}

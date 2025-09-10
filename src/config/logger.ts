@@ -18,4 +18,3 @@ export function createLogger() {
 }
 
 export type Logger = ReturnType<typeof createLogger>
-

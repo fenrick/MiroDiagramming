@@ -4,9 +4,9 @@ import type {
   ConnectorStyle,
   Group,
   TextAlignVertical,
-} from '@mirohq/websdk-types';
-import type { EdgeData, EdgeHint } from '../core/graph';
-import type { ConnectorTemplate } from './templates';
+} from '@mirohq/websdk-types'
+import type { EdgeData, EdgeHint } from '../core/graph'
+import type { ConnectorTemplate } from './templates'
 
 /**
  * Build caption objects for a connector label.
@@ -20,21 +20,17 @@ import type { ConnectorTemplate } from './templates';
  * @returns The caption array expected by the Miro SDK or `undefined` when
  *   the edge has no label.
  */
-function buildCaptions(
-  edge: EdgeData,
-  template?: ConnectorTemplate,
-): Connector['captions'] {
+function buildCaptions(edge: EdgeData, template?: ConnectorTemplate): Connector['captions'] {
   if (!edge.label) {
-    return undefined;
+    return undefined
   }
   return [
     {
       content: edge.label,
       position: template?.caption?.position,
-      textAlignVertical: template?.caption
-        ?.textAlignVertical as TextAlignVertical,
+      textAlignVertical: template?.caption?.textAlignVertical as TextAlignVertical,
     },
-  ];
+  ]
 }
 
 function mergeStyle(connector: Connector, template?: ConnectorTemplate): void {
@@ -42,9 +38,9 @@ function mergeStyle(connector: Connector, template?: ConnectorTemplate): void {
     connector.style = {
       ...connector.style,
       ...template.style,
-    } as ConnectorStyle;
+    } as ConnectorStyle
   }
-  connector.shape = template?.shape ?? connector.shape;
+  connector.shape = template?.shape ?? connector.shape
 }
 
 function applyHint(connector: Connector, hint?: EdgeHint): void {
@@ -52,13 +48,13 @@ function applyHint(connector: Connector, hint?: EdgeHint): void {
     connector.start = {
       ...(connector.start ?? {}),
       position: hint.startPosition,
-    } as Connector['start'];
+    } as Connector['start']
   }
   if (hint?.endPosition) {
     connector.end = {
       ...(connector.end ?? {}),
       position: hint.endPosition,
-    } as Connector['end'];
+    } as Connector['end']
   }
 }
 
@@ -80,12 +76,12 @@ export function updateConnector(
   template?: ConnectorTemplate,
   hint?: EdgeHint,
 ): void {
-  const captions = buildCaptions(edge, template);
+  const captions = buildCaptions(edge, template)
   if (captions) {
-    connector.captions = captions;
+    connector.captions = captions
   }
-  mergeStyle(connector, template);
-  applyHint(connector, hint);
+  mergeStyle(connector, template)
+  applyHint(connector, hint)
 }
 
 /**
@@ -111,6 +107,6 @@ export async function createConnector(
     shape: template?.shape ?? 'curved',
     captions: buildCaptions(edge, template),
     style: template?.style as ConnectorStyle | undefined,
-  });
-  return connector;
+  })
+  return connector
 }

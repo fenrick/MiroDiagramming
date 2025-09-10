@@ -10,4 +10,3 @@ export const registerLimitsRoutes: FastifyPluginAsync = async (app) => {
     return reply.send({ queue_length, bucket_fill })
   })
 }
-

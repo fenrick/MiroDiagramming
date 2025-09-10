@@ -39,4 +39,3 @@ export function loadEnv(): Env {
 }
 
 export type { Env }
-

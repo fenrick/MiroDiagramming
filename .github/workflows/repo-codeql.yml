@@ -8,7 +8,6 @@ on:
 permissions:
   security-events: write
 
-
 jobs:
   codeql:
     runs-on: ubuntu-latest

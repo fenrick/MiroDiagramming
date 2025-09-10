@@ -1,23 +1,23 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react'
 
-import { apiFetch } from '../utils/api-fetch';
+import { apiFetch } from '../utils/api-fetch'
 
-export type AuthState = 'ok' | 'unauthorized' | 'expired';
+export type AuthState = 'ok' | 'unauthorized' | 'expired'
 
 export interface AuthStatus {
-  status: AuthState;
+  status: AuthState
   /**
    * Execute a job and capture 401 responses to trigger re-authentication.
    */
-  runWithAuth<T>(job: () => Promise<T>): Promise<T | undefined>;
+  runWithAuth<T>(job: () => Promise<T>): Promise<T | undefined>
   /**
    * Redirect the user to begin the OAuth login flow.
    */
-  signIn(): void;
+  signIn(): void
   /**
    * Query the backend for the current authorisation status.
    */
-  check(): Promise<void>;
+  check(): Promise<void>
 }
 
 /**
@@ -25,55 +25,51 @@ export interface AuthStatus {
  * once the session is repaired.
  */
 export function useAuthStatus(): AuthStatus {
-  const [status, setStatus] = useState<AuthState>('ok');
-  const pending = useRef<(() => Promise<unknown>) | null>(null);
+  const [status, setStatus] = useState<AuthState>('ok')
+  const pending = useRef<(() => Promise<unknown>) | null>(null)
 
   const check = useCallback(async () => {
-    const res = await apiFetch('/api/auth/status');
-    setStatus(res.ok ? 'ok' : 'unauthorized');
-  }, []);
+    const res = await apiFetch('/api/auth/status')
+    setStatus(res.ok ? 'ok' : 'unauthorized')
+  }, [])
 
   useEffect(() => {
-    void check();
-  }, [check]);
+    void check()
+  }, [check])
 
   useEffect(() => {
     if (status === 'ok' && pending.current) {
-      void pending.current();
-      pending.current = null;
+      void pending.current()
+      pending.current = null
     }
-  }, [status]);
+  }, [status])
 
-  const runWithAuth = useCallback(
-    async <T,>(job: () => Promise<T>): Promise<T | undefined> => {
-      try {
-        const result = await job();
-        // if job resolves to a Response, check status
-        if (
-          typeof (result as unknown as { status?: number }).status ===
-            'number' &&
-          (result as unknown as { status?: number }).status === 401
-        ) {
-          setStatus('expired');
-          pending.current = job;
-          return undefined;
-        }
-        return result;
-      } catch (err) {
-        if ((err as { status?: number }).status === 401) {
-          setStatus('expired');
-          pending.current = job;
-          return undefined;
-        }
-        throw err;
+  const runWithAuth = useCallback(async <T>(job: () => Promise<T>): Promise<T | undefined> => {
+    try {
+      const result = await job()
+      // if job resolves to a Response, check status
+      if (
+        typeof (result as unknown as { status?: number }).status === 'number' &&
+        (result as unknown as { status?: number }).status === 401
+      ) {
+        setStatus('expired')
+        pending.current = job
+        return undefined
       }
-    },
-    [],
-  );
+      return result
+    } catch (err) {
+      if ((err as { status?: number }).status === 401) {
+        setStatus('expired')
+        pending.current = job
+        return undefined
+      }
+      throw err
+    }
+  }, [])
 
   const signIn = useCallback(() => {
-    window.location.href = '/oauth/login';
-  }, []);
+    window.location.href = '/oauth/login'
+  }, [])
 
-  return { status, runWithAuth, signIn, check };
+  return { status, runWithAuth, signIn, check }
 }

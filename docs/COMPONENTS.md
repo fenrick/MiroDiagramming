@@ -138,7 +138,6 @@ To add an icon use the `icon` prop and optionally `iconPosition='end'`:
 
 ```tsx
 import { IconActivity } from '@mirohq/design-system-icons/react'
-
 ;<Button icon={<IconActivity />}>Activity</Button>
 ```
 
