@@ -10,8 +10,23 @@ export const registerAuthRoutes: FastifyPluginAsync = async (app) => {
     reply.redirect(url)
   })
 
+  // Back-compat aliases expected by the client
+  app.get('/oauth/login', async (_req, reply) => {
+    reply.redirect('/auth/miro/login')
+  })
+
   // OAuth callback
   app.get('/auth/miro/callback', async (req, reply) => {
+    const userId = (req as unknown as { userId?: string }).userId || ''
+    const code = (req.query as Record<string, string> | undefined)?.code
+    if (!code) {
+      return reply.code(400).send({ error: 'Missing code' })
+    }
+    await getMiro().exchangeCodeForAccessToken(userId, code)
+    reply.redirect('/')
+  })
+
+  app.get('/oauth/callback', async (req, reply) => {
     const userId = (req as unknown as { userId?: string }).userId || ''
     const code = (req.query as Record<string, string> | undefined)?.code
     if (!code) {
