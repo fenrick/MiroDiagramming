@@ -22,55 +22,35 @@ This document defines the new end-to-end system design after removing the Python
 ## Repository Layout (Proposed)
 
 ```
-server/                      # Node backend (new)
-  src/
-    app.ts                   # Fastify app bootstrap
-    server.ts                # CLI entry (listen)
-    config/
-      env.ts                 # env var parsing (zod)
-      logger.ts              # pino logger config
-    auth/
-      session.ts             # cookie/session helpers
-      csrf.ts                # CSRF utilities (if needed)
-    miro/
-      miroClient.ts          # wraps `Miro` high-level client
-      tokenStorage.ts        # implements Miro Storage interface using DB
-      webhook.ts             # webhook signature verification helpers
-    routes/
-      auth.routes.ts         # /auth endpoints (login, callback)
-      cards.routes.ts        # /api/cards (queue + worker pipeline)
-      boards.routes.ts       # /api/boards (planned)
-      items.routes.ts        # /api/boards/:id/items (planned)
-      tags.routes.ts         # /api/boards/:id/tags (planned)
-      cache.routes.ts        # /api/cache (if retaining)
-    services/
-      BoardService.ts        # board orchestration (Miro + DB)
-      TagService.ts          # tags orchestration
-      CacheService.ts        # cache logic if retained
-      miroService.ts         # direct Miro REST interactions
-    repositories/
-      BoardRepo.ts           # Prisma access for Board
-      TagRepo.ts             # Prisma access for Tag
-      ShapeRepo.ts           # Prisma access for shapes (if retained)
-      UserTokenRepo.ts       # token persistence
-    middleware/
-      authGuard.ts           # route guards for app auth
-      error.ts               # error → HTTP mapping
-      cors.ts                # CORS config
-    utils/
-      types.ts               # shared DTOs & zod schemas
-      pagination.ts          # helpers for cursor/page
-  prisma/
-    schema.prisma            # Board, Tag, Shape, UserToken etc.
-  tests/
-    unit/
-    integration/
-  package.json
-  tsconfig.json
-  vitest.config.ts (or jest.config.ts)
-
-  web/client/                  # React frontend (dev via Vite, built assets served by server in prod)
-shared/                      # optional shared TS types (if needed)
+src/
+  app.ts                   # Fastify app bootstrap
+  server.ts                # CLI entry (listen)
+  config/
+    env.ts                 # env var parsing (zod)
+    logger.ts              # pino logger config
+    db.ts                  # Prisma client bootstrap
+  miro/
+    miroClient.ts          # wraps `Miro` high-level client
+    tokenStorage.ts        # implements Miro Storage interface using DB
+  routes/
+    auth.routes.ts         # /auth endpoints (login, callback) + /oauth/* aliases
+    cards.routes.ts        # /api/cards (queue + worker pipeline)
+    tags.routes.ts         # /api/boards/:boardId/tags
+    cache.routes.ts        # /api/cache/:boardId
+    limits.routes.ts       # /api/limits
+  services/
+    miroService.ts         # direct Miro REST interactions
+  queue/
+    changeQueue.ts         # in-memory queue + worker
+    types.ts               # task types
+client/                      # React frontend (dev via Vite, built by root scripts)
+prisma/
+  schema.prisma            # Board, Tag, Shape, User, CacheEntry, IdempotencyEntry
+tests/
+  integration/             # server integration tests (Vitest + Supertest)
+package.json
+tsconfig.json
+vitest.config.ts
 ```
 
 ## Environment Configuration
