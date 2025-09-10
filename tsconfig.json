@@ -12,7 +12,7 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "types": ["node"]
+    "types": ["node", "@prisma/client"]
   },
   "include": ["src/**/*", "tests/integration/**/*"],
   "exclude": ["node_modules", "dist", "src/web/**", "src/frontend/**"]
