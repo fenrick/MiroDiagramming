@@ -123,4 +123,6 @@ export async function applyBracketTagsToSelectedStickies(): Promise<void> {
       // Leave the text unchanged when tagging fails
     }
   }
+  // Clear caches so subsequent reads see updated tags/text
+  boardCache.reset()
 }

@@ -14,11 +14,11 @@ Status markers: [Done] applied, [Planned] to do.
    - Why: remove fragile transforms and casts.
    - Acceptance: `z.coerce.number().int().positive().default(3000)` for `PORT`.
 
-3. Centralize Miro env validation [Planned]
+3. Centralize Miro env validation [Done]
    - Why: clear startup fail-fast for missing OAuth env when auth endpoints are used.
    - Acceptance: `getMiro()` calls use `loadEnv()` and throw a descriptive error when required vars are missing.
 
-4. Startup logging and request.userId typing [Planned]
+4. Startup logging and request.userId typing [Done]
    - Why: clearer boot diagnostics; remove repeated casts in routes.
    - Acceptance: log resolved port/env; add Fastify decorator for `request.userId` and update route handler types.
 
@@ -52,7 +52,7 @@ Status markers: [Done] applied, [Planned] to do.
 
 ## 4) Data & Prisma
 
-11. Disconnect Prisma on shutdown [Planned]
+11. Disconnect Prisma on shutdown [Done]
    - Why: avoid dangling connections in dev/tests.
    - Acceptance: `onClose` hook or exported `closePrisma()` used by tests.
 
@@ -98,7 +98,7 @@ Status markers: [Done] applied, [Planned] to do.
    - Why: avoid duplicate tag creation/lookups; faster runs.
    - Acceptance: single pre-scan ensures all tag names; per-sticky only applies IDs; strict text removal on success.
 
-21. Invalidate board cache after mutations [Planned]
+21. Invalidate board cache after mutations [Done]
    - Why: avoid stale reads.
    - Acceptance: call `boardCache.reset()` after mutative actions (e.g., sticky tags, layout, card creation).
 

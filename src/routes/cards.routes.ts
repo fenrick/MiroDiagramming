@@ -17,7 +17,7 @@ const CardCreate = z.object({
 
 export const registerCardsRoutes: FastifyPluginAsync = async (app) => {
   app.post('/api/cards', async (req, reply) => {
-    const userId = (req as unknown as { userId?: string }).userId || ''
+    const userId = req.userId || ''
     const body = req.body
     const parsed = z.array(CardCreate).safeParse(body)
     if (!parsed.success) {

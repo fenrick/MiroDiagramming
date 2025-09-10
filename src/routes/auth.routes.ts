@@ -17,7 +17,7 @@ export const registerAuthRoutes: FastifyPluginAsync = async (app) => {
 
   // OAuth callback
   app.get('/auth/miro/callback', async (req, reply) => {
-    const userId = (req as unknown as { userId?: string }).userId || ''
+    const userId = req.userId || ''
     const code = (req.query as Record<string, string> | undefined)?.code
     if (!code) {
       return reply.code(400).send({ error: 'Missing code' })
@@ -27,7 +27,7 @@ export const registerAuthRoutes: FastifyPluginAsync = async (app) => {
   })
 
   app.get('/oauth/callback', async (req, reply) => {
-    const userId = (req as unknown as { userId?: string }).userId || ''
+    const userId = req.userId || ''
     const code = (req.query as Record<string, string> | undefined)?.code
     if (!code) {
       return reply.code(400).send({ error: 'Missing code' })
@@ -38,7 +38,7 @@ export const registerAuthRoutes: FastifyPluginAsync = async (app) => {
 
   // Simple auth status endpoint for client
   app.get('/api/auth/status', async (req, reply) => {
-    const userId = (req as unknown as { userId?: string }).userId || ''
+    const userId = req.userId || ''
     const authorized = await getMiro().isAuthorized(userId)
     return reply.send({ authorized })
   })

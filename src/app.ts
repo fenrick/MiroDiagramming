@@ -3,7 +3,7 @@ import path from 'node:path'
 import fs from 'node:fs/promises'
 import { randomUUID } from 'node:crypto'
 
-import Fastify, { type FastifyReply, type FastifyRequest } from 'fastify'
+import Fastify from 'fastify'
 import fastifyCookie from '@fastify/cookie'
 import fastifyStatic from '@fastify/static'
 import fastifyCors from '@fastify/cors'
@@ -11,6 +11,7 @@ import fastifyCors from '@fastify/cors'
 import { loadEnv } from './config/env.js'
 import { createLogger } from './config/logger.js'
 import { registerErrorHandler } from './config/error-handler.js'
+import { getPrisma } from './config/db.js'
 import { registerAuthRoutes } from './routes/auth.routes.js'
 import { registerCardsRoutes } from './routes/cards.routes.js'
 import { registerTagsRoutes } from './routes/tags.routes.js'
@@ -30,23 +31,20 @@ export async function buildApp() {
   })
 
   // Simple userId cookie for session affinity (used later for Miro OAuth)
-  app.addHook(
-    'preHandler',
-    async (request: FastifyRequest & { userId?: string }, reply: FastifyReply) => {
-      const cookies = (request as unknown as { cookies?: Record<string, string> }).cookies
-      let userId = cookies?.userId
-      if (!userId) {
-        userId = Math.random().toString(36).slice(2)
-        reply.setCookie('userId', userId, {
-          httpOnly: true,
-          sameSite: 'strict',
-          secure: env.NODE_ENV === 'production',
-          path: '/',
-        })
-      }
-      request.userId = userId
-    },
-  )
+  app.addHook('preHandler', async (request, reply) => {
+    const cookies = (request as unknown as { cookies?: Record<string, string> }).cookies
+    let userId = cookies?.userId
+    if (!userId) {
+      userId = Math.random().toString(36).slice(2)
+      reply.setCookie('userId', userId, {
+        httpOnly: true,
+        sameSite: 'strict',
+        secure: env.NODE_ENV === 'production',
+        path: '/',
+      })
+    }
+    ;(request as unknown as { userId?: string }).userId = userId
+  })
 
   app.get('/healthz', async () => ({ status: 'ok' }))
 
@@ -84,6 +82,15 @@ export async function buildApp() {
       // Ignore if dist path is missing (dev/test mode)
     }
   }
+
+  // Gracefully close Prisma on server shutdown
+  app.addHook('onClose', async () => {
+    try {
+      await getPrisma().$disconnect()
+    } catch {
+      // ignore
+    }
+  })
 
   // In development (but not tests), attach Vite middleware for a single-process dev
   if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {

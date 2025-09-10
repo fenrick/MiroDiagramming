@@ -7,6 +7,7 @@ async function main() {
   const app = await buildApp()
   changeQueue.start()
   await app.listen({ port: env.PORT, host: '0.0.0.0' })
+  app.log.info({ port: env.PORT }, 'Server listening')
 }
 
 main().catch((err) => {

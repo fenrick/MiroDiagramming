@@ -1,5 +1,3 @@
-import fetch from 'node-fetch'
-
 import { getMiro } from '../miro/miroClient.js'
 
 export class MiroService {
