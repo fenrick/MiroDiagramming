@@ -13,6 +13,7 @@ import { registerCardsRoutes } from './routes/cards.routes.js'
 import { registerTagsRoutes } from './routes/tags.routes.js'
 import { registerCacheRoutes } from './routes/cache.routes.js'
 import { registerLimitsRoutes } from './routes/limits.routes.js'
+import { registerWebhookRoutes } from './routes/webhook.routes.js'
 
 export async function buildApp() {
   const env = loadEnv()
@@ -47,6 +48,7 @@ export async function buildApp() {
   await app.register(registerTagsRoutes)
   await app.register(registerCacheRoutes)
   await app.register(registerLimitsRoutes)
+  await app.register(registerWebhookRoutes)
 
   // In production, serve the built frontend from client/dist
   if (process.env.NODE_ENV === 'production') {
