@@ -67,7 +67,7 @@ server/                      # Node backend (new)
   tsconfig.json
   vitest.config.ts (or jest.config.ts)
 
-web/client/                  # React frontend (unchanged initially)
+  web/client/                  # React frontend (dev via Vite, built assets served by server in prod)
 shared/                      # optional shared TS types (if needed)
 ```
 
@@ -226,9 +226,10 @@ We will map SQLAlchemy tables one-to-one and add migrations to preserve data.
 
 ## Local Development
 
-- `npm --prefix server i`
-- `npm --prefix server run dev` (ts-node-dev / nodemon)
-- Frontend continues under `web/client` (unchanged initially)
+- Root `package.json` defines workspaces and unified scripts
+- `npm install` at repo root
+- `npm run dev` runs both server and client (Vite) concurrently
+- In production, server serves `web/client/dist` so only one process is deployed
 - Ensure `MIRO_*` env vars are set; redirect URL points to local server
 
 ## Deployment
@@ -248,4 +249,3 @@ We will map SQLAlchemy tables one-to-one and add migrations to preserve data.
 - Keep cache endpoints or replace with live queries?
 - Choose ORM (Prisma vs Drizzle) – Prisma assumed herein
 - Job queue strategy (BullMQ with Redis if heavier workloads emerge)
-

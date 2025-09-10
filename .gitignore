@@ -30,3 +30,5 @@ legacy/dotnet/**/coverage/
 legacy/dotnet/.vs
 
 __pycache__/
+
+node_modules/
