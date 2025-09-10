@@ -13,21 +13,34 @@ each element can carry metadata that controls its appearance and placement.
 ### Prerequisites
 
 - Node.js 20.x
-- Python 3.11
 
-> The previous .NET implementation lives under `legacy/dotnet/`. See
-> [legacy/dotnet/README.md](legacy/dotnet/README.md) for historical context.
+The previous Python FastAPI backend is deprecated. The app now runs as a single Node.js process that serves both the API and the React frontend.
 
 ### Environment
 
-Copy `web/client/.env.example` to `web/client/.env` and adjust the values as needed. `VITE_PORT` sets the client dev server port, `LOG_LEVEL` controls log verbosity, and `VITE_BACKEND_URL` specifies the backend API (defaults to `http://localhost:8000`).
+Create a `.env` file at the repository root. Minimum:
+
+```
+DATABASE_URL=file:./app.db
+MIRO_CLIENT_ID=your-client-id
+MIRO_CLIENT_SECRET=your-client-secret
+MIRO_REDIRECT_URL=http://localhost:4000/auth/miro/callback
+```
 
 ### Development
 
-Run migrations and start both the FastAPI server and Vite dev server:
+Run a single dev process (Fastify + Vite middleware):
 
 ```bash
-./scripts/dev.sh
+npm install
+npm run dev
+```
+
+Production build and start:
+
+```bash
+npm run build
+npm start
 ```
 
 ## Uploading JSON Content
