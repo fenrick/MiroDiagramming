@@ -7,7 +7,6 @@ from importlib import import_module
 from typing import Any
 
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor  # noqa: F401
-from opentelemetry.instrumentation.sqlalchemy import SQLAlchemyInstrumentor  # noqa: F401
 from opentelemetry.instrumentation.sqlite3 import SQLite3Instrumentor  # noqa: F401
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
@@ -15,7 +14,6 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
 from fastapi import FastAPI
 from opentelemetry import trace
-from ..db.session import engine
 
 _otel_instrumented = False
 

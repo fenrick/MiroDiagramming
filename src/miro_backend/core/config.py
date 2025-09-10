@@ -205,7 +205,7 @@ def load_settings() -> Settings:
 
     try:
         return Settings()  # type: ignore[call-arg]
-    except ValidationError as exc:
+    except ValidationError:
         created = _create_default_config_files()
         if created:
             # Try loading again now that defaults exist; this allows a smooth

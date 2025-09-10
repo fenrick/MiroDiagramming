@@ -60,9 +60,7 @@ class DummyAsyncClient:
     async def request(self, method: str, url: str, **kwargs: Any) -> httpx.Response:
         """Dispatch generic request to verb-specific handlers."""
 
-        func: Callable[..., Awaitable[httpx.Response]] = getattr(
-            self, method.lower()
-        )
+        func: Callable[..., Awaitable[httpx.Response]] = getattr(self, method.lower())
         return await func(url, **kwargs)
 
 
