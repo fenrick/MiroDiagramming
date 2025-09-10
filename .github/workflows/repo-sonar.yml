@@ -22,26 +22,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Set up Node & install front-end deps
+      - name: Set up Node & install deps
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-          cache-dependency-path: web/client/package-lock.json
-      - run: corepack enable && npm ci
-        working-directory: web/client
-      - name: Run node unit tests
-        run: npm run test
-        working-directory: web/client
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - name: Install Python dependencies
-        run: |
-          pip install fastapi "uvicorn[standard]" pydantic sqlalchemy alembic pytest pytest-cov pytest-asyncio httpx
-      - name: Run Python tests
-        run: pytest
+      - run: npm ci
+      - name: Run tests with coverage
+        run: npm run coverage
       - name: SonarCloud Scan
         uses: sonarsource/sonarcloud-github-action@v2
         env:
@@ -51,5 +39,4 @@ jobs:
             -Dsonar.projectKey=fenrick_MiroDiagraming
             -Dsonar.organization=fenrick
             -Dsonar.host.url=https://sonarcloud.io
-            -Dsonar.javascript.lcov.reportPaths=web/client/coverage/lcov.info
-            -Dsonar.python.coverage.reportPaths=coverage.xml
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
