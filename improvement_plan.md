@@ -56,9 +56,10 @@ Status markers: [Done] applied, [Planned] to do.
    - Why: avoid dangling connections in dev/tests.
    - Acceptance: `onClose` hook or exported `closePrisma()` used by tests.
 
-12. Migrations & deployment flow [Planned]
+12. Migrations & deployment flow [Done]
    - Why: safe, repeatable schema changes.
    - Acceptance: add `npm run migrate:deploy`; document running it in CI/prod; stop committing `app.db`.
+   - Notes: `.gitignore` now excludes `*.db`. Removing tracked DB files should be a separate maintenance task.
 
 13. Indices and naming consistency [Planned]
    - Why: performance and readability.
@@ -152,9 +153,13 @@ Status markers: [Done] applied, [Planned] to do.
    - Why: reduce confusion.
    - Acceptance: purge Python-era remnants and stray references from README/DEPLOYMENT.
 
-33. Commit hygiene for DB files [Planned]
+33. Commit hygiene for DB files [Done]
    - Why: avoid shipping dev databases.
    - Acceptance: ensure `.gitignore` covers `*.db`; remove committed `app.db` from repo history in a separate maintenance task if desired.
+
+34. Prisma Client import guidance [Done]
+   - Why: make DB usage patterns explicit and consistent.
+   - Acceptance: README and node-architecture docs include import snippet and migration commands; Pulse tip added.
 
 ---
 

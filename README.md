@@ -425,3 +425,22 @@ the development workflow.
 
 This software is released into the public domain under [The Unlicense](LICENSE).
 See the LICENSE file for details.
+### Database (Prisma)
+
+- Import your Prisma Client in backend code with:
+
+```
+import { PrismaClient } from '@prisma/client'
+const prisma = new PrismaClient()
+```
+
+This repo uses a singleton via `getPrisma()` in `src/config/db.ts`, which internally constructs the client once and reuses it.
+
+- Generate client and apply migrations:
+
+```
+npm run migrate:dev      # development migrations
+npm run migrate:deploy   # deploy existing migrations
+```
+
+Tip: For real-time database updates without polling, see Prisma Pulse: https://pris.ly/tip-0-pulse

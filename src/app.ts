@@ -7,6 +7,7 @@ import Fastify from 'fastify'
 import fastifyCookie from '@fastify/cookie'
 import fastifyStatic from '@fastify/static'
 import fastifyCors from '@fastify/cors'
+import fastifyRawBody from 'fastify-raw-body'
 
 import { loadEnv } from './config/env.js'
 import { createLogger } from './config/logger.js'
@@ -29,6 +30,8 @@ export async function buildApp() {
     origin: env.CORS_ORIGIN ?? false,
     credentials: true,
   })
+  // Register raw-body plugin (disabled by default; enable per-route)
+  await app.register(fastifyRawBody, { field: 'rawBody', global: false, encoding: false, runFirst: true })
 
   // Simple userId cookie for session affinity (used later for Miro OAuth)
   app.addHook('preHandler', async (request, reply) => {

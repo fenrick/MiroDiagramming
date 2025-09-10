@@ -13,14 +13,15 @@ const WebhookEvent = z.object({
 const WebhookPayloadSchema = z.object({ events: z.array(WebhookEvent) })
 
 export const registerWebhookRoutes: FastifyPluginAsync = async (app) => {
-  app.post('/api/webhook', async (req, reply) => {
+  app.post('/api/webhook', { config: { rawBody: true } }, async (req, reply) => {
     const secret = process.env.MIRO_WEBHOOK_SECRET
     const signature = req.headers['x-miro-signature'] as string | undefined
     if (!secret || !signature) {
       return reply.code(401).send({ error: 'Invalid signature' })
     }
     const body = req.body as unknown
-    const raw = JSON.stringify(body)
+    const rawBody = (req as unknown as { rawBody?: Buffer | string }).rawBody
+    const raw = typeof rawBody === 'string' || Buffer.isBuffer(rawBody) ? rawBody : JSON.stringify(body)
     const expected = crypto.createHmac('sha256', secret).update(raw).digest('hex')
     if (expected !== signature) {
       return reply.code(401).send({ error: 'Invalid signature' })

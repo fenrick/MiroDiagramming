@@ -71,6 +71,31 @@ Additional backend env:
 
 Use a schema validator (zod) to fail fast if vars are missing.
 
+## Database Access (Prisma)
+
+Import the generated Prisma Client where you need DB access:
+
+```
+import { PrismaClient } from '@prisma/client'
+const prisma = new PrismaClient()
+```
+
+This project exposes a shared singleton via `getPrisma()` (`src/config/db.ts`), which avoids creating multiple client instances.
+
+Development:
+
+```
+npm run migrate:dev
+```
+
+Deployment:
+
+```
+npm run migrate:deploy
+```
+
+For low-latency change notifications without polling, consider Prisma Pulse: https://pris.ly/tip-0-pulse
+
 ## Miro Node.js API Client Integration
 
 Install:
