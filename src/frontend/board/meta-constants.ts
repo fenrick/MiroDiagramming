@@ -3,4 +3,4 @@
  */
 
 /** Metadata key storing structural graph information. */
-export const STRUCT_GRAPH_KEY = 'app.miro.structgraph';
+export const STRUCT_GRAPH_KEY = 'app.miro.structgraph'

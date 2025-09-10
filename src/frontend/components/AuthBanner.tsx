@@ -1,7 +1,7 @@
-import * as React from 'react';
+import * as React from 'react'
 
-import { Button, Callout } from '@mirohq/design-system';
-import { useAuthStatus } from '../core/hooks/useAuthStatus';
+import { Button, Callout } from '@mirohq/design-system'
+import { useAuthStatus } from '../core/hooks/useAuthStatus'
 
 /**
  * Display an authorisation banner with a sign-in button when the user
@@ -11,16 +11,13 @@ import { useAuthStatus } from '../core/hooks/useAuthStatus';
  * valid session.
  */
 export const AuthBanner: React.FC = () => {
-  const { status, signIn } = useAuthStatus();
+  const { status, signIn } = useAuthStatus()
   if (status === 'ok') {
-    return null;
+    return null
   }
-  const message =
-    status === 'unauthorized' ? 'Sign in to Miro' : 'Session expired';
+  const message = status === 'unauthorized' ? 'Sign in to Miro' : 'Session expired'
   return (
-    <Callout
-      variant='warning'
-      dismissible={false}>
+    <Callout variant="warning" dismissible={false}>
       <Callout.Content>
         <Callout.Description>{message}</Callout.Description>
       </Callout.Content>
@@ -28,7 +25,7 @@ export const AuthBanner: React.FC = () => {
         <Button onClick={signIn}>Sign in to Miro</Button>
       </Callout.Actions>
     </Callout>
-  );
-};
+  )
+}
 
-export default AuthBanner;
+export default AuthBanner

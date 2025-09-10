@@ -1,6 +1,6 @@
-import type { Frame } from '@mirohq/websdk-types';
-import { BoardBuilder } from './board-builder';
-import type { BoardEntity } from './item-types';
+import type { Frame } from '@mirohq/websdk-types'
+import { BoardBuilder } from './board-builder'
+import type { BoardEntity } from './item-types'
 
 /**
  * Create a frame and register it for undo handling.
@@ -21,9 +21,9 @@ export async function registerFrame(
   spot: { x: number; y: number },
   title?: string,
 ): Promise<Frame> {
-  const frame = await builder.createFrame(width, height, spot.x, spot.y, title);
-  registry.push(frame);
-  return frame;
+  const frame = await builder.createFrame(width, height, spot.x, spot.y, title)
+  registry.push(frame)
+  return frame
 }
 
 /**
@@ -32,5 +32,5 @@ export async function registerFrame(
  * @param builder - Board builder instance whose frame is cleared.
  */
 export function clearActiveFrame(builder: BoardBuilder): void {
-  builder.setFrame(undefined);
+  builder.setFrame(undefined)
 }

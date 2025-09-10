@@ -1,18 +1,18 @@
-import React from 'react';
-import { styled } from '@mirohq/design-system';
-import { Button } from './Button';
+import React from 'react'
+import { styled } from '@mirohq/design-system'
+import { Button } from './Button'
 
 export interface ModalProps {
   /** Dialog title displayed in the header. */
-  readonly title: string;
+  readonly title: string
   /** Whether the modal is visible. */
-  readonly isOpen: boolean;
+  readonly isOpen: boolean
   /** Callback when the dialog should close. */
-  readonly onClose: () => void;
+  readonly onClose: () => void
   /** Optional size variant. */
-  readonly size?: 'small' | 'medium';
+  readonly size?: 'small' | 'medium'
   /** Modal content. */
-  readonly children: React.ReactNode;
+  readonly children: React.ReactNode
 }
 
 /**
@@ -28,131 +28,119 @@ export function Modal({
   size = 'medium',
   children,
 }: ModalProps): React.JSX.Element | null {
-  const ref = React.useRef<HTMLDialogElement>(null);
+  const ref = React.useRef<HTMLDialogElement>(null)
 
   React.useEffect(() => {
     if (!isOpen) {
-      return;
+      return
     }
-    const root = ref.current;
+    const root = ref.current
     if (!root) {
-      return;
+      return
     }
     const focusable = root.querySelector<HTMLElement>(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
-    );
-    focusable?.focus();
-  }, [isOpen]);
+    )
+    focusable?.focus()
+  }, [isOpen])
 
   const getFocusables = React.useCallback((): HTMLElement[] => {
     if (!ref.current) {
-      return [];
+      return []
     }
     return Array.from(
       ref.current.querySelectorAll<HTMLElement>(
         'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
       ),
-    );
-  }, []);
+    )
+  }, [])
 
   const trapTab = React.useCallback(
     (e: KeyboardEvent): boolean => {
       if (e.key !== 'Tab') {
-        return false;
+        return false
       }
-      const nodes = getFocusables();
+      const nodes = getFocusables()
       if (nodes.length === 0) {
-        return false;
+        return false
       }
-      const first = nodes[0]!;
-      const last = nodes[nodes.length - 1]!;
-      const active = document.activeElement as HTMLElement;
+      const first = nodes[0]!
+      const last = nodes[nodes.length - 1]!
+      const active = document.activeElement as HTMLElement
       if (e.shiftKey && active === first) {
-        last.focus();
-        return true;
+        last.focus()
+        return true
       }
       if (!e.shiftKey && active === last) {
-        first.focus();
-        return true;
+        first.focus()
+        return true
       }
-      return false;
+      return false
     },
     [getFocusables],
-  );
+  )
 
   React.useEffect(() => {
     if (!isOpen) {
-      return;
+      return
     }
     const handleKey = (e: KeyboardEvent): void => {
       if (e.key === 'Escape') {
-        e.preventDefault();
-        onClose();
+        e.preventDefault()
+        onClose()
       } else if (trapTab(e)) {
-        e.preventDefault();
+        e.preventDefault()
       }
-    };
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
-  }, [isOpen, onClose, trapTab]);
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
+  }, [isOpen, onClose, trapTab])
 
   if (!isOpen) {
-    return null;
+    return null
   }
 
   // Close the modal when the backdrop is activated via mouse or keyboard
   return (
     <Container>
       <Backdrop
-        role='button'
+        role="button"
         tabIndex={0}
-        aria-label='Close modal'
-        data-testid='modal-backdrop'
+        aria-label="Close modal"
+        data-testid="modal-backdrop"
         onClick={(e: React.MouseEvent<HTMLDivElement>) => {
           if (e.target === e.currentTarget) {
-            onClose();
+            onClose()
           }
         }}
         onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
-          if (
-            e.target === e.currentTarget &&
-            (e.key === 'Enter' || e.key === ' ')
-          ) {
-            e.preventDefault();
-            onClose();
+          if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) {
+            e.preventDefault()
+            onClose()
           }
         }}
       />
-      <Dialog
-        role='dialog'
-        open
-        aria-label={title}
-        aria-modal='true'
-        ref={ref}
-        size={size}>
+      <Dialog role="dialog" open aria-label={title} aria-modal="true" ref={ref} size={size}>
         <Header>
           <h3>{title}</h3>
-          <Button
-            variant='secondary'
-            aria-label='Close'
-            onClick={onClose}>
+          <Button variant="secondary" aria-label="Close" onClick={onClose}>
             ×
           </Button>
         </Header>
         <Content>{children}</Content>
       </Dialog>
     </Container>
-  );
+  )
 }
 
-const Container = styled('div', { position: 'fixed', inset: 0, zIndex: 1000 });
+const Container = styled('div', { position: 'fixed', inset: 0, zIndex: 1000 })
 
 const Backdrop = styled('div', {
   position: 'absolute',
   inset: 0,
   background: 'var(--colors-background-alpha-neutrals-overlay-subtle)',
   border: 'none',
-});
+})
 
 const Dialog = styled('dialog', {
   position: 'relative',
@@ -169,13 +157,13 @@ const Dialog = styled('dialog', {
       medium: { width: 'var(--size-modal-medium)' },
     },
   },
-});
+})
 
 const Header = styled('header', {
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
   marginBottom: 'var(--space-small)',
-});
+})
 
-const Content = styled('div', { overflowY: 'auto' });
+const Content = styled('div', { overflowY: 'auto' })

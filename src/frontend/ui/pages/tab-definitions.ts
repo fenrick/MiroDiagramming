@@ -1,4 +1,4 @@
-import type React from 'react';
+import type React from 'react'
 
 export type TabId =
   | 'diagrams'
@@ -10,7 +10,7 @@ export type TabId =
   | 'excel'
   | 'search'
   | 'help'
-  | 'dummy';
+  | 'dummy'
 
 export type TabTuple = readonly [
   order: number,
@@ -18,18 +18,18 @@ export type TabTuple = readonly [
   label: string,
   instructions: string,
   Component: React.FC,
-];
+]
 
 export interface CommandDef {
   /** Unique identifier used for keyboard shortcuts. */
-  id: string;
+  id: string
   /** Visible label for menus. */
-  label: string;
+  label: string
   /** Shortcut string for documentation. */
-  shortcut: string;
+  shortcut: string
 }
 
 /** List of global commands available in the app. */
 export const COMMANDS: CommandDef[] = [
   { id: 'edit-metadata', label: 'Edit Metadata', shortcut: 'Ctrl+Alt+M' },
-];
+]

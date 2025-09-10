@@ -1,15 +1,15 @@
-import { apiFetch } from './core/utils/api-fetch';
-import { error as logError, warning as logWarning } from 'logfire';
+import { apiFetch } from './core/utils/api-fetch'
+import { error as logError, warning as logWarning } from 'logfire'
 
 export interface ClientLogEntry {
-  timestamp: string;
-  level: string;
-  message: string;
-  context?: Record<string, string>;
+  timestamp: string
+  level: string
+  message: string
+  context?: Record<string, string>
 }
 
 export interface LogSink {
-  store(entries: ClientLogEntry[]): Promise<void>;
+  store(entries: ClientLogEntry[]): Promise<void>
 }
 
 /**
@@ -26,21 +26,21 @@ export class HttpLogSink implements LogSink {
    */
   public async store(entries: ClientLogEntry[]): Promise<void> {
     if (process.env.NODE_ENV === 'test' || typeof fetch !== 'function') {
-      return;
+      return
     }
     try {
       const response = await apiFetch(this.url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(entries),
-      });
+      })
       if (!response.ok) {
         logWarning('HttpLogSink received unexpected status', {
           status: response.status,
-        });
+        })
       }
     } catch (error) {
-      logError('HttpLogSink failed to store log entries', { error });
+      logError('HttpLogSink failed to store log entries', { error })
       /* avoid crashing on network errors */
     }
   }

@@ -5,7 +5,10 @@ export interface ChangeTask {
   data: Record<string, unknown>
 }
 
-export function createNodeTask(userId: string, nodeId: string, data: Record<string, unknown>): ChangeTask {
+export function createNodeTask(
+  userId: string,
+  nodeId: string,
+  data: Record<string, unknown>,
+): ChangeTask {
   return { userId, type: 'create_node', nodeId, data }
 }
-

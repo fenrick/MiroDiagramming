@@ -4,11 +4,11 @@
  */
 export interface DiffResult<T> {
   /** Items that do not exist in the original set. */
-  readonly creates: T[];
+  readonly creates: T[]
   /** Items present in both sets but with different content. */
-  readonly updates: T[];
+  readonly updates: T[]
   /** Items from the original set missing in the modified set. */
-  readonly deletes: T[];
+  readonly deletes: T[]
 }
 
 /**
@@ -22,37 +22,33 @@ export function computeDiff<T extends { id?: string }>(
   original: readonly T[],
   modified: readonly T[],
 ): DiffResult<T> {
-  const originalMap = new Map(
-    original.map(item => [item.id ?? crypto.randomUUID(), item]),
-  );
-  const modifiedMap = new Map(
-    modified.map(item => [item.id ?? crypto.randomUUID(), item]),
-  );
+  const originalMap = new Map(original.map((item) => [item.id ?? crypto.randomUUID(), item]))
+  const modifiedMap = new Map(modified.map((item) => [item.id ?? crypto.randomUUID(), item]))
 
-  const creates = modified.filter(item => {
+  const creates = modified.filter((item) => {
     if (!item.id) {
-      return true;
+      return true
     }
-    return !originalMap.has(item.id);
-  });
+    return !originalMap.has(item.id)
+  })
 
-  const deletes = original.filter(item => {
+  const deletes = original.filter((item) => {
     if (!item.id) {
-      return true;
+      return true
     }
-    return !modifiedMap.has(item.id);
-  });
+    return !modifiedMap.has(item.id)
+  })
 
-  const updates = modified.filter(item => {
+  const updates = modified.filter((item) => {
     if (!item.id) {
-      return false;
+      return false
     }
-    const orig = originalMap.get(item.id);
+    const orig = originalMap.get(item.id)
     if (!orig) {
-      return false;
+      return false
     }
-    return JSON.stringify(orig) !== JSON.stringify(item);
-  });
+    return JSON.stringify(orig) !== JSON.stringify(item)
+  })
 
-  return { creates, updates, deletes };
+  return { creates, updates, deletes }
 }

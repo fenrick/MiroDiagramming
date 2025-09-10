@@ -1,20 +1,20 @@
-import { Select as DSSelect } from '@mirohq/design-system';
-import React from 'react';
+import { Select as DSSelect } from '@mirohq/design-system'
+import React from 'react'
 
 export type SelectProps = Readonly<{
   /** Currently selected value. */
-  value?: string;
+  value?: string
   /** Called when the selection changes. */
-  onChange?: (value: string) => void;
+  onChange?: (value: string) => void
   /** Optional placeholder shown when no value selected. */
-  placeholder?: React.ReactNode;
+  placeholder?: React.ReactNode
   /** Whether the control is disabled. */
-  disabled?: boolean;
+  disabled?: boolean
   /** Select size token. Defaults to medium. */
-  size?: 'medium' | 'large' | 'x-large';
+  size?: 'medium' | 'large' | 'x-large'
   /** Additional children, typically `<SelectOption>` elements. */
-  children?: React.ReactNode;
-}>;
+  children?: React.ReactNode
+}>
 
 /**
  * Wrapper around the design-system `Select` component.
@@ -32,30 +32,20 @@ export function Select({
   // className intentionally omitted
 }: SelectProps): React.JSX.Element {
   return (
-    <DSSelect
-      value={value}
-      onValueChange={onChange}
-      disabled={disabled}>
-      <DSSelect.Trigger
-        size={size}
-        aria-label='Select option'>
+    <DSSelect value={value} onValueChange={onChange} disabled={disabled}>
+      <DSSelect.Trigger size={size} aria-label="Select option">
         <DSSelect.Value placeholder={placeholder} />
       </DSSelect.Trigger>
       <DSSelect.Portal>
         <DSSelect.Content>{children}</DSSelect.Content>
       </DSSelect.Portal>
     </DSSelect>
-  );
+  )
 }
 
-export type SelectOptionProps = Readonly<
-  React.ComponentProps<typeof DSSelect.Item>
->;
+export type SelectOptionProps = Readonly<React.ComponentProps<typeof DSSelect.Item>>
 
 /** Option element for `Select`. */
-export function SelectOption({
-  children,
-  ...props
-}: SelectOptionProps): React.JSX.Element {
-  return <DSSelect.Item {...props}>{children}</DSSelect.Item>;
+export function SelectOption({ children, ...props }: SelectOptionProps): React.JSX.Element {
+  return <DSSelect.Item {...props}>{children}</DSSelect.Item>
 }

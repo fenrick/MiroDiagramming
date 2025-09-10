@@ -1,26 +1,26 @@
-import type { ElkNode } from 'elkjs/lib/elk-api';
-import { templateManager } from '../../board/templates';
-import { GraphData } from '../graph';
-import { aspectRatioValue } from '../utils/aspect-ratio';
-import { loadElk } from './elk-loader';
-import { UserLayoutOptions, validateLayoutOptions } from './elk-options';
+import type { ElkNode } from 'elkjs/lib/elk-api'
+import { templateManager } from '../../board/templates'
+import { GraphData } from '../graph'
+import { aspectRatioValue } from '../utils/aspect-ratio'
+import { loadElk } from './elk-loader'
+import { UserLayoutOptions, validateLayoutOptions } from './elk-options'
 
 export interface PositionedNode {
-  id: string;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
+  id: string
+  x: number
+  y: number
+  width: number
+  height: number
 }
 
 export interface PositionedEdge {
-  startPoint: { x: number; y: number };
-  endPoint: { x: number; y: number };
-  bendPoints?: { x: number; y: number }[];
+  startPoint: { x: number; y: number }
+  endPoint: { x: number; y: number }
+  bendPoints?: { x: number; y: number }[]
 }
 
-const DEFAULT_WIDTH = 180;
-const DEFAULT_HEIGHT = 110;
+const DEFAULT_WIDTH = 180
+const DEFAULT_HEIGHT = 110
 
 /**
  * Determine the rendered dimensions for a graph node.
@@ -34,31 +34,23 @@ function resolveDimension(
   defaultValue: number,
 ): number {
   if (typeof metaValue === 'number') {
-    return metaValue;
+    return metaValue
   }
   if (typeof templateValue === 'number') {
-    return templateValue;
+    return templateValue
   }
-  return defaultValue;
+  return defaultValue
 }
 
 export function getNodeDimensions(node: {
-  type: string;
-  metadata?: { width?: number; height?: number };
+  type: string
+  metadata?: { width?: number; height?: number }
 }): { width: number; height: number } {
-  const tpl = templateManager.getTemplate(node.type);
-  const dims = tpl?.elements.find(e => e.width && e.height);
-  const width = resolveDimension(
-    node.metadata?.width,
-    dims?.width,
-    DEFAULT_WIDTH,
-  );
-  const height = resolveDimension(
-    node.metadata?.height,
-    dims?.height,
-    DEFAULT_HEIGHT,
-  );
-  return { width, height };
+  const tpl = templateManager.getTemplate(node.type)
+  const dims = tpl?.elements.find((e) => e.width && e.height)
+  const width = resolveDimension(node.metadata?.width, dims?.width, DEFAULT_WIDTH)
+  const height = resolveDimension(node.metadata?.height, dims?.height, DEFAULT_HEIGHT)
+  return { width, height }
 }
 
 /**
@@ -67,9 +59,7 @@ export function getNodeDimensions(node: {
  * @param opts - Normalised layout options.
  * @returns ELK configuration for {@link performLayout}.
  */
-export function buildElkGraphOptions(
-  opts: UserLayoutOptions,
-): Record<string, string> {
+export function buildElkGraphOptions(opts: UserLayoutOptions): Record<string, string> {
   return {
     'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
     'elk.algorithm': opts.algorithm,
@@ -88,15 +78,14 @@ export function buildElkGraphOptions(
       'elk.mrtree.edgeRoutingMode': opts.edgeRoutingMode,
     }),
     ...(opts.optimizationGoal && {
-      'elk.rectpacking.widthApproximation.optimizationGoal':
-        opts.optimizationGoal,
+      'elk.rectpacking.widthApproximation.optimizationGoal': opts.optimizationGoal,
     }),
-  };
+  }
 }
 
 export interface LayoutResult {
-  nodes: Record<string, PositionedNode>;
-  edges: PositionedEdge[];
+  nodes: Record<string, PositionedNode>
+  edges: PositionedEdge[]
 }
 
 /**
@@ -110,17 +99,17 @@ export async function performLayout(
   data: GraphData,
   opts: Partial<UserLayoutOptions> = {},
 ): Promise<LayoutResult> {
-  const Elk = await loadElk();
-  const elk = new Elk();
-  const userOpts = validateLayoutOptions(opts);
+  const Elk = await loadElk()
+  const elk = new Elk()
+  const userOpts = validateLayoutOptions(opts)
 
-  const elkGraph = buildElkGraph(data, userOpts);
-  const layouted = await elk.layout(elkGraph);
+  const elkGraph = buildElkGraph(data, userOpts)
+  const layouted = await elk.layout(elkGraph)
 
-  const nodes = mapNodes(layouted.children);
-  const edges = mapEdges(layouted.edges);
+  const nodes = mapNodes(layouted.children)
+  const edges = mapEdges(layouted.edges)
 
-  return { nodes, edges };
+  return { nodes, edges }
 }
 
 /**
@@ -130,22 +119,20 @@ function buildElkGraph(data: GraphData, opts: UserLayoutOptions): ElkNode {
   return {
     id: 'root',
     layoutOptions: buildElkGraphOptions(opts),
-    children: data.nodes.map(n => ({ id: n.id, ...getNodeDimensions(n) })),
+    children: data.nodes.map((n) => ({ id: n.id, ...getNodeDimensions(n) })),
     edges: data.edges.map((e, idx) => ({
       id: `e${idx}`,
       sources: [e.from],
       targets: [e.to],
     })),
-  };
+  }
 }
 
 /**
  * Map ELK positioned children back into our node structure.
  */
-function mapNodes(
-  children: ElkNode['children'],
-): Record<string, PositionedNode> {
-  const nodes: Record<string, PositionedNode> = {};
+function mapNodes(children: ElkNode['children']): Record<string, PositionedNode> {
+  const nodes: Record<string, PositionedNode> = {}
   for (const child of children ?? []) {
     nodes[child.id] = {
       id: child.id,
@@ -153,26 +140,26 @@ function mapNodes(
       y: child.y ?? 0,
       width: child.width ?? DEFAULT_WIDTH,
       height: child.height ?? DEFAULT_HEIGHT,
-    };
+    }
   }
-  return nodes;
+  return nodes
 }
 
 /**
  * Map ELK positioned edges back into our edge structure.
  */
 function mapEdges(edges: ElkNode['edges']): PositionedEdge[] {
-  const result: PositionedEdge[] = [];
+  const result: PositionedEdge[] = []
   for (const edge of edges ?? []) {
-    const section = edge.sections?.[0];
+    const section = edge.sections?.[0]
     if (!section) {
-      continue;
+      continue
     }
     result.push({
       startPoint: section.startPoint,
       endPoint: section.endPoint,
       bendPoints: section.bendPoints,
-    });
+    })
   }
-  return result;
+  return result
 }

@@ -1,21 +1,21 @@
-import { GraphData } from '../graph';
-import { UserLayoutOptions } from './elk-options';
-import { LayoutResult, performLayout } from './layout-core';
+import { GraphData } from '../graph'
+import { UserLayoutOptions } from './elk-options'
+import { LayoutResult, performLayout } from './layout-core'
 
 /**
  * LayoutEngine executes ELK layout directly within the main thread.
  */
 export class LayoutEngine {
-  private static instance: LayoutEngine;
+  private static instance: LayoutEngine
 
   private constructor() {}
 
   /** Access the shared layout engine instance. */
   public static getInstance(): LayoutEngine {
     if (!LayoutEngine.instance) {
-      LayoutEngine.instance = new LayoutEngine();
+      LayoutEngine.instance = new LayoutEngine()
     }
-    return LayoutEngine.instance;
+    return LayoutEngine.instance
   }
 
   /**
@@ -25,9 +25,9 @@ export class LayoutEngine {
     data: GraphData,
     opts: Partial<UserLayoutOptions> = {},
   ): Promise<LayoutResult> {
-    return performLayout(data, opts);
+    return performLayout(data, opts)
   }
 }
 
-export const layoutEngine = LayoutEngine.getInstance();
-export type { LayoutResult } from './layout-core';
+export const layoutEngine = LayoutEngine.getInstance()
+export type { LayoutResult } from './layout-core'

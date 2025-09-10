@@ -2,140 +2,123 @@
 
 ### Bug Fixes
 
-* enable soft token-bucket limiter for production queue
+- enable soft token-bucket limiter for production queue
 
 ## [1.18.1](https://github.com/fenrick/MiroDiagramming/compare/v1.18.0...v1.18.1) (2025-07-19)
 
-
 ### Performance Improvements
 
-* update .editorconfig ([2c29034](https://github.com/fenrick/MiroDiagramming/commit/2c290340e336f6295e7f6743f242ebd152313b08))
+- update .editorconfig ([2c29034](https://github.com/fenrick/MiroDiagramming/commit/2c290340e336f6295e7f6743f242ebd152313b08))
 
 # [1.18.0](https://github.com/fenrick/MiroDiagramming/compare/v1.17.0...v1.18.0) (2025-07-02)
 
-
 ### Features
 
-* **ui:** rename create tab to diagrams ([98d607f](https://github.com/fenrick/MiroDiagramming/commit/98d607faf54ba8a1a89696632310927d87a2fddd))
+- **ui:** rename create tab to diagrams ([98d607f](https://github.com/fenrick/MiroDiagramming/commit/98d607faf54ba8a1a89696632310927d87a2fddd))
 
 # [1.17.0](https://github.com/fenrick/MiroDiagramming/compare/v1.16.1...v1.17.0) (2025-07-02)
 
-
 ### Bug Fixes
 
-* form layout ([d085888](https://github.com/fenrick/MiroDiagramming/commit/d0858887c9936a773b76de7459321f7643764df3))
-* husky install deprecated ([0d1cb5e](https://github.com/fenrick/MiroDiagramming/commit/0d1cb5e3496c7e41bca59237d222c5c4c0d4f281))
-* layout corrections ([9c8ffcd](https://github.com/fenrick/MiroDiagramming/commit/9c8ffcd0b1daee0a6fe880bf855eb07d63310e73))
-* **layout:** skip spacer nodes in results ([c9307ac](https://github.com/fenrick/MiroDiagramming/commit/c9307ace285707f5b4d925e8af927fa05faa7dff))
-* move to component ([f8c91fd](https://github.com/fenrick/MiroDiagramming/commit/f8c91fd92022dabd047265de1a9217a0007bc116))
-* rename tab ([4599771](https://github.com/fenrick/MiroDiagramming/commit/459977170324e86fa9626286bb3ef4673908ec53))
-* update package.json ([5d15ce1](https://github.com/fenrick/MiroDiagramming/commit/5d15ce1b7f84a2ab9b9273628eda8ccb72036055))
-
+- form layout ([d085888](https://github.com/fenrick/MiroDiagramming/commit/d0858887c9936a773b76de7459321f7643764df3))
+- husky install deprecated ([0d1cb5e](https://github.com/fenrick/MiroDiagramming/commit/0d1cb5e3496c7e41bca59237d222c5c4c0d4f281))
+- layout corrections ([9c8ffcd](https://github.com/fenrick/MiroDiagramming/commit/9c8ffcd0b1daee0a6fe880bf855eb07d63310e73))
+- **layout:** skip spacer nodes in results ([c9307ac](https://github.com/fenrick/MiroDiagramming/commit/c9307ace285707f5b4d925e8af927fa05faa7dff))
+- move to component ([f8c91fd](https://github.com/fenrick/MiroDiagramming/commit/f8c91fd92022dabd047265de1a9217a0007bc116))
+- rename tab ([4599771](https://github.com/fenrick/MiroDiagramming/commit/459977170324e86fa9626286bb3ef4673908ec53))
+- update package.json ([5d15ce1](https://github.com/fenrick/MiroDiagramming/commit/5d15ce1b7f84a2ab9b9273628eda8ccb72036055))
 
 ### Features
 
-* **build:** add local CI script ([1ad4bd5](https://github.com/fenrick/MiroDiagramming/commit/1ad4bd53e2bf17fc41c7205038c9b46e075cc64e))
-* **layout:** add recursive ELK preprocessor ([0d8c087](https://github.com/fenrick/MiroDiagramming/commit/0d8c0878d1ff74700937ab98629497e793d3e3e9))
-* **layout:** integrate elk preprocessor and options ([bbacd8c](https://github.com/fenrick/MiroDiagramming/commit/bbacd8c5c3c948b33bc4f8c9fdf2e16fa3edaf34))
-* square aspect ratio ([9dc3e78](https://github.com/fenrick/MiroDiagramming/commit/9dc3e78a1114abf8bfe6c1c097e4c9f0e26f5ae9))
-
+- **build:** add local CI script ([1ad4bd5](https://github.com/fenrick/MiroDiagramming/commit/1ad4bd53e2bf17fc41c7205038c9b46e075cc64e))
+- **layout:** add recursive ELK preprocessor ([0d8c087](https://github.com/fenrick/MiroDiagramming/commit/0d8c0878d1ff74700937ab98629497e793d3e3e9))
+- **layout:** integrate elk preprocessor and options ([bbacd8c](https://github.com/fenrick/MiroDiagramming/commit/bbacd8c5c3c948b33bc4f8c9fdf2e16fa3edaf34))
+- square aspect ratio ([9dc3e78](https://github.com/fenrick/MiroDiagramming/commit/9dc3e78a1114abf8bfe6c1c097e4c9f0e26f5ae9))
 
 ### Performance Improvements
 
-* aspect-ratio.ts ([6cab979](https://github.com/fenrick/MiroDiagramming/commit/6cab9798890ed01f16dcad2be27cb3feee557dc4))
-* missed this ([a81ccd3](https://github.com/fenrick/MiroDiagramming/commit/a81ccd361a0e6a7f936fab00dd768a7ae1f2e9d4))
-* prettier ([bf2e29c](https://github.com/fenrick/MiroDiagramming/commit/bf2e29c7f0d7cc88beaa304ca6eec56711f64e96))
-* prettier ([52248cc](https://github.com/fenrick/MiroDiagramming/commit/52248cca7d92fc42b56c4f7864f111c790801f91))
+- aspect-ratio.ts ([6cab979](https://github.com/fenrick/MiroDiagramming/commit/6cab9798890ed01f16dcad2be27cb3feee557dc4))
+- missed this ([a81ccd3](https://github.com/fenrick/MiroDiagramming/commit/a81ccd361a0e6a7f936fab00dd768a7ae1f2e9d4))
+- prettier ([bf2e29c](https://github.com/fenrick/MiroDiagramming/commit/bf2e29c7f0d7cc88beaa304ca6eec56711f64e96))
+- prettier ([52248cc](https://github.com/fenrick/MiroDiagramming/commit/52248cca7d92fc42b56c4f7864f111c790801f91))
 
 ## [1.16.1](https://github.com/fenrick/MiroDiagramming/compare/v1.16.0...v1.16.1) (2025-07-01)
 
-
 ### Performance Improvements
 
-* ci.yml ([ccb7989](https://github.com/fenrick/MiroDiagramming/commit/ccb79893027332673a866ba17debd248867e1c66))
-* update TabGrid.tsx ([a5bb3c1](https://github.com/fenrick/MiroDiagramming/commit/a5bb3c184cee3a73ec17bd62157740e97f00c361))
-* update TabGrid.tsx ([c3f2c25](https://github.com/fenrick/MiroDiagramming/commit/c3f2c2578e5b810fedd97818439605047ae67d2b))
+- ci.yml ([ccb7989](https://github.com/fenrick/MiroDiagramming/commit/ccb79893027332673a866ba17debd248867e1c66))
+- update TabGrid.tsx ([a5bb3c1](https://github.com/fenrick/MiroDiagramming/commit/a5bb3c184cee3a73ec17bd62157740e97f00c361))
+- update TabGrid.tsx ([c3f2c25](https://github.com/fenrick/MiroDiagramming/commit/c3f2c2578e5b810fedd97818439605047ae67d2b))
 
 # [1.16.0](https://github.com/fenrick/MiroDiagramming/compare/v1.15.2...v1.16.0) (2025-07-01)
 
-
 ### Features
 
-* **ui:** expose tab panels with ARIA role ([a90df9f](https://github.com/fenrick/MiroDiagramming/commit/a90df9f871861388e597b866f2961b0ec093fd78))
+- **ui:** expose tab panels with ARIA role ([a90df9f](https://github.com/fenrick/MiroDiagramming/commit/a90df9f871861388e597b866f2961b0ec093fd78))
 
 ## [1.15.2](https://github.com/fenrick/MiroDiagramming/compare/v1.15.1...v1.15.2) (2025-07-01)
 
-
 ### Bug Fixes
 
-* **tests:** remove orig variable and avoid state mocking ([677b809](https://github.com/fenrick/MiroDiagramming/commit/677b8095cdcf8bc362b3b497881fb28e29fc5e6a))
+- **tests:** remove orig variable and avoid state mocking ([677b809](https://github.com/fenrick/MiroDiagramming/commit/677b8095cdcf8bc362b3b497881fb28e29fc5e6a))
 
 ## [1.15.1](https://github.com/fenrick/MiroDiagramming/compare/v1.15.0...v1.15.1) (2025-07-01)
 
-
 ### Bug Fixes
 
-* **ui:** remove redundant dialog role ([5368a22](https://github.com/fenrick/MiroDiagramming/commit/5368a22eeab503e18f39932a03f7295fee8866a9))
+- **ui:** remove redundant dialog role ([5368a22](https://github.com/fenrick/MiroDiagramming/commit/5368a22eeab503e18f39932a03f7295fee8866a9))
 
 # [1.15.0](https://github.com/fenrick/MiroDiagramming/compare/v1.14.0...v1.15.0) (2025-07-01)
 
-
 ### Features
 
-* **ui:** unify tab bar component ([2644b61](https://github.com/fenrick/MiroDiagramming/commit/2644b6111013ecee4dc7daef83086e479c07a833))
+- **ui:** unify tab bar component ([2644b61](https://github.com/fenrick/MiroDiagramming/commit/2644b6111013ecee4dc7daef83086e479c07a833))
 
 # [1.14.0](https://github.com/fenrick/MiroDiagramming/compare/v1.13.0...v1.14.0) (2025-07-01)
 
-
 ### Features
 
-* **ui:** improve tab navigation accessibility ([cf3ef09](https://github.com/fenrick/MiroDiagramming/commit/cf3ef09eda00babc7aec776e1362f87fd8688ca1))
-* **ui:** introduce tools tab with subtabs ([554a4e6](https://github.com/fenrick/MiroDiagramming/commit/554a4e6be579e62b7c07cd68e0e24a2b016bdd0d))
-* **utils:** add color mixing function ([3aa2adc](https://github.com/fenrick/MiroDiagramming/commit/3aa2adc3466cfe7104309966b3a0edcc5c676c8a))
+- **ui:** improve tab navigation accessibility ([cf3ef09](https://github.com/fenrick/MiroDiagramming/commit/cf3ef09eda00babc7aec776e1362f87fd8688ca1))
+- **ui:** introduce tools tab with subtabs ([554a4e6](https://github.com/fenrick/MiroDiagramming/commit/554a4e6be579e62b7c07cd68e0e24a2b016bdd0d))
+- **utils:** add color mixing function ([3aa2adc](https://github.com/fenrick/MiroDiagramming/commit/3aa2adc3466cfe7104309966b3a0edcc5c676c8a))
 
 # [1.13.0](https://github.com/fenrick/MiroDiagramming/compare/v1.12.1...v1.13.0) (2025-07-01)
 
-
 ### Bug Fixes
 
-* **style:** add missing semicolons ([e1ad64b](https://github.com/fenrick/MiroDiagramming/commit/e1ad64b78703a6b5eabd8a07f2cfa0f3acf91711))
-* **ui:** remove metadata casts in row hook ([e41686e](https://github.com/fenrick/MiroDiagramming/commit/e41686e66e1a712e3cc7f85edc318dcda8b3c17f))
-
+- **style:** add missing semicolons ([e1ad64b](https://github.com/fenrick/MiroDiagramming/commit/e1ad64b78703a6b5eabd8a07f2cfa0f3acf91711))
+- **ui:** remove metadata casts in row hook ([e41686e](https://github.com/fenrick/MiroDiagramming/commit/e41686e66e1a712e3cc7f85edc318dcda8b3c17f))
 
 ### Features
 
-* **sync:** type widget extraction ([d567e11](https://github.com/fenrick/MiroDiagramming/commit/d567e11ffac6fca3c80c5b7485537ea21493a087))
-* **ui:** improve modal accessibility ([1fe800a](https://github.com/fenrick/MiroDiagramming/commit/1fe800aeb91a1b3e494fcadb874f7b8f6efb3f3d))
+- **sync:** type widget extraction ([d567e11](https://github.com/fenrick/MiroDiagramming/commit/d567e11ffac6fca3c80c5b7485537ea21493a087))
+- **ui:** improve modal accessibility ([1fe800a](https://github.com/fenrick/MiroDiagramming/commit/1fe800aeb91a1b3e494fcadb874f7b8f6efb3f3d))
 
 ## [1.12.1](https://github.com/fenrick/MiroDiagramming/compare/v1.12.0...v1.12.1) (2025-07-01)
 
-
 ### Bug Fixes
 
-* style issues ([f69acd6](https://github.com/fenrick/MiroDiagramming/commit/f69acd66cecd9f8d5ddc7a4dbf91f6848c4c0291))
-* **style:** add button type to StyleTab ([e078c17](https://github.com/fenrick/MiroDiagramming/commit/e078c17b417749ad32d5f99b2a592df0c71de042))
-* **tabs:** adjust selectors and tests ([4298f65](https://github.com/fenrick/MiroDiagramming/commit/4298f656d518ca7a166a261a7e7f0e1c94f1d2e7))
+- style issues ([f69acd6](https://github.com/fenrick/MiroDiagramming/commit/f69acd66cecd9f8d5ddc7a4dbf91f6848c4c0291))
+- **style:** add button type to StyleTab ([e078c17](https://github.com/fenrick/MiroDiagramming/commit/e078c17b417749ad32d5f99b2a592df0c71de042))
+- **tabs:** adjust selectors and tests ([4298f65](https://github.com/fenrick/MiroDiagramming/commit/4298f656d518ca7a166a261a7e7f0e1c94f1d2e7))
 
 # [1.12.0](https://github.com/fenrick/MiroDiagramming/compare/v1.11.2...v1.12.0) (2025-07-01)
 
-
 ### Features
 
-* **core:** load exceljs from cdn ([6ebfff8](https://github.com/fenrick/MiroDiagramming/commit/6ebfff8a39ff19f9761f78abe66c8a4e17f19080))
+- **core:** load exceljs from cdn ([6ebfff8](https://github.com/fenrick/MiroDiagramming/commit/6ebfff8a39ff19f9761f78abe66c8a4e17f19080))
 
 ## [1.11.2](https://github.com/fenrick/MiroDiagramming/compare/v1.11.1...v1.11.2) (2025-07-01)
 
-
 ### Bug Fixes
 
-* prettier to ignore CHANGELOG.md ([f8aecd2](https://github.com/fenrick/MiroDiagramming/commit/f8aecd2b95f2f4effca80568a9aa4ee9fd427fb0))
+- prettier to ignore CHANGELOG.md ([f8aecd2](https://github.com/fenrick/MiroDiagramming/commit/f8aecd2b95f2f4effca80568a9aa4ee9fd427fb0))
 
 ## [1.11.1](https://github.com/fenrick/MiroDiagramming/compare/v1.11.0...v1.11.1) (2025-06-30)
 
-
 ### Bug Fixes
 
-* **core:** improve excel loader and UI ([758294e](https://github.com/fenrick/MiroDiagramming/commit/758294e9b7ada1479e24b5a2b3b9cf2c91c11b29))
+- **core:** improve excel loader and UI ([758294e](https://github.com/fenrick/MiroDiagramming/commit/758294e9b7ada1479e24b5a2b3b9cf2c91c11b29))
 
 # [1.11.0](https://github.com/fenrick/MiroDiagramming/compare/v1.10.0...v1.11.0) (2025-06-30)
 

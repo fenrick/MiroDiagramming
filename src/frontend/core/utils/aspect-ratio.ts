@@ -8,11 +8,11 @@
 /** Representation of an aspect ratio preset. */
 export interface AspectRatioPreset {
   /** Unique identifier used by the UI. */
-  id: AspectRatioId;
+  id: AspectRatioId
   /** Human-readable label shown in dropdowns. */
-  label: string;
+  label: string
   /** Numeric ratio of width / height. */
-  ratio: number;
+  ratio: number
 }
 
 /** Supported preset identifiers. */
@@ -23,10 +23,10 @@ export type AspectRatioId =
   | '16:10'
   | '4:3'
   | 'A-landscape'
-  | 'A-portrait';
+  | 'A-portrait'
 
 /** Golden ratio constant used by presets. */
-export const GOLDEN_RATIO = (1 + Math.sqrt(5)) / 2;
+export const GOLDEN_RATIO = (1 + Math.sqrt(5)) / 2
 
 /** List of selectable aspect ratios. */
 export const ASPECT_RATIOS: AspectRatioPreset[] = [
@@ -37,12 +37,10 @@ export const ASPECT_RATIOS: AspectRatioPreset[] = [
   { id: '4:3', label: '4:3', ratio: 4 / 3 },
   { id: 'A-landscape', label: 'A Landscape', ratio: Math.SQRT2 },
   { id: 'A-portrait', label: 'A Portrait', ratio: 1 / Math.SQRT2 },
-];
+]
 
 /** List of identifiers for validation. */
-export const ASPECT_RATIO_IDS = ASPECT_RATIOS.map(
-  r => r.id,
-) as readonly AspectRatioId[];
+export const ASPECT_RATIO_IDS = ASPECT_RATIOS.map((r) => r.id) as readonly AspectRatioId[]
 
 /**
  * Retrieve the numeric ratio for a preset identifier.
@@ -51,11 +49,11 @@ export const ASPECT_RATIO_IDS = ASPECT_RATIOS.map(
  * @returns Width divided by height as a number.
  */
 export function aspectRatioValue(id: AspectRatioId): number {
-  const preset = ASPECT_RATIOS.find(p => p.id === id);
+  const preset = ASPECT_RATIOS.find((p) => p.id === id)
   if (!preset) {
-    throw new Error(`Unknown aspect ratio: ${id}`);
+    throw new Error(`Unknown aspect ratio: ${id}`)
   }
-  return preset.ratio;
+  return preset.ratio
 }
 
 /**
@@ -66,5 +64,5 @@ export function aspectRatioValue(id: AspectRatioId): number {
  * @returns Rounded height respecting the ratio.
  */
 export function ratioHeight(width: number, ratio: number): number {
-  return Math.round(width / ratio);
+  return Math.round(width / ratio)
 }

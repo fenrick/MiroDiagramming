@@ -1,5 +1,5 @@
-import type { ExcelRow } from './excel-loader';
-import { loadExcelJS } from './exceljs-loader';
+import type { ExcelRow } from './excel-loader'
+import { loadExcelJS } from './exceljs-loader'
 
 /**
  * Add Miro widget identifiers to the provided rows using the given ID column.
@@ -15,10 +15,10 @@ export function addMiroIds(
   idMap: Record<string, string>,
 ): ExcelRow[] {
   return rows.map((row, index) => {
-    const key = row[idColumn] != null ? String(row[idColumn]) : String(index);
-    const miroId = idMap[key];
-    return miroId ? { ...row, MiroId: miroId } : { ...row };
-  });
+    const key = row[idColumn] != null ? String(row[idColumn]) : String(index)
+    const miroId = idMap[key]
+    return miroId ? { ...row, MiroId: miroId } : { ...row }
+  })
 }
 
 /**
@@ -27,26 +27,23 @@ export function addMiroIds(
  * @param rows - Rows to write into the workbook.
  * @param fileName - Suggested download file name.
  */
-export async function downloadWorkbook(
-  rows: ExcelRow[],
-  fileName: string,
-): Promise<void> {
-  const Excel = await loadExcelJS();
-  const wb = new Excel.Workbook();
-  const ws = wb.addWorksheet('Sheet1');
-  const first = rows[0];
+export async function downloadWorkbook(rows: ExcelRow[], fileName: string): Promise<void> {
+  const Excel = await loadExcelJS()
+  const wb = new Excel.Workbook()
+  const ws = wb.addWorksheet('Sheet1')
+  const first = rows[0]
   if (first) {
-    ws.addRow(Object.keys(first));
+    ws.addRow(Object.keys(first))
   }
-  rows.forEach(r => ws.addRow(Object.values(r)));
-  const data = await wb.xlsx.writeBuffer();
+  rows.forEach((r) => ws.addRow(Object.values(r)))
+  const data = await wb.xlsx.writeBuffer()
   const blob = new Blob([data], {
     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = fileName;
-  link.click();
-  setTimeout(() => URL.revokeObjectURL(url), 100);
+  })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = fileName
+  link.click()
+  setTimeout(() => URL.revokeObjectURL(url), 100)
 }

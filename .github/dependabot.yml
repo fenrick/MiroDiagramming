@@ -5,46 +5,46 @@
 
 version: 2
 updates:
-  - package-ecosystem: "npm"
-    directory: "/fenrick.miro.client"
+  - package-ecosystem: 'npm'
+    directory: '/fenrick.miro.client'
     schedule:
-      interval: "daily"
+      interval: 'daily'
 
-  - package-ecosystem: "npm"
-    directory: "/fenrick.miro.client"
+  - package-ecosystem: 'npm'
+    directory: '/fenrick.miro.client'
     schedule:
-      interval: "daily"
-    target-branch: "develop"
+      interval: 'daily'
+    target-branch: 'develop'
 
-  - package-ecosystem: "nuget"
-    directory: "/"
+  - package-ecosystem: 'nuget'
+    directory: '/'
     schedule:
-      interval: "daily"
+      interval: 'daily'
 
-  - package-ecosystem: "nuget"
-    directory: "/"
+  - package-ecosystem: 'nuget'
+    directory: '/'
     schedule:
-      interval: "daily"
-    target-branch: "develop"
+      interval: 'daily'
+    target-branch: 'develop'
 
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "daily"
+      interval: 'daily'
 
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "daily"
-    target-branch: "develop"
+      interval: 'daily'
+    target-branch: 'develop'
 
-  - package-ecosystem: "docker"
-    directory: "/fenrick.miro.server"
+  - package-ecosystem: 'docker'
+    directory: '/fenrick.miro.server'
     schedule:
-      interval: "daily"
+      interval: 'daily'
 
-  - package-ecosystem: "docker"
-    directory: "/fenrick.miro.server"
+  - package-ecosystem: 'docker'
+    directory: '/fenrick.miro.server'
     schedule:
-      interval: "daily"
-    target-branch: "develop"
+      interval: 'daily'
+    target-branch: 'develop'

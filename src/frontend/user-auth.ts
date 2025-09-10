@@ -7,8 +7,8 @@
  * @property refresh_token - Token used to renew credentials.
  * @property expires_at - Expiration timestamp of the access token.
  */
-import type { UserInfo } from './generated/user-info';
-import { apiFetch } from './core/utils/api-fetch';
+import type { UserInfo } from './generated/user-info'
+import { apiFetch } from './core/utils/api-fetch'
 
 /** HTTP client for sending Miro auth details to the backend. */
 export class AuthClient {
@@ -21,17 +21,17 @@ export class AuthClient {
    */
   public async register(details: UserInfo): Promise<void> {
     if (typeof fetch !== 'function') {
-      return;
+      return
     }
 
     const res = await apiFetch(this.url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(details),
-    });
+    })
 
     if (!res.ok) {
-      throw new Error(`Registration failed with status ${res.status}`);
+      throw new Error(`Registration failed with status ${res.status}`)
     }
   }
 
@@ -41,19 +41,16 @@ export class AuthClient {
    * @param details - User id, name and OAuth tokens.
    * @param attempts - Maximum number of tries.
    */
-  public async registerWithRetry(
-    details: UserInfo,
-    attempts = 3,
-  ): Promise<void> {
+  public async registerWithRetry(details: UserInfo, attempts = 3): Promise<void> {
     for (let i = 0; i < attempts; i += 1) {
       try {
-        await this.register(details);
-        return;
+        await this.register(details)
+        return
       } catch (err) {
         if (i === attempts - 1) {
-          throw err;
+          throw err
         }
-        await new Promise(r => setTimeout(r, 2 ** i * 1000));
+        await new Promise((r) => setTimeout(r, 2 ** i * 1000))
       }
     }
   }
@@ -64,33 +61,29 @@ export class AuthClient {
  *
  * @throws Error when the Miro SDK is unavailable.
  */
-export async function registerWithCurrentUser(
-  client = new AuthClient(),
-): Promise<void> {
+export async function registerWithCurrentUser(client = new AuthClient()): Promise<void> {
   if (
     typeof window === 'undefined' ||
     typeof (window as Window & { miro?: unknown }).miro === 'undefined'
   ) {
     // eslint-disable-next-line no-console
-    console.warn(
-      'Miro SDK not loaded; are you opening index.html outside Miro?',
-    );
-    return;
+    console.warn('Miro SDK not loaded; are you opening index.html outside Miro?')
+    return
   }
   if (!miro.board) {
     // eslint-disable-next-line no-console
-    console.error('Miro board API not available');
-    throw new Error('Miro SDK not available');
+    console.error('Miro board API not available')
+    throw new Error('Miro SDK not available')
   }
-  const token = await miro.board.getIdToken();
-  const user = await miro.board.getUserInfo();
+  const token = await miro.board.getIdToken()
+  const user = await miro.board.getUserInfo()
   await client.registerWithRetry({
     id: String(user.id),
     name: user.name,
     access_token: token,
     refresh_token: '',
     expires_at: new Date().toISOString(),
-  });
+  })
   // TODO: model the full OAuth exchange so tokens can be renewed via the server
   //       when they expire.
 }

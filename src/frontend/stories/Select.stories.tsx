@@ -1,20 +1,20 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Select, SelectOption } from '../ui/components/Select';
+import type { Meta, StoryObj } from '@storybook/react'
+import { Select, SelectOption } from '../ui/components/Select'
 
 const meta: Meta<typeof Select> = {
   title: 'Components/Select',
   component: Select,
-};
-export default meta;
+}
+export default meta
 
-type Story = StoryObj<typeof Select>;
+type Story = StoryObj<typeof Select>
 
 export const Default: Story = {
-  render: args => (
+  render: (args) => (
     <Select {...args}>
-      <SelectOption value='one'>One</SelectOption>
-      <SelectOption value='two'>Two</SelectOption>
+      <SelectOption value="one">One</SelectOption>
+      <SelectOption value="two">Two</SelectOption>
     </Select>
   ),
   args: { placeholder: 'Choose', onChange: () => {} },
-};
+}

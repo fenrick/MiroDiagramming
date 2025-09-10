@@ -1,4 +1,4 @@
-import { styled } from '@mirohq/design-system';
+import { styled } from '@mirohq/design-system'
 
 /**
  * Scrollable list styling for dropped files.
@@ -11,4 +11,4 @@ export const DroppedFileList = styled('ul', {
   overflowY: 'auto',
   fontSize: 'var(--font-200)',
   margin: 0,
-});
+})

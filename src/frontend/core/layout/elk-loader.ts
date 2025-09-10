@@ -1,4 +1,4 @@
-import type ELK from 'elkjs/lib/elk.bundled.js';
+import type ELK from 'elkjs/lib/elk.bundled.js'
 
 /**
  * Dynamically load the ELK layout engine.
@@ -7,29 +7,27 @@ import type ELK from 'elkjs/lib/elk.bundled.js';
  * `node_modules`. Browsers fetch the library from the jsDelivr CDN to
  * avoid bundling it with the application.
  */
-let elkPromise: Promise<typeof ELK> | null = null;
+let elkPromise: Promise<typeof ELK> | null = null
 
 /**
  * Retrieve the ELK constructor. Subsequent calls return the cached value.
  */
 export async function loadElk(): Promise<typeof ELK> {
   if (elkPromise) {
-    return elkPromise;
+    return elkPromise
   }
 
-  const isNode =
-    typeof process !== 'undefined' && process.release?.name === 'node';
+  const isNode = typeof process !== 'undefined' && process.release?.name === 'node'
 
-  const dynamic = (p: string) => import(/* @vite-ignore */ p);
+  const dynamic = (p: string) => import(/* @vite-ignore */ p)
 
   elkPromise = isNode
-    ? dynamic('elkjs/lib/elk.bundled.js').then(m => m.default)
+    ? dynamic('elkjs/lib/elk.bundled.js').then((m) => m.default)
     : (async () => {
-        const url =
-          'https://cdn.jsdelivr.net/npm/elkjs@0.10.0/lib/elk.bundled.js';
-        const mod = (await dynamic(url)) as { default?: typeof ELK };
-        return mod.default ?? (window as unknown as { ELK: typeof ELK }).ELK;
-      })();
+        const url = 'https://cdn.jsdelivr.net/npm/elkjs@0.10.0/lib/elk.bundled.js'
+        const mod = (await dynamic(url)) as { default?: typeof ELK }
+        return mod.default ?? (window as unknown as { ELK: typeof ELK }).ELK
+      })()
 
-  return elkPromise;
+  return elkPromise
 }

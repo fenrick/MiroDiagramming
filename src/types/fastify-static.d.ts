@@ -1,1 +1,1 @@
-declare module '@fastify/static';
+declare module '@fastify/static'

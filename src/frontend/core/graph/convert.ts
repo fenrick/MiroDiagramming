@@ -1,5 +1,5 @@
-import { HierNode } from '../layout/nested-layout';
-import { EdgeData, GraphData, NodeData } from './graph-service';
+import { HierNode } from '../layout/nested-layout'
+import { EdgeData, GraphData, NodeData } from './graph-service'
 
 /**
  * Transform a flat edge list into a nested hierarchy structure.
@@ -8,29 +8,27 @@ import { EdgeData, GraphData, NodeData } from './graph-service';
  * @returns An array of root hierarchy nodes with nested children.
  */
 export function edgesToHierarchy(graph: GraphData): HierNode[] {
-  const nodeMap = new Map(graph.nodes.map(n => [n.id, n]));
-  const children: Record<string, string[]> = {};
-  const childSet = new Set<string>();
+  const nodeMap = new Map(graph.nodes.map((n) => [n.id, n]))
+  const children: Record<string, string[]> = {}
+  const childSet = new Set<string>()
   for (const edge of graph.edges) {
-    const list = children[edge.from] ?? (children[edge.from] = []);
-    list.push(edge.to);
-    childSet.add(edge.to);
+    const list = children[edge.from] ?? (children[edge.from] = [])
+    list.push(edge.to)
+    childSet.add(edge.to)
   }
   const build = (id: string): HierNode => {
-    const n = nodeMap.get(id) as NodeData;
-    const kids = children[id]?.map(build);
+    const n = nodeMap.get(id) as NodeData
+    const kids = children[id]?.map(build)
     return {
       id: n.id,
       label: n.label,
       type: n.type,
       metadata: n.metadata,
       ...(kids?.length ? { children: kids } : {}),
-    } as HierNode;
-  };
-  const roots = graph.nodes
-    .filter(n => !childSet.has(n.id))
-    .map(n => build(n.id));
-  return roots;
+    } as HierNode
+  }
+  const roots = graph.nodes.filter((n) => !childSet.has(n.id)).map((n) => build(n.id))
+  return roots
 }
 
 /**
@@ -40,22 +38,22 @@ export function edgesToHierarchy(graph: GraphData): HierNode[] {
  * @returns The equivalent flat graph data.
  */
 export function hierarchyToEdges(roots: HierNode[]): GraphData {
-  const nodes: NodeData[] = [];
-  const edges: EdgeData[] = [];
+  const nodes: NodeData[] = []
+  const edges: EdgeData[] = []
   const visit = (node: HierNode): void => {
     nodes.push({
       id: node.id,
       label: node.label,
       type: node.type,
       metadata: node.metadata,
-    });
+    })
     for (const child of node.children ?? []) {
-      edges.push({ from: node.id, to: child.id });
-      visit(child);
+      edges.push({ from: node.id, to: child.id })
+      visit(child)
     }
-  };
-  for (const root of roots) {
-    visit(root);
   }
-  return { nodes, edges };
+  for (const root of roots) {
+    visit(root)
+  }
+  return { nodes, edges }
 }

@@ -1,19 +1,12 @@
-import { Flex, styled, Switch as DSSwitch } from '@mirohq/design-system';
-import React from 'react';
+import { Flex, styled, Switch as DSSwitch } from '@mirohq/design-system'
+import React from 'react'
 
 export type CheckboxProps = Readonly<
   Omit<
     React.ComponentProps<typeof DSSwitch>,
-    | 'checked'
-    | 'onChecked'
-    | 'onUnchecked'
-    | 'style'
-    | 'className'
-    | 'onChange'
-    | 'value'
-    | 'type'
+    'checked' | 'onChecked' | 'onUnchecked' | 'style' | 'className' | 'onChange' | 'value' | 'type'
   > & { label?: string; value?: boolean; onChange?: (value: boolean) => void }
->;
+>
 
 /**
  * Checkbox wrapper implemented using the design-system `Switch` component.
@@ -22,7 +15,7 @@ export type CheckboxProps = Readonly<
 const StyledGroup = styled(Flex, {
   marginBottom: 'var(--space-200)',
   position: 'relative',
-});
+})
 
 export function Checkbox({
   label,
@@ -31,10 +24,10 @@ export function Checkbox({
   id,
   ...props
 }: CheckboxProps): React.JSX.Element {
-  const handleChange = (checked: boolean): void => onChange?.(checked);
-  const generatedId = React.useId();
-  const inputId = id ?? generatedId;
-  const labelId = `${inputId}-label`;
+  const handleChange = (checked: boolean): void => onChange?.(checked)
+  const generatedId = React.useId()
+  const inputId = id ?? generatedId
+  const labelId = `${inputId}-label`
 
   return (
     <StyledGroup gap={200}>
@@ -46,11 +39,9 @@ export function Checkbox({
         aria-labelledby={labelId}
         {...props}
       />
-      <label
-        id={labelId}
-        htmlFor={inputId}>
+      <label id={labelId} htmlFor={inputId}>
         {label}
       </label>
     </StyledGroup>
-  );
+  )
 }

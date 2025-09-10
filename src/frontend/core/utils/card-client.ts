@@ -1,5 +1,5 @@
-import { apiFetch } from './api-fetch';
-import type { CardData } from './cards';
+import { apiFetch } from './api-fetch'
+import type { CardData } from './cards'
 
 /** HTTP client for the cards API. */
 export class CardClient {
@@ -7,7 +7,7 @@ export class CardClient {
 
   /** Create a single card. */
   public async createCard(card: CardData): Promise<void> {
-    await this.createCards([card]);
+    await this.createCards([card])
   }
 
   /**
@@ -16,13 +16,13 @@ export class CardClient {
    */
   public async createCards(cards: CardData[]): Promise<void> {
     if (typeof fetch !== 'function') {
-      return;
+      return
     }
-    const key = crypto.randomUUID?.() ?? String(Date.now()) + Math.random();
+    const key = crypto.randomUUID?.() ?? String(Date.now()) + Math.random()
     await apiFetch(this.url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Idempotency-Key': key },
       body: JSON.stringify(cards),
-    });
+    })
   }
 }

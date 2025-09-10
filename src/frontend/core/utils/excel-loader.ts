@@ -1,11 +1,11 @@
-import type ExcelJS from 'exceljs';
-import { loadExcelJS } from './exceljs-loader';
-import { fileUtils } from './file-utils';
-import { GraphClient, graphClient } from './graph-client';
+import type ExcelJS from 'exceljs'
+import { loadExcelJS } from './exceljs-loader'
+import { fileUtils } from './file-utils'
+import { GraphClient, graphClient } from './graph-client'
 
 /** Row object produced from a worksheet. */
 export interface ExcelRow {
-  [key: string]: unknown;
+  [key: string]: unknown
 }
 
 /**
@@ -15,14 +15,14 @@ export interface ExcelRow {
  * Rows are returned as objects keyed by column headers.
  */
 export class ExcelLoader {
-  private workbook: ExcelJS.Workbook | null = null;
+  private workbook: ExcelJS.Workbook | null = null
 
   /** Parse a workbook from raw array buffer data. */
   public async loadArrayBuffer(buffer: ArrayBuffer): Promise<void> {
-    const Excel = await loadExcelJS();
-    const wb = new Excel.Workbook();
-    await wb.xlsx.load(buffer);
-    this.workbook = wb;
+    const Excel = await loadExcelJS()
+    const wb = new Excel.Workbook()
+    await wb.xlsx.load(buffer)
+    this.workbook = wb
   }
 
   /**
@@ -31,19 +31,19 @@ export class ExcelLoader {
    * @param file - Excel file to parse.
    */
   public async loadWorkbook(file: File): Promise<void> {
-    fileUtils.validateFile(file);
-    const buffer = await file.arrayBuffer();
-    await this.loadArrayBuffer(buffer);
+    fileUtils.validateFile(file)
+    const buffer = await file.arrayBuffer()
+    await this.loadArrayBuffer(buffer)
   }
 
   /** List worksheet names from the current workbook. */
   public listSheets(): string[] {
-    return this.workbook ? this.workbook.worksheets.map(ws => ws.name) : [];
+    return this.workbook ? this.workbook.worksheets.map((ws) => ws.name) : []
   }
 
   /** List named table ranges from the current workbook. */
   public listNamedTables(): string[] {
-    return this.workbook?.definedNames.model.map(n => n.name) ?? [];
+    return this.workbook?.definedNames.model.map((n) => n.name) ?? []
   }
 
   /**
@@ -53,8 +53,8 @@ export class ExcelLoader {
    * @returns Array of row objects keyed by column headers.
    */
   public loadSheet(name: string): ExcelRow[] {
-    const ws = this.getSheet(name);
-    return this.extractRows(ws);
+    const ws = this.getSheet(name)
+    return this.extractRows(ws)
   }
 
   /**
@@ -65,49 +65,49 @@ export class ExcelLoader {
    */
   public loadNamedTable(name: string): ExcelRow[] {
     if (!this.workbook) {
-      throw new Error('Workbook not loaded');
+      throw new Error('Workbook not loaded')
     }
-    const entry = this.workbook.definedNames.getRanges(name);
-    const ref = entry.ranges[0];
+    const entry = this.workbook.definedNames.getRanges(name)
+    const ref = entry.ranges[0]
     if (!ref) {
-      throw new Error(`Unknown table: ${name}`);
+      throw new Error(`Unknown table: ${name}`)
     }
-    const [sheetName, range] = ref.replace(/'/g, '').split('!');
-    const ws = this.workbook.getWorksheet(sheetName);
+    const [sheetName, range] = ref.replace(/'/g, '').split('!')
+    const ws = this.workbook.getWorksheet(sheetName)
     if (!ws) {
-      throw new Error(`Missing sheet for table: ${name}`);
+      throw new Error(`Missing sheet for table: ${name}`)
     }
-    return this.extractRows(ws, range);
+    return this.extractRows(ws, range)
   }
 
   /** Retrieve a worksheet object, throwing on missing sheet. */
   private getSheet(name: string): ExcelJS.Worksheet {
     if (!this.workbook) {
-      throw new Error('Workbook not loaded');
+      throw new Error('Workbook not loaded')
     }
-    const ws = this.workbook.getWorksheet(name);
+    const ws = this.workbook.getWorksheet(name)
     if (!ws) {
-      throw new Error(`Unknown sheet: ${name}`);
+      throw new Error(`Unknown sheet: ${name}`)
     }
-    return ws;
+    return ws
   }
 
   private extractRows(ws: ExcelJS.Worksheet, range?: string): ExcelRow[] {
-    const { start, end } = this.parseRange(range, ws);
-    const headers = [] as string[];
+    const { start, end } = this.parseRange(range, ws)
+    const headers = [] as string[]
     for (let c = start.col; c <= end.col; c++) {
-      headers.push(String(ws.getRow(start.row).getCell(c).value ?? ''));
+      headers.push(String(ws.getRow(start.row).getCell(c).value ?? ''))
     }
-    const rows: ExcelRow[] = [];
+    const rows: ExcelRow[] = []
     for (let r = start.row + 1; r <= end.row; r++) {
-      const row: ExcelRow = {};
+      const row: ExcelRow = {}
       for (let c = start.col; c <= end.col; c++) {
-        const header = headers[c - start.col]!;
-        row[header] = ws.getRow(r).getCell(c).value ?? null;
+        const header = headers[c - start.col]!
+        row[header] = ws.getRow(r).getCell(c).value ?? null
       }
-      rows.push(row);
+      rows.push(row)
     }
-    return rows;
+    return rows
   }
 
   /**
@@ -121,46 +121,46 @@ export class ExcelLoader {
     ref: string | undefined,
     ws: ExcelJS.Worksheet,
   ): {
-    start: { row: number; col: number };
-    end: { row: number; col: number };
+    start: { row: number; col: number }
+    end: { row: number; col: number }
   } {
     if (!ref) {
       return {
         start: { row: 1, col: 1 },
         end: { row: ws.rowCount, col: ws.columnCount },
-      };
+      }
     }
-    const clean = ref.replace(/\$/g, '');
-    const rangeRegex = /([A-Z]+)(\d+):([A-Z]+)(\d+)/i;
-    const match = rangeRegex.exec(clean);
+    const clean = ref.replace(/\$/g, '')
+    const rangeRegex = /([A-Z]+)(\d+):([A-Z]+)(\d+)/i
+    const match = rangeRegex.exec(clean)
     if (!match) {
-      throw new Error(`Invalid range: ${ref}`);
+      throw new Error(`Invalid range: ${ref}`)
     }
-    const [, sCol, sRow, eCol, eRow] = match;
+    const [, sCol, sRow, eCol, eRow] = match
     if (!sCol || !sRow || !eCol || !eRow) {
-      throw new Error(`Invalid range: ${ref}`);
+      throw new Error(`Invalid range: ${ref}`)
     }
     const colNum = (col: string) =>
       col
         .toUpperCase()
         .split('')
-        .reduce((n, ch) => n * 26 + ch.charCodeAt(0) - 64, 0);
+        .reduce((n, ch) => n * 26 + ch.charCodeAt(0) - 64, 0)
     return {
       start: { row: Number(sRow), col: colNum(sCol) },
       end: { row: Number(eRow), col: colNum(eCol) },
-    };
+    }
   }
 }
 
 /** Shared instance to avoid repetitive class creation. */
-export const excelLoader = new ExcelLoader();
+export const excelLoader = new ExcelLoader()
 
 /**
  * Excel loader capable of fetching workbooks from OneDrive or SharePoint.
  */
 export class GraphExcelLoader extends ExcelLoader {
   constructor(private readonly client: GraphClient = graphClient) {
-    super();
+    super()
   }
 
   /**
@@ -169,10 +169,10 @@ export class GraphExcelLoader extends ExcelLoader {
    * @param identifier - File share URL or drive item ID.
    */
   public async loadWorkbookFromGraph(identifier: string): Promise<void> {
-    const buffer = await this.client.fetchFile(identifier);
-    await this.loadArrayBuffer(buffer);
+    const buffer = await this.client.fetchFile(identifier)
+    await this.loadArrayBuffer(buffer)
   }
 }
 
 /** Shared instance for Graph-based loading. */
-export const graphExcelLoader = new GraphExcelLoader();
+export const graphExcelLoader = new GraphExcelLoader()

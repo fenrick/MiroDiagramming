@@ -1,8 +1,8 @@
-import type { TabId, TabTuple } from './tab-definitions';
+import type { TabId, TabTuple } from './tab-definitions'
 
 const modules = import.meta.glob<{ tabDef: TabTuple }>('./*Tab.tsx', {
   eager: true,
-});
+})
 
 /**
  * Auto registers all sidebar tabs. Dummy tab appears only in test mode to
@@ -10,14 +10,13 @@ const modules = import.meta.glob<{ tabDef: TabTuple }>('./*Tab.tsx', {
  */
 export const TAB_DATA: TabTuple[] = Object.values(modules)
   .filter((m): m is { tabDef: TabTuple } => 'tabDef' in m)
-  .map(m => m.tabDef)
-  .filter(t =>
+  .map((m) => m.tabDef)
+  .filter((t) =>
     process.env.NODE_ENV === 'test'
       ? true
-      : t[1] !== 'dummy' &&
-        !['size', 'style', 'arrange', 'frames'].includes(t[1]),
+      : t[1] !== 'dummy' && !['size', 'style', 'arrange', 'frames'].includes(t[1]),
   )
-  .sort((a, b) => a[0] - b[0]);
+  .sort((a, b) => a[0] - b[0])
 
-export type Tab = TabId;
-export type { TabTuple } from './tab-definitions';
+export type Tab = TabId
+export type { TabTuple } from './tab-definitions'

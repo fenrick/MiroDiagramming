@@ -1,7 +1,7 @@
-import type { Decorator, Preview } from '@storybook/react';
-import '@mirohq/design-system-themes/base.css';
-import '@mirohq/design-system-themes/light.css';
-import '../src/assets/style.css';
+import type { Decorator, Preview } from '@storybook/react'
+import '@mirohq/design-system-themes/base.css'
+import '@mirohq/design-system-themes/light.css'
+import '../src/assets/style.css'
 
 /**
  * Custom viewport definitions for Storybook. Miro restricts embedded
@@ -14,27 +14,24 @@ export const miroViewports = {
     styles: { width: '368px', height: '100%' },
     type: 'mobile',
   },
-} as const;
+} as const
 
-const darkHref = new URL(
-  '@mirohq/design-system-themes/dark.css',
-  import.meta.url,
-).toString();
-const darkLink = document.createElement('link');
-darkLink.rel = 'stylesheet';
-darkLink.href = darkHref;
+const darkHref = new URL('@mirohq/design-system-themes/dark.css', import.meta.url).toString()
+const darkLink = document.createElement('link')
+darkLink.rel = 'stylesheet'
+darkLink.href = darkHref
 
 const withTheme: Decorator = (Story, context) => {
-  const { theme } = context.globals;
+  const { theme } = context.globals
   if (theme === 'dark') {
     if (!document.head.querySelector(`link[href="${darkHref}"]`)) {
-      document.head.appendChild(darkLink);
+      document.head.appendChild(darkLink)
     }
   } else {
-    document.head.querySelector(`link[href="${darkHref}"]`)?.remove();
+    document.head.querySelector(`link[href="${darkHref}"]`)?.remove()
   }
-  return Story(context);
-};
+  return Story(context)
+}
 
 const preview: Preview = {
   decorators: [withTheme],
@@ -57,6 +54,6 @@ const preview: Preview = {
       },
     },
   },
-};
+}
 
-export default preview;
+export default preview

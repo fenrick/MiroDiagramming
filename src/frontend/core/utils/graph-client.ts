@@ -1,5 +1,5 @@
-import { encodeBase64 } from './base64';
-import { GraphAuth, graphAuth } from './graph-auth';
+import { encodeBase64 } from './base64'
+import { GraphAuth, graphAuth } from './graph-auth'
 
 /**
  * Fetch files from Microsoft Graph using an OAuth access token.
@@ -14,22 +14,22 @@ export class GraphClient {
    * @returns Raw file contents.
    */
   public async fetchFile(identifier: string): Promise<ArrayBuffer> {
-    const token = this.auth.getToken();
+    const token = this.auth.getToken()
     if (!token) {
-      throw new Error('Graph token unavailable');
+      throw new Error('Graph token unavailable')
     }
-    const root = 'https://graph.microsoft.com/v1.0';
+    const root = 'https://graph.microsoft.com/v1.0'
     const url = identifier.startsWith('http')
       ? `${root}/shares/u!${encodeBase64(identifier)}/driveItem/content`
-      : `${root}/me/drive/items/${identifier}/content`;
+      : `${root}/me/drive/items/${identifier}/content`
     const res = await fetch(url, {
       headers: { Authorization: `Bearer ${token}` },
-    });
+    })
     if (!res.ok) {
-      throw new Error('Failed to fetch workbook');
+      throw new Error('Failed to fetch workbook')
     }
-    return res.arrayBuffer();
+    return res.arrayBuffer()
   }
 }
 
-export const graphClient = new GraphClient();
+export const graphClient = new GraphClient()

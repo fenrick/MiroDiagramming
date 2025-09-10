@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 
 /**
  * Provides a vertically scrollable region sized for panel layouts.
@@ -9,14 +9,6 @@ import React from 'react';
  * @param children Elements to render inside the scroll area.
  * @returns A flex container that scrolls its children vertically.
  */
-export function ScrollArea({
-  children,
-}: {
-  children: React.ReactNode;
-}): React.JSX.Element {
-  return (
-    <div style={{ flex: 1, overflowY: 'auto', padding: 'var(--space-200)' }}>
-      {children}
-    </div>
-  );
+export function ScrollArea({ children }: { children: React.ReactNode }): React.JSX.Element {
+  return <div style={{ flex: 1, overflowY: 'auto', padding: 'var(--space-200)' }}>{children}</div>
 }

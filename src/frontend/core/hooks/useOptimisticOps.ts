@@ -1,5 +1,5 @@
-import React from 'react';
-import { pushToast } from '../../ui/components/Toast';
+import React from 'react'
+import { pushToast } from '../../ui/components/Toast'
 
 /**
  * Definition of an optimistic operation applied to the board.
@@ -10,19 +10,19 @@ import { pushToast } from '../../ui/components/Toast';
  */
 export interface OptimisticOp {
   /** Apply the change locally. */
-  apply: () => void;
+  apply: () => void
   /** Persist the change to the server or board. */
-  commit: () => Promise<void>;
+  commit: () => Promise<void>
   /** Revert the local change if committing fails. */
-  rollback: () => void | Promise<void>;
+  rollback: () => void | Promise<void>
   /** Optional thumbnail used in failure toasts. */
-  thumbnailUrl?: string;
+  thumbnailUrl?: string
 }
 
 const wait = (ms: number): Promise<void> =>
-  new Promise(resolve => {
-    setTimeout(resolve, ms);
-  });
+  new Promise((resolve) => {
+    setTimeout(resolve, ms)
+  })
 
 /**
  * React hook executing operations optimistically with automatic rollback on
@@ -33,24 +33,24 @@ const wait = (ms: number): Promise<void> =>
  */
 export function useOptimisticOps(): (op: OptimisticOp) => Promise<void> {
   const enqueue = React.useCallback(async (op: OptimisticOp): Promise<void> => {
-    op.apply();
+    op.apply()
     try {
-      await op.commit();
+      await op.commit()
     } catch {
-      await wait(150);
-      await op.rollback();
+      await wait(150)
+      await op.rollback()
       pushToast({
         message: 'Operation failed',
         thumbnailUrl: op.thumbnailUrl,
         action: {
           label: 'Try again',
           callback: () => {
-            void enqueue(op);
+            void enqueue(op)
           },
         },
-      });
+      })
     }
-  }, []);
+  }, [])
 
-  return enqueue;
+  return enqueue
 }

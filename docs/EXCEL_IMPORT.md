@@ -35,18 +35,16 @@ to acquire an access token. Once authorised you can pass either a share link or
 a drive item ID to `loadWorkbookFromGraph`:
 
 ```ts
-import { graphExcelLoader } from '../core/utils/excel-loader';
-import { graphAuth } from '../core/utils/graph-auth';
+import { graphExcelLoader } from '../core/utils/excel-loader'
+import { graphAuth } from '../core/utils/graph-auth'
 
 // handleRedirect() validates the stored OAuth state
-graphAuth.handleRedirect();
+graphAuth.handleRedirect()
 if (!graphAuth.getToken()) {
-  // login() generates an OAuth state value for security
-  graphAuth.login('<client id>', ['Files.Read'], window.location.href);
+    // login() generates an OAuth state value for security
+    graphAuth.login('<client id>', ['Files.Read'], window.location.href)
 }
-await graphExcelLoader.loadWorkbookFromGraph(
-  'https://contoso.sharepoint.com/:x:/r/site/doc.xlsx',
-);
+await graphExcelLoader.loadWorkbookFromGraph('https://contoso.sharepoint.com/:x:/r/site/doc.xlsx')
 // alternatively
 // await graphExcelLoader.loadWorkbookFromGraph('01B2LJ6UYA6XC7YQO3FBD2I7RBXWJKG6SY');
 ```
@@ -65,11 +63,11 @@ identifiers, labels, templates and metadata. Templates are looked up via
 
 ```ts
 const mapping = {
-  idColumn: 'Id',
-  labelColumn: 'Title',
-  templateColumn: 'Type',
-  metadataColumns: { role: 'Role' },
-};
+    idColumn: 'Id',
+    labelColumn: 'Title',
+    templateColumn: 'Type',
+    metadataColumns: { role: 'Role' },
+}
 ```
 
 Select a template column to allow per-row styling or choose a static template

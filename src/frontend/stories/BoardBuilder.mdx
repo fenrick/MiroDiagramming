@@ -1,18 +1,18 @@
-import { Meta, Story, Canvas } from '@storybook/blocks';
-import { BoardBuilder } from '../board/board-builder';
+import { Meta, Story, Canvas } from '@storybook/blocks'
+import { BoardBuilder } from '../board/board-builder'
 
-<Meta title='Core/BoardBuilder' />
+<Meta title="Core/BoardBuilder" />
 
 # BoardBuilder
 
 Helper responsible for finding, creating and updating widgets on the board.
 
 <Canvas>
-  <Story name='usage'>
-    {() => {
-      const builder = new BoardBuilder();
-      builder.findSpace(400, 300);
-      return null;
-    }}
-  </Story>
+    <Story name="usage">
+        {() => {
+            const builder = new BoardBuilder()
+            builder.findSpace(400, 300)
+            return null
+        }}
+    </Story>
 </Canvas>
