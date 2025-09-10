@@ -10,6 +10,9 @@ import { loadEnv } from './config/env.js'
 import { createLogger } from './config/logger.js'
 import { registerAuthRoutes } from './routes/auth.routes.js'
 import { registerCardsRoutes } from './routes/cards.routes.js'
+import { registerTagsRoutes } from './routes/tags.routes.js'
+import { registerCacheRoutes } from './routes/cache.routes.js'
+import { registerLimitsRoutes } from './routes/limits.routes.js'
 
 export async function buildApp() {
   const env = loadEnv()
@@ -41,6 +44,9 @@ export async function buildApp() {
 
   await app.register(registerAuthRoutes)
   await app.register(registerCardsRoutes)
+  await app.register(registerTagsRoutes)
+  await app.register(registerCacheRoutes)
+  await app.register(registerLimitsRoutes)
 
   // In production, serve the built frontend from client/dist
   if (process.env.NODE_ENV === 'production') {
