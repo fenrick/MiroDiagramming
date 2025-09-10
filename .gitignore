@@ -142,7 +142,7 @@ vite.config.ts.timestamp-*
 
 .DS_Store
 coverage
-client/node_modules
-client/dist
+src/client/node_modules
+src/client/dist
 
 __pycache__/

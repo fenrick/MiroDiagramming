@@ -43,7 +43,7 @@ src/
   queue/
     changeQueue.ts         # in-memory queue + worker
     types.ts               # task types
-client/                      # React frontend (dev via Vite, built by root scripts)
+src/client/                  # React frontend (dev via Vite, built by root scripts)
 prisma/
   schema.prisma            # Board, Tag, Shape, User, CacheEntry, IdempotencyEntry
 tests/
