@@ -59,7 +59,7 @@ Required for Miro OAuth:
 
 - `MIRO_CLIENT_ID`
 - `MIRO_CLIENT_SECRET`
-- `MIRO_REDIRECT_URL` (e.g., `http://localhost:4000/auth/miro/callback`)
+- `MIRO_REDIRECT_URL` (e.g., `http://localhost:3000/auth/miro/callback`)
 
 Additional backend env:
 

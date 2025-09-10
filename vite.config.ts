@@ -34,7 +34,7 @@ export default defineConfig(({ mode }) => {
     },
     plugins: [react()],
     server: {
-      port: parseInt(env.VITE_PORT || '5173', 10),
+      port: parseInt(env.VITE_PORT || '3000', 10),
       proxy: {
         '/api': { target: env.VITE_BACKEND_URL, changeOrigin: true, secure: false },
         '/oauth': { target: env.VITE_BACKEND_URL, changeOrigin: true, secure: false },

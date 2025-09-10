@@ -45,7 +45,7 @@ Environment
 
 - Create `.env` at repo root. Minimum:
     - `DATABASE_URL=file:./app.db`
-    - `MIRO_CLIENT_ID=...`, `MIRO_CLIENT_SECRET=...`, `MIRO_REDIRECT_URL=http://localhost:4000/auth/miro/callback`
+    - `MIRO_CLIENT_ID=...`, `MIRO_CLIENT_SECRET=...`, `MIRO_REDIRECT_URL=http://localhost:3000/auth/miro/callback`
     - Optional: `PORT=4000`
     - Optional: `MIRO_WEBHOOK_SECRET=change-me` (verify `/api/webhook` signatures)
 

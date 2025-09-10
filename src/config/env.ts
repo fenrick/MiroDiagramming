@@ -2,11 +2,7 @@ import { z } from 'zod'
 
 const EnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
-  PORT: z
-    .string()
-    .transform((v) => parseInt(v, 10))
-    .refine((v) => Number.isFinite(v) && v > 0, 'PORT must be a positive integer')
-    .default('4000' as unknown as string) as unknown as z.ZodEffects<z.ZodString, number>,
+  PORT: z.coerce.number().int().positive().default(3000),
   SESSION_SECRET: z.string().min(10).default('dev-secret-change-me'),
   CORS_ORIGIN: z.string().optional(),
 
@@ -16,12 +12,12 @@ const EnvSchema = z.object({
   MIRO_REDIRECT_URL: z.string().optional(),
 })
 
-type Env = z.infer<typeof EnvSchema> & { PORT: number }
+type Env = z.infer<typeof EnvSchema>
 
 export function loadEnv(): Env {
   const raw = {
     NODE_ENV: process.env.NODE_ENV,
-    PORT: process.env.PORT ?? '4000',
+    PORT: process.env.PORT ?? '3000',
     SESSION_SECRET: process.env.SESSION_SECRET,
     CORS_ORIGIN: process.env.CORS_ORIGIN,
     MIRO_CLIENT_ID: process.env.MIRO_CLIENT_ID,

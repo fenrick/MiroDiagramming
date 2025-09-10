@@ -23,7 +23,7 @@ Create a `.env` file at the repository root. Minimum:
 DATABASE_URL=file:./app.db
 MIRO_CLIENT_ID=your-client-id
 MIRO_CLIENT_SECRET=your-client-secret
-MIRO_REDIRECT_URL=http://localhost:4000/auth/miro/callback
+MIRO_REDIRECT_URL=http://localhost:3000/auth/miro/callback
 MIRO_WEBHOOK_SECRET=change-me
 ```
 
@@ -223,7 +223,7 @@ the rest of the UI. These guidelines help keep layouts consistent:
    similar to this example:
 
 ```
- http://localhost:4000
+ http://localhost:3000
 ```
 
 3. Open the
@@ -236,7 +236,7 @@ the rest of the UI. These guidelines help keep layouts consistent:
 # See https://developers.miro.com/docs/app-manifest on how to use this
 appName: JSON Diagram
 sdkVersion: SDK_V2
-sdkUri: http://localhost:4000
+sdkUri: http://localhost:3000
 scopes:
     - boards:read
     - boards:write
