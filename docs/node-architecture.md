@@ -212,16 +212,17 @@ We will map SQLAlchemy tables one-to-one and add migrations to preserve data.
 
 ## Local Development
 
-- Root `package.json` defines workspaces and unified scripts
+- Single root `package.json`; no nested packages
 - `npm install` at repo root
-- `npm run dev` runs both server and client (Vite) concurrently
-- In production, server serves `web/client/dist` so only one process is deployed
+- `npm run dev` runs one Node process: Fastify + Vite middleware
+- In production, server serves `src/client/dist` (static) and API
 - Ensure `MIRO_*` env vars are set; redirect URL points to local server
 
 ## Deployment
 
-- Dockerize `server` separately; keep `web/client` as static build
-- Configure env in hosting platform (client ID/secret/redirect URL)
+- Build with `npm run build` (client + server)
+- Run with `npm run start` (serves built UI and API)
+- Configure env (MIRO_CLIENT_ID/SECRET/REDIRECT_URL, DATABASE_URL, PORT)
 - Health check endpoint: `/healthz`
 
 ## Backwards Compatibility
