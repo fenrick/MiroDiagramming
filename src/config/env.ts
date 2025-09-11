@@ -19,6 +19,7 @@ const EnvSchema = z.object({
   MIRO_CLIENT_ID: z.string().optional(),
   MIRO_CLIENT_SECRET: z.string().optional(),
   MIRO_REDIRECT_URL: z.string().optional(),
+  MIRO_IDEMPOTENCY_CLEANUP_SECONDS: z.coerce.number().int().positive().default(86400),
 })
 
 type Env = z.infer<typeof EnvSchema>
@@ -32,6 +33,7 @@ export function loadEnv(): Env {
     MIRO_CLIENT_ID: process.env.MIRO_CLIENT_ID,
     MIRO_CLIENT_SECRET: process.env.MIRO_CLIENT_SECRET,
     MIRO_REDIRECT_URL: process.env.MIRO_REDIRECT_URL,
+    MIRO_IDEMPOTENCY_CLEANUP_SECONDS: process.env.MIRO_IDEMPOTENCY_CLEANUP_SECONDS,
   }
   const parsed = EnvSchema.safeParse(raw)
   if (!parsed.success) {

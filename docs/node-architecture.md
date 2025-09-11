@@ -66,6 +66,7 @@ Additional backend env:
 - `PORT=4000`
 - `SESSION_SECRET` (for cookie signatures)
 - `MIRO_WEBHOOK_SECRET` (signature validation for `/api/webhook`)
+- `MIRO_IDEMPOTENCY_CLEANUP_SECONDS` (interval for removing stale idempotency keys)
 - Webhook signatures are computed over the raw request body using `@fastify/raw-body`.
 - `DATABASE_URL` (e.g., `file:./dev.db`)
 - `CORS_ORIGINS` (JSON array of allowed origins)
@@ -194,6 +195,7 @@ Cards pipeline:
 
 - `POST /api/cards` accepts an array of card definitions. It enqueues tasks into an in-memory queue and returns 202 with `{ accepted }`.
 - A background worker processes tasks and creates cards via Miro REST. Include `boardId` in card definitions to route creation to a board.
+- Idempotency keys are stored to prevent duplicate submissions and are pruned on a scheduled interval.
 
 New auth routes:
 
@@ -201,7 +203,8 @@ New auth routes:
 - `GET /auth/miro/callback` → `exchangeCodeForAccessToken`
 - `GET /api/auth/status` → report app-level auth state
 
-Use DTOs and zod schemas for request/response validation.
+Use DTOs and JSON Schemas for request/response validation, allowing Fastify to
+automatically return 400 responses on invalid input.
 
 ## Data Model Mapping (Python → Node)
 
@@ -224,8 +227,10 @@ We will map SQLAlchemy tables one-to-one and add migrations to preserve data.
 ## Error Handling & Logging
 
 - Central error middleware: map domain errors to HTTP
+- Error responses consistently use `{ error: { message, code? } }`
 - Use Pino logger with request-id; structured logs
 - Mask secrets; never log tokens
+- Miro API calls use exponential backoff on 429/5xx via `withMiroRetry`
 
 ## Security
 

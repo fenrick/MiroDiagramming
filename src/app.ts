@@ -10,8 +10,9 @@ import fastifyCors from '@fastify/cors'
 import fastifyRawBody from 'fastify-raw-body'
 
 import { loadEnv } from './config/env.js'
-import { createLogger } from './config/logger.js'
+import { getLoggerOptions } from './config/logger.js'
 import { registerErrorHandler } from './config/error-handler.js'
+import { errorResponse } from './config/error-response.js'
 import { getPrisma } from './config/db.js'
 import { changeQueue } from './queue/changeQueue.js'
 import { registerAuthRoutes } from './routes/auth.routes.js'
@@ -20,11 +21,11 @@ import { registerTagsRoutes } from './routes/tags.routes.js'
 import { registerCacheRoutes } from './routes/cache.routes.js'
 import { registerLimitsRoutes } from './routes/limits.routes.js'
 import { registerWebhookRoutes } from './routes/webhook.routes.js'
+import { IdempotencyRepo } from './repositories/idempotencyRepo.js'
 
 export async function buildApp() {
   const env = loadEnv()
-  const logger = createLogger()
-  const app = Fastify({ logger, genReqId: () => randomUUID() })
+  const app = Fastify({ logger: getLoggerOptions(), genReqId: () => randomUUID() })
   registerErrorHandler(app)
   await app.register(fastifyCookie, {
     secret: env.SESSION_SECRET,
@@ -81,6 +82,17 @@ export async function buildApp() {
   await app.register(registerLimitsRoutes)
   await app.register(registerWebhookRoutes)
 
+  const idempotencyRepo = new IdempotencyRepo()
+  const cleanupInterval = env.MIRO_IDEMPOTENCY_CLEANUP_SECONDS * 1000
+  const cleanupTimer = setInterval(async () => {
+    try {
+      await idempotencyRepo.cleanup(env.MIRO_IDEMPOTENCY_CLEANUP_SECONDS)
+    } catch (err) {
+      app.log.error({ err }, 'idempotency cleanup failed')
+    }
+  }, cleanupInterval)
+  cleanupTimer.unref()
+
   // In production, serve the built frontend from src/web/dist
   if (process.env.NODE_ENV === 'production') {
     try {
@@ -94,7 +106,7 @@ export async function buildApp() {
       app.setNotFoundHandler((req, reply) => {
         const url = req.url || ''
         if (url.startsWith('/api')) {
-          return reply.code(404).send({ error: 'Not found' })
+          return reply.code(404).send(errorResponse('Not found', 'NOT_FOUND'))
         }
         // Serve index.html for client-side routing
         return (reply as unknown as { sendFile: (p: string) => FastifyReply }).sendFile(
@@ -118,6 +130,7 @@ export async function buildApp() {
     } catch {
       // ignore
     }
+    clearInterval(cleanupTimer)
   })
 
   // In development (but not tests), attach Vite middleware for a single-process dev
@@ -140,7 +153,7 @@ export async function buildApp() {
     app.all('*', async (req, reply) => {
       const url = req.url || '/'
       if (url.startsWith('/api') || url.startsWith('/healthz')) {
-        return reply.code(404).send({ error: 'Not found' })
+        return reply.code(404).send(errorResponse('Not found', 'NOT_FOUND'))
       }
       const indexPath = path.resolve(clientRoot, 'index.html')
       let html = await fs.readFile(indexPath, 'utf-8')

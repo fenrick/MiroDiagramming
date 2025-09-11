@@ -1,4 +1,5 @@
 import { getMiro } from '../miro/miroClient.js'
+import { withMiroRetry } from '../miro/retry.js'
 
 export class MiroService {
   async createNode(userId: string, nodeId: string, data: Record<string, unknown>): Promise<void> {
@@ -10,7 +11,7 @@ export class MiroService {
     const title = (data as { title?: string }).title ?? nodeId
     const description = (data as { description?: string }).description
     const api = getMiro().as(userId)
-    const board = await api.getBoard(boardId)
-    await board.createCardItem({ data: { title, description } })
+    const board = await withMiroRetry(() => api.getBoard(boardId))
+    await withMiroRetry(() => board.createCardItem({ data: { title, description } }))
   }
 }

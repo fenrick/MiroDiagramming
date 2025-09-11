@@ -1,8 +1,8 @@
-import pino from 'pino'
+import pino, { type LoggerOptions } from 'pino'
 
-export function createLogger() {
+export function getLoggerOptions(): LoggerOptions {
   const isProd = process.env.NODE_ENV === 'production'
-  return pino({
+  return {
     level: process.env.LOG_LEVEL || (isProd ? 'info' : 'debug'),
     transport: isProd
       ? undefined
@@ -14,7 +14,11 @@ export function createLogger() {
       paths: ['req.headers.authorization', 'miro.*', 'tokens.*'],
       remove: true,
     },
-  })
+  }
+}
+
+export function createLogger() {
+  return pino(getLoggerOptions())
 }
 
 export type Logger = ReturnType<typeof createLogger>

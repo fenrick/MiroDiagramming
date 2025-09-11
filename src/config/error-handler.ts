@@ -1,32 +1,28 @@
-import type {
-  FastifyError,
-  FastifyInstance,
-  FastifyReply,
-  FastifyRequest,
-  RawReplyDefaultExpression,
-  RawRequestDefaultExpression,
-  RawServerDefault,
-} from 'fastify'
+import type { FastifyError, FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 
-import type { Logger } from './logger.js'
+import { errorResponse } from './error-response.js'
 
 /**
  * Registers a global error handler that logs the error and returns a
  * structured response body. All errors are logged with the request
- * context and a JSON payload `{ error: { message } }` is sent to the
- * client.
+ * context and a JSON payload `{ error: { message, code? } }` is sent to
+ * the client.
  */
-export function registerErrorHandler(
-  app: FastifyInstance<
-    RawServerDefault,
-    RawRequestDefaultExpression,
-    RawReplyDefaultExpression,
-    Logger
-  >,
-) {
+export function registerErrorHandler(app: FastifyInstance) {
   app.setErrorHandler(function (error: FastifyError, request: FastifyRequest, reply: FastifyReply) {
     request.log.error({ err: error }, 'request failed')
     const status = error.statusCode ?? 500
-    reply.status(status).send({ error: { message: error.message } })
+    let message = error.message
+    let code: string | undefined
+    if ((error as { code?: string }).code === 'FST_ERR_VALIDATION') {
+      message = 'Invalid payload'
+      code = 'INVALID_PAYLOAD'
+    } else {
+      code =
+        typeof (error as { code?: unknown }).code === 'string'
+          ? (error as { code: string }).code
+          : undefined
+    }
+    reply.status(status).send(errorResponse(message, code))
   })
 }

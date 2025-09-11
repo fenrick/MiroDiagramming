@@ -39,6 +39,9 @@ describe('webhook route', () => {
     await app.ready()
     const res = await request(app.server).post('/api/webhook').send({ events: [] })
     expect(res.status).toBe(401)
+    expect(res.body).toEqual({
+      error: { message: 'Invalid signature', code: 'INVALID_SIGNATURE' },
+    })
     expect(webhookQueue.size()).toBe(0)
     await app.close()
   })
@@ -54,6 +57,9 @@ describe('webhook route', () => {
       .set('X-Miro-Signature', sign(obj))
       .send(raw)
     expect(res.status).toBe(401)
+    expect(res.body).toEqual({
+      error: { message: 'Invalid signature', code: 'INVALID_SIGNATURE' },
+    })
     expect(webhookQueue.size()).toBe(0)
     await app.close()
   })
@@ -67,6 +73,9 @@ describe('webhook route', () => {
       .set('X-Miro-Signature', sign(bad))
       .send(bad)
     expect(res.status).toBe(400)
+    expect(res.body).toEqual({
+      error: { message: 'Invalid payload', code: 'INVALID_PAYLOAD' },
+    })
     expect(webhookQueue.size()).toBe(0)
     await app.close()
   })
