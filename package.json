@@ -27,7 +27,7 @@
     "@fastify/cookie": "^9.3.1",
     "@fastify/cors": "^11.1.0",
     "@fastify/middie": "^9.0.2",
-    "@fastify/static": "^6.12.0",
+    "@fastify/static": "^8.2.0",
     "@mirohq/design-system": "^1.0.23",
     "@mirohq/miro-api": "^2.2.4",
     "@mirohq/websdk-react-hooks": "^0.0.3",
