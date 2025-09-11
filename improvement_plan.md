@@ -14,56 +14,52 @@ Status markers: [Planned] to do. Completed items are removed from this list once
     - Why: avoid drift between dev Vite middleware and prod static serving.
     - Acceptance: shared helper used in both branches; tests updated if needed.
 
-3. Cards route polish [Planned]
-    - Why: simplify and harden request handling.
-    - Acceptance: lowercased `idempotency-key` util; payload whitelisted to expected fields; `randomUUID()` for `nodeId`; empty array fast-path.
-
-4. Tags lookup simplification [Planned]
+3. Tags lookup simplification [Planned]
     - Why: reduce branching/readability.
     - Acceptance: single Prisma `OR` query handling numeric `id` or string `board_id`.
 
-5. Vite dev wiring isolation [Planned]
+4. Vite dev wiring isolation [Planned]
     - Why: clarify responsibilities; lighten `app.ts`.
     - Acceptance: dev middleware moved to `config/dev-vite.ts` (lazy import); behavior unchanged.
 
 ## Security, Resilience, Logging
 
-6. Queue configurability via env [Planned]
+5. Queue configurability via env [Planned]
     - Why: tune concurrency/backoff without code changes.
     - Acceptance: `QUEUE_CONCURRENCY`, `QUEUE_MAX_RETRIES`, `QUEUE_BASE_DELAY_MS`, `QUEUE_MAX_DELAY_MS` parsed in `env.ts` and applied.
 
-7. Unify logging under Fastify logger [Planned]
+6. Unify logging under Fastify logger [Planned]
 
 - Why: consistent redaction and correlation.
 - Acceptance: queues/services receive `app.log` (or adapter) instead of creating separate pino instances.
 
 ## Database
 
-8. Index for idempotency cleanup [Planned]
+7. Index for idempotency cleanup [Planned]
 
 - Why: speed up deletion by age.
 - Acceptance: Prisma migration adding index on `IdempotencyEntry.created_at`.
 
 ## Frontend
 
-9. Backend boundary for board reads [Planned]
+8. Backend boundary for board reads [Planned]
 
 - Why: reduce client API calls; improve testability.
 - Acceptance: minimal backend endpoints added; `shape-client`/`board-cache` progressively switched to server-backed lookups.
 
-10. BoardBuilder testability [Planned]
+9. BoardBuilder testability [Planned]
 
 - Why: easier unit tests and reuse.
 - Acceptance: inject board-like dependency into `loadShapeMap`; extract `runBatch` utility.
 
-11. Improve error messages [Planned]
+10. Improve error messages [Planned]
 
 - Why: faster debugging.
 - Acceptance: errors include invalid values/context across builder operations.
 
 ## Docs & Inline Comments
 
-12. JSDoc and inline docs across key files [Planned]
+11. JSDoc and inline docs across key files [Planned]
 
 - app.ts: server composition, cookie rationale, SPA fallback.
 - env.ts: per-variable docs, examples, security notes (incl. `MIRO_WEBHOOK_SECRET`).
@@ -71,27 +67,26 @@ Status markers: [Planned] to do. Completed items are removed from this list once
 - queue/changeQueue.ts: concurrency model, backoff, drop policy.
 - miro/tokenStorage.ts: mapping to Prisma `User`, expire semantics, `set(undefined)`.
 - services/miroService.ts: inputs/outputs and idempotency expectations.
-- routes/cards.routes.ts: schema intent, idempotency header semantics, honored fields.
 - frontend/board/board-builder.ts: metadata assumptions, `runBatch` behavior.
 
 ## Lint, Tests & Quality
 
-13. ESLint rules refinement [Planned]
+12. ESLint rules refinement [Planned]
 
 - Why: reduce unsafe casts.
 - Acceptance: discourage `as unknown as`; prefer typed helpers or module augmentation.
 
-14. Tests for idempotency and tags lookup [Planned]
+13. Tests for idempotency and tags lookup [Planned]
 
 - Why: prevent regressions.
 - Acceptance: integration tests for `/api/cards` idempotency and `/api/boards/:id/tags` OR mapping.
 
-15. Webhook signature util tests [Planned]
+14. Webhook signature util tests [Planned]
 
 - Why: verify timing-safe logic.
 - Acceptance: unit tests covering valid/invalid signature paths with raw body.
 
-16. Coverage guard [Planned]
+15. Coverage guard [Planned]
 
 - Why: maintain targets.
 - Acceptance: threshold check (Vitest/c8) gating CI summary.

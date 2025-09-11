@@ -4,6 +4,7 @@ import type { FastifyPluginAsync } from 'fastify'
 
 import { changeQueue, createNodeTask } from '../queue/changeQueue.js'
 import { IdempotencyRepo } from '../repositories/idempotencyRepo.js'
+import { getIdempotencyKey } from '../utils/headers.js'
 
 interface CardCreate {
   id?: string
@@ -29,7 +30,7 @@ const cardCreateSchema = {
     boardId: { type: 'string' },
   },
   required: ['title'],
-  additionalProperties: true,
+  additionalProperties: false,
 } as const
 
 export const registerCardsRoutes: FastifyPluginAsync = async (app) => {
@@ -47,24 +48,32 @@ export const registerCardsRoutes: FastifyPluginAsync = async (app) => {
         },
       },
     },
-    // Accepts an array of card definitions and enqueues creation tasks.
-    // Idempotency is supported via the `Idempotency-Key` header.
+    /**
+     * Accepts an array of card definitions and enqueues creation tasks.
+     * Only whitelisted fields are forwarded. Idempotency is enforced via
+     * the `Idempotency-Key` header which returns the same accepted count on
+     * retries.
+     */
     async (req, reply) => {
       const userId = req.userId
       const cards = req.body
-      const idemKey = (req.headers['idempotency-key'] as string | undefined) ?? undefined
-      const repo = new IdempotencyRepo()
+      const idemKey = getIdempotencyKey(req)
 
-      if (idemKey) {
+      if (!Array.isArray(cards) || cards.length === 0) {
+        if (idemKey) {
+          const repo = new IdempotencyRepo()
+          await repo.set(idemKey, 0)
+        }
+        return reply.code(202).send({ accepted: 0 })
+      }
+
+      const repo = idemKey ? new IdempotencyRepo() : undefined
+
+      if (idemKey && repo) {
         const previous = await repo.get(idemKey)
         if (typeof previous === 'number') {
           return reply.code(202).send({ accepted: previous })
         }
-      }
-
-      if (!Array.isArray(cards) || cards.length === 0) {
-        if (idemKey) await repo.set(idemKey, 0)
-        return reply.code(202).send({ accepted: 0 })
       }
 
       for (const c of cards) {
@@ -84,7 +93,7 @@ export const registerCardsRoutes: FastifyPluginAsync = async (app) => {
         changeQueue.enqueue(createNodeTask(userId, nodeId, data))
       }
       const accepted = cards.length
-      if (idemKey) await repo.set(idemKey, accepted)
+      if (idemKey && repo) await repo.set(idemKey, accepted)
       return reply.code(202).send({ accepted })
     },
   )
