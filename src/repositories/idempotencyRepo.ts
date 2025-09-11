@@ -15,4 +15,13 @@ export class IdempotencyRepo {
       create: { key, accepted },
     })
   }
+
+  async cleanup(ttlSeconds: number): Promise<number> {
+    const prisma = getPrisma()
+    const cutoff = new Date(Date.now() - ttlSeconds * 1000)
+    const { count } = await prisma.idempotencyEntry.deleteMany({
+      where: { created_at: { lt: cutoff } },
+    })
+    return count
+  }
 }

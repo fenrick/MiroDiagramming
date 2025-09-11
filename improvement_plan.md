@@ -42,7 +42,7 @@ Status markers: [Done] applied, [Planned] to do.
     - Why: centralize auth/refresh; reduce manual fetch and error plumbing.
     - Acceptance: `MiroService.createNode` uses `getMiro().as(userId).getBoard(boardId).createCardItem(...)`; removed `node-fetch`.
 
-9. Error handling/backoff for Miro calls [Planned]
+9. Error handling/backoff for Miro calls [Done]
     - Why: consistent retry/backoff on 429/5xx.
     - Acceptance: shared helper wraps calls with exponential backoff and caps retries.
 
@@ -88,17 +88,17 @@ Status markers: [Done] applied, [Planned] to do.
 
 ## 6) API & Validation
 
-17. Route schemas (zod/JSON schema) [Planned]
+17. Route schemas (zod/JSON schema) [Done]
 
 - Why: runtime validation and typed handlers.
 - Acceptance: schemas for `/api/cards`, `/api/webhook`, etc.; automatic 400s on invalid input.
 
-18. Unified error format [Planned]
+18. Unified error format [Done]
 
 - Why: predictable client handling.
 - Acceptance: `{ error: { message, code? } }` across routes; consistent 4xx/5xx mapping.
 
-19. Idempotency TTL cleanup [Planned]
+19. Idempotency TTL cleanup [Done]
 
 - Why: bound storage growth.
 - Acceptance: scheduled cleanup (e.g., daily) or age-based deletion.

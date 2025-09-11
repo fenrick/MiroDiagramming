@@ -1,36 +1,77 @@
 import crypto from 'node:crypto'
 
 import type { FastifyPluginAsync } from 'fastify'
-import { z } from 'zod'
 
 import { webhookQueue } from '../queue/webhookQueue.js'
 import type { WebhookPayload } from '../queue/webhookTypes.js'
+import { errorResponse } from '../config/error-response.js'
 
-const WebhookEvent = z.object({
-  event: z.string(),
-  data: z.record(z.unknown()),
-})
-const WebhookPayloadSchema = z.object({ events: z.array(WebhookEvent) })
+const webhookEventSchema = {
+  type: 'object',
+  properties: {
+    event: { type: 'string' },
+    data: { type: 'object', additionalProperties: true },
+  },
+  required: ['event', 'data'],
+  additionalProperties: false,
+} as const
+
+const webhookPayloadSchema = {
+  type: 'object',
+  properties: {
+    events: { type: 'array', items: webhookEventSchema },
+  },
+  required: ['events'],
+  additionalProperties: false,
+} as const
 
 export const registerWebhookRoutes: FastifyPluginAsync = async (app) => {
-  app.post('/api/webhook', { config: { rawBody: true } }, async (req, reply) => {
-    const secret = process.env.MIRO_WEBHOOK_SECRET
-    const signature = req.headers['x-miro-signature'] as string | undefined
-    if (!secret || !signature) {
-      return reply.code(401).send({ error: 'Invalid signature' })
-    }
-    const body = req.body as unknown
-    const rawBody = (req as unknown as { rawBody?: Buffer | string }).rawBody
-    const raw = typeof rawBody === 'string' || Buffer.isBuffer(rawBody) ? rawBody : JSON.stringify(body)
-    const expected = crypto.createHmac('sha256', secret).update(raw).digest('hex')
-    if (expected !== signature) {
-      return reply.code(401).send({ error: 'Invalid signature' })
-    }
-    const parsed = WebhookPayloadSchema.safeParse(body)
-    if (!parsed.success) {
-      return reply.code(400).send({ error: 'Invalid payload' })
-    }
-    webhookQueue.enqueue(parsed.data as WebhookPayload)
-    return reply.code(202).send({ accepted: true })
-  })
+  app.post<{ Body: WebhookPayload }>(
+    '/api/webhook',
+    {
+      config: { rawBody: true },
+      schema: {
+        body: webhookPayloadSchema,
+        response: {
+          202: {
+            type: 'object',
+            properties: { accepted: { type: 'boolean' } },
+            required: ['accepted'],
+          },
+          401: {
+            type: 'object',
+            properties: {
+              error: {
+                type: 'object',
+                properties: { message: { type: 'string' }, code: { type: 'string' } },
+                required: ['message', 'code'],
+              },
+            },
+            required: ['error'],
+          },
+        },
+      },
+      preValidation: async (req, reply) => {
+        const secret = process.env.MIRO_WEBHOOK_SECRET
+        const signature = req.headers['x-miro-signature'] as string | undefined
+        if (!secret || !signature) {
+          return reply.code(401).send(errorResponse('Invalid signature', 'INVALID_SIGNATURE'))
+        }
+        const rawBody = (req as unknown as { rawBody?: Buffer | string }).rawBody
+        const raw =
+          typeof rawBody === 'string' || Buffer.isBuffer(rawBody)
+            ? rawBody
+            : JSON.stringify(req.body)
+        const expected = crypto.createHmac('sha256', secret).update(raw).digest('hex')
+        if (expected !== signature) {
+          return reply.code(401).send(errorResponse('Invalid signature', 'INVALID_SIGNATURE'))
+        }
+        return undefined
+      },
+    },
+    async (req, reply) => {
+      webhookQueue.enqueue(req.body)
+      return reply.code(202).send({ accepted: true })
+    },
+  )
 }
