@@ -46,7 +46,7 @@
     "react-dom": "^18.3.1",
     "react-dropzone": "^14.3.8",
     "safe-regex": "^2.1.1",
-    "zod": "^3.23.8",
+    "zod": "^4.1.6",
     "zustand": "^5.0.0"
   },
   "devDependencies": {
