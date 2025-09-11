@@ -143,16 +143,16 @@ Storage interface (token persistence):
 
 ```ts
 // Implements the Storage interface required by Miro
-  export class TokenStorage {
-      async get(userId: string) {
-          return await userTokenRepo.get(userId) // returns State | undefined
-      }
+export class TokenStorage {
+    async get(userId: string) {
+        return await userTokenRepo.get(userId) // returns State | undefined
+    }
 
-      async set(userId: string, state: any) {
-          await userTokenRepo.set(userId, state)
-      }
-  }
-  ```
+    async set(userId: string, state: any) {
+        await userTokenRepo.set(userId, state)
+    }
+}
+```
 
 Our production `TokenStorage` persists tokens with Prisma, and unit tests cover the `get`, `set`, and delete paths to ensure compatibility with Miro's Storage interface.
 
@@ -208,7 +208,7 @@ Use DTOs and zod schemas for request/response validation.
 Planned Prisma models (aligned to existing SQLite data):
 
 - `Board(id, boardId, name, createdAt, updatedAt)`
-- `Tag(id, name, color, boardId)`
+- `Tag(id, board_id, name)` (unique on `board_id` + `name`)
 - `Shape(id, boardId, shapeId, data, createdAt)`
 - `UserToken(userId, provider, accessToken, refreshToken, expiresAt, scopes, rawState)`
 - `CacheEntry(key, value, createdAt, updatedAt)` (optional if keeping cache)

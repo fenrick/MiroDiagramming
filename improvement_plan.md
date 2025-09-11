@@ -64,10 +64,10 @@ Status markers: [Done] applied, [Planned] to do.
 - Acceptance: add `npm run migrate:deploy`; document running it in CI/prod; stop committing `app.db`.
 - Notes: `.gitignore` now excludes `*.db`. Removing tracked DB files should be a separate maintenance task.
 
-13. Indices and naming consistency [Planned]
+13. Indices and naming consistency [Done]
 
 - Why: performance and readability.
-- Acceptance: composite unique/index for `Tag(board_id, name)`; consider `@map` to camelCase or standardize snake_case.
+- Acceptance: composite unique/index for `Tag(board_id, name)`; naming remains snake_case.
 
 ## 5) Queue/Worker
 
