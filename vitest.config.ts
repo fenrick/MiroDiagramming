@@ -9,6 +9,12 @@ export default defineConfig({
       provider: 'v8',
       enabled: true,
       all: true,
+      thresholds: {
+        lines: 80,
+        statements: 80,
+        functions: 75,
+        branches: 75,
+      },
       include: [
         'src/app.ts',
         'src/server.ts',
@@ -19,7 +25,7 @@ export default defineConfig({
         'src/routes/**/*.ts',
         'src/services/**/*.ts',
         'src/utils/**/*.ts',
-        'src/types/**/*.ts'
+        'src/types/**/*.ts',
       ],
       exclude: [
         'node_modules/**',
