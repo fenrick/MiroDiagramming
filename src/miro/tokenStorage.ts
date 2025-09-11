@@ -3,6 +3,18 @@ import type { State, Storage } from '@mirohq/miro-api/dist/storage'
 
 import { getPrisma } from '../config/db.js'
 
+/**
+ * TokenStorage implementation bridging Miro's Storage interface to Prisma `User` records.
+ *
+ * Fields mapping:
+ * - userId -> `user.user_id`
+ * - accessToken -> `user.access_token`
+ * - refreshToken -> `user.refresh_token`
+ * - tokenExpiresAt (ISO) -> `user.expires_at` (Date)
+ *
+ * Passing `undefined` to `set` removes the user state.
+ */
+
 export class TokenStorage implements Storage {
   async get(userId: ExternalUserId): Promise<State | undefined> {
     const prisma = getPrisma()

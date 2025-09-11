@@ -27,6 +27,7 @@ export async function buildApp() {
   const env = loadEnv()
   const app = Fastify({ logger: getLoggerOptions(), genReqId: () => randomUUID() })
   registerErrorHandler(app)
+  // Cookie-based lightweight session to associate a userId used for Miro OAuth.
   await app.register(fastifyCookie, {
     secret: env.SESSION_SECRET,
     parseOptions: {
@@ -48,6 +49,7 @@ export async function buildApp() {
   })
 
   // Simple userId cookie for session affinity (used later for Miro OAuth)
+  // Ensure every request has a stable userId cookie set; used to scope Miro tokens.
   app.addHook('preHandler', async (request, reply) => {
     const cookies = (request as { cookies?: Record<string, string> }).cookies
     let userId = cookies?.userId
@@ -134,6 +136,7 @@ export async function buildApp() {
   })
 
   // In development (but not tests), attach Vite middleware for a single-process dev
+  // Dev-only: attach Vite middleware to serve the React frontend from the same process
   if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
     const clientRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../src/web')
     // Lazy import to avoid adding Vite to production runtime

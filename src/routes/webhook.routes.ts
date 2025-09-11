@@ -52,6 +52,8 @@ export const registerWebhookRoutes: FastifyPluginAsync = async (app) => {
           },
         },
       },
+      // Verify the request signature using HMAC-SHA256 over the raw request body.
+      // The raw body is provided by fastify-raw-body (enabled per-route via config.rawBody).
       preValidation: async (req, reply) => {
         const { MIRO_WEBHOOK_SECRET: secret } = loadEnv()
         const signature = req.headers['x-miro-signature'] as string | undefined

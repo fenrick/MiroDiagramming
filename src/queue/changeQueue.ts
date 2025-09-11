@@ -1,5 +1,13 @@
 import { setTimeout as delay } from 'node:timers/promises'
 
+/**
+ * In-memory change queue with simple concurrency and retry/backoff.
+ *
+ * - Uses exponential backoff with jitter on retriable failures
+ * - Allows tuning via `configure` and log injection via `setLogger`
+ * - Default settings favor safety over throughput
+ */
+
 import { MiroService } from '../services/miroService.js'
 
 import { createNodeTask, type ChangeTask } from './types.js'

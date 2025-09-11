@@ -47,6 +47,8 @@ export const registerCardsRoutes: FastifyPluginAsync = async (app) => {
         },
       },
     },
+    // Accepts an array of card definitions and enqueues creation tasks.
+    // Idempotency is supported via the `Idempotency-Key` header.
     async (req, reply) => {
       const userId = req.userId || ''
       const cards = req.body
