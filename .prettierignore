@@ -49,3 +49,4 @@ coverage/
 *.log
 *.db
 app.db
+CHANGELOG.md
