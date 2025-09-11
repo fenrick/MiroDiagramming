@@ -47,7 +47,6 @@ Status markers: [Done] applied, [Planned] to do.
     - Acceptance: shared helper wraps calls with exponential backoff and caps retries.
 
 10. TokenStorage tests [Done]
-
 - Why: ensure storage meets client semantics.
 - Acceptance: unit tests for get/set/delete paths.
 
