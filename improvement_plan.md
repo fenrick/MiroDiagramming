@@ -33,11 +33,6 @@ Status markers: [Planned] to do. Completed items are removed from this list once
 - Why: reduce unsafe casts.
 - Acceptance: discourage `as unknown as`; prefer typed helpers or module augmentation.
 
-- Tests for idempotency and tags lookup [Planned]
-
-- Why: prevent regressions.
-- Acceptance: integration tests for `/api/cards` idempotency and `/api/boards/:id/tags` OR mapping.
-
 - Webhook signature util tests [Planned]
 
 - Why: verify timing-safe logic.
