@@ -23,11 +23,6 @@ Status markers: [Planned] to do. Completed items are removed from this list once
 - Why: reduce unsafe casts.
 - Acceptance: discourage `as unknown as`; prefer typed helpers or module augmentation.
 
-- Coverage guard [Planned]
-
-- Why: maintain targets.
-- Acceptance: threshold check (Vitest/c8) gating CI summary.
-
 ---
 
 Execution guidance:
