@@ -19,11 +19,8 @@ Status markers: [Planned] to do. Completed items are removed from this list once
 ## Docs & Inline Comments
 
 - JSDoc and inline docs across key files [Planned]
-
-- app.ts: server composition, cookie rationale, SPA fallback.
-- miro/tokenStorage.ts: mapping to Prisma `User`, expire semantics, `set(undefined)`.
-- services/miroService.ts: inputs/outputs and idempotency expectations.
-- frontend/board/board-builder.ts: metadata assumptions, `runBatch` behavior.
+    - services/miroService.ts: inputs/outputs and idempotency expectations.
+    - frontend/board/board-builder.ts: metadata assumptions, `runBatch` behavior.
 
 ## Lint, Tests & Quality
 

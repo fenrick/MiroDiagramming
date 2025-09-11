@@ -23,11 +23,20 @@ import { registerWebhookRoutes } from './routes/webhook.routes.js'
 import { IdempotencyRepo } from './repositories/idempotencyRepo.js'
 import { registerSpaFallback } from './utils/spaFallback.js'
 
+/**
+ * Compose and configure the Fastify application.
+ *
+ * Registers core plugins, API routes and queue handlers while wiring up
+ * lightweight request state via cookies. In production the pre-built React
+ * frontend is served and a SPA fallback ensures client-side routing works
+ * for deep links.
+ */
 export async function buildApp() {
   const env = loadEnv()
   const app = Fastify({ logger: getLoggerOptions(), genReqId: () => randomUUID() })
   registerErrorHandler(app)
   // Cookie-based lightweight session to associate a userId used for Miro OAuth.
+  // The cookie is not an auth session; it only scopes Miro tokens per visitor.
   await app.register(fastifyCookie, {
     secret: env.SESSION_SECRET,
     parseOptions: {
@@ -95,7 +104,8 @@ export async function buildApp() {
   }, cleanupInterval)
   cleanupTimer.unref()
 
-  // In production, serve the built frontend from src/web/dist
+  // In production, serve the built frontend and fall back to index.html so
+  // arbitrary paths resolve to the SPA entrypoint.
   if (process.env.NODE_ENV === 'production') {
     try {
       const distPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../src/web/dist')
