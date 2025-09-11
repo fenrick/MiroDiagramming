@@ -162,5 +162,20 @@ export async function buildApp() {
     })
   }
 
+  // Configure queue logging and tuning from env
+  changeQueue.setLogger(
+    app.log as unknown as {
+      info: (o: unknown, m?: string) => void
+      warn: (o: unknown, m?: string) => void
+      error: (o: unknown, m?: string) => void
+    },
+  )
+  changeQueue.configure({
+    concurrency: env.QUEUE_CONCURRENCY,
+    baseDelayMs: env.QUEUE_BASE_DELAY_MS,
+    maxDelayMs: env.QUEUE_MAX_DELAY_MS,
+    maxRetries: env.QUEUE_MAX_RETRIES,
+  })
+
   return app
 }

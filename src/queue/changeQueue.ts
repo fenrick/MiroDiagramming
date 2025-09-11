@@ -1,11 +1,20 @@
 import { setTimeout as delay } from 'node:timers/promises'
 
 import { MiroService } from '../services/miroService.js'
-import { createLogger } from '../config/logger.js'
 
 import { createNodeTask, type ChangeTask } from './types.js'
 
-const logger = createLogger()
+type LoggerLike = {
+  info: (obj: unknown, msg?: string) => void
+  warn: (obj: unknown, msg?: string) => void
+  error: (obj: unknown, msg?: string) => void
+}
+
+const defaultLogger: LoggerLike = {
+  info: () => {},
+  warn: () => {},
+  error: () => {},
+}
 
 class InMemoryQueue {
   private q: ChangeTask[] = []
@@ -13,9 +22,27 @@ class InMemoryQueue {
   private workers = 0
   private active = 0
   private miro = new MiroService()
-  private readonly baseDelayMs = 250
-  private readonly maxDelayMs = 5000
-  private readonly defaultConcurrency = 2
+  private baseDelayMs = 250
+  private maxDelayMs = 5000
+  private defaultConcurrency = 2
+  private defaultMaxRetries = 5
+  private logger: LoggerLike = defaultLogger
+
+  configure(opts: {
+    concurrency?: number
+    baseDelayMs?: number
+    maxDelayMs?: number
+    maxRetries?: number
+  }) {
+    if (opts.concurrency !== undefined) this.defaultConcurrency = Math.max(1, opts.concurrency)
+    if (opts.baseDelayMs !== undefined) this.baseDelayMs = Math.max(1, opts.baseDelayMs)
+    if (opts.maxDelayMs !== undefined) this.maxDelayMs = Math.max(this.baseDelayMs, opts.maxDelayMs)
+    if (opts.maxRetries !== undefined) this.defaultMaxRetries = Math.max(1, opts.maxRetries)
+  }
+
+  setLogger(logger: LoggerLike) {
+    this.logger = logger ?? defaultLogger
+  }
 
   enqueue(task: ChangeTask) {
     this.q.push(task)
@@ -37,12 +64,12 @@ class InMemoryQueue {
     for (let i = 0; i < this.workers; i += 1) {
       void this.loop(i + 1)
     }
-    logger.info({ workers: this.workers }, 'changeQueue started')
+    this.logger.info({ workers: this.workers }, 'changeQueue started')
   }
 
   stop() {
     this.running = false
-    logger.info({ queued: this.q.length }, 'changeQueue stopping')
+    this.logger.info({ queued: this.q.length }, 'changeQueue stopping')
   }
 
   private async process(task: ChangeTask): Promise<void> {
@@ -52,7 +79,7 @@ class InMemoryQueue {
         await this.miro.createNode(task.userId, task.nodeId, task.data)
       }
       const dur = Date.now() - started
-      logger.info({
+      this.logger.info({
         event: 'task.processed',
         type: task.type,
         nodeId: task.nodeId,
@@ -63,9 +90,9 @@ class InMemoryQueue {
       })
     } catch (err) {
       const retry = (task.retryCount ?? 0) + 1
-      const maxRetries = task.maxRetries ?? 5
+      const maxRetries = task.maxRetries ?? this.defaultMaxRetries
       if (retry > maxRetries) {
-        logger.error({
+        this.logger.error({
           event: 'task.dropped',
           type: task.type,
           nodeId: task.nodeId,
@@ -76,7 +103,7 @@ class InMemoryQueue {
       }
       const backoff = Math.min(this.baseDelayMs * 2 ** (retry - 1), this.maxDelayMs)
       const jitter = Math.floor(Math.random() * 50)
-      logger.warn({
+      this.logger.warn({
         event: 'task.retry',
         type: task.type,
         nodeId: task.nodeId,
@@ -105,7 +132,7 @@ class InMemoryQueue {
         this.active -= 1
       }
     }
-    logger.info({ workerId }, 'worker stopped')
+    this.logger.info({ workerId }, 'worker stopped')
   }
 }
 

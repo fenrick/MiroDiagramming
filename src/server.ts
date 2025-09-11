@@ -5,7 +5,7 @@ import { changeQueue } from './queue/changeQueue.js'
 async function main() {
   const env = loadEnv()
   const app = await buildApp()
-  changeQueue.start()
+  changeQueue.start(env.QUEUE_CONCURRENCY)
   await app.listen({ port: env.PORT, host: '0.0.0.0' })
   app.log.info({ port: env.PORT }, 'Server listening')
 }
