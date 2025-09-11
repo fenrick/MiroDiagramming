@@ -4,13 +4,6 @@ Purpose: a concise, ordered backlog of refactors and optimizations to keep the c
 
 Status markers: [Planned] to do. Completed items are removed from this list once merged.
 
-## Security, Resilience, Logging
-
-- Unify logging under Fastify logger [Planned]
-
-- Why: consistent redaction and correlation.
-- Acceptance: queues/services receive `app.log` (or adapter) instead of creating separate pino instances.
-
 ## Database
 
 - Index for idempotency cleanup [Planned]

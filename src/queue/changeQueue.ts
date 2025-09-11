@@ -8,15 +8,13 @@ import { setTimeout as delay } from 'node:timers/promises'
  * - Default settings favor safety over throughput
  */
 
+import type { FastifyBaseLogger } from 'fastify'
+
 import { MiroService } from '../services/miroService.js'
 
 import { createNodeTask, type ChangeTask } from './types.js'
 
-type LoggerLike = {
-  info: (obj: unknown, msg?: string) => void
-  warn: (obj: unknown, msg?: string) => void
-  error: (obj: unknown, msg?: string) => void
-}
+type LoggerLike = Pick<FastifyBaseLogger, 'info' | 'warn' | 'error'>
 
 const defaultLogger: LoggerLike = {
   info: () => {},

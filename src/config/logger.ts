@@ -1,4 +1,4 @@
-import pino, { type LoggerOptions } from 'pino'
+import type { LoggerOptions } from 'pino'
 
 import { loadEnv } from './env.js'
 
@@ -19,9 +19,3 @@ export function getLoggerOptions(): LoggerOptions {
     },
   }
 }
-
-export function createLogger() {
-  return pino(getLoggerOptions())
-}
-
-export type Logger = ReturnType<typeof createLogger>

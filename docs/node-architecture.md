@@ -236,6 +236,7 @@ We will map SQLAlchemy tables one-to-one and add migrations to preserve data.
 - Central error middleware: map domain errors to HTTP
 - Error responses consistently use `{ error: { message, code? } }`
 - Use Pino logger with request-id; structured logs
+- Background queues and services reuse Fastify's `app.log` for consistent redaction and correlation
 - Mask secrets; never log tokens
 - Miro API calls use exponential backoff on 429/5xx via `withMiroRetry`
 

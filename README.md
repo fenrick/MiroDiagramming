@@ -313,7 +313,8 @@ All runtime messages are emitted through a shared logger defined in
 `silent` to control verbosity. It defaults to `info`.
 
 The Fastify server uses **Logfire** for structured logging. Client log entries
-are posted to `/api/logs` so both sides share the same log stream.
+are posted to `/api/logs` so both sides share the same log stream. Background
+workers reuse the Fastify logger (`app.log`) for consistent redaction and correlation.
 
 Data persistence is handled by **Prisma**. Development and tests use SQLite
 while production targets PostgreSQL through the same models. Database schemas

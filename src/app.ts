@@ -134,13 +134,7 @@ export async function buildApp() {
   }
 
   // Configure queue logging and tuning from env
-  changeQueue.setLogger(
-    app.log as unknown as {
-      info: (o: unknown, m?: string) => void
-      warn: (o: unknown, m?: string) => void
-      error: (o: unknown, m?: string) => void
-    },
-  )
+  changeQueue.setLogger(app.log)
   changeQueue.configure({
     concurrency: env.QUEUE_CONCURRENCY,
     baseDelayMs: env.QUEUE_BASE_DELAY_MS,
