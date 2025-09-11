@@ -1,9 +1,12 @@
 import pino, { type LoggerOptions } from 'pino'
 
+import { loadEnv } from './env.js'
+
 export function getLoggerOptions(): LoggerOptions {
-  const isProd = process.env.NODE_ENV === 'production'
+  const env = loadEnv()
+  const isProd = env.NODE_ENV === 'production'
   return {
-    level: process.env.LOG_LEVEL || (isProd ? 'info' : 'debug'),
+    level: env.LOG_LEVEL || (isProd ? 'info' : 'debug'),
     transport: isProd
       ? undefined
       : {
