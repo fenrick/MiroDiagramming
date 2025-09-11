@@ -16,12 +16,6 @@ Status markers: [Planned] to do. Completed items are removed from this list once
 - Why: faster debugging.
 - Acceptance: errors include invalid values/context across builder operations.
 
-## Docs & Inline Comments
-
-- JSDoc and inline docs across key files [Planned]
-    - services/miroService.ts: inputs/outputs and idempotency expectations.
-    - frontend/board/board-builder.ts: metadata assumptions, `runBatch` behavior.
-
 ## Lint, Tests & Quality
 
 - ESLint rules refinement [Planned]

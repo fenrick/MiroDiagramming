@@ -98,7 +98,13 @@ export class BoardBuilder {
     await miro.board.viewport.zoomTo(target)
   }
 
-  /** Lookup an existing widget with matching metadata. */
+  /**
+   * Lookup an existing widget with matching metadata.
+   *
+   * Labels are expected to be stored directly on shape content or on a child
+   * item within a group. No additional metadata is persisted, so duplicate
+   * labels may yield ambiguous results.
+   */
   public async findNode(
     type: unknown,
     label: unknown,
@@ -119,7 +125,8 @@ export class BoardBuilder {
   /**
    * Search only the currently selected widgets for one matching the node
    * metadata. Falling back to shapes and groups mirrors {@link findNode} but
-   * avoids querying the entire board.
+   * avoids querying the entire board. The same label-based lookup assumption
+   * applies.
    */
   public async findNodeInSelection(type: unknown, label: unknown): Promise<BoardItem | undefined> {
     if (typeof type !== 'string' || typeof label !== 'string') {
@@ -163,6 +170,7 @@ export class BoardBuilder {
   /**
    * Create new connectors between nodes.
    * Existing connectors are ignored; a fresh widget is created for each edge.
+   * Operations run inside {@link runBatch} to minimise API round-trips.
    */
   public async createEdges(
     edges: EdgeData[],
@@ -197,7 +205,10 @@ export class BoardBuilder {
     return created
   }
 
-  /** Call `.sync()` on each widget if the method exists. */
+  /**
+   * Call `.sync()` on each widget if the method exists.
+   * Batched with {@link runBatch} so multiple syncs are sent together.
+   */
   public async syncAll(items: Array<BoardItem | Connector>): Promise<void> {
     const board = miro.board as unknown as BoardLike
     await runBatch(board, async () => {
@@ -206,7 +217,10 @@ export class BoardBuilder {
     })
   }
 
-  /** Remove the provided widgets from the board. */
+  /**
+   * Remove the provided widgets from the board.
+   * Deletion is wrapped in {@link runBatch} to reduce network chatter.
+   */
   public async removeItems(items: Array<BoardItem | Connector | Frame>): Promise<void> {
     const board = miro.board as unknown as BoardLike
     await runBatch(board, async () => {

@@ -1,12 +1,23 @@
 import { getMiro } from '../miro/miroClient.js'
 import { withMiroRetry } from '../miro/retry.js'
 
+/**
+ * Thin wrapper around the Miro SDK exposing higher-level convenience methods.
+ *
+ * The service performs no deduplication; callers must enforce any
+ * idempotency requirements themselves.
+ */
 export class MiroService {
   /**
    * Create a card-like node on a given board for a user.
    *
-   * - Requires `boardId` in the payload; otherwise this is a no-op.
-   * - Title/description are mapped to the card item; other fields are ignored here.
+   * @param userId - Identifier of the acting user used for SDK auth.
+   * @param nodeId - Node identifier used as a fallback title.
+   * @param data - Additional node data including `boardId`, `title` and `description`.
+   * @returns Resolves when the card is created or immediately if `boardId` is missing.
+   *
+   * Note: repeated calls create duplicate widgets; no checks for existing cards
+   * are performed.
    */
   async createNode(userId: string, nodeId: string, data: Record<string, unknown>): Promise<void> {
     // For cards, expect a boardId in data to route creation; otherwise skip
