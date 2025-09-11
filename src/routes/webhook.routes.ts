@@ -1,11 +1,10 @@
-import crypto from 'node:crypto'
-
 import type { FastifyPluginAsync } from 'fastify'
 
 import { webhookQueue } from '../queue/webhookQueue.js'
 import type { WebhookPayload } from '../queue/webhookTypes.js'
 import { errorResponse } from '../config/error-response.js'
 import { loadEnv } from '../config/env.js'
+import { verifyWebhookSignature } from '../utils/webhookSignature.js'
 
 const webhookEventSchema = {
   type: 'object',
@@ -26,6 +25,14 @@ const webhookPayloadSchema = {
   additionalProperties: false,
 } as const
 
+/**
+ * Register the `/api/webhook` endpoint used by Miro callbacks.
+ *
+ * The route verifies the `X-Miro-Signature` header using HMAC-SHA256
+ * computed over the raw request body. `fastify-raw-body` is enabled
+ * via `config.rawBody` so the unparsed payload is available for
+ * signature verification.
+ */
 export const registerWebhookRoutes: FastifyPluginAsync = async (app) => {
   app.post<{ Body: WebhookPayload }>(
     '/api/webhook',
@@ -53,7 +60,6 @@ export const registerWebhookRoutes: FastifyPluginAsync = async (app) => {
         },
       },
       // Verify the request signature using HMAC-SHA256 over the raw request body.
-      // The raw body is provided by fastify-raw-body (enabled per-route via config.rawBody).
       preValidation: async (req, reply) => {
         const { MIRO_WEBHOOK_SECRET: secret } = loadEnv()
         const signature = req.headers['x-miro-signature'] as string | undefined
@@ -65,10 +71,7 @@ export const registerWebhookRoutes: FastifyPluginAsync = async (app) => {
           typeof rawBody === 'string' || Buffer.isBuffer(rawBody)
             ? rawBody
             : JSON.stringify(req.body)
-        const expectedHex = crypto.createHmac('sha256', secret).update(raw).digest('hex')
-        const sigBuf = Buffer.from(signature, 'hex')
-        const expBuf = Buffer.from(expectedHex, 'hex')
-        if (sigBuf.length !== expBuf.length || !crypto.timingSafeEqual(sigBuf, expBuf)) {
+        if (!verifyWebhookSignature(raw, secret, signature)) {
           return reply.code(401).send(errorResponse('Invalid signature', 'INVALID_SIGNATURE'))
         }
         return undefined

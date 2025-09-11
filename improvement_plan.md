@@ -21,7 +21,6 @@ Status markers: [Planned] to do. Completed items are removed from this list once
 - JSDoc and inline docs across key files [Planned]
 
 - app.ts: server composition, cookie rationale, SPA fallback.
-- webhook.routes.ts: signature algorithm and raw-body requirement.
 - miro/tokenStorage.ts: mapping to Prisma `User`, expire semantics, `set(undefined)`.
 - services/miroService.ts: inputs/outputs and idempotency expectations.
 - frontend/board/board-builder.ts: metadata assumptions, `runBatch` behavior.
@@ -32,11 +31,6 @@ Status markers: [Planned] to do. Completed items are removed from this list once
 
 - Why: reduce unsafe casts.
 - Acceptance: discourage `as unknown as`; prefer typed helpers or module augmentation.
-
-- Webhook signature util tests [Planned]
-
-- Why: verify timing-safe logic.
-- Acceptance: unit tests covering valid/invalid signature paths with raw body.
 
 - Coverage guard [Planned]
 
