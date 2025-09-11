@@ -26,6 +26,7 @@ model Tag {
   // Relations
   board Board @relation(fields: [board_id], references: [id], onDelete: Cascade)
 
+  @@unique([board_id, name])
   @@index([board_id])
 }
 
