@@ -1,3 +1,10 @@
+# [1.20.0](https://github.com/fenrick/MiroDiagramming/compare/v1.19.0...v1.20.0) (2025-09-11)
+
+
+### Features
+
+* **utils:** add SPA fallback helper ([53d7072](https://github.com/fenrick/MiroDiagramming/commit/53d7072ab11ca17ca38f21c16f528ee3120307cb))
+
 # [1.19.0](https://github.com/fenrick/MiroDiagramming/compare/v1.18.1...v1.19.0) (2025-09-11)
 
 
