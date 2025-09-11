@@ -143,16 +143,18 @@ Storage interface (token persistence):
 
 ```ts
 // Implements the Storage interface required by Miro
-export class TokenStorage {
-    async get(userId: string) {
-        return await userTokenRepo.get(userId) // returns State | undefined
-    }
+  export class TokenStorage {
+      async get(userId: string) {
+          return await userTokenRepo.get(userId) // returns State | undefined
+      }
 
-    async set(userId: string, state: any) {
-        await userTokenRepo.set(userId, state)
-    }
-}
-```
+      async set(userId: string, state: any) {
+          await userTokenRepo.set(userId, state)
+      }
+  }
+  ```
+
+Our production `TokenStorage` persists tokens with Prisma, and unit tests cover the `get`, `set`, and delete paths to ensure compatibility with Miro's Storage interface.
 
 OAuth flow (Fastify example):
 
@@ -253,6 +255,7 @@ We will map SQLAlchemy tables one-to-one and add migrations to preserve data.
 - Run with `npm run start` (serves built UI and API)
 - Configure env (MIRO_CLIENT_ID/SECRET/REDIRECT_URL, DATABASE_URL, PORT)
 - Health check endpoint: `/healthz`
+- Readiness endpoint: `/readyz` (verifies DB connectivity and queue idle status)
 
 ## Backwards Compatibility
 

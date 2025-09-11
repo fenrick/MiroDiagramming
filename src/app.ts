@@ -59,6 +59,18 @@ export async function buildApp() {
 
   app.get('/healthz', async () => ({ status: 'ok' }))
 
+  app.get('/readyz', async (request, reply) => {
+    try {
+      await getPrisma().$queryRaw`SELECT 1`
+    } catch {
+      return reply.code(503).send({ status: 'error', reason: 'db' })
+    }
+    if (changeQueue.size() > 0 || changeQueue.inFlight() > 0) {
+      return reply.code(503).send({ status: 'error', reason: 'queue' })
+    }
+    return { status: 'ok' }
+  })
+
   // Root route can be used for a quick sanity check
   app.get('/api', async () => ({ name: 'miro-server', ok: true }))
 

@@ -32,7 +32,7 @@ Status markers: [Done] applied, [Planned] to do.
     - Why: secure defaults in production.
     - Acceptance: CORS allowlist via env; secure/sameSite cookies enforced in prod.
 
-7. Readiness endpoint [Planned]
+7. Readiness endpoint [Done]
     - Why: health vs readiness split for orchestration.
     - Acceptance: `/readyz` checks DB connectivity and queue idle status.
 
@@ -46,8 +46,7 @@ Status markers: [Done] applied, [Planned] to do.
     - Why: consistent retry/backoff on 429/5xx.
     - Acceptance: shared helper wraps calls with exponential backoff and caps retries.
 
-10. TokenStorage tests [Planned]
-
+10. TokenStorage tests [Done]
 - Why: ensure storage meets client semantics.
 - Acceptance: unit tests for get/set/delete paths.
 
