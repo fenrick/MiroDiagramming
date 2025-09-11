@@ -3,7 +3,7 @@ import path from 'node:path'
 import fs from 'node:fs/promises'
 import { randomUUID } from 'node:crypto'
 
-import Fastify from 'fastify'
+import Fastify, { type FastifyReply } from 'fastify'
 import fastifyCookie from '@fastify/cookie'
 import fastifyStatic from '@fastify/static'
 import fastifyCors from '@fastify/cors'
@@ -26,13 +26,25 @@ export async function buildApp() {
   const logger = createLogger()
   const app = Fastify({ logger, genReqId: () => randomUUID() })
   registerErrorHandler(app)
-  await app.register(fastifyCookie)
+  await app.register(fastifyCookie, {
+    secret: env.SESSION_SECRET,
+    parseOptions: {
+      httpOnly: true,
+      sameSite: 'strict',
+      secure: env.NODE_ENV === 'production',
+    },
+  })
   await app.register(fastifyCors, {
-    origin: env.CORS_ORIGIN ?? false,
+    origin: env.CORS_ORIGINS ?? false,
     credentials: true,
   })
   // Register raw-body plugin (disabled by default; enable per-route)
-  await app.register(fastifyRawBody, { field: 'rawBody', global: false, encoding: false, runFirst: true })
+  await app.register(fastifyRawBody, {
+    field: 'rawBody',
+    global: false,
+    encoding: false,
+    runFirst: true,
+  })
 
   // Simple userId cookie for session affinity (used later for Miro OAuth)
   app.addHook('preHandler', async (request, reply) => {
@@ -40,12 +52,7 @@ export async function buildApp() {
     let userId = cookies?.userId
     if (!userId) {
       userId = Math.random().toString(36).slice(2)
-      reply.setCookie('userId', userId, {
-        httpOnly: true,
-        sameSite: 'strict',
-        secure: env.NODE_ENV === 'production',
-        path: '/',
-      })
+      reply.setCookie('userId', userId, { path: '/' })
     }
     ;(request as unknown as { userId?: string }).userId = userId
   })

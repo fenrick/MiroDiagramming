@@ -19,7 +19,9 @@
     "format:write": "prettier --write .",
     "test": "vitest run",
     "coverage": "c8 -r lcov -r text-summary npm run test",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "prepare": "husky",
+    "commitlint": "commitlint"
   },
   "dependencies": {
     "@fastify/cookie": "^9.3.1",
@@ -36,7 +38,7 @@
     "elkjs": "^0.10.0",
     "exceljs": "^4.4.0",
     "fastify": "^4.28.1",
-    "fastify-raw-body": "5.0.0",
+    "fastify-raw-body": "^4.3.0",
     "logfire": "^0.9.0",
     "marked": "^12.0.2",
     "pino": "^9.4.0",
@@ -63,6 +65,7 @@
     "eslint": "^9.35.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.29.1",
+    "husky": "^9.1.7",
     "pino-pretty": "^11.2.2",
     "prettier": "^3.6.2",
     "prisma": "^6.16.0",
