@@ -42,14 +42,10 @@ Provision the same variables through your CI secret store (e.g. GitHub Actions s
 
 ### CORS origins
 
-Configure Cross-Origin Resource Sharing in `config/config.yaml`:
+Set allowed origins through the `CORS_ORIGINS` environment variable as a JSON array:
 
-```yaml
-cors_origins:
-    - 'https://app.example.com'
-    - 'https://admin.example.com'
-    # - "https://*.example.org"  # Wildcard subdomains
-    # - "*"  # Allow all origins (development only; not for production)
+```bash
+CORS_ORIGINS='["https://app.example.com","https://admin.example.com"]'
 ```
 
-List each allowed origin explicitly. Wildcards can match subdomains, but avoid using `"*"` in production to restrict cross-origin access.
+List each origin explicitly. Wildcards can match subdomains, but avoid using `"*"` in production to restrict cross-origin access.

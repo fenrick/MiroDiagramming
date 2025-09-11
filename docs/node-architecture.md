@@ -68,7 +68,7 @@ Additional backend env:
 - `MIRO_WEBHOOK_SECRET` (signature validation for `/api/webhook`)
 - Webhook signatures are computed over the raw request body using `@fastify/raw-body`.
 - `DATABASE_URL` (e.g., `file:./dev.db`)
-- `CORS_ORIGIN` (frontend origin during dev)
+- `CORS_ORIGINS` (JSON array of allowed origins)
 
 Use a schema validator (zod) to fail fast if vars are missing.
 
@@ -228,7 +228,7 @@ We will map SQLAlchemy tables one-to-one and add migrations to preserve data.
 ## Security
 
 - HTTPS in production; secure HTTP-only cookies (`sameSite=strict`)
-- CORS via `@fastify/cors` and `CORS_ORIGIN` env
+- CORS via `@fastify/cors` and `CORS_ORIGINS` env
 - CSRF protection for state-changing endpoints (if applicable)
 - Input validation (zod) and output typing
 - Secrets from env; no tokens in source control

@@ -25,6 +25,8 @@ MIRO_CLIENT_ID=your-client-id
 MIRO_CLIENT_SECRET=your-client-secret
 MIRO_REDIRECT_URL=http://localhost:3000/auth/miro/callback
 MIRO_WEBHOOK_SECRET=change-me
+# JSON array of allowed cross-origin URLs (optional)
+CORS_ORIGINS=["http://localhost:3000"]
 ```
 
 `MIRO_WEBHOOK_SECRET` verifies webhook callbacks. Signatures are computed over the

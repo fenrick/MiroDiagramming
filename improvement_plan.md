@@ -28,7 +28,7 @@ Status markers: [Done] applied, [Planned] to do.
     - Why: align with providers that sign exact bytes; reduce false negatives.
     - Acceptance: use raw body (e.g., `@fastify/raw-body`) and HMAC over bytes; integration test adjusted.
 
-6. CORS/cookie hardening [Planned]
+6. CORS/cookie hardening [Done]
     - Why: secure defaults in production.
     - Acceptance: CORS allowlist via env; secure/sameSite cookies enforced in prod.
 
