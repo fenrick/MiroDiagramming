@@ -47,6 +47,7 @@ Status markers: [Done] applied, [Planned] to do.
     - Acceptance: shared helper wraps calls with exponential backoff and caps retries.
 
 10. TokenStorage tests [Done]
+
 - Why: ensure storage meets client semantics.
 - Acceptance: unit tests for get/set/delete paths.
 
@@ -131,7 +132,7 @@ Status markers: [Done] applied, [Planned] to do.
 
 ## 8) Build & Tooling
 
-25. Remove node-fetch; use global fetch [Planned]
+25. Remove node-fetch; use global fetch [Done]
 
 - Why: reduce deps; Node 20 provides fetch.
 - Acceptance: dependency removed; imports dropped; tests updated.
@@ -170,7 +171,7 @@ Status markers: [Done] applied, [Planned] to do.
 - Why: clarify raw body requirement.
 - Acceptance: docs updated with implementation detail and env note.
 
-32. Remove legacy references [Planned]
+32. Remove legacy references [Done]
 
 - Why: reduce confusion.
 - Acceptance: purge Python-era remnants and stray references from README/DEPLOYMENT.

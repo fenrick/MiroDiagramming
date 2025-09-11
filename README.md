@@ -13,7 +13,7 @@ each element can carry metadata that controls its appearance and placement.
 
 - Node.js 20.x
 
-The previous Python FastAPI backend is deprecated. The app now runs as a single Node.js process that serves both the API and the React frontend.
+The app runs as a single Node.js process that serves both the API and the React frontend.
 
 ### Environment
 
