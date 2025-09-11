@@ -6,10 +6,6 @@ Status markers: [Planned] to do. Completed items are removed from this list once
 
 ## Quick Wins (Backend)
 
-- SPA fallback helper (dev/prod) [Planned]
-    - Why: avoid drift between dev Vite middleware and prod static serving.
-    - Acceptance: shared helper used in both branches; tests updated if needed.
-
 - Vite dev wiring isolation [Planned]
     - Why: clarify responsibilities; lighten `app.ts`.
     - Acceptance: dev middleware moved to `config/dev-vite.ts` (lazy import); behavior unchanged.

@@ -22,6 +22,7 @@ import { registerCacheRoutes } from './routes/cache.routes.js'
 import { registerLimitsRoutes } from './routes/limits.routes.js'
 import { registerWebhookRoutes } from './routes/webhook.routes.js'
 import { IdempotencyRepo } from './repositories/idempotencyRepo.js'
+import { registerSpaFallback } from './utils/spaFallback.js'
 
 export async function buildApp() {
   const env = loadEnv()
@@ -104,17 +105,9 @@ export async function buildApp() {
         prefix: '/',
       })
 
-      // SPA fallback to index.html for non-API routes
-      app.setNotFoundHandler((req, reply) => {
-        const url = req.url || ''
-        if (url.startsWith('/api')) {
-          return reply.code(404).send(errorResponse('Not found', 'NOT_FOUND'))
-        }
-        // Serve index.html for client-side routing
-        return (reply as unknown as { sendFile: (p: string) => FastifyReply }).sendFile(
-          'index.html',
-        )
-      })
+      registerSpaFallback(app, (_req, reply) =>
+        (reply as unknown as { sendFile: (p: string) => FastifyReply }).sendFile('index.html'),
+      )
     } catch {
       // Ignore if dist path is missing (dev/test mode)
     }
@@ -152,12 +145,8 @@ export async function buildApp() {
     })
     ;(app as unknown as { use: (m: unknown) => void }).use(vite.middlewares)
 
-    // Fallback index.html for SPA routes, excluding API and health
-    app.all('*', async (req, reply) => {
+    registerSpaFallback(app, async (req, reply) => {
       const url = req.url || '/'
-      if (url.startsWith('/api') || url.startsWith('/healthz')) {
-        return reply.code(404).send(errorResponse('Not found', 'NOT_FOUND'))
-      }
       const indexPath = path.resolve(clientRoot, 'index.html')
       let html = await fs.readFile(indexPath, 'utf-8')
       html = await vite.transformIndexHtml(url, html)
