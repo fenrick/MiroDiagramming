@@ -32,20 +32,20 @@ export const registerAuthRoutes: FastifyPluginAsync = async (app) => {
 
   // OAuth callback
   app.get('/auth/miro/callback', async (req, reply) => {
-    const userId = req.userId || ''
+    const userId = req.userId
     const code = (req.query as Record<string, string> | undefined)?.code
     return handleCallback(userId, code, reply)
   })
 
   app.get('/oauth/callback', async (req, reply) => {
-    const userId = req.userId || ''
+    const userId = req.userId
     const code = (req.query as Record<string, string> | undefined)?.code
     return handleCallback(userId, code, reply)
   })
 
   // Simple auth status endpoint for client
   app.get('/api/auth/status', async (req, reply) => {
-    const userId = req.userId || ''
+    const userId = req.userId
     const authorized = await getMiro().isAuthorized(userId)
     return reply.send({ authorized })
   })
