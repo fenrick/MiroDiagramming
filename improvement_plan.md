@@ -4,13 +4,6 @@ Purpose: a concise, ordered backlog of refactors and optimizations to keep the c
 
 Status markers: [Planned] to do. Completed items are removed from this list once merged.
 
-## Database
-
-- Index for idempotency cleanup [Planned]
-
-- Why: speed up deletion by age.
-- Acceptance: Prisma migration adding index on `IdempotencyEntry.created_at`.
-
 ## Frontend
 
 - Backend boundary for board reads [Planned]

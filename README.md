@@ -27,6 +27,8 @@ MIRO_REDIRECT_URL=http://localhost:3000/auth/miro/callback
 MIRO_WEBHOOK_SECRET=change-me
 # JSON array of allowed cross-origin URLs (optional)
 CORS_ORIGINS=["http://localhost:3000"]
+# Interval for removing stale idempotency keys (optional)
+MIRO_IDEMPOTENCY_CLEANUP_SECONDS=86400
 # Queue tuning (optional)
 QUEUE_CONCURRENCY=2
 QUEUE_MAX_RETRIES=5
@@ -36,6 +38,8 @@ QUEUE_MAX_DELAY_MS=5000
 
 `MIRO_WEBHOOK_SECRET` verifies webhook callbacks. Signatures are computed over the
 raw request body using `@fastify/raw-body`.
+
+`MIRO_IDEMPOTENCY_CLEANUP_SECONDS` controls how often old idempotency entries are removed.
 
 `QUEUE_CONCURRENCY`, `QUEUE_MAX_RETRIES`, `QUEUE_BASE_DELAY_MS`, and `QUEUE_MAX_DELAY_MS`
 allow tuning the in-memory change queue's worker count and backoff strategy.
