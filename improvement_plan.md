@@ -20,10 +20,6 @@ Status markers: [Planned] to do. Completed items are removed from this list once
 
 ## Security, Resilience, Logging
 
-- Queue configurability via env [Planned]
-    - Why: tune concurrency/backoff without code changes.
-    - Acceptance: `QUEUE_CONCURRENCY`, `QUEUE_MAX_RETRIES`, `QUEUE_BASE_DELAY_MS`, `QUEUE_MAX_DELAY_MS` parsed in `env.ts` and applied.
-
 - Unify logging under Fastify logger [Planned]
 
 - Why: consistent redaction and correlation.

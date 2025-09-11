@@ -70,6 +70,10 @@ Additional backend env:
 - Webhook signatures are computed over the raw request body using `@fastify/raw-body`.
 - `DATABASE_URL` (e.g., `file:./dev.db`)
 - `CORS_ORIGINS` (JSON array of allowed origins)
+- `QUEUE_CONCURRENCY` (number of worker loops processing change tasks)
+- `QUEUE_MAX_RETRIES` (per-task retry limit before dropping)
+- `QUEUE_BASE_DELAY_MS` (initial backoff delay in milliseconds)
+- `QUEUE_MAX_DELAY_MS` (upper bound for exponential backoff)
 
 Use a schema validator (zod) to fail fast if vars are missing.
 
