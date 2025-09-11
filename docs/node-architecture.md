@@ -66,6 +66,7 @@ Additional backend env:
 - `PORT=4000`
 - `SESSION_SECRET` (for cookie signatures)
 - `MIRO_WEBHOOK_SECRET` (signature validation for `/api/webhook`)
+- Webhook signatures are computed over the raw request body using `@fastify/raw-body`.
 - `DATABASE_URL` (e.g., `file:./dev.db`)
 - `CORS_ORIGIN` (frontend origin during dev)
 

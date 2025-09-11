@@ -24,7 +24,7 @@ Status markers: [Done] applied, [Planned] to do.
 
 ## 2) HTTP Server & Middleware
 
-5. Webhook signature over raw body [Planned]
+5. Webhook signature over raw body [Done]
     - Why: align with providers that sign exact bytes; reduce false negatives.
     - Acceptance: use raw body (e.g., `@fastify/raw-body`) and HMAC over bytes; integration test adjusted.
 
@@ -166,7 +166,7 @@ Status markers: [Done] applied, [Planned] to do.
 
 ## 10) Docs & Cleanup
 
-31. Webhook signature note [Planned]
+31. Webhook signature note [Done]
 
 - Why: clarify raw body requirement.
 - Acceptance: docs updated with implementation detail and env note.

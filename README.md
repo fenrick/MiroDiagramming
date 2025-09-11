@@ -27,6 +27,9 @@ MIRO_REDIRECT_URL=http://localhost:3000/auth/miro/callback
 MIRO_WEBHOOK_SECRET=change-me
 ```
 
+`MIRO_WEBHOOK_SECRET` verifies webhook callbacks. Signatures are computed over the
+raw request body using `@fastify/raw-body`.
+
 ### Development
 
 Run a single dev process (Fastify + Vite middleware):
