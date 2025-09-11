@@ -11,11 +11,6 @@ Status markers: [Planned] to do. Completed items are removed from this list once
 - Why: reduce client API calls; improve testability.
 - Acceptance: minimal backend endpoints added; `shape-client`/`board-cache` progressively switched to server-backed lookups.
 
-- BoardBuilder testability [Planned]
-
-- Why: easier unit tests and reuse.
-- Acceptance: inject board-like dependency into `loadShapeMap`; extract `runBatch` utility.
-
 - Improve error messages [Planned]
 
 - Why: faster debugging.
