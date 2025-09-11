@@ -33,7 +33,7 @@ src/
     miroClient.ts          # wraps `Miro` high-level client
     tokenStorage.ts        # implements Miro Storage interface using DB
   routes/
-    auth.routes.ts         # /auth endpoints (login, callback) + /oauth/* aliases
+    auth.routes.ts         # login/callback handlers reused for /auth/miro/* and /oauth/* aliases
     cards.routes.ts        # /api/cards (queue + worker pipeline)
     tags.routes.ts         # /api/boards/:boardId/tags
     cache.routes.ts        # /api/cache/:boardId
@@ -203,8 +203,8 @@ Cards pipeline:
 
 New auth routes:
 
-- `GET /auth/miro/login` → redirect to `miro.getAuthUrl()`
-- `GET /auth/miro/callback` → `exchangeCodeForAccessToken`
+- `GET /auth/miro/login` and `/oauth/login` → redirect to `miro.getAuthUrl()`
+- `GET /auth/miro/callback` and `/oauth/callback` → `exchangeCodeForAccessToken`
 - `GET /api/auth/status` → report app-level auth state
 
 Use DTOs and JSON Schemas for request/response validation, allowing Fastify to

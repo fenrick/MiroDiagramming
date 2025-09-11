@@ -6,10 +6,6 @@ Status markers: [Planned] to do. Completed items are removed from this list once
 
 ## Quick Wins (Backend)
 
-- DRY OAuth routes [Planned]
-    - Why: eliminate duplicate callback/login handlers.
-    - Acceptance: single callback/login handlers used by both `/auth/miro/*` and `/oauth/*` aliases.
-
 - SPA fallback helper (dev/prod) [Planned]
     - Why: avoid drift between dev Vite middleware and prod static serving.
     - Acceptance: shared helper used in both branches; tests updated if needed.
