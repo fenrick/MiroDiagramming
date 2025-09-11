@@ -22,3 +22,20 @@ test('getBoardTags uses tag client', async () => {
   expect((fetch as vi.Mock).mock.calls[0][0]).toBe('/api/b1/tags')
   expect(tags).toHaveLength(1)
 })
+
+test('ensureTagIds creates tags via client', async () => {
+  const client = {
+    getTags: vi.fn(),
+    createTag: vi.fn().mockResolvedValue({ id: 't1', title: 'tag' }),
+  } as unknown as TagClient
+  const processor = new CardProcessor(undefined, client) as unknown as {
+    ensureTagIds: (
+      names: string[],
+      map: Map<string, { id?: string; title: string }>,
+    ) => Promise<string[]>
+  }
+  const map = new Map<string, { id?: string; title: string }>()
+  const ids = await processor.ensureTagIds(['tag'], map)
+  expect(client.createTag).toHaveBeenCalledWith('tag')
+  expect(ids).toEqual(['t1'])
+})

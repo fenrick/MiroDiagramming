@@ -115,17 +115,17 @@ Status markers: [Done] applied, [Planned] to do.
 - Why: avoid stale reads.
 - Acceptance: call `boardCache.reset()` after mutative actions (e.g., sticky tags, layout, card creation).
 
-22. Extract text read/write util [Planned]
+22. Extract text read/write util [Done]
 
 - Why: DRY across search, sticky tagging, excel sync.
 - Acceptance: shared helpers for getting/setting text fields; existing callers updated.
 
-23. SDK guards + UX feedback [Planned]
+23. SDK guards + UX feedback [Done]
 
 - Why: better UX outside Miro; actionable feedback.
 - Acceptance: central `ensureBoard()`; toast/snackbar for sticky tag results.
 
-24. Tag client enhancement [Planned]
+24. Tag client enhancement [Done]
 
 - Why: clear abstraction.
 - Acceptance: optional `createTag(name)` wrapper (or backend endpoint later) and reuse across features.

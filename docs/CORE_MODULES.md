@@ -38,6 +38,8 @@ src/frontend/core/
     file-utils.ts
     graph-auth.ts
     graph-client.ts
+    tag-client.ts
+    text-utils.ts
     unit-utils.ts
     workbook-writer.ts
 ```
@@ -71,5 +73,7 @@ src/frontend/core/
 | utils/file-utils.ts          | Read and write local files for import/export.       |
 | utils/graph-auth.ts          | Handle OAuth login for the graph service.           |
 | utils/graph-client.ts        | Fetch graph data from the backend API.              |
+| utils/tag-client.ts          | Minimal client for board tag operations.            |
+| utils/text-utils.ts          | Read and write widget text content.                 |
 | utils/unit-utils.ts          | Unit conversion helpers for board measurements.     |
 | utils/workbook-writer.ts     | Output workbook rows to an Excel file.              |

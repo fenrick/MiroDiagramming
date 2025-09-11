@@ -1,6 +1,7 @@
 import * as log from '../logger'
 import { boardCache } from './board-cache'
 import type { BoardLike, BoardQueryLike } from './types'
+import { showError } from '../ui/hooks/notifications'
 
 export type { BoardUILike, BoardLike, BoardQueryLike } from './types'
 
@@ -35,6 +36,24 @@ export function getBoard(board?: BoardLike): BoardLike {
 export function getBoardWithQuery(board?: BoardQueryLike): BoardQueryLike {
   log.trace('Casting board with query capabilities')
   return getBoard(board) as BoardQueryLike
+}
+
+/**
+ * Ensure the Miro board API is available.
+ *
+ * Attempts to resolve the active board and displays a user-facing error when
+ * the SDK is not present, such as when opening the app outside Miro.
+ *
+ * @param board - Optional board override primarily used in tests.
+ * @returns The resolved board instance or `undefined` when unavailable.
+ */
+export function ensureBoard(board?: BoardLike): BoardLike | undefined {
+  try {
+    return getBoard(board)
+  } catch {
+    void showError('Open this app in a Miro board to use this feature.')
+    return undefined
+  }
 }
 
 /**

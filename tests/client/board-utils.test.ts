@@ -1,5 +1,7 @@
-import { forEachSelection, getFirstSelection, maybeSync } from '../src/board/board'
+import { ensureBoard, forEachSelection, getFirstSelection, maybeSync } from '../src/board/board'
 import { boardCache } from '../src/board/board-cache'
+vi.mock('../src/ui/hooks/notifications', () => ({ showError: vi.fn() }))
+import { showError } from '../src/ui/hooks/notifications'
 
 beforeEach(() => boardCache.reset())
 
@@ -49,5 +51,27 @@ describe('getFirstSelection', () => {
     const board = { getSelection: vi.fn().mockResolvedValue([]) }
     const result = await getFirstSelection(board)
     expect(result).toBeUndefined()
+  })
+})
+
+describe('ensureBoard', () => {
+  const original = (globalThis as { miro?: unknown }).miro
+
+  afterEach(() => {
+    ;(globalThis as { miro?: unknown }).miro = original
+    vi.mocked(showError).mockReset()
+  })
+
+  test('returns board when available', () => {
+    const board = {}
+    ;(globalThis as { miro?: unknown }).miro = { board }
+    expect(ensureBoard()).toBe(board)
+    expect(showError).not.toHaveBeenCalled()
+  })
+
+  test('reports error when board missing', () => {
+    ;(globalThis as { miro?: unknown }).miro = undefined
+    expect(ensureBoard()).toBeUndefined()
+    expect(showError).toHaveBeenCalled()
   })
 })
