@@ -3,7 +3,7 @@ import path from 'node:path'
 import fs from 'node:fs/promises'
 import { randomUUID } from 'node:crypto'
 
-import Fastify from 'fastify'
+import Fastify, { type FastifyReply } from 'fastify'
 import fastifyCookie from '@fastify/cookie'
 import fastifyStatic from '@fastify/static'
 import fastifyCors from '@fastify/cors'
@@ -32,7 +32,12 @@ export async function buildApp() {
     credentials: true,
   })
   // Register raw-body plugin (disabled by default; enable per-route)
-  await app.register(fastifyRawBody, { field: 'rawBody', global: false, encoding: false, runFirst: true })
+  await app.register(fastifyRawBody, {
+    field: 'rawBody',
+    global: false,
+    encoding: false,
+    runFirst: true,
+  })
 
   // Simple userId cookie for session affinity (used later for Miro OAuth)
   app.addHook('preHandler', async (request, reply) => {

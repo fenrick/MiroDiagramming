@@ -283,16 +283,7 @@ npm run lint --silent
 npm run format --silent
 ```
 
-The Husky hooks live under the repository's `.husky/` folder. After cloning the
-repo run `npx husky install` from the project root to activate them so every
-commit is validated automatically. These commands perform TypeScript type
-checking, run ESLint and format files with Prettier. Execute the Vitest suite
-yourself before committing. Aim for at least 90 % line and branch coverage and
-keep cyclomatic complexity under eight (see
-[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)). Sonar rules such as using
-`readonly` class fields, optional chaining, semantic HTML tags and stable React
-keys. Run these checks before committing so code conforms to the repository
-guidelines.
+The Husky hooks live under the repository's `.husky/` folder. Hooks are installed automatically on `npm install` via the `prepare` script so each commit is validated. The pre-commit hook runs type checking, tests, ESLint and Prettier. Execute the Vitest suite yourself before committing. Aim for at least 90 % line and branch coverage and keep cyclomatic complexity under eight (see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)). Sonar rules such as using `readonly` class fields, optional chaining, semantic HTML tags and stable React keys. Run these checks before committing so code conforms to the repository guidelines.
 
 CI merges coverage from all test shards. The build doesn't fail based on coverage
 numbers, so developers must keep both codebases above 90 % coverage
@@ -337,7 +328,7 @@ LOG_LEVEL=debug npm run dev
 ## Commit message checks
 
 Commit messages must follow the Conventional Commits specification. A
-`commit-msg` hook now runs commitlint automatically. Verify the latest commit
+`commit-msg` hook runs commitlint automatically (installed via `npm install`). Verify the latest commit
 manually by running:
 
 ```bash
@@ -425,6 +416,7 @@ the development workflow.
 
 This software is released into the public domain under [The Unlicense](LICENSE).
 See the LICENSE file for details.
+
 ### Database (Prisma)
 
 - Import your Prisma Client in backend code with:

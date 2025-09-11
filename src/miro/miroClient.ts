@@ -1,7 +1,8 @@
 import { Miro } from '@mirohq/miro-api'
 
-import { TokenStorage } from './tokenStorage.js'
 import { loadEnv } from '../config/env.js'
+
+import { TokenStorage } from './tokenStorage.js'
 
 let _miro: Miro | undefined
 
