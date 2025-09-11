@@ -2,189 +2,111 @@
 
 Purpose: a concise, ordered backlog of refactors and optimizations to keep the codebase simple, reliable, and easy to maintain.
 
-Status markers: [Done] applied, [Planned] to do.
+Status markers: [Planned] to do. Completed items are removed from this list once merged.
 
-## 1) Config & Environment
+## Quick Wins (Backend)
 
-1. Default port to 3000 [Done]
-    - Why: align local URLs and app manifest; common dev default.
-    - Acceptance: `PORT` defaults to 3000; docs/examples updated.
+1. Type-safe `request.userId` [Planned]
+    - Why: remove repeated casts in routes and hooks.
+    - Acceptance: module augmentation for FastifyRequest; all routes use `req.userId` without casts.
 
-2. Simplify env schema with zod coercion [Done]
-    - Why: remove fragile transforms and casts.
-    - Acceptance: `z.coerce.number().int().positive().default(3000)` for `PORT`.
+2. Centralize env usage for webhook/signature/logging [Planned]
+    - Why: avoid `process.env` reads scattered in code.
+    - Acceptance: `src/config/env.ts` includes `MIRO_WEBHOOK_SECRET`, `LOG_LEVEL`; `webhook.routes.ts` uses `loadEnv()`.
 
-3. Centralize Miro env validation [Done]
-    - Why: clear startup fail-fast for missing OAuth env when auth endpoints are used.
-    - Acceptance: `getMiro()` calls use `loadEnv()` and throw a descriptive error when required vars are missing.
+3. Constant-time webhook signature compare [Planned]
+    - Why: prevent timing attacks; follow best practices.
+    - Acceptance: `timingSafeEqual` used on computed HMAC vs header; raw-body retained.
 
-4. Startup logging and request.userId typing [Done]
-    - Why: clearer boot diagnostics; remove repeated casts in routes.
-    - Acceptance: log resolved port/env; add Fastify decorator for `request.userId` and update route handler types.
+4. DRY OAuth routes [Planned]
+    - Why: eliminate duplicate callback/login handlers.
+    - Acceptance: single callback/login handlers used by both `/auth/miro/*` and `/oauth/*` aliases.
 
-## 2) HTTP Server & Middleware
+5. SPA fallback helper (dev/prod) [Planned]
+    - Why: avoid drift between dev Vite middleware and prod static serving.
+    - Acceptance: shared helper used in both branches; tests updated if needed.
 
-5. Webhook signature over raw body [Done]
-    - Why: align with providers that sign exact bytes; reduce false negatives.
-    - Acceptance: use raw body (e.g., `@fastify/raw-body`) and HMAC over bytes; integration test adjusted.
+6. Cards route polish [Planned]
+    - Why: simplify and harden request handling.
+    - Acceptance: lowercased `idempotency-key` util; payload whitelisted to expected fields; `randomUUID()` for `nodeId`; empty array fast-path.
 
-6. CORS/cookie hardening [Done]
-    - Why: secure defaults in production.
-    - Acceptance: CORS allowlist via env; secure/sameSite cookies enforced in prod.
+7. Tags lookup simplification [Planned]
+    - Why: reduce branching/readability.
+    - Acceptance: single Prisma `OR` query handling numeric `id` or string `board_id`.
 
-7. Readiness endpoint [Done]
-    - Why: health vs readiness split for orchestration.
-    - Acceptance: `/readyz` checks DB connectivity and queue idle status.
+8. Vite dev wiring isolation [Planned]
+    - Why: clarify responsibilities; lighten `app.ts`.
+    - Acceptance: dev middleware moved to `config/dev-vite.ts` (lazy import); behavior unchanged.
 
-## 3) Miro Integration
+## Security, Resilience, Logging
 
-8. Use official client for REST calls [Done]
-    - Why: centralize auth/refresh; reduce manual fetch and error plumbing.
-    - Acceptance: `MiroService.createNode` uses `getMiro().as(userId).getBoard(boardId).createCardItem(...)`; removed `node-fetch`.
+9. Queue configurability via env [Planned]
+    - Why: tune concurrency/backoff without code changes.
+    - Acceptance: `QUEUE_CONCURRENCY`, `QUEUE_MAX_RETRIES`, `QUEUE_BASE_DELAY_MS`, `QUEUE_MAX_DELAY_MS` parsed in `env.ts` and applied.
 
-9. Error handling/backoff for Miro calls [Done]
-    - Why: consistent retry/backoff on 429/5xx.
-    - Acceptance: shared helper wraps calls with exponential backoff and caps retries.
+10. Unify logging under Fastify logger [Planned]
 
-10. TokenStorage tests [Done]
+- Why: consistent redaction and correlation.
+- Acceptance: queues/services receive `app.log` (or adapter) instead of creating separate pino instances.
 
-- Why: ensure storage meets client semantics.
-- Acceptance: unit tests for get/set/delete paths.
+## Database
 
-## 4) Data & Prisma
+11. Index for idempotency cleanup [Planned]
 
-11. Disconnect Prisma on shutdown [Done]
+- Why: speed up deletion by age.
+- Acceptance: Prisma migration adding index on `IdempotencyEntry.created_at`.
 
-- Why: avoid dangling connections in dev/tests.
-- Acceptance: `onClose` hook or exported `closePrisma()` used by tests.
+## Frontend
 
-12. Migrations & deployment flow [Done]
+12. Backend boundary for board reads [Planned]
 
-- Why: safe, repeatable schema changes.
-- Acceptance: add `npm run migrate:deploy`; document running it in CI/prod; stop committing `app.db`.
-- Notes: `.gitignore` now excludes `*.db`. Removing tracked DB files should be a separate maintenance task.
+- Why: reduce client API calls; improve testability.
+- Acceptance: minimal backend endpoints added; `shape-client`/`board-cache` progressively switched to server-backed lookups.
 
-13. Indices and naming consistency [Done]
+13. BoardBuilder testability [Planned]
 
-- Why: performance and readability.
-- Acceptance: composite unique/index for `Tag(board_id, name)`; naming remains snake_case.
+- Why: easier unit tests and reuse.
+- Acceptance: inject board-like dependency into `loadShapeMap`; extract `runBatch` utility.
 
-## 5) Queue/Worker
+14. Improve error messages [Planned]
 
-14. Concurrency + backoff + max retries [Done]
+- Why: faster debugging.
+- Acceptance: errors include invalid values/context across builder operations.
 
-- Why: prevent infinite loops; improve throughput.
-- Acceptance: configurable concurrency; exponential backoff; dead-letter or log after N failures.
+## Docs & Inline Comments
 
-15. Graceful shutdown [Done]
+15. JSDoc and inline docs across key files [Planned]
 
-- Why: prevent task loss on exit.
-- Acceptance: handle signals; stop intake; drain queue or persist tasks; log summary.
+- app.ts: server composition, cookie rationale, SPA fallback.
+- env.ts: per-variable docs, examples, security notes (incl. `MIRO_WEBHOOK_SECRET`).
+- webhook.routes.ts: signature algorithm and raw-body requirement.
+- queue/changeQueue.ts: concurrency model, backoff, drop policy.
+- miro/tokenStorage.ts: mapping to Prisma `User`, expire semantics, `set(undefined)`.
+- services/miroService.ts: inputs/outputs and idempotency expectations.
+- routes/cards.routes.ts: schema intent, idempotency header semantics, honored fields.
+- frontend/board/board-builder.ts: metadata assumptions, `runBatch` behavior.
 
-16. Structured task logs [Done]
+## Lint, Tests & Quality
 
-- Why: observability.
-- Acceptance: include task id, board id, type, retry count, duration.
+16. ESLint rules refinement [Planned]
 
-## 6) API & Validation
+- Why: reduce unsafe casts.
+- Acceptance: discourage `as unknown as`; prefer typed helpers or module augmentation.
 
-17. Route schemas (zod/JSON schema) [Done]
-
-- Why: runtime validation and typed handlers.
-- Acceptance: schemas for `/api/cards`, `/api/webhook`, etc.; automatic 400s on invalid input.
-
-18. Unified error format [Done]
-
-- Why: predictable client handling.
-- Acceptance: `{ error: { message, code? } }` across routes; consistent 4xx/5xx mapping.
-
-19. Idempotency TTL cleanup [Done]
-
-- Why: bound storage growth.
-- Acceptance: scheduled cleanup (e.g., daily) or age-based deletion.
-
-## 7) Frontend
-
-20. Sticky tagger caching and pre-scan [Done]
-
-- Why: avoid duplicate tag creation/lookups; faster runs.
-- Acceptance: single pre-scan ensures all tag names; per-sticky only applies IDs; strict text removal on success.
-
-21. Invalidate board cache after mutations [Done]
-
-- Why: avoid stale reads.
-- Acceptance: call `boardCache.reset()` after mutative actions (e.g., sticky tags, layout, card creation).
-
-22. Extract text read/write util [Done]
-
-- Why: DRY across search, sticky tagging, excel sync.
-- Acceptance: shared helpers for getting/setting text fields; existing callers updated.
-
-23. SDK guards + UX feedback [Done]
-
-- Why: better UX outside Miro; actionable feedback.
-- Acceptance: central `ensureBoard()`; toast/snackbar for sticky tag results.
-
-24. Tag client enhancement [Done]
-
-- Why: clear abstraction.
-- Acceptance: optional `createTag(name)` wrapper (or backend endpoint later) and reuse across features.
-
-## 8) Build & Tooling
-
-25. Remove node-fetch; use global fetch [Done]
-
-- Why: reduce deps; Node 20 provides fetch.
-- Acceptance: dependency removed; imports dropped; tests updated.
-
-26. Husky prepare script [Done]
-
-- Why: auto-install hooks on clone.
-- Acceptance: add `"prepare": "husky"` and docs note.
-
-27. ESLint rules refinement [Planned]
-
-- Why: reduce unsafe patterns.
-- Acceptance: rule to discourage `as unknown as`; prefer typed helpers.
-
-## 9) Tests & Quality
-
-28. Cards idempotency and tags route tests [Planned]
+17. Tests for idempotency and tags lookup [Planned]
 
 - Why: prevent regressions.
-- Acceptance: integration tests for `/api/cards` idempotency and `/api/boards/:id/tags` mapping.
+- Acceptance: integration tests for `/api/cards` idempotency and `/api/boards/:id/tags` OR mapping.
 
-29. Sticky-tags unit tests [Planned]
+18. Webhook signature util tests [Planned]
 
-- Why: lock behavior.
-- Acceptance: tests covering multiple bracketed tags, duplicates, failure to create, and text stripping conditions.
+- Why: verify timing-safe logic.
+- Acceptance: unit tests covering valid/invalid signature paths with raw body.
 
-30. Coverage guard [Planned]
+19. Coverage guard [Planned]
 
 - Why: maintain targets.
-- Acceptance: simple threshold check (Vitest/c8) gating CI summary.
-
-## 10) Docs & Cleanup
-
-31. Webhook signature note [Done]
-
-- Why: clarify raw body requirement.
-- Acceptance: docs updated with implementation detail and env note.
-
-32. Remove legacy references [Done]
-
-- Why: reduce confusion.
-- Acceptance: purge Python-era remnants and stray references from README/DEPLOYMENT.
-
-33. Commit hygiene for DB files [Done]
-
-- Why: avoid shipping dev databases.
-- Acceptance: ensure `.gitignore` covers `*.db`; remove committed `app.db` from repo history in a separate maintenance task if desired.
-
-34. Prisma Client import guidance [Done]
-
-- Why: make DB usage patterns explicit and consistent.
-- Acceptance: README and node-architecture docs include import snippet and migration commands; Pulse tip added.
+- Acceptance: threshold check (Vitest/c8) gating CI summary.
 
 ---
 

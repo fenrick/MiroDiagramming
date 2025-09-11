@@ -49,13 +49,13 @@ export async function buildApp() {
 
   // Simple userId cookie for session affinity (used later for Miro OAuth)
   app.addHook('preHandler', async (request, reply) => {
-    const cookies = (request as unknown as { cookies?: Record<string, string> }).cookies
+    const cookies = (request as { cookies?: Record<string, string> }).cookies
     let userId = cookies?.userId
     if (!userId) {
-      userId = Math.random().toString(36).slice(2)
+      userId = randomUUID()
       reply.setCookie('userId', userId, { path: '/' })
     }
-    ;(request as unknown as { userId?: string }).userId = userId
+    request.userId = userId
   })
 
   app.get('/healthz', async () => ({ status: 'ok' }))

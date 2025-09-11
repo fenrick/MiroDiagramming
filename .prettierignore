@@ -1,0 +1,51 @@
+# Ignore temporary, cache, and build artifacts
+
+# Package manager and dependencies
+node_modules/
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
+# Build outputs
+dist/
+build/
+.output/
+out/
+
+# Framework caches/builds
+.next/
+.nuxt/
+.svelte-kit/
+.docusaurus/
+.serverless/
+.firebase/
+
+# Tool caches
+.cache/
+.parcel-cache/
+.vite/
+**/.vitepress/dist
+**/.vitepress/cache
+.nyc_output/
+.eslintcache
+.stylelintcache
+
+# OS/editor clutter
+.DS_Store
+.vscode-test/
+
+# Python temp (legacy remnants)
+__pycache__/
+.mypy_cache/
+.ruff_cache/
+
+# Misc
+coverage/
+*.tsbuildinfo
+*.log
+*.db
+app.db
