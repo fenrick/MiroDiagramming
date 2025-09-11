@@ -1,22 +1,21 @@
 import { setTimeout as delay } from 'node:timers/promises'
 
 /**
- * In-memory change queue with simple concurrency and retry/backoff.
+ * In-memory change queue coordinating writes to the Miro API.
  *
- * - Uses exponential backoff with jitter on retriable failures
- * - Allows tuning via `configure` and log injection via `setLogger`
- * - Default settings favor safety over throughput
+ * - Multiple worker loops pull tasks concurrently up to a configurable limit
+ * - Retries use exponential backoff with jitter between the configured
+ *   `baseDelayMs` and `maxDelayMs`
+ * - Tasks exceeding the retry limit are dropped and logged as errors
  */
+
+import type { FastifyBaseLogger } from 'fastify'
 
 import { MiroService } from '../services/miroService.js'
 
 import { createNodeTask, type ChangeTask } from './types.js'
 
-type LoggerLike = {
-  info: (obj: unknown, msg?: string) => void
-  warn: (obj: unknown, msg?: string) => void
-  error: (obj: unknown, msg?: string) => void
-}
+type LoggerLike = Pick<FastifyBaseLogger, 'info' | 'warn' | 'error'>
 
 const defaultLogger: LoggerLike = {
   info: () => {},
@@ -36,6 +35,10 @@ class InMemoryQueue {
   private defaultMaxRetries = 5
   private logger: LoggerLike = defaultLogger
 
+  /**
+   * Update default concurrency and retry/backoff settings.
+   * Values less than 1 are clamped to 1.
+   */
   configure(opts: {
     concurrency?: number
     baseDelayMs?: number
@@ -48,22 +51,30 @@ class InMemoryQueue {
     if (opts.maxRetries !== undefined) this.defaultMaxRetries = Math.max(1, opts.maxRetries)
   }
 
+  /** Inject a logger; defaults to a no-op logger. */
   setLogger(logger: LoggerLike) {
     this.logger = logger ?? defaultLogger
   }
 
+  /** Queue a task for processing. */
   enqueue(task: ChangeTask) {
     this.q.push(task)
   }
 
+  /** Number of queued tasks awaiting execution. */
   size() {
     return this.q.length
   }
 
+  /** Number of tasks currently being processed. */
   inFlight() {
     return this.active
   }
 
+  /**
+   * Start worker loops that continually pull tasks from the queue.
+   * Skips execution when running in tests to keep them deterministic.
+   */
   start(concurrency = this.defaultConcurrency) {
     if (this.running) return
     if (process.env.NODE_ENV === 'test') return
@@ -75,11 +86,17 @@ class InMemoryQueue {
     this.logger.info({ workers: this.workers }, 'changeQueue started')
   }
 
+  /** Stop accepting new tasks and halt worker loops. */
   stop() {
     this.running = false
     this.logger.info({ queued: this.q.length }, 'changeQueue stopping')
   }
 
+  /**
+   * Execute a task with retry logic.
+   * Retries grow exponentially and include a small random jitter to avoid
+   * thundering herds. Once the retry limit is exceeded the task is dropped.
+   */
   private async process(task: ChangeTask): Promise<void> {
     const started = Date.now()
     try {
@@ -126,6 +143,7 @@ class InMemoryQueue {
     }
   }
 
+  /** Worker loop pulling tasks from the queue while the queue is running. */
   private async loop(workerId: number) {
     while (this.running) {
       const task = this.q.shift()

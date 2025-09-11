@@ -20,20 +20,20 @@ describe('BoardBuilder lookup and connector updates', () => {
   })
   test('findNode caches shapes by text', async () => {
     const shape = { content: 'B' } as Record<string, unknown>
-    mockBoard({ get: vi.fn().mockResolvedValue([shape]) })
+    const board = mockBoard({ get: vi.fn().mockResolvedValue([shape]) })
     const builder = new BoardBuilder()
-    await builder.findNode('Business', 'B')
-    await builder.findNode('Business', 'B')
+    await builder.findNode('Business', 'B', board)
+    await builder.findNode('Business', 'B', board)
     expect((global.miro.board.get as vi.Mock).mock.calls.length).toBe(1)
   })
 
   test('reset clears the shape cache', async () => {
     const shape = { content: 'B' } as Record<string, unknown>
-    mockBoard({ get: vi.fn().mockResolvedValue([shape]) })
+    const board = mockBoard({ get: vi.fn().mockResolvedValue([shape]) })
     const builder = new BoardBuilder()
-    await builder.findNode('Business', 'B')
+    await builder.findNode('Business', 'B', board)
     builder.reset()
-    await builder.findNode('Business', 'B')
+    await builder.findNode('Business', 'B', board)
     expect((global.miro.board.get as vi.Mock).mock.calls.length).toBe(1)
   })
 
@@ -52,9 +52,9 @@ describe('BoardBuilder lookup and connector updates', () => {
       getMetadata: vi.fn().mockResolvedValue({ type: 'X', label: 'Y' }),
       getItems: vi.fn().mockResolvedValue([]),
     } as Record<string, unknown>
-    mockBoard({ get: vi.fn().mockResolvedValue([shape]) })
+    const board = mockBoard({ get: vi.fn().mockResolvedValue([shape]) })
     const builder = new BoardBuilder()
-    const result = await builder.findNode('Business', 'A')
+    const result = await builder.findNode('Business', 'A', board)
     expect(result).toBe(shape)
   })
 

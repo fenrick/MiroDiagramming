@@ -1,10 +1,30 @@
 import { z } from 'zod'
 
+/**
+ * Schema defining all supported environment variables.
+ * Each property includes a description and default, ensuring
+ * a single source of truth for configuration.
+ */
 const EnvSchema = z.object({
+  /** Node execution mode affecting logging and error handling. */
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+
+  /** HTTP port the Fastify server listens on. */
   PORT: z.coerce.number().int().positive().default(3000),
+
+  /**
+   * Secret used to sign session cookies.
+   * Replace the default with a long random string in production.
+   */
   SESSION_SECRET: z.string().min(10).default('dev-secret-change-me'),
+
+  /** Minimum Pino log level, e.g. `info` or `debug`. */
   LOG_LEVEL: z.string().optional(),
+
+  /**
+   * Allowed cross-origin request origins. Accepts a JSON array string
+   * (e.g. `["https://app.example"]`) or a comma-separated list.
+   */
   CORS_ORIGINS: z
     .string()
     .transform((val) => {
@@ -16,22 +36,46 @@ const EnvSchema = z.object({
     })
     .optional(),
 
-  // Miro OAuth (used in later phases)
+  // Miro OAuth
+  /** OAuth client identifier issued by Miro. */
   MIRO_CLIENT_ID: z.string().optional(),
+  /** OAuth client secret; treat as sensitive. */
   MIRO_CLIENT_SECRET: z.string().optional(),
+  /**
+   * Redirect URL registered with Miro, e.g.
+   * `http://localhost:3000/auth/miro/callback`.
+   */
   MIRO_REDIRECT_URL: z.string().optional(),
+  /**
+   * Interval in seconds for pruning stale idempotency keys.
+   * Defaults to one day.
+   */
   MIRO_IDEMPOTENCY_CLEANUP_SECONDS: z.coerce.number().int().positive().default(86400),
+  /**
+   * Shared secret for verifying webhook signatures. Keep this value
+   * private to prevent request forgery.
+   */
   MIRO_WEBHOOK_SECRET: z.string().optional(),
 
   // Queue tuning
+  /** Number of concurrent workers processing queued tasks. */
   QUEUE_CONCURRENCY: z.coerce.number().int().positive().default(2),
+  /** Maximum retry attempts before a task is dropped. */
   QUEUE_MAX_RETRIES: z.coerce.number().int().positive().default(5),
+  /** Initial backoff delay in milliseconds for retries. */
   QUEUE_BASE_DELAY_MS: z.coerce.number().int().positive().default(250),
+  /** Upper bound for exponential backoff delay in milliseconds. */
   QUEUE_MAX_DELAY_MS: z.coerce.number().int().positive().default(5000),
 })
 
 type Env = z.infer<typeof EnvSchema>
 
+/**
+ * Load and validate environment variables using {@link EnvSchema}.
+ *
+ * @returns Parsed environment values.
+ * @throws If validation fails, an Error describing the invalid fields.
+ */
 export function loadEnv(): Env {
   const raw = {
     NODE_ENV: process.env.NODE_ENV,

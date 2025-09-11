@@ -1,6 +1,5 @@
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
-import fs from 'node:fs/promises'
 import { randomUUID } from 'node:crypto'
 
 import Fastify, { type FastifyReply } from 'fastify'
@@ -22,6 +21,7 @@ import { registerCacheRoutes } from './routes/cache.routes.js'
 import { registerLimitsRoutes } from './routes/limits.routes.js'
 import { registerWebhookRoutes } from './routes/webhook.routes.js'
 import { IdempotencyRepo } from './repositories/idempotencyRepo.js'
+import { registerSpaFallback } from './utils/spaFallback.js'
 
 export async function buildApp() {
   const env = loadEnv()
@@ -104,17 +104,9 @@ export async function buildApp() {
         prefix: '/',
       })
 
-      // SPA fallback to index.html for non-API routes
-      app.setNotFoundHandler((req, reply) => {
-        const url = req.url || ''
-        if (url.startsWith('/api')) {
-          return reply.code(404).send(errorResponse('Not found', 'NOT_FOUND'))
-        }
-        // Serve index.html for client-side routing
-        return (reply as unknown as { sendFile: (p: string) => FastifyReply }).sendFile(
-          'index.html',
-        )
-      })
+      registerSpaFallback(app, (_req, reply) =>
+        (reply as unknown as { sendFile: (p: string) => FastifyReply }).sendFile('index.html'),
+      )
     } catch {
       // Ignore if dist path is missing (dev/test mode)
     }
@@ -136,43 +128,13 @@ export async function buildApp() {
   })
 
   // In development (but not tests), attach Vite middleware for a single-process dev
-  // Dev-only: attach Vite middleware to serve the React frontend from the same process
   if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
-    const clientRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../src/web')
-    // Lazy import to avoid adding Vite to production runtime
-    const [{ default: middie }, { createServer }] = await Promise.all([
-      import('@fastify/middie'),
-      import('vite'),
-    ])
-    await app.register(middie)
-    const vite = await createServer({
-      root: clientRoot,
-      server: { middlewareMode: true },
-      appType: 'custom',
-    })
-    ;(app as unknown as { use: (m: unknown) => void }).use(vite.middlewares)
-
-    // Fallback index.html for SPA routes, excluding API and health
-    app.all('*', async (req, reply) => {
-      const url = req.url || '/'
-      if (url.startsWith('/api') || url.startsWith('/healthz')) {
-        return reply.code(404).send(errorResponse('Not found', 'NOT_FOUND'))
-      }
-      const indexPath = path.resolve(clientRoot, 'index.html')
-      let html = await fs.readFile(indexPath, 'utf-8')
-      html = await vite.transformIndexHtml(url, html)
-      reply.type('text/html').send(html)
-    })
+    const { registerDevVite } = await import('./config/dev-vite')
+    await registerDevVite(app)
   }
 
   // Configure queue logging and tuning from env
-  changeQueue.setLogger(
-    app.log as unknown as {
-      info: (o: unknown, m?: string) => void
-      warn: (o: unknown, m?: string) => void
-      error: (o: unknown, m?: string) => void
-    },
-  )
+  changeQueue.setLogger(app.log)
   changeQueue.configure({
     concurrency: env.QUEUE_CONCURRENCY,
     baseDelayMs: env.QUEUE_BASE_DELAY_MS,

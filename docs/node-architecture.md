@@ -29,11 +29,12 @@ src/
     env.ts                 # env var parsing (zod)
     logger.ts              # pino logger config
     db.ts                  # Prisma client bootstrap
+    dev-vite.ts            # Vite middleware for local development
   miro/
     miroClient.ts          # wraps `Miro` high-level client
     tokenStorage.ts        # implements Miro Storage interface using DB
   routes/
-    auth.routes.ts         # /auth endpoints (login, callback) + /oauth/* aliases
+    auth.routes.ts         # login/callback handlers reused for /auth/miro/* and /oauth/* aliases
     cards.routes.ts        # /api/cards (queue + worker pipeline)
     tags.routes.ts         # /api/boards/:boardId/tags
     cache.routes.ts        # /api/cache/:boardId
@@ -43,6 +44,8 @@ src/
   queue/
     changeQueue.ts         # in-memory queue with concurrency, retries, backoff
     types.ts               # task types (retryCount, maxRetries, createdAt)
+  utils/
+    spaFallback.ts         # shared SPA index.html fallback for dev/prod
 src/web/                     # React frontend (dev via Vite, built by root scripts)
 prisma/
   schema.prisma            # Board, Tag, Shape, User, CacheEntry, IdempotencyEntry
@@ -67,9 +70,14 @@ Additional backend env:
 - `SESSION_SECRET` (for cookie signatures)
 - `MIRO_WEBHOOK_SECRET` (signature validation for `/api/webhook`)
 - `MIRO_IDEMPOTENCY_CLEANUP_SECONDS` (interval for removing stale idempotency keys)
+- Idempotency entries are indexed by `created_at` to speed up cleanup.
 - Webhook signatures are computed over the raw request body using `@fastify/raw-body`.
 - `DATABASE_URL` (e.g., `file:./dev.db`)
 - `CORS_ORIGINS` (JSON array of allowed origins)
+- `QUEUE_CONCURRENCY` (number of worker loops processing change tasks)
+- `QUEUE_MAX_RETRIES` (per-task retry limit before dropping)
+- `QUEUE_BASE_DELAY_MS` (initial backoff delay in milliseconds)
+- `QUEUE_MAX_DELAY_MS` (upper bound for exponential backoff)
 
 Use a schema validator (zod) to fail fast if vars are missing.
 
@@ -199,8 +207,8 @@ Cards pipeline:
 
 New auth routes:
 
-- `GET /auth/miro/login` → redirect to `miro.getAuthUrl()`
-- `GET /auth/miro/callback` → `exchangeCodeForAccessToken`
+- `GET /auth/miro/login` and `/oauth/login` → redirect to `miro.getAuthUrl()`
+- `GET /auth/miro/callback` and `/oauth/callback` → `exchangeCodeForAccessToken`
 - `GET /api/auth/status` → report app-level auth state
 
 Use DTOs and JSON Schemas for request/response validation, allowing Fastify to
@@ -229,6 +237,7 @@ We will map SQLAlchemy tables one-to-one and add migrations to preserve data.
 - Central error middleware: map domain errors to HTTP
 - Error responses consistently use `{ error: { message, code? } }`
 - Use Pino logger with request-id; structured logs
+- Background queues and services reuse Fastify's `app.log` for consistent redaction and correlation
 - Mask secrets; never log tokens
 - Miro API calls use exponential backoff on 429/5xx via `withMiroRetry`
 
@@ -250,7 +259,7 @@ We will map SQLAlchemy tables one-to-one and add migrations to preserve data.
 
 - Single root `package.json`; no nested packages
 - `npm install` at repo root
-- `npm run dev` runs one Node process: Fastify + Vite middleware
+- `npm run dev` runs one Node process: Fastify + Vite middleware (see `config/dev-vite.ts`)
 - In production, server serves `src/client/dist` (static) and API
 - Ensure `MIRO_*` env vars are set; redirect URL points to local server
 
