@@ -63,4 +63,6 @@ model IdempotencyEntry {
   key        String   @unique
   accepted   Int
   created_at DateTime @default(now())
+
+  @@index([created_at])
 }
