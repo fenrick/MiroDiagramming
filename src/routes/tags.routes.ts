@@ -36,12 +36,12 @@ export const registerTagsRoutes: FastifyPluginAsync = async (app) => {
       const prisma = getPrisma()
       const boardParam = req.params.boardId
       // Resolve either by external board_id (string) or internal id (number)
-      const ors: Array<Record<string, unknown>> = [{ board_id: boardParam }]
-      const parsed = Number(boardParam)
-      if (Number.isFinite(parsed)) {
-        ors.push({ id: parsed })
-      }
-      const board = await prisma.board.findFirst({ where: { OR: ors } })
+      const numericId = Number(boardParam)
+      const or = [
+        { board_id: boardParam },
+        ...(Number.isFinite(numericId) ? [{ id: numericId }] : []),
+      ]
+      const board = await prisma.board.findFirst({ where: { OR: or } })
       if (!board) {
         return reply.send([])
       }
