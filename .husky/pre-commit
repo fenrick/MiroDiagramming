@@ -1,0 +1,7 @@
+#!/usr/bin/env sh
+. "$(dirname "$0")/_/husky.sh"
+
+npm run typecheck --silent
+npm test --silent
+npm run lint --silent
+npm run format --silent

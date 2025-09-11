@@ -4,7 +4,16 @@ const EnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().int().positive().default(3000),
   SESSION_SECRET: z.string().min(10).default('dev-secret-change-me'),
-  CORS_ORIGIN: z.string().optional(),
+  CORS_ORIGINS: z
+    .string()
+    .transform((val) => {
+      try {
+        return JSON.parse(val) as string[]
+      } catch {
+        return val.split(',').map((v) => v.trim())
+      }
+    })
+    .optional(),
 
   // Miro OAuth (used in later phases)
   MIRO_CLIENT_ID: z.string().optional(),
@@ -19,7 +28,7 @@ export function loadEnv(): Env {
     NODE_ENV: process.env.NODE_ENV,
     PORT: process.env.PORT ?? '3000',
     SESSION_SECRET: process.env.SESSION_SECRET,
-    CORS_ORIGIN: process.env.CORS_ORIGIN,
+    CORS_ORIGINS: process.env.CORS_ORIGINS,
     MIRO_CLIENT_ID: process.env.MIRO_CLIENT_ID,
     MIRO_CLIENT_SECRET: process.env.MIRO_CLIENT_SECRET,
     MIRO_REDIRECT_URL: process.env.MIRO_REDIRECT_URL,

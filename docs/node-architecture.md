@@ -66,8 +66,9 @@ Additional backend env:
 - `PORT=4000`
 - `SESSION_SECRET` (for cookie signatures)
 - `MIRO_WEBHOOK_SECRET` (signature validation for `/api/webhook`)
+- Webhook signatures are computed over the raw request body using `@fastify/raw-body`.
 - `DATABASE_URL` (e.g., `file:./dev.db`)
-- `CORS_ORIGIN` (frontend origin during dev)
+- `CORS_ORIGINS` (JSON array of allowed origins)
 
 Use a schema validator (zod) to fail fast if vars are missing.
 
@@ -142,16 +143,18 @@ Storage interface (token persistence):
 
 ```ts
 // Implements the Storage interface required by Miro
-export class TokenStorage {
-    async get(userId: string) {
-        return await userTokenRepo.get(userId) // returns State | undefined
-    }
+  export class TokenStorage {
+      async get(userId: string) {
+          return await userTokenRepo.get(userId) // returns State | undefined
+      }
 
-    async set(userId: string, state: any) {
-        await userTokenRepo.set(userId, state)
-    }
-}
-```
+      async set(userId: string, state: any) {
+          await userTokenRepo.set(userId, state)
+      }
+  }
+  ```
+
+Our production `TokenStorage` persists tokens with Prisma, and unit tests cover the `get`, `set`, and delete paths to ensure compatibility with Miro's Storage interface.
 
 OAuth flow (Fastify example):
 
@@ -227,7 +230,7 @@ We will map SQLAlchemy tables one-to-one and add migrations to preserve data.
 ## Security
 
 - HTTPS in production; secure HTTP-only cookies (`sameSite=strict`)
-- CORS via `@fastify/cors` and `CORS_ORIGIN` env
+- CORS via `@fastify/cors` and `CORS_ORIGINS` env
 - CSRF protection for state-changing endpoints (if applicable)
 - Input validation (zod) and output typing
 - Secrets from env; no tokens in source control
@@ -252,6 +255,7 @@ We will map SQLAlchemy tables one-to-one and add migrations to preserve data.
 - Run with `npm run start` (serves built UI and API)
 - Configure env (MIRO_CLIENT_ID/SECRET/REDIRECT_URL, DATABASE_URL, PORT)
 - Health check endpoint: `/healthz`
+- Readiness endpoint: `/readyz` (verifies DB connectivity and queue idle status)
 
 ## Backwards Compatibility
 
