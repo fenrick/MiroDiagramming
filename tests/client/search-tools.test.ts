@@ -1,6 +1,7 @@
 import { BoardQueryLike } from '../src/board/board'
 import { boardCache } from '../src/board/board-cache'
-import { getTextFields, replaceBoardContent, searchBoardContent } from '../src/board/search-tools'
+import { replaceBoardContent, searchBoardContent } from '../src/board/search-tools'
+import { getTextFields } from '../src/core/utils/text-utils'
 
 beforeEach(() => boardCache.reset())
 
@@ -194,7 +195,7 @@ describe('search-tools', () => {
   })
 
   test('setStringAtPath guards prototype pollution', async () => {
-    const { _setStringAtPath: fn } = (await import('../src/board/search-tools')) as {
+    const { _setStringAtPath: fn } = (await import('../src/core/utils/text-utils')) as {
       _setStringAtPath: (o: Record<string, unknown>, p: string, v: string) => void
     }
     const obj1: Record<string, unknown> = {}

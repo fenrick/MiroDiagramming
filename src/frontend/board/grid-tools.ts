@@ -24,7 +24,7 @@ import * as log from '../logger'
 import { BoardLike, getBoard, maybeSync, Syncable } from './board'
 import { boardCache } from './board-cache'
 import { calculateGridPositions } from './grid-layout'
-import { getTextFields } from './search-tools'
+import { getTextFields } from '../core/utils/text-utils'
 
 /** Extract a name field from a widget for sorting purposes. */
 function getName(item: Record<string, unknown>): string {

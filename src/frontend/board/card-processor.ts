@@ -193,11 +193,13 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
     for (const name of uniqueNames) {
       let tag = tagMap.get(name)
       if (!tag) {
-        tag = await miro.board.createTag({ title: name })
-        tagMap.set(name, tag)
-        this.tagsCache?.push(tag)
+        tag = await this.tagClient.createTag(name)
+        if (tag) {
+          tagMap.set(name, tag)
+          this.tagsCache?.push(tag)
+        }
       }
-      if (tag.id) {
+      if (tag?.id) {
         ids.push(tag.id)
       }
     }

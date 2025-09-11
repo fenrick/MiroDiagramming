@@ -1,6 +1,7 @@
 import { BoardQueryLike, getBoardWithQuery, maybeSync, Syncable } from './board'
 import { boardCache } from './board-cache'
 import safeRegex from 'safe-regex'
+import { getTextFields, getStringAtPath, setStringAtPath } from '../core/utils/text-utils'
 
 /** Search configuration. */
 export interface SearchOptions {
@@ -85,75 +86,6 @@ function buildRegex(opts: SearchOptions): RegExp {
  * @param item - Record containing arbitrary widget properties.
  * @returns Array of `[path, text]` tuples for each discovered field.
  */
-function pushIfString(arr: Array<[string, string]>, key: string, value: unknown): void {
-  if (typeof value === 'string') {
-    arr.push([key, value])
-  }
-}
-
-function pushNestedText(arr: Array<[string, string]>, text: Record<string, unknown>): void {
-  pushIfString(arr, 'text.plainText', text.plainText)
-  pushIfString(arr, 'text.content', text.content)
-}
-
-export function getTextFields(item: Record<string, unknown>): Array<[string, string]> {
-  const fields: Array<[string, string]> = []
-  pushIfString(fields, 'title', item.title)
-  pushIfString(fields, 'content', item.content)
-  pushIfString(fields, 'plainText', item.plainText)
-  pushIfString(fields, 'description', item.description)
-  if (typeof item.text === 'string') {
-    pushIfString(fields, 'text', item.text)
-  } else if (item.text && typeof item.text === 'object') {
-    pushNestedText(fields, item.text as Record<string, unknown>)
-  }
-  return fields
-}
-
-function getStringAtPath(item: Record<string, unknown>, path: string): string | undefined {
-  const parts = path.split('.')
-  let ref: unknown = item
-  for (const p of parts) {
-    if (!ref || typeof ref !== 'object') {
-      return undefined
-    }
-    ref = (ref as Record<string, unknown>)[p]
-  }
-  return typeof ref === 'string' ? ref : undefined
-}
-
-function isUnsafe(prop: string): boolean {
-  return prop === '__proto__' || prop === 'constructor'
-}
-
-function getParent(
-  obj: Record<string, unknown>,
-  parts: string[],
-): Record<string, unknown> | undefined {
-  let ref: unknown = obj
-  for (let i = 0; i < parts.length - 1; i += 1) {
-    const part = parts[i]!
-    if (isUnsafe(part) || !ref || typeof ref !== 'object') {
-      return undefined
-    }
-    ref = (ref as Record<string, unknown>)[part]
-  }
-  return typeof ref === 'object' && ref ? (ref as Record<string, unknown>) : undefined
-}
-
-function setStringAtPath(item: Record<string, unknown>, path: string, value: string): void {
-  const parts = path.split('.')
-  const parent = getParent(item, parts)
-  if (!parent) {
-    return
-  }
-  const last = parts[parts.length - 1]!
-  if (isUnsafe(last)) {
-    return
-  }
-  parent[last] = value
-}
-
 /**
  * Collect matching text fields from a single widget.
  */
@@ -309,4 +241,3 @@ export async function replaceBoardContent(
 }
 
 // Internal export for testing.
-export { setStringAtPath as _setStringAtPath }

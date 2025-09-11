@@ -28,4 +28,22 @@ export class TagClient {
     }
     return (await res.json()) as TagInfo[]
   }
+
+  /** Create a tag on the current board. */
+  public async createTag(title: string): Promise<TagInfo | undefined> {
+    const board = (
+      globalThis as {
+        miro?: { board?: { createTag?: (t: { title: string }) => Promise<TagInfo> } }
+      }
+    ).miro?.board
+    if (typeof board?.createTag !== 'function') {
+      return undefined
+    }
+    try {
+      const tag = (await board.createTag({ title })) as TagInfo
+      return tag
+    } catch {
+      return undefined
+    }
+  }
 }
