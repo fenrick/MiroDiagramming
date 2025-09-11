@@ -17,7 +17,11 @@ describe('miroClient env + singleton', () => {
       }),
     }))
     // Mock SDK to a trivial class to avoid side-effects
-    vi.mock('@mirohq/miro-api', () => ({ Miro: class { constructor() {} } }))
+    vi.mock('@mirohq/miro-api', () => ({
+      Miro: class {
+        constructor() {}
+      },
+    }))
     const mod = await import('../../../src/miro/miroClient.js')
     getMiro = mod.getMiro
     const a = getMiro()

@@ -20,7 +20,7 @@ describe('error-handler', () => {
       },
       async () => ({ ok: true }),
     )
-    const res = await app.inject({ method: 'POST', url: '/test', payload: { } })
+    const res = await app.inject({ method: 'POST', url: '/test', payload: {} })
     expect(res.statusCode).toBe(400)
     expect(res.json()).toEqual({ error: { message: 'Invalid payload', code: 'INVALID_PAYLOAD' } })
     await app.close()
@@ -41,4 +41,3 @@ describe('error-handler', () => {
     await app.close()
   })
 })
-

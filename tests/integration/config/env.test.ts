@@ -7,13 +7,7 @@ describe('env', () => {
 
   beforeEach(() => {
     // snapshot keys we touch
-    for (const k of [
-      'NODE_ENV',
-      'PORT',
-      'SESSION_SECRET',
-      'CORS_ORIGINS',
-      'QUEUE_CONCURRENCY',
-    ]) {
+    for (const k of ['NODE_ENV', 'PORT', 'SESSION_SECRET', 'CORS_ORIGINS', 'QUEUE_CONCURRENCY']) {
       restore[k] = process.env[k]
     }
     delete process.env.CORS_ORIGINS
@@ -52,4 +46,3 @@ describe('env', () => {
     expect(() => loadEnv()).toThrowError(/Invalid environment/)
   })
 })
-
