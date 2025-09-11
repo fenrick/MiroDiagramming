@@ -1,6 +1,5 @@
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
-import fs from 'node:fs/promises'
 import { randomUUID } from 'node:crypto'
 
 import Fastify, { type FastifyReply } from 'fastify'
@@ -129,29 +128,9 @@ export async function buildApp() {
   })
 
   // In development (but not tests), attach Vite middleware for a single-process dev
-  // Dev-only: attach Vite middleware to serve the React frontend from the same process
   if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
-    const clientRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../src/web')
-    // Lazy import to avoid adding Vite to production runtime
-    const [{ default: middie }, { createServer }] = await Promise.all([
-      import('@fastify/middie'),
-      import('vite'),
-    ])
-    await app.register(middie)
-    const vite = await createServer({
-      root: clientRoot,
-      server: { middlewareMode: true },
-      appType: 'custom',
-    })
-    ;(app as unknown as { use: (m: unknown) => void }).use(vite.middlewares)
-
-    registerSpaFallback(app, async (req, reply) => {
-      const url = req.url || '/'
-      const indexPath = path.resolve(clientRoot, 'index.html')
-      let html = await fs.readFile(indexPath, 'utf-8')
-      html = await vite.transformIndexHtml(url, html)
-      reply.type('text/html').send(html)
-    })
+    const { registerDevVite } = await import('./config/dev-vite')
+    await registerDevVite(app)
   }
 
   // Configure queue logging and tuning from env

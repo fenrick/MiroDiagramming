@@ -4,12 +4,6 @@ Purpose: a concise, ordered backlog of refactors and optimizations to keep the c
 
 Status markers: [Planned] to do. Completed items are removed from this list once merged.
 
-## Quick Wins (Backend)
-
-- Vite dev wiring isolation [Planned]
-    - Why: clarify responsibilities; lighten `app.ts`.
-    - Acceptance: dev middleware moved to `config/dev-vite.ts` (lazy import); behavior unchanged.
-
 ## Security, Resilience, Logging
 
 - Unify logging under Fastify logger [Planned]

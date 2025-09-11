@@ -29,6 +29,7 @@ src/
     env.ts                 # env var parsing (zod)
     logger.ts              # pino logger config
     db.ts                  # Prisma client bootstrap
+    dev-vite.ts            # Vite middleware for local development
   miro/
     miroClient.ts          # wraps `Miro` high-level client
     tokenStorage.ts        # implements Miro Storage interface using DB
@@ -256,7 +257,7 @@ We will map SQLAlchemy tables one-to-one and add migrations to preserve data.
 
 - Single root `package.json`; no nested packages
 - `npm install` at repo root
-- `npm run dev` runs one Node process: Fastify + Vite middleware
+- `npm run dev` runs one Node process: Fastify + Vite middleware (see `config/dev-vite.ts`)
 - In production, server serves `src/client/dist` (static) and API
 - Ensure `MIRO_*` env vars are set; redirect URL points to local server
 
