@@ -1,3 +1,5 @@
+import { randomUUID } from 'node:crypto'
+
 import type { FastifyPluginAsync } from 'fastify'
 
 import { changeQueue, createNodeTask } from '../queue/changeQueue.js'
@@ -48,19 +50,35 @@ export const registerCardsRoutes: FastifyPluginAsync = async (app) => {
     async (req, reply) => {
       const userId = req.userId || ''
       const cards = req.body
-      const headers = (req.headers || {}) as Record<string, string | undefined>
-      const idemKey = headers['idempotency-key'] || headers['Idempotency-Key']
+      const idemKey = (req.headers['idempotency-key'] as string | undefined) ?? undefined
       const repo = new IdempotencyRepo()
+
       if (idemKey) {
         const previous = await repo.get(idemKey)
-        if (previous !== undefined) {
+        if (typeof previous === 'number') {
           return reply.code(202).send({ accepted: previous })
         }
       }
+
+      if (!Array.isArray(cards) || cards.length === 0) {
+        if (idemKey) await repo.set(idemKey, 0)
+        return reply.code(202).send({ accepted: 0 })
+      }
+
       for (const c of cards) {
-        const nodeId = c.id ?? Math.random().toString(36).slice(2)
-        const data: Record<string, unknown> = { ...c }
-        delete (data as Record<string, unknown>).id
+        const nodeId = c.id ?? randomUUID()
+        const { title, description, tags, style, fields, taskStatus, boardId } = c
+        const data: Record<string, unknown> = {
+          title,
+          description,
+          tags,
+          style,
+          fields,
+          taskStatus,
+          boardId,
+        }
+        // Remove undefined keys
+        Object.keys(data).forEach((k) => (data[k] === undefined ? delete data[k] : undefined))
         changeQueue.enqueue(createNodeTask(userId, nodeId, data))
       }
       const accepted = cards.length
