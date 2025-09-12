@@ -17,6 +17,14 @@ export default [
           'newlines-between': 'always',
         },
       ],
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: 'TSAsExpression > TSAsExpression[typeAnnotation.type="TSUnknownKeyword"]',
+          message:
+            "Avoid double assertions. Use typed helpers or module augmentation instead of 'as unknown as'.",
+        },
+      ],
     },
     languageOptions: {
       parserOptions: {

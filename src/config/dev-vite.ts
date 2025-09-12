@@ -3,6 +3,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import type { FastifyInstance } from 'fastify'
+import type {} from '@fastify/middie'
 
 import { registerSpaFallback } from '../utils/spaFallback'
 
@@ -24,7 +25,7 @@ export async function registerDevVite(app: FastifyInstance) {
     server: { middlewareMode: true },
     appType: 'custom',
   })
-  ;(app as unknown as { use: (m: unknown) => void }).use(vite.middlewares)
+  app.use(vite.middlewares)
 
   registerSpaFallback(app, async (req, reply) => {
     const url = req.url || '/'

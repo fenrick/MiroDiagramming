@@ -11,13 +11,6 @@ Status markers: [Planned] to do. Completed items are removed from this list once
 - Why: reduce client API calls; improve testability.
 - Acceptance: minimal backend endpoints added; `shape-client`/`board-cache` progressively switched to server-backed lookups.
 
-## Lint, Tests & Quality
-
-- ESLint rules refinement [Planned]
-
-- Why: reduce unsafe casts.
-- Acceptance: discourage `as unknown as`; prefer typed helpers or module augmentation.
-
 ---
 
 Execution guidance:

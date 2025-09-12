@@ -5,6 +5,7 @@ import type { WebhookPayload } from '../queue/webhookTypes.js'
 import { errorResponse } from '../config/error-response.js'
 import { loadEnv } from '../config/env.js'
 import { verifyWebhookSignature } from '../utils/webhookSignature.js'
+import type {} from 'fastify-raw-body'
 
 const webhookEventSchema = {
   type: 'object',
@@ -66,7 +67,7 @@ export const registerWebhookRoutes: FastifyPluginAsync = async (app) => {
         if (!secret || !signature) {
           return reply.code(401).send(errorResponse('Invalid signature', 'INVALID_SIGNATURE'))
         }
-        const rawBody = (req as unknown as { rawBody?: Buffer | string }).rawBody
+        const rawBody = req.rawBody
         const raw =
           typeof rawBody === 'string' || Buffer.isBuffer(rawBody)
             ? rawBody

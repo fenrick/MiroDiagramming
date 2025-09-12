@@ -2,11 +2,12 @@ import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import { randomUUID } from 'node:crypto'
 
-import Fastify, { type FastifyReply } from 'fastify'
+import Fastify from 'fastify'
 import fastifyCookie from '@fastify/cookie'
 import fastifyStatic from '@fastify/static'
 import fastifyCors from '@fastify/cors'
 import fastifyRawBody from 'fastify-raw-body'
+import type {} from '@fastify/static'
 
 import { loadEnv } from './config/env.js'
 import { getLoggerOptions } from './config/logger.js'
@@ -114,9 +115,7 @@ export async function buildApp() {
         prefix: '/',
       })
 
-      registerSpaFallback(app, (_req, reply) =>
-        (reply as unknown as { sendFile: (p: string) => FastifyReply }).sendFile('index.html'),
-      )
+      registerSpaFallback(app, (_req, reply) => reply.sendFile('index.html'))
     } catch {
       // Ignore if dist path is missing (dev/test mode)
     }
