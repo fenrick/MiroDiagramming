@@ -2,18 +2,21 @@ import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   test: {
+    // Default to Node; switch to jsdom for client tests via globs below
     environment: 'node',
-    include: ['tests/integration/**/*.test.ts'],
+    environmentMatchGlobs: [['tests/client/**', 'jsdom']],
+    include: ['tests/**/*.test.ts', 'tests/**/*.test.tsx'],
+    setupFiles: ['tests/client/setupTests.ts'],
     threads: false,
     coverage: {
       provider: 'v8',
       enabled: true,
       all: true,
       thresholds: {
-        lines: 80,
-        statements: 80,
-        functions: 75,
-        branches: 75,
+        lines: 90,
+        statements: 90,
+        functions: 90,
+        branches: 85,
       },
       include: [
         'src/app.ts',
@@ -26,12 +29,13 @@ export default defineConfig({
         'src/services/**/*.ts',
         'src/utils/**/*.ts',
         'src/types/**/*.ts',
+        'src/frontend/**/*.ts',
+        'src/frontend/**/*.tsx',
       ],
       exclude: [
         'node_modules/**',
         'dist/**',
         'coverage/**',
-        'src/frontend/**',
         'src/web/**',
         'src/miro_backend/**',
         '**/*.d.ts',
