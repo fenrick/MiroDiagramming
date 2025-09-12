@@ -1,3 +1,15 @@
+# [1.21.0](https://github.com/fenrick/MiroDiagramming/compare/v1.20.1...v1.21.0) (2025-09-12)
+
+
+### Bug Fixes
+
+* **deps:** update dependency zod to v4.1.8 ([c599e85](https://github.com/fenrick/MiroDiagramming/commit/c599e859b2ee3d16108eb1ff0d82b9142715d2b0))
+
+
+### Features
+
+* **board:** add backend widget lookup with caching ([faff8d6](https://github.com/fenrick/MiroDiagramming/commit/faff8d69d5732f10958fa823d563ddb8ac54f7aa))
+
 ## [1.20.1](https://github.com/fenrick/MiroDiagramming/compare/v1.20.0...v1.20.1) (2025-09-11)
 
 
