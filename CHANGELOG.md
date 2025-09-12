@@ -1,3 +1,12 @@
+## [1.20.1](https://github.com/fenrick/MiroDiagramming/compare/v1.20.0...v1.20.1) (2025-09-11)
+
+
+### Bug Fixes
+
+* **deps:** update dependency marked to v16 ([6ae155a](https://github.com/fenrick/MiroDiagramming/commit/6ae155a4e09032311e46158416f99e69288ce18e))
+* **deps:** update dependency zod to v4.1.7 ([84a2f44](https://github.com/fenrick/MiroDiagramming/commit/84a2f44f89eda02a38c75334c38e1c84b081b858))
+* **deps:** update prisma monorepo to v6.16.1 ([27899fc](https://github.com/fenrick/MiroDiagramming/commit/27899fc235c8bcb79e849de596fbffe7ac7242ea))
+
 # [1.20.0](https://github.com/fenrick/MiroDiagramming/compare/v1.19.0...v1.20.0) (2025-09-11)
 
 
