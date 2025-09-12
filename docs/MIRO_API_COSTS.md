@@ -27,7 +27,7 @@ Excessive use quickly exhausts the daily rate limit.
 2. **In‑memory shape cache** – `ShapeCache` stores widgets by board and item identifier. The Fastify shapes route updates the cache after each change so lookups avoid `board.get` or `item` requests.
 3. **Planned persistent cache** – future versions will back the cache with Redis and **SQLite** via **SQLAlchemy** so multiple server instances share widget data.
 4. **Centralised logging** – `HttpLogSink` forwards front‑end log entries to the server so shape operations are traceable across the boundary.
-5. **Avoid direct board calls** – Front‑end modules now contain TODOs to replace remaining direct Web SDK calls (`board.getSelection`, `board.get`) with cached lookups.
+5. **Avoid direct board calls** – The board cache resolves widget lookups via `/api/boards/{boardId}/widgets` so the client no longer invokes `board.get` directly. Selection queries still use `board.getSelection` until a backend lookup is added.
 6. **Expanded REST coverage** – placeholder shim methods will wrap additional Miro endpoints so future features can reuse a consistent API layer.
 
 This approach reduces point expenditure and keeps the application responsive.

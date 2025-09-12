@@ -31,4 +31,31 @@ export class MiroService {
     const board = await withMiroRetry(() => api.getBoard(boardId))
     await withMiroRetry(() => board.createCardItem({ data: { title, description } }))
   }
+
+  /**
+   * Fetch widgets of the specified types for a board.
+   *
+   * @param userId - Identifier of the acting user used for SDK auth.
+   * @param boardId - Board identifier to query.
+   * @param types - Widget types to retrieve.
+   * @returns Map of widget type to list of widgets.
+   */
+  async getWidgets(
+    userId: string,
+    boardId: string,
+    types: string[],
+  ): Promise<Record<string, Array<Record<string, unknown>>>> {
+    const api = getMiro().as(userId)
+    const rawBoard: unknown = await withMiroRetry(() => api.getBoard(boardId))
+    const board = rawBoard as {
+      get(opts: { type: string }): Promise<Array<Record<string, unknown>>>
+    }
+    const result: Record<string, Array<Record<string, unknown>>> = {}
+    await Promise.all(
+      types.map(async (t) => {
+        result[t] = await withMiroRetry(() => board.get({ type: t }))
+      }),
+    )
+    return result
+  }
 }

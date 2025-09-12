@@ -6,10 +6,7 @@ Status markers: [Planned] to do. Completed items are removed from this list once
 
 ## Frontend
 
-- Backend boundary for board reads [Planned]
-
-- Why: reduce client API calls; improve testability.
-- Acceptance: minimal backend endpoints added; `shape-client`/`board-cache` progressively switched to server-backed lookups.
+_(no pending items)_
 
 ---
 
