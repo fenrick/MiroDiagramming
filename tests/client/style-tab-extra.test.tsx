@@ -2,6 +2,22 @@
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom/vitest'
 import React from 'react'
+
+vi.mock('@mirohq/design-system', async () => {
+  const actual = await vi.importActual<typeof import('@mirohq/design-system')>(
+    '@mirohq/design-system',
+  )
+  const Slider = Object.assign(
+    (props: React.PropsWithChildren) => <div {...props} />,
+    {
+      Track: (props: React.PropsWithChildren) => <div {...props} />,
+      Range: (props: React.PropsWithChildren) => <div {...props} />,
+      Thumb: (props: React.PropsWithChildren) => <div {...props} />,
+    },
+  )
+  return { ...actual, Slider }
+})
+
 import * as formatTools from '../src/board/format-tools'
 import * as styleTools from '../src/board/style-tools'
 import { StyleTab } from '../src/ui/pages/StyleTab'

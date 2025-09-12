@@ -2,7 +2,10 @@ import { act, renderHook } from '@testing-library/react'
 import { useOptimisticOps } from '../src/core/hooks/useOptimisticOps'
 import { pushToast } from '../src/ui/components/Toast'
 
-vi.mock('../src/ui/components/Toast', () => ({ pushToast: vi.fn() }))
+vi.mock('../src/ui/components/Toast', () => ({
+  pushToast: vi.fn(),
+  ToastContainer: () => null,
+}))
 
 vi.useFakeTimers()
 

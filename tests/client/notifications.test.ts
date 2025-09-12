@@ -2,7 +2,10 @@ import * as log from '../src/logger'
 import { showApiError, showError } from '../src/ui/hooks/notifications'
 import { pushToast } from '../src/ui/components/Toast'
 
-vi.mock('../src/ui/components/Toast', () => ({ pushToast: vi.fn() }))
+vi.mock('../src/ui/components/Toast', () => ({
+  pushToast: vi.fn(),
+  ToastContainer: () => null,
+}))
 
 describe('showError', () => {
   beforeEach(() => {

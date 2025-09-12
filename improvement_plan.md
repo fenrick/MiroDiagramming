@@ -6,9 +6,7 @@ Status markers: [Planned] to do. Completed items are removed from this list once
 
 ## Backend
 
-- [Planned] Expand `src/queue/changeQueue.ts` tests for clamping, retry/drop paths, and logging.
-- [Planned] Improve `src/repositories/idempotencyRepo.ts` tests to cover `cleanup` TTL cutoff logic.
-- [Planned] Refactor `src/server.ts` for testability and add a minimal smoke test.
+_(no pending items)_
 
 ## Frontend
 
