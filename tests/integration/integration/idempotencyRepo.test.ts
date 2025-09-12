@@ -20,4 +20,23 @@ describe('IdempotencyRepo', () => {
     spy.mockRestore()
     vi.useRealTimers()
   })
+
+  it('computes cutoff from current time on each call', async () => {
+    vi.useFakeTimers()
+    const now = new Date('2024-01-01T00:00:00Z')
+    vi.setSystemTime(now)
+    const deleteMany = vi.fn().mockResolvedValue({ count: 0 })
+    vi.spyOn(db, 'getPrisma').mockReturnValue({ idempotencyEntry: { deleteMany } } as any)
+    const repo = new IdempotencyRepo()
+    await repo.cleanup(10)
+    expect(deleteMany).toHaveBeenLastCalledWith({
+      where: { created_at: { lt: new Date(now.getTime() - 10_000) } },
+    })
+    vi.advanceTimersByTime(5_000)
+    await repo.cleanup(10)
+    expect(deleteMany).toHaveBeenLastCalledWith({
+      where: { created_at: { lt: new Date(now.getTime() + 5_000 - 10_000) } },
+    })
+    vi.useRealTimers()
+  })
 })
