@@ -16,6 +16,8 @@ export type BoardItem = BaseItem | Group
 
 /**
  * Helper responsible for finding, creating and updating widgets on the board.
+ * Validates inputs and surfaces descriptive errors that include the offending
+ * values to speed up debugging.
  * TODO introduce OO based shape interactions to support planned move/update
  * operations and improve testability.
  * TODO compute data-driven board diffs so modifications can be queued and
@@ -111,7 +113,9 @@ export class BoardBuilder {
     board: BoardQueryLike = miro.board as unknown as BoardQueryLike,
   ): Promise<BoardItem | undefined> {
     if (typeof type !== 'string' || typeof label !== 'string') {
-      throw new Error('Invalid search parameters')
+      throw new Error(
+        `Invalid search parameters: type=${JSON.stringify(type)}, label=${JSON.stringify(label)}`,
+      )
     }
     this.ensureBoard()
     await this.loadShapeMap(board)
@@ -130,7 +134,9 @@ export class BoardBuilder {
    */
   public async findNodeInSelection(type: unknown, label: unknown): Promise<BoardItem | undefined> {
     if (typeof type !== 'string' || typeof label !== 'string') {
-      throw new Error('Invalid search parameters')
+      throw new Error(
+        `Invalid search parameters: type=${JSON.stringify(type)}, label=${JSON.stringify(label)}`,
+      )
     }
     this.ensureBoard()
     const selection = await boardCache.getSelection(
@@ -151,10 +157,10 @@ export class BoardBuilder {
   public async createNode(node: unknown, pos: PositionedNode): Promise<BoardItem> {
     log.info({ type: (node as NodeData)?.type }, 'Creating node')
     if (!pos || typeof pos.x !== 'number' || typeof pos.y !== 'number') {
-      throw new Error('Invalid position')
+      throw new Error(`Invalid position: ${JSON.stringify(pos)}`)
     }
     if (!BoardBuilder.isNodeData(node)) {
-      throw new Error('Invalid node')
+      throw new Error(`Invalid node: ${JSON.stringify(node)}`)
     }
     const nodeData = node
     const templateDef = templateManager.getTemplate(nodeData.type)
@@ -178,11 +184,11 @@ export class BoardBuilder {
     hints?: EdgeHint[],
   ): Promise<Connector[]> {
     if (!Array.isArray(edges)) {
-      throw new Error('Invalid edges')
+      throw new Error(`Invalid edges: ${JSON.stringify(edges)}`)
     }
     log.info({ count: edges.length }, 'Creating edges')
     if (!nodeMap || typeof nodeMap !== 'object') {
-      throw new Error('Invalid node map')
+      throw new Error(`Invalid node map: ${JSON.stringify(nodeMap)}`)
     }
     const board = miro.board as unknown as BoardLike
     const created = await runBatch(board, async () => {
