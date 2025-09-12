@@ -69,3 +69,7 @@ type(scope): short description
 - Consult `improvement_plan.md` for current quick wins and refactor backlog.
 - When you complete an item, remove it from the plan (the plan only lists pending work).
 - Prefer small, self-contained PRs; update the plan in the same change to keep it accurate.
+
+## Code Review
+
+- During code review, capture any improvement ideas or refactor opportunities in `implementation_plan.md` (or `improvement_plan.md` if it’s a quick win) so the backlog stays current and actionable.
