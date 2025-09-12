@@ -18,7 +18,7 @@
     "format": "prettier --check .",
     "format:write": "prettier --write .",
     "test": "vitest run",
-    "coverage": "c8 -r lcov -r text-summary npm run test",
+    "coverage": "vitest run --coverage",
     "postinstall": "prisma generate",
     "prepare": "husky",
     "commitlint": "commitlint"

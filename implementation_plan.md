@@ -8,10 +8,6 @@
     - Validate defaults and parsing (e.g., JSON vs CSV `CORS_ORIGINS`).
     - Verify invalid values (e.g., `PORT=0`, `QUEUE_CONCURRENCY=0`) cause a clear error.
 
-- Add `src/miro/miroClient.ts` tests
-    - Throw when required OAuth env vars missing.
-    - Ensure singleton behavior (same instance returned on repeated calls).
-
 - Expand `src/queue/changeQueue.ts` tests
     - Cover `configure` clamping for negative/zero values.
     - Exercise retry and drop paths with fake timers and a stubbed `MiroService`.

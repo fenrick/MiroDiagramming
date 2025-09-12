@@ -44,17 +44,26 @@ describe('BoardCache', () => {
     expect(board.getSelection).not.toHaveBeenCalled()
   })
 
-  test('widget queries are cached per type', async () => {
-    const board: BoardQueryLike = {
+  test('widget queries are fetched via backend and cached per type', async () => {
+    const board = {
+      id: 'b1',
       getSelection: vi.fn(),
-      get: vi.fn(({ type }) =>
-        type === 'shape' ? Promise.resolve([{ s: 1 }]) : Promise.resolve([{ g: 1 }]),
-      ),
+      get: vi.fn(),
     } as unknown as BoardQueryLike
+    const originalFetch = global.fetch
+    global.fetch = vi.fn(
+      async () =>
+        new Response(JSON.stringify({ shape: [{ s: 1 }], group: [{ g: 1 }] }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        }),
+    )
     const first = await boardCache.getWidgets(['shape', 'group'], board)
     const second = await boardCache.getWidgets(['shape', 'group'], board)
     expect(first).toEqual([{ s: 1 }, { g: 1 }])
     expect(second).toEqual([{ s: 1 }, { g: 1 }])
-    expect(board.get).toHaveBeenCalledTimes(2)
+    expect(global.fetch).toHaveBeenCalledTimes(1)
+    expect(board.get).not.toHaveBeenCalled()
+    global.fetch = originalFetch
   })
 })

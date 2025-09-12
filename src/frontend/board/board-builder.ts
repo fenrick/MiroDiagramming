@@ -16,6 +16,8 @@ export type BoardItem = BaseItem | Group
 
 /**
  * Helper responsible for finding, creating and updating widgets on the board.
+ * Validates inputs and surfaces descriptive errors that include the offending
+ * values to speed up debugging.
  * TODO introduce OO based shape interactions to support planned move/update
  * operations and improve testability.
  * TODO compute data-driven board diffs so modifications can be queued and
@@ -98,14 +100,22 @@ export class BoardBuilder {
     await miro.board.viewport.zoomTo(target)
   }
 
-  /** Lookup an existing widget with matching metadata. */
+  /**
+   * Lookup an existing widget with matching metadata.
+   *
+   * Labels are expected to be stored directly on shape content or on a child
+   * item within a group. No additional metadata is persisted, so duplicate
+   * labels may yield ambiguous results.
+   */
   public async findNode(
     type: unknown,
     label: unknown,
     board: BoardQueryLike = miro.board as unknown as BoardQueryLike,
   ): Promise<BoardItem | undefined> {
     if (typeof type !== 'string' || typeof label !== 'string') {
-      throw new Error('Invalid search parameters')
+      throw new Error(
+        `Invalid search parameters: type=${JSON.stringify(type)}, label=${JSON.stringify(label)}`,
+      )
     }
     this.ensureBoard()
     await this.loadShapeMap(board)
@@ -119,11 +129,14 @@ export class BoardBuilder {
   /**
    * Search only the currently selected widgets for one matching the node
    * metadata. Falling back to shapes and groups mirrors {@link findNode} but
-   * avoids querying the entire board.
+   * avoids querying the entire board. The same label-based lookup assumption
+   * applies.
    */
   public async findNodeInSelection(type: unknown, label: unknown): Promise<BoardItem | undefined> {
     if (typeof type !== 'string' || typeof label !== 'string') {
-      throw new Error('Invalid search parameters')
+      throw new Error(
+        `Invalid search parameters: type=${JSON.stringify(type)}, label=${JSON.stringify(label)}`,
+      )
     }
     this.ensureBoard()
     const selection = await boardCache.getSelection(
@@ -144,10 +157,10 @@ export class BoardBuilder {
   public async createNode(node: unknown, pos: PositionedNode): Promise<BoardItem> {
     log.info({ type: (node as NodeData)?.type }, 'Creating node')
     if (!pos || typeof pos.x !== 'number' || typeof pos.y !== 'number') {
-      throw new Error('Invalid position')
+      throw new Error(`Invalid position: ${JSON.stringify(pos)}`)
     }
     if (!BoardBuilder.isNodeData(node)) {
-      throw new Error('Invalid node')
+      throw new Error(`Invalid node: ${JSON.stringify(node)}`)
     }
     const nodeData = node
     const templateDef = templateManager.getTemplate(nodeData.type)
@@ -163,6 +176,7 @@ export class BoardBuilder {
   /**
    * Create new connectors between nodes.
    * Existing connectors are ignored; a fresh widget is created for each edge.
+   * Operations run inside {@link runBatch} to minimise API round-trips.
    */
   public async createEdges(
     edges: EdgeData[],
@@ -170,11 +184,11 @@ export class BoardBuilder {
     hints?: EdgeHint[],
   ): Promise<Connector[]> {
     if (!Array.isArray(edges)) {
-      throw new Error('Invalid edges')
+      throw new Error(`Invalid edges: ${JSON.stringify(edges)}`)
     }
     log.info({ count: edges.length }, 'Creating edges')
     if (!nodeMap || typeof nodeMap !== 'object') {
-      throw new Error('Invalid node map')
+      throw new Error(`Invalid node map: ${JSON.stringify(nodeMap)}`)
     }
     const board = miro.board as unknown as BoardLike
     const created = await runBatch(board, async () => {
@@ -197,7 +211,10 @@ export class BoardBuilder {
     return created
   }
 
-  /** Call `.sync()` on each widget if the method exists. */
+  /**
+   * Call `.sync()` on each widget if the method exists.
+   * Batched with {@link runBatch} so multiple syncs are sent together.
+   */
   public async syncAll(items: Array<BoardItem | Connector>): Promise<void> {
     const board = miro.board as unknown as BoardLike
     await runBatch(board, async () => {
@@ -206,7 +223,10 @@ export class BoardBuilder {
     })
   }
 
-  /** Remove the provided widgets from the board. */
+  /**
+   * Remove the provided widgets from the board.
+   * Deletion is wrapped in {@link runBatch} to reduce network chatter.
+   */
   public async removeItems(items: Array<BoardItem | Connector | Frame>): Promise<void> {
     const board = miro.board as unknown as BoardLike
     await runBatch(board, async () => {

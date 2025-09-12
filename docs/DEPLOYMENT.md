@@ -48,4 +48,10 @@ Set allowed origins through the `CORS_ORIGINS` environment variable as a JSON ar
 CORS_ORIGINS='["https://app.example.com","https://admin.example.com"]'
 ```
 
+Alternatively, provide a comma-separated list:
+
+```bash
+CORS_ORIGINS='https://app.example.com,https://admin.example.com'
+```
+
 List each origin explicitly. Wildcards can match subdomains, but avoid using `"*"` in production to restrict cross-origin access.

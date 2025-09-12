@@ -1,31 +1,40 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-describe('miroClient env + singleton', () => {
-  afterEach(() => {
-    vi.restoreAllMocks()
-    vi.resetModules()
-  })
+const ORIGINAL_ENV = { ...process.env }
 
+afterEach(() => {
+  process.env = { ...ORIGINAL_ENV }
+  vi.restoreAllMocks()
+  vi.resetModules()
+})
+
+describe('miroClient env + singleton', () => {
   it('returns the same instance across calls', async () => {
-    vi.resetModules()
-    let getMiro!: () => unknown
-    vi.mock('../../../src/config/env.js', () => ({
-      loadEnv: () => ({
-        MIRO_CLIENT_ID: 'id',
-        MIRO_CLIENT_SECRET: 'secret',
-        MIRO_REDIRECT_URL: 'http://localhost/cb',
-      }),
-    }))
-    // Mock SDK to a trivial class to avoid side-effects
     vi.mock('@mirohq/miro-api', () => ({
       Miro: class {
         constructor() {}
       },
     }))
+    process.env.MIRO_CLIENT_ID = 'id'
+    process.env.MIRO_CLIENT_SECRET = 'secret'
+    process.env.MIRO_REDIRECT_URL = 'http://localhost/cb'
     const mod = await import('../../../src/miro/miroClient.js')
-    getMiro = mod.getMiro
-    const a = getMiro()
-    const b = getMiro()
+    const a = mod.getMiro()
+    const b = mod.getMiro()
     expect(a).toBe(b)
+  })
+
+  it('throws when required OAuth env vars are missing', async () => {
+    vi.mock('@mirohq/miro-api', () => ({
+      Miro: class {
+        constructor() {}
+      },
+    }))
+    delete process.env.MIRO_CLIENT_ID
+    delete process.env.MIRO_CLIENT_SECRET
+    delete process.env.MIRO_REDIRECT_URL
+    await expect(
+      import('../../../src/miro/miroClient.js').then((m) => m.getMiro()),
+    ).rejects.toThrow(/Miro OAuth env not configured/)
   })
 })

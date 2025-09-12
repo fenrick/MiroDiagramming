@@ -4,44 +4,15 @@ Purpose: a concise, ordered backlog of refactors and optimizations to keep the c
 
 Status markers: [Planned] to do. Completed items are removed from this list once merged.
 
+## Backend
+
+- [Planned] Expand `src/queue/changeQueue.ts` tests for clamping, retry/drop paths, and logging.
+- [Planned] Improve `src/repositories/idempotencyRepo.ts` tests to cover `cleanup` TTL cutoff logic.
+- [Planned] Refactor `src/server.ts` for testability and add a minimal smoke test.
+
 ## Frontend
 
-- Backend boundary for board reads [Planned]
-
-- Why: reduce client API calls; improve testability.
-- Acceptance: minimal backend endpoints added; `shape-client`/`board-cache` progressively switched to server-backed lookups.
-
-- Improve error messages [Planned]
-
-- Why: faster debugging.
-- Acceptance: errors include invalid values/context across builder operations.
-
-## Docs & Inline Comments
-
-- JSDoc and inline docs across key files [Planned]
-
-- app.ts: server composition, cookie rationale, SPA fallback.
-- webhook.routes.ts: signature algorithm and raw-body requirement.
-- miro/tokenStorage.ts: mapping to Prisma `User`, expire semantics, `set(undefined)`.
-- services/miroService.ts: inputs/outputs and idempotency expectations.
-- frontend/board/board-builder.ts: metadata assumptions, `runBatch` behavior.
-
-## Lint, Tests & Quality
-
-- ESLint rules refinement [Planned]
-
-- Why: reduce unsafe casts.
-- Acceptance: discourage `as unknown as`; prefer typed helpers or module augmentation.
-
-- Webhook signature util tests [Planned]
-
-- Why: verify timing-safe logic.
-- Acceptance: unit tests covering valid/invalid signature paths with raw body.
-
-- Coverage guard [Planned]
-
-- Why: maintain targets.
-- Acceptance: threshold check (Vitest/c8) gating CI summary.
+_(no pending items)_
 
 ---
 

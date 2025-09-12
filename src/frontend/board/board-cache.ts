@@ -23,8 +23,8 @@ function resolveBoardWithQuery(board?: BoardQueryLike): BoardQueryLike {
 export class BoardCache {
   // TODO persistent cache service backing onto Redis or SQLite for multi-process reuse
   // TODO translate cached results to a simple data model shared with the server
-  // TODO expose typed lookup endpoints on the server so the client never calls
-  //      board.get directly.
+  // TODO expose a backend lookup for selection so the client never calls
+  //      board.getSelection directly.
   private selection: Array<Record<string, unknown>> | undefined
   private readonly widgets = new Map<string, Array<Record<string, unknown>>>()
 
@@ -76,11 +76,15 @@ export class BoardCache {
     }
     if (missing.length) {
       log.trace({ missing }, 'Fetching uncached widget types')
-      // TODO replace board.get with backend service once caching implemented
-      const fetched = await Promise.all(missing.map((t) => b.get({ type: t })))
-      for (let i = 0; i < missing.length; i += 1) {
-        const list = fetched[i] ?? []
-        this.widgets.set(missing[i]!, list)
+      const boardId = (b as { id?: string }).id
+      if (!boardId) {
+        throw new Error('Board id not available for widget lookup')
+      }
+      const res = await fetch(`/api/boards/${boardId}/widgets?types=${missing.join(',')}`)
+      const json = (await res.json()) as Record<string, Array<Record<string, unknown>>>
+      for (const t of missing) {
+        const list = json[t] ?? []
+        this.widgets.set(t, list)
         results.push(...list)
       }
       log.info({ types: missing.length }, 'Cached widget query results')
