@@ -3,7 +3,11 @@ import { boardCache } from '../src/board/board-cache'
 import { replaceBoardContent, searchBoardContent } from '../src/board/search-tools'
 import { getTextFields } from '../src/core/utils/text-utils'
 
-beforeEach(() => boardCache.reset())
+beforeEach(() => {
+  boardCache.reset()
+  vi.restoreAllMocks()
+  vi.unstubAllGlobals()
+})
 
 const makeBoard = () => {
   const items = [
@@ -63,12 +67,25 @@ const makeBoard = () => {
       sync: vi.fn(),
     },
   ]
-  const board: BoardQueryLike = {
+  const board: BoardQueryLike & { id: string } = {
+    id: 'b1',
     getSelection: vi.fn().mockResolvedValue(items.slice(0, 2)),
     get: vi.fn(async ({ type }) =>
       type === 'widget' ? items : items.filter((i) => i.type === type),
     ),
-  } as unknown as BoardQueryLike
+  } as unknown as BoardQueryLike & { id: string }
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async (url: string) => {
+      const u = new URL(url, 'http://localhost')
+      const types = u.searchParams.get('types')?.split(',') ?? []
+      const res: Record<string, unknown[]> = {}
+      for (const t of types) {
+        res[t] = t === 'widget' ? items : items.filter((i) => i.type === t)
+      }
+      return { json: async () => res } as unknown as Response
+    }),
+  )
   return { board, items }
 }
 
@@ -184,10 +201,15 @@ describe('search-tools', () => {
       { type: 'shape', sync: vi.fn() },
       { type: 'sticky_note', plainText: 'hello', sync: vi.fn() },
     ]
-    const board: BoardQueryLike = {
+    const board: BoardQueryLike & { id: string } = {
+      id: 'b1',
       getSelection: vi.fn().mockResolvedValue([]),
       get: vi.fn().mockResolvedValue(items),
-    } as unknown as BoardQueryLike
+    } as unknown as BoardQueryLike & { id: string }
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => ({ json: async () => ({ widget: items }) }) as unknown as Response),
+    )
     const count = await replaceBoardContent({ query: 'hello', replacement: 'hi' }, board)
     expect(count).toBe(1)
     expect(items[0].sync).not.toHaveBeenCalled()

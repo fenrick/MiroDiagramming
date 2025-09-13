@@ -142,7 +142,11 @@ export class BoardBuilder {
     const selection = await boardCache.getSelection(
       miro.board as unknown as import('./board').BoardLike,
     )
+    const boardId =
+      (miro.board as { id?: string; info?: { id?: string } }).id ??
+      (miro.board as { info?: { id?: string } }).info?.id
     const board: import('./board').BoardQueryLike = {
+      id: boardId,
       get: async ({ type: t }) => selection.filter((i) => (i as { type?: string }).type === t),
       getSelection: async () => selection,
     }
@@ -228,9 +232,9 @@ export class BoardBuilder {
    * Deletion is wrapped in {@link runBatch} to reduce network chatter.
    */
   public async removeItems(items: Array<BoardItem | Connector | Frame>): Promise<void> {
+    this.ensureBoard()
     const board = miro.board as unknown as BoardLike
     await runBatch(board, async () => {
-      this.ensureBoard()
       log.debug({ count: items.length }, 'Removing items')
       await Promise.all(items.map((item) => miro.board.remove(item)))
     })
