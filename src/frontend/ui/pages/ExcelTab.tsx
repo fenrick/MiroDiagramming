@@ -13,10 +13,12 @@ import {
   Button,
   ButtonToolbar,
   Checkbox,
+  EmptyState,
   InputField,
   Paragraph,
   SelectField,
   SelectOption,
+  SidebarSection,
 } from '../components'
 import { PageHelp } from '../components/PageHelp'
 import { RowInspector } from '../components/RowInspector'
@@ -372,33 +374,38 @@ function ExcelTabView({
   return (
     <TabPanel tabId="excel">
       <PageHelp content="Import nodes from Excel workbooks" />
-      <div {...dropzone.getRootProps({ style })} aria-label="Excel drop area">
-        {(() => {
-          const fileProps = { ...dropzone.getInputProps() }
-          delete (fileProps as Record<string, unknown>).style
-          delete (fileProps as Record<string, unknown>).className
-          delete (fileProps as Record<string, unknown>).onChange
-          return (
-            <InputField
-              label="Excel file"
-              type="file"
-              data-testid="file-input"
-              {...(fileProps as Record<string, unknown>)}
-            />
-          )
-        })()}
-      </div>
-      <InputField
-        label="OneDrive/SharePoint file"
-        value={remote}
-        onValueChange={(v) => setRemote(v)}
-        aria-label="graph file"
-      />
-      <Button onClick={fetchRemote} variant="secondary">
-        Fetch File
-      </Button>
+      <SidebarSection title="Source">
+        <div {...dropzone.getRootProps({ style })} aria-label="Excel drop area">
+          {(() => {
+            const fileProps = { ...dropzone.getInputProps() }
+            delete (fileProps as Record<string, unknown>).style
+            delete (fileProps as Record<string, unknown>).className
+            delete (fileProps as Record<string, unknown>).onChange
+            return (
+              <InputField
+                label="Excel file"
+                type="file"
+                data-testid="file-input"
+                {...(fileProps as Record<string, unknown>)}
+              />
+            )
+          })()}
+        </div>
+        <InputField
+          label="OneDrive/SharePoint file"
+          value={remote}
+          onValueChange={(v) => setRemote(v)}
+          aria-label="graph file"
+        />
+        <Button onClick={fetchRemote} variant="secondary">
+          Fetch File
+        </Button>
+        {rows.length === 0 && loader.listSheets().length === 0 && !remote && !source && (
+          <EmptyState title="No data yet" description="Fetch a file or select a sheet or table." />
+        )}
+      </SidebarSection>
       {loader.listSheets().length > 0 && (
-        <>
+        <SidebarSection title="Data source">
           <SelectField
             label="Data source"
             value={source}
@@ -420,10 +427,10 @@ function ExcelTabView({
           <Button onClick={loadRows} variant="secondary">
             Load Rows
           </Button>
-        </>
+        </SidebarSection>
       )}
       {rows.length > 0 && (
-        <>
+        <SidebarSection title="Mapping & Selection">
           <SelectField
             label="Template"
             value={template}
@@ -502,7 +509,7 @@ function ExcelTabView({
               </Button>
             </ButtonToolbar>
           </StickyActions>
-        </>
+        </SidebarSection>
       )}
       <RowInspector rows={rows} idColumn={idColumn || undefined} onUpdate={updateRow} />
     </TabPanel>

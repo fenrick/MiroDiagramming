@@ -25,9 +25,11 @@ import {
   ButtonToolbar,
   Checkbox,
   DroppedFileList,
+  EmptyState,
   InputField,
   SelectField,
   SelectOption,
+  SidebarSection,
 } from '../components'
 import { StickyActions } from '../StickyActions'
 import { JsonDropZone } from '../components/JsonDropZone'
@@ -157,220 +159,227 @@ export const StructuredTab: React.FC = () => {
     <TabPanel tabId="structured" style={{ marginTop: space[200] }}>
       <PageHelp content="Flow or tree diagrams with advanced options" />
       <JsonDropZone onFiles={handleFiles} />
-
+      {importQueue.length === 0 && (
+        <EmptyState
+          title="Drop a JSON file"
+          description="Drag a JSON/CSV file to create a diagram."
+        />
+      )}
       {importQueue.length > 0 && (
-        <Grid columns={2}>
-          <Grid.Item>
-            <DroppedFileList>
-              {importQueue.map((file) => (
-                <li key={`${file.name}-${file.lastModified}`}>{file.name}</li>
-              ))}
-            </DroppedFileList>
-          </Grid.Item>
-          <Grid.Item>
-            <fieldset>
-              <VisuallyHidden asChild>
-                <legend>Diagram options</legend>
-              </VisuallyHidden>
-              <SelectField
-                label="Layout type"
-                value={layoutChoice}
-                onChange={(v) => setLayoutChoice(v as LayoutChoice)}
-              >
-                {LAYOUTS.map((l) => (
-                  <SelectOption key={l} value={l}>
-                    {l}
-                  </SelectOption>
+        <SidebarSection title="Diagram import">
+          <Grid columns={2}>
+            <Grid.Item>
+              <DroppedFileList>
+                {importQueue.map((file) => (
+                  <li key={`${file.name}-${file.lastModified}`}>{file.name}</li>
                 ))}
-              </SelectField>
-              <p className="field-help">Layout options:</p>
-              <ul className="field-help">
-                {LAYOUTS.map((l) => (
-                  <li key={`desc-${l}`}>{LAYOUT_DESCRIPTIONS[l]}</li>
-                ))}
-              </ul>
-              <div style={{ marginTop: space[200] }}>
-                <Checkbox label="Wrap items in frame" value={withFrame} onChange={setWithFrame} />
-              </div>
-              {withFrame && (
-                <InputField
-                  label="Frame title"
-                  value={frameTitle}
-                  onValueChange={(v) => setFrameTitle(v)}
-                  placeholder="Frame title"
-                />
-              )}
-              <details
-                open={showAdvanced}
-                aria-label="Advanced options"
-                onToggle={(e) => setShowAdvanced((e.target as HTMLDetailsElement).open)}
-              >
-                <summary>Advanced options</summary>
-                <InputField
-                  label="Spacing"
-                  type="number"
-                  value={String(layoutOpts.spacing)}
-                  onValueChange={(v) => setLayoutOpts({ ...layoutOpts, spacing: Number(v) })}
-                />
-                {OPTION_VISIBILITY[layoutOpts.algorithm].aspectRatio && (
-                  <SelectField
-                    label="Aspect ratio"
-                    value={layoutOpts.aspectRatio}
-                    onChange={(v) =>
-                      setLayoutOpts({
-                        ...layoutOpts,
-                        aspectRatio: v as AspectRatioId,
-                      })
-                    }
-                  >
-                    {ASPECT_RATIOS.map((r) => (
-                      <SelectOption key={r.id} value={r.id}>
-                        {r.label}
-                      </SelectOption>
-                    ))}
-                  </SelectField>
-                )}
+              </DroppedFileList>
+            </Grid.Item>
+            <Grid.Item>
+              <fieldset>
+                <VisuallyHidden asChild>
+                  <legend>Diagram options</legend>
+                </VisuallyHidden>
                 <SelectField
-                  label="Existing nodes"
-                  value={existingMode}
-                  onChange={(v) => setExistingMode(v as ExistingNodeMode)}
+                  label="Layout type"
+                  value={layoutChoice}
+                  onChange={(v) => setLayoutChoice(v as LayoutChoice)}
                 >
-                  <SelectOption value="move">Move into place</SelectOption>
-                  <SelectOption value="layout">Use for layout</SelectOption>
-                  <SelectOption value="ignore">Keep position</SelectOption>
-                </SelectField>
-                <SelectField
-                  label="Algorithm"
-                  value={layoutOpts.algorithm}
-                  onChange={(v) =>
-                    setLayoutOpts({
-                      ...layoutOpts,
-                      algorithm: v as ElkAlgorithm,
-                    })
-                  }
-                >
-                  {ALGORITHMS.map((a) => (
-                    <SelectOption key={a} value={a}>
-                      {a}
+                  {LAYOUTS.map((l) => (
+                    <SelectOption key={l} value={l}>
+                      {l}
                     </SelectOption>
                   ))}
                 </SelectField>
-                <SelectField
-                  label="Direction"
-                  value={layoutOpts.direction}
-                  onChange={(v) =>
-                    setLayoutOpts({
-                      ...layoutOpts,
-                      direction: v as ElkDirection,
-                    })
-                  }
-                >
-                  {DIRECTIONS.map((d) => (
-                    <SelectOption key={d} value={d}>
-                      {d}
-                    </SelectOption>
+                <p className="field-help">Layout options:</p>
+                <ul className="field-help">
+                  {LAYOUTS.map((l) => (
+                    <li key={`desc-${l}`}>{LAYOUT_DESCRIPTIONS[l]}</li>
                   ))}
-                </SelectField>
-                {OPTION_VISIBILITY[layoutOpts.algorithm].edgeRouting && (
-                  <SelectField
-                    label="Edge routing"
-                    value={layoutOpts.edgeRouting as ElkEdgeRouting}
-                    onChange={(v) =>
-                      setLayoutOpts({
-                        ...layoutOpts,
-                        edgeRouting: v as ElkEdgeRouting,
-                      })
-                    }
-                  >
-                    {EDGE_ROUTINGS.map((e) => (
-                      <SelectOption key={e} value={e}>
-                        {e}
-                      </SelectOption>
-                    ))}
-                  </SelectField>
-                )}
-                {OPTION_VISIBILITY[layoutOpts.algorithm].edgeRoutingMode && (
-                  <SelectField
-                    label="Routing mode"
-                    value={layoutOpts.edgeRoutingMode as ElkEdgeRoutingMode}
-                    onChange={(v) =>
-                      setLayoutOpts({
-                        ...layoutOpts,
-                        edgeRoutingMode: v as ElkEdgeRoutingMode,
-                      })
-                    }
-                  >
-                    {EDGE_ROUTING_MODES.map((m) => (
-                      <SelectOption key={m} value={m}>
-                        {m}
-                      </SelectOption>
-                    ))}
-                  </SelectField>
-                )}
-                {OPTION_VISIBILITY[layoutOpts.algorithm].optimizationGoal && (
-                  <SelectField
-                    label="Optimisation goal"
-                    value={layoutOpts.optimizationGoal as ElkOptimizationGoal}
-                    onChange={(v) =>
-                      setLayoutOpts({
-                        ...layoutOpts,
-                        optimizationGoal: v as ElkOptimizationGoal,
-                      })
-                    }
-                  >
-                    {OPTIMIZATION_GOALS.map((o) => (
-                      <SelectOption key={o} value={o}>
-                        {o}
-                      </SelectOption>
-                    ))}
-                  </SelectField>
-                )}
-                {layoutChoice === 'Nested' && (
+                </ul>
+                <div style={{ marginTop: space[200] }}>
+                  <Checkbox label="Wrap items in frame" value={withFrame} onChange={setWithFrame} />
+                </div>
+                {withFrame && (
                   <InputField
-                    label="Padding"
-                    type="number"
-                    value={String(nestedPadding)}
-                    onValueChange={(v) => setNestedPadding(Number(v))}
+                    label="Frame title"
+                    value={frameTitle}
+                    onValueChange={(v) => setFrameTitle(v)}
+                    placeholder="Frame title"
                   />
                 )}
-                {layoutChoice === 'Nested' && (
-                  <InputField
-                    label="Top spacing"
-                    type="number"
-                    value={String(nestedTopSpacing)}
-                    onValueChange={(v) => setNestedTopSpacing(Number(v))}
-                  />
-                )}
-              </details>
-            </fieldset>
-          </Grid.Item>
-          <Grid.Item>
-            <StickyActions>
-              <ButtonToolbar>
-                <Button
-                  onClick={handleCreate}
-                  variant="primary"
-                  iconPosition="start"
-                  icon={<IconPlus />}
+                <details
+                  open={showAdvanced}
+                  aria-label="Advanced options"
+                  onToggle={(e) => setShowAdvanced((e.target as HTMLDetailsElement).open)}
                 >
-                  <Text>Create Diagram</Text>
-                </Button>
-                {lastProc && (
+                  <summary>Advanced options</summary>
+                  <InputField
+                    label="Spacing"
+                    type="number"
+                    value={String(layoutOpts.spacing)}
+                    onValueChange={(v) => setLayoutOpts({ ...layoutOpts, spacing: Number(v) })}
+                  />
+                  {OPTION_VISIBILITY[layoutOpts.algorithm].aspectRatio && (
+                    <SelectField
+                      label="Aspect ratio"
+                      value={layoutOpts.aspectRatio}
+                      onChange={(v) =>
+                        setLayoutOpts({
+                          ...layoutOpts,
+                          aspectRatio: v as AspectRatioId,
+                        })
+                      }
+                    >
+                      {ASPECT_RATIOS.map((r) => (
+                        <SelectOption key={r.id} value={r.id}>
+                          {r.label}
+                        </SelectOption>
+                      ))}
+                    </SelectField>
+                  )}
+                  <SelectField
+                    label="Existing nodes"
+                    value={existingMode}
+                    onChange={(v) => setExistingMode(v as ExistingNodeMode)}
+                  >
+                    <SelectOption value="move">Move into place</SelectOption>
+                    <SelectOption value="layout">Use for layout</SelectOption>
+                    <SelectOption value="ignore">Keep position</SelectOption>
+                  </SelectField>
+                  <SelectField
+                    label="Algorithm"
+                    value={layoutOpts.algorithm}
+                    onChange={(v) =>
+                      setLayoutOpts({
+                        ...layoutOpts,
+                        algorithm: v as ElkAlgorithm,
+                      })
+                    }
+                  >
+                    {ALGORITHMS.map((a) => (
+                      <SelectOption key={a} value={a}>
+                        {a}
+                      </SelectOption>
+                    ))}
+                  </SelectField>
+                  <SelectField
+                    label="Direction"
+                    value={layoutOpts.direction}
+                    onChange={(v) =>
+                      setLayoutOpts({
+                        ...layoutOpts,
+                        direction: v as ElkDirection,
+                      })
+                    }
+                  >
+                    {DIRECTIONS.map((d) => (
+                      <SelectOption key={d} value={d}>
+                        {d}
+                      </SelectOption>
+                    ))}
+                  </SelectField>
+                  {OPTION_VISIBILITY[layoutOpts.algorithm].edgeRouting && (
+                    <SelectField
+                      label="Edge routing"
+                      value={layoutOpts.edgeRouting as ElkEdgeRouting}
+                      onChange={(v) =>
+                        setLayoutOpts({
+                          ...layoutOpts,
+                          edgeRouting: v as ElkEdgeRouting,
+                        })
+                      }
+                    >
+                      {EDGE_ROUTINGS.map((e) => (
+                        <SelectOption key={e} value={e}>
+                          {e}
+                        </SelectOption>
+                      ))}
+                    </SelectField>
+                  )}
+                  {OPTION_VISIBILITY[layoutOpts.algorithm].edgeRoutingMode && (
+                    <SelectField
+                      label="Routing mode"
+                      value={layoutOpts.edgeRoutingMode as ElkEdgeRoutingMode}
+                      onChange={(v) =>
+                        setLayoutOpts({
+                          ...layoutOpts,
+                          edgeRoutingMode: v as ElkEdgeRoutingMode,
+                        })
+                      }
+                    >
+                      {EDGE_ROUTING_MODES.map((m) => (
+                        <SelectOption key={m} value={m}>
+                          {m}
+                        </SelectOption>
+                      ))}
+                    </SelectField>
+                  )}
+                  {OPTION_VISIBILITY[layoutOpts.algorithm].optimizationGoal && (
+                    <SelectField
+                      label="Optimisation goal"
+                      value={layoutOpts.optimizationGoal as ElkOptimizationGoal}
+                      onChange={(v) =>
+                        setLayoutOpts({
+                          ...layoutOpts,
+                          optimizationGoal: v as ElkOptimizationGoal,
+                        })
+                      }
+                    >
+                      {OPTIMIZATION_GOALS.map((o) => (
+                        <SelectOption key={o} value={o}>
+                          {o}
+                        </SelectOption>
+                      ))}
+                    </SelectField>
+                  )}
+                  {layoutChoice === 'Nested' && (
+                    <InputField
+                      label="Padding"
+                      type="number"
+                      value={String(nestedPadding)}
+                      onValueChange={(v) => setNestedPadding(Number(v))}
+                    />
+                  )}
+                  {layoutChoice === 'Nested' && (
+                    <InputField
+                      label="Top spacing"
+                      type="number"
+                      value={String(nestedTopSpacing)}
+                      onValueChange={(v) => setNestedTopSpacing(Number(v))}
+                    />
+                  )}
+                </details>
+              </fieldset>
+            </Grid.Item>
+            <Grid.Item>
+              <StickyActions>
+                <ButtonToolbar>
                   <Button
-                    onClick={() => undoLastImport(lastProc, () => setLastProc(undefined))}
-                    variant="secondary"
+                    onClick={handleCreate}
+                    variant="primary"
                     iconPosition="start"
-                    icon={<IconArrowArcLeft />}
+                    icon={<IconPlus />}
                   >
-                    <Text>Undo Last Import</Text>
+                    <Text>Create Diagram</Text>
                   </Button>
-                )}
-              </ButtonToolbar>
-            </StickyActions>
-            {progress > 0 && progress < 100 && <progress value={progress} max={100} />}
-            {error && <p className="error">{error}</p>}
-          </Grid.Item>
-        </Grid>
+                  {lastProc && (
+                    <Button
+                      onClick={() => undoLastImport(lastProc, () => setLastProc(undefined))}
+                      variant="secondary"
+                      iconPosition="start"
+                      icon={<IconArrowArcLeft />}
+                    >
+                      <Text>Undo Last Import</Text>
+                    </Button>
+                  )}
+                </ButtonToolbar>
+              </StickyActions>
+              {progress > 0 && progress < 100 && <progress value={progress} max={100} />}
+              {error && <p className="error">{error}</p>}
+            </Grid.Item>
+          </Grid>
+        </SidebarSection>
       )}
       <section style={{ marginTop: space[200] }}>
         <h3>Read cached shapes</h3>
