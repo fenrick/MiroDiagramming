@@ -11,6 +11,7 @@ import {
   InputField,
   EmptyState,
   SidebarSection,
+  Skeleton,
 } from '../components'
 import { StickyActions } from '../StickyActions'
 import { JsonDropZone } from '../components/JsonDropZone'
@@ -146,7 +147,12 @@ export const CardsTab: React.FC = () => {
                 )}
               </ButtonToolbar>
             </StickyActions>
-            {progress > 0 && progress < 100 && <progress value={progress} max={100} />}
+            {progress > 0 && progress < 100 && (
+              <div aria-label="Loading" role="status" style={{ marginTop: 'var(--space-100)' }}>
+                <Skeleton />
+                <Skeleton />
+              </div>
+            )}
             {error && <p className="error">{error}</p>}
           </SidebarSection>
         </>

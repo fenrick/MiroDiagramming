@@ -32,6 +32,7 @@ import {
   SidebarSection,
 } from '../components'
 import { StickyActions } from '../StickyActions'
+import { Skeleton } from '../components'
 import { JsonDropZone } from '../components/JsonDropZone'
 import { PageHelp } from '../components/PageHelp'
 import { TabPanel } from '../components/TabPanel'
@@ -375,7 +376,12 @@ export const StructuredTab: React.FC = () => {
                   )}
                 </ButtonToolbar>
               </StickyActions>
-              {progress > 0 && progress < 100 && <progress value={progress} max={100} />}
+              {progress > 0 && progress < 100 && (
+                <div aria-label="Loading" role="status" style={{ marginTop: 'var(--space-100)' }}>
+                  <Skeleton />
+                  <Skeleton />
+                </div>
+              )}
               {error && <p className="error">{error}</p>}
             </Grid.Item>
           </Grid>

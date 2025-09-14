@@ -7,6 +7,11 @@ import { ToolsTab } from '../src/ui/pages/ToolsTab'
 
 vi.mock('@mirohq/design-system', async () => {
   const React = await import('react')
+  const styled = (tag: any, _styles?: any) =>
+    React.forwardRef<any, any>(function StyledMock(props, ref) {
+      const Comp = tag as React.ElementType
+      return React.createElement(Comp, { ...props, ref, 'data-styled': '1' })
+    })
   const Tabs = ({
     children,
     onChange,
@@ -67,7 +72,10 @@ vi.mock('@mirohq/design-system', async () => {
   Tooltip.Trigger.displayName = 'TooltipTriggerMock'
   Tooltip.Content.displayName = 'TooltipContentMock'
   Tooltip.Portal.displayName = 'TooltipPortalMock'
-  return { Tabs, IconButton, IconQuestionMarkCircle, Tooltip }
+  const Callout = ({ title, description }: { title?: string; description?: string }) => (
+    <div role="alert" title={title} description={description} />
+  )
+  return { Tabs, IconButton, IconQuestionMarkCircle, Tooltip, styled, Callout }
 })
 
 vi.mock('../src/ui/pages/ResizeTab', () => {
