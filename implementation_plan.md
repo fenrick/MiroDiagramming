@@ -46,6 +46,11 @@ Purpose: Track pending improvements and code quality actions. Do not remove item
     - Where: `src/config/logger.ts` (`redact.paths` to include `req.headers['x-miro-signature']`, `req.headers.cookie`, `req.headers.authorization`).
     - DoD: Logs show `[Redacted]` for configured fields; no secrets leak in app logs.
 
+- Domain error classes and mapping
+    - What’s needed: Define lightweight domain error classes with machine-readable `code` and centralize mapping to HTTP statuses (400/401/403/409/429) in the error handler.
+    - Where: `src/config/error-response.ts`, `src/config/error-handler.ts`, thrown from services/routes.
+    - DoD: Errors include codes; centralized handler maps to correct status/payload; tests assert mappings.
+
 ## Reliability & Operations
 
 - Liveness and readiness endpoints exposed for orchestration
@@ -119,6 +124,11 @@ Purpose: Track pending improvements and code quality actions. Do not remove item
     - Where: `src/types/` (new or expanded module); refactor imports to use shared DTOs.
     - DoD: Duplication removed; typecheck and tests pass.
 
+- Frontend Miro SDK adapter (no globals)
+    - What’s needed: Introduce a `BoardAdapter` wrapper for Miro SDK access and inject it where needed to avoid direct `globalThis` references.
+    - Where: `src/frontend/board/board-adapter.ts` (new), refactors in `src/frontend/**`.
+    - DoD: All SDK calls go through adapter; tests stub adapter; no direct global casts remain.
+
 ## Linting & Formatting
 
 - Expand lint script scope
@@ -135,6 +145,21 @@ Purpose: Track pending improvements and code quality actions. Do not remove item
     - What’s needed: Ensure Prettier config is applied consistently; run formatter in CI/local.
     - Where: Project root via `npm run format:write` (or equivalent).
     - DoD: Formatting stable and enforced where configured.
+
+- Type-only imports enforcement
+    - What’s needed: Enable and auto-fix `consistent-type-imports` to prefer `import type` for types; migrate existing imports.
+    - Where: `eslint.config.mjs`; code in `src/**`, `tests/**`.
+    - DoD: No mixed type/value imports; lint clean for consistent-type-imports.
+
+- Import order: alphabetize + internal groups
+    - What’s needed: Configure `import/order` to alphabetize within groups and recognize internal aliases (`@/*` or `src/*`) via `pathGroups`.
+    - Where: `eslint.config.mjs`.
+    - DoD: Imports are grouped and alphabetized; no import/order warnings.
+
+- Import hygiene: cycles and extraneous deps
+    - What’s needed: Add `import/no-cycle` and `import/no-extraneous-dependencies` with sensible overrides; fix any violations.
+    - Where: `eslint.config.mjs`, `package.json` adjustments as needed.
+    - DoD: Lint passes with no cycles or extraneous dependency errors.
 
 ## Style Guide Compliance
 
@@ -197,6 +222,26 @@ Purpose: Track pending improvements and code quality actions. Do not remove item
     - What’s needed: Fix floating promises by awaiting or explicitly marking `void` for fire‑and‑forget handlers.
     - Where: `src/**` where async is used.
     - DoD: Lint clean for `no-floating-promises`; tests unaffected.
+
+- Ban double assertions in app code
+    - What’s needed: Enforce rule preventing `as unknown as` in `src/**`; provide typed helpers/guards and migrate any remaining occurrences. Keep tests override only where necessary.
+    - Where: `eslint.config.mjs` rule; code in `src/**`.
+    - DoD: `rg` finds zero `as unknown as` in app code; lint blocks regressions.
+
+- ESLint resolver for path aliases
+    - What’s needed: Wire `eslint-import-resolver-typescript` to resolve TS `paths`/`baseUrl` and avoid false positives.
+    - Where: `eslint.config.mjs`, devDependencies.
+    - DoD: Lint resolves `@/*` or `src/*` imports without errors.
+
+- Barrel hygiene and named exports
+    - What’s needed: Audit barrels to avoid cycles; enforce `import/no-default-export` with allowlist; prefer named exports.
+    - Where: `eslint.config.mjs`; code in `src/**`.
+    - DoD: No default exports outside allowlist; no cycles via barrels.
+
+- React accessibility linting
+    - What’s needed: Add `eslint-plugin-jsx-a11y` with recommended rules; fix high-signal violations.
+    - Where: `package.json` devDependency and `eslint.config.mjs`; code in `src/frontend/**`.
+    - DoD: a11y lint passes; obvious accessibility issues addressed.
 
 ## Testing & Coverage
 
