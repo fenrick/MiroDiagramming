@@ -10,9 +10,9 @@ export function PanelShell({ children }: { children: React.ReactNode }): React.J
     <div
       style={{
         boxSizing: 'border-box',
-        maxWidth: 320,
-        paddingLeft: 24,
-        paddingRight: 24,
+        maxWidth: 'var(--size-drawer)',
+        paddingLeft: 'var(--space-300)',
+        paddingRight: 'var(--space-300)',
         margin: '0 auto',
       }}
     >

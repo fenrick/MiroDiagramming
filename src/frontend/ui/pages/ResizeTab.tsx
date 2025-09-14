@@ -1,6 +1,5 @@
 import {
   Grid,
-  Heading,
   IconArrowArcLeft,
   IconChevronRightDouble,
   IconSquaresTwoOverlap,
@@ -24,10 +23,12 @@ import { boardUnitsToInches, boardUnitsToMm } from '../../core/utils/unit-utils'
 import {
   Button,
   ButtonToolbar,
+  EmptyState,
   InputField,
   Paragraph,
   SelectField,
   SelectOption,
+  SidebarSection,
 } from '../components'
 import { PageHelp } from '../components/PageHelp'
 import { TabPanel } from '../components/TabPanel'
@@ -126,6 +127,9 @@ export const ResizeTab: React.FC = () => {
   return (
     <TabPanel tabId="size">
       <PageHelp content="Adjust size manually or copy from selection" />
+      {selection.length === 0 ? (
+        <EmptyState title="No selection" description="Select one or more items to resize." />
+      ) : null}
       <Paragraph data-testid="size-display">
         {copiedSize
           ? `Copied: ${copiedSize.width}×${copiedSize.height}`
@@ -136,59 +140,62 @@ export const ResizeTab: React.FC = () => {
         in)
       </Paragraph>
       {warning && <p className="error">{warning}</p>}
-      <Grid columns={2} gap={200}>
-        <Grid.Item columnStart={1} columnEnd={2}>
-          <InputField
-            label="Width:"
-            type="number"
-            value={String(size.width)}
-            onValueChange={(v) => update('width')(v)}
-            placeholder="Width (board units)"
-          />
-        </Grid.Item>
-        <Grid.Item columnStart={2} columnEnd={3}>
-          <InputField
-            label="Height:"
-            type="number"
-            value={String(size.height)}
-            onValueChange={(v) => update('height')(v)}
-            placeholder="Height (board units)"
-          />
-        </Grid.Item>
-        <Grid.Item columnStart={1} columnEnd={5}>
-          <SelectField
-            label="Aspect Ratio"
-            value={ratio}
-            onChange={(v) => setRatio(v as AspectRatioId | 'none')}
-            data-testid="ratio-select"
-          >
-            <SelectOption value="none">Free</SelectOption>
-            {ASPECT_RATIOS.map((r) => (
-              <SelectOption key={r.id} value={r.id}>
-                {r.label}
-              </SelectOption>
-            ))}
-          </SelectField>
-        </Grid.Item>
-      </Grid>
-      <Heading level={3}>Presets</Heading>
-      <Grid columns={1}>
-        <Grid.Item>
-          <div>
-            {(['S', 'M', 'L'] as const).map((p) => (
-              <Button key={p} onClick={() => setSize(PRESET_SIZES[p])} variant="secondary">
-                {p}
-              </Button>
-            ))}
-            <br />
-            {SCALE_OPTIONS.map((s) => (
-              <Button key={s.label} onClick={() => scale(s.factor)} variant="secondary">
-                {s.label}
-              </Button>
-            ))}
-          </div>
-        </Grid.Item>
-      </Grid>
+      <SidebarSection title="Manual size">
+        <Grid columns={2} gap={200}>
+          <Grid.Item columnStart={1} columnEnd={2}>
+            <InputField
+              label="Width:"
+              type="number"
+              value={String(size.width)}
+              onValueChange={(v) => update('width')(v)}
+              placeholder="Width (board units)"
+            />
+          </Grid.Item>
+          <Grid.Item columnStart={2} columnEnd={3}>
+            <InputField
+              label="Height:"
+              type="number"
+              value={String(size.height)}
+              onValueChange={(v) => update('height')(v)}
+              placeholder="Height (board units)"
+            />
+          </Grid.Item>
+          <Grid.Item columnStart={1} columnEnd={5}>
+            <SelectField
+              label="Aspect Ratio"
+              value={ratio}
+              onChange={(v) => setRatio(v as AspectRatioId | 'none')}
+              data-testid="ratio-select"
+            >
+              <SelectOption value="none">Free</SelectOption>
+              {ASPECT_RATIOS.map((r) => (
+                <SelectOption key={r.id} value={r.id}>
+                  {r.label}
+                </SelectOption>
+              ))}
+            </SelectField>
+          </Grid.Item>
+        </Grid>
+      </SidebarSection>
+      <SidebarSection title="Presets">
+        <Grid columns={1}>
+          <Grid.Item>
+            <div>
+              {(['S', 'M', 'L'] as const).map((p) => (
+                <Button key={p} onClick={() => setSize(PRESET_SIZES[p])} variant="secondary">
+                  {p}
+                </Button>
+              ))}
+              <br />
+              {SCALE_OPTIONS.map((s) => (
+                <Button key={s.label} onClick={() => scale(s.factor)} variant="secondary">
+                  {s.label}
+                </Button>
+              ))}
+            </div>
+          </Grid.Item>
+        </Grid>
+      </SidebarSection>
       <StickyActions>
         <ButtonToolbar>
           <Button

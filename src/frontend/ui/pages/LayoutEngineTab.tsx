@@ -1,7 +1,7 @@
 import { space } from '@mirohq/design-tokens'
 import React from 'react'
 
-import { Paragraph } from '../components'
+import { Paragraph, SidebarSection } from '../components'
 import { PageHelp } from '../components/PageHelp'
 import { TabPanel } from '../components/TabPanel'
 
@@ -9,6 +9,8 @@ import { TabPanel } from '../components/TabPanel'
 export const LayoutEngineTab: React.FC = () => (
   <TabPanel tabId="layout" style={{ marginTop: space[200] }}>
     <PageHelp content="Layout engine coming soon" />
-    <Paragraph>Layout engine coming soon.</Paragraph>
+    <SidebarSection title="Preview">
+      <Paragraph>Layout engine coming soon.</Paragraph>
+    </SidebarSection>
   </TabPanel>
 )

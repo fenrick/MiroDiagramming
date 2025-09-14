@@ -3,7 +3,15 @@ import React from 'react'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 
 import { CardProcessor } from '../../board/card-processor'
-import { Button, ButtonToolbar, Checkbox, DroppedFileList, InputField } from '../components'
+import {
+  Button,
+  ButtonToolbar,
+  Checkbox,
+  DroppedFileList,
+  InputField,
+  EmptyState,
+  SidebarSection,
+} from '../components'
 import { StickyActions } from '../StickyActions'
 import { JsonDropZone } from '../components/JsonDropZone'
 import { PageHelp } from '../components/PageHelp'
@@ -71,33 +79,43 @@ export const CardsTab: React.FC = () => {
     <TabPanel tabId="cards">
       <PageHelp content="Board-linked items with thumbnail and title" />
       <JsonDropZone onFiles={handleFiles} />
+      {files.length === 0 && (
+        <EmptyState
+          title="Drop a JSON file"
+          description="Drag a JSON file here or choose one to create cards."
+        />
+      )}
 
       {files.length > 0 && (
-        <Grid columns={2}>
-          <Grid.Item>
-            <DroppedFileList>
-              {files.map((file) => (
-                <li key={`${file.name}-${file.lastModified}`}>{file.name}</li>
-              ))}
-            </DroppedFileList>
-          </Grid.Item>
-          <Grid.Item>
-            <fieldset>
-              <VisuallyHidden asChild>
-                <legend>Card options</legend>
-              </VisuallyHidden>
-              <Checkbox label="Wrap items in frame" value={withFrame} onChange={setWithFrame} />
-              {withFrame && (
-                <InputField
-                  label="Frame title"
-                  value={frameTitle}
-                  onValueChange={(v) => setFrameTitle(v)}
-                  placeholder="Frame title"
-                />
-              )}
-            </fieldset>
-          </Grid.Item>
-          <Grid.Item>
+        <>
+          <SidebarSection title="Selected file">
+            <Grid columns={2}>
+              <Grid.Item>
+                <DroppedFileList>
+                  {files.map((file) => (
+                    <li key={`${file.name}-${file.lastModified}`}>{file.name}</li>
+                  ))}
+                </DroppedFileList>
+              </Grid.Item>
+              <Grid.Item>
+                <fieldset>
+                  <VisuallyHidden asChild>
+                    <legend>Card options</legend>
+                  </VisuallyHidden>
+                  <Checkbox label="Wrap items in frame" value={withFrame} onChange={setWithFrame} />
+                  {withFrame && (
+                    <InputField
+                      label="Frame title"
+                      value={frameTitle}
+                      onValueChange={(v) => setFrameTitle(v)}
+                      placeholder="Frame title"
+                    />
+                  )}
+                </fieldset>
+              </Grid.Item>
+            </Grid>
+          </SidebarSection>
+          <SidebarSection title="Create">
             <StickyActions>
               <ButtonToolbar>
                 <Button
@@ -130,8 +148,8 @@ export const CardsTab: React.FC = () => {
             </StickyActions>
             {progress > 0 && progress < 100 && <progress value={progress} max={100} />}
             {error && <p className="error">{error}</p>}
-          </Grid.Item>
-        </Grid>
+          </SidebarSection>
+        </>
       )}
     </TabPanel>
   )

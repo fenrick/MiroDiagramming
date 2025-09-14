@@ -11,6 +11,7 @@ import {
   InputField,
   SelectField,
   SelectOption,
+  SidebarSection,
 } from '../components'
 import { PageHelp } from '../components/PageHelp'
 import { TabPanel } from '../components/TabPanel'
@@ -63,114 +64,118 @@ export const ArrangeTab: React.FC = () => {
   return (
     <TabPanel tabId="arrange">
       <PageHelp content="Grid and spacing tools" />
-      <Grid columns={2}>
-        <Grid.Item>
-          <InputField
-            label="Columns"
-            type="number"
-            value={String(grid.cols)}
-            onValueChange={(v) => updateNumber('cols')(v)}
-            placeholder="Columns"
-          />
-        </Grid.Item>
-        <Grid.Item>
-          <InputField
-            label="Gap"
-            type="number"
-            value={String(grid.padding)}
-            onValueChange={(v) => updateNumber('padding')(v)}
-            placeholder="Gap"
-          />
-        </Grid.Item>
-        <Grid.Item>
-          <Checkbox
-            label="Sort by name"
-            value={Boolean(grid.sortByName)}
-            onChange={toggle('sortByName')}
-          />
-        </Grid.Item>
-        {grid.sortByName && (
-          <Grid.Item>
-            <SelectField label="Order" value={grid.sortOrientation} onChange={setOrientation}>
-              <SelectOption value="horizontal">Horizontally</SelectOption>
-              <SelectOption value="vertical">Vertically</SelectOption>
-            </SelectField>
-          </Grid.Item>
-        )}
-        <Grid.Item>
-          <Checkbox
-            label="Group items into Frame"
-            value={Boolean(grid.groupResult)}
-            onChange={toggle('groupResult')}
-          />
-        </Grid.Item>
-        {grid.groupResult && (
+      <SidebarSection title="Grid">
+        <Grid columns={2}>
           <Grid.Item>
             <InputField
-              label="Frame Title"
-              value={frameTitle}
-              onValueChange={(v) => setFrameTitle(v)}
-              placeholder="Optional"
-            />
-          </Grid.Item>
-        )}
-        <Grid.Item>
-          <StickyActions>
-            <ButtonToolbar>
-              <Button
-                onClick={applyGrid}
-                variant="primary"
-                iconPosition="start"
-                icon={<IconGrid />}
-              >
-                <Text>Arrange Grid</Text>
-              </Button>
-            </ButtonToolbar>
-          </StickyActions>
-        </Grid.Item>
-
-        <Grid.Item>
-          <Flex direction="column" gap={100} css={{ marginBottom: 'var(--space-200)' }}>
-            <SelectField label="Axis" value={spacing.axis} onChange={updateAxis}>
-              <SelectOption value="x">Horizontal</SelectOption>
-              <SelectOption value="y">Vertical</SelectOption>
-            </SelectField>
-            <SelectField label="Mode" value={spacing.mode ?? 'move'} onChange={updateMode}>
-              <SelectOption value="move">Move</SelectOption>
-              <SelectOption value="grow">Expand</SelectOption>
-            </SelectField>
-            <InputField
-              label="Spacing"
+              label="Columns"
               type="number"
-              value={String(spacing.spacing)}
-              onValueChange={(v) => updateSpacing(v)}
-              placeholder="Distance"
+              value={String(grid.cols)}
+              onValueChange={(v) => updateNumber('cols')(v)}
+              placeholder="Columns"
             />
+          </Grid.Item>
+          <Grid.Item>
+            <InputField
+              label="Gap"
+              type="number"
+              value={String(grid.padding)}
+              onValueChange={(v) => updateNumber('padding')(v)}
+              placeholder="Gap"
+            />
+          </Grid.Item>
+          <Grid.Item>
+            <Checkbox
+              label="Sort by name"
+              value={Boolean(grid.sortByName)}
+              onChange={toggle('sortByName')}
+            />
+          </Grid.Item>
+          {grid.sortByName && (
+            <Grid.Item>
+              <SelectField label="Order" value={grid.sortOrientation} onChange={setOrientation}>
+                <SelectOption value="horizontal">Horizontally</SelectOption>
+                <SelectOption value="vertical">Vertically</SelectOption>
+              </SelectField>
+            </Grid.Item>
+          )}
+          <Grid.Item>
+            <Checkbox
+              label="Group items into Frame"
+              value={Boolean(grid.groupResult)}
+              onChange={toggle('groupResult')}
+            />
+          </Grid.Item>
+          {grid.groupResult && (
+            <Grid.Item>
+              <InputField
+                label="Frame Title"
+                value={frameTitle}
+                onValueChange={(v) => setFrameTitle(v)}
+                placeholder="Optional"
+              />
+            </Grid.Item>
+          )}
+          <Grid.Item>
             <StickyActions>
               <ButtonToolbar>
                 <Button
-                  onClick={applySpacing}
+                  onClick={applyGrid}
                   variant="primary"
                   iconPosition="start"
-                  icon={<IconChevronRightDouble />}
+                  icon={<IconGrid />}
                 >
-                  <Text>Distribute</Text>
+                  <Text>Arrange Grid</Text>
                 </Button>
               </ButtonToolbar>
             </StickyActions>
-          </Flex>
-        </Grid.Item>
-
-        <Grid.Item>
-          <StickyActions>
-            <ButtonToolbar>
-              <Button onClick={applyStickyTags} variant="secondary">
-                <Text>Apply [tags] to Stickies</Text>
-              </Button>
-            </ButtonToolbar>
-          </StickyActions>
-        </Grid.Item>
-      </Grid>
+          </Grid.Item>
+        </Grid>
+      </SidebarSection>
+      <SidebarSection title="Spacing">
+        <Grid columns={2}>
+          <Grid.Item>
+            <Flex direction="column" gap={100} css={{ marginBottom: 'var(--space-200)' }}>
+              <SelectField label="Axis" value={spacing.axis} onChange={updateAxis}>
+                <SelectOption value="x">Horizontal</SelectOption>
+                <SelectOption value="y">Vertical</SelectOption>
+              </SelectField>
+              <SelectField label="Mode" value={spacing.mode ?? 'move'} onChange={updateMode}>
+                <SelectOption value="move">Move</SelectOption>
+                <SelectOption value="grow">Expand</SelectOption>
+              </SelectField>
+              <InputField
+                label="Spacing"
+                type="number"
+                value={String(spacing.spacing)}
+                onValueChange={(v) => updateSpacing(v)}
+                placeholder="Distance"
+              />
+              <StickyActions>
+                <ButtonToolbar>
+                  <Button
+                    onClick={applySpacing}
+                    variant="primary"
+                    iconPosition="start"
+                    icon={<IconChevronRightDouble />}
+                  >
+                    <Text>Distribute</Text>
+                  </Button>
+                </ButtonToolbar>
+              </StickyActions>
+            </Flex>
+          </Grid.Item>
+          <Grid.Item>
+            <StickyActions>
+              <ButtonToolbar>
+                <Button onClick={applyStickyTags} variant="secondary">
+                  <Text>Apply [tags] to Stickies</Text>
+                </Button>
+              </ButtonToolbar>
+            </StickyActions>
+          </Grid.Item>
+        </Grid>
+      </SidebarSection>
     </TabPanel>
   )
 }
