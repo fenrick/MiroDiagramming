@@ -14,7 +14,7 @@
     "migrate:dev": "prisma migrate dev",
     "typecheck": "tsc --noEmit",
     "typecheck:client": "tsc -p tsconfig.client.json --noEmit",
-    "lint": "eslint \"src/{app,config,miro,routes,queue,services,repositories}/**/*.ts\"",
+    "lint": "eslint \"src/**/*.{ts,tsx}\" \"tests/**/*.{ts,tsx}\" \"scripts/**/*.{ts,tsx}\" --max-warnings=0",
     "format": "prettier --check .",
     "format:write": "prettier --write .",
     "test": "vitest run",
