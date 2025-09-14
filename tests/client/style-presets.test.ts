@@ -4,21 +4,6 @@ import React from 'react'
 import { describe, expect, test } from 'vitest'
 import '@testing-library/jest-dom/vitest'
 
-vi.mock('@mirohq/design-system', async () => {
-  const actual = await vi.importActual<typeof import('@mirohq/design-system')>(
-    '@mirohq/design-system',
-  )
-  const Slider = Object.assign(
-    (props: React.PropsWithChildren) => <div {...props} />,
-    {
-      Track: (props: React.PropsWithChildren) => <div {...props} />,
-      Range: (props: React.PropsWithChildren) => <div {...props} />,
-      Thumb: (props: React.PropsWithChildren) => <div {...props} />,
-    },
-  )
-  return { ...actual, Slider }
-})
-
 import templatesJson from '../../templates/shapeTemplates.json'
 import type { TemplateDefinition } from '../src/board/templates'
 import { templateManager } from '../src/board/templates'
