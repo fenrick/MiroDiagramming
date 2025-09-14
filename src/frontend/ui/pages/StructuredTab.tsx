@@ -33,6 +33,7 @@ import {
 } from '../components'
 import { StickyActions } from '../StickyActions'
 import { Skeleton } from '../components'
+import { InfoCallout } from '../components'
 import { JsonDropZone } from '../components/JsonDropZone'
 import { PageHelp } from '../components/PageHelp'
 import { TabPanel } from '../components/TabPanel'
@@ -192,12 +193,13 @@ export const StructuredTab: React.FC = () => {
                     </SelectOption>
                   ))}
                 </SelectField>
-                <p className="field-help">Layout options:</p>
-                <ul className="field-help">
-                  {LAYOUTS.map((l) => (
-                    <li key={`desc-${l}`}>{LAYOUT_DESCRIPTIONS[l]}</li>
-                  ))}
-                </ul>
+                <InfoCallout title="Layout options">
+                  <ul style={{ margin: 0, paddingLeft: 'var(--space-200)' }}>
+                    {LAYOUTS.map((l) => (
+                      <li key={`desc-${l}`}>{LAYOUT_DESCRIPTIONS[l]}</li>
+                    ))}
+                  </ul>
+                </InfoCallout>
                 <div style={{ marginTop: space[200] }}>
                   <Checkbox label="Wrap items in frame" value={withFrame} onChange={setWithFrame} />
                 </div>
