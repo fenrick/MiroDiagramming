@@ -2,7 +2,7 @@
 
 Purpose: Track pending improvements and code quality actions. Do not remove items; mark them done as completed. Each item lists what’s needed, where it applies, and the definition of done (DoD).
 
-## Architecture & Lifecycle
+## Server Architecture & Lifecycle
 
 - Export `createServer()` for tests
     - What’s needed: Expose a function to build the Fastify app without binding a port; have `startServer()` consume it.
@@ -29,62 +29,6 @@ Purpose: Track pending improvements and code quality actions. Do not remove item
     - Where: `tests/integration/server/lifecycle.test.ts`.
     - DoD: Test passes reliably and guards start/stop regressions.
 
-## Queue & Persistence
-
-- Persist pending `changeQueue` tasks
-    - What’s needed: Store tasks via Prisma/SQLite to survive restarts; decide purge semantics.
-    - Where: `src/queue/changeQueue.ts` (persistence), `prisma/schema.prisma` (if schema changes), `src/config/db` utilities.
-    - DoD: Tasks survive process restarts per documented policy; migration present; tests cover enqueue/dequeue and recovery.
-
-- Queue instrumentation and backpressure
-    - What’s needed: Structured logs for enqueue/dequeue with size/in-flight; WARN when length exceeds soft limit; limit configurable.
-    - Where: `src/queue/changeQueue.ts`; configuration via env (e.g., `QUEUE_WARN_LENGTH`).
-    - DoD: Logs show metrics; WARN triggers above threshold; threshold controlled by env.
-
-- Ensure queue drains on shutdown
-    - What’s needed: Stop processing cleanly and drain backlog or persist state on shutdown.
-    - Where: `src/queue/changeQueue.ts` and lifecycle in `src/server.ts`.
-    - DoD: Test verifies no tasks lost or left stuck; shutdown completes.
-
-## Miro API & Webhooks
-
-- Backoff jitter and Retry-After support
-    - What’s needed: Add jitter to exponential backoff and honor `Retry-After` header.
-    - Where: `src/miro/retry.ts` (or equivalent retry helper).
-    - DoD: Retries wait per header when provided; otherwise exponential with jitter; logs reflect backoff choice.
-
-- Use SDK async iterators for listings
-    - What’s needed: Refactor list operations to `for await (...)` and update docs with example.
-    - Where: `src/services/miroService.ts`; docs in `docs/node-architecture.md`.
-    - DoD: Listings stream via async iteration; unit/integration tests continue to pass; docs updated.
-
-- Replace custom webhook signature verify (when SDK ready)
-    - What’s needed: Swap `src/utils/webhookSignature.ts` for official SDK helper; adjust tests.
-    - Where: `src/utils/webhookSignature.ts`, webhook route, and related tests.
-    - DoD: Webhook verification uses SDK; tests green; fallback plan documented until helper is available.
-
-## Type Safety & SDK Usage
-
-- Replace broad `Record<string, unknown>`
-    - What’s needed: Use SDK types or explicit DTOs instead of wide records.
-    - Where: `src/services/miroService.ts` (and any similar services).
-    - DoD: No `Record<string, unknown>` in service APIs; types validated by tsc and tests.
-
-- Import frontend SDK types
-    - What’s needed: Use `@mirohq/websdk-types` in frontend code.
-    - Where: `src/frontend/**`.
-    - DoD: Frontend compiles with stronger typing; no implicit anys in these areas.
-
-- Enable `noImplicitAny`
-    - What’s needed: Turn on `noImplicitAny` and resolve resulting errors.
-    - Where: `tsconfig.json`, `tsconfig.client.json` and code fixes across `src/**` as needed.
-    - DoD: Typecheck passes with `noImplicitAny` enabled.
-
-- Define shared DTOs
-    - What’s needed: Centralize request/response DTOs shared by backend and frontend.
-    - Where: `src/types/` (new or expanded module).
-    - DoD: Imports use shared DTOs; duplication removed; typecheck and tests pass.
-
 ## Security
 
 - Security headers via Helmet
@@ -104,108 +48,93 @@ Purpose: Track pending improvements and code quality actions. Do not remove item
 
 ## Reliability & Operations
 
-- Liveness/readiness endpoints (see Architecture & Lifecycle)
-    - What’s needed: As specified above; expose DB and queue state.
-    - Where: `src/routes/health.routes.ts`, `src/app.ts`.
-    - DoD: Ready for orchestration probes; correct status codes returned.
+- Liveness and readiness endpoints exposed for orchestration
+    - What’s needed: Provide `/healthz/live` and `/healthz/ready` endpoints suitable for Kubernetes/Docker health checks; readiness should verify DB connectivity and expose queue stats; ensure SPA fallback excludes `/healthz/*`.
+    - Where: `src/routes/health.routes.ts` (new), registered in `src/app.ts` with SPA exclusion.
+    - DoD: `/healthz/live` returns `{ status: 'ok' }` with 200; `/healthz/ready` returns structured object including DB status and queue metrics, returns 503 on DB failure.
 
-- Queue backpressure visibility (see Queue & Persistence)
-    - What’s needed: Metrics and WARN thresholds.
-    - Where: `src/queue/changeQueue.ts`.
-    - DoD: Logs/metrics available for monitoring.
+- Queue backpressure visibility for operations
+    - What’s needed: Emit structured logs/metrics for queue size and in‑flight counts; log WARN when queue length crosses a soft threshold; threshold configurable by env.
+    - Where: `src/queue/changeQueue.ts`; configuration via env (e.g., `QUEUE_WARN_LENGTH`).
+    - DoD: Logs contain queue metrics; WARN fires above threshold; threshold adjusted via env var.
 
-## Testing & Coverage
+- Server lifecycle integration coverage
+    - What’s needed: Integration test that starts the app, probes health endpoints, triggers SIGINT/SIGTERM, and verifies queue stop/drain and Fastify onClose hooks.
+    - Where: `tests/integration/server/lifecycle.test.ts`.
+    - DoD: Test reliably passes and prevents regressions in start/stop behavior.
 
-- Env var error handling tests
-    - What’s needed: Tests for missing required envs throwing descriptive errors; tests for default `PORT` and JSON array parsing.
-    - Where: `src/config/env.test.ts`.
-    - DoD: Tests pass and cover edge cases for env parsing and defaults.
+## Queue & Persistence
 
-- Error handler coverage
-    - What’s needed: Cover non-validation error paths; verify custom HTTP codes and response shapes.
-    - Where: `src/config/error-handler.test.ts`.
-    - DoD: Tests assert correct codes/payloads for various error types.
+- Persist pending `changeQueue` tasks across restarts
+    - What’s needed: Store enqueued tasks in Prisma/SQLite with minimal schema; define purge/TTL semantics and recovery order.
+    - Where: `src/queue/changeQueue.ts` (persistence integration), `prisma/schema.prisma` (schema/migration), `src/config/db` helpers.
+    - DoD: Tasks survive process restarts per documented policy; migration included; tests cover enqueue, dequeue, recovery on boot, and purge behavior.
 
-- Change queue behavior tests
-    - What’s needed: Mock timers to test clamping, retry/drop flows, backoff logging; verify queue drains on shutdown.
-    - Where: `src/queue/changeQueue.test.ts` and lifecycle-related tests.
-    - DoD: All queue scenarios covered; shutdown drain verified.
+- Ensure queue drains or persists on shutdown
+    - What’s needed: On shutdown, stop accepting new work, finish in‑flight items, and either drain backlog or persist state for resumption.
+    - Where: `src/queue/changeQueue.ts` and server lifecycle in `src/server.ts`.
+    - DoD: Tests prove no tasks are lost or stuck; shutdown completes cleanly within a bounded time.
 
-- Idempotency repository TTL tests
-    - What’s needed: Mock `Date.now` to verify TTL cleanup; confirm duplicate keys extend TTL.
-    - Where: `src/repositories/idempotencyRepo.test.ts`.
-    - DoD: TTL behavior validated; duplicates extend TTL as expected.
+- Instrument queue and apply backpressure
+    - What’s needed: Structured logging for enqueue/dequeue with sizes and latencies; configurable concurrency; soft/hard limits with clamped enqueue or shedding if needed.
+    - Where: `src/queue/changeQueue.ts`; env config for limits/concurrency.
+    - DoD: Logs/metrics available; WARN/ERROR at thresholds; behavior configurable via env.
 
-- Client tests stability
-    - What’s needed: Fix timeouts in `search-tab` tests for debounced search and clear-query; fix parsing issues in `style-presets` tests (ensure JSDOM env, correct ESM/JSX handling, proper `.tsx`).
-    - Where: `tests/client/search-tab.test.tsx`, `tests/client/style-presets.test.ts[x]`.
-    - DoD: `npm test` runs without Vitest parse failures and flake-free timeouts.
+## Miro API & Webhooks
 
-- Coverage thresholds in Vitest
-    - What’s needed: Set `test.coverage.thresholds` for statements/branches/functions/lines ≥ 80; add CI coverage run that fails below thresholds.
-    - Where: `vitest.config.ts`, `.github/workflows/ci.yml` (coverage step).
-    - DoD: Local and CI runs fail if coverage drops below thresholds; coverage report generated.
+- Backoff jitter and Retry‑After support
+    - What’s needed: Add full jitter to exponential backoff and honor `Retry-After` header values (seconds/date); respect 429/5xx semantics.
+    - Where: `src/miro/retry.ts` (or retry helper), with logging of chosen delay and reason.
+    - DoD: Retries wait per header when provided; otherwise exponential with jitter; logs include backoff details; unit tests cover both flows.
 
-- Note on Quality Gates alignment
-    - What’s needed: Plan to raise thresholds to meet project Quality Gates (target ≥ 90%).
-    - Where: `vitest.config.ts` follow-up change tracked in `improvement_plan.md` when ready.
-    - DoD: Thresholds eventually updated to ≥ 90% with tests supporting the increase.
+- Use SDK async iterators for listings
+    - What’s needed: Replace manual pagination with `for await (...)` over SDK iterators; include example in docs.
+    - Where: `src/services/miroService.ts`; documentation in `docs/node-architecture.md`.
+    - DoD: List operations stream via async iteration; tests still pass; docs updated with example usage.
+
+- Replace custom webhook signature verification (when SDK helper available)
+    - What’s needed: Swap `src/utils/webhookSignature.ts` for official SDK helper, adjust route wiring and tests accordingly; keep fallback until helper is released.
+    - Where: `src/utils/webhookSignature.ts`, webhook route, and related tests.
+    - DoD: Verification uses SDK helper; tests green; fallback path documented until rollout.
+
+## Type Safety & SDK Usage
+
+- Replace broad `Record<string, unknown>` usage
+    - What’s needed: Adopt precise SDK types or explicit DTOs in public/service APIs; remove wide index signatures.
+    - Where: `src/services/miroService.ts` and similar services.
+    - DoD: No `Record<string, unknown>` in service APIs; typecheck and tests validate correctness.
+
+- Import frontend SDK types
+    - What’s needed: Use `@mirohq/websdk-types` in frontend components/hooks for stronger typing.
+    - Where: `src/frontend/**`.
+    - DoD: Frontend compiles with stronger typing; no implicit anys in these areas.
+
+- Enable `noImplicitAny`
+    - What’s needed: Turn on `noImplicitAny` and resolve resulting errors across backend and frontend.
+    - Where: `tsconfig.json`, `tsconfig.client.json`, and code in `src/**`.
+    - DoD: `npm run typecheck` passes with `noImplicitAny` enabled.
+
+- Define shared DTOs
+    - What’s needed: Centralize request/response DTOs shared by backend and frontend.
+    - Where: `src/types/` (new or expanded module); refactor imports to use shared DTOs.
+    - DoD: Duplication removed; typecheck and tests pass.
 
 ## Linting & Formatting
 
 - Expand lint script scope
-    - What’s needed: Lint `src/frontend/`, `tests/`, and `scripts/`; fail on warnings.
+    - What’s needed: Lint `src/frontend/`, `tests/`, and `scripts/`; fail on warnings to keep signal strong.
     - Where: `package.json` (`scripts.lint`).
-    - DoD: `npm run lint` covers all paths and exits non-zero on warnings.
+    - DoD: `npm run lint` covers all paths and exits non‑zero on warnings.
 
 - Fix ESLint warnings and parsing issues
-    - What’s needed: Resolve lints across tests and client code, especially around JSX/ESM parsing in style presets test.
-    - Where: Codebase-wide; specifically `tests/client/style-presets.test.ts[x]`.
+    - What’s needed: Resolve lints across tests and client code, especially JSX/ESM parsing in style‑presets tests.
+    - Where: Codebase‑wide; specifically `tests/client/style-presets.test.ts[x]`.
     - DoD: `npm run lint` clean with zero warnings.
 
 - Maintain formatting
-    - What’s needed: Run formatter and ensure consistent Prettier config applied.
+    - What’s needed: Ensure Prettier config is applied consistently; run formatter in CI/local.
     - Where: Project root via `npm run format:write` (or equivalent).
-    - DoD: Formatting stable and enforced in CI if configured.
-
-## Developer Experience
-
-- Production Dockerfile
-    - What’s needed: Multi-stage build (builder → runner) on `node:20-alpine`; build Vite + tsc; run with `node dist/server.js`.
-    - Where: `Dockerfile` at repo root; adjust `package.json` scripts if needed.
-    - DoD: `docker build` succeeds; `docker run -p 3000:3000` serves the app.
-
-- Authoritative `.env.example`
-    - What’s needed: List all required/optional env vars with comments (e.g., `PORT`, `DATABASE_URL`, `MIRO_CLIENT_ID/SECRET/REDIRECT_URL`, `MIRO_WEBHOOK_SECRET`, `QUEUE_*`, any `SESSION_*`).
-    - Where: `.env.example` at repo root.
-    - DoD: New contributors can `cp .env.example .env` and boot the app without guesswork.
-
-## Documentation
-
-- Keep improvement plan current
-    - What’s needed: Remove completed items from `improvement_plan.md` per AGENTS guidance.
-    - Where: `improvement_plan.md`.
-    - DoD: Only pending work remains listed; updated alongside related PRs.
-
-- Document server refactor and lifecycle
-    - What’s needed: Describe `createServer`, start/stop, and signal handling.
-    - Where: `docs/node-architecture.md`.
-    - DoD: Docs include lifecycle & signals section; reflects implemented behavior.
-
-- Document queue persistence strategy
-    - What’s needed: Capture persistence design, trade-offs, and operational notes.
-    - Where: `docs/node-architecture.md`.
-    - DoD: Clear section explaining persistence choices and recovery.
-
-- Operational runbook
-    - What’s needed: Create `docs/runbook.md` covering env vars, health endpoints, graceful shutdown, queue metrics, and secret rotation basics.
-    - Where: `docs/runbook.md` (new).
-    - DoD: Runbook exists and is referenced by deployment docs.
-
-- Update retry semantics in docs
-    - What’s needed: Add jitter/Retry-After behavior and queue limits/telemetry to docs.
-    - Where: `docs/node-architecture.md`.
-    - DoD: Documentation reflects current retry and telemetry patterns.
+    - DoD: Formatting stable and enforced where configured.
 
 ## Style Guide Compliance
 
@@ -239,18 +168,18 @@ Purpose: Track pending improvements and code quality actions. Do not remove item
     - Where: `tsconfig.json`, `eslint.config.mjs`, code in `src/**`.
     - DoD: New code uses absolute imports; lint warns on long relative paths; initial migration completed.
 
-- Husky pre-commit runs lint
-    - What’s needed: Extend the pre-commit hook to run `npm run lint` in addition to Prettier check.
+- Husky pre‑commit runs lint
+    - What’s needed: Extend the pre‑commit hook to run `npm run lint` in addition to Prettier check.
     - Where: `.husky/pre-commit`.
     - DoD: Commits are blocked on lint errors locally.
 
-- No non-null assertions
+- No non‑null assertions
     - What’s needed: Enable `@typescript-eslint/no-non-null-assertion` and refactor code to use guards/narrowing.
     - Where: `eslint.config.mjs`, code in `src/**`.
     - DoD: Lint clean with rule enabled; code uses safe checks.
 
 - Backend input validation with Zod
-    - What’s needed: Ensure all externally-sourced inputs (routes, webhooks, env parsing) validate via Zod or JSON Schema.
+    - What’s needed: Ensure all externally‑sourced inputs (routes, webhooks, env parsing) validate via Zod or JSON Schema.
     - Where: `src/routes/**`, `src/utils/**`, `src/config/env.ts`.
     - DoD: Handlers parse inputs before use; tests cover invalid input cases.
 
@@ -268,3 +197,79 @@ Purpose: Track pending improvements and code quality actions. Do not remove item
     - What’s needed: Fix floating promises by awaiting or explicitly marking `void` for fire‑and‑forget handlers.
     - Where: `src/**` where async is used.
     - DoD: Lint clean for `no-floating-promises`; tests unaffected.
+
+## Testing & Coverage
+
+- Env var error handling tests
+    - What’s needed: Tests for missing required envs throwing descriptive errors; tests for default `PORT` and JSON array parsing.
+    - Where: `src/config/env.test.ts`.
+    - DoD: Tests pass and cover edge cases for env parsing and defaults.
+
+- Error handler coverage
+    - What’s needed: Cover non‑validation error paths; verify custom HTTP codes and response shapes.
+    - Where: `src/config/error-handler.test.ts`.
+    - DoD: Tests assert correct codes/payloads for various error types.
+
+- Change queue behavior tests
+    - What’s needed: Mock timers to test clamping, retry/drop flows, backoff logging; verify queue drains on shutdown.
+    - Where: `src/queue/changeQueue.test.ts` and lifecycle‑related tests.
+    - DoD: All queue scenarios covered; shutdown drain verified.
+
+- Idempotency repository TTL tests
+    - What’s needed: Mock `Date.now` to verify TTL cleanup; confirm duplicate keys extend TTL.
+    - Where: `src/repositories/idempotencyRepo.test.ts`.
+    - DoD: TTL behavior validated; duplicates extend TTL as expected.
+
+- Client tests stability
+    - What’s needed: Fix timeouts in `search-tab` tests for debounced search and clear‑query; fix parsing issues in `style-presets` tests (ensure JSDOM env, correct ESM/JSX handling, proper `.tsx`).
+    - Where: `tests/client/search-tab.test.tsx`, `tests/client/style-presets.test.ts[x]`.
+    - DoD: `npm test` runs without Vitest parse failures and with flake‑free timeouts.
+
+- Coverage thresholds in Vitest
+    - What’s needed: Set `test.coverage.thresholds` for statements/branches/functions/lines ≥ 80; add CI coverage run that fails below thresholds.
+    - Where: `vitest.config.ts`, `.github/workflows/ci.yml` (coverage step).
+    - DoD: Local and CI runs fail if coverage drops below thresholds; coverage report generated.
+
+- Quality Gates alignment follow‑up
+    - What’s needed: Plan to raise thresholds to meet project Quality Gates (target ≥ 90%). Track as a follow‑up in `improvement_plan.md` when ready.
+    - Where: `vitest.config.ts` (future change), `improvement_plan.md` (tracking).
+    - DoD: Thresholds eventually updated to ≥ 90% with tests supporting the increase.
+
+## Developer Experience
+
+- Production Dockerfile
+    - What’s needed: Multi‑stage build (builder → runner) on `node:20-alpine`; build Vite + tsc; run with `node dist/server.js`.
+    - Where: `Dockerfile` at repo root; adjust `package.json` scripts if needed.
+    - DoD: `docker build` succeeds; `docker run -p 3000:3000` serves the app.
+
+- Authoritative `.env.example`
+    - What’s needed: List all required/optional env vars with comments (e.g., `PORT`, `DATABASE_URL`, `MIRO_CLIENT_ID/SECRET/REDIRECT_URL`, `MIRO_WEBHOOK_SECRET`, `QUEUE_*`, any `SESSION_*`).
+    - Where: `.env.example` at repo root.
+    - DoD: New contributors can `cp .env.example .env` and boot the app without guesswork.
+
+## Documentation
+
+- Keep improvement plan current
+    - What’s needed: Remove completed items from `improvement_plan.md` per AGENTS guidance.
+    - Where: `improvement_plan.md`.
+    - DoD: Only pending work remains listed; updated alongside related PRs.
+
+- Document server refactor and lifecycle
+    - What’s needed: Describe `createServer`, start/stop, and signal handling in the Node architecture doc.
+    - Where: `docs/node-architecture.md`.
+    - DoD: Docs include lifecycle & signals section reflecting implemented behavior.
+
+- Document queue persistence strategy
+    - What’s needed: Capture persistence design, trade‑offs, and operational notes.
+    - Where: `docs/node-architecture.md`.
+    - DoD: Clear section explaining persistence choices and recovery.
+
+- Operational runbook
+    - What’s needed: Create `docs/runbook.md` covering env vars, health endpoints, graceful shutdown, queue metrics, and secret rotation basics.
+    - Where: `docs/runbook.md` (new).
+    - DoD: Runbook exists and is referenced by deployment docs.
+
+- Update retry semantics in docs
+    - What’s needed: Add jitter/Retry‑After behavior and queue limits/telemetry to docs.
+    - Where: `docs/node-architecture.md`.
+    - DoD: Documentation reflects current retry and telemetry patterns.
