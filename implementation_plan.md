@@ -1,211 +1,208 @@
 # Implementation Plan
 
-Purpose: Track pending improvements and code quality actions. Remove items once addressed.
+Purpose: Track pending improvements and code quality actions. Do not remove items; mark them done as completed. Each item lists what’s needed, where it applies, and the definition of done (DoD).
 
-## Testing & Coverage
+## Architecture & Lifecycle
 
-- _Good_: Project enforces ESLint, TypeScript strict mode and Vitest per [AGENTS.md](AGENTS.md).
-- Add test in `src/config/env.test.ts` for missing required env vars to throw descriptive error.
-- Add test in `src/config/env.test.ts` verifying default `PORT` and JSON array env parsing.
-- Add test in `src/config/error-handler.test.ts` covering non-validation error paths.
-- Add test in `src/config/error-handler.test.ts` verifying custom HTTP codes and response shapes.
-- Add test in `src/queue/changeQueue.test.ts` with mocked timers for clamping, retry/drop flows and backoff logging.
-- Add test in `src/queue/changeQueue.test.ts` ensuring the queue drains on shutdown.
-- Add test in `src/repositories/idempotencyRepo.test.ts` mocking `Date.now` to verify TTL cleanup.
-- Add test in `src/repositories/idempotencyRepo.test.ts` confirming duplicate keys extend TTL.
-- Set `statements`, `branches`, `lines` and `functions` coverage ≥ 80% in `vitest.config.ts`.
-- Fix timeouts in `tests/client/search-tab.test.tsx` so debounced search and clear-query tests pass.
-- Set minimum coverage gates in `vitest.config.ts`
-  _Action_: Add `test.coverage.thresholds` (statements/branches/functions/lines ≥ 80).
-  _Why_: Enforces quality bar in CI, not just local.
+- Export `createServer()` for tests
+    - What’s needed: Expose a function to build the Fastify app without binding a port; have `startServer()` consume it.
+    - Where: `src/server.ts` (create/export `createServer`; refactor `startServer`).
+    - DoD: Integration tests can import `createServer()` and run requests without port binding; no behavior change for production start.
 
-    ```ts
-    // vitest.config.ts
-    export default defineConfig({
-        test: {
-            coverage: {
-                provider: 'v8',
-                thresholds: { statements: 80, branches: 80, functions: 80, lines: 80 },
-                reporter: ['text', 'lcov'],
-                reportsDirectory: 'coverage',
-            },
-        },
-    })
-    ```
+- Guard auto-start in entrypoint
+    - What’s needed: Only auto-start server when the file is executed directly.
+    - Where: `src/server.ts` using `if (require.main === module) { startServer() }`.
+    - DoD: Running tests that import the module does not start a listener.
 
-- Run coverage in CI and fail below thresholds
-  _Action_: Add `npm run coverage` step (or `vitest run --coverage`) in `.github/workflows/ci.yml` after unit tests.
-  _Why_: Makes the gate enforceable in PRs.
+- Graceful shutdown on SIGTERM/SIGINT
+    - What’s needed: Signal handlers that `await app.close()` and stop background workers; make sure Fastify onClose hooks run.
+    - Where: `src/server.ts` (signal handlers), `src/queue/changeQueue.ts` (stop hook if needed).
+    - DoD: Sending SIGINT/SIGTERM closes the server cleanly and calls `changeQueue.stop()`; verified by lifecycle test.
 
-- Fix parsing issue in `tests/client/style-presets.test.ts`
-  _Action_: Resolve import/JSX parsing error (ensure `/** @vitest-environment jsdom */`, correct ESM imports, and file extension `.tsx` if JSX).
-  _Why_: Unblocks full client suite.
-  _Done when_: `npm test` runs without Vitest parse failures.
+- Health endpoints (liveness/readiness)
+    - What’s needed: Add `/healthz/live` simple OK and `/healthz/ready` that checks DB and exposes queue stats; ensure SPA fallback excludes `/healthz`.
+    - Where: `src/routes/health.routes.ts` (new), register in `src/app.ts`; ensure SPA fallback exclusion remains.
+    - DoD: Hitting `/healthz/live` returns `{status:'ok'}`; `/healthz/ready` returns DB status and queue metrics, 503 on DB failure.
 
-- Add server lifecycle test
-  _Action_: New test `tests/integration/server/lifecycle.test.ts` that starts the server (see “Graceful shutdown” below), hits `/healthz`, then triggers shutdown and asserts queue stop was called.
-  _Why_: Prevents regressions in start/stop hooks.
+- Server lifecycle integration test
+    - What’s needed: Start server/app, hit `/healthz`, then trigger shutdown and assert queue stop called.
+    - Where: `tests/integration/server/lifecycle.test.ts`.
+    - DoD: Test passes reliably and guards start/stop regressions.
 
-## Linting, Formatting & Code Smells
+## Queue & Persistence
 
-- _Good_: Prettier and ESLint are configured per [AGENTS.md](AGENTS.md).
-- Expand `npm run lint` to cover `src/frontend/`, `tests/` and `scripts/` directories and fail on warnings.
-  _Action_: Update `package.json` `lint` script:
+- Persist pending `changeQueue` tasks
+    - What’s needed: Store tasks via Prisma/SQLite to survive restarts; decide purge semantics.
+    - Where: `src/queue/changeQueue.ts` (persistence), `prisma/schema.prisma` (if schema changes), `src/config/db` utilities.
+    - DoD: Tasks survive process restarts per documented policy; migration present; tests cover enqueue/dequeue and recovery.
 
-    ```json
-    // package.json scripts
-    "lint": "eslint \"src/**/*.ts*\" \"tests/**/*.ts*\" \"scripts/**/*.ts\" --max-warnings 0"
-    ```
+- Queue instrumentation and backpressure
+    - What’s needed: Structured logs for enqueue/dequeue with size/in-flight; WARN when length exceeds soft limit; limit configurable.
+    - Where: `src/queue/changeQueue.ts`; configuration via env (e.g., `QUEUE_WARN_LENGTH`).
+    - DoD: Logs show metrics; WARN triggers above threshold; threshold controlled by env.
 
-    _Why_: Keeps client and scripts tidy too.
+- Ensure queue drains on shutdown
+    - What’s needed: Stop processing cleanly and drain backlog or persist state on shutdown.
+    - Where: `src/queue/changeQueue.ts` and lifecycle in `src/server.ts`.
+    - DoD: Test verifies no tasks lost or left stuck; shutdown completes.
 
-- Fix ESLint warnings and parsing issues across tests, especially `tests/client/style-presets.test.ts`.
-- Run `npm run format:write` to maintain consistent formatting.
+## Miro API & Webhooks
 
-## Architecture & Testability
+- Backoff jitter and Retry-After support
+    - What’s needed: Add jitter to exponential backoff and honor `Retry-After` header.
+    - Where: `src/miro/retry.ts` (or equivalent retry helper).
+    - DoD: Retries wait per header when provided; otherwise exponential with jitter; logs reflect backoff choice.
 
-- _Good_: Backend and frontend share a single Node process as documented in [docs/node-architecture.md](docs/node-architecture.md).
-- Export a callable `createServer()` from `src/server.ts` for integration tests.
-  _Action_: Build the app without listening and reuse in `startServer()`.
+- Use SDK async iterators for listings
+    - What’s needed: Refactor list operations to `for await (...)` and update docs with example.
+    - Where: `src/services/miroService.ts`; docs in `docs/node-architecture.md`.
+    - DoD: Listings stream via async iteration; unit/integration tests continue to pass; docs updated.
 
-    ```ts
-    // src/server.ts
-    export async function createServer() {
-      const app = await buildApp()
-      return app
-    }
-    export async function startServer(port?: number) {
-      const app = await createServer()
-      ...
-    }
-    ```
-
-    _Why_: Lets integration tests run against a real Fastify instance without network port binding.
-
-- Guard auto-start in `src/server.ts` with `if (require.main === module)`.
-- Store pending `changeQueue` tasks via Prisma/SQLite as described in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
-- Document trade-offs of queue persistence in [docs/node-architecture.md](docs/node-architecture.md).
-- Add an integration test that starts the Fastify app and hits a sample route.
+- Replace custom webhook signature verify (when SDK ready)
+    - What’s needed: Swap `src/utils/webhookSignature.ts` for official SDK helper; adjust tests.
+    - Where: `src/utils/webhookSignature.ts`, webhook route, and related tests.
+    - DoD: Webhook verification uses SDK; tests green; fallback plan documented until helper is available.
 
 ## Type Safety & SDK Usage
 
-- _Good_: Strong TypeScript typing and the `withMiroRetry` wrapper around the Miro SDK.
-- Replace `Record<string, unknown>` in `src/services/miroService.ts` with SDK types or explicit DTOs.
-- Import types from `@mirohq/websdk-types` in frontend code under `src/frontend/`.
-- Enable `noImplicitAny` in `tsconfig.json` and `tsconfig.client.json`.
-- Define shared DTOs in `src/types/` for data passed between backend and frontend.
+- Replace broad `Record<string, unknown>`
+    - What’s needed: Use SDK types or explicit DTOs instead of wide records.
+    - Where: `src/services/miroService.ts` (and any similar services).
+    - DoD: No `Record<string, unknown>` in service APIs; types validated by tsc and tests.
 
-## Miro API & Webhook Integration
+- Import frontend SDK types
+    - What’s needed: Use `@mirohq/websdk-types` in frontend code.
+    - Where: `src/frontend/**`.
+    - DoD: Frontend compiles with stronger typing; no implicit anys in these areas.
 
-- _Good_: Retry helper centralizes API error handling.
-- Add jitter to backoff and honour `Retry-After` header in `src/miro/retry.ts`.
-  _Action_:
+- Enable `noImplicitAny`
+    - What’s needed: Turn on `noImplicitAny` and resolve resulting errors.
+    - Where: `tsconfig.json`, `tsconfig.client.json` and code fixes across `src/**` as needed.
+    - DoD: Typecheck passes with `noImplicitAny` enabled.
 
-    ```ts
-    const ra = Number((err as any)?.headers?.['retry-after'])
-    const base = Number.isFinite(ra) ? ra * 1000 : baseDelayMs * 2 ** i
-    const jitter = Math.random() * 0.3 + 0.85 // 85–115%
-    await delay(base * jitter)
-    ```
-
-    _Why_: Reduces thundering herd, aligns to API guidance.
-
-- Use the SDK’s async iterator (`for await (...)`) for listing resources and refactor `src/services/miroService.ts`; document usage in `docs/node-architecture.md`.
-- Replace custom `verifyWebhookSignature` in `src/utils/webhookSignature.ts` with official SDK helper when released; update tests accordingly.
-
-## Reliability & Operations
-
-- Graceful shutdown on SIGTERM/SIGINT
-  _Action_: In `src/server.ts`, attach signal handlers that `await app.close()` and `changeQueue.stop()`; ensure Fastify `onClose` runs.
-  _Why_: Prevents in-flight loss and port binding leaks.
-
-    ```ts
-    // src/server.ts
-    export async function startServer(port?: number) {
-        const env = loadEnv()
-        const app = await buildApp()
-        changeQueue.start(env.QUEUE_CONCURRENCY)
-        const listenPort = port ?? env.PORT
-        await app.listen({ port: listenPort, host: '0.0.0.0' })
-
-        const shutdown = async (signal: string) => {
-            app.log.info({ signal }, 'shutting down')
-            try {
-                await app.close()
-            } finally {
-                changeQueue.stop()
-                process.exit(0)
-            }
-        }
-        process.on('SIGTERM', () => void shutdown('SIGTERM'))
-        process.on('SIGINT', () => void shutdown('SIGINT'))
-        return app
-    }
-    ```
-
-- Liveness & readiness endpoint
-  _Action_: Add `src/routes/health.routes.ts` and register in `src/app.ts`. Route should:
-    - `GET /healthz/live`: return `{ status:'ok' }`
-    - `GET /healthz/ready`: check Prisma `SELECT 1`, and report `{ db:true, queue_length, in_flight }` with non-200 if DB fails.
-
-    _Why_: Enables container orchestration readiness.
-
-    ```ts
-    // src/routes/health.routes.ts
-    export const registerHealthRoutes: FastifyPluginAsync = async (app) => {
-        app.get('/healthz/live', async () => ({ status: 'ok' }))
-        app.get('/healthz/ready', async (_req, reply) => {
-            try {
-                await getPrisma().$queryRaw`SELECT 1`
-                return reply.send({
-                    db: true,
-                    queue_length: changeQueue.size(),
-                    in_flight: changeQueue.inFlight(),
-                })
-            } catch {
-                return reply.code(503).send({ db: false })
-            }
-        })
-    }
-    ```
-
-    _Remember_: Keep `registerSpaFallback` excluding `/healthz` as it already does.
-
-- Queue instrumentation & backpressure
-  _Action_: In `src/queue/changeQueue.ts`, log structured metrics on task enqueue/dequeue (size, in*flight) at debug level and WARN when queue length breaches a soft limit (e.g., > 500).
-  \_Why*: Early visibility of overload.
-  _Done when_: Logs appear and threshold configurable via env (e.g., `QUEUE_WARN_LENGTH`).
+- Define shared DTOs
+    - What’s needed: Centralize request/response DTOs shared by backend and frontend.
+    - Where: `src/types/` (new or expanded module).
+    - DoD: Imports use shared DTOs; duplication removed; typecheck and tests pass.
 
 ## Security
 
-- Add security headers
-  _Action_: Register `@fastify/helmet` in `src/app.ts` (behind `NODE_ENV !== 'test'`) with sensible defaults.
-  _Why_: Baseline hardening for production deployments.
+- Security headers via Helmet
+    - What’s needed: Register `@fastify/helmet` with sensible defaults; disable in tests.
+    - Where: `src/app.ts` (conditional on `NODE_ENV !== 'test'`).
+    - DoD: Responses include standard security headers in non-test envs; no breakage observed.
 
-- Tighten webhook content-type
-  _Action_: In `src/routes/webhook.routes.ts`, enforce `contentType: ['application/json']` and a small `bodyLimit` specifically for the route (Fastify route options), keep `rawBody` enabled.
-  _Why_: Reduce attack surface on public webhook.
+- Tighten webhook content-type and size
+    - What’s needed: Enforce `application/json`, set small `bodyLimit`, keep `rawBody` enabled for signature check.
+    - Where: `src/routes/webhook.routes.ts` (route options/schema).
+    - DoD: Route rejects invalid content types/oversized bodies; existing webhook tests pass.
 
-- Redact more sensitive fields in logs
-  _Action_: Extend `redact.paths` in `src/config/logger.ts` to include `req.headers['x-miro-signature']`, `req.headers.cookie`, and any OAuth tokens under `req.headers.authorization`.
-  _Why_: Prevents secret leakage in logs.
+- Redact sensitive fields in logs
+    - What’s needed: Extend logger redaction to headers and tokens.
+    - Where: `src/config/logger.ts` (`redact.paths` to include `req.headers['x-miro-signature']`, `req.headers.cookie`, `req.headers.authorization`).
+    - DoD: Logs show `[Redacted]` for configured fields; no secrets leak in app logs.
+
+## Reliability & Operations
+
+- Liveness/readiness endpoints (see Architecture & Lifecycle)
+    - What’s needed: As specified above; expose DB and queue state.
+    - Where: `src/routes/health.routes.ts`, `src/app.ts`.
+    - DoD: Ready for orchestration probes; correct status codes returned.
+
+- Queue backpressure visibility (see Queue & Persistence)
+    - What’s needed: Metrics and WARN thresholds.
+    - Where: `src/queue/changeQueue.ts`.
+    - DoD: Logs/metrics available for monitoring.
+
+## Testing & Coverage
+
+- Env var error handling tests
+    - What’s needed: Tests for missing required envs throwing descriptive errors; tests for default `PORT` and JSON array parsing.
+    - Where: `src/config/env.test.ts`.
+    - DoD: Tests pass and cover edge cases for env parsing and defaults.
+
+- Error handler coverage
+    - What’s needed: Cover non-validation error paths; verify custom HTTP codes and response shapes.
+    - Where: `src/config/error-handler.test.ts`.
+    - DoD: Tests assert correct codes/payloads for various error types.
+
+- Change queue behavior tests
+    - What’s needed: Mock timers to test clamping, retry/drop flows, backoff logging; verify queue drains on shutdown.
+    - Where: `src/queue/changeQueue.test.ts` and lifecycle-related tests.
+    - DoD: All queue scenarios covered; shutdown drain verified.
+
+- Idempotency repository TTL tests
+    - What’s needed: Mock `Date.now` to verify TTL cleanup; confirm duplicate keys extend TTL.
+    - Where: `src/repositories/idempotencyRepo.test.ts`.
+    - DoD: TTL behavior validated; duplicates extend TTL as expected.
+
+- Client tests stability
+    - What’s needed: Fix timeouts in `search-tab` tests for debounced search and clear-query; fix parsing issues in `style-presets` tests (ensure JSDOM env, correct ESM/JSX handling, proper `.tsx`).
+    - Where: `tests/client/search-tab.test.tsx`, `tests/client/style-presets.test.ts[x]`.
+    - DoD: `npm test` runs without Vitest parse failures and flake-free timeouts.
+
+- Coverage thresholds in Vitest
+    - What’s needed: Set `test.coverage.thresholds` for statements/branches/functions/lines ≥ 80; add CI coverage run that fails below thresholds.
+    - Where: `vitest.config.ts`, `.github/workflows/ci.yml` (coverage step).
+    - DoD: Local and CI runs fail if coverage drops below thresholds; coverage report generated.
+
+- Note on Quality Gates alignment
+    - What’s needed: Plan to raise thresholds to meet project Quality Gates (target ≥ 90%).
+    - Where: `vitest.config.ts` follow-up change tracked in `improvement_plan.md` when ready.
+    - DoD: Thresholds eventually updated to ≥ 90% with tests supporting the increase.
+
+## Linting & Formatting
+
+- Expand lint script scope
+    - What’s needed: Lint `src/frontend/`, `tests/`, and `scripts/`; fail on warnings.
+    - Where: `package.json` (`scripts.lint`).
+    - DoD: `npm run lint` covers all paths and exits non-zero on warnings.
+
+- Fix ESLint warnings and parsing issues
+    - What’s needed: Resolve lints across tests and client code, especially around JSX/ESM parsing in style presets test.
+    - Where: Codebase-wide; specifically `tests/client/style-presets.test.ts[x]`.
+    - DoD: `npm run lint` clean with zero warnings.
+
+- Maintain formatting
+    - What’s needed: Run formatter and ensure consistent Prettier config applied.
+    - Where: Project root via `npm run format:write` (or equivalent).
+    - DoD: Formatting stable and enforced in CI if configured.
 
 ## Developer Experience
 
-- Add Dockerfile for production
-  _Action_: Multi-stage Dockerfile (builder → runner). Use `node:20-alpine`, run `vite build && tsc`, copy `dist/` and `public/`, set `NODE_ENV=production`, `PORT`, run `node dist/server.js`.
-  _Why_: Standardise deploy artifact.
-  _Done when_: `docker build` and `docker run -p 3000:3000` serve app.
+- Production Dockerfile
+    - What’s needed: Multi-stage build (builder → runner) on `node:20-alpine`; build Vite + tsc; run with `node dist/server.js`.
+    - Where: `Dockerfile` at repo root; adjust `package.json` scripts if needed.
+    - DoD: `docker build` succeeds; `docker run -p 3000:3000` serves the app.
 
-- Make `.env.example` authoritative
-  _Action_: Add all required/optional env keys with comments (PORT, SESSION*SECRET, MIRO*\_ vars, QUEUE\__).
-  \_Why_: Faster onboarding and consistent configs.
+- Authoritative `.env.example`
+    - What’s needed: List all required/optional env vars with comments (e.g., `PORT`, `DATABASE_URL`, `MIRO_CLIENT_ID/SECRET/REDIRECT_URL`, `MIRO_WEBHOOK_SECRET`, `QUEUE_*`, any `SESSION_*`).
+    - Where: `.env.example` at repo root.
+    - DoD: New contributors can `cp .env.example .env` and boot the app without guesswork.
 
 ## Documentation
 
-- _Good_: Architecture docs provide clear guidance on system design.
-- Remove completed items from `improvement_plan.md` following [AGENTS.md](AGENTS.md).
-- Document server refactor in [docs/node-architecture.md](docs/node-architecture.md) after implementation.
-- Document queue persistence strategy in [docs/node-architecture.md](docs/node-architecture.md) after implementation.
-- Document operational runbook in `docs/runbook.md` explaining environment variables, `healthz` endpoints, graceful shutdown, queue metrics, and how to rotate secrets.
-- Update `docs/node-architecture.md` with sections for lifecycle & signals, health endpoints, queue limits/telemetry, and retry semantics with jitter/Retry-After.
+- Keep improvement plan current
+    - What’s needed: Remove completed items from `improvement_plan.md` per AGENTS guidance.
+    - Where: `improvement_plan.md`.
+    - DoD: Only pending work remains listed; updated alongside related PRs.
+
+- Document server refactor and lifecycle
+    - What’s needed: Describe `createServer`, start/stop, and signal handling.
+    - Where: `docs/node-architecture.md`.
+    - DoD: Docs include lifecycle & signals section; reflects implemented behavior.
+
+- Document queue persistence strategy
+    - What’s needed: Capture persistence design, trade-offs, and operational notes.
+    - Where: `docs/node-architecture.md`.
+    - DoD: Clear section explaining persistence choices and recovery.
+
+- Operational runbook
+    - What’s needed: Create `docs/runbook.md` covering env vars, health endpoints, graceful shutdown, queue metrics, and secret rotation basics.
+    - Where: `docs/runbook.md` (new).
+    - DoD: Runbook exists and is referenced by deployment docs.
+
+- Update retry semantics in docs
+    - What’s needed: Add jitter/Retry-After behavior and queue limits/telemetry to docs.
+    - Where: `docs/node-architecture.md`.
+    - DoD: Documentation reflects current retry and telemetry patterns.
