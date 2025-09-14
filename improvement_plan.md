@@ -6,12 +6,9 @@ Status markers: [Planned] to do. Completed items are removed from this list once
 
 ## UX Alignment (Aura)
 
-- Add `SidebarSection` and `EmptyState` primitives using `@mirohq/design-system`. [Planned]
-- Replace ad‑hoc spacing with `@mirohq/design-tokens`; reduce custom CSS. [Planned]
-- Convert Help, Search, and Style tabs to use `SidebarSection` headings. [Planned]
 - Normalize form controls to design-system `Form` components and field groups. [Planned]
-- Add empty/loading states to long operations (board scan, imports, diff). [Planned]
-- Audit keyboard navigation and focus order across Tabs, modals, and lists. [Planned]
+- Add loading states to long operations (board scan, imports, diff). [Planned]
+- Audit keyboard navigation and focus order across Tabs, modals, and lists; add a11y tests. [Planned]
 
 ## Jobs & Backend Infrastructure
 

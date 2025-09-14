@@ -39,9 +39,9 @@ Phase 2 – Adopt in existing screens
 
 Phase 3 – Refinements
 
-6. Add consistent empty/loading states for long operations
-7. Audit focus order and keyboard shortcuts (Tabs, modals, lists)
-8. Add storybook stories for primitives and key flows
+6. Add consistent empty/loading states for long operations [Partially done: EmptyState]
+7. Audit focus order and keyboard shortcuts (Tabs, modals, lists) [In progress]
+8. Add storybook stories for primitives and key flows [Pending]
 
 ## Notes on Libraries
 

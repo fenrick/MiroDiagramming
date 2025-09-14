@@ -17,6 +17,7 @@ export function StickyActions({ children }: { children: React.ReactNode }): Reac
         position: 'sticky',
         bottom: 0,
         background: 'var(--mds-surface, #fff)',
+        borderTop: 'var(--border-widths-sm) solid var(--colors-gray-200)',
         paddingTop: 'var(--space-200)',
         paddingBottom: 'var(--space-200)',
       }}
