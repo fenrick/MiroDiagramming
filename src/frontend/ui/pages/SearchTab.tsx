@@ -5,10 +5,12 @@ import type { SearchOptions } from '../../board/search-tools'
 import {
   Button,
   ButtonToolbar,
+  EmptyState,
   FilterDropdown,
   InputField,
   Paragraph,
   RegexSearchField,
+  SidebarSection,
 } from '../components'
 import { PageHelp } from '../components/PageHelp'
 import { TabPanel } from '../components/TabPanel'
@@ -123,81 +125,87 @@ export const SearchTab: React.FC = () => {
   return (
     <TabPanel tabId="search">
       <PageHelp content="Find and replace text on the board" />
-      <Grid columns={2}>
-        <Grid.Item>
-          <RegexSearchField
-            label="Find"
-            value={query}
-            onChange={(v: string) => setQuery(v)}
-            regex={regex}
-            onRegexToggle={setRegex}
-            placeholder="Search board text"
+      <SidebarSection title="Find & Replace">
+        <Grid columns={2}>
+          <Grid.Item>
+            <RegexSearchField
+              label="Find"
+              value={query}
+              onChange={(v: string) => setQuery(v)}
+              regex={regex}
+              onRegexToggle={setRegex}
+              placeholder="Search board text"
+            />
+          </Grid.Item>
+          <Grid.Item>
+            <InputField
+              label="Replace"
+              value={replacement}
+              onValueChange={(v: string) => setReplacement(v)}
+              placeholder="Replacement text"
+            />
+          </Grid.Item>
+        </Grid>
+      </SidebarSection>
+      <SidebarSection title="Filters">
+        <FilterDropdown
+          widgetTypes={widgetTypes}
+          toggleType={toggleType}
+          tagIds={tagIds}
+          onTagIdsChange={setTagIds}
+          backgroundColor={backgroundColor}
+          onBackgroundColorChange={setBackgroundColor}
+          assignee={assignee}
+          onAssigneeChange={setAssignee}
+          creator={creator}
+          onCreatorChange={setCreator}
+          lastModifiedBy={lastModifiedBy}
+          onLastModifiedByChange={setLastModifiedBy}
+          caseSensitive={caseSensitive}
+          onCaseSensitiveChange={setCaseSensitive}
+          wholeWord={wholeWord}
+          onWholeWordChange={setWholeWord}
+        />
+      </SidebarSection>
+      <SidebarSection title="Results">
+        <Paragraph data-testid="match-count">Matches: {results.length}</Paragraph>
+        {query && results.length === 0 ? (
+          <EmptyState
+            title="No matches found"
+            description="Try adjusting filters or turning off regex."
           />
-        </Grid.Item>
-        <Grid.Item>
-          <InputField
-            label="Replace"
-            value={replacement}
-            onValueChange={(v: string) => setReplacement(v)}
-            placeholder="Replacement text"
-          />
-        </Grid.Item>
-        <Grid.Item>
-          <FilterDropdown
-            widgetTypes={widgetTypes}
-            toggleType={toggleType}
-            tagIds={tagIds}
-            onTagIdsChange={setTagIds}
-            backgroundColor={backgroundColor}
-            onBackgroundColorChange={setBackgroundColor}
-            assignee={assignee}
-            onAssigneeChange={setAssignee}
-            creator={creator}
-            onCreatorChange={setCreator}
-            lastModifiedBy={lastModifiedBy}
-            onLastModifiedByChange={setLastModifiedBy}
-            caseSensitive={caseSensitive}
-            onCaseSensitiveChange={setCaseSensitive}
-            wholeWord={wholeWord}
-            onWholeWordChange={setWholeWord}
-          />
-        </Grid.Item>
-        <Grid.Item>
-          <Paragraph data-testid="match-count">Matches: {results.length}</Paragraph>
-        </Grid.Item>
-        <Grid.Item>
-          <StickyActions>
-            <ButtonToolbar>
-              <Button
-                onClick={nextMatch}
-                disabled={!results.length}
-                variant="secondary"
-                icon={<IconChevronRight />}
-                iconPosition="start"
-              >
-                <Text>Next</Text>
-              </Button>
-              <Button
-                onClick={replaceCurrent}
-                disabled={!results.length}
-                variant="secondary"
-                icon={<IconPen />}
-                iconPosition="start"
-              >
-                <Text>Replace</Text>
-              </Button>
-              <Button
-                onClick={replaceAll}
-                variant="primary"
-                icon={<IconArrowRight />}
-                iconPosition="start"
-              >
-                <Text>Replace All</Text>
-              </Button>
-            </ButtonToolbar>
-          </StickyActions>
-        </Grid.Item>
-      </Grid>
+        ) : null}
+        <StickyActions>
+          <ButtonToolbar>
+            <Button
+              onClick={nextMatch}
+              disabled={!results.length}
+              variant="secondary"
+              icon={<IconChevronRight />}
+              iconPosition="start"
+            >
+              <Text>Next</Text>
+            </Button>
+            <Button
+              onClick={replaceCurrent}
+              disabled={!results.length}
+              variant="secondary"
+              icon={<IconPen />}
+              iconPosition="start"
+            >
+              <Text>Replace</Text>
+            </Button>
+            <Button
+              onClick={replaceAll}
+              variant="primary"
+              icon={<IconArrowRight />}
+              iconPosition="start"
+            >
+              <Text>Replace All</Text>
+            </Button>
+          </ButtonToolbar>
+        </StickyActions>
+      </SidebarSection>
     </TabPanel>
   )
 }

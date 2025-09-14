@@ -4,6 +4,15 @@ Purpose: a concise, ordered backlog of refactors and optimizations to keep the c
 
 Status markers: [Planned] to do. Completed items are removed from this list once merged.
 
+## UX Alignment (Aura)
+
+- Add `SidebarSection` and `EmptyState` primitives using `@mirohq/design-system`. [Planned]
+- Replace ad‑hoc spacing with `@mirohq/design-tokens`; reduce custom CSS. [Planned]
+- Convert Help, Search, and Style tabs to use `SidebarSection` headings. [Planned]
+- Normalize form controls to design-system `Form` components and field groups. [Planned]
+- Add empty/loading states to long operations (board scan, imports, diff). [Planned]
+- Audit keyboard navigation and focus order across Tabs, modals, and lists. [Planned]
+
 ## Jobs & Backend Infrastructure
 
 - Progressive job status API for UI progress bars [Planned]

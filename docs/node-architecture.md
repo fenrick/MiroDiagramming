@@ -19,6 +19,10 @@ This document defines the new end-to-end system design after removing the Python
 - Lint/Format: ESLint (typescript-eslint), Prettier
 - Git hooks: Husky + lint-staged
 
+## UI/UX Alignment
+
+- The React frontend uses Miro’s Aura design language via `@mirohq/design-system` components and `@mirohq/design-tokens` with `@mirohq/design-system-themes` for theming. See `docs/ui-ux.md` for principles and the adoption plan.
+
 ## Repository Layout (Proposed)
 
 ```

@@ -1,4 +1,4 @@
-import { Form, Grid, Heading, IconSlidersX, Slider, Text } from '@mirohq/design-system'
+import { Form, Grid, IconSlidersX, Slider, Text } from '@mirohq/design-system'
 import { colors, space } from '@mirohq/design-tokens'
 import React from 'react'
 
@@ -11,7 +11,7 @@ import {
   tweakOpacity,
 } from '../../board/style-tools'
 import { adjustColor } from '../../core/utils/color-utils'
-import { Button, ButtonToolbar, InputField } from '../components'
+import { Button, ButtonToolbar, InputField, SidebarSection } from '../components'
 import { StickyActions } from '../StickyActions'
 import { PageHelp } from '../components/PageHelp'
 import { TabPanel } from '../components/TabPanel'
@@ -49,134 +49,133 @@ export const StyleTab: React.FC = () => {
   return (
     <TabPanel tabId="style">
       <PageHelp content="Lighten or darken the fill colour of selected shapes" />
-      <Grid columns={2}>
-        <Grid.Item>
-          <Form.Field>
-            <Form.Label>Adjust fill</Form.Label>
-            <Slider
-              aria-label="Adjust fill"
+      <SidebarSection title="Adjust Colors">
+        <Grid columns={2}>
+          <Grid.Item>
+            <Form.Field>
+              <Form.Label>Adjust fill</Form.Label>
+              <Slider
+                aria-label="Adjust fill"
+                min={-100}
+                max={100}
+                step={1}
+                value={adjust}
+                onValueChange={setAdjust}
+              >
+                <Slider.Track>
+                  <Slider.Range />
+                </Slider.Track>
+                <Slider.Thumb />
+              </Slider>
+              <span
+                data-testid="adjust-preview"
+                style={{
+                  display: 'inline-block',
+                  width: 'var(--size-thumb)',
+                  height: 'var(--size-thumb)',
+                  marginLeft: space[200],
+                  border: `var(--border-widths-sm) solid ${colors['gray-200']}`,
+                  backgroundColor: preview,
+                }}
+              />
+              <code data-testid="color-hex" style={{ marginLeft: space[50] }}>
+                {preview}
+              </code>
+            </Form.Field>
+          </Grid.Item>
+          <Grid.Item>
+            <InputField
+              label="Adjust value"
+              type="number"
               min={-100}
               max={100}
-              step={1}
-              value={adjust}
-              onValueChange={setAdjust}
-            >
-              <Slider.Track>
-                <Slider.Range />
-              </Slider.Track>
-              <Slider.Thumb />
-            </Slider>
-            <span
-              data-testid="adjust-preview"
-              style={{
-                display: 'inline-block',
-                width: 'var(--size-thumb)',
-                height: 'var(--size-thumb)',
-                marginLeft: space[200],
-                border: `var(--border-widths-sm) solid ${colors['gray-200']}`,
-                backgroundColor: preview,
-              }}
+              value={String(adjust)}
+              onValueChange={(v) => setAdjust(Number(v))}
+              placeholder="Adjust (-100–100)"
+              data-testid="adjust-input"
             />
-            <code data-testid="color-hex" style={{ marginLeft: space[50] }}>
-              {preview}
-            </code>
-          </Form.Field>
-        </Grid.Item>
-        <Grid.Item>
-          <InputField
-            label="Adjust value"
-            type="number"
-            min={-100}
-            max={100}
-            value={String(adjust)}
-            onValueChange={(v) => setAdjust(Number(v))}
-            placeholder="Adjust (-100–100)"
-            data-testid="adjust-input"
-          />
-        </Grid.Item>
-        <Grid.Item>
-          <InputField
-            label="Opacity Δ"
-            type="number"
-            step="0.1"
-            min={-1}
-            max={1}
-            value={String(opacityDelta)}
-            onValueChange={(v) => setOpacityDelta(Number(v))}
-            placeholder="Δ opacity (-1–1)"
-            data-testid="opacity-input"
-          />
-        </Grid.Item>
-        <Grid.Item>
-          <InputField
-            label="Border Δ"
-            type="number"
-            value={String(borderDelta)}
-            onValueChange={(v) => setBorderDelta(Number(v))}
-            placeholder="Δ width"
-            data-testid="border-input"
-          />
-        </Grid.Item>
-        <Grid.Item>
-          <StickyActions>
-            <ButtonToolbar>
-              <Button
-                onClick={apply}
-                type="button"
-                variant="primary"
-                icon={<IconSlidersX />}
-                iconPosition="start"
-              >
-                <Text>Apply</Text>
-              </Button>
-              <Button onClick={applyOpacity} type="button" variant="secondary">
-                <Text>Opacity</Text>
-              </Button>
-              <Button onClick={applyBorder} type="button" variant="secondary">
-                <Text>Border</Text>
-              </Button>
-              <Button onClick={copyFill} type="button" variant="ghost">
-                <Text>Copy Fill</Text>
-              </Button>
-            </ButtonToolbar>
-          </StickyActions>
-        </Grid.Item>
-        <Grid.Item>
-          <Heading level={2}>Style presets</Heading>
-        </Grid.Item>
-        <Grid.Item>
-          <StickyActions>
-            <ButtonToolbar>
-              {STYLE_PRESET_NAMES.map((name) => {
-                const preset = stylePresets[name]
-                if (!preset) {
-                  return null
-                }
-                const style = presetStyle(preset)
-                return (
-                  <Button
-                    key={name}
-                    onClick={() => applyStylePreset(preset)}
-                    type="button"
-                    variant="secondary"
-                    css={{
-                      color: style.color,
-                      backgroundColor: style.fillColor,
-                      borderColor: style.borderColor,
-                      borderWidth: style.borderWidth,
-                      borderStyle: 'solid',
-                      display: 'inline-block',
-                      padding: `0 var(--space-50)`,
-                    }}
-                  >
-                    {preset.label}
-                  </Button>
-                )
-              })}
-            </ButtonToolbar>
-          </StickyActions>
-        </Grid.Item>
-      </Grid>
+          </Grid.Item>
+          <Grid.Item>
+            <InputField
+              label="Opacity Δ"
+              type="number"
+              step="0.1"
+              min={-1}
+              max={1}
+              value={String(opacityDelta)}
+              onValueChange={(v) => setOpacityDelta(Number(v))}
+              placeholder="Δ opacity (-1–1)"
+              data-testid="opacity-input"
+            />
+          </Grid.Item>
+          <Grid.Item>
+            <InputField
+              label="Border Δ"
+              type="number"
+              value={String(borderDelta)}
+              onValueChange={(v) => setBorderDelta(Number(v))}
+              placeholder="Δ width"
+              data-testid="border-input"
+            />
+          </Grid.Item>
+          <Grid.Item>
+            <StickyActions>
+              <ButtonToolbar>
+                <Button
+                  onClick={apply}
+                  type="button"
+                  variant="primary"
+                  icon={<IconSlidersX />}
+                  iconPosition="start"
+                >
+                  <Text>Apply</Text>
+                </Button>
+                <Button onClick={applyOpacity} type="button" variant="secondary">
+                  <Text>Opacity</Text>
+                </Button>
+                <Button onClick={applyBorder} type="button" variant="secondary">
+                  <Text>Border</Text>
+                </Button>
+                <Button onClick={copyFill} type="button" variant="ghost">
+                  <Text>Copy Fill</Text>
+                </Button>
+              </ButtonToolbar>
+            </StickyActions>
+          </Grid.Item>
+        </Grid>
+      </SidebarSection>
+      <SidebarSection title="Style presets">
+        <StickyActions>
+          <ButtonToolbar>
+            {STYLE_PRESET_NAMES.map((name) => {
+              const preset = stylePresets[name]
+              if (!preset) {
+                return null
+              }
+              const style = presetStyle(preset)
+              return (
+                <Button
+                  key={name}
+                  onClick={() => applyStylePreset(preset)}
+                  type="button"
+                  variant="secondary"
+                  css={{
+                    color: style.color,
+                    backgroundColor: style.fillColor,
+                    borderColor: style.borderColor,
+                    borderWidth: style.borderWidth,
+                    borderStyle: 'solid',
+                    display: 'inline-block',
+                    padding: `0 var(--space-50)`,
+                  }}
+                >
+                  {preset.label}
+                </Button>
+              )
+            })}
+          </ButtonToolbar>
+        </StickyActions>
+      </SidebarSection>
     </TabPanel>
   )
 }
