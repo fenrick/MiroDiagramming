@@ -11,7 +11,7 @@ import {
   tweakOpacity,
 } from '../../board/style-tools'
 import { adjustColor } from '../../core/utils/color-utils'
-import { Button, ButtonToolbar, InputField, SidebarSection } from '../components'
+import { Button, ButtonToolbar, InfoCallout, InputField, SidebarSection } from '../components'
 import { StickyActions } from '../StickyActions'
 import { PageHelp } from '../components/PageHelp'
 import { TabPanel } from '../components/TabPanel'
@@ -50,6 +50,11 @@ export const StyleTab: React.FC = () => {
     <TabPanel tabId="style">
       <PageHelp content="Lighten or darken the fill colour of selected shapes" />
       <SidebarSection title="Adjust Colors">
+        <div style={{ marginBottom: 'var(--space-200)' }}>
+          <InfoCallout title="Tips">
+            Use the slider or enter a value between −100 and 100 to lighten/darken. Copy Fill takes the colour from the current selection.
+          </InfoCallout>
+        </div>
         <Grid columns={2}>
           <Grid.Item>
             <Form.Field>
