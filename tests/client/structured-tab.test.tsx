@@ -3,6 +3,7 @@ import { act, fireEvent, render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom/vitest'
 /* eslint-disable no-var */
 import React from 'react'
+
 import { handleFileDrop, StructuredTab } from '../src/ui/pages/StructuredTab'
 
 vi.mock('../src/core/graph/graph-processor', () => ({

@@ -1,5 +1,7 @@
 /** @vitest-environment jsdom */
 import { act, renderHook } from '@testing-library/react'
+import { useDropzone } from 'react-dropzone'
+
 import { excelLoader, graphExcelLoader } from '../src/core/utils/excel-loader'
 import {
   fetchRemoteWorkbook,
@@ -7,7 +9,6 @@ import {
   useExcelDrop,
 } from '../src/ui/hooks/use-excel-handlers'
 import { getDropzoneStyle } from '../src/ui/hooks/ui-utils'
-import { useDropzone } from 'react-dropzone'
 
 vi.mock('../src/core/utils/excel-loader', () => ({
   excelLoader: { loadWorkbook: vi.fn() },

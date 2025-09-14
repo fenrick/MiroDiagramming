@@ -1,8 +1,9 @@
 import * as log from '../logger'
+
 import type { BoardLike, BoardQueryLike } from './types'
 
 function resolveBoard(board?: BoardLike): BoardLike {
-  const b = board ?? (globalThis as unknown as { miro?: { board?: BoardLike } }).miro?.board
+  const b = board ?? (globalThis as { miro?: { board?: BoardLike } }).miro?.board
   if (!b) {
     throw new Error('Miro board not available')
   }

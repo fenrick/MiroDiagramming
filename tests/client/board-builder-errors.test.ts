@@ -1,4 +1,5 @@
 import { expect, test } from 'vitest'
+
 import { BoardBuilder } from '../src/board/board-builder'
 
 test('findNode surfaces invalid parameters', async () => {

@@ -2,6 +2,7 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom/vitest'
 import React from 'react'
+
 import { RowInspector } from '../src/ui/components/RowInspector'
 import { useRowData } from '../src/ui/hooks/use-row-data'
 

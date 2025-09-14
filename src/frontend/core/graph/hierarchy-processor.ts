@@ -1,9 +1,11 @@
 import type { BaseItem, Connector, Frame, Group, GroupableItem } from '@mirohq/websdk-types'
+
 import { BoardBuilder } from '../../board/board-builder'
 import { clearActiveFrame, registerFrame } from '../../board/frame-utils'
 import { boundingBoxFromCenter, frameOffset } from '../layout/layout-utils'
 import { HierNode, layoutHierarchy, NestedLayoutResult } from '../layout/nested-layout'
 import { fileUtils } from '../utils/file-utils'
+
 import { edgesToHierarchy } from './convert'
 import type { GraphData } from './graph-service'
 import { UndoableProcessor } from './undoable-processor'
@@ -137,17 +139,12 @@ export class HierarchyProcessor extends UndoableProcessor<BaseItem | Group | Fra
     const childWidgets: GroupableItem[] = []
     for (const child of node.children) {
       const childWidget = await this.createNodeTree(child, posMap, offsetX, offsetY)
-      childWidgets.push(childWidget as unknown as GroupableItem)
+      childWidgets.push(childWidget as GroupableItem)
     }
 
     // Remove children from undo list; they will be represented by the group.
-    this.lastCreated = this.lastCreated.filter(
-      (i) => !childWidgets.includes(i as unknown as GroupableItem),
-    )
-    const group = await this.builder.groupItems([
-      widget as unknown as GroupableItem,
-      ...childWidgets,
-    ])
+    this.lastCreated = this.lastCreated.filter((i) => !childWidgets.includes(i as GroupableItem))
+    const group = await this.builder.groupItems([widget as GroupableItem, ...childWidgets])
     this.registerCreated(group)
     return group
   }

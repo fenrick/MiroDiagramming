@@ -1,7 +1,8 @@
 import * as log from '../logger'
+import { showError } from '../ui/hooks/notifications'
+
 import { boardCache } from './board-cache'
 import type { BoardLike, BoardQueryLike } from './types'
-import { showError } from '../ui/hooks/notifications'
 
 export type { BoardUILike, BoardLike, BoardQueryLike } from './types'
 
@@ -16,7 +17,7 @@ export type { BoardUILike, BoardLike, BoardQueryLike } from './types'
  */
 export function getBoard(board?: BoardLike): BoardLike {
   log.trace('Resolving board instance')
-  const b = board ?? (globalThis as unknown as { miro?: { board?: BoardLike } }).miro?.board
+  const b = board ?? (globalThis as { miro?: { board?: BoardLike } }).miro?.board
   if (!b) {
     throw new Error('Miro board not available')
   }

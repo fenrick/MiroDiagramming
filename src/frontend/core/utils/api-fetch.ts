@@ -1,5 +1,6 @@
 import { context, propagation } from '@opentelemetry/api'
 import { span } from 'logfire'
+
 import { debugFlags } from './debug-flags'
 
 const API_BASE_URL = import.meta.env.VITE_BACKEND_URL ?? ''

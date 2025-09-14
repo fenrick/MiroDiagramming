@@ -1,4 +1,5 @@
 import type { BaseItem, Shape, ShapeStyle, Text, TextStyle } from '@mirohq/websdk-types'
+
 import type { TemplateElement } from './templates'
 import { templateManager } from './templates'
 
@@ -63,7 +64,7 @@ export function applyShapeElement(item: BaseItem, element: TemplateElement, labe
   for (const [src, dest] of assignments) {
     const value = (element as Record<string, unknown>)[src]
     if (value) {
-      ;(shape as unknown as Record<string, unknown>)[dest] = value
+      ;(shape as Record<string, unknown>)[dest] = value
     }
   }
   shape.content = (element.text ?? '{{label}}').replace('{{label}}', label)

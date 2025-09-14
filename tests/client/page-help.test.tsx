@@ -2,6 +2,7 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom/vitest'
 import React from 'react'
+
 import { PageHelp } from '../src/ui/components/PageHelp'
 
 class ResizeObserverMock {

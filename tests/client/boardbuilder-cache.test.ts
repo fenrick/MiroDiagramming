@@ -1,6 +1,8 @@
 import { describe, expect, test, vi } from 'vitest'
+
 import { BoardBuilder, updateConnector } from '../src/board/board-builder'
 import { boardCache } from '../src/board/board-cache'
+
 import { mockBoard } from './mock-board'
 
 interface GlobalWithMiro {

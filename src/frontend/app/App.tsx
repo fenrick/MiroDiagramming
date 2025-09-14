@@ -1,5 +1,6 @@
 import { Tabs } from '@mirohq/design-system'
 import * as React from 'react'
+
 import type { ExcelRow } from '../core/utils/excel-loader'
 import { AuthBanner } from '../components/AuthBanner'
 import { SyncStatusBar } from '../components/SyncStatusBar'
@@ -9,7 +10,6 @@ import { ExcelDataProvider } from '../ui/hooks/excel-data-context'
 import { ToastContainer } from '../ui/components/Toast'
 import { PanelShell } from '../ui/PanelShell'
 import { ScrollArea } from '../ui/ScrollArea'
-
 import { type Tab, TAB_DATA } from '../ui/pages/tabs'
 
 /**

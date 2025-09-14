@@ -1,4 +1,5 @@
 import ExcelJS from 'exceljs'
+
 import { loadExcelJS } from '../src/core/utils/exceljs-loader'
 
 describe('loadExcelJS', () => {

@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import React from 'react'
+
 import { SearchTab } from '../src/ui/pages/SearchTab'
 
 /**

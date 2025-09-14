@@ -1,6 +1,7 @@
 import { Form, Grid, Heading, IconSlidersX, Slider, Text } from '@mirohq/design-system'
 import { colors, space } from '@mirohq/design-tokens'
 import React from 'react'
+
 import { applyStylePreset, presetStyle } from '../../board/format-tools'
 import {
   copyFillFromSelection,
@@ -16,6 +17,7 @@ import { PageHelp } from '../components/PageHelp'
 import { TabPanel } from '../components/TabPanel'
 import { useSelection } from '../hooks/use-selection'
 import { STYLE_PRESET_NAMES, stylePresets } from '../style-presets'
+
 import type { TabTuple } from './tab-definitions'
 
 /** Adjusts the fill colour of selected widgets. */

@@ -2,6 +2,7 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom/vitest'
 import React from 'react'
+
 import { Button } from '../src/ui/components/Button'
 import { Tooltip } from '../src/ui/components/Tooltip'
 

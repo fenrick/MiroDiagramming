@@ -66,12 +66,10 @@ export async function registerWithCurrentUser(client = new AuthClient()): Promis
     typeof window === 'undefined' ||
     typeof (window as Window & { miro?: unknown }).miro === 'undefined'
   ) {
-    // eslint-disable-next-line no-console
     console.warn('Miro SDK not loaded; are you opening index.html outside Miro?')
     return
   }
   if (!miro.board) {
-    // eslint-disable-next-line no-console
     console.error('Miro board API not available')
     throw new Error('Miro SDK not available')
   }

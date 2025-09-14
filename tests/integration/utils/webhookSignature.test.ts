@@ -1,4 +1,5 @@
 import crypto from 'node:crypto'
+
 import { describe, expect, it } from 'vitest'
 
 import { verifyWebhookSignature } from '../../../src/utils/webhookSignature.js'

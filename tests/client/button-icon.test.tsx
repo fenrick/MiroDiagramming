@@ -2,6 +2,7 @@
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom/vitest'
 import React from 'react'
+
 import { Button } from '../src/ui/components/Button'
 
 const DummyIcon = () => <svg data-icon-component />

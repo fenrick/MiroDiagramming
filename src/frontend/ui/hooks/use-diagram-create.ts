@@ -1,7 +1,9 @@
 import React from 'react'
+
 import { GraphProcessor } from '../../core/graph/graph-processor'
 import { HierarchyProcessor } from '../../core/graph/hierarchy-processor'
 import { ElkAlgorithm, UserLayoutOptions } from '../../core/layout/elk-options'
+
 import { showError } from './notifications'
 
 /** Configuration options controlling diagram creation. */

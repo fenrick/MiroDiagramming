@@ -1,5 +1,7 @@
 import React from 'react'
+
 import { TabPanel } from '../components/TabPanel'
+
 import type { TabTuple } from './tab-definitions'
 
 /** Dummy tab for testing auto-registration. */

@@ -1,4 +1,5 @@
 import type { CardField, CardStyle, CardTaskStatus } from '@mirohq/websdk-types'
+
 import { fileUtils } from './file-utils'
 
 export interface CardData {
@@ -53,7 +54,7 @@ export class CardLoader {
       throw new Error('Invalid card data')
     }
     return (data as CardFile).cards.map((card) =>
-      this.normalizeCard(card as unknown as Record<string, unknown>),
+      this.normalizeCard(card as Record<string, unknown>),
     )
   }
 

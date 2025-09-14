@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+
 import { IntroScreen } from '../ui/components/IntroScreen'
 
 const meta: Meta<typeof IntroScreen> = {

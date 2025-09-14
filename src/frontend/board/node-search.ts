@@ -1,5 +1,7 @@
-import type { BaseItem, Group, Shape } from '@mirohq/websdk-types'
+import type { BaseItem, Group } from '@mirohq/websdk-types'
+
 import * as log from '../logger'
+
 import type { BoardQueryLike } from './board'
 import { boardCache } from './board-cache'
 
@@ -23,11 +25,14 @@ export async function searchShapes(
   let map = cache
   if (!map) {
     log.debug('Shape cache miss')
-    const shapes = (await boardCache.getWidgets(['shape'], board)) as unknown as Shape[]
+    const widgets = await boardCache.getWidgets(['shape'], board)
     map = new Map<string, BaseItem>()
-    shapes
-      .filter((s) => typeof s.content === 'string' && s.content.trim())
-      .forEach((s) => map!.set(s.content, s as BaseItem))
+    for (const s of widgets) {
+      const content = (s as { content?: unknown }).content
+      if (typeof content === 'string' && content.trim()) {
+        map!.set(content, s as BaseItem)
+      }
+    }
   }
   const result = map.get(label)
   log.debug({ found: Boolean(result) }, 'Shape search complete')
@@ -48,9 +53,9 @@ export async function searchGroups(
   label: string,
 ): Promise<Group | undefined> {
   log.trace({ label }, 'Searching groups')
-  const groups = (await boardCache.getWidgets(['group'], board)) as unknown as Group[]
+  const groups = await boardCache.getWidgets(['group'], board)
   for (const group of groups) {
-    const items = await group.getItems()
+    const items = await (group as Group).getItems()
     if (!Array.isArray(items)) {
       continue
     }

@@ -1,7 +1,6 @@
 import { afterAll, afterEach, vi } from 'vitest'
 
 // alias vi global to vitest for compatibility
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 ;(globalThis as any).vi = vi
 
 // Silence noisy console output from third-party libraries during tests

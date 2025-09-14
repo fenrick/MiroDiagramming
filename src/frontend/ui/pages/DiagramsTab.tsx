@@ -1,7 +1,9 @@
 import { Tabs } from '@mirohq/design-system'
 import React from 'react'
+
 import { PageHelp } from '../components/PageHelp'
 import { TabPanel } from '../components/TabPanel'
+
 import { CardsTab } from './CardsTab'
 import { LayoutEngineTab } from './LayoutEngineTab'
 import { StructuredTab } from './StructuredTab'

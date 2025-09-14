@@ -1,4 +1,5 @@
 import { expect, test, vi } from 'vitest'
+
 import { apiFetch } from '../src/core/utils/api-fetch'
 
 vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true } as Response))

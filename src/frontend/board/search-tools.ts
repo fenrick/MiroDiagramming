@@ -1,7 +1,9 @@
+import safeRegex from 'safe-regex'
+
+import { getTextFields, getStringAtPath, setStringAtPath } from '../core/utils/text-utils'
+
 import { BoardQueryLike, getBoardWithQuery, maybeSync, Syncable } from './board'
 import { boardCache } from './board-cache'
-import safeRegex from 'safe-regex'
-import { getTextFields, getStringAtPath, setStringAtPath } from '../core/utils/text-utils'
 
 /** Search configuration. */
 export interface SearchOptions {

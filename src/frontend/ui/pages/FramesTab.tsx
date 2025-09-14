@@ -1,10 +1,12 @@
 import { Grid, Heading, IconLockClosed, IconPen, Text } from '@mirohq/design-system'
 import React from 'react'
+
 import { lockSelectedFrames, renameSelectedFrames } from '../../board/frame-tools'
 import { Button, ButtonToolbar, InputField } from '../components'
 import { StickyActions } from '../StickyActions'
 import { PageHelp } from '../components/PageHelp'
 import { TabPanel } from '../components/TabPanel'
+
 import type { TabTuple } from './tab-definitions'
 
 /** UI for renaming or locking selected frames. */

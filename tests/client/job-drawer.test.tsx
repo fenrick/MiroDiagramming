@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom/vitest'
 import React from 'react'
 import { afterEach, expect, test, vi } from 'vitest'
+
 import { JobDrawer } from '../src/components/JobDrawer'
 import type { Job } from '../src/core/hooks/useJob'
 

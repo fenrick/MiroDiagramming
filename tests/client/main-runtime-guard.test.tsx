@@ -13,7 +13,7 @@ describe('main entrypoint', () => {
     vi.resetModules()
     document.body.innerHTML = '<div id="root"></div>'
     // ensure no Miro SDK
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     delete (window as any).miro
   })
 
@@ -26,7 +26,6 @@ describe('main entrypoint', () => {
   })
 
   test('uses provider when Miro SDK present', async () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ;(window as any).miro = {}
     await import('../src/main')
     expect(document.querySelector('[data-testid="miro-provider"]')).not.toBeNull()

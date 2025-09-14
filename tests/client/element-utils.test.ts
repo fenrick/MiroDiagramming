@@ -1,3 +1,6 @@
+import { vi } from 'vitest'
+import type { Shape, Text, BaseItem } from '@mirohq/websdk-types'
+
 import {
   buildShapeStyle,
   applyShapeElement,
@@ -6,8 +9,6 @@ import {
 } from '../src/board/element-utils'
 import { templateManager } from '../src/board/templates'
 import type { TemplateElement } from '../src/board/templates'
-import { vi } from 'vitest'
-import type { Shape, Text, BaseItem } from '@mirohq/websdk-types'
 
 describe('buildShapeStyle', () => {
   afterEach(() => vi.restoreAllMocks())

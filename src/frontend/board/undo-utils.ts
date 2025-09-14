@@ -1,4 +1,5 @@
 import type { BaseItem, Connector, Group } from '@mirohq/websdk-types'
+
 import { BoardBuilder } from './board-builder'
 import type { BoardEntity } from './item-types'
 

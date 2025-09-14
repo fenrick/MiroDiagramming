@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+
 import { RegexSearchField } from '../ui/components/RegexSearchField'
 
 const meta: Meta<typeof RegexSearchField> = {

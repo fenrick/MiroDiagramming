@@ -1,5 +1,6 @@
 import React from 'react'
 import { styled } from '@mirohq/design-system'
+
 import { Button } from './Button'
 
 export interface ModalProps {

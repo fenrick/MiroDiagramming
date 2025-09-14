@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react'
 import { styled } from '@mirohq/design-system'
+
 import { useSyncStore } from '../core/state/sync-store'
 import { apiFetch } from '../core/utils/api-fetch'
 

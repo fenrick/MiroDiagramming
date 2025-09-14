@@ -1,8 +1,10 @@
-import type { BaseItem, Connector, Frame, Group, GroupableItem, Shape } from '@mirohq/websdk-types'
+import type { BaseItem, Connector, Frame, Group, GroupableItem } from '@mirohq/websdk-types'
+
 import type { EdgeData, EdgeHint, NodeData, PositionedNode } from '../core/graph'
 import * as log from '../logger'
-import { maybeSync } from './board'
-import type { BoardLike, BoardQueryLike } from './board'
+
+import { getBoard, getBoardWithQuery, maybeSync } from './board'
+import type { BoardQueryLike } from './board'
 import { boardCache } from './board-cache'
 import { runBatch } from './batch'
 import { createConnector } from './connector-utils'
@@ -110,7 +112,7 @@ export class BoardBuilder {
   public async findNode(
     type: unknown,
     label: unknown,
-    board: BoardQueryLike = miro.board as unknown as BoardQueryLike,
+    board: BoardQueryLike = getBoardWithQuery(),
   ): Promise<BoardItem | undefined> {
     if (typeof type !== 'string' || typeof label !== 'string') {
       throw new Error(
@@ -139,12 +141,9 @@ export class BoardBuilder {
       )
     }
     this.ensureBoard()
-    const selection = await boardCache.getSelection(
-      miro.board as unknown as import('./board').BoardLike,
-    )
-    const boardId =
-      (miro.board as { id?: string; info?: { id?: string } }).id ??
-      (miro.board as { info?: { id?: string } }).info?.id
+    const selection = await boardCache.getSelection(getBoard())
+    const rb = getBoard() as { id?: string; info?: { id?: string } }
+    const boardId = rb.id ?? rb.info?.id
     const board: import('./board').BoardQueryLike = {
       id: boardId,
       get: async ({ type: t }) => selection.filter((i) => (i as { type?: string }).type === t),
@@ -194,7 +193,7 @@ export class BoardBuilder {
     if (!nodeMap || typeof nodeMap !== 'object') {
       throw new Error(`Invalid node map: ${JSON.stringify(nodeMap)}`)
     }
-    const board = miro.board as unknown as BoardLike
+    const board = getBoard()
     const created = await runBatch(board, async () => {
       const connectors = await Promise.all(
         edges.map(async (edge, i) => {
@@ -220,7 +219,7 @@ export class BoardBuilder {
    * Batched with {@link runBatch} so multiple syncs are sent together.
    */
   public async syncAll(items: Array<BoardItem | Connector>): Promise<void> {
-    const board = miro.board as unknown as BoardLike
+    const board = getBoard()
     await runBatch(board, async () => {
       log.trace({ count: items.length }, 'Syncing widgets')
       await Promise.all(items.map((i) => maybeSync(i)))
@@ -233,7 +232,7 @@ export class BoardBuilder {
    */
   public async removeItems(items: Array<BoardItem | Connector | Frame>): Promise<void> {
     this.ensureBoard()
-    const board = miro.board as unknown as BoardLike
+    const board = getBoard()
     await runBatch(board, async () => {
       log.debug({ count: items.length }, 'Removing items')
       await Promise.all(items.map((item) => miro.board.remove(item)))
@@ -274,11 +273,14 @@ export class BoardBuilder {
   private async loadShapeMap(board: BoardQueryLike): Promise<void> {
     if (!this.shapeMap) {
       log.trace('Populating shape cache')
-      const shapes = (await boardCache.getWidgets(['shape'], board)) as unknown as Shape[]
+      const widgets = await boardCache.getWidgets(['shape'], board)
       const map = new Map<string, BaseItem>()
-      shapes
-        .filter((s) => typeof s.content === 'string' && s.content.trim())
-        .forEach((s) => map.set(s.content, s as BaseItem))
+      for (const s of widgets) {
+        const content = (s as { content?: unknown }).content
+        if (typeof content === 'string' && content.trim()) {
+          map.set(content, s as BaseItem)
+        }
+      }
       this.shapeMap = map
       log.debug({ count: map.size }, 'Shape cache ready')
     }

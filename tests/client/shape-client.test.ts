@@ -1,4 +1,5 @@
 import { beforeEach, expect, test, vi } from 'vitest'
+
 import { ShapeClient, type ShapeData } from '../src/core/utils/shape-client'
 vi.mock('logfire', () => ({
   span: (_: string, fn: () => unknown) => fn(),

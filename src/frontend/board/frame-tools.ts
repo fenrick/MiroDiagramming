@@ -1,4 +1,5 @@
 import * as log from '../logger'
+
 import { BoardLike, getBoard, maybeSync, Syncable } from './board'
 import { boardCache } from './board-cache'
 

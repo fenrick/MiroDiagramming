@@ -3,6 +3,7 @@ import { colors } from '@mirohq/design-tokens'
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom/vitest'
 import React from 'react'
+
 import { App } from '../src/app/App'
 import { GraphProcessor } from '../src/core/graph/graph-processor'
 import { getDropzoneStyle, undoLastImport } from '../src/ui/hooks/ui-utils'
@@ -15,14 +16,13 @@ vi.mock('../src/ui/components/Toast', () => ({
 
 describe('App UI integration', () => {
   beforeEach(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ;(global as any).miro = { board: {} }
     vi.clearAllMocks()
   })
 
   afterEach(() => {
     vi.restoreAllMocks()
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     delete (global as any).miro
   })
 

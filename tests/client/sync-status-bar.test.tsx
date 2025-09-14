@@ -3,6 +3,7 @@ import { act, render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom/vitest'
 import React from 'react'
 import { vi } from 'vitest'
+
 import { SyncStatusBar } from '../src/components/SyncStatusBar'
 import { useSyncStore } from '../src/core/state/sync-store'
 import { apiFetch } from '../src/core/utils/api-fetch'

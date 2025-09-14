@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+
 import { FormGroup } from '../ui/components/FormGroup'
 
 const meta: Meta<typeof FormGroup> = {

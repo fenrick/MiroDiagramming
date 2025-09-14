@@ -2,6 +2,7 @@
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom/vitest'
 import React from 'react'
+
 import { TabPanel } from '../src/ui/components/TabPanel'
 
 test('renders with correct aria attributes', () => {

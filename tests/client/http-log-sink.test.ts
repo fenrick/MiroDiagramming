@@ -1,7 +1,9 @@
 import { createServer } from 'node:http'
+
 import { afterAll, beforeAll, expect, test, vi } from 'vitest'
-import { HttpLogSink } from '../src/log-sink'
 import * as logfire from 'logfire'
+
+import { HttpLogSink } from '../src/log-sink'
 
 let server: ReturnType<typeof createServer>
 let url: string

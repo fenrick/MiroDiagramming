@@ -1,7 +1,9 @@
 import React from 'react'
+
 import { ExcelSyncService } from '../../core/excel-sync-service'
 import { useOptimisticOps } from '../../core/hooks/useOptimisticOps'
 import type { ExcelRow } from '../../core/utils/excel-loader'
+
 import { useExcelData } from './excel-data-context'
 
 /**

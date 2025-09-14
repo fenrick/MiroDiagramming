@@ -1,4 +1,5 @@
 import { describe, expect, test, vi } from 'vitest'
+
 import type { BoardQueryLike } from '../src/board/board'
 import { boardCache } from '../src/board/board-cache'
 

@@ -8,6 +8,7 @@ import type {
   ShapeType,
   TextStyle,
 } from '@mirohq/websdk-types'
+
 import { ShapeClient, type ShapeData } from '../core/utils/shape-client'
 import connectorJson from '../../../templates/connectorTemplates.json'
 import templatesJson from '../../../templates/shapeTemplates.json'
@@ -66,8 +67,7 @@ export class TemplateManager {
   private readonly aliasMap: Record<string, string> = {}
   private readonly connectorAliasMap: Record<string, string> = {}
   private readonly api = new ShapeClient(
-    ((globalThis as unknown as { miro?: { board?: { info?: { id: string } } } }).miro?.board?.info
-      ?.id ?? '') as string,
+    (globalThis as { miro?: { board?: { info?: { id?: string } } } }).miro?.board?.info?.id ?? '',
   )
 
   private constructor() {

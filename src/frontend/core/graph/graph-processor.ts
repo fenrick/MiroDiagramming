@@ -1,4 +1,5 @@
 import type { BaseItem, Frame, Group } from '@mirohq/websdk-types'
+
 import { maybeSync } from '../../board/board'
 import { BoardBuilder } from '../../board/board-builder'
 import { clearActiveFrame, registerFrame } from '../../board/frame-utils'
@@ -8,6 +9,7 @@ import type { PositionedNode } from '../layout/layout-core'
 import { boundingBoxFromTopLeft, computeEdgeHints, frameOffset } from '../layout/layout-utils'
 import type { HierNode } from '../layout/nested-layout'
 import { fileUtils } from '../utils/file-utils'
+
 import { edgesToHierarchy, hierarchyToEdges } from './convert'
 import { GraphData, graphService } from './graph-service'
 import { HierarchyProcessor } from './hierarchy-processor'
@@ -236,7 +238,7 @@ export class GraphProcessor extends UndoableProcessor {
         if (mode !== 'ignore') {
           ;(widget as { x?: number; y?: number }).x = target.x
           ;(widget as { x?: number; y?: number }).y = target.y
-          await maybeSync(widget as unknown as { sync?: () => Promise<void> })
+          await maybeSync(widget as { sync?: () => Promise<void> })
           positions[node.id] = { ...target, id: node.id }
         } else {
           const w = widget as {

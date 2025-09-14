@@ -1,5 +1,6 @@
 import { space } from '@mirohq/design-tokens'
 import React from 'react'
+
 import { Paragraph } from '../components'
 import { PageHelp } from '../components/PageHelp'
 import { TabPanel } from '../components/TabPanel'

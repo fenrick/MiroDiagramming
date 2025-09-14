@@ -2,7 +2,9 @@
  * Colour manipulation utilities for the currently selected widgets.
  */
 import { colors } from '@mirohq/design-tokens'
+
 import { adjustColor, ensureContrast, resolveColor } from '../core/utils/color-utils'
+
 import { BoardLike, forEachSelection, getFirstSelection, maybeSync, Syncable } from './board'
 
 /**

@@ -47,11 +47,9 @@ export function useAuthStatus(): AuthStatus {
   const runWithAuth = useCallback(async <T>(job: () => Promise<T>): Promise<T | undefined> => {
     try {
       const result = await job()
-      // if job resolves to a Response, check status
-      if (
-        typeof (result as unknown as { status?: number }).status === 'number' &&
-        (result as unknown as { status?: number }).status === 401
-      ) {
+      // if job resolves to a Response-like, check status
+      const statusCode = (result as { status?: number } | undefined)?.status
+      if (typeof statusCode === 'number' && statusCode === 401) {
         setStatus('expired')
         pending.current = job
         return undefined

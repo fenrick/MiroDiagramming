@@ -1,4 +1,5 @@
 import { vi } from 'vitest'
+
 import type { BoardLike } from '../src/board/board'
 
 /**

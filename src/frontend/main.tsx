@@ -10,7 +10,6 @@ const lightThemeClassName = createTheme(themes.light)
 const isInMiro =
   typeof window !== 'undefined' && Boolean((window as Window & { miro?: unknown }).miro)
 if (!isInMiro) {
-  // eslint-disable-next-line no-console -- Surface configuration issues during development
   console.warn('Miro SDK not found; open inside a Miro board.')
 }
 

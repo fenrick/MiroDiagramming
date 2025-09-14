@@ -1,5 +1,6 @@
 import { IconPlus, Text } from '@mirohq/design-system'
 import React from 'react'
+
 import { templateManager } from '../../board/templates'
 import {
   excelLoader,
@@ -23,9 +24,6 @@ import { DiffDrawer } from '../../components/DiffDrawer'
 import { JobDrawer } from '../../components/JobDrawer'
 import { computeDiff, DiffResult } from '../../board/computeDiff'
 import { mapRowsToNodes, ColumnMapping, NodeDefinition } from '../../core/data-mapper'
-
-// prettier-ignore
-type LoaderStateDispatch = React.Dispatch<React.SetStateAction<ExcelLoader | GraphExcelLoader>>;
 import { TabPanel } from '../components/TabPanel'
 import { useExcelData } from '../hooks/excel-data-context'
 import { showError } from '../hooks/notifications'
@@ -36,8 +34,12 @@ import {
   useExcelDrop,
 } from '../hooks/use-excel-handlers'
 import { useExcelSync } from '../hooks/use-excel-sync'
-import type { TabTuple } from './tab-definitions'
 import { StickyActions } from '../StickyActions'
+
+import type { TabTuple } from './tab-definitions'
+
+// prettier-ignore
+type LoaderStateDispatch = React.Dispatch<React.SetStateAction<ExcelLoader | GraphExcelLoader>>;
 
 /**
  * Remote workbook loader with error handling.
@@ -213,7 +215,6 @@ interface ExcelTabState {
   setIdColumn: (v: string) => void
 }
 
-// eslint-disable-next-line complexity
 function useExcelTabData() {
   const data = useExcelData()
   const [file, setFile] = React.useState<File | null>(null)

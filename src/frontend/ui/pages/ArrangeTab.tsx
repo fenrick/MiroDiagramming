@@ -1,5 +1,7 @@
 import { Grid, IconChevronRightDouble, IconGrid, Text } from '@mirohq/design-system'
 import React from 'react'
+import { Flex } from '@mirohq/design-system'
+
 import { applyGridLayout, GridOptions } from '../../board/grid-tools'
 import { applySpacingLayout, SpacingOptions } from '../../board/spacing-tools'
 import {
@@ -10,12 +12,12 @@ import {
   SelectField,
   SelectOption,
 } from '../components'
-import { Flex } from '@mirohq/design-system'
 import { PageHelp } from '../components/PageHelp'
 import { TabPanel } from '../components/TabPanel'
-import type { TabTuple } from './tab-definitions'
 import { StickyActions } from '../StickyActions'
 import { applyBracketTagsToSelectedStickies } from '../../board/sticky-tags'
+
+import type { TabTuple } from './tab-definitions'
 
 /**
  * Combines grid and spacing tools into a single sidebar tab.

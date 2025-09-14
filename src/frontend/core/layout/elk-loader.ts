@@ -26,7 +26,7 @@ export async function loadElk(): Promise<typeof ELK> {
     : (async () => {
         const url = 'https://cdn.jsdelivr.net/npm/elkjs@0.10.0/lib/elk.bundled.js'
         const mod = (await dynamic(url)) as { default?: typeof ELK }
-        return mod.default ?? (window as unknown as { ELK: typeof ELK }).ELK
+        return mod.default ?? (window as { ELK: typeof ELK }).ELK
       })()
 
   return elkPromise

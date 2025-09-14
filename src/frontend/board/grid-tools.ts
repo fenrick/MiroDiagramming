@@ -1,3 +1,10 @@
+import * as log from '../logger'
+import { getTextFields } from '../core/utils/text-utils'
+
+import { BoardLike, getBoard, maybeSync, Syncable } from './board'
+import { boardCache } from './board-cache'
+import { calculateGridPositions } from './grid-layout'
+
 /**
  * Grid layout helpers for arranging selected widgets.
  *
@@ -15,16 +22,6 @@ export interface GridOptions {
   /** Direction for placing sorted items, defaults to horizontal */
   sortOrientation?: 'horizontal' | 'vertical'
 }
-
-import * as log from '../logger'
-/**
- * Minimal abstraction of the board API used for selection and grouping.
- * Allows injection of a mock implementation in tests.
- */
-import { BoardLike, getBoard, maybeSync, Syncable } from './board'
-import { boardCache } from './board-cache'
-import { calculateGridPositions } from './grid-layout'
-import { getTextFields } from '../core/utils/text-utils'
 
 /** Extract a name field from a widget for sorting purposes. */
 function getName(item: Record<string, unknown>): string {

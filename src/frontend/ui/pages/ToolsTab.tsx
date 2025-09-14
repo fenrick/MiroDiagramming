@@ -1,7 +1,9 @@
 import { Tabs } from '@mirohq/design-system'
 import React from 'react'
+
 import { PageHelp } from '../components/PageHelp'
 import { TabPanel } from '../components/TabPanel'
+
 import { ArrangeTab } from './ArrangeTab'
 import { FramesTab } from './FramesTab'
 import { ResizeTab } from './ResizeTab'

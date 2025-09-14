@@ -3,6 +3,7 @@ import '@testing-library/jest-dom/vitest'
 import userEvent from '@testing-library/user-event'
 import React from 'react'
 import { beforeEach, expect, test, vi } from 'vitest'
+
 import { DiffDrawer } from '../src/components/DiffDrawer'
 import { ShapeClient } from '../src/core/utils/shape-client'
 

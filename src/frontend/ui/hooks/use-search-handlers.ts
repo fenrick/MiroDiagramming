@@ -1,4 +1,5 @@
 import React from 'react'
+
 import {
   replaceBoardContent,
   searchBoardContent,
@@ -133,7 +134,7 @@ export function useReplaceCurrent(
     const board = {
       getSelection: async () => [current.item],
       get: async () => [],
-    } as unknown as Parameters<typeof replaceBoardContent>[1]
+    }
     await replaceBoardContent(
       { ...buildOptions(), replacement, inSelection: true },
       board,

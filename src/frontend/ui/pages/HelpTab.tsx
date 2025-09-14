@@ -1,9 +1,11 @@
 import { Heading } from '@mirohq/design-system'
 import React, { useState } from 'react'
+
 import changelog from '../../../../CHANGELOG.md?raw'
 import { Button, Markdown, Paragraph } from '../components'
 import { PageHelp } from '../components/PageHelp'
 import { TabPanel } from '../components/TabPanel'
+
 import type { TabTuple } from './tab-definitions'
 
 /** Static help page summarising diagram options and tools. */

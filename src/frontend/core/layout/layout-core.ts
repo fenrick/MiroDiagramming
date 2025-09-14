@@ -1,7 +1,9 @@
 import type { ElkNode } from 'elkjs/lib/elk-api'
+
 import { templateManager } from '../../board/templates'
 import { GraphData } from '../graph'
 import { aspectRatioValue } from '../utils/aspect-ratio'
+
 import { loadElk } from './elk-loader'
 import { UserLayoutOptions, validateLayoutOptions } from './elk-options'
 

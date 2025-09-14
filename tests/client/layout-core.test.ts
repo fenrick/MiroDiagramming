@@ -1,5 +1,6 @@
 import ELK from 'elkjs/lib/elk.bundled.js'
 import { vi } from 'vitest'
+
 import { templateManager } from '../src/board/templates'
 import {
   buildElkGraphOptions,

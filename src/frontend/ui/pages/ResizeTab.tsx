@@ -7,6 +7,7 @@ import {
   Text,
 } from '@mirohq/design-system'
 import React from 'react'
+
 import {
   applySizeToSelection,
   copySizeFromSelection,
@@ -31,8 +32,9 @@ import {
 import { PageHelp } from '../components/PageHelp'
 import { TabPanel } from '../components/TabPanel'
 import { useSelection } from '../hooks/use-selection'
-import type { TabTuple } from './tab-definitions'
 import { StickyActions } from '../StickyActions'
+
+import type { TabTuple } from './tab-definitions'
 
 /** Predefined button sizes used by the quick presets. */
 const PRESET_SIZES: Record<'S' | 'M' | 'L', Size> = {

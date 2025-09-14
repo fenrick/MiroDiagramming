@@ -2,6 +2,7 @@
 import { render } from '@testing-library/react'
 import '@testing-library/jest-dom/vitest'
 import React from 'react'
+
 import { ScrollArea } from '../src/ui/ScrollArea'
 
 describe('ScrollArea', () => {

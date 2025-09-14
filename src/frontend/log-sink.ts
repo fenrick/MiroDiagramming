@@ -1,5 +1,6 @@
-import { apiFetch } from './core/utils/api-fetch'
 import { error as logError, warning as logWarning } from 'logfire'
+
+import { apiFetch } from './core/utils/api-fetch'
 
 export interface ClientLogEntry {
   timestamp: string

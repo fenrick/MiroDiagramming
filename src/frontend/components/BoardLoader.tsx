@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react'
+import { styled } from '@mirohq/design-system'
+
 import { apiFetch } from '../core/utils/api-fetch'
 import { Button } from '../ui/components/Button'
-import { styled } from '@mirohq/design-system'
 
 const Skeleton = styled('div', {
   backgroundColor: 'var(--colors-gray-200)',

@@ -1,4 +1,5 @@
 import ELK from 'elkjs/lib/elk.bundled.js'
+
 import { loadElk } from '../src/core/layout/elk-loader'
 
 /** Tests for the dynamic ELK loader. */

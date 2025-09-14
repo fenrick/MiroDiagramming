@@ -1,4 +1,5 @@
 import { beforeEach, expect, test, vi } from 'vitest'
+
 import { TagClient } from '../src/core/utils/tag-client'
 
 vi.stubGlobal('fetch', vi.fn())

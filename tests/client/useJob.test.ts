@@ -1,6 +1,7 @@
 /** @vitest-environment jsdom */
 import { renderHook } from '@testing-library/react'
 import { afterEach, expect, test, vi } from 'vitest'
+
 import { useJob } from '../src/core/hooks/useJob'
 import * as api from '../src/core/utils/api-fetch'
 

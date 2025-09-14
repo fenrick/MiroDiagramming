@@ -2,6 +2,7 @@
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom/vitest'
 import React from 'react'
+
 import { App } from '../src/app/App'
 import { ExcelSyncService } from '../src/core/excel-sync-service'
 import { EditMetadataModal } from '../src/ui/components/EditMetadataModal'
@@ -52,9 +53,8 @@ describe('Edit Metadata command', () => {
 
   test('query parameter opens EditMetadataModal on load', () => {
     const original = window.location
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     delete (window as any).location
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ;(window as any).location = {
       ...original,
       search: '?command=edit-metadata',
@@ -62,7 +62,6 @@ describe('Edit Metadata command', () => {
     render(<App />)
     fireEvent.click(screen.getByTestId('start-button'))
     expect(screen.getByRole('dialog')).toBeInTheDocument()
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ;(window as any).location = original
   })
 

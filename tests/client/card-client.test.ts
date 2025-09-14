@@ -1,4 +1,5 @@
 import { beforeEach, expect, test, vi } from 'vitest'
+
 import { CardClient } from '../src/core/utils/card-client'
 import type { CardData } from '../src/core/utils/cards'
 vi.mock('logfire', () => ({

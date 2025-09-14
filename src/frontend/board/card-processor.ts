@@ -1,4 +1,5 @@
-import type { Card, CardStyle, Frame, Tag } from '@mirohq/websdk-types'
+import type { Card, CardStyle, Frame } from '@mirohq/websdk-types'
+
 import { UndoableProcessor } from '../core/graph/undoable-processor'
 import { type CardData, cardLoader } from '../core/utils/cards'
 import { TagClient } from '../core/utils/tag-client'

@@ -1,4 +1,5 @@
 import { expect, test } from 'vitest'
+
 import { computeDiff } from '../src/board/computeDiff'
 
 test('computes creates updates deletes', () => {

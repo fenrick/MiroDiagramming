@@ -1,9 +1,11 @@
 import type { BaseItem, Group } from '@mirohq/websdk-types'
+
 import type { BoardQueryLike } from '../board/board'
 import { applyElementToItem } from '../board/element-utils'
 import { searchGroups, searchShapes } from '../board/node-search'
-import { ShapeClient } from './utils/shape-client'
 import { templateManager } from '../board/templates'
+
+import { ShapeClient } from './utils/shape-client'
 import { ColumnMapping, mapRowsToNodes } from './data-mapper'
 import type { ExcelRow } from './utils/excel-loader'
 import { toSafeString } from './utils/string-utils'
@@ -26,11 +28,8 @@ export class ExcelSyncService {
     this.api =
       api ??
       new ShapeClient(
-        ((
-          globalThis as unknown as {
-            miro?: { board?: { info?: { id: string } } }
-          }
-        ).miro?.board?.info?.id ?? '') as string,
+        (globalThis as { miro?: { board?: { info?: { id?: string } } } }).miro?.board?.info?.id ??
+          '',
       )
   }
 
@@ -150,7 +149,7 @@ export class ExcelSyncService {
     const byId = this.rowMap[rowId]
     if (byId) {
       try {
-        const item = (await this.api.getShape(byId)) as unknown as BaseItem | Group
+        const item = (await this.api.getShape(byId)) as BaseItem | Group
         if (item) {
           return item
         }
@@ -158,7 +157,12 @@ export class ExcelSyncService {
         // ignore stale mapping
       }
     }
-    const board = miro.board as unknown as BoardQueryLike
+    const board = (globalThis as { miro?: { board?: BoardQueryLike } }).miro?.board as
+      | BoardQueryLike
+      | undefined
+    if (!board) {
+      return undefined
+    }
     const shape = await searchShapes(board, undefined, label)
     if (shape) {
       return shape
@@ -179,7 +183,7 @@ export class ExcelSyncService {
     if (!template) {
       return
     }
-    const items = widget.type === 'group' ? await (widget as unknown as Group).getItems() : [widget]
+    const items = widget.type === 'group' ? await (widget as Group).getItems() : [widget]
     template.elements.forEach((el, idx) => {
       if (items[idx]) {
         applyElementToItem(items[idx] as BaseItem, el, label)
@@ -195,7 +199,7 @@ export class ExcelSyncService {
   /** Retrieve the first item of a widget for text extraction. */
   private async extractItem(widget: BaseItem | Group): Promise<BaseItem> {
     if (widget.type === 'group') {
-      const items = await (widget as unknown as Group).getItems()
+      const items = await (widget as Group).getItems()
       return items[0] as BaseItem
     }
     return widget as BaseItem

@@ -1,13 +1,13 @@
 import { Grid, IconArrowArcLeft, IconPlus, Text } from '@mirohq/design-system'
 import React from 'react'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
+
 import { CardProcessor } from '../../board/card-processor'
 import { Button, ButtonToolbar, Checkbox, DroppedFileList, InputField } from '../components'
 import { StickyActions } from '../StickyActions'
 import { JsonDropZone } from '../components/JsonDropZone'
 import { PageHelp } from '../components/PageHelp'
 import { TabPanel } from '../components/TabPanel'
-
 import { showError } from '../hooks/notifications'
 import { undoLastImport } from '../hooks/ui-utils'
 

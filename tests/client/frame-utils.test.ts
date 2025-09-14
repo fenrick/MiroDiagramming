@@ -1,4 +1,5 @@
 import type { Frame } from '@mirohq/websdk-types'
+
 import { BoardBuilder } from '../src/board/board-builder'
 import { clearActiveFrame, registerFrame } from '../src/board/frame-utils'
 

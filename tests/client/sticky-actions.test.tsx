@@ -2,6 +2,7 @@
 import { render } from '@testing-library/react'
 import '@testing-library/jest-dom/vitest'
 import React from 'react'
+
 import { StickyActions } from '../src/ui/StickyActions'
 
 describe('StickyActions', () => {

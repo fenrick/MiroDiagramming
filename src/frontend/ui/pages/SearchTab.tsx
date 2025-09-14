@@ -1,5 +1,6 @@
 import { Grid, IconArrowRight, IconChevronRight, IconPen, Text } from '@mirohq/design-system'
 import React from 'react'
+
 import type { SearchOptions } from '../../board/search-tools'
 import {
   Button,
@@ -17,8 +18,9 @@ import {
   useReplaceAll,
   useReplaceCurrent,
 } from '../hooks/use-search-handlers'
-import type { TabTuple } from './tab-definitions'
 import { StickyActions } from '../StickyActions'
+
+import type { TabTuple } from './tab-definitions'
 
 /**
  * Sidebar tab providing board wide search and replace.
@@ -37,18 +39,16 @@ export const SearchTab: React.FC = () => {
   const [regex, setRegex] = React.useState(false)
 
   const focusOnItem = React.useCallback(async (item: unknown): Promise<void> => {
-    const vp = globalThis.miro?.board?.viewport
-    const typedVp = vp as unknown as {
-      zoomTo(items: unknown[]): Promise<void>
+    type ViewportAPI = {
+      zoomTo: (items: unknown[]) => Promise<void>
       zoomToObject?: (i: unknown) => Promise<void>
     }
-    if (!typedVp) {
-      return
-    }
-    if (typedVp.zoomToObject) {
-      await typedVp.zoomToObject(item)
+    const vp = globalThis.miro?.board?.viewport as ViewportAPI | undefined
+    if (!vp) return
+    if (typeof vp.zoomToObject === 'function') {
+      await vp.zoomToObject(item)
     } else {
-      await typedVp.zoomTo([item])
+      await vp.zoomTo([item])
     }
   }, [])
 

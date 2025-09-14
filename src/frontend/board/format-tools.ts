@@ -1,5 +1,6 @@
 import { resolveColor } from '../core/utils/color-utils'
 import type { StylePreset } from '../ui/style-presets'
+
 import { type BoardLike, forEachSelection, maybeSync, type Syncable } from './board'
 
 /** Resolved preset style attributes. */

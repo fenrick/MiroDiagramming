@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+
 import { JsonDropZone } from '../ui/components/JsonDropZone'
 
 const meta: Meta<typeof JsonDropZone> = {

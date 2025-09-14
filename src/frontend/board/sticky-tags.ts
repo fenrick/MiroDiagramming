@@ -1,10 +1,11 @@
 import type { BaseItem } from '@mirohq/websdk-types'
 
-import { boardCache } from './board-cache'
-import { ensureBoard, maybeSync, type BoardLike } from './board'
 import { TagClient, type TagInfo } from '../core/utils/tag-client'
 import { readItemText, writeItemText } from '../core/utils/text-utils'
 import { pushToast } from '../ui/components/Toast'
+
+import { ensureBoard, maybeSync, type BoardLike } from './board'
+import { boardCache } from './board-cache'
 
 type TagLike = Pick<TagInfo, 'id' | 'title'>
 
@@ -100,16 +101,16 @@ export async function applyBracketTagsToSelectedStickies(): Promise<void> {
         .map((n) => tagMap.get(n)?.id)
         .filter((id): id is string => typeof id === 'string')
 
-      const existing = ((item as unknown as { tagIds?: string[] }).tagIds ?? []) as string[]
+      const existing = ((item as { tagIds?: string[] }).tagIds ?? []) as string[]
       const merged = Array.from(new Set([...(existing ?? []), ...resolvedIds]))
-      ;(item as unknown as { tagIds?: string[] }).tagIds = merged
-      await maybeSync(item as unknown as { sync?: () => Promise<void> })
+      ;(item as { tagIds?: string[] }).tagIds = merged
+      await maybeSync(item as { sync?: () => Promise<void> })
 
       // Only strip text if all names resolved to IDs and tagging succeeded
       const allResolved = tags.every((n) => Boolean(tagMap.get(n)?.id))
       if (allResolved) {
         writeItemText(item, stripped)
-        await maybeSync(item as unknown as { sync?: () => Promise<void> })
+        await maybeSync(item as { sync?: () => Promise<void> })
         tagged += 1
       }
     } catch {

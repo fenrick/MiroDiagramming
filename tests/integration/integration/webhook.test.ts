@@ -1,6 +1,7 @@
+import crypto from 'node:crypto'
+
 import { beforeEach, describe, expect, it } from 'vitest'
 import request from 'supertest'
-import crypto from 'node:crypto'
 
 import { buildApp } from '../../../src/app.js'
 import { webhookQueue } from '../../../src/queue/webhookQueue.js'

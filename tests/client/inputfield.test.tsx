@@ -2,6 +2,7 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom/vitest'
 import React from 'react'
+
 import { InputField } from '../src/ui/components/InputField'
 
 test('renders label and input', () => {

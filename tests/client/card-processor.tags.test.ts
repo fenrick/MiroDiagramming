@@ -1,5 +1,6 @@
 import { beforeEach, expect, test, vi } from 'vitest'
 import type { Tag } from '@mirohq/websdk-types'
+
 import { CardProcessor } from '../src/board/card-processor'
 import { TagClient } from '../src/core/utils/tag-client'
 

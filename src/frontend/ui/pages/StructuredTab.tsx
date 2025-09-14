@@ -2,6 +2,7 @@ import { Grid, IconArrowArcLeft, IconPlus, Text } from '@mirohq/design-system'
 import { space } from '@mirohq/design-tokens'
 import React from 'react'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
+
 import { ExistingNodeMode, GraphProcessor } from '../../core/graph/graph-processor'
 import { HierarchyProcessor } from '../../core/graph/hierarchy-processor'
 import {
@@ -91,7 +92,7 @@ const LAYOUT_DESCRIPTIONS: Record<LayoutChoice, string> = {
 }
 
 /** UI for the Structured sub-tab. */
-// eslint-disable-next-line complexity
+
 export const StructuredTab: React.FC = () => {
   const [importQueue, setImportQueue] = React.useState<File[]>([])
   const [boardId, setBoardId] = React.useState<string | null>(null)

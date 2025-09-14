@@ -2,7 +2,9 @@ import { IconSquareArrowIn, Text } from '@mirohq/design-system'
 import React from 'react'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import { useDropzone } from 'react-dropzone'
+
 import { getDropzoneStyle } from '../hooks/ui-utils'
+
 import { Button } from './Button'
 
 export type JsonDropZoneProps = Readonly<{

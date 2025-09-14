@@ -1,6 +1,6 @@
 import * as React from 'react'
-
 import { Button, Callout } from '@mirohq/design-system'
+
 import { useAuthStatus } from '../core/hooks/useAuthStatus'
 
 /**

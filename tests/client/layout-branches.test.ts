@@ -1,4 +1,5 @@
 import ELK from 'elkjs/lib/elk.bundled.js'
+
 import { layoutEngine } from '../src/core/layout/elk-layout'
 
 /**

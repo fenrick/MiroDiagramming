@@ -1,6 +1,8 @@
 import http, { type Server } from 'node:http'
 import { AddressInfo } from 'node:net'
+
 import { afterAll, beforeAll, expect, test, vi } from 'vitest'
+
 import { AuthClient, registerWithCurrentUser } from '../src/user-auth'
 
 let server: Server

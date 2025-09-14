@@ -1,7 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import type { JSX } from 'react'
 import React from 'react'
+
 import { RowInspector } from '../ui/components/RowInspector'
+
 import { ExcelStoryWrapper } from './ExcelStoryWrapper'
 
 const meta: Meta<typeof RowInspector> = {

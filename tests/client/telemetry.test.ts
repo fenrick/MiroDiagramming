@@ -1,4 +1,5 @@
 import { afterEach, expect, test, vi } from 'vitest'
+
 import * as logger from '../src/logger'
 import { diffShown, oauthPromptShown } from '../src/core/telemetry'
 

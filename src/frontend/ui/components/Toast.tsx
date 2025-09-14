@@ -1,5 +1,6 @@
 import React from 'react'
 import { Callout } from '@mirohq/design-system'
+
 import { Button } from './Button'
 
 /** A single toast notification. */

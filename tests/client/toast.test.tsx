@@ -1,8 +1,9 @@
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom/vitest'
 import React from 'react'
-import { ToastContainer, pushToast } from '../src/ui/components/Toast'
 import { expect, test, vi } from 'vitest'
+
+import { ToastContainer, pushToast } from '../src/ui/components/Toast'
 
 vi.useFakeTimers()
 

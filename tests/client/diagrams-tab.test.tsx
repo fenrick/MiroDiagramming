@@ -2,6 +2,7 @@
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom/vitest'
 import React from 'react'
+
 import { GraphProcessor } from '../src/core/graph/graph-processor'
 import { DiagramsTab } from '../src/ui/pages/DiagramsTab'
 
@@ -10,12 +11,10 @@ vi.mock('../src/board/card-processor')
 
 describe('DiagramsTab', () => {
   beforeEach(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ;(globalThis as any).miro = { board: { ui: { on: vi.fn() } } }
   })
 
   afterEach(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     delete (globalThis as any).miro
     vi.clearAllMocks()
   })

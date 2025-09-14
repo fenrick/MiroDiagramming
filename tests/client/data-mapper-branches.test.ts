@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest'
+
 import { mapRowsToCards, mapRowsToNodes } from '../src/core/data-mapper'
 
 describe('data-mapper branches', () => {
