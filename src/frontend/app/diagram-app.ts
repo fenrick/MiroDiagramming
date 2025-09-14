@@ -23,7 +23,6 @@ export class DiagramApp {
       typeof window === 'undefined' ||
       typeof (window as Window & { miro?: unknown }).miro === 'undefined'
     ) {
-      // eslint-disable-next-line no-console
       console.warn('Miro SDK not loaded; are you opening index.html outside Miro?')
       return
     }

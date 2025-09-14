@@ -40,4 +40,15 @@ export default [
     files: ['**/*.ts'],
     ignores: ['dist/**', 'node_modules/**'],
   },
+  {
+    files: ['tests/**/*.{ts,tsx}'],
+    rules: {
+      // Tests often use flexible shapes and mocks
+      '@typescript-eslint/no-explicit-any': 'off',
+      // Allow double assertions in tests where handy for setup/mocks
+      'no-restricted-syntax': 'off',
+      // Relax import grouping/order in tests to allow mock-first patterns
+      'import/order': 'off',
+    },
+  },
 ]
