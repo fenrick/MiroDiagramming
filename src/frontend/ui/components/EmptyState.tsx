@@ -21,7 +21,7 @@ export function EmptyState({
   icon,
 }: EmptyStateProps): React.JSX.Element {
   return (
-    <Container>
+    <Container role="status" aria-live="polite">
       <Callout
         title={title}
         description={description}

@@ -1,4 +1,5 @@
 import { Tabs } from '@mirohq/design-system'
+import { space } from '@mirohq/design-tokens'
 import React from 'react'
 
 import { PageHelp } from '../components/PageHelp'
@@ -52,7 +53,7 @@ export const ToolsTab: React.FC = () => {
         onChange={(id: string) => setSub(id as SubTabId)}
         size="medium"
       >
-        <Tabs.List>
+        <Tabs.List aria-label="Tool categories">
           {SUB_TABS.map((t) => (
             <Tabs.Trigger key={t.id} value={t.id}>
               {t.label}
@@ -60,7 +61,9 @@ export const ToolsTab: React.FC = () => {
           ))}
         </Tabs.List>
       </Tabs>
-      <Current />
+      <div style={{ marginTop: space[200] }}>
+        <Current />
+      </div>
     </TabPanel>
   )
 }

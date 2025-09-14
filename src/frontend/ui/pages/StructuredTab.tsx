@@ -213,7 +213,7 @@ export const StructuredTab: React.FC = () => {
                   aria-label="Advanced options"
                   onToggle={(e) => setShowAdvanced((e.target as HTMLDetailsElement).open)}
                 >
-                  <summary>Advanced options</summary>
+                  <summary aria-expanded={showAdvanced}>Advanced options</summary>
                   <InputField
                     label="Spacing"
                     type="number"

@@ -1,4 +1,5 @@
 import { Tabs } from '@mirohq/design-system'
+import { space } from '@mirohq/design-tokens'
 import React from 'react'
 
 import { PageHelp } from '../components/PageHelp'
@@ -37,7 +38,7 @@ export const DiagramsTab: React.FC = () => {
     <TabPanel tabId="diagrams">
       <PageHelp content="Import data or experiment with the layout engine" />
       <Tabs value={sub} variant={'tabs'} onChange={(id) => setSub(id)} size="medium">
-        <Tabs.List>
+        <Tabs.List aria-label="Diagram tools">
           {SUB_TABS.map((t) => (
             <Tabs.Trigger key={t.id} value={t.id}>
               {t.label}
@@ -45,7 +46,9 @@ export const DiagramsTab: React.FC = () => {
           ))}
         </Tabs.List>
       </Tabs>
-      <Current />
+      <div style={{ marginTop: space[200] }}>
+        <Current />
+      </div>
     </TabPanel>
   )
 }
