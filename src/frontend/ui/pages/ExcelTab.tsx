@@ -19,6 +19,7 @@ import {
   SelectField,
   SelectOption,
   SidebarSection,
+  InfoCallout,
 } from '../components'
 import { PageHelp } from '../components/PageHelp'
 import { RowInspector } from '../components/RowInspector'
@@ -400,6 +401,12 @@ function ExcelTabView({
         <Button onClick={fetchRemote} variant="secondary">
           Fetch File
         </Button>
+        <div style={{ marginTop: 'var(--space-200)' }}>
+          <InfoCallout title="Tips">
+            Paste a OneDrive/SharePoint link or drop a local workbook. Then choose a sheet or table
+            and click “Load Rows”.
+          </InfoCallout>
+        </div>
         {rows.length === 0 && loader.listSheets().length === 0 && !remote && !source && (
           <EmptyState title="No data yet" description="Fetch a file or select a sheet or table." />
         )}

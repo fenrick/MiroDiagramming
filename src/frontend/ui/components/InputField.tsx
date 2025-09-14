@@ -1,4 +1,4 @@
-import { Form, Input } from '@mirohq/design-system'
+import { Form, Input, styled } from '@mirohq/design-system'
 import React from 'react'
 
 export type InputFieldProps = Readonly<
@@ -16,6 +16,11 @@ export type InputFieldProps = Readonly<
 // Custom class names and inline styles are intentionally excluded so spacing
 // and typography remain consistent across the app.
 
+const StyledFormField = styled(Form.Field, {
+  marginBottom: 'var(--space-200)',
+  position: 'relative',
+})
+
 export const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(function InputField(
   { label, onValueChange, id, ...props },
   ref,
@@ -29,9 +34,9 @@ export const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(fu
   }
 
   return (
-    <Form.Field>
+    <StyledFormField>
       <Form.Label htmlFor={inputId}>{label}</Form.Label>
       <Input id={inputId} ref={ref} onChange={handleChange} {...restProps} />
-    </Form.Field>
+    </StyledFormField>
   )
 })
