@@ -57,7 +57,7 @@ Status markers: [Planned] to do. Completed items are removed from this list once
 ## Feedback & Error Handling
 
 - Loading and skeleton states [Planned]
-    - What’s needed: Add skeletons/placeholders for imports and long operations; avoid spinner‑only states.
+    - What’s needed: Add skeletons/placeholders for remaining imports and diff views; avoid spinner‑only states.
     - Where: pages invoking async work.
     - DoD: Each async view renders skeleton within 100ms; shimmer duration ≤ 400ms motion token.
 

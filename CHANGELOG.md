@@ -7,6 +7,11 @@
 ### Docs
 
 * document Skeleton component
+* clarify remaining skeleton tasks in improvement plan
+
+### Tests
+
+* fix Skeleton test import path
 
 ## [1.21.1](https://github.com/fenrick/MiroDiagramming/compare/v1.21.0...v1.21.1) (2025-09-14)
 
