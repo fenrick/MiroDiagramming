@@ -3,7 +3,7 @@ import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 
 import { useJob } from '../core/hooks/useJob'
 import { useFocusTrap } from '../core/hooks/useFocusTrap'
-import { Button, ButtonToolbar, Checkbox } from '../ui/components'
+import { Button, ButtonToolbar, Checkbox, Skeleton } from '../ui/components'
 import { ScrollArea } from '../ui/ScrollArea'
 import { StickyActions } from '../ui/StickyActions'
 
@@ -74,8 +74,16 @@ export function JobDrawer({ jobId, isOpen, onClose }: JobDrawerProps): JSX.Eleme
     return null
   }
 
+  const loading = !job || job.status === 'working'
+
   return (
-    <aside ref={trapRef} className="drawer" role="dialog" aria-modal="true">
+    <aside
+      ref={trapRef}
+      className="drawer"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Sync progress"
+    >
       <ScrollArea>
         <VisuallyHidden asChild>
           <div aria-live="polite" role="status">
@@ -83,24 +91,32 @@ export function JobDrawer({ jobId, isOpen, onClose }: JobDrawerProps): JSX.Eleme
           </div>
         </VisuallyHidden>
         <Checkbox label="Close when done" value={closeOnDone} onChange={setCloseOnDone} />
-        <ul>
-          {job?.operations
-            .filter((op) => !hiddenOps.has(op.id))
-            .map((op) => (
-              <li key={op.id} id={`job-op-${op.id}`} tabIndex={-1}>
-                <span className="truncate" title={op.id}>
-                  {op.id}
-                </span>
-                <span>{op.status}</span>
-                {op.status === 'failed' && (
-                  <>
-                    <Button variant="tertiary">Retry</Button>
-                    <Button variant="ghost">Details</Button>
-                  </>
-                )}
-              </li>
-            ))}
-        </ul>
+        {loading ? (
+          <div aria-label="Loading" role="status" style={{ marginTop: 'var(--space-100)' }}>
+            <Skeleton />
+            <Skeleton />
+            <Skeleton />
+          </div>
+        ) : (
+          <ul>
+            {job?.operations
+              .filter((op) => !hiddenOps.has(op.id))
+              .map((op) => (
+                <li key={op.id} id={`job-op-${op.id}`} tabIndex={-1}>
+                  <span className="truncate" title={op.id}>
+                    {op.id}
+                  </span>
+                  <span>{op.status}</span>
+                  {op.status === 'failed' && (
+                    <>
+                      <Button variant="tertiary">Retry</Button>
+                      <Button variant="ghost">Details</Button>
+                    </>
+                  )}
+                </li>
+              ))}
+          </ul>
+        )}
         <StickyActions>
           <ButtonToolbar>
             <Button variant="tertiary" onClick={onClose}>

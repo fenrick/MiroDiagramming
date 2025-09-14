@@ -48,9 +48,17 @@ export function DiffDrawer<T extends { id?: string }>({
   const trapRef = useFocusTrap<HTMLDivElement>(true, onClose)
 
   return (
-    <aside className="drawer diff-drawer" ref={trapRef} role="dialog" aria-modal="true">
+    <aside
+      className="drawer diff-drawer"
+      ref={trapRef}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="diff-heading"
+    >
       <ScrollArea>
-        <h2 className="h2">Pending changes</h2>
+        <h2 className="h2" id="diff-heading">
+          Pending changes
+        </h2>
         <ul>
           {diff.creates.map((c, i) => (
             <li key={`c${i}`}>
