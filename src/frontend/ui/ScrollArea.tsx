@@ -10,5 +10,17 @@ import React from 'react'
  * @returns A flex container that scrolls its children vertically.
  */
 export function ScrollArea({ children }: { children: React.ReactNode }): React.JSX.Element {
-  return <div style={{ flex: 1, overflowY: 'auto', padding: 'var(--space-200)' }}>{children}</div>
+  return (
+    <div
+      style={{
+        flex: 1,
+        overflowY: 'auto',
+        padding: 'var(--space-200) 0 var(--space-300)',
+        scrollbarGutter: 'stable both-edges',
+        overscrollBehavior: 'contain',
+      }}
+    >
+      {children}
+    </div>
+  )
 }

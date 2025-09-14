@@ -80,3 +80,13 @@ body {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* Aura-aligned list spacing for inline help lists */
+.list,
+section ul.list {
+  margin: 0 0 var(--space-200) var(--space-200);
+  padding: 0;
+}
+.list li {
+  margin: 0 0 var(--space-50) 0;
+}

@@ -11,8 +11,10 @@ type SidebarSectionProps = Readonly<{
 }>
 
 const Wrapper = styled('section', {
-  paddingTop: space[100],
-  paddingBottom: space[100],
+  paddingTop: space[200],
+  paddingBottom: space[200],
+  display: 'grid',
+  rowGap: 'var(--space-200)',
   '& + &': {
     borderTop: `1px solid var(--colors-gray-200)`,
   },
