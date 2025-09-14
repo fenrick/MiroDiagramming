@@ -1,3 +1,13 @@
+## [1.21.2](https://github.com/fenrick/MiroDiagramming/compare/v1.21.1...v1.21.2) (2025-09-14)
+
+### Refactor
+
+* **board:** reuse shared Skeleton in BoardLoader
+
+### Docs
+
+* document Skeleton component
+
 ## [1.21.1](https://github.com/fenrick/MiroDiagramming/compare/v1.21.0...v1.21.1) (2025-09-14)
 
 

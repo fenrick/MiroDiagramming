@@ -1,15 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { styled } from '@mirohq/design-system'
 
 import { apiFetch } from '../core/utils/api-fetch'
-import { Button } from '../ui/components/Button'
-
-const Skeleton = styled('div', {
-  backgroundColor: 'var(--colors-gray-200)',
-  color: 'transparent',
-  height: 'var(--space-250)',
-  marginBottom: 'var(--space-100)',
-})
+import { Button, Skeleton } from '../ui/components'
 
 interface BoardLoaderProps {
   readonly boardId: string

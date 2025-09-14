@@ -57,8 +57,8 @@ Status markers: [Planned] to do. Completed items are removed from this list once
 ## Feedback & Error Handling
 
 - Loading and skeleton states [Planned]
-    - What’s needed: Add skeletons/placeholders for board scans, imports, and long operations; avoid spinner‑only states.
-    - Where: `src/frontend/components/BoardLoader.tsx`, pages invoking async work.
+    - What’s needed: Add skeletons/placeholders for imports and long operations; avoid spinner‑only states.
+    - Where: pages invoking async work.
     - DoD: Each async view renders skeleton within 100ms; shimmer duration ≤ 400ms motion token.
 
 - Job Drawer UX overhaul [Planned]

@@ -45,6 +45,7 @@ components or compose using the design system tokens.
 | **Input**                     | value, onChange                 | text, number              | 32                  |
 | **Select**                    | options, value, onChange        | single, multi             | 32                  |
 | **Switch** (Checkbox wrapper) | checked, onChange               | medium, large             | 24                  |
+| **Skeleton**                  | –                               | –                         | var(--space-250)    |
 | **Modal**                     | title, isOpen, onClose          | small, medium             | auto                |
 | _SidebarTab_                  | id, icon, title                 | persistent, modal         | fill                |
 | _TabBar_                      | tabs, tab, onChange, size?      | regular, small            | 48                  |
