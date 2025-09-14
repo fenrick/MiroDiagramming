@@ -5,6 +5,7 @@ import type { SearchOptions } from '../../board/search-tools'
 import {
   Button,
   ButtonToolbar,
+  InfoCallout,
   EmptyState,
   FilterDropdown,
   InputField,
@@ -148,6 +149,11 @@ export const SearchTab: React.FC = () => {
         </Grid>
       </SidebarSection>
       <SidebarSection title="Filters">
+        <div style={{ marginBottom: 'var(--space-200)' }}>
+          <InfoCallout title="Tips">
+            Combine type, tags, and colour to narrow matches. Toggle Regex for advanced patterns. Case and whole-word are applied client-side.
+          </InfoCallout>
+        </div>
         <FilterDropdown
           widgetTypes={widgetTypes}
           toggleType={toggleType}

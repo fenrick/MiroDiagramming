@@ -12,6 +12,7 @@ import {
   SelectField,
   SelectOption,
   SidebarSection,
+  InfoCallout,
 } from '../components'
 import { PageHelp } from '../components/PageHelp'
 import { TabPanel } from '../components/TabPanel'
@@ -133,6 +134,11 @@ export const ArrangeTab: React.FC = () => {
         </Grid>
       </SidebarSection>
       <SidebarSection title="Spacing">
+        <div style={{ marginBottom: 'var(--space-200)' }}>
+          <InfoCallout title="Mode">
+            Move keeps sizes and shifts items; Expand increases gaps by growing groups along the chosen axis.
+          </InfoCallout>
+        </div>
         <Grid columns={2}>
           <Grid.Item>
             <Flex direction="column" gap={100} css={{ marginBottom: 'var(--space-200)' }}>
