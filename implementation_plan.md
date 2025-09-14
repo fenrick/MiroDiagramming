@@ -206,3 +206,65 @@ Purpose: Track pending improvements and code quality actions. Do not remove item
     - What’s needed: Add jitter/Retry-After behavior and queue limits/telemetry to docs.
     - Where: `docs/node-architecture.md`.
     - DoD: Documentation reflects current retry and telemetry patterns.
+
+## Style Guide Compliance
+
+- Enforce ESLint rules per style guide
+    - What’s needed: Configure rules `consistent-type-imports`, `import/order`, `import/no-default-export` (allow exceptions for Vite/CLI), `@typescript-eslint/no-floating-promises`, `@typescript-eslint/explicit-module-boundary-types`, `no-console` (allow in scripts), `curly`, `eqeqeq`.
+    - Where: `eslint.config.mjs` (or `.eslintrc.*`).
+    - DoD: `npm run lint` passes and catches violations; CI enforces the rules.
+
+- Add React linting plugins
+    - What’s needed: Add `eslint-plugin-react` and `eslint-plugin-react-hooks` with recommended configs for files under `src/frontend/**`.
+    - Where: `package.json` devDependencies and `eslint.config.mjs`.
+    - DoD: Frontend lint catches hook rule violations and JSX best practices.
+
+- Require TSDoc on exported APIs
+    - What’s needed: Add `eslint-plugin-tsdoc` and enable errors for invalid/missing TSDoc on exported functions/classes.
+    - Where: `package.json` (devDependency) and `eslint.config.mjs`.
+    - DoD: Lint fails on missing/invalid TSDoc; key modules documented.
+
+- Prefer named exports internally
+    - What’s needed: Refactor modules using default exports to named exports where feasible; add allowlist for required defaults (Vite entry, CLI).
+    - Where: `src/**` modules with default export.
+    - DoD: No default exports remain except allowlisted; lint passes.
+
+- TypeScript strictness flags
+    - What’s needed: Ensure `tsconfig.json` and `tsconfig.client.json` enable `noImplicitAny`, `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`, `noImplicitOverride`, `useUnknownInCatchVariables`, `noPropertyAccessFromIndexSignature`.
+    - Where: `tsconfig.json`, `tsconfig.client.json`.
+    - DoD: `npm run typecheck` passes with flags enabled.
+
+- Absolute import paths
+    - What’s needed: Configure `baseUrl` and `paths` for absolute imports; add lint guard to discourage deep relative paths; migrate imports gradually.
+    - Where: `tsconfig.json`, `eslint.config.mjs`, code in `src/**`.
+    - DoD: New code uses absolute imports; lint warns on long relative paths; initial migration completed.
+
+- Husky pre-commit runs lint
+    - What’s needed: Extend the pre-commit hook to run `npm run lint` in addition to Prettier check.
+    - Where: `.husky/pre-commit`.
+    - DoD: Commits are blocked on lint errors locally.
+
+- No non-null assertions
+    - What’s needed: Enable `@typescript-eslint/no-non-null-assertion` and refactor code to use guards/narrowing.
+    - Where: `eslint.config.mjs`, code in `src/**`.
+    - DoD: Lint clean with rule enabled; code uses safe checks.
+
+- Backend input validation with Zod
+    - What’s needed: Ensure all externally-sourced inputs (routes, webhooks, env parsing) validate via Zod or JSON Schema.
+    - Where: `src/routes/**`, `src/utils/**`, `src/config/env.ts`.
+    - DoD: Handlers parse inputs before use; tests cover invalid input cases.
+
+- Frontend component/file naming
+    - What’s needed: Audit and align filenames to `PascalCase.tsx` for components, `kebab-case.ts` for utilities.
+    - Where: `src/frontend/**`.
+    - DoD: Naming matches guide; imports updated; build and tests pass.
+
+- Logger usage policy
+    - What’s needed: Replace stray `console.*` in app code with the shared logger; ensure redaction covers sensitive headers/tokens.
+    - Where: `src/**` (app code), `src/config/logger.ts`.
+    - DoD: No `console.*` in app code (scripts allowed); redaction list updated and verified.
+
+- Promise handling hygiene
+    - What’s needed: Fix floating promises by awaiting or explicitly marking `void` for fire‑and‑forget handlers.
+    - Where: `src/**` where async is used.
+    - DoD: Lint clean for `no-floating-promises`; tests unaffected.
