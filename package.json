@@ -53,7 +53,7 @@
     "@testing-library/jest-dom": "^6.4.0",
     "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.5.2",
-    "jsdom": "^24.1.0",
+    "jsdom": "^26.0.0",
     "@commitlint/config-conventional": "^19.8.1",
     "@mirohq/websdk-types": "^2.9.0",
     "@semantic-release/changelog": "^6.0.3",

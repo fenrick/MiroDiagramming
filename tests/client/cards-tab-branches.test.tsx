@@ -6,7 +6,10 @@ import { CardProcessor } from '../src/board/card-processor'
 import { CardsTab } from '../src/ui/pages/CardsTab'
 import { pushToast } from '../src/ui/components/Toast'
 
-vi.mock('../src/ui/components/Toast', () => ({ pushToast: vi.fn() }))
+vi.mock('../src/ui/components/Toast', () => ({
+  pushToast: vi.fn(),
+  ToastContainer: () => null,
+}))
 
 vi.mock('../src/board/card-processor')
 

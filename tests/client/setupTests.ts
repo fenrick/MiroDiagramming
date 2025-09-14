@@ -1,4 +1,4 @@
-import { afterEach, vi } from 'vitest'
+import { afterAll, afterEach, vi } from 'vitest'
 
 // alias vi global to vitest for compatibility
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

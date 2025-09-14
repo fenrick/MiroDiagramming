@@ -49,12 +49,15 @@ describe('graph conversion helpers', () => {
 describe('processor conversions', () => {
   afterEach(() => {
     vi.restoreAllMocks()
+    vi.unstubAllGlobals()
     delete global.miro
   })
 
   test('GraphProcessor converts hierarchy input', async () => {
     global.miro = {
       board: {
+        id: 'b1',
+        info: { id: 'b1' },
         get: vi.fn().mockResolvedValue([]),
         getSelection: vi.fn().mockResolvedValue([]),
         findEmptySpace: vi.fn().mockResolvedValue({ x: 0, y: 0, width: 100, height: 100 }),
@@ -93,6 +96,22 @@ describe('processor conversions', () => {
         }),
       },
     } as unknown as GlobalWithMiro
+    vi.spyOn(templateManager, 'createFromTemplate').mockResolvedValue({
+      id: 's1',
+      type: 'shape',
+      setMetadata: vi.fn(),
+      getMetadata: vi.fn(),
+      sync: vi.fn(),
+    } as unknown)
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (url: string) => {
+        if (url.includes('/widgets')) {
+          return { json: async () => ({ shape: [] }) } as unknown as Response
+        }
+        return { json: async () => ({}) } as unknown as Response
+      }),
+    )
     const gp = new GraphProcessor()
     const hierarchy = [
       {
@@ -122,6 +141,8 @@ describe('processor conversions', () => {
   test('GraphProcessor uses nested layout for box algorithm', async () => {
     global.miro = {
       board: {
+        id: 'b1',
+        info: { id: 'b1' },
         get: vi.fn().mockResolvedValue([]),
         getSelection: vi.fn().mockResolvedValue([]),
         findEmptySpace: vi.fn().mockResolvedValue({ x: 0, y: 0, width: 100, height: 100 }),
@@ -154,6 +175,22 @@ describe('processor conversions', () => {
         createFrame: vi.fn().mockResolvedValue({ add: vi.fn(), id: 'f1' }),
       },
     } as unknown as GlobalWithMiro
+    vi.spyOn(templateManager, 'createFromTemplate').mockResolvedValue({
+      id: 's1',
+      type: 'shape',
+      setMetadata: vi.fn(),
+      getMetadata: vi.fn(),
+      sync: vi.fn(),
+    } as unknown)
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (url: string) => {
+        if (url.includes('/widgets')) {
+          return { json: async () => ({ shape: [] }) } as unknown as Response
+        }
+        return { json: async () => ({}) } as unknown as Response
+      }),
+    )
 
     const gp = new GraphProcessor()
     const layoutSpy = vi.spyOn(nestedLayout, 'layoutHierarchy').mockResolvedValue({

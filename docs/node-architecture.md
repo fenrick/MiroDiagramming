@@ -24,7 +24,7 @@ This document defines the new end-to-end system design after removing the Python
 ```
 src/
   app.ts                   # Fastify app bootstrap
-  server.ts                # CLI entry (listen)
+  server.ts                # CLI entry (listen); exports startServer for tests
   config/
     env.ts                 # env var parsing (zod)
     logger.ts              # pino logger config
@@ -50,7 +50,9 @@ src/web/                     # React frontend (dev via Vite, built by root scrip
 prisma/
   schema.prisma            # Board, Tag, Shape, User, CacheEntry, IdempotencyEntry
 tests/
+  client/                  # legacy client tests (jsdom)
   integration/             # server integration tests (Vitest + Supertest)
+  src -> ../src/frontend   # symlink for legacy ../src imports
 package.json
 tsconfig.json
 vitest.config.ts
