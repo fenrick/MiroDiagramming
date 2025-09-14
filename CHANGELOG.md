@@ -1,3 +1,10 @@
+## [1.21.1](https://github.com/fenrick/MiroDiagramming/compare/v1.21.0...v1.21.1) (2025-09-14)
+
+
+### Bug Fixes
+
+* **board:** include board id for selection search ([3d6f474](https://github.com/fenrick/MiroDiagramming/commit/3d6f47413d9f8d9216e02998def2c50bb6c9d383))
+
 # [1.21.0](https://github.com/fenrick/MiroDiagramming/compare/v1.20.1...v1.21.0) (2025-09-12)
 
 
