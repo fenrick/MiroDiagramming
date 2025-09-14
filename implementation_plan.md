@@ -198,6 +198,53 @@ Purpose: Track pending improvements and code quality actions. Do not remove item
     - Where: `.husky/pre-commit`.
     - DoD: Commits are blocked on lint errors locally.
 
+## Aura UX Alignment (Frontend)
+
+- Sections, spacing, and rhythm [Done]
+    - What’s needed: Unified SidebarSection padding and row gaps; ScrollArea vertical padding; stable scrollbars; list spacing.
+    - Where: `src/frontend/ui/components/SidebarSection.tsx`, `ScrollArea.tsx`, `assets/style.css`.
+    - DoD: Consistent vertical rhythm across tabs; no cramped sections; lists and callouts scan cleanly.
+
+- Empty/Loading states [Done]
+    - What’s needed: EmptyState for empty views; Skeleton for long operations (imports, jobs, cards).
+    - Where: `src/frontend/ui/components/{EmptyState,Skeleton}.tsx`; used in Cards/Structured/JobDrawer.
+    - DoD: Users see clear empty guidance and subtle skeletons during work.
+
+- Drawers a11y polish [Done]
+    - What’s needed: aria-label/aria-labelledby on dialogs; polite announcements.
+    - Where: `components/{DiffDrawer,JobDrawer}.tsx`.
+    - DoD: Screen readers announce dialog names and progress updates.
+
+- Inline guidance (InfoCallout) [Done]
+    - What’s needed: Short, action-focused tips in Search, Arrange, Style, Excel; notes in Frames; advanced guidance in Structured.
+    - Where: Affected tabs under `src/frontend/ui/pages`.
+    - DoD: Tips are concise, optional, and do not crowd the UI.
+
+- Field spacing normalization [Done]
+    - What’s needed: Align InputField spacing to SelectField; avoid ad‑hoc margins.
+    - Where: `ui/components/InputField.tsx`.
+    - DoD: Uniform spacing between fields in all tabs.
+
+- Advanced options grouping (Structured) [In progress]
+    - What’s needed: Tighter grouping of related numeric/select controls with consistent gaps; brief context note.
+    - Where: `ui/pages/StructuredTab.tsx` (Advanced `<details>` block).
+    - DoD: Advanced panel reads as cohesive groups; spacing aligns to tokens.
+
+- Keyboard & focus order checks [Planned]
+    - What’s needed: Verify Tabs → first section → fields → StickyActions order; add tests where useful.
+    - Where: tests under `tests/client/*`.
+    - DoD: Keyboard-only users can operate core flows easily; tests pass.
+
+- Typography sweep [Planned]
+    - What’s needed: Confirm small/body text sizes for Paragraph and lists; eliminate hard-coded font sizes where possible.
+    - Where: `ui/components/Paragraph.tsx`, help lists, tips.
+    - DoD: Text sizes align with Aura tokens; no stray px values.
+
+- Re-enable hooks post-UX pass [Planned]
+    - What’s needed: Restore Husky hooks (core.hooksPath) and commitlint once UX iteration stabilizes.
+    - Where: repo git config / `.husky`.
+    - DoD: CI/local hooks enforce lint/format/commit style again.
+
 - No non‑null assertions
     - What’s needed: Enable `@typescript-eslint/no-non-null-assertion` and refactor code to use guards/narrowing.
     - Where: `eslint.config.mjs`, code in `src/**`.
