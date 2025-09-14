@@ -2,7 +2,7 @@ import { Grid, IconLockClosed, IconPen, Text } from '@mirohq/design-system'
 import React from 'react'
 
 import { lockSelectedFrames, renameSelectedFrames } from '../../board/frame-tools'
-import { Button, ButtonToolbar, InputField, SidebarSection, EmptyState } from '../components'
+import { Button, ButtonToolbar, InputField, SidebarSection, EmptyState, InfoCallout } from '../components'
 import { StickyActions } from '../StickyActions'
 import { PageHelp } from '../components/PageHelp'
 import { TabPanel } from '../components/TabPanel'
@@ -57,6 +57,9 @@ export const FramesTab: React.FC = () => {
         </Grid>
       </SidebarSection>
       <SidebarSection title="Lock Frames">
+        <div style={{ marginBottom: 'var(--space-200)' }}>
+          <InfoCallout title="Note">Locking a frame also locks its content.</InfoCallout>
+        </div>
         <StickyActions>
           <ButtonToolbar>
             <Button

@@ -211,18 +211,23 @@ export const StructuredTab: React.FC = () => {
                     placeholder="Frame title"
                   />
                 )}
-                <details
-                  open={showAdvanced}
-                  aria-label="Advanced options"
-                  onToggle={(e) => setShowAdvanced((e.target as HTMLDetailsElement).open)}
-                >
-                  <summary aria-expanded={showAdvanced}>Advanced options</summary>
-                  <InputField
-                    label="Spacing"
-                    type="number"
-                    value={String(layoutOpts.spacing)}
-                    onValueChange={(v) => setLayoutOpts({ ...layoutOpts, spacing: Number(v) })}
-                  />
+                  <details
+                    open={showAdvanced}
+                    aria-label="Advanced options"
+                    onToggle={(e) => setShowAdvanced((e.target as HTMLDetailsElement).open)}
+                  >
+                    <summary aria-expanded={showAdvanced}>Advanced options</summary>
+                    <div style={{ marginBottom: 'var(--space-200)' }}>
+                      <InfoCallout title="Existing nodes">
+                        Choose how existing items on the board are treated during layout. “Move into place” repositions items, “Use for layout” anchors them, and “Keep position” leaves them untouched.
+                      </InfoCallout>
+                    </div>
+                    <InputField
+                      label="Spacing"
+                      type="number"
+                      value={String(layoutOpts.spacing)}
+                      onValueChange={(v) => setLayoutOpts({ ...layoutOpts, spacing: Number(v) })}
+                    />
                   {OPTION_VISIBILITY[layoutOpts.algorithm].aspectRatio && (
                     <SelectField
                       label="Aspect ratio"
@@ -241,15 +246,15 @@ export const StructuredTab: React.FC = () => {
                       ))}
                     </SelectField>
                   )}
-                  <SelectField
-                    label="Existing nodes"
-                    value={existingMode}
-                    onChange={(v) => setExistingMode(v as ExistingNodeMode)}
-                  >
-                    <SelectOption value="move">Move into place</SelectOption>
-                    <SelectOption value="layout">Use for layout</SelectOption>
-                    <SelectOption value="ignore">Keep position</SelectOption>
-                  </SelectField>
+                <SelectField
+                  label="Existing nodes"
+                  value={existingMode}
+                  onChange={(v) => setExistingMode(v as ExistingNodeMode)}
+                >
+                  <SelectOption value="move">Move into place</SelectOption>
+                  <SelectOption value="layout">Use for layout</SelectOption>
+                  <SelectOption value="ignore">Keep position</SelectOption>
+                </SelectField>
                   <SelectField
                     label="Algorithm"
                     value={layoutOpts.algorithm}
