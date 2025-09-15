@@ -52,7 +52,8 @@ export const StyleTab: React.FC = () => {
       <SidebarSection title="Adjust Colors">
         <div style={{ marginBottom: 'var(--space-200)' }}>
           <InfoCallout title="Tips">
-            Use the slider or enter a value between −100 and 100 to lighten/darken. Copy Fill takes the colour from the current selection.
+            Use the slider or enter a value between −100 and 100 to lighten/darken. Copy Fill takes
+            the colour from the current selection.
           </InfoCallout>
         </div>
         <Grid columns={2}>

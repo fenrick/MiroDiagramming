@@ -60,6 +60,15 @@ npm run build
 npm start
 ```
 
+### Health and Readiness
+
+For container orchestration and uptime checks, the server exposes:
+
+- `GET /healthz` → liveness probe (`{ status: 'ok' }`).
+- `GET /readyz` → readiness probe (200 when DB is connected and the background change queue is idle; otherwise 503).
+
+The SPA fallback excludes `/api/*` and `/healthz*` so probes and API calls never return the client HTML.
+
 ## Uploading JSON Content
 
 1. Click the app icon on your Miro board.

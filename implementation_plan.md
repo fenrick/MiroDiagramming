@@ -21,10 +21,10 @@ Guiding principle: configure and compose established frameworks (e.g., Fastify) 
     - Where: `src/server.ts` (signal handlers), `src/queue/changeQueue.ts` (stop hook if needed).
     - DoD: Sending SIGINT/SIGTERM closes the server cleanly and calls `changeQueue.stop()`; verified by lifecycle test.
 
-- Health endpoints (liveness/readiness)
-    - What’s needed: Add `/healthz/live` simple OK and `/healthz/ready` that checks DB and exposes queue stats; ensure SPA fallback excludes `/healthz`.
-    - Where: `src/routes/health.routes.ts` (new), register in `src/app.ts`; ensure SPA fallback exclusion remains.
-    - DoD: Hitting `/healthz/live` returns `{status:'ok'}`; `/healthz/ready` returns DB status and queue metrics, 503 on DB failure.
+- Health and readiness endpoints [Done]
+    - What’s needed: Provide liveness and readiness probes suitable for containers.
+    - Where: Implemented in `src/app.ts` as `GET /healthz` (liveness) and `GET /readyz` (readiness); SPA fallback excludes `/healthz*`.
+    - DoD: `/healthz` returns `{ status: 'ok' }`; `/readyz` returns 200 only when DB connectivity succeeds and the change queue is idle, 503 on DB/queue issues.
 
 - Server lifecycle integration test
     - What’s needed: Start server/app, hit `/healthz`, then trigger shutdown and assert queue stop called.
@@ -55,10 +55,10 @@ Guiding principle: configure and compose established frameworks (e.g., Fastify) 
 
 ## Reliability & Operations
 
-- Liveness and readiness endpoints exposed for orchestration
-    - What’s needed: Provide `/healthz/live` and `/healthz/ready` endpoints suitable for Kubernetes/Docker health checks; readiness should verify DB connectivity and expose queue stats; ensure SPA fallback excludes `/healthz/*`.
-    - Where: `src/routes/health.routes.ts` (new), registered in `src/app.ts` with SPA exclusion.
-    - DoD: `/healthz/live` returns `{ status: 'ok' }` with 200; `/healthz/ready` returns structured object including DB status and queue metrics, returns 503 on DB failure.
+- Liveness and readiness endpoints exposed for orchestration [Done]
+    - What’s needed: Provide `/healthz` and `/readyz` for Kubernetes/Docker health checks; readiness verifies DB and queue idle; SPA fallback excludes `/healthz/*`.
+    - Where: Implemented in `src/app.ts`.
+    - DoD: `/healthz` 200 OK, `/readyz` 200 only when ready, 503 otherwise.
 
 - Queue backpressure visibility for operations
     - What’s needed: Emit structured logs/metrics for queue size and in‑flight counts; log WARN when queue length crosses a soft threshold; threshold configurable by env.
@@ -348,19 +348,19 @@ Guiding principle: configure and compose established frameworks (e.g., Fastify) 
     - Where: `implementation_plan.md`.
     - DoD: Only pending work remains listed; updated alongside related PRs.
 
-- Document server lifecycle
-    - What’s needed: Describe server start/stop and signal handling in the Node architecture doc.
-    - Where: `docs/node-architecture.md`.
-    - DoD: Docs include lifecycle & signals section reflecting implemented behavior.
+- Document server lifecycle [Done]
+    - What’s needed: Describe server start/stop and graceful close behavior.
+    - Where: `docs/node-architecture.md` (Server Lifecycle section).
+    - DoD: Docs include lifecycle notes; aligns with `buildApp()`/`startServer()`.
 
 - Document queue persistence strategy
     - What’s needed: Capture persistence design, trade‑offs, and operational notes.
     - Where: `docs/node-architecture.md`.
     - DoD: Clear section explaining persistence choices and recovery.
 
-- Operational runbook
-    - What’s needed: Create `docs/runbook.md` covering env vars, health endpoints, graceful shutdown, queue metrics, and secret rotation basics.
-    - Where: `docs/runbook.md` (new).
+- Operational runbook [Done]
+    - What’s needed: `docs/runbook.md` covering env vars, health/readiness, shutdown notes, queue metrics.
+    - Where: `docs/runbook.md`.
     - DoD: Runbook exists and is referenced by deployment docs.
 
 - Update retry semantics in docs

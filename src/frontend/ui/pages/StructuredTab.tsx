@@ -219,7 +219,9 @@ export const StructuredTab: React.FC = () => {
                   <summary aria-expanded={showAdvanced}>Advanced options</summary>
                   <div style={{ marginBottom: 'var(--space-200)' }}>
                     <InfoCallout title="Existing nodes">
-                      Choose how existing items on the board are treated during layout. “Move into place” repositions items, “Use for layout” anchors them, and “Keep position” leaves them untouched.
+                      Choose how existing items on the board are treated during layout. “Move into
+                      place” repositions items, “Use for layout” anchors them, and “Keep position”
+                      leaves them untouched.
                     </InfoCallout>
                   </div>
                   <div style={{ display: 'grid', rowGap: 'var(--space-200)' }}>
@@ -253,10 +255,10 @@ export const StructuredTab: React.FC = () => {
                     value={existingMode}
                     onChange={(v) => setExistingMode(v as ExistingNodeMode)}
                   >
-                  <SelectOption value="move">Move into place</SelectOption>
-                  <SelectOption value="layout">Use for layout</SelectOption>
-                  <SelectOption value="ignore">Keep position</SelectOption>
-                </SelectField>
+                    <SelectOption value="move">Move into place</SelectOption>
+                    <SelectOption value="layout">Use for layout</SelectOption>
+                    <SelectOption value="ignore">Keep position</SelectOption>
+                  </SelectField>
                   <SelectField
                     label="Algorithm"
                     value={layoutOpts.algorithm}

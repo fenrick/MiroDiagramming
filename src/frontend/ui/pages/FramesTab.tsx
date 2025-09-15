@@ -2,7 +2,14 @@ import { Grid, IconLockClosed, IconPen, Text } from '@mirohq/design-system'
 import React from 'react'
 
 import { lockSelectedFrames, renameSelectedFrames } from '../../board/frame-tools'
-import { Button, ButtonToolbar, InputField, SidebarSection, EmptyState, InfoCallout } from '../components'
+import {
+  Button,
+  ButtonToolbar,
+  InputField,
+  SidebarSection,
+  EmptyState,
+  InfoCallout,
+} from '../components'
 import { StickyActions } from '../StickyActions'
 import { PageHelp } from '../components/PageHelp'
 import { TabPanel } from '../components/TabPanel'

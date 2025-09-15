@@ -55,3 +55,12 @@ CORS_ORIGINS='https://app.example.com,https://admin.example.com'
 ```
 
 List each origin explicitly. Wildcards can match subdomains, but avoid using `"*"` in production to restrict cross-origin access.
+
+### Health and Readiness Probes
+
+Configure your load balancer/orchestrator to use the following endpoints:
+
+- Liveness: `GET /healthz` (returns `{ status: 'ok' }` when the process is alive).
+- Readiness: `GET /readyz` (returns 200 only when the DB is reachable and the background change queue is idle; otherwise 503).
+
+The production server also serves the SPA. Its fallback is configured to exclude `/api/*` and `/healthz*` so probes and API routes do not resolve to the client `index.html`.

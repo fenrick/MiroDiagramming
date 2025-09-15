@@ -151,7 +151,8 @@ export const SearchTab: React.FC = () => {
       <SidebarSection title="Filters">
         <div style={{ marginBottom: 'var(--space-200)' }}>
           <InfoCallout title="Tips">
-            Combine type, tags, and colour to narrow matches. Toggle Regex for advanced patterns. Case and whole-word are applied client-side.
+            Combine type, tags, and colour to narrow matches. Toggle Regex for advanced patterns.
+            Case and whole-word are applied client-side.
           </InfoCallout>
         </div>
         <FilterDropdown

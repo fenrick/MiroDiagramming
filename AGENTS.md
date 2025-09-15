@@ -50,6 +50,15 @@ Environment
     - Optional: `PORT=4000`
     - Optional: `MIRO_WEBHOOK_SECRET=change-me` (verify `/api/webhook` signatures)
 
+Health and readiness
+
+- Liveness: `GET /healthz` returns `{ status: 'ok' }`.
+- Readiness: `GET /readyz` verifies DB connectivity and that the background change queue is idle; returns 503 if not ready.
+
+Notes
+
+- The backend serves the React app in development via Vite middleware and in production as static assets. The SPA fallback excludes `/api/*` and `/healthz*` paths so health probes and API calls do not resolve to `index.html`.
+
 ## Commits
 
 Follow Conventional Commits:
@@ -62,6 +71,7 @@ type(scope): short description
 
 - docs/node-architecture.md (authoritative)
 - docs/DEPLOYMENT.md
+- docs/runbook.md (operational)
 - docs/archive/python-architecture.md (legacy)
 
 ## Implementation Plan

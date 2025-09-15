@@ -90,6 +90,13 @@ Additional backend env:
 
 Use a schema validator (zod) to fail fast if vars are missing.
 
+Health and readiness endpoints used by orchestrators:
+
+- `GET /healthz` → liveness probe, always returns `{ status: 'ok' }` when the process is up.
+- `GET /readyz` → readiness probe, returns 200 when the database connection succeeds and the change queue is idle; otherwise 503 with a reason (`db` or `queue`).
+
+SPA fallback excludes `/api/*` and `/healthz*` so probes and API routes do not resolve to `index.html`.
+
 ## Database Access (Prisma)
 
 Import the generated Prisma Client where you need DB access:
@@ -198,6 +205,7 @@ Notes:
 
 - `miro.isAuthorized(userId)`, `miro.getAuthUrl()`, `miro.exchangeCodeForAccessToken(userId, code)`, and `miro.as(userId)` are the core methods to manage OAuth and access-token based calls.
 - Implement storage with a real database for production. The client auto-refreshes tokens.
+- The app issues a lightweight `userId` cookie (HTTP-only, same-site strict) to scope tokens per visitor. This cookie is not an authentication session.
 
 ## API Design (Parity with Current Python Endpoints)
 
@@ -248,7 +256,7 @@ We will map SQLAlchemy tables one-to-one and add migrations to preserve data.
 - Use Pino logger with request-id; structured logs
 - Background queues and services reuse Fastify's `app.log` for consistent redaction and correlation
 - Mask secrets; logger redacts Authorization, Cookie, and `x-miro-signature` headers
-- Miro API calls use exponential backoff on 429/5xx via `withMiroRetry`
+- Miro API calls use exponential backoff on 429/5xx via `withMiroRetry` with capped delay and small jitter to avoid lockstep retries.
 
 ## Security
 
@@ -279,6 +287,12 @@ We will map SQLAlchemy tables one-to-one and add migrations to preserve data.
 - Configure env (MIRO_CLIENT_ID/SECRET/REDIRECT_URL, DATABASE_URL, PORT)
 - Health check endpoint: `/healthz`
 - Readiness endpoint: `/readyz` (verifies DB connectivity and queue idle status)
+
+## Server Lifecycle
+
+- `buildApp()` composes the Fastify instance with middleware, routes, and queue configuration. Tests reuse this without opening a port using `app.inject`.
+- `startServer()` starts the HTTP listener and kicks off the background change queue workers. On `app.close()`, Prisma disconnects and the queue stops via Fastify `onClose`.
+- When deploying with a supervisor (Docker, systemd), send a graceful stop (`SIGTERM`) and wait for `/readyz` to report 503 before killing the process to avoid interrupting in-flight work.
 
 ## Backwards Compatibility
 

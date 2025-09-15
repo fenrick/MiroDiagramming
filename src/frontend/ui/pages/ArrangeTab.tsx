@@ -136,7 +136,8 @@ export const ArrangeTab: React.FC = () => {
       <SidebarSection title="Spacing">
         <div style={{ marginBottom: 'var(--space-200)' }}>
           <InfoCallout title="Mode">
-            Move keeps sizes and shifts items; Expand increases gaps by growing groups along the chosen axis.
+            Move keeps sizes and shifts items; Expand increases gaps by growing groups along the
+            chosen axis.
           </InfoCallout>
         </div>
         <Grid columns={2}>
