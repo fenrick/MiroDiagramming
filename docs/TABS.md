@@ -93,12 +93,13 @@ Shows a getting started guide and a collapsible changelog.
 
 ## Global Keyboard Shortcuts
 
-| Action     | Mac | Win/Linux |
-| ---------- | --- | --------- |
-| Undo       | ⌘Z  | CtrlZ     |
-| Redo       | ⌘⇧Z | Ctrl⇧Z    |
-| Copy Size  | ⌥C  | AltC      |
-| Apply Size | ⌥V  | AltV      |
+| Action          | Mac | Win/Linux |
+| --------------- | --- | --------- |
+| Undo            | ⌘Z  | CtrlZ     |
+| Redo            | ⌘⇧Z | Ctrl⇧Z    |
+| Copy Size       | ⌥C  | AltC      |
+| Apply Size      | ⌥V  | AltV      |
+| Command Palette | ⌘K  | CtrlK     |
 
 ## Board Actions
 

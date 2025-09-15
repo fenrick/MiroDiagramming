@@ -4,6 +4,7 @@ export interface Keybinding {
   readonly ctrl?: boolean
   readonly alt?: boolean
   readonly shift?: boolean
+  readonly meta?: boolean
   readonly key: string
   readonly onMatch: () => void
 }
@@ -21,7 +22,8 @@ export function useKeybinding(bindings: Keybinding[]) {
           key === b.key.toLowerCase() &&
           (b.ctrl ?? false) === e.ctrlKey &&
           (b.alt ?? false) === e.altKey &&
-          (b.shift ?? false) === e.shiftKey
+          (b.shift ?? false) === e.shiftKey &&
+          (b.meta ?? false) === e.metaKey
         ) {
           e.preventDefault()
           b.onMatch()

@@ -4,7 +4,7 @@ import * as React from 'react'
 import type { ExcelRow } from '../core/utils/excel-loader'
 import { AuthBanner } from '../components/AuthBanner'
 import { SyncStatusBar } from '../components/SyncStatusBar'
-import { EditMetadataModal, IntroScreen, Tooltip } from '../ui/components'
+import { CommandPalette, EditMetadataModal, IntroScreen, Tooltip } from '../ui/components'
 import { Paragraph } from '../ui/components/Paragraph'
 import { ExcelDataProvider } from '../ui/hooks/excel-data-context'
 import { useKeybinding } from '../core/hooks/useKeybinding'
@@ -28,6 +28,7 @@ function AppShell(): React.JSX.Element {
     const params = new URLSearchParams(window.location.search)
     return params.get('command') === 'edit-metadata'
   })
+  const [showPalette, setShowPalette] = React.useState(false)
   const tabIds = React.useMemo(() => TAB_DATA.map((t) => t[1]!), [])
   const kbRef = useKeybinding([
     {
@@ -36,6 +37,8 @@ function AppShell(): React.JSX.Element {
       key: 'm',
       onMatch: () => setShowMeta(true),
     },
+    { ctrl: true, key: 'k', onMatch: () => setShowPalette(true) },
+    { meta: true, key: 'k', onMatch: () => setShowPalette(true) },
     ...tabIds.map((_, i) => ({
       ctrl: true,
       alt: true,
@@ -45,6 +48,15 @@ function AppShell(): React.JSX.Element {
   ])
   const current = TAB_DATA.find((t) => t[1] === tab)!
   const CurrentComp = current[4]
+  const commands = React.useMemo(
+    () =>
+      TAB_DATA.map((t) => ({
+        id: `tab-${t[1]}`,
+        label: t[2],
+        action: () => setTab(t[1]!),
+      })),
+    [setTab],
+  )
 
   return (
     <ScrollArea>
@@ -85,6 +97,11 @@ function AppShell(): React.JSX.Element {
           <CurrentComp />
         </div>
         <EditMetadataModal isOpen={showMeta} onClose={() => setShowMeta(false)} />
+        <CommandPalette
+          isOpen={showPalette}
+          onClose={() => setShowPalette(false)}
+          commands={commands}
+        />
         <ToastContainer />
       </ExcelDataProvider>
     </ScrollArea>

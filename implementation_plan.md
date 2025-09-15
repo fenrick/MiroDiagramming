@@ -453,10 +453,15 @@ Guiding principle: configure and compose established frameworks (e.g., Fastify) 
     - Where: `src/frontend/pages/HelpTab.tsx`, new `src/frontend/ui/components/CoachMarks.tsx`, integrate with `App.tsx` first‑run check (board metadata / localStorage).
     - DoD: First open shows 3–5 step tour, skippable and never auto‑repeats; sample board creates non‑destructive widgets for demo.
 
-- Command palette and shortcuts [Planned]
+- Command palette and shortcuts [Done]
     - What’s needed: Add `Cmd/Ctrl+K` palette to run actions (search, layout, style presets, selection ops). Document shortcuts.
     - Where: `src/frontend/ui/components/CommandPalette.tsx` (new); wire into existing actions in `pages/` and hooks.
     - DoD: Palette opens with `Cmd/Ctrl+K`; arrow/Enter navigates; actions execute; help lists available shortcuts.
+
+- Expand command palette actions [Planned]
+    - What’s needed: Surface search, layout, style preset, and selection operations within the command palette.
+    - Where: `src/frontend/app/App.tsx`, `src/frontend/ui/components/CommandPalette.tsx`.
+    - DoD: Palette offers common actions beyond tab switching; tests cover each action.
 
 - Consistent panel IA and tabs [Planned]
     - What’s needed: Audit tab taxonomy; prioritize common tasks; reduce to 5–7 top‑level tabs; move advanced items to nested tabs with clear labels.

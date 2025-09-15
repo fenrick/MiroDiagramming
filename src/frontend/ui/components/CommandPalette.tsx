@@ -1,0 +1,98 @@
+import { styled } from '@mirohq/design-system'
+import React from 'react'
+
+import { Modal } from './Modal'
+
+export interface CommandItem {
+  readonly id: string
+  readonly label: string
+  readonly action: () => void
+}
+
+export interface CommandPaletteProps {
+  readonly isOpen: boolean
+  readonly onClose: () => void
+  readonly commands: readonly CommandItem[]
+}
+
+export function CommandPalette({
+  isOpen,
+  onClose,
+  commands,
+}: CommandPaletteProps): React.JSX.Element | null {
+  const [query, setQuery] = React.useState('')
+  const [index, setIndex] = React.useState(0)
+
+  const filtered = React.useMemo(
+    () => commands.filter((c) => c.label.toLowerCase().includes(query.toLowerCase())),
+    [commands, query],
+  )
+
+  React.useEffect(() => {
+    setIndex(0)
+  }, [query, isOpen])
+
+  const handleKey = React.useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault()
+        setIndex((i) => Math.min(i + 1, filtered.length - 1))
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault()
+        setIndex((i) => Math.max(i - 1, 0))
+      } else if (e.key === 'Enter') {
+        e.preventDefault()
+        filtered[index]?.action()
+        onClose()
+      }
+    },
+    [filtered, index, onClose],
+  )
+
+  return (
+    <Modal title="Command Palette" isOpen={isOpen} onClose={onClose} size="small">
+      <label htmlFor="command-input">Command</label>
+      <input
+        id="command-input"
+        autoFocus
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        onKeyDown={handleKey}
+      />
+      <List role="listbox">
+        {filtered.map((cmd, i) => (
+          <Item
+            key={cmd.id}
+            role="option"
+            aria-selected={i === index}
+            data-selected={i === index}
+            onMouseEnter={() => setIndex(i)}
+            onClick={() => {
+              cmd.action()
+              onClose()
+            }}
+          >
+            {cmd.label}
+          </Item>
+        ))}
+        {filtered.length === 0 && <Item>No commands</Item>}
+      </List>
+    </Modal>
+  )
+}
+
+const List = styled('ul', {
+  listStyle: 'none',
+  padding: 0,
+  margin: 0,
+  maxHeight: '200px',
+  overflowY: 'auto',
+})
+
+const Item = styled('li', {
+  padding: 'var(--space-100)',
+  cursor: 'pointer',
+  '&[data-selected=true]': {
+    background: 'var(--colors-background-tertiary)',
+  },
+})
