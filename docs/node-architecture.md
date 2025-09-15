@@ -29,7 +29,7 @@ This document defines the new end-to-end system design after removing the Python
 ```
 src/
   app.ts                   # Fastify app bootstrap
-  server.ts                # server lifecycle; exports createServer() and startServer
+  server.ts                # server lifecycle entrypoint
   config/
     env.ts                 # env var parsing (zod)
     logger.ts              # pino logger config
@@ -63,7 +63,7 @@ tsconfig.json
 vitest.config.ts
 ```
 
-`createServer()` builds the Fastify app and starts background workers without binding a port. `startServer()` wraps it to begin listening; tests can import `createServer()` and run requests via `app.inject` without opening a network port.
+Tests can import `buildApp()` and run requests via `app.inject` without opening a network port.
 
 ## Environment Configuration
 

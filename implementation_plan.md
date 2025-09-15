@@ -2,12 +2,14 @@
 
 Purpose: Track pending improvements and code quality actions. Do not remove items; mark them done as completed. Each item lists what’s needed, where it applies, and the definition of done (DoD).
 
+Guiding principle: configure and compose established frameworks (e.g., Fastify) instead of building a custom framework.
+
 ## Server Architecture & Lifecycle
 
-- Export `createServer()` for tests [Done]
-    - What’s needed: Expose a function to build the Fastify app without binding a port; have `startServer()` consume it.
-    - Where: `src/server.ts` (create/export `createServer`; refactor `startServer`).
-    - DoD: Integration tests can import `createServer()` and run requests without port binding; no behavior change for production start.
+- Expose `buildApp()` for tests [Done]
+    - What’s needed: Allow tests to construct the Fastify app without binding a port; avoid custom server wrappers.
+    - Where: `src/app.ts` exports `buildApp()`; `src/server.ts` starts the server directly.
+    - DoD: Integration tests import `buildApp()` and run requests via `app.inject` without network listeners.
 
 - Guard auto-start in entrypoint [Done]
     - What’s needed: Only auto-start server when the file is executed directly.
@@ -346,8 +348,8 @@ Purpose: Track pending improvements and code quality actions. Do not remove item
     - Where: `implementation_plan.md`.
     - DoD: Only pending work remains listed; updated alongside related PRs.
 
-- Document server refactor and lifecycle
-    - What’s needed: Describe `createServer`, start/stop, and signal handling in the Node architecture doc.
+- Document server lifecycle
+    - What’s needed: Describe server start/stop and signal handling in the Node architecture doc.
     - Where: `docs/node-architecture.md`.
     - DoD: Docs include lifecycle & signals section reflecting implemented behavior.
 
