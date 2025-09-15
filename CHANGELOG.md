@@ -1,5 +1,9 @@
 ## [1.21.3](https://github.com/fenrick/MiroDiagramming/compare/v1.21.2...v1.21.3) (2025-09-14)
 
+### Features
+
+* **server:** add security headers via helmet
+
 ### Refactor
 
 * **server:** export createServer and guard entrypoint
@@ -8,10 +12,12 @@
 ### Docs
 
 * update architecture docs and AGENTS for consolidated plan and createServer
+* note helmet usage in Node architecture
 
 ### Tests
 
 * add integration test for createServer
+* verify helmet adds standard security headers
 
 ## [1.21.2](https://github.com/fenrick/MiroDiagramming/compare/v1.21.1...v1.21.2) (2025-09-14)
 

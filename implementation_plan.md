@@ -31,7 +31,7 @@ Purpose: Track pending improvements and code quality actions. Do not remove item
 
 ## Security
 
-- Security headers via Helmet
+- Security headers via Helmet [Done]
     - What’s needed: Register `@fastify/helmet` with sensible defaults; disable in tests.
     - Where: `src/app.ts` (conditional on `NODE_ENV !== 'test'`).
     - DoD: Responses include standard security headers in non-test envs; no breakage observed.
