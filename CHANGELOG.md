@@ -1,3 +1,18 @@
+## [1.21.3](https://github.com/fenrick/MiroDiagramming/compare/v1.21.2...v1.21.3) (2025-09-14)
+
+### Refactor
+
+* **server:** export createServer and guard entrypoint
+* merge improvement plan into implementation plan
+
+### Docs
+
+* update architecture docs and AGENTS for consolidated plan and createServer
+
+### Tests
+
+* add integration test for createServer
+
 ## [1.21.2](https://github.com/fenrick/MiroDiagramming/compare/v1.21.1...v1.21.2) (2025-09-14)
 
 ### Refactor

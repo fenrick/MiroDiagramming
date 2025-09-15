@@ -9,7 +9,7 @@ Authoritative Node docs
 
 - docs/node-architecture.md – Node backend architecture and Miro integration
 - docs/migration-node-plan.md – migration plan and status
-- improvement_plan.md – prioritized quick wins and refactors (keep updated)
+- implementation_plan.md – consolidated backlog of improvements and refactors (keep updated)
 
 ## Project Structure
 
@@ -64,12 +64,12 @@ type(scope): short description
 - docs/DEPLOYMENT.md
 - docs/archive/python-architecture.md (legacy)
 
-## Improvement Plan
+## Implementation Plan
 
-- Consult `improvement_plan.md` for current quick wins and refactor backlog.
-- When you complete an item, remove it from the plan (the plan only lists pending work).
+- Consult `implementation_plan.md` for current improvements and refactor backlog.
+- When you complete an item, mark it as [Done] in the plan.
 - Prefer small, self-contained PRs; update the plan in the same change to keep it accurate.
 
 ## Code Review
 
-- During code review, capture any improvement ideas or refactor opportunities in `implementation_plan.md` (or `improvement_plan.md` if it’s a quick win) so the backlog stays current and actionable.
+- During code review, capture any improvement ideas or refactor opportunities in `implementation_plan.md` so the backlog stays current and actionable.
