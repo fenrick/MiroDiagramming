@@ -14,8 +14,14 @@ export function getLoggerOptions(): LoggerOptions {
           options: { translateTime: 'SYS:standard', colorize: true, singleLine: true },
         },
     redact: {
-      paths: ['req.headers.authorization', 'miro.*', 'tokens.*'],
-      remove: true,
+      paths: [
+        'req.headers.authorization',
+        'req.headers.cookie',
+        'req.headers["x-miro-signature"]',
+        'miro.*',
+        'tokens.*',
+      ],
+      censor: '[Redacted]',
     },
   }
 }

@@ -43,7 +43,7 @@ Guiding principle: configure and compose established frameworks (e.g., Fastify) 
     - Where: `src/routes/webhook.routes.ts` (route options/schema).
     - DoD: Route rejects invalid content types/oversized bodies; existing webhook tests pass.
 
-- Redact sensitive fields in logs
+- Redact sensitive fields in logs [Done]
     - What’s needed: Extend logger redaction to headers and tokens.
     - Where: `src/config/logger.ts` (`redact.paths` to include `req.headers['x-miro-signature']`, `req.headers.cookie`, `req.headers.authorization`).
     - DoD: Logs show `[Redacted]` for configured fields; no secrets leak in app logs.
