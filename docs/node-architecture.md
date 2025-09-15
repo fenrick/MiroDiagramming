@@ -206,7 +206,7 @@ Keep route semantics where possible, updating implementation:
 - `GET /api/cache/:boardId` → use CacheService + BoardRepo
 - `GET /api/boards/:id/tags` → TagService using DB + Miro if required
 - `POST /api/cards` and other existing routers → mirror functionality
-- `POST /api/webhook` → verify signature and enqueue work as needed
+- `POST /api/webhook` → verify signature and enqueue work as needed; accepts only `application/json` bodies up to 1 KB
 
 Cards pipeline:
 

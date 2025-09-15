@@ -80,4 +80,41 @@ describe('webhook route', () => {
     expect(webhookQueue.size()).toBe(0)
     await app.close()
   })
+
+  it('rejects unsupported content type', async () => {
+    const app = await buildApp()
+    await app.ready()
+    const raw = ''
+    const res = await app.inject({
+      method: 'POST',
+      url: '/api/webhook',
+      headers: {
+        'Content-Type': 'text/plain',
+        'X-Miro-Signature': sign(raw),
+      },
+      payload: Buffer.alloc(0),
+    })
+    expect(res.statusCode).toBe(415)
+    expect(res.json()).toEqual({
+      error: { message: 'Unsupported content type', code: 'UNSUPPORTED_MEDIA_TYPE' },
+    })
+    expect(webhookQueue.size()).toBe(0)
+    await app.close()
+  })
+
+  it('rejects payloads over the size limit', async () => {
+    const app = await buildApp()
+    await app.ready()
+    const big = 'x'.repeat(2000)
+    const obj = { events: [{ event: 'created', data: { big } }] }
+    const raw = JSON.stringify(obj)
+    const res = await request(app.server)
+      .post('/api/webhook')
+      .set('Content-Type', 'application/json')
+      .set('X-Miro-Signature', sign(raw))
+      .send(raw)
+    expect(res.status).toBe(413)
+    expect(webhookQueue.size()).toBe(0)
+    await app.close()
+  })
 })
