@@ -1,4 +1,5 @@
 import { afterAll, afterEach, vi } from 'vitest'
+import '@testing-library/jest-dom/vitest'
 
 // alias vi global to vitest for compatibility
 ;(globalThis as any).vi = vi
@@ -6,6 +7,15 @@ import { afterAll, afterEach, vi } from 'vitest'
 // Silence noisy console output from third-party libraries during tests
 const logSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
 const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+// Provide a minimal default miro global for tests that call apiFetch
+beforeEach(() => {
+  ;(globalThis as any).miro = {
+    board: {
+      getUserInfo: vi.fn().mockResolvedValue({ id: 'test-user' }),
+    },
+  }
+})
 
 // Reset mocks and clean up globals after every test
 afterEach(() => {

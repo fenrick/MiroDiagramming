@@ -7,6 +7,7 @@ import { SyncStatusBar } from '../components/SyncStatusBar'
 import { EditMetadataModal, IntroScreen, Tooltip } from '../ui/components'
 import { Paragraph } from '../ui/components/Paragraph'
 import { ExcelDataProvider } from '../ui/hooks/excel-data-context'
+import { useKeybinding } from '../core/hooks/useKeybinding'
 import { ToastContainer } from '../ui/components/Toast'
 import { PanelShell } from '../ui/PanelShell'
 import { ScrollArea } from '../ui/ScrollArea'
@@ -28,21 +29,20 @@ function AppShell(): React.JSX.Element {
     return params.get('command') === 'edit-metadata'
   })
   const tabIds = React.useMemo(() => TAB_DATA.map((t) => t[1]!), [])
-  React.useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.ctrlKey && e.altKey) {
-        const idx = parseInt(e.key, 10)
-        if (idx >= 1 && idx <= tabIds.length) {
-          setTab(tabIds[idx - 1]!)
-        }
-        if (e.key.toLowerCase() === 'm') {
-          setShowMeta(true)
-        }
-      }
-    }
-    window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  }, [tabIds])
+  const kbRef = useKeybinding([
+    {
+      ctrl: true,
+      alt: true,
+      key: 'm',
+      onMatch: () => setShowMeta(true),
+    },
+    ...tabIds.map((_, i) => ({
+      ctrl: true,
+      alt: true,
+      key: String(i + 1),
+      onMatch: () => setTab(tabIds[i]!),
+    })),
+  ])
   const current = TAB_DATA.find((t) => t[1] === tab)!
   const CurrentComp = current[4]
 
@@ -80,8 +80,10 @@ function AppShell(): React.JSX.Element {
           </Tabs.List>
         </Tabs>
         <SyncStatusBar />
-        <Paragraph>{current[3]}</Paragraph>
-        <CurrentComp />
+        <div ref={kbRef} tabIndex={0} aria-label="Panel content">
+          <Paragraph>{current[3]}</Paragraph>
+          <CurrentComp />
+        </div>
         <EditMetadataModal isOpen={showMeta} onClose={() => setShowMeta(false)} />
         <ToastContainer />
       </ExcelDataProvider>

@@ -304,7 +304,7 @@ Guiding principle: configure and compose established frameworks (e.g., Fastify) 
 
 - Keyboard shortcuts scoping
     - What’s needed: Scope global `window` keydown handlers (e.g., panel Ctrl+Alt+1..N in `App.tsx`) so they are active only when the panel is focused/visible; avoid conflicts with Miro shortcuts. Prefer event delegation within the panel root.
-    - Where: `src/frontend/app/App.tsx`, shared `useKeybinding` hook (new).
+    - Where: `src/frontend/app/App.tsx`, shared `useKeybinding` hook (new in `src/frontend/core/hooks/useKeybinding.ts`).
     - DoD: Keybindings work only when the app panel has focus; tests simulate focus changes and verify no global leakage.
 
 - Replace `document.getElementById` focus jumps with refs
@@ -339,7 +339,7 @@ Guiding principle: configure and compose established frameworks (e.g., Fastify) 
 
 - Jest‑DOM matchers and DS provider in tests
     - What’s needed: Import `@testing-library/jest-dom/vitest` in test setup; ensure components that rely on DS/Radix context are wrapped in minimal providers/mocks so tests don’t fail on internal assertions (e.g., SliderThumb within Slider).
-    - Where: `tests/client/setupTests.ts`, test utilities.
+    - Where: `tests/client/setupTests.ts` (added), test utilities.
     - DoD: Client test failures for `.toBeInTheDocument()` and Slider context are resolved; CI green.
     - What’s needed: Add `eslint-plugin-jsx-a11y` with recommended rules; fix high-signal violations.
     - Where: `package.json` devDependency and `eslint.config.mjs`; code in `src/frontend/**`.

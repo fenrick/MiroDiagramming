@@ -43,6 +43,7 @@ export function JobDrawer({ jobId, isOpen, onClose }: JobDrawerProps): JSX.Eleme
     return () => timers.forEach(clearTimeout)
   }, [job, hiddenOps])
 
+  const itemRefs = React.useRef<Record<string, HTMLLIElement | null>>({})
   React.useEffect(() => {
     if (!job) {
       return
@@ -51,7 +52,7 @@ export function JobDrawer({ jobId, isOpen, onClose }: JobDrawerProps): JSX.Eleme
     const failed = job.status === 'failed' || job.status === 'partial'
     if (failed) {
       const first = job.operations.find((op) => op.status === 'failed')
-      const el = first ? document.getElementById(`job-op-${first.id}`) : null
+      const el = first ? itemRefs.current[first.id] : null
       el?.focus()
     } else if (done && closeOnDone) {
       onClose()
@@ -102,7 +103,13 @@ export function JobDrawer({ jobId, isOpen, onClose }: JobDrawerProps): JSX.Eleme
             {job?.operations
               .filter((op) => !hiddenOps.has(op.id))
               .map((op) => (
-                <li key={op.id} id={`job-op-${op.id}`} tabIndex={-1}>
+                <li
+                  key={op.id}
+                  ref={(el) => {
+                    itemRefs.current[op.id] = el
+                  }}
+                  tabIndex={-1}
+                >
                   <span className="truncate" title={op.id}>
                     {op.id}
                   </span>
