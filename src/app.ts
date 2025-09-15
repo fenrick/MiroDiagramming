@@ -7,6 +7,7 @@ import fastifyCookie from '@fastify/cookie'
 import fastifyStatic from '@fastify/static'
 import fastifyCors from '@fastify/cors'
 import fastifyRawBody from 'fastify-raw-body'
+import fastifyHelmet from '@fastify/helmet'
 import type {} from '@fastify/static'
 
 import { loadEnv } from './config/env.js'
@@ -57,6 +58,10 @@ export async function buildApp() {
     encoding: false,
     runFirst: true,
   })
+
+  if (env.NODE_ENV !== 'test') {
+    await app.register(fastifyHelmet)
+  }
 
   // Simple userId cookie for session affinity (used later for Miro OAuth)
   // Ensure every request has a stable userId cookie set; used to scope Miro tokens.

@@ -18,6 +18,7 @@ This document defines the new end-to-end system design after removing the Python
 - Testing: Vitest or Jest + Supertest; c8 for coverage
 - Lint/Format: ESLint (typescript-eslint), Prettier
 - Git hooks: Husky + lint-staged
+- Security headers via `@fastify/helmet` (disabled in tests)
 
 ## UI/UX Alignment
 
