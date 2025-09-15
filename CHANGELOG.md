@@ -1,3 +1,17 @@
+## [1.21.4](https://github.com/fenrick/MiroDiagramming/compare/v1.21.3...v1.21.4) (2025-09-14)
+
+### Refactor
+
+* **server:** remove custom createServer helper and rely on buildApp
+
+### Docs
+
+* note framework configuration in plan and architecture docs
+
+### Tests
+
+* adjust helmet integration test to use buildApp
+
 ## [1.21.3](https://github.com/fenrick/MiroDiagramming/compare/v1.21.2...v1.21.3) (2025-09-14)
 
 ### Features

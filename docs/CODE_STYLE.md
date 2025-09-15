@@ -103,7 +103,7 @@ Non-goals: These rules are pragmatic. Prefer maintainability, safety, and clarit
     - Keep handlers thin; delegate to services. Validate inputs at the edge and return typed DTOs.
 
 - Lifecycle
-    - Provide `createServer()` for tests and graceful shutdown handlers for SIGINT/SIGTERM. Health endpoints: `/healthz/live` and `/healthz/ready`.
+    - Expose `buildApp()` for tests and provide graceful shutdown handlers for SIGINT/SIGTERM. Health endpoints: `/healthz/live` and `/healthz/ready`.
 
 ---
 
