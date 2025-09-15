@@ -3,14 +3,17 @@
 ### Security
 
 * **webhook:** enforce application/json content type and 1 KB body limit
+* **logger:** redact Authorization, Cookie, and x-miro-signature headers
 
 ### Docs
 
 * document webhook content-type and size limit
+* note logger redaction of sensitive headers
 
 ### Tests
 
 * cover webhook content-type and body limit
+* assert logger redacts sensitive headers
 
 ## [1.21.4](https://github.com/fenrick/MiroDiagramming/compare/v1.21.3...v1.21.4) (2025-09-14)
 
