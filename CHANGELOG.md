@@ -1,3 +1,17 @@
+## [1.21.5](https://github.com/fenrick/MiroDiagramming/compare/v1.21.4...v1.21.5) (2025-09-14)
+
+### Security
+
+* **webhook:** enforce application/json content type and 1 KB body limit
+
+### Docs
+
+* document webhook content-type and size limit
+
+### Tests
+
+* cover webhook content-type and body limit
+
 ## [1.21.4](https://github.com/fenrick/MiroDiagramming/compare/v1.21.3...v1.21.4) (2025-09-14)
 
 ### Refactor

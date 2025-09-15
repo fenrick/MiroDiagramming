@@ -38,7 +38,7 @@ Guiding principle: configure and compose established frameworks (e.g., Fastify) 
     - Where: `src/app.ts` (conditional on `NODE_ENV !== 'test'`).
     - DoD: Responses include standard security headers in non-test envs; no breakage observed.
 
-- Tighten webhook content-type and size
+- Tighten webhook content-type and size [Done]
     - What’s needed: Enforce `application/json`, set small `bodyLimit`, keep `rawBody` enabled for signature check.
     - Where: `src/routes/webhook.routes.ts` (route options/schema).
     - DoD: Route rejects invalid content types/oversized bodies; existing webhook tests pass.
