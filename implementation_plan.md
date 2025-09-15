@@ -550,3 +550,12 @@ Execution guidance:
 - Prefer small, reviewable PRs grouped by section above.
 - Add/update tests alongside behavior changes.
 - Keep changes minimal and avoid incidental refactors.
+- Test utilities for Miro SDK
+    - What’s needed: Provide a default `miro` global stub in test setup and helpers to customize board methods per test; add a `renderWithProviders` utility that applies theme classes and any required context providers.
+    - Where: `tests/client/setupTests.ts`, `tests/client/test-utils.tsx` (new).
+    - DoD: Client tests no longer fail with `miro is not defined`; components render under a consistent provider/theme wrapper.
+
+- Update existing tests for dialog semantics
+    - What’s needed: Align modal tests with explicit `role="dialog"` and aria attributes; avoid brittle assumptions about attributes.
+    - Where: `tests/client/modal.test.tsx` (updated).
+    - DoD: Modal tests pass and reflect current a11y semantics.
