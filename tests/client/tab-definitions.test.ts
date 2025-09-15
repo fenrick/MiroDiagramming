@@ -8,4 +8,12 @@ describe('tab-definitions', () => {
       shortcut: 'Ctrl+Alt+M',
     })
   })
+
+  test('includes command palette shortcut', () => {
+    expect(COMMANDS).toContainEqual({
+      id: 'command-palette',
+      label: 'Command Palette',
+      shortcut: 'Ctrl+K',
+    })
+  })
 })
