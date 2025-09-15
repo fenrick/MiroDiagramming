@@ -49,4 +49,4 @@ Phase 3 – Refinements
 
 ## Tracking
 
-- See `improvement_plan.md` under “UX Alignment (Aura) – Phase 1–3”.
+- See `implementation_plan.md` under “UX Alignment (Aura) – Phase 1–3”.

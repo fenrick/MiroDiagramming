@@ -3,15 +3,25 @@ import { loadEnv } from './config/env.js'
 import { changeQueue } from './queue/changeQueue.js'
 
 /**
+ * Build the Fastify server and start the background change queue without listening.
+ *
+ * @returns The Fastify instance and loaded environment.
+ */
+export async function createServer() {
+  const env = loadEnv()
+  const app = await buildApp()
+  changeQueue.start(env.QUEUE_CONCURRENCY)
+  return { app, env }
+}
+
+/**
  * Start the Fastify server and background change queue.
  *
  * @param port Optional port override. Defaults to the `PORT` value from the environment.
  * @returns The Fastify instance once it has started listening.
  */
 export async function startServer(port?: number) {
-  const env = loadEnv()
-  const app = await buildApp()
-  changeQueue.start(env.QUEUE_CONCURRENCY)
+  const { app, env } = await createServer()
   const listenPort = port ?? env.PORT
   await app.listen({ port: listenPort, host: '0.0.0.0' })
   app.log.info({ port: listenPort }, 'Server listening')
