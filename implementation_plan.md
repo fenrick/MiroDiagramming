@@ -288,6 +288,59 @@ Guiding principle: configure and compose established frameworks (e.g., Fastify) 
     - DoD: No default exports outside allowlist; no cycles via barrels.
 
 - React accessibility linting
+  [Planned]
+
+## Frontend UX Quality
+
+- BoardAdapter + Context (remove globals)
+    - What’s needed: Introduce `BoardAdapter` wrapping Miro Web SDK access and provide it via React context. Replace direct `globalThis.miro`/`window.miro` references in UI and hooks (`StructuredTab`, `templates.ts`, `user-auth.ts`, etc.) with the adapter.
+    - Where: `src/frontend/board/board-adapter.ts` (new), `src/frontend/app/App.tsx` provider, refactors under `src/frontend/**`.
+    - DoD: No `globalThis.miro` occurrences in app code; tests stub the adapter; typecheck and client tests pass.
+
+- Modal: replace custom trap with design-system dialog
+    - What’s needed: Swap the bespoke `Modal` for the design-system/Radix Dialog primitives (proper aria attributes, focus trap, ESC handling). Remove manual `keydown` listeners and `document.querySelector` logic in favor of library behavior.
+    - Where: `src/frontend/ui/components/Modal.tsx` and all consumers.
+    - DoD: Dialog opens/closes via props, traps focus, announces title; a11y tests cover ESC, Tab/Shift+Tab cycling, and backdrop click/Enter/Space to close.
+
+- Keyboard shortcuts scoping
+    - What’s needed: Scope global `window` keydown handlers (e.g., panel Ctrl+Alt+1..N in `App.tsx`) so they are active only when the panel is focused/visible; avoid conflicts with Miro shortcuts. Prefer event delegation within the panel root.
+    - Where: `src/frontend/app/App.tsx`, shared `useKeybinding` hook (new).
+    - DoD: Keybindings work only when the app panel has focus; tests simulate focus changes and verify no global leakage.
+
+- Replace `document.getElementById` focus jumps with refs
+    - What’s needed: In places like `JobDrawer`, store refs to items and move focus via ref rather than DOM id queries. Keep focus outlines visible for accessibility.
+    - Where: `src/frontend/components/JobDrawer.tsx` and similar.
+    - DoD: No `document.getElementById` in app code; tests verify focus moves to first failed op.
+
+- Non‑null assertions removal (frontend pass)
+    - What’s needed: Remove `!` assertions in `App.tsx` and other frontend files; add guards or invariant helpers to satisfy strict typing.
+    - Where: `src/frontend/**`.
+    - DoD: `rg "\!\]"` and `rg "!\)"` find zero meaningful non‑null assertions; typecheck passes.
+
+- A11y audit and tests
+    - What’s needed: Add targeted tests for roles, names, and live regions (e.g., `SyncStatusBar` uses `role="status"` with polite updates). Validate labels for all inputs and controls; ensure `summary` reflects `aria-expanded` state.
+    - Where: `tests/client/**` and component props in `src/frontend/ui/components/**`.
+    - DoD: a11y tests pass; no axe violations in critical screens (informational only if axe is added).
+
+- Debounce and timers hygiene
+    - What’s needed: Ensure all `setInterval`/`setTimeout` have cleanup paths; replace ad‑hoc debounce (e.g., search handlers) with a small `useDebouncedEffect` hook for consistency.
+    - Where: `src/frontend/components/SyncStatusBar.tsx`, `src/frontend/ui/hooks/use-search-handlers.ts`, others.
+    - DoD: Hook used consistently; tests assert timers are cleared on unmount.
+
+- Code splitting for tabs
+    - What’s needed: Lazy‑load heavy tabs (Structured, Excel) using `React.lazy` + `Suspense` with existing skeletons to reduce initial panel load.
+    - Where: `src/frontend/app/App.tsx`, `src/frontend/ui/pages/**`.
+    - DoD: Initial bundle decreases; skeletons render during lazy load; tests updated to await suspense.
+
+- Error boundary
+    - What’s needed: Wrap the panel with an error boundary that shows a friendly error with a “Try again” action and logs details (without PII).
+    - Where: `src/frontend/app/App.tsx` (new `ErrorBoundary` component under `ui/components`).
+    - DoD: Uncaught render errors show the boundary; tests simulate a throwing component and assert fallback UI.
+
+- Jest‑DOM matchers and DS provider in tests
+    - What’s needed: Import `@testing-library/jest-dom/vitest` in test setup; ensure components that rely on DS/Radix context are wrapped in minimal providers/mocks so tests don’t fail on internal assertions (e.g., SliderThumb within Slider).
+    - Where: `tests/client/setupTests.ts`, test utilities.
+    - DoD: Client test failures for `.toBeInTheDocument()` and Slider context are resolved; CI green.
     - What’s needed: Add `eslint-plugin-jsx-a11y` with recommended rules; fix high-signal violations.
     - Where: `package.json` devDependency and `eslint.config.mjs`; code in `src/frontend/**`.
     - DoD: a11y lint passes; obvious accessibility issues addressed.
