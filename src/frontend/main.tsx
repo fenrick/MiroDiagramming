@@ -1,5 +1,6 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
+import { flushSync } from 'react-dom'
 import { createTheme, themes } from '@mirohq/design-system'
 import { MiroProvider } from '@mirohq/websdk-react-hooks'
 
@@ -15,8 +16,12 @@ if (!isInMiro) {
 
 const container = document.getElementById('root')
 if (container) {
-  container.classList += lightThemeClassName
+  // Ensure theme class is appended correctly
+  container.classList.add(lightThemeClassName)
   const root = createRoot(container)
   const app = <App />
-  root.render(isInMiro ? <MiroProvider>{app}</MiroProvider> : app)
+  // Ensure markup is committed before tests assert on DOM
+  flushSync(() => {
+    root.render(isInMiro ? <MiroProvider>{app}</MiroProvider> : app)
+  })
 }
