@@ -30,6 +30,9 @@ export class BoardCache {
       log.trace('Fetching selection from board')
       // TODO replace direct board.getSelection usage with cached backend lookup
       const b = getBoard(board)
+      if (typeof (b as { getSelection?: unknown }).getSelection !== 'function') {
+        throw new Error('Miro board not available')
+      }
       this.selection = await b.getSelection()
       log.debug({ count: this.selection.length }, 'Selection cached')
     } else {
