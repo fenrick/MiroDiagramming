@@ -18,8 +18,26 @@ export async function withMiroRetry<T>(
       if (!retriable || i === attempts - 1) {
         throw err
       }
-      const backoff = baseDelayMs * 2 ** i
-      await delay(backoff)
+      // Respect Retry-After header if present (seconds or HTTP-date)
+      const headers = (err as { headers?: Record<string, unknown> })?.headers || {}
+      const retryAfter = headers['retry-after'] as string | number | undefined
+      let waitMs: number | undefined
+      if (retryAfter !== undefined) {
+        if (typeof retryAfter === 'number') {
+          waitMs = retryAfter * 1000
+        } else if (/^\d+(?:\.\d+)?$/.test(retryAfter)) {
+          waitMs = Math.ceil(parseFloat(retryAfter) * 1000)
+        } else if (!Number.isNaN(Date.parse(retryAfter))) {
+          waitMs = Math.max(0, Date.parse(retryAfter) - Date.now())
+        }
+      }
+      // Fallback to exponential backoff with small jitter
+      if (waitMs === undefined) {
+        const base = baseDelayMs * 2 ** i
+        const jitter = Math.floor(Math.random() * Math.min(100, base))
+        waitMs = base + jitter
+      }
+      await delay(waitMs)
     }
   }
   // Should never reach here
