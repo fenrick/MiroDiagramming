@@ -79,6 +79,7 @@ Additional backend env:
 - `SESSION_SECRET` (for cookie signatures)
 - `MIRO_WEBHOOK_SECRET` (signature validation for `/api/webhook`)
 - `MIRO_IDEMPOTENCY_CLEANUP_SECONDS` (interval for removing stale idempotency keys)
+- `STATIC_ROOT` (optional absolute path to built frontend assets; if unset, the server falls back to `src/web/dist` or `dist/web`)
 - Idempotency entries are indexed by `created_at` to speed up cleanup.
 - Webhook signatures are computed over the raw request body using `@fastify/raw-body`.
 - `DATABASE_URL` (e.g., `file:./dev.db`)

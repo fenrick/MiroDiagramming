@@ -66,6 +66,12 @@ const EnvSchema = z.object({
   QUEUE_BASE_DELAY_MS: z.coerce.number().int().positive().default(250),
   /** Upper bound for exponential backoff delay in milliseconds. */
   QUEUE_MAX_DELAY_MS: z.coerce.number().int().positive().default(5000),
+
+  /**
+   * Absolute path to the directory containing built static assets (index.html, JS, CSS).
+   * When unset, the server falls back to common locations under the repository root.
+   */
+  STATIC_ROOT: z.string().optional(),
 })
 
 type Env = z.infer<typeof EnvSchema>
@@ -92,6 +98,7 @@ export function loadEnv(): Env {
     QUEUE_MAX_RETRIES: process.env.QUEUE_MAX_RETRIES,
     QUEUE_BASE_DELAY_MS: process.env.QUEUE_BASE_DELAY_MS,
     QUEUE_MAX_DELAY_MS: process.env.QUEUE_MAX_DELAY_MS,
+    STATIC_ROOT: process.env.STATIC_ROOT,
   }
   const parsed = EnvSchema.safeParse(raw)
   if (!parsed.success) {
