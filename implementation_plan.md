@@ -70,6 +70,12 @@ Guiding principle: configure and compose established frameworks (e.g., Fastify) 
     - Where: `tests/integration/server/lifecycle.test.ts`.
     - DoD: Test reliably passes and prevents regressions in start/stop behavior.
 
+## Recent Maintenance
+
+- [Done] Remove deprecated Python backend sources under `src/miro_backend/**` and stray `__pycache__`.
+- [Done] Remove stale top-level `server/` folder to avoid confusion with `src/server.ts`.
+- [Done] Harden production static serving: add `STATIC_ROOT` env and fallbacks to `src/web/dist` and `dist/web`.
+
 ## Queue & Persistence
 
 - Persist pending `changeQueue` tasks across restarts

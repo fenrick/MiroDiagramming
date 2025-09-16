@@ -1,4 +1,5 @@
 import { fileURLToPath } from 'node:url'
+import fs from 'node:fs'
 import path from 'node:path'
 import { randomUUID } from 'node:crypto'
 
@@ -115,7 +116,31 @@ export async function buildApp() {
   // arbitrary paths resolve to the SPA entrypoint.
   if (process.env.NODE_ENV === 'production') {
     try {
-      const distPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../src/web/dist')
+      // Resolve static assets root using env override and sensible fallbacks.
+      // Priority:
+      //  1) Explicit STATIC_ROOT
+      //  2) Repo layout:   <repo>/src/web/dist
+      //  3) Build layout:  <repo>/dist/web
+      const distDir = path.dirname(fileURLToPath(import.meta.url))
+      const repoRoot = path.resolve(distDir, '..')
+      const candidates = [
+        process.env.STATIC_ROOT,
+        path.resolve(repoRoot, 'src/web/dist'),
+        path.resolve(repoRoot, 'dist/web'),
+      ].filter(Boolean) as string[]
+
+      const distPath = candidates.find((p) => {
+        try {
+          return fs.existsSync(p) && fs.statSync(p).isDirectory()
+        } catch {
+          return false
+        }
+      })
+
+      if (!distPath) {
+        app.log.warn('No static asset directory found for production serving')
+        throw new Error('missing-static-root')
+      }
       await app.register(fastifyStatic, {
         root: distPath,
         prefix: '/',
