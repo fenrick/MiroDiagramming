@@ -10,10 +10,13 @@ const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
 // Provide a minimal default miro global for tests that call apiFetch
 beforeEach(() => {
-  ;(globalThis as any).miro = {
-    board: {
-      getUserInfo: vi.fn().mockResolvedValue({ id: 'test-user' }),
-    },
+  // Only install a default stub if a test hasn't already provided one.
+  if (!(globalThis as any).miro) {
+    ;(globalThis as any).miro = {
+      board: {
+        getUserInfo: vi.fn().mockResolvedValue({ id: 'test-user' }),
+      },
+    }
   }
 })
 

@@ -70,8 +70,8 @@ export async function registerWithCurrentUser(client = new AuthClient()): Promis
     return
   }
   if (!miro.board) {
-    console.error('Miro board API not available')
-    throw new Error('Miro SDK not available')
+    console.warn('Miro board API not available')
+    return
   }
   const token = await miro.board.getIdToken()
   const user = await miro.board.getUserInfo()
