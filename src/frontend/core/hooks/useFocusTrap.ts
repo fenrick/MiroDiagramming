@@ -19,7 +19,7 @@ export function useFocusTrap<T extends HTMLElement>(
     }
     const container = ref.current
     const selector =
-      'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'
+      'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"]):not([role="toolbar"])'
 
     const getFocusable = (): HTMLElement[] =>
       Array.from(container.querySelectorAll<HTMLElement>(selector))
@@ -30,22 +30,15 @@ export function useFocusTrap<T extends HTMLElement>(
         onClose()
         return
       }
-      if (e.key !== 'Tab') {
-        return
-      }
+      if (e.key !== 'Tab') return
       const focusable = getFocusable()
-      if (focusable.length === 0) {
-        return
-      }
-      const first = focusable[0]!
-      const last = focusable[focusable.length - 1]!
-      if (e.shiftKey && document.activeElement === first) {
-        e.preventDefault()
-        last.focus()
-      } else if (!e.shiftKey && document.activeElement === last) {
-        e.preventDefault()
-        first.focus()
-      }
+      if (focusable.length === 0) return
+      e.preventDefault()
+      const current = document.activeElement as HTMLElement | null
+      const idx = Math.max(0, current ? focusable.findIndex((el) => el === current) : 0)
+      const delta = e.shiftKey ? -1 : 1
+      const nextIndex = (idx + delta + focusable.length) % focusable.length
+      focusable[nextIndex]!.focus()
     }
 
     container.addEventListener('keydown', handleKey)
