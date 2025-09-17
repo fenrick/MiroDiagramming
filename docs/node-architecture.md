@@ -88,6 +88,8 @@ Additional backend env:
 - `QUEUE_MAX_RETRIES` (per-task retry limit before dropping)
 - `QUEUE_BASE_DELAY_MS` (initial backoff delay in milliseconds)
 - `QUEUE_MAX_DELAY_MS` (upper bound for exponential backoff)
+- `QUEUE_WARN_LENGTH` (queue length that emits WARN logs; set ≤ 0 to disable)
+- `QUEUE_SHUTDOWN_TIMEOUT_MS` (milliseconds to wait for the queue to drain during graceful shutdown before timing out)
 
 Use a schema validator (zod) to fail fast if vars are missing.
 
@@ -97,6 +99,16 @@ Health and readiness endpoints used by orchestrators:
 - `GET /readyz` → readiness probe, returns 200 when the database connection succeeds and the change queue is idle; otherwise 503 with a reason (`db` or `queue`).
 
 SPA fallback excludes `/api/*` and `/healthz*` so probes and API routes do not resolve to `index.html`.
+
+## Server Lifecycle
+
+- `startServer()` in `src/server.ts` boots the Fastify instance, configures the
+  change queue, and listens on the configured port.
+- `registerGracefulShutdown()` attaches SIGINT/SIGTERM handlers that await
+  `app.close()`. The Fastify `onClose` hooks disconnect Prisma, stop the change
+  queue, and clear recurring timers before the process exits.
+- A forced exit is logged if the shutdown takes longer than 10 seconds or a
+  second termination signal arrives before the cleanup finishes.
 
 ## Database Access (Prisma)
 
@@ -253,6 +265,7 @@ We will map SQLAlchemy tables one-to-one and add migrations to preserve data.
 ## Error Handling & Logging
 
 - Central error middleware: map domain errors to HTTP
+- Shared error classes live in `src/config/domain-errors.ts`; throw these from routes/services to ensure consistent mapping.
 - Error responses consistently use `{ error: { message, code? } }`
 - Use Pino logger with request-id; structured logs
 - Background queues and services reuse Fastify's `app.log` for consistent redaction and correlation
@@ -293,6 +306,8 @@ We will map SQLAlchemy tables one-to-one and add migrations to preserve data.
 
 - `buildApp()` composes the Fastify instance with middleware, routes, and queue configuration. Tests reuse this without opening a port using `app.inject`.
 - `startServer()` starts the HTTP listener and kicks off the background change queue workers. On `app.close()`, Prisma disconnects and the queue stops via Fastify `onClose`.
+- Termination signals are handled by [`close-with-grace`](https://github.com/mcollina/close-with-grace); the helper invokes `app.close()` so all Fastify `onClose` hooks (Prisma disconnect, queue stop, timers) run before the process exits.
+- The change queue rejects new work once shutdown begins and waits for in-flight tasks to finish. `QUEUE_SHUTDOWN_TIMEOUT_MS` bounds how long Fastify waits for the queue to drain before logging a timeout and continuing teardown.
 - When deploying with a supervisor (Docker, systemd), send a graceful stop (`SIGTERM`) and wait for `/readyz` to report 503 before killing the process to avoid interrupting in-flight work.
 
 ## Backwards Compatibility
