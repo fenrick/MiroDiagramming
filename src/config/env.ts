@@ -1,5 +1,32 @@
 import { z } from 'zod'
 
+function createSourceListSchema(defaultSources: string[]) {
+  const defaultValue = defaultSources.join(' ')
+  return z
+    .string()
+    .default(defaultValue)
+    .transform((val) => {
+      const trimmed = val.trim()
+      if (!trimmed) {
+        return [...defaultSources]
+      }
+      try {
+        const parsed = JSON.parse(trimmed)
+        if (Array.isArray(parsed)) {
+          return parsed.map((entry) => entry.toString().trim()).filter(Boolean)
+        }
+      } catch {
+        // fall through to string split
+      }
+      return trimmed
+        .split(/[\s,]+/)
+        .map((entry) => entry.trim())
+        .filter(Boolean)
+    })
+}
+
+const defaultExternalSources = ["'self'", 'https://miro.com', 'https://*.miro.com']
+
 /**
  * Schema defining all supported environment variables.
  * Each property includes a description and default, ensuring
@@ -40,27 +67,11 @@ const EnvSchema = z.object({
    * Allowed parent frames for embedding this app. Accepts JSON array,
    * comma-separated or space-separated list. Defaults to self and Miro origins.
    */
-  FRAME_ANCESTORS: z
-    .string()
-    .default("'self' https://miro.com https://*.miro.com")
-    .transform((val) => {
-      const trimmed = val.trim()
-      if (!trimmed) {
-        return ["'self'"]
-      }
-      try {
-        const parsed = JSON.parse(trimmed)
-        if (Array.isArray(parsed)) {
-          return parsed.map((entry) => entry.toString().trim()).filter(Boolean)
-        }
-      } catch {
-        // fall through to string split
-      }
-      return trimmed
-        .split(/[\s,]+/)
-        .map((entry) => entry.trim())
-        .filter(Boolean)
-    }),
+  FRAME_ANCESTORS: createSourceListSchema(defaultExternalSources),
+  /** Allowed script sources used in CSP headers. */
+  SCRIPT_SRC: createSourceListSchema(defaultExternalSources),
+  /** Allowed connect sources (e.g. websockets) used in CSP headers. */
+  CONNECT_SRC: createSourceListSchema(defaultExternalSources),
 
   // Miro OAuth
   /** OAuth client identifier issued by Miro. */
@@ -123,6 +134,8 @@ export function loadEnv(): Env {
     LOG_LEVEL: process.env.LOG_LEVEL,
     CORS_ORIGINS: process.env.CORS_ORIGINS,
     FRAME_ANCESTORS: process.env.FRAME_ANCESTORS,
+    SCRIPT_SRC: process.env.SCRIPT_SRC,
+    CONNECT_SRC: process.env.CONNECT_SRC,
     MIRO_CLIENT_ID: process.env.MIRO_CLIENT_ID,
     MIRO_CLIENT_SECRET: process.env.MIRO_CLIENT_SECRET,
     MIRO_REDIRECT_URL: process.env.MIRO_REDIRECT_URL,

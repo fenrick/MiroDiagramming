@@ -25,9 +25,10 @@ describe('server lifecycle', () => {
       const res = await request(app.server).get('/healthz')
       expect(res.status).toBe(200)
       expect(res.body).toEqual({ status: 'ok' })
-      expect(res.headers['content-security-policy']).toContain(
-        "frame-ancestors 'self' https://miro.com https://*.miro.com",
-      )
+      const csp = res.headers['content-security-policy']
+      expect(csp).toContain("frame-ancestors 'self' https://miro.com https://*.miro.com")
+      expect(csp).toContain("script-src 'self' https://miro.com https://*.miro.com 'unsafe-inline' 'unsafe-eval'")
+      expect(csp).toContain("connect-src 'self' https://miro.com https://*.miro.com ws://localhost:* wss://localhost:*")
     } finally {
       await app?.close()
       process.env.NODE_ENV = originalNodeEnv

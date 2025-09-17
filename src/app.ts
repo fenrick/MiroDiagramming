@@ -62,11 +62,25 @@ export async function buildApp() {
   })
 
   if (env.NODE_ENV !== 'test') {
+    const scriptSrc = new Set(env.SCRIPT_SRC)
+    const connectSrc = new Set(env.CONNECT_SRC)
+    const styleSrc = new Set(["'self'", "'unsafe-inline'"])
+
+    if (env.NODE_ENV !== 'production') {
+      scriptSrc.add("'unsafe-inline'")
+      scriptSrc.add("'unsafe-eval'")
+      connectSrc.add('ws://localhost:*')
+      connectSrc.add('wss://localhost:*')
+    }
+
     await app.register(fastifyHelmet, {
       contentSecurityPolicy: {
         useDefaults: true,
         directives: {
           'frame-ancestors': env.FRAME_ANCESTORS,
+          'script-src': Array.from(scriptSrc),
+          'connect-src': Array.from(connectSrc),
+          'style-src': Array.from(styleSrc),
         },
       },
     })
