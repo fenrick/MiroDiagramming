@@ -1,3 +1,34 @@
+# [1.22.0](https://github.com/fenrick/MiroDiagramming/compare/v1.21.1...v1.22.0) (2025-09-17)
+
+
+### Bug Fixes
+
+* **board-cache:** throw friendly error when board lacks getSelection ([b1e2807](https://github.com/fenrick/MiroDiagramming/commit/b1e2807b73c6c5710ab23b037734a74192303cec))
+* **frontend:** resolve vite entry path ([251180d](https://github.com/fenrick/MiroDiagramming/commit/251180dcd32467b453f6073ecd3cefeab2092a80))
+* **ui:** exclude roving toolbar container from focus trap sequence ([33b1400](https://github.com/fenrick/MiroDiagramming/commit/33b140009fe3182c03abb76aef7dfbcf8221140a))
+
+
+### Features
+
+* **frontend:** add command palette ([76b54d3](https://github.com/fenrick/MiroDiagramming/commit/76b54d35c11e5238f0cc15f84272544d64af5a53))
+* **miro:** honor Retry-After and add jitter in withMiroRetry ([2d25e10](https://github.com/fenrick/MiroDiagramming/commit/2d25e10ce3f0556e6c278877d52ebb4596993187))
+* **queue:** drain change queue on shutdown ([c95e638](https://github.com/fenrick/MiroDiagramming/commit/c95e638721b0b800e10780795d5621816288e49d))
+* **server:** add SIGINT/SIGTERM graceful shutdown handling ([9aa468c](https://github.com/fenrick/MiroDiagramming/commit/9aa468cbc3da2d1fcb33ed875c30899d565fa701))
+* **server:** restore shapes routes and allow miro embedding ([ea1700e](https://github.com/fenrick/MiroDiagramming/commit/ea1700ea5f171d7263dc79064cb73875af197a5f))
+* **ui:** add InfoCallout and replace ad-hoc help text in StructuredTab ([4a4b43a](https://github.com/fenrick/MiroDiagramming/commit/4a4b43a14e0baef214556aa496bfbe1628cf48ac))
+* **ui:** add InfoCallout notes in Frames and advanced-options guidance in Structured ([d941389](https://github.com/fenrick/MiroDiagramming/commit/d94138960e428188b6313a6925d1d3fb24a34ecb))
+* **ui:** add InfoCallout tips to Style adjustments; add tips to Search/Arrange earlier; keep progressive Aura polish ([a17703e](https://github.com/fenrick/MiroDiagramming/commit/a17703ef91a89474cd2a42b4e32060619a3ad4fa))
+* **ui:** add inline tips via InfoCallout in Search filters and Arrange spacing ([893aca9](https://github.com/fenrick/MiroDiagramming/commit/893aca95b9902c5b13f570c756c79a4c40653982))
+* **ui:** add SidebarSection/EmptyState primitives and adopt in Help, Search, Style tabs ([ed732bc](https://github.com/fenrick/MiroDiagramming/commit/ed732bcd858b3856ef006398286a4b8fbc94050f))
+* **ui:** add Skeleton component and use for loading states ([7baf91e](https://github.com/fenrick/MiroDiagramming/commit/7baf91e9e7cf20aa69c615f57ab292ddfb5d8b3c))
+* **ui:** align more tabs with Aura sidebar primitives ([518b4f7](https://github.com/fenrick/MiroDiagramming/commit/518b4f77e887c3bfd051e6590ba9cd46ff5a5b91))
+* **ui:** group Structured advanced controls with grid row gaps; record Aura work in implementation_plan ([de9d8e4](https://github.com/fenrick/MiroDiagramming/commit/de9d8e42eb9d56e1a2c4a36924b249d18eee4e64))
+* **ui:** improve drawers a11y and loading states ([e90f78f](https://github.com/fenrick/MiroDiagramming/commit/e90f78fed850931e540bec548d674f3b45079c98))
+* **ui:** input spacing + excel tips ([2dd1c91](https://github.com/fenrick/MiroDiagramming/commit/2dd1c915253754af70a2f28fa6baeece26cdb9bf))
+* **ui:** sectioned UX for Structured and Excel tabs ([1c72277](https://github.com/fenrick/MiroDiagramming/commit/1c7227714a0b321af44406e89697b99872292b41))
+* **ui:** tighten section rhythm and scroll area padding; add list spacing for inline help ([5e73063](https://github.com/fenrick/MiroDiagramming/commit/5e730633fe3a6f95b51302991d104df1ecdac2ef))
+* **ux:** scoped keybindings and safer focus ([73031c9](https://github.com/fenrick/MiroDiagramming/commit/73031c95edc446b3d6f04d3b821efa98d9b74904))
+
 ## [1.21.5](https://github.com/fenrick/MiroDiagramming/compare/v1.21.4...v1.21.5) (2025-09-14)
 
 ### Security
