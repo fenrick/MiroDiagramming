@@ -66,6 +66,13 @@ const EnvSchema = z.object({
   QUEUE_BASE_DELAY_MS: z.coerce.number().int().positive().default(250),
   /** Upper bound for exponential backoff delay in milliseconds. */
   QUEUE_MAX_DELAY_MS: z.coerce.number().int().positive().default(5000),
+  /** Queue length that should trigger warning logs; set ≤ 0 to disable. */
+  QUEUE_WARN_LENGTH: z.coerce.number().int().default(25),
+  /**
+   * Maximum time in milliseconds to wait for the change queue to drain during
+   * shutdown before timing out.
+   */
+  QUEUE_SHUTDOWN_TIMEOUT_MS: z.coerce.number().int().positive().default(5000),
 
   /**
    * Absolute path to the directory containing built static assets (index.html, JS, CSS).
@@ -98,6 +105,8 @@ export function loadEnv(): Env {
     QUEUE_MAX_RETRIES: process.env.QUEUE_MAX_RETRIES,
     QUEUE_BASE_DELAY_MS: process.env.QUEUE_BASE_DELAY_MS,
     QUEUE_MAX_DELAY_MS: process.env.QUEUE_MAX_DELAY_MS,
+    QUEUE_WARN_LENGTH: process.env.QUEUE_WARN_LENGTH,
+    QUEUE_SHUTDOWN_TIMEOUT_MS: process.env.QUEUE_SHUTDOWN_TIMEOUT_MS,
     STATIC_ROOT: process.env.STATIC_ROOT,
   }
   const parsed = EnvSchema.safeParse(raw)

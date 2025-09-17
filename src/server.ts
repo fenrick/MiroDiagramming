@@ -1,6 +1,7 @@
 import { buildApp } from './app.js'
 import { loadEnv } from './config/env.js'
 import { changeQueue } from './queue/changeQueue.js'
+import { registerGracefulShutdown } from './server/shutdown.js'
 
 /**
  * Start the Fastify server and background change queue.
@@ -21,22 +22,7 @@ export async function startServer(port?: number) {
 if (import.meta.url === `file://${process.argv[1]}`) {
   startServer()
     .then((app) => {
-      let shuttingDown = false
-      const shutdown = async (signal: NodeJS.Signals) => {
-        if (shuttingDown) return
-        shuttingDown = true
-        app.log.info({ signal }, 'Shutting down')
-        try {
-          await app.close()
-          app.log.info('Server closed')
-          process.exit(0)
-        } catch (err) {
-          app.log.error({ err }, 'Error during shutdown')
-          process.exit(1)
-        }
-      }
-      process.on('SIGINT', shutdown)
-      process.on('SIGTERM', shutdown)
+      registerGracefulShutdown(app)
     })
     .catch((err) => {
       console.error(err)

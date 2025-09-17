@@ -160,7 +160,7 @@ export async function buildApp() {
       // ignore
     }
     try {
-      changeQueue.stop()
+      await changeQueue.stop({ timeoutMs: env.QUEUE_SHUTDOWN_TIMEOUT_MS })
     } catch {
       // ignore
     }
@@ -180,6 +180,7 @@ export async function buildApp() {
     baseDelayMs: env.QUEUE_BASE_DELAY_MS,
     maxDelayMs: env.QUEUE_MAX_DELAY_MS,
     maxRetries: env.QUEUE_MAX_RETRIES,
+    warnLength: env.QUEUE_WARN_LENGTH,
   })
 
   return app

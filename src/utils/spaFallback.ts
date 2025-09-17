@@ -1,6 +1,6 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 
-import { errorResponse } from '../config/error-response.js'
+import { NotFoundError } from '../config/domain-errors.js'
 
 /**
  * Registers a catch-all SPA fallback serving `index.html` for non-API routes.
@@ -15,7 +15,7 @@ export function registerSpaFallback(
   app.setNotFoundHandler((req, reply) => {
     const url = req.url || ''
     if (url.startsWith('/api') || url.startsWith('/healthz')) {
-      return reply.code(404).send(errorResponse('Not found', 'NOT_FOUND'))
+      throw new NotFoundError('Not found', 'NOT_FOUND')
     }
     return serveIndex(req, reply)
   })

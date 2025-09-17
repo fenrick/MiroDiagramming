@@ -16,17 +16,18 @@ Guiding principle: configure and compose established frameworks (e.g., Fastify) 
     - Where: `src/server.ts` using `if (require.main === module) { startServer() }`.
     - DoD: Running tests that import the module does not start a listener.
 
-- Graceful shutdown on SIGTERM/SIGINT
+- Graceful shutdown on SIGTERM/SIGINT [Done]
     - What’s needed: Signal handlers that `await app.close()` and stop background workers; make sure Fastify onClose hooks run.
     - Where: `src/server.ts` (signal handlers), `src/queue/changeQueue.ts` (stop hook if needed).
     - DoD: Sending SIGINT/SIGTERM closes the server cleanly and calls `changeQueue.stop()`; verified by lifecycle test.
+    - Notes: Implementation delegates signal wiring to the `close-with-grace` package so we do not maintain bespoke signal logic.
 
 - Health and readiness endpoints [Done]
     - What’s needed: Provide liveness and readiness probes suitable for containers.
     - Where: Implemented in `src/app.ts` as `GET /healthz` (liveness) and `GET /readyz` (readiness); SPA fallback excludes `/healthz*`.
     - DoD: `/healthz` returns `{ status: 'ok' }`; `/readyz` returns 200 only when DB connectivity succeeds and the change queue is idle, 503 on DB/queue issues.
 
-- Server lifecycle integration test
+- Server lifecycle integration test [Done]
     - What’s needed: Start server/app, hit `/healthz`, then trigger shutdown and assert queue stop called.
     - Where: `tests/integration/server/lifecycle.test.ts`.
     - DoD: Test passes reliably and guards start/stop regressions.
@@ -48,7 +49,7 @@ Guiding principle: configure and compose established frameworks (e.g., Fastify) 
     - Where: `src/config/logger.ts` (`redact.paths` to include `req.headers['x-miro-signature']`, `req.headers.cookie`, `req.headers.authorization`).
     - DoD: Logs show `[Redacted]` for configured fields; no secrets leak in app logs.
 
-- Domain error classes and mapping
+- Domain error classes and mapping [Done]
     - What’s needed: Define lightweight domain error classes with machine-readable `code` and centralize mapping to HTTP statuses (400/401/403/409/429) in the error handler.
     - Where: `src/config/error-response.ts`, `src/config/error-handler.ts`, thrown from services/routes.
     - DoD: Errors include codes; centralized handler maps to correct status/payload; tests assert mappings.
@@ -60,7 +61,7 @@ Guiding principle: configure and compose established frameworks (e.g., Fastify) 
     - Where: Implemented in `src/app.ts`.
     - DoD: `/healthz` 200 OK, `/readyz` 200 only when ready, 503 otherwise.
 
-- Queue backpressure visibility for operations
+- Queue backpressure visibility for operations [Done]
     - What’s needed: Emit structured logs/metrics for queue size and in‑flight counts; log WARN when queue length crosses a soft threshold; threshold configurable by env.
     - Where: `src/queue/changeQueue.ts`; configuration via env (e.g., `QUEUE_WARN_LENGTH`).
     - DoD: Logs contain queue metrics; WARN fires above threshold; threshold adjusted via env var.
@@ -83,7 +84,7 @@ Guiding principle: configure and compose established frameworks (e.g., Fastify) 
     - Where: `src/queue/changeQueue.ts` (persistence integration), `prisma/schema.prisma` (schema/migration), `src/config/db` helpers.
     - DoD: Tasks survive process restarts per documented policy; migration included; tests cover enqueue, dequeue, recovery on boot, and purge behavior.
 
-- Ensure queue drains or persists on shutdown
+- Ensure queue drains or persists on shutdown [Done]
     - What’s needed: On shutdown, stop accepting new work, finish in‑flight items, and either drain backlog or persist state for resumption.
     - Where: `src/queue/changeQueue.ts` and server lifecycle in `src/server.ts`.
     - DoD: Tests prove no tasks are lost or stuck; shutdown completes cleanly within a bounded time.

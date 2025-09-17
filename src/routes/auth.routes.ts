@@ -1,7 +1,7 @@
 import type { FastifyPluginAsync } from 'fastify'
 
 import { getMiro } from '../miro/miroClient.js'
-import { errorResponse } from '../config/error-response.js'
+import { BadRequestError } from '../config/domain-errors.js'
 
 export const registerAuthRoutes: FastifyPluginAsync = async (app) => {
   const loginHandler = async (
@@ -20,7 +20,7 @@ export const registerAuthRoutes: FastifyPluginAsync = async (app) => {
     const userId = req.userId
     const code = (req.query as Record<string, string> | undefined)?.code
     if (!code) {
-      return reply.code(400).send(errorResponse('Missing code', 'MISSING_CODE'))
+      throw new BadRequestError('Missing code', 'MISSING_CODE')
     }
     await getMiro().exchangeCodeForAccessToken(userId, code)
     return reply.redirect('/')

@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it } from 'vitest'
 import Fastify from 'fastify'
 
 import { registerErrorHandler } from '../../../src/config/error-handler.js'
+import { BadRequestError } from '../../../src/config/domain-errors.js'
 
 describe('error-handler', () => {
   afterEach(async () => {
@@ -38,6 +39,18 @@ describe('error-handler', () => {
     const res = await app.inject({ method: 'GET', url: '/boom' })
     expect(res.statusCode).toBe(418)
     expect(res.json()).toEqual({ error: { message: 'boom', code: 'TEAPOT' } })
+    await app.close()
+  })
+
+  it('maps domain errors to configured status and code', async () => {
+    const app = Fastify({ logger: false })
+    registerErrorHandler(app)
+    app.get('/domain', async () => {
+      throw new BadRequestError('bad', 'BAD_INPUT')
+    })
+    const res = await app.inject({ method: 'GET', url: '/domain' })
+    expect(res.statusCode).toBe(400)
+    expect(res.json()).toEqual({ error: { message: 'bad', code: 'BAD_INPUT' } })
     await app.close()
   })
 })

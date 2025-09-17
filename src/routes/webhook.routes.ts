@@ -2,9 +2,9 @@ import type { FastifyPluginAsync } from 'fastify'
 
 import { webhookQueue } from '../queue/webhookQueue.js'
 import type { WebhookPayload } from '../queue/webhookTypes.js'
-import { errorResponse } from '../config/error-response.js'
 import { loadEnv } from '../config/env.js'
 import { verifyWebhookSignature } from '../utils/webhookSignature.js'
+import { UnauthorizedError, UnsupportedMediaTypeError } from '../config/domain-errors.js'
 import type {} from 'fastify-raw-body'
 
 const webhookEventSchema = {
@@ -63,17 +63,15 @@ export const registerWebhookRoutes: FastifyPluginAsync = async (app) => {
       },
       // Enforce content-type and verify the request signature using HMAC-SHA256
       // over the raw request body.
-      preValidation: async (req, reply) => {
+      preValidation: async (req, _reply) => {
         const contentType = req.headers['content-type']
         if (contentType !== 'application/json') {
-          return reply
-            .code(415)
-            .send(errorResponse('Unsupported content type', 'UNSUPPORTED_MEDIA_TYPE'))
+          throw new UnsupportedMediaTypeError('Unsupported content type', 'UNSUPPORTED_MEDIA_TYPE')
         }
         const { MIRO_WEBHOOK_SECRET: secret } = loadEnv()
         const signature = req.headers['x-miro-signature'] as string | undefined
         if (!secret || !signature) {
-          return reply.code(401).send(errorResponse('Invalid signature', 'INVALID_SIGNATURE'))
+          throw new UnauthorizedError('Invalid signature', 'INVALID_SIGNATURE')
         }
         const rawBody = req.rawBody
         const raw =
@@ -81,9 +79,8 @@ export const registerWebhookRoutes: FastifyPluginAsync = async (app) => {
             ? rawBody
             : JSON.stringify(req.body)
         if (!verifyWebhookSignature(raw, secret, signature)) {
-          return reply.code(401).send(errorResponse('Invalid signature', 'INVALID_SIGNATURE'))
+          throw new UnauthorizedError('Invalid signature', 'INVALID_SIGNATURE')
         }
-        return undefined
       },
     },
     async (req, reply) => {
