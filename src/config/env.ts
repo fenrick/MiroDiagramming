@@ -72,6 +72,8 @@ const EnvSchema = z.object({
   SCRIPT_SRC: createSourceListSchema(defaultExternalSources),
   /** Allowed connect sources (e.g. websockets) used in CSP headers. */
   CONNECT_SRC: createSourceListSchema(defaultExternalSources),
+  /** Allowed worker sources used in CSP headers. */
+  WORKER_SRC: createSourceListSchema(defaultExternalSources),
 
   // Miro OAuth
   /** OAuth client identifier issued by Miro. */
@@ -136,6 +138,7 @@ export function loadEnv(): Env {
     FRAME_ANCESTORS: process.env.FRAME_ANCESTORS,
     SCRIPT_SRC: process.env.SCRIPT_SRC,
     CONNECT_SRC: process.env.CONNECT_SRC,
+    WORKER_SRC: process.env.WORKER_SRC,
     MIRO_CLIENT_ID: process.env.MIRO_CLIENT_ID,
     MIRO_CLIENT_SECRET: process.env.MIRO_CLIENT_SECRET,
     MIRO_REDIRECT_URL: process.env.MIRO_REDIRECT_URL,

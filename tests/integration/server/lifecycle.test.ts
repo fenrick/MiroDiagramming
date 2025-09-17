@@ -27,8 +27,13 @@ describe('server lifecycle', () => {
       expect(res.body).toEqual({ status: 'ok' })
       const csp = res.headers['content-security-policy']
       expect(csp).toContain("frame-ancestors 'self' https://miro.com https://*.miro.com")
-      expect(csp).toContain("script-src 'self' https://miro.com https://*.miro.com 'unsafe-inline' 'unsafe-eval'")
-      expect(csp).toContain("connect-src 'self' https://miro.com https://*.miro.com ws://localhost:* wss://localhost:*")
+      expect(csp).toContain(
+        "script-src 'self' https://miro.com https://*.miro.com 'unsafe-inline' 'unsafe-eval' blob:",
+      )
+      expect(csp).toContain(
+        "connect-src 'self' https://miro.com https://*.miro.com ws://localhost:* wss://localhost:*",
+      )
+      expect(csp).toContain("worker-src 'self' https://miro.com https://*.miro.com blob: data:")
     } finally {
       await app?.close()
       process.env.NODE_ENV = originalNodeEnv

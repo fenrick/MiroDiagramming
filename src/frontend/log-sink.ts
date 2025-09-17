@@ -1,5 +1,4 @@
-import { error as logError, warning as logWarning } from 'logfire'
-
+import { error as logError, warning as logWarning } from './logger'
 import { apiFetch } from './core/utils/api-fetch'
 
 export interface ClientLogEntry {

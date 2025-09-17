@@ -64,13 +64,17 @@ export async function buildApp() {
   if (env.NODE_ENV !== 'test') {
     const scriptSrc = new Set(env.SCRIPT_SRC)
     const connectSrc = new Set(env.CONNECT_SRC)
+    const workerSrc = new Set(env.WORKER_SRC)
     const styleSrc = new Set(["'self'", "'unsafe-inline'"])
 
     if (env.NODE_ENV !== 'production') {
       scriptSrc.add("'unsafe-inline'")
       scriptSrc.add("'unsafe-eval'")
+      scriptSrc.add('blob:')
       connectSrc.add('ws://localhost:*')
       connectSrc.add('wss://localhost:*')
+      workerSrc.add('blob:')
+      workerSrc.add('data:')
     }
 
     await app.register(fastifyHelmet, {
@@ -81,6 +85,7 @@ export async function buildApp() {
           'script-src': Array.from(scriptSrc),
           'connect-src': Array.from(connectSrc),
           'style-src': Array.from(styleSrc),
+          'worker-src': Array.from(workerSrc),
         },
       },
     })

@@ -1,40 +1,77 @@
+/* eslint-disable no-console */
 /**
- * Configure Logfire for the browser and expose Pino‑style helpers.
+ * Lightweight console-backed logger for the browser.
  *
  * The rest of the codebase expects logging functions with the signature
  * `log.info(obj, msg)` where the structured attributes are provided first.
- * Logfire uses the opposite order.  To minimise churn, small wrappers are
- * exported that accept either calling convention and forward to Logfire.
+ * These wrappers preserve that call style while emitting logs to the browser
+ * console so local development remains observable without pulling in the
+ * server-oriented Logfire dependency.
  */
-import {
-  configure,
-  info as lfInfo,
-  debug as lfDebug,
-  trace as lfTrace,
-  warning as lfWarning,
-  error as lfError,
-} from 'logfire'
-
-configure({
-  sendToLogfire: import.meta.env.VITE_LOGFIRE_SEND_TO_LOGFIRE === 'true',
-  serviceName: import.meta.env.VITE_LOGFIRE_SERVICE_NAME ?? 'miro-frontend',
-  console: import.meta.env.DEV ?? true, // enable console in dev
-})
 
 type Attrs = Record<string, unknown> | undefined
 
-function wrap(fn: (msg: string, attrs?: Attrs) => void) {
+const SERVICE = import.meta.env.VITE_LOGFIRE_SERVICE_NAME ?? 'miro-frontend'
+const ENABLE_CONSOLE = (import.meta.env.VITE_LOGFIRE_SEND_TO_LOGFIRE ?? 'false') !== 'true'
+
+function log(level: 'info' | 'debug' | 'trace' | 'warn' | 'error', message: string, attrs?: Attrs) {
+  if (!ENABLE_CONSOLE) {
+    return
+  }
+  const payload = attrs && Object.keys(attrs).length > 0 ? attrs : undefined
+  const prefix = `[${SERVICE}] ${message}`
+  switch (level) {
+    case 'info':
+      if (payload) {
+        console.info(prefix, payload)
+      } else {
+        console.info(prefix)
+      }
+      break
+    case 'debug':
+    case 'trace':
+      if (payload) {
+        console.debug(prefix, payload)
+      } else {
+        console.debug(prefix)
+      }
+      break
+    case 'warn':
+      if (payload) {
+        console.warn(prefix, payload)
+      } else {
+        console.warn(prefix)
+      }
+      break
+    case 'error':
+      if (payload) {
+        console.error(prefix, payload)
+      } else {
+        console.error(prefix)
+      }
+      break
+    default:
+      if (payload) {
+        console.log(prefix, payload)
+      } else {
+        console.log(prefix)
+      }
+      break
+  }
+}
+
+function wrap(level: 'info' | 'debug' | 'trace' | 'warn' | 'error') {
   return (a: string | Record<string, unknown>, b?: string | Record<string, unknown>) => {
     if (typeof a === 'string') {
-      fn(a, b as Attrs)
+      log(level, a, b as Attrs)
     } else {
-      fn(b as string, a)
+      log(level, b as string, a)
     }
   }
 }
 
-export const info = wrap(lfInfo)
-export const debug = wrap(lfDebug)
-export const trace = wrap(lfTrace)
-export const warning = wrap(lfWarning)
-export const error = wrap(lfError)
+export const info = wrap('info')
+export const debug = wrap('debug')
+export const trace = wrap('trace')
+export const warning = wrap('warn')
+export const error = wrap('error')

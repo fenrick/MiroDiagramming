@@ -1,5 +1,6 @@
 import { context, propagation } from '@opentelemetry/api'
-import { span } from 'logfire'
+
+import { span } from '../../telemetry'
 
 import { debugFlags } from './debug-flags'
 
