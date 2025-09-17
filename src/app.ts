@@ -20,6 +20,7 @@ import { registerAuthRoutes } from './routes/auth.routes.js'
 import { registerCardsRoutes } from './routes/cards.routes.js'
 import { registerTagsRoutes } from './routes/tags.routes.js'
 import { registerBoardsRoutes } from './routes/boards.routes.js'
+import { registerShapesRoutes } from './routes/shapes.routes.js'
 import { registerCacheRoutes } from './routes/cache.routes.js'
 import { registerLimitsRoutes } from './routes/limits.routes.js'
 import { registerWebhookRoutes } from './routes/webhook.routes.js'
@@ -61,7 +62,14 @@ export async function buildApp() {
   })
 
   if (env.NODE_ENV !== 'test') {
-    await app.register(fastifyHelmet)
+    await app.register(fastifyHelmet, {
+      contentSecurityPolicy: {
+        useDefaults: true,
+        directives: {
+          'frame-ancestors': env.FRAME_ANCESTORS,
+        },
+      },
+    })
   }
 
   // Simple userId cookie for session affinity (used later for Miro OAuth)
@@ -97,6 +105,7 @@ export async function buildApp() {
   await app.register(registerCardsRoutes)
   await app.register(registerTagsRoutes)
   await app.register(registerBoardsRoutes)
+  await app.register(registerShapesRoutes)
   await app.register(registerCacheRoutes)
   await app.register(registerLimitsRoutes)
   await app.register(registerWebhookRoutes)

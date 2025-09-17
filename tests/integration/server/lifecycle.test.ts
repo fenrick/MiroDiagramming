@@ -15,14 +15,22 @@ afterEach(() => {
 describe('server lifecycle', () => {
   it('serves health check and stops queue on shutdown', async () => {
     const stopSpy = vi.spyOn(changeQueue, 'stop')
-    const app = await startServer(0)
+    const originalNodeEnv = process.env.NODE_ENV
+    process.env.NODE_ENV = 'development'
 
+    let app
     try {
+      app = await startServer(0)
+
       const res = await request(app.server).get('/healthz')
       expect(res.status).toBe(200)
       expect(res.body).toEqual({ status: 'ok' })
+      expect(res.headers['content-security-policy']).toContain(
+        "frame-ancestors 'self' https://miro.com https://*.miro.com",
+      )
     } finally {
-      await app.close()
+      await app?.close()
+      process.env.NODE_ENV = originalNodeEnv
     }
 
     expect(stopSpy).toHaveBeenCalledTimes(1)

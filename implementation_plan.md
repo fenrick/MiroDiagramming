@@ -96,6 +96,11 @@ Guiding principle: configure and compose established frameworks (e.g., Fastify) 
 
 ## Miro API & Webhooks
 
+- Restore shapes REST endpoints [Done]
+    - What’s needed: Provide `/api/boards/:boardId/shapes` CRUD endpoints in the Node backend so the frontend ShapeClient can create, read, update, and delete widgets without falling back to legacy code.
+    - Where: `src/routes/shapes.routes.ts`, `src/app.ts`, supporting tests in `tests/integration/integration/shapes.test.ts`.
+    - DoD: Shape routes proxy to the Miro Node SDK for shapes and text items; integration tests cover create/read/update/delete; SPA imports succeed end-to-end.
+
 - Backoff jitter and Retry‑After support
     - What’s needed: Add full jitter to exponential backoff and honor `Retry-After` header values (seconds/date); respect 429/5xx semantics.
     - Where: `src/miro/retry.ts` (or retry helper), with logging of chosen delay and reason.

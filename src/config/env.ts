@@ -36,6 +36,32 @@ const EnvSchema = z.object({
     })
     .optional(),
 
+  /**
+   * Allowed parent frames for embedding this app. Accepts JSON array,
+   * comma-separated or space-separated list. Defaults to self and Miro origins.
+   */
+  FRAME_ANCESTORS: z
+    .string()
+    .default("'self' https://miro.com https://*.miro.com")
+    .transform((val) => {
+      const trimmed = val.trim()
+      if (!trimmed) {
+        return ["'self'"]
+      }
+      try {
+        const parsed = JSON.parse(trimmed)
+        if (Array.isArray(parsed)) {
+          return parsed.map((entry) => entry.toString().trim()).filter(Boolean)
+        }
+      } catch {
+        // fall through to string split
+      }
+      return trimmed
+        .split(/[\s,]+/)
+        .map((entry) => entry.trim())
+        .filter(Boolean)
+    }),
+
   // Miro OAuth
   /** OAuth client identifier issued by Miro. */
   MIRO_CLIENT_ID: z.string().optional(),
@@ -96,6 +122,7 @@ export function loadEnv(): Env {
     SESSION_SECRET: process.env.SESSION_SECRET,
     LOG_LEVEL: process.env.LOG_LEVEL,
     CORS_ORIGINS: process.env.CORS_ORIGINS,
+    FRAME_ANCESTORS: process.env.FRAME_ANCESTORS,
     MIRO_CLIENT_ID: process.env.MIRO_CLIENT_ID,
     MIRO_CLIENT_SECRET: process.env.MIRO_CLIENT_SECRET,
     MIRO_REDIRECT_URL: process.env.MIRO_REDIRECT_URL,
