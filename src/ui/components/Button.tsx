@@ -8,11 +8,8 @@ export type ButtonProps = Readonly<
     'variant' | 'size' | 'className' | 'style' | 'css'
   > & {
     variant?: 'primary' | 'secondary' | 'tertiary' | 'ghost' | 'danger'
-    /**
-     * Optional size override. When omitted, primary buttons default to
-     * `medium` and all others use `small`.
-     */
-    size?: 'small' | 'medium'
+    /** Optional size override. */
+    size?: 'small' | 'medium' | 'large' | 'x-large'
     /** Optional icon shown inside the button. */
     icon?: React.ReactNode
     /**
@@ -51,7 +48,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
   { variant = 'primary', size, icon, iconPosition = 'start', css, children, ...props },
   ref,
 ) {
-  const finalSize = size ?? (variant === 'primary' ? 'large' : 'medium')
+  const largeByDefault = variant === 'primary' || variant === 'secondary' || variant === 'danger'
+  const finalSize = size ?? (largeByDefault ? 'large' : 'medium')
 
   const { start, end } = getIconSlots(icon, iconPosition)
 

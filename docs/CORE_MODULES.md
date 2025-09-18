@@ -36,8 +36,6 @@ src/core/
     color-utils.ts
     excel-loader.ts
     file-utils.ts
-    graph-auth.ts
-    graph-client.ts
     tag-client.ts
     text-utils.ts
     unit-utils.ts
@@ -57,7 +55,6 @@ src/core/
 | graph/index.ts               | Bundle graph utilities for external use.            |
 | graph/layout-modes.ts        | Enumerate supported layout algorithms.              |
 | graph/undoable-processor.ts  | Base class adding undo support to processors.       |
-| user-auth.ts                 | Forward the board user's token to the backend.      |
 | layout/elk-layout.ts         | Run layout calculations using the ELK engine.       |
 | layout/elk-loader.ts         | Lazy-load the ELK WebAssembly bundle.               |
 | layout/elk-options.ts        | Provide user options for ELK layout algorithms.     |
@@ -71,8 +68,6 @@ src/core/
 | utils/exceljs-loader.ts      | Dynamically load ExcelJS from the CDN.              |
 | utils/excel-loader.ts        | Parse Excel files into row objects.                 |
 | utils/file-utils.ts          | Read and write local files for import/export.       |
-| utils/graph-auth.ts          | Handle OAuth login for the graph service.           |
-| utils/graph-client.ts        | Fetch graph data from the backend API.              |
 | utils/tag-client.ts          | Minimal client for board tag operations.            |
 | utils/text-utils.ts          | Read and write widget text content.                 |
 | utils/unit-utils.ts          | Unit conversion helpers for board measurements.     |

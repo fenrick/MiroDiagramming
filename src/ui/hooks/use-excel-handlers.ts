@@ -3,7 +3,7 @@ import { useDropzone } from 'react-dropzone'
 
 import { ColumnMapping, mapRowsToNodes } from '../../core/data-mapper'
 import { GraphProcessor } from '../../core/graph/graph-processor'
-import { excelLoader, ExcelRow, graphExcelLoader } from '../../core/utils/excel-loader'
+import { excelLoader, ExcelRow } from '../../core/utils/excel-loader'
 import { addMiroIds, downloadWorkbook } from '../../core/utils/workbook-writer'
 
 import { showError } from './notifications'
@@ -128,13 +128,4 @@ export async function handleLocalDrop(files: File[]): Promise<void> {
     return
   }
   await excelLoader.loadWorkbook(files[0]!)
-}
-
-/**
- * Fetch an Excel workbook referenced by a graph file.
- *
- * @param url - URL pointing to the hosted graph JSON.
- */
-export async function fetchRemoteWorkbook(url: string): Promise<void> {
-  await graphExcelLoader.loadWorkbookFromGraph(url)
 }

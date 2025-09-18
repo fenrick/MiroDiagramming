@@ -307,7 +307,7 @@ Guiding principle: compose established frontend tooling (Vite, React, Miro Web S
 ## Frontend UX Quality
 
 - BoardAdapter + Context (remove globals)
-    - What’s needed: Introduce `BoardAdapter` wrapping Miro Web SDK access and provide it via React context. Replace direct `globalThis.miro`/`window.miro` references in UI and hooks (`StructuredTab`, `templates.ts`, `user-auth.ts`, etc.) with the adapter.
+    - What’s needed: Introduce `BoardAdapter` wrapping Miro Web SDK access and provide it via React context. Replace direct `globalThis.miro`/`window.miro` references in UI and hooks (`StructuredTab`, `templates.ts`, etc.) with the adapter.
     - Where: `src/board/board-adapter.ts` (new), `src/app/App.tsx` provider, refactors under `src/**`.
     - DoD: No `globalThis.miro` occurrences in app code; tests stub the adapter; typecheck and client tests pass.
 

@@ -51,7 +51,7 @@ Environment
 
 Notes
 
-- Build output is static. When hosting behind nginx, use `src/web/default.conf.template`; no API proxying is required.
+- Build output is static. When hosting behind nginx, use `config/default.conf.template`; no API proxying is required.
 - All board access and mutations go through the Web SDK helpers under `src/board/**` and `src/core/utils/shape-client.ts`.
 
 ## Commits

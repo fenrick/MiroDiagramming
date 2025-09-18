@@ -2,8 +2,7 @@ import { Tabs } from '@mirohq/design-system'
 import * as React from 'react'
 
 import type { ExcelRow } from '../core/utils/excel-loader'
-import { AuthBanner } from '../components/AuthBanner'
-import { CommandPalette, EditMetadataModal, IntroScreen, Tooltip } from '../ui/components'
+import { CommandPalette, EditMetadataModal, Tooltip } from '../ui/components'
 import { Paragraph } from '../ui/components/Paragraph'
 import { ExcelDataProvider } from '../ui/hooks/excel-data-context'
 import { useKeybinding } from '../core/hooks/useKeybinding'
@@ -71,7 +70,6 @@ function AppShell(): React.JSX.Element {
           setTemplateColumn,
         }}
       >
-        <AuthBanner />
         <Tabs
           value={tab}
           onChange={(id: string) => {
@@ -106,16 +104,10 @@ function AppShell(): React.JSX.Element {
   )
 }
 
-/**
- * Root component that defers loading the main UI until the user
- * explicitly starts the session. This avoids initial Miro API calls
- * triggered by various tabs.
- */
 export const App: React.FC = () => {
-  const [started, setStarted] = React.useState(false)
   return (
     <PanelShell>
-      {started ? <AppShell /> : <IntroScreen onStart={() => setStarted(true)} />}
+      <AppShell />
     </PanelShell>
   )
 }

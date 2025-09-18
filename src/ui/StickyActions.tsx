@@ -1,4 +1,5 @@
 import React from 'react'
+import { Box } from '@mirohq/design-system'
 
 /**
  * Anchors action elements to the bottom of a panel while allowing
@@ -12,17 +13,17 @@ import React from 'react'
  */
 export function StickyActions({ children }: { children: React.ReactNode }): React.JSX.Element {
   return (
-    <div
-      style={{
+    <Box
+      css={{
         position: 'sticky',
         bottom: 0,
-        background: 'var(--mds-surface, #fff)',
-        borderTop: 'var(--border-widths-sm) solid var(--colors-gray-200)',
-        paddingTop: 'var(--space-200)',
-        paddingBottom: 'var(--space-200)',
+        background: '$background-neutrals',
+        borderTop: '1px solid $border-primary',
+        paddingTop: '$200',
+        paddingBottom: '$200',
       }}
     >
       {children}
-    </div>
+    </Box>
   )
 }

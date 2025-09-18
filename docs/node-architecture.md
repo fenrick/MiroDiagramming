@@ -28,14 +28,14 @@ src/
   core/        # Hooks, state, telemetry, data mappers
   stories/     # Optional storybook entries
   ui/          # Panel pages, hooks, and composite components
-  web/         # HTML entry points used by Vite build
+index.html     # Single HTML entry served by Vite
 ```
 
 There is no longer a `src/app.ts`, `src/server.ts`, or Fastify route tree. All imports of `fetch('/api/...')` have been removed or replaced with SDK calls.
 
 ## App Boot Flow
 
-1. `src/index.ts` logs startup and initialises `DiagramApp`.
+1. `src/main.tsx` logs startup and initialises `DiagramApp`.
 2. `DiagramApp` mounts the React panel (`App` component) when the user launches the app.
 3. Board interactions (selection, widget creation) use helpers under `src/board/` that wrap `miro.board` methods. When running outside Miro the helpers bail out and surface a friendly warning.
 
@@ -56,7 +56,7 @@ Telemetry events flow through `src/core/telemetry.ts` and log to the console (`s
 
 ## Auth & Rate Limits
 
-OAuth redirects and `/api/auth/status` checks have been removed. `useAuthStatus` assumes SDK access as the source of truth and exposes `signIn` as a best-effort call to `miro.board.openApp()` for convenience. Rate-limit polling endpoints were deleted along with the Fastify service; UI now reacts only to local optimistic state.
+There is no standalone authentication flow. The panel depends on being launched from within Miro, so Web SDK availability doubles as the access check. Former OAuth prompts, banners and backend polling endpoints were removed with the server. Rate-limit polling endpoints were deleted along with the Fastify service; the UI now reacts only to local optimistic state.
 
 ## Build & Deployment
 
@@ -64,7 +64,7 @@ OAuth redirects and `/api/auth/status` checks have been removed. `useAuthStatus`
 - `npm run build` → `vite build`
 - `npm run preview` → `vite preview`
 
-Output is a static bundle that can be served via `src/web/default.conf.template` (no API proxying required). Environment variables now use the `VITE_*` prefix and are consumed client-side.
+Output is a static bundle that can be served via `config/default.conf.template` (no API proxying required). Environment variables now use the `VITE_*` prefix and are consumed client-side.
 
 ## Testing Expectations
 

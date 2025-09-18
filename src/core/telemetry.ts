@@ -32,21 +32,11 @@ export interface RateLimitEncounteredEvent extends BaseEvent {
   retryAfterMs: number
 }
 
-export interface OauthPromptShownEvent extends BaseEvent {
-  type: 'oauth_prompt_shown'
-}
-
-export interface OauthCompletedEvent extends BaseEvent {
-  type: 'oauth_completed'
-}
-
 export type TelemetryEvent =
   | DiffShownEvent
   | BatchSubmittedEvent
   | JobCompletedEvent
   | RateLimitEncounteredEvent
-  | OauthPromptShownEvent
-  | OauthCompletedEvent
 
 /**
  * Sends telemetry events to the backend logging endpoint.
@@ -100,18 +90,4 @@ export async function rateLimitEncountered(
     type: 'rate_limit_encountered',
     ...params,
   } as RateLimitEncounteredEvent)
-}
-
-/**
- * Tracks display of the OAuth consent prompt.
- */
-export async function oauthPromptShown(): Promise<void> {
-  await post({ type: 'oauth_prompt_shown' })
-}
-
-/**
- * Tracks successful completion of OAuth consent.
- */
-export async function oauthCompleted(): Promise<void> {
-  await post({ type: 'oauth_completed' })
 }

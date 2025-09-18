@@ -15,7 +15,7 @@ The output lives under `dist/`.
 
 Upload the contents of `dist/` to your static host (Vercel, Netlify, S3 + CloudFront, nginx, etc). No Node.js runtime is required at runtime.
 
-If you use the provided nginx template (`src/web/default.conf.template`), mount the built assets at `/usr/share/nginx/html` and serve them directly.
+If you use the provided nginx template (`config/default.conf.template`), mount the built assets at `/usr/share/nginx/html` and serve them directly.
 
 ## 3. Environment Variables
 

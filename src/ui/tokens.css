@@ -21,7 +21,7 @@
   --white: var(--white);
   --black: var(--black);
   --primary-text-color: var(--colors-gray-900);
-  --size-drawer: 320px;
+  --size-drawer: 368px; /* Match Miro sidebar width */
   --size-modal-small: 300px;
   --size-modal-medium: 320px;
   --size-thumb: 24px;

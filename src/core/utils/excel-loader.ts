@@ -2,7 +2,6 @@ import type ExcelJS from 'exceljs'
 
 import { loadExcelJS } from './exceljs-loader'
 import { fileUtils } from './file-utils'
-import { GraphClient, graphClient } from './graph-client'
 
 /** Row object produced from a worksheet. */
 export interface ExcelRow {
@@ -155,25 +154,3 @@ export class ExcelLoader {
 
 /** Shared instance to avoid repetitive class creation. */
 export const excelLoader = new ExcelLoader()
-
-/**
- * Excel loader capable of fetching workbooks from OneDrive or SharePoint.
- */
-export class GraphExcelLoader extends ExcelLoader {
-  constructor(private readonly client: GraphClient = graphClient) {
-    super()
-  }
-
-  /**
-   * Load a workbook using the Microsoft Graph API.
-   *
-   * @param identifier - File share URL or drive item ID.
-   */
-  public async loadWorkbookFromGraph(identifier: string): Promise<void> {
-    const buffer = await this.client.fetchFile(identifier)
-    await this.loadArrayBuffer(buffer)
-  }
-}
-
-/** Shared instance for Graph-based loading. */
-export const graphExcelLoader = new GraphExcelLoader()

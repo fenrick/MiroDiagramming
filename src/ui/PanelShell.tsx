@@ -1,4 +1,5 @@
 import React from 'react'
+import { Box } from '@mirohq/design-system'
 
 /**
  * Constrains its children to the Miro panel dimensions.
@@ -7,16 +8,20 @@ import React from 'react'
  */
 export function PanelShell({ children }: { children: React.ReactNode }): React.JSX.Element {
   return (
-    <div
-      style={{
+    <Box
+      css={{
+        display: 'flex',
+        flexDirection: 'column',
+        flex: 1,
+        height: '100%',
         boxSizing: 'border-box',
         maxWidth: 'var(--size-drawer)',
-        paddingLeft: 'var(--space-300)',
-        paddingRight: 'var(--space-300)',
-        margin: '0 auto',
+        paddingLeft: '$100',
+        paddingRight: '$100',
+        margin: 0,
       }}
     >
       {children}
-    </div>
+    </Box>
   )
 }

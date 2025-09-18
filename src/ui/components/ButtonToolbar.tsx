@@ -1,5 +1,7 @@
-import { Toolbar } from '@mirohq/design-system'
+import { Flex } from '@mirohq/design-system'
 import React from 'react'
+
+import { Button as OurButton } from './Button'
 
 export interface ButtonToolbarProps {
   /** Optional className for container styling. */
@@ -13,12 +15,20 @@ export interface ButtonToolbarProps {
  */
 export function ButtonToolbar({ className, children }: ButtonToolbarProps): React.JSX.Element {
   return (
-    <Toolbar className={className} orientation="vertical">
-      {React.Children.map(children, (child, index) => (
-        <Toolbar.Item asChild key={index}>
-          {child as React.ReactElement}
-        </Toolbar.Item>
-      ))}
-    </Toolbar>
+    <Flex className={className} direction="column" gap={100}>
+      {React.Children.map(children, (child, index) => {
+        if (!React.isValidElement(child)) return child as React.ReactElement
+        // Make buttons full-width by default for readability in the panel
+        if (child.type === OurButton) {
+          return React.cloneElement(child, { fluid: true, key: index })
+        }
+        // Fallback: wrap unknown children in a block-level container
+        return (
+          <div key={index} style={{ width: '100%' }}>
+            {child as React.ReactElement}
+          </div>
+        )
+      })}
+    </Flex>
   )
 }

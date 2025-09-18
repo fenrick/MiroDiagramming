@@ -1,4 +1,5 @@
 import React from 'react'
+import { Primitive } from '@mirohq/design-system'
 
 /**
  * Wraps tab content with appropriate ARIA attributes.
@@ -15,7 +16,7 @@ export interface TabPanelProps extends React.ComponentPropsWithoutRef<'div'> {
  * remaining props to the underlying container.
  */
 export const TabPanel: React.FC<TabPanelProps> = ({ tabId, children, style, ...props }) => (
-  <div
+  <Primitive.div
     id={`panel-${tabId}`}
     role="tabpanel"
     aria-labelledby={`tab-${tabId}`}
@@ -23,5 +24,5 @@ export const TabPanel: React.FC<TabPanelProps> = ({ tabId, children, style, ...p
     {...props}
   >
     {children}
-  </div>
+  </Primitive.div>
 )

@@ -1,11 +1,10 @@
-import { DiagramApp } from './app/diagram-app'
-import * as log from './logger'
-
-async function start(): Promise<void> {
-  log.info('Starting application')
-  await DiagramApp.getInstance().init()
+async function init() {
+  miro.board.ui.on('icon:click', async () => {
+    await miro.board.ui.openPanel({ url: 'app.html' })
+  })
+  miro.board.ui.on('custom:edit-metadata', async () => {
+    await miro.board.ui.openPanel({ url: 'app.html?command=edit-metadata' })
+  })
 }
 
-start().catch((err) => log.error(err))
-
-export {}
+init()

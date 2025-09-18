@@ -70,8 +70,8 @@ export const StyleTab: React.FC = () => {
               >
                 <Slider.Track>
                   <Slider.Range />
+                  <Slider.Thumb />
                 </Slider.Track>
-                <Slider.Thumb />
               </Slider>
               <span
                 data-testid="adjust-preview"

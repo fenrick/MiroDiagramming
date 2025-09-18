@@ -94,11 +94,15 @@ export const ResizeTab: React.FC = () => {
   }, [])
 
   React.useEffect(() => {
+    // Reset displayed info on selection change unless in copy mode
+    if (copiedSize) return
     const first = selection[0] as { width?: number; height?: number } | undefined
     if (first && typeof first.width === 'number' && typeof first.height === 'number') {
       setSize({ width: first.width, height: first.height })
     }
-  }, [selection])
+    setWarning('')
+    setRatio('none')
+  }, [selection, copiedSize])
 
   React.useEffect(() => {
     if (ratio === 'none') {
@@ -127,6 +131,14 @@ export const ResizeTab: React.FC = () => {
   return (
     <TabPanel tabId="size">
       <PageHelp content="Adjust size manually or copy from selection" />
+      {copiedSize ? (
+        <SidebarSection title="Copy mode">
+          <Paragraph>
+            Using copied size {copiedSize.width}×{copiedSize.height}. Clear to resume syncing with
+            selection.
+          </Paragraph>
+        </SidebarSection>
+      ) : null}
       {selection.length === 0 ? (
         <EmptyState title="No selection" description="Select one or more items to resize." />
       ) : null}
@@ -182,7 +194,16 @@ export const ResizeTab: React.FC = () => {
           <Grid.Item>
             <div>
               {(['S', 'M', 'L'] as const).map((p) => (
-                <Button key={p} onClick={() => setSize(PRESET_SIZES[p])} variant="secondary">
+                <Button
+                  key={p}
+                  onClick={async () => {
+                    const next = PRESET_SIZES[p]
+                    setCopiedSize(null)
+                    setSize(next)
+                    await applySizeToSelection(next)
+                  }}
+                  variant="secondary"
+                >
                   {p}
                 </Button>
               ))}
@@ -208,11 +229,11 @@ export const ResizeTab: React.FC = () => {
           </Button>
           <Button
             onClick={copiedSize ? resetCopy : copy}
-            variant="secondary"
+            variant={copiedSize ? 'danger' : 'secondary'}
             iconPosition="start"
             icon={copiedSize ? <IconArrowArcLeft /> : <IconSquaresTwoOverlap />}
           >
-            <Text>{copiedSize ? 'Reset Copy' : 'Copy Size'}</Text>
+            <Text>{copiedSize ? 'Clear Copy Mode' : 'Copy Size'}</Text>
           </Button>
         </ButtonToolbar>
       </StickyActions>

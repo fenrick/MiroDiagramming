@@ -27,31 +27,6 @@ await excelLoader.loadWorkbook(file);
 const rows = excelLoader.loadSheet('Sheet1');
 ```
 
-### Loading from OneDrive/SharePoint via Microsoft Graph
-
-When workbooks live in OneDrive or SharePoint, use `GraphExcelLoader` to fetch
-them through the Microsoft Graph API. Begin by redirecting the user to Azure AD
-to acquire an access token. Once authorised you can pass either a share link or
-a drive item ID to `loadWorkbookFromGraph`:
-
-```ts
-import { graphExcelLoader } from '../core/utils/excel-loader'
-import { graphAuth } from '../core/utils/graph-auth'
-
-// handleRedirect() validates the stored OAuth state
-graphAuth.handleRedirect()
-if (!graphAuth.getToken()) {
-    // login() generates an OAuth state value for security
-    graphAuth.login('<client id>', ['Files.Read'], window.location.href)
-}
-await graphExcelLoader.loadWorkbookFromGraph('https://contoso.sharepoint.com/:x:/r/site/doc.xlsx')
-// alternatively
-// await graphExcelLoader.loadWorkbookFromGraph('01B2LJ6UYA6XC7YQO3FBD2I7RBXWJKG6SY');
-```
-
-The loader exposes the same helpers as `ExcelLoader` so the remainder of the
-workflow is identical.
-
 ---
 
 ## 2 Column Mapping & Template Selection
@@ -92,7 +67,7 @@ sidebar, allowing quick edits. Changes invoke the callback provided by
 
 Use the **Edit Metadata** board action to update cell values directly on the
 board. Trigger the command from the context menu or press `Ctrl+Alt+M`. The
-action opens `app.html?command=edit-metadata`, displaying a modal with the
+action opens `index.html?command=edit-metadata`, displaying a modal with the
 selected row's fields. After editing, `ExcelSyncService` writes the changes back
 to the workbook.
 

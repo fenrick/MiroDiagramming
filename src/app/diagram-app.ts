@@ -8,6 +8,29 @@ export class DiagramApp {
 
   private constructor() {}
 
+  private async waitForBoardUi(): Promise<NonNullable<typeof miro.board.ui>> {
+    return new Promise((resolve, reject) => {
+      let attempts = 0
+      const maxAttempts = 200
+
+      const check = () => {
+        const ui = miro?.board?.ui
+        if (ui) {
+          resolve(ui)
+          return
+        }
+        attempts += 1
+        if (attempts > maxAttempts) {
+          reject(new Error('Timed out waiting for Miro board UI'))
+          return
+        }
+        window.setTimeout(check, 50)
+      }
+
+      check()
+    })
+  }
+
   /** Retrieve the shared instance of the app. */
   public static getInstance(): DiagramApp {
     if (!DiagramApp.instance) {
@@ -23,19 +46,16 @@ export class DiagramApp {
       typeof window === 'undefined' ||
       typeof (window as Window & { miro?: unknown }).miro === 'undefined'
     ) {
-      console.warn('Miro SDK not loaded; are you opening index.html outside Miro?')
+      console.warn('Miro SDK not loaded; are you opening the panel outside Miro?')
       return
     }
-    if (!miro?.board?.ui) {
-      log.error('Miro board UI not available')
-      throw new Error('Miro SDK not available')
-    }
-    miro.board.ui.on('icon:click', async () => {
+    const boardUi = await this.waitForBoardUi()
+    boardUi.on('icon:click', async () => {
       log.trace('Icon clicked')
       await miro.board.ui.openPanel({ url: 'app.html' })
     })
     log.debug('Registered icon:click handler')
-    miro.board.ui.on('custom:edit-metadata', async () => {
+    boardUi.on('custom:edit-metadata', async () => {
       log.trace('Edit metadata command received')
       await miro.board.ui.openPanel({ url: 'app.html?command=edit-metadata' })
     })

@@ -2,13 +2,7 @@ import { IconPlus, Text } from '@mirohq/design-system'
 import React from 'react'
 
 import { templateManager } from '../../board/templates'
-import {
-  excelLoader,
-  ExcelLoader,
-  ExcelRow,
-  graphExcelLoader,
-  GraphExcelLoader,
-} from '../../core/utils/excel-loader'
+import { excelLoader, ExcelRow } from '../../core/utils/excel-loader'
 import {
   Button,
   ButtonToolbar,
@@ -27,54 +21,22 @@ import { mapRowsToNodes, ColumnMapping } from '../../core/data-mapper'
 import { TabPanel } from '../components/TabPanel'
 import { useExcelData } from '../hooks/excel-data-context'
 import { showError } from '../hooks/notifications'
-import {
-  fetchRemoteWorkbook,
-  handleLocalDrop,
-  useExcelCreate,
-  useExcelDrop,
-} from '../hooks/use-excel-handlers'
+import { handleLocalDrop, useExcelCreate, useExcelDrop } from '../hooks/use-excel-handlers'
 import { useExcelSync } from '../hooks/use-excel-sync'
 import { StickyActions } from '../StickyActions'
 
 import type { TabTuple } from './tab-definitions'
 
-// prettier-ignore
-type LoaderStateDispatch = React.Dispatch<React.SetStateAction<ExcelLoader | GraphExcelLoader>>;
-
-/**
- * Remote workbook loader with error handling.
- */
-async function handleRemote(
-  remote: string,
-  setLoader: LoaderStateDispatch,
-  setFile: React.Dispatch<React.SetStateAction<File | null>>,
-  setSource: React.Dispatch<React.SetStateAction<string>>,
-  setRows: React.Dispatch<React.SetStateAction<ExcelRow[]>>,
-  setSelected: React.Dispatch<React.SetStateAction<Set<number>>>,
-): Promise<void> {
-  try {
-    await fetchRemoteWorkbook(remote)
-    setLoader(graphExcelLoader)
-    setFile(null)
-    setSource('')
-    setRows([])
-    setSelected(new Set())
-  } catch (e) {
-    await showError(String(e))
-  }
-}
-
 function loadRowsFromSource(
-  loader: ExcelLoader | GraphExcelLoader,
   source: string,
   setRows: React.Dispatch<React.SetStateAction<ExcelRow[]>>,
   setSelected: React.Dispatch<React.SetStateAction<Set<number>>>,
 ): void {
   try {
     if (source.startsWith('sheet:')) {
-      setRows(loader.loadSheet(source.slice(6)))
+      setRows(excelLoader.loadSheet(source.slice(6)))
     } else if (source.startsWith('table:')) {
-      setRows(loader.loadNamedTable(source.slice(6)))
+      setRows(excelLoader.loadNamedTable(source.slice(6)))
     }
     setSelected(new Set())
   } catch (e) {
@@ -108,20 +70,16 @@ function useExcelDataSync(
 }
 
 function useDropHandler(
-  setLoader: LoaderStateDispatch,
   setFile: React.Dispatch<React.SetStateAction<File | null>>,
   setSource: React.Dispatch<React.SetStateAction<string>>,
   setRows: React.Dispatch<React.SetStateAction<ExcelRow[]>>,
   setSelected: React.Dispatch<React.SetStateAction<Set<number>>>,
 ) {
-  return useExcelDrop((files) =>
-    handleDrop(files, setLoader, setFile, setSource, setRows, setSelected),
-  )
+  return useExcelDrop((files) => handleDrop(files, setFile, setSource, setRows, setSelected))
 }
 
 async function handleDrop(
   files: File[],
-  setLoader: LoaderStateDispatch,
   setFile: React.Dispatch<React.SetStateAction<File | null>>,
   setSource: React.Dispatch<React.SetStateAction<string>>,
   setRows: React.Dispatch<React.SetStateAction<ExcelRow[]>>,
@@ -130,7 +88,6 @@ async function handleDrop(
   try {
     await handleLocalDrop(files)
     const f = files[0] ?? null
-    setLoader(excelLoader)
     setFile(f)
     setSource('')
     setRows([])
@@ -168,24 +125,23 @@ export const ExcelTab: React.FC = () => {
 
 interface ExcelTabState {
   file: File | null
-  remote: string
+  setFile: React.Dispatch<React.SetStateAction<File | null>>
   source: string
   rows: ExcelRow[]
+  setRows: React.Dispatch<React.SetStateAction<ExcelRow[]>>
   selected: Set<number>
+  setSelected: React.Dispatch<React.SetStateAction<Set<number>>>
   idColumn: string
   labelColumn: string
   templateColumn: string
   template: string
-  loader: ExcelLoader | GraphExcelLoader
   dropzone: ReturnType<typeof useExcelDrop>['dropzone']
   style: React.CSSProperties
   columns: string[]
-  fetchRemote: () => Promise<void>
   loadRows: () => void
   toggle: (idx: number) => void
   handleCreate: () => void
   updateRow: (index: number, updated: ExcelRow) => void
-  setRemote: (v: string) => void
   setSource: (v: string) => void
   setTemplate: (v: string) => void
   setLabelColumn: (v: string) => void
@@ -196,7 +152,6 @@ interface ExcelTabState {
 function useExcelTabData() {
   const data = useExcelData()
   const [file, setFile] = React.useState<File | null>(null)
-  const [remote, setRemote] = React.useState('')
   const [source, setSource] = React.useState('')
   const [rows, setRows] = React.useState<ExcelRow[]>(data?.rows ?? [])
   const [selected, setSelected] = React.useState(new Set<number>())
@@ -204,7 +159,6 @@ function useExcelTabData() {
   const [labelColumn, setLabelColumn] = React.useState(data?.labelColumn ?? '')
   const [templateColumn, setTemplateColumn] = React.useState(data?.templateColumn ?? '')
   const [template, setTemplate] = React.useState('Motivation')
-  const [loader, setLoader] = React.useState<ExcelLoader | GraphExcelLoader>(excelLoader)
 
   useExcelDataSync(data, rows, idColumn, labelColumn, templateColumn)
 
@@ -212,8 +166,6 @@ function useExcelTabData() {
     data,
     file,
     setFile,
-    remote,
-    setRemote,
     source,
     setSource,
     rows,
@@ -228,20 +180,15 @@ function useExcelTabData() {
     setTemplateColumn,
     template,
     setTemplate,
-    loader,
-    setLoader,
   }
 }
 
 function useExcelTabHandlers(state: ReturnType<typeof useExcelTabData>) {
   const {
-    remote,
-    setLoader,
     setFile,
     setSource,
     setRows,
     setSelected,
-    loader,
     source,
     rows,
     selected,
@@ -253,16 +200,11 @@ function useExcelTabHandlers(state: ReturnType<typeof useExcelTabData>) {
     setRows: updateRows,
   } = state
 
-  const fetchRemote = React.useCallback(
-    (): Promise<void> => handleRemote(remote, setLoader, setFile, setSource, setRows, setSelected),
-    [remote, setFile, setLoader, setRows, setSelected, setSource],
-  )
-
   const columns = React.useMemo(() => Object.keys(rows[0] ?? {}), [rows])
 
   const loadRows = React.useCallback(
-    (): void => loadRowsFromSource(loader, source, setRows, setSelected),
-    [loader, source, setRows, setSelected],
+    (): void => loadRowsFromSource(source, setRows, setSelected),
+    [source, setRows, setSelected],
   )
 
   const toggle = React.useCallback(
@@ -287,11 +229,10 @@ function useExcelTabHandlers(state: ReturnType<typeof useExcelTabData>) {
     setRows: updateRows,
   })
 
-  const { dropzone, style } = useDropHandler(setLoader, setFile, setSource, setRows, setSelected)
+  const { dropzone, style } = useDropHandler(setFile, setSource, setRows, setSelected)
 
   return {
     columns,
-    fetchRemote,
     loadRows,
     toggle,
     updateRow,
@@ -314,14 +255,10 @@ function useExcelTabState(): ExcelTabState {
  * Present the Excel import UI using provided state handlers.
  */
 function ExcelTabView({
-  remote,
   dropzone,
   style,
-  fetchRemote,
-  loader,
   source,
   setSource,
-  setRemote,
   loadRows,
   rows,
   template,
@@ -338,15 +275,7 @@ function ExcelTabView({
   handleCreate,
   updateRow,
   handleApplyChanges,
-}: ExcelTabState & {
-  setSource: (s: string) => void
-  setRemote: (s: string) => void
-  setTemplate: (s: string) => void
-  setLabelColumn: (s: string) => void
-  setTemplateColumn: (s: string) => void
-  setIdColumn: (s: string) => void
-  handleApplyChanges: () => void
-}): React.JSX.Element {
+}: ExcelTabState & { handleApplyChanges: () => void }): React.JSX.Element {
   return (
     <TabPanel tabId="excel">
       <PageHelp content="Import nodes from Excel workbooks" />
@@ -367,26 +296,16 @@ function ExcelTabView({
             )
           })()}
         </div>
-        <InputField
-          label="OneDrive/SharePoint file"
-          value={remote}
-          onValueChange={(v) => setRemote(v)}
-          aria-label="graph file"
-        />
-        <Button onClick={fetchRemote} variant="secondary">
-          Fetch File
-        </Button>
         <div style={{ marginTop: 'var(--space-200)' }}>
           <InfoCallout title="Tips">
-            Paste a OneDrive/SharePoint link or drop a local workbook. Then choose a sheet or table
-            and click “Load Rows”.
+            Drop a local workbook, then choose a sheet or table and click “Load Rows”.
           </InfoCallout>
         </div>
-        {rows.length === 0 && loader.listSheets().length === 0 && !remote && !source && (
-          <EmptyState title="No data yet" description="Fetch a file or select a sheet or table." />
+        {rows.length === 0 && excelLoader.listSheets().length === 0 && !source && (
+          <EmptyState title="No data yet" description="Drop a file or select a sheet or table." />
         )}
       </SidebarSection>
-      {loader.listSheets().length > 0 && (
+      {excelLoader.listSheets().length > 0 && (
         <SidebarSection title="Data source">
           <SelectField
             label="Data source"
@@ -395,12 +314,12 @@ function ExcelTabView({
             aria-label="Data source"
           >
             <SelectOption value="">Select…</SelectOption>
-            {loader.listSheets().map((s) => (
+            {excelLoader.listSheets().map((s) => (
               <SelectOption key={`s-${s}`} value={`sheet:${s}`}>
                 Sheet: {s}
               </SelectOption>
             ))}
-            {loader.listNamedTables().map((t) => (
+            {excelLoader.listNamedTables().map((t) => (
               <SelectOption key={`t-${t}`} value={`table:${t}`}>
                 Table: {t}
               </SelectOption>

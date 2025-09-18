@@ -17,6 +17,8 @@ export interface GridOptions {
   padding: number
   /** Whether to group the widgets after layout. */
   groupResult?: boolean
+  /** Optional frame title when grouping into a frame. */
+  frameTitle?: string
   /** Sort widgets alphabetically by their name before layout. */
   sortByName?: boolean
   /** Direction for placing sorted items, defaults to horizontal */
@@ -66,9 +68,48 @@ export async function applyGridLayout(opts: GridOptions, board?: BoardLike): Pro
       await maybeSync(item as Syncable)
     }),
   )
-  if (opts.groupResult && typeof b.group === 'function') {
-    log.debug('Grouping laid out items')
-    await b.group({ items })
+  if (opts.groupResult) {
+    try {
+      // Compute a bounding frame and add items to it
+      const boxes = items.map((i) => {
+        const x = (i as { x: number }).x
+        const y = (i as { y: number }).y
+        const w = (i as { width: number }).width
+        const h = (i as { height: number }).height
+        const left = x - w / 2
+        const top = y - h / 2
+        const right = x + w / 2
+        const bottom = y + h / 2
+        return { left, top, right, bottom }
+      })
+      const left = Math.min(...boxes.map((b) => b.left))
+      const top = Math.min(...boxes.map((b) => b.top))
+      const right = Math.max(...boxes.map((b) => b.right))
+      const bottom = Math.max(...boxes.map((b) => b.bottom))
+      const pad = Math.max(20, Math.min(opts.padding * 2, 80))
+      const width = right - left + pad * 2
+      const height = bottom - top + pad * 2
+      const cx = left + (right - left) / 2
+      const cy = top + (bottom - top) / 2
+
+      const { BoardBuilder } = await import('./board-builder')
+      const builder = new BoardBuilder()
+      const frame = await builder.createFrame(width, height, cx, cy, opts.frameTitle)
+      // Best-effort add; ignore if API is not available in types
+      await Promise.all(
+        items.map(async (i) => {
+          try {
+            // @ts-expect-error runtime API
+            await frame.add?.(i)
+          } catch {}
+        }),
+      )
+    } catch {
+      log.warning('Failed to create frame for arranged items; falling back to group if available')
+      if (typeof b.group === 'function') {
+        await b.group({ items })
+      }
+    }
   }
   log.debug({ count: items.length }, 'Grid layout complete')
 }

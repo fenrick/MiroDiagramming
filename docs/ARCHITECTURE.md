@@ -41,11 +41,11 @@ Miro Board
 ## Error Handling & Telemetry
 
 - Logging is performed via `src/logger.ts`, which writes to `console` unless disabled by `VITE_LOGFIRE_SEND_TO_LOGFIRE`.
-- `src/core/telemetry.ts` records significant events (diffs shown/applied, OAuth prompts) by logging locally. No server collection is performed.
+- `src/core/telemetry.ts` records significant events (diffs shown/applied, job lifecycle, rate limits) by logging locally. No server collection is performed.
 
 ## Authentication & Permissions
 
-- The app assumes the user launches it inside Miro. `useAuthStatus` treats SDK availability as the source of truth. If Miro access is missing, the UI prompts the user to open the app within a board.
+- The app assumes it runs inside Miro and relies on the Web SDK for access. There is no additional sign-in or OAuth flow in the panel.
 - Board permissions are governed by the scopes granted to the Miro app; ensure the manifest covers widget CRUD.
 
 ## Deployment Responsibilities

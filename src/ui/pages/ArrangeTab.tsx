@@ -3,6 +3,7 @@ import React from 'react'
 import { Flex } from '@mirohq/design-system'
 
 import { applyGridLayout, GridOptions } from '../../board/grid-tools'
+import { boardCache } from '../../board/board-cache'
 import { applySpacingLayout, SpacingOptions } from '../../board/spacing-tools'
 import {
   Button,
@@ -58,7 +59,11 @@ export const ArrangeTab: React.FC = () => {
       setSpacing({ ...spacing, mode })
     }
   }
-  const applyGrid = async (): Promise<void> => await applyGridLayout(grid)
+  const applyGrid = async (): Promise<void> => {
+    // Ensure we read a fresh selection before arranging
+    boardCache.clearSelection()
+    await applyGridLayout({ ...grid, frameTitle })
+  }
   const applySpacing = async (): Promise<void> => await applySpacingLayout(spacing)
   const applyStickyTags = async (): Promise<void> => await applyBracketTagsToSelectedStickies()
 
@@ -94,9 +99,13 @@ export const ArrangeTab: React.FC = () => {
           </Grid.Item>
           {grid.sortByName && (
             <Grid.Item>
-              <SelectField label="Order" value={grid.sortOrientation} onChange={setOrientation}>
-                <SelectOption value="horizontal">Horizontally</SelectOption>
-                <SelectOption value="vertical">Vertically</SelectOption>
+              <SelectField
+                label="Fill direction"
+                value={grid.sortOrientation}
+                onChange={setOrientation}
+              >
+                <SelectOption value="horizontal">Across rows (left → right)</SelectOption>
+                <SelectOption value="vertical">Down columns (top → bottom)</SelectOption>
               </SelectField>
             </Grid.Item>
           )}
@@ -132,6 +141,12 @@ export const ArrangeTab: React.FC = () => {
             </StickyActions>
           </Grid.Item>
         </Grid>
+        <div style={{ marginTop: 'var(--space-100)' }}>
+          <InfoCallout title="Tip">
+            With 4 items and 3 columns: horizontal fill lays out 3 + 1; vertical fill lays out 2 +
+            2. Vertical fill places items top-to-bottom in each column before moving to the next.
+          </InfoCallout>
+        </div>
       </SidebarSection>
       <SidebarSection title="Spacing">
         <div style={{ marginBottom: 'var(--space-200)' }}>

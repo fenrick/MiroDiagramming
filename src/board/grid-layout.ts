@@ -35,10 +35,44 @@ export function calculateGrid(
 ): GridPosition[] {
   const positions: GridPosition[] = []
   const cols = Math.max(1, config.cols)
-  const rows = Math.ceil(count / cols)
+
+  if (!config.vertical) {
+    // Row-major (horizontal) fill: left → right across rows, then wrap
+    for (let i = 0; i < count; i += 1) {
+      const col = i % cols
+      const row = Math.floor(i / cols)
+      positions.push({
+        x: col * (width + config.padding),
+        y: row * (height + config.padding),
+      })
+    }
+    return positions
+  }
+
+  // Column-major (vertical) fill that still respects the requested column count.
+  // Distribute items across exactly `cols` columns: the first `extra` columns get one more item.
+  const base = Math.floor(count / cols)
+  const extra = count % cols
+  const colSizes = Array.from({ length: cols }, (_, c) => base + (c < extra ? 1 : 0))
+  const colStarts: number[] = []
+  let start = 0
+  for (let c = 0; c < cols; c += 1) {
+    colStarts[c] = start
+    start += colSizes[c]!
+  }
+
   for (let i = 0; i < count; i += 1) {
-    const col = config.vertical ? Math.floor(i / rows) : i % cols
-    const row = config.vertical ? i % rows : Math.floor(i / cols)
+    // Find the column that contains index i based on the distribution above
+    let col = 0
+    for (let c = 0; c < cols; c += 1) {
+      const s = colStarts[c]!
+      const e = s + colSizes[c]!
+      if (i >= s && i < e) {
+        col = c
+        break
+      }
+    }
+    const row = i - colStarts[col]!
     positions.push({
       x: col * (width + config.padding),
       y: row * (height + config.padding),
