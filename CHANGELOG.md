@@ -1,3 +1,11 @@
+## [1.22.1](https://github.com/fenrick/MiroDiagramming/compare/v1.22.0...v1.22.1) (2025-09-18)
+
+
+### Bug Fixes
+
+* replace logfire logger and relax dev csp ([e2b844f](https://github.com/fenrick/MiroDiagramming/commit/e2b844ff7090dd352e68509e8817dd5ed0f6a5dd))
+* **server:** extend csp directives for miro dev ([948f05c](https://github.com/fenrick/MiroDiagramming/commit/948f05ca6e00c560e6263ac8231bbf3fc9c42461))
+
 # [1.22.0](https://github.com/fenrick/MiroDiagramming/compare/v1.21.1...v1.22.0) (2025-09-17)
 
 
