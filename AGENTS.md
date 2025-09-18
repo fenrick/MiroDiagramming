@@ -2,33 +2,33 @@
 
 Context
 
-- The app has completed migration to a single Node.js project using the official Miro Node.js API client. The React (TypeScript) frontend is served by the same Node process in development (via Vite middleware) and in production (as static assets).
-- The previous Python FastAPI backend is deprecated and removed. Any remaining Python docs are legacy reference only.
+- The app runs entirely as a browser-based React (TypeScript) panel built with Vite and Miro’s Web SDK. There is no Fastify/Prisma backend.
+- Legacy Python/Node docs are archived in `docs/archive/` for historical reference only.
 
-Authoritative Node docs
+Authoritative docs
 
-- docs/node-architecture.md – Node backend architecture and Miro integration
-- docs/migration-node-plan.md – migration plan and status
-- implementation_plan.md – consolidated backlog of improvements and refactors (keep updated)
+- docs/node-architecture.md – current frontend/Web SDK architecture
+- docs/migration-node-plan.md – notes on retiring the server and remaining clean-up
+- implementation_plan.md – backlog of improvements and refactors (keep updated)
 
 ## Project Structure
 
 ```
-src/                    # backend + frontend sources
-  app.ts, server.ts     # Fastify app and entrypoint
-  config/               # env (zod), logger, db (Prisma)
-  routes/               # API routes
-  services/, queue/     # domain services and background worker
-  frontend/             # React sources
-  web/                  # HTML entry points (Vite root)
-prisma/                 # Prisma schema and migrations
-tests/                  # Node tests (Vitest)
+src/
+  app/          # React shell and launch plumbing
+  assets/       # Static assets bundled into the panel
+  board/        # Board utilities (selection cache, processors, templates)
+  components/   # Reusable UI components
+  core/         # Shared hooks, services, utilities
+  stories/      # Storybook stories (optional)
+  ui/           # Panel pages and composite UI modules
+  web/          # HTML entrypoints (Vite root)
 ```
 
 ## Quality Gates
 
 - TypeScript strict mode; ESLint clean
-- Tests and coverage via Vitest + c8 (target ≥ 90%)
+- `npm run test` currently reports success even without suites; reintroduce Vitest specs as desired.
 - Prettier formatting
 
 ## Local Development
@@ -36,7 +36,7 @@ tests/                  # Node tests (Vitest)
 ```
 nvm use
 npm install
-npm run dev        # single process: Fastify + Vite middleware
+npm run dev        # vite dev (serves the React panel)
 npm run typecheck  # tsc --noEmit
 npm run lint       # eslint
 npm run test       # vitest
@@ -44,20 +44,15 @@ npm run test       # vitest
 
 Environment
 
-- Create `.env` at repo root. Minimum:
-    - `DATABASE_URL=file:./app.db`
-    - `MIRO_CLIENT_ID=...`, `MIRO_CLIENT_SECRET=...`, `MIRO_REDIRECT_URL=http://localhost:3000/auth/miro/callback`
-    - Optional: `PORT=4000`
-    - Optional: `MIRO_WEBHOOK_SECRET=change-me` (verify `/api/webhook` signatures)
-
-Health and readiness
-
-- Liveness: `GET /healthz` returns `{ status: 'ok' }`.
-- Readiness: `GET /readyz` verifies DB connectivity and that the background change queue is idle; returns 503 if not ready.
+- Optional `.env` for client-side configuration:
+    - `VITE_PORT=3000` to override dev server port.
+    - `VITE_LOGFIRE_*` flags to tweak logging.
+    - Any additional `VITE_*` variables consumed in code.
 
 Notes
 
-- The backend serves the React app in development via Vite middleware and in production as static assets. The SPA fallback excludes `/api/*` and `/healthz*` paths so health probes and API calls do not resolve to `index.html`.
+- Build output is static. When hosting behind nginx, use `src/web/default.conf.template`; no API proxying is required.
+- All board access and mutations go through the Web SDK helpers under `src/board/**` and `src/core/utils/shape-client.ts`.
 
 ## Commits
 
@@ -66,13 +61,6 @@ Follow Conventional Commits:
 ```
 type(scope): short description
 ```
-
-## References
-
-- docs/node-architecture.md (authoritative)
-- docs/DEPLOYMENT.md
-- docs/runbook.md (operational)
-- docs/archive/python-architecture.md (legacy)
 
 ## Implementation Plan
 

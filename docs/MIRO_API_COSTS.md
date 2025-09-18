@@ -1,41 +1,38 @@
 # Miro API Costs & Caching Strategy
 
-_Version 2025-07-21_
+_Version 2025-09-18_
 
 ---
 
 ## 0 Purpose
 
-Explain our design decisions regarding the high point cost of some Miro REST API calls. Caching shapes and moving widget manipulation to the server minimises these costs.
+Summarise how the client reduces calls to high-cost Web SDK operations now that all work happens in the browser.
 
 ## 1 Cost Summary
 
-The following endpoints each cost **500** points per call:
+The Web SDK internally maps to REST endpoints with the following indicative costs:
 
-| Endpoint             | Description                   |
-| -------------------- | ----------------------------- |
-| `board.get`          | Fetch all widgets of a board. |
-| `item`               | Retrieve a single widget.     |
-| `item.setmetadata`   | Update widget metadata.       |
-| `board.getselection` | Retrieve the user selection.  |
+| SDK call                  | Estimated cost*         |
+| ------------------------- | ----------------------- |
+| `miro.board.get({ type })`| ~500 points             |
+| `miro.board.getSelection()` | ~500 points          |
+| `miro.board.get({ id })`  | ~500 points             |
+| Widget mutations (`sync`) | Variable (typically 50) |
 
-Excessive use quickly exhausts the daily rate limit.
+\*Subject to change per Miro’s rate limits. We optimise assuming the classic REST costs.
 
-## 2 Design Decisions
+## 2 Strategies
 
-1. **Server‑side shape management** – Widget creation, update and deletion are handled by the **Fastify shapes route**. The client calls `/api/boards/{boardId}/shapes` via `ShapeClient`.
-2. **In‑memory shape cache** – `ShapeCache` stores widgets by board and item identifier. The Fastify shapes route updates the cache after each change so lookups avoid `board.get` or `item` requests.
-3. **Planned persistent cache** – future versions will back the cache with Redis and **SQLite** via **SQLAlchemy** so multiple server instances share widget data.
-4. **Centralised logging** – `HttpLogSink` forwards front‑end log entries to the server so shape operations are traceable across the boundary.
-5. **Avoid direct board calls** – The board cache resolves widget lookups via `/api/boards/{boardId}/widgets` so the client no longer invokes `board.get` directly. Selection queries still use `board.getSelection` until a backend lookup is added.
-6. **Expanded REST coverage** – placeholder shim methods will wrap additional Miro endpoints so future features can reuse a consistent API layer.
+1. **Client-side caching** – `board/board-cache.ts` caches widget collections by type and the current selection. Subsequent calls reuse cached results until explicitly reset.
+2. **Targeted fetches** – Most features request only the widget types they need (`{ type: 'card' }`, `{ type: 'tag' }`) rather than fetching entire boards.
+3. **Batch creation** – `CardProcessor` and `TemplateManager` create groups of widgets in a single pass and avoid redundant `get` calls by retaining references returned from `createShape`/`createCard`.
+4. **Lazy metadata updates** – Sticky tag helpers only sync widgets when tags actually change. Optimistic operations roll back on failure without triggering additional reads.
+5. **No duplicate polling** – Jobs queues were removed. Long-running operations execute directly and surface toast notifications; no `/api/jobs` polling remains.
 
-This approach reduces point expenditure and keeps the application responsive.
+## 3 Opportunities
 
-## 3 Remaining Work
+- Extend `board-cache.ts` to persist results across sessions via `miro.board.storage` if rate limits become an issue.
+- Record lightweight metrics (counts, durations) in telemetry to spot expensive flows.
+- Investigate incremental selection updates via realtime events to keep the cache warm without high-cost fetches.
 
-The caching layer currently lives purely in memory. Persisted storage and
-automatic invalidation are future enhancements. Client modules such as
-`card-processor.ts` and `excel-sync-service.ts` still invoke `board.get` and
-`getById`; TODO comments mark these spots until the backend lookup API is fully
-integrated.
+Overall, keeping all logic client-side makes rate-limit behaviour predictable—each feature controls when it touches the board API, and caches avoid unnecessary calls.

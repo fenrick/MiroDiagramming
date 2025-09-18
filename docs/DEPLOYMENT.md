@@ -1,66 +1,36 @@
-# Node Client Deployment Guide
+# Deployment Guide
 
-This document covers building and hosting the React client.
+This project now ships as a static React application that runs inside Miro and talks to the board via the Web SDK. Deployment consists of building the Vite bundle and hosting the generated assets.
 
 ## 1. Build
 
 ```bash
+npm install
 npm run build
 ```
 
-## 2. Deploy
+The output lives under `dist/`.
 
-Upload `dist/` to your static host (e.g., Vercel, Netlify or S3).
+## 2. Host
+
+Upload the contents of `dist/` to your static host (Vercel, Netlify, S3 + CloudFront, nginx, etc). No Node.js runtime is required at runtime.
+
+If you use the provided nginx template (`src/web/default.conf.template`), mount the built assets at `/usr/share/nginx/html` and serve them directly.
 
 ## 3. Environment Variables
 
-- `MIRO_APP_ID`
-- `PUBLIC_BASE_URL`
-- `FEATURE_FLAG_SDK_KEY`
-- `SENTRY_DSN`
-- `NODE_ENV`
-- `LOG_LEVEL`
+All runtime configuration must use the `VITE_` prefix so Vite embeds it into the bundle. Typical variables:
 
-See your hosting provider's documentation for setting environment variables. CI/CD and monitoring hooks are described in [ARCHITECTURE.md](ARCHITECTURE.md).
+- `VITE_PORT` – overrides the dev server port (development only).
+- `VITE_LOGFIRE_SERVICE_NAME` – label used by the console logger.
+- `VITE_LOGFIRE_SEND_TO_LOGFIRE` – set to `true` to disable console logging when you forward logs elsewhere.
 
-## 4. Backend Secrets
+Set these at build time through your CI/CD provider. Avoid committing secrets; the app runs fully client-side.
 
-The Node backend loads required secrets from environment variables as parsed by `src/config/env.ts`.
+## 4. Monitoring & Health Checks
 
-### Local development
+Because there is no application server, standard static-host probes are sufficient. If you front the app with a load balancer, configure it to check the static file endpoint (e.g., `/index.html`).
 
-On first run the backend will create `config/.env` and `config/config.yaml` from their example files and exit.
-Populate `config/.env` with values for:
+## 5. Miro App Configuration
 
-- `MIRO_CLIENT_ID`
-- `MIRO_CLIENT_SECRET`
-- `MIRO_WEBHOOK_SECRET`
-
-### Continuous integration
-
-Provision the same variables through your CI secret store (e.g. GitHub Actions secrets) and expose them as environment variables at build and deploy time. Never commit real secret values to the repository.
-
-### CORS origins
-
-Set allowed origins through the `CORS_ORIGINS` environment variable as a JSON array:
-
-```bash
-CORS_ORIGINS='["https://app.example.com","https://admin.example.com"]'
-```
-
-Alternatively, provide a comma-separated list:
-
-```bash
-CORS_ORIGINS='https://app.example.com,https://admin.example.com'
-```
-
-List each origin explicitly. Wildcards can match subdomains, but avoid using `"*"` in production to restrict cross-origin access.
-
-### Health and Readiness Probes
-
-Configure your load balancer/orchestrator to use the following endpoints:
-
-- Liveness: `GET /healthz` (returns `{ status: 'ok' }` when the process is alive).
-- Readiness: `GET /readyz` (returns 200 only when the DB is reachable and the background change queue is idle; otherwise 503).
-
-The production server also serves the SPA. Its fallback is configured to exclude `/api/*` and `/healthz*` so probes and API routes do not resolve to the client `index.html`.
+Update the Miro app manifest to point to the deployed URL of your `index.html`. The Web SDK permissions determine what board operations your app can perform.

@@ -1,323 +1,77 @@
-# Node.js Backend Architecture (Miro Integration)
+# Frontend Architecture (Miro Web SDK)
 
-This document defines the new end-to-end system design after removing the Python layer and moving the backend to Node.js. It also embeds the key usage patterns for the official Miro Node.js API client.
+The application now runs entirely in the browser. All board operations are executed through the official Miro Web SDK, and the Vite-built React app is the only runtime we ship. This document captures the high-level structure so contributors understand where features live after the server-side removal.
 
 ## Goals
 
-- Single-language stack: Node.js backend + React (TypeScript) frontend
-- First-class Miro OAuth 2.0 and API integration using `@mirohq/miro-api`
-- Strong typing, testing, and linting parity with previous quality gates
-- Maintain existing product behavior and API semantics where practical
+- Zero backend services. The app bundles to static assets and runs inside Miro.
+- Use the Web SDK for board CRUD, selection, tagging, and template creation.
+- Keep the existing React UI/UX while simplifying deployment.
+- Preserve strict TypeScript, ESLint, Vitest quality gates.
 
 ## Tech Stack
 
-- Runtime: Node.js 20+, TypeScript (strict)
-- Web framework: Fastify (high perf, good ecosystem) or Express (if preferred)
-- Miro SDK: `@mirohq/miro-api` (high-level stateful `Miro` and low-level stateless `MiroApi`)
-- Data: SQLite (initial) via Prisma ORM (or Drizzle) with migration support
-- Testing: Vitest or Jest + Supertest; c8 for coverage
-- Lint/Format: ESLint (typescript-eslint), Prettier
-- Git hooks: Husky + lint-staged
-- Security headers via `@fastify/helmet` (disabled in tests)
+- Runtime: Browser (ES2022) with Vite, React 18, TypeScript (strict).
+- Miro integration: `window.miro` Web SDK and `@mirohq/websdk-types` typings.
+- Styling: `@mirohq/design-system`, `@mirohq/design-tokens`, Stitches CSS-in-JS.
+- Testing: Vitest + @testing-library/react (jsdom).
+- Tooling: ESLint, Prettier, Husky hooks, commitlint.
 
-## UI/UX Alignment
-
-- The React frontend uses Miro’s Aura design language via `@mirohq/design-system` components and `@mirohq/design-tokens` with `@mirohq/design-system-themes` for theming. See `docs/ui-ux.md` for principles and the adoption plan.
-
-## Repository Layout (Proposed)
+## Repository Layout
 
 ```
 src/
-  app.ts                   # Fastify app bootstrap
-  server.ts                # server lifecycle entrypoint
-  config/
-    env.ts                 # env var parsing (zod)
-    logger.ts              # pino logger config
-    db.ts                  # Prisma client bootstrap
-    dev-vite.ts            # Vite middleware for local development
-  miro/
-    miroClient.ts          # wraps `Miro` high-level client
-    tokenStorage.ts        # implements Miro Storage interface using DB
-  routes/
-    auth.routes.ts         # login/callback handlers reused for /auth/miro/* and /oauth/* aliases
-    cards.routes.ts        # /api/cards (queue + worker pipeline)
-    tags.routes.ts         # /api/boards/:boardId/tags
-    cache.routes.ts        # /api/cache/:boardId
-    limits.routes.ts       # /api/limits
-  services/
-    miroService.ts         # uses high-level `Miro.as(user).getBoard(...).createCardItem(...)`
-  queue/
-    changeQueue.ts         # in-memory queue with concurrency, retries, backoff
-    types.ts               # task types (retryCount, maxRetries, createdAt)
-  utils/
-    spaFallback.ts         # shared SPA index.html fallback for dev/prod
-src/web/                     # React frontend (dev via Vite, built by root scripts)
-prisma/
-  schema.prisma            # Board, Tag, Shape, User, CacheEntry, IdempotencyEntry
-tests/
-  client/                  # legacy client tests (jsdom)
-  integration/             # server integration tests (Vitest + Supertest)
-  src -> ../src/frontend   # symlink for legacy ../src imports
-package.json
-tsconfig.json
-vitest.config.ts
+  app/         # React entry shell and panels
+  assets/      # Static assets consumed by the UI
+  board/       # Board utilities (selection cache, templates, processors)
+  components/  # Reusable UI primitives
+  core/        # Hooks, state, telemetry, data mappers
+  stories/     # Optional storybook entries
+  ui/          # Panel pages, hooks, and composite components
+  web/         # HTML entry points used by Vite build
 ```
 
-Tests can import `buildApp()` and run requests via `app.inject` without opening a network port.
+There is no longer a `src/app.ts`, `src/server.ts`, or Fastify route tree. All imports of `fetch('/api/...')` have been removed or replaced with SDK calls.
 
-## Environment Configuration
+## App Boot Flow
 
-Required for Miro OAuth:
+1. `src/index.ts` logs startup and initialises `DiagramApp`.
+2. `DiagramApp` mounts the React panel (`App` component) when the user launches the app.
+3. Board interactions (selection, widget creation) use helpers under `src/board/` that wrap `miro.board` methods. When running outside Miro the helpers bail out and surface a friendly warning.
 
-- `MIRO_CLIENT_ID`
-- `MIRO_CLIENT_SECRET`
-- `MIRO_REDIRECT_URL` (e.g., `http://localhost:3000/auth/miro/callback`)
+## Board Utilities
 
-Additional backend env:
+- `board/board-cache.ts` caches selections and widget queries in memory using `miro.board.get({ type })`.
+- `board/card-processor.ts` creates and updates cards directly via `miro.board.createCard`.
+- `board/sticky-tags.ts` inspects sticky note content, creates missing tags with `miro.board.createTag`, and syncs edited widgets.
+- `board/templates.ts` and `core/utils/shape-client.ts` generate shape groups using the Web SDK; no HTTP batching layer is required.
 
-- `PORT=4000`
-- `SESSION_SECRET` (for cookie signatures)
-- `MIRO_WEBHOOK_SECRET` (signature validation for `/api/webhook`)
-- `MIRO_IDEMPOTENCY_CLEANUP_SECONDS` (interval for removing stale idempotency keys)
-- `STATIC_ROOT` (optional absolute path to built frontend assets; if unset, the server falls back to `src/web/dist` or `dist/web`)
-- Idempotency entries are indexed by `created_at` to speed up cleanup.
-- Webhook signatures are computed over the raw request body using `@fastify/raw-body`.
-- `DATABASE_URL` (e.g., `file:./dev.db`)
-- `CORS_ORIGINS` (JSON array of allowed origins)
-- `QUEUE_CONCURRENCY` (number of worker loops processing change tasks)
-- `QUEUE_MAX_RETRIES` (per-task retry limit before dropping)
-- `QUEUE_BASE_DELAY_MS` (initial backoff delay in milliseconds)
-- `QUEUE_MAX_DELAY_MS` (upper bound for exponential backoff)
-- `QUEUE_WARN_LENGTH` (queue length that emits WARN logs; set ≤ 0 to disable)
-- `QUEUE_SHUTDOWN_TIMEOUT_MS` (milliseconds to wait for the queue to drain during graceful shutdown before timing out)
+## Data & Excel Sync
 
-Use a schema validator (zod) to fail fast if vars are missing.
+`core/excel-sync-service.ts` maps Excel rows to board widgets. It now depends solely on the Web SDK (`ShapeClient`) for fetch and mutation operations and no longer queues remote jobs.
 
-Health and readiness endpoints used by orchestrators:
+## Telemetry & Logging
 
-- `GET /healthz` → liveness probe, always returns `{ status: 'ok' }` when the process is up.
-- `GET /readyz` → readiness probe, returns 200 when the database connection succeeds and the change queue is idle; otherwise 503 with a reason (`db` or `queue`).
+Telemetry events flow through `src/core/telemetry.ts` and log to the console (`src/logger.ts`). There is no HTTP log sink.
 
-SPA fallback excludes `/api/*` and `/healthz*` so probes and API routes do not resolve to `index.html`.
+## Auth & Rate Limits
 
-## Server Lifecycle
+OAuth redirects and `/api/auth/status` checks have been removed. `useAuthStatus` assumes SDK access as the source of truth and exposes `signIn` as a best-effort call to `miro.board.openApp()` for convenience. Rate-limit polling endpoints were deleted along with the Fastify service; UI now reacts only to local optimistic state.
 
-- `startServer()` in `src/server.ts` boots the Fastify instance, configures the
-  change queue, and listens on the configured port.
-- `registerGracefulShutdown()` attaches SIGINT/SIGTERM handlers that await
-  `app.close()`. The Fastify `onClose` hooks disconnect Prisma, stop the change
-  queue, and clear recurring timers before the process exits.
-- A forced exit is logged if the shutdown takes longer than 10 seconds or a
-  second termination signal arrives before the cleanup finishes.
+## Build & Deployment
 
-## Database Access (Prisma)
+- `npm run dev` → `vite dev`
+- `npm run build` → `vite build`
+- `npm run preview` → `vite preview`
 
-Import the generated Prisma Client where you need DB access:
+Output is a static bundle that can be served via `src/web/default.conf.template` (no API proxying required). Environment variables now use the `VITE_*` prefix and are consumed client-side.
 
-```
-import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
-```
+## Testing Expectations
 
-This project exposes a shared singleton via `getPrisma()` (`src/config/db.ts`), which avoids creating multiple client instances.
+- Jest/Vitest client tests cover React hooks and view logic under `tests/client/`.
+- There are no integration tests hitting HTTP endpoints because none exist.
+- New features should provide jsdom coverage where practical.
 
-Development:
+## Migration Notes
 
-```
-npm run migrate:dev
-```
-
-Deployment:
-
-```
-npm run migrate:deploy
-```
-
-For low-latency change notifications without polling, consider Prisma Pulse: https://pris.ly/tip-0-pulse
-
-## Miro Node.js API Client Integration
-
-Install:
-
-```
-npm install @mirohq/miro-api
-```
-
-High-level client (stateful):
-
-```ts
-import { Miro } from '@mirohq/miro-api'
-
-// Provide token storage and env configuration
-export const miro = new Miro({
-    clientId: process.env.MIRO_CLIENT_ID!,
-    clientSecret: process.env.MIRO_CLIENT_SECRET!,
-    redirectUrl: process.env.MIRO_REDIRECT_URL!,
-    storage: new TokenStorage(), // see Storage below
-})
-
-// Per-user API accessor
-// miro.as(userId) → MiroApi for the given user
-```
-
-Low-level client (stateless):
-
-```ts
-import { MiroApi } from '@mirohq/miro-api'
-const api = new MiroApi('<access_token>')
-```
-
-Pagination helpers (example):
-
-```ts
-const api = miro.as(userId)
-for await (const board of api.getAllBoards()) {
-    // handle boards
-    break // optional to stop pagination
-}
-```
-
-Storage interface (token persistence):
-
-```ts
-// Implements the Storage interface required by Miro
-export class TokenStorage {
-    async get(userId: string) {
-        return await userTokenRepo.get(userId) // returns State | undefined
-    }
-
-    async set(userId: string, state: any) {
-        await userTokenRepo.set(userId, state)
-    }
-}
-```
-
-Our production `TokenStorage` persists tokens with Prisma, and unit tests cover the `get`, `set`, and delete paths to ensure compatibility with Miro's Storage interface.
-
-OAuth flow (Fastify example):
-
-```ts
-app.get('/auth/miro/callback', async (req, reply) => {
-    await miro.exchangeCodeForAccessToken(req.cookies.userId, (req.query as any).code)
-    reply.redirect('/')
-})
-
-app.get('/', async (req, reply) => {
-    if (!(await miro.isAuthorized(req.cookies.userId))) {
-        reply.redirect(miro.getAuthUrl())
-        return
-    }
-    const api = miro.as(req.cookies.userId)
-    for await (const board of api.getAllBoards()) {
-        return reply.send(board)
-    }
-})
-```
-
-Notes:
-
-- `miro.isAuthorized(userId)`, `miro.getAuthUrl()`, `miro.exchangeCodeForAccessToken(userId, code)`, and `miro.as(userId)` are the core methods to manage OAuth and access-token based calls.
-- Implement storage with a real database for production. The client auto-refreshes tokens.
-- The app issues a lightweight `userId` cookie (HTTP-only, same-site strict) to scope tokens per visitor. This cookie is not an authentication session.
-
-## API Design (Parity with Current Python Endpoints)
-
-Keep route semantics where possible, updating implementation:
-
-- `GET /api/cache/:boardId` → use CacheService + BoardRepo
-- `GET /api/boards/:id/tags` → TagService using DB + Miro if required
-- `POST /api/cards` and other existing routers → mirror functionality
-- `POST /api/webhook` → verify signature and enqueue work as needed; accepts only `application/json` bodies up to 1 KB
-
-Cards pipeline:
-
-- `POST /api/cards` accepts an array of card definitions. It enqueues tasks into an in-memory queue and returns 202 with `{ accepted }`.
-- A background worker processes tasks and creates cards via Miro REST. Include `boardId` in card definitions to route creation to a board.
-- Idempotency keys are stored to prevent duplicate submissions and are pruned on a scheduled interval.
-
-New auth routes:
-
-- `GET /auth/miro/login` and `/oauth/login` → redirect to `miro.getAuthUrl()`
-- `GET /auth/miro/callback` and `/oauth/callback` → `exchangeCodeForAccessToken`
-- `GET /api/auth/status` → report app-level auth state
-
-Use DTOs and JSON Schemas for request/response validation, allowing Fastify to
-automatically return 400 responses on invalid input.
-
-## Data Model Mapping (Python → Node)
-
-Planned Prisma models (aligned to existing SQLite data):
-
-- `Board(id, boardId, name, createdAt, updatedAt)`
-- `Tag(id, board_id, name)` (unique on `board_id` + `name`)
-- `Shape(id, boardId, shapeId, data, createdAt)`
-- `UserToken(userId, provider, accessToken, refreshToken, expiresAt, scopes, rawState)`
-- `CacheEntry(key, value, createdAt, updatedAt)` (optional if keeping cache)
-
-We will map SQLAlchemy tables one-to-one and add migrations to preserve data.
-
-## Services & Responsibilities
-
-- BoardService: resolve board info (DB cache + Miro), orchestrate CRUD via `miro.as(user).getBoard(...)`, `createBoard`, item operations
-- TagService: list/attach/detach tags; keep local Tag table consistent where needed
-- CacheService: optional layer for board state snapshots (parity with Python `repository.py`)
-
-## Error Handling & Logging
-
-- Central error middleware: map domain errors to HTTP
-- Shared error classes live in `src/config/domain-errors.ts`; throw these from routes/services to ensure consistent mapping.
-- Error responses consistently use `{ error: { message, code? } }`
-- Use Pino logger with request-id; structured logs
-- Background queues and services reuse Fastify's `app.log` for consistent redaction and correlation
-- Mask secrets; logger redacts Authorization, Cookie, and `x-miro-signature` headers
-- Miro API calls use exponential backoff on 429/5xx via `withMiroRetry` with capped delay and small jitter to avoid lockstep retries.
-
-## Security
-
-- HTTPS in production; secure HTTP-only cookies (`sameSite=strict`)
-- CORS via `@fastify/cors` and `CORS_ORIGINS` env
-- CSRF protection for state-changing endpoints (if applicable)
-- Input validation (zod) and output typing
-- Secrets from env; no tokens in source control
-
-## Testing & Coverage
-
-- Unit tests for services (mock `MiroApi`)
-- Integration tests for routes (Supertest + in-memory DB or test DB)
-- Coverage target ≥ 90% lines & branches
-
-## Local Development
-
-- Single root `package.json`; no nested packages
-- `npm install` at repo root
-- `npm run dev` runs one Node process: Fastify + Vite middleware (see `config/dev-vite.ts`)
-- In production, server serves `src/client/dist` (static) and API
-- Ensure `MIRO_*` env vars are set; redirect URL points to local server
-
-## Deployment
-
-- Build with `npm run build` (client + server)
-- Run with `npm run start` (serves built UI and API)
-- Configure env (MIRO_CLIENT_ID/SECRET/REDIRECT_URL, DATABASE_URL, PORT)
-- Health check endpoint: `/healthz`
-- Readiness endpoint: `/readyz` (verifies DB connectivity and queue idle status)
-
-## Server Lifecycle
-
-- `buildApp()` composes the Fastify instance with middleware, routes, and queue configuration. Tests reuse this without opening a port using `app.inject`.
-- `startServer()` starts the HTTP listener and kicks off the background change queue workers. On `app.close()`, Prisma disconnects and the queue stops via Fastify `onClose`.
-- Termination signals are handled by [`close-with-grace`](https://github.com/mcollina/close-with-grace); the helper invokes `app.close()` so all Fastify `onClose` hooks (Prisma disconnect, queue stop, timers) run before the process exits.
-- The change queue rejects new work once shutdown begins and waits for in-flight tasks to finish. `QUEUE_SHUTDOWN_TIMEOUT_MS` bounds how long Fastify waits for the queue to drain before logging a timeout and continuing teardown.
-- When deploying with a supervisor (Docker, systemd), send a graceful stop (`SIGTERM`) and wait for `/readyz` to report 503 before killing the process to avoid interrupting in-flight work.
-
-## Backwards Compatibility
-
-- Maintain existing REST endpoints when feasible
-- Keep `app.db` data; migrate schema via Prisma
-- Provide a cutover checklist (see migration plan)
-
-## Open Questions
-
-- Keep cache endpoints or replace with live queries?
-- Choose ORM (Prisma vs Drizzle) – Prisma assumed herein
-- Job queue strategy (BullMQ with Redis if heavier workloads emerge)
+If you spot references to the removed Node backend (Prisma, Fastify, `/api` route calls), please delete or rewrite them. `implementation_plan.md` tracks any follow-up clean-up – update that document whenever you finish an item.

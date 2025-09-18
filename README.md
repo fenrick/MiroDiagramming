@@ -13,61 +13,33 @@ each element can carry metadata that controls its appearance and placement.
 
 - Node.js 20.x
 
-The app runs as a single Node.js process that serves both the API and the React frontend.
+The app builds to static assets served by Vite in development and by any static host in production. All board interactions happen client-side through the Miro Web SDK.
 
 ### Environment
 
-Create a `.env` file at the repository root. Minimum:
+Create a `.env` file at the repository root if you need to override defaults. All variables must use the `VITE_` prefix so Vite exposes them to the client. Common options:
 
 ```
-DATABASE_URL=file:./app.db
-MIRO_CLIENT_ID=your-client-id
-MIRO_CLIENT_SECRET=your-client-secret
-MIRO_REDIRECT_URL=http://localhost:3000/auth/miro/callback
-MIRO_WEBHOOK_SECRET=change-me
-# JSON array of allowed cross-origin URLs (optional)
-CORS_ORIGINS=["http://localhost:3000"]
-# Interval for removing stale idempotency keys (optional)
-MIRO_IDEMPOTENCY_CLEANUP_SECONDS=86400
-# Queue tuning (optional)
-QUEUE_CONCURRENCY=2
-QUEUE_MAX_RETRIES=5
-QUEUE_BASE_DELAY_MS=250
-QUEUE_MAX_DELAY_MS=5000
+VITE_PORT=3000
+VITE_LOGFIRE_SERVICE_NAME=miro-frontend
+VITE_LOGFIRE_SEND_TO_LOGFIRE=false
 ```
-
-`MIRO_WEBHOOK_SECRET` verifies webhook callbacks. Signatures are computed over the
-raw request body using `@fastify/raw-body`.
-
-`MIRO_IDEMPOTENCY_CLEANUP_SECONDS` controls how often old idempotency entries are removed.
-
-`QUEUE_CONCURRENCY`, `QUEUE_MAX_RETRIES`, `QUEUE_BASE_DELAY_MS`, and `QUEUE_MAX_DELAY_MS`
-allow tuning the in-memory change queue's worker count and backoff strategy.
 
 ### Development
 
-Run a single dev process (Fastify + Vite middleware):
+Run the Vite dev server:
 
 ```bash
 npm install
 npm run dev
 ```
 
-Production build and start:
+Production build and local preview:
 
 ```bash
 npm run build
-npm start
+npm run preview
 ```
-
-### Health and Readiness
-
-For container orchestration and uptime checks, the server exposes:
-
-- `GET /healthz` → liveness probe (`{ status: 'ok' }`).
-- `GET /readyz` → readiness probe (200 when DB is connected and the background change queue is idle; otherwise 503).
-
-The SPA fallback excludes `/api/*` and `/healthz*` so probes and API calls never return the client HTML.
 
 ## Uploading JSON Content
 
@@ -200,10 +172,10 @@ complete UI flow.
 ## Styling with the Miro Design System
 
 The CSS for this project imports `@mirohq/design-system-themes/light.css` in
-[`src/frontend/assets/style.css`](src/frontend/assets/style.css)
+[`src/assets/style.css`](src/assets/style.css)
 to match the Miro UI. Components are sourced from `@mirohq/design-system`.
 Avoid custom CSS when a component or token already exists. Wrapper components
-in `src/frontend/ui/components` abstract the design-system primitives so
+in `src/ui/components` abstract the design-system primitives so
 upgrades happen in one place.
 
 ## Form Design Guidelines
@@ -321,7 +293,7 @@ everyone uses the exact dependency versions when installing.
 ## Logging
 
 All runtime messages are emitted through a shared logger defined in
-[`src/frontend/logger.ts`](src/frontend/logger.ts). Set the
+[`src/logger.ts`](src/logger.ts). Set the
 `LOG_LEVEL` environment variable to `trace`, `debug`, `info`, `warn`, `error` or
 `silent` to control verbosity. It defaults to `info`.
 
@@ -373,10 +345,14 @@ installs share the same lockfile.
 .
 ├── docs/
 ├── src/
-│   ├── config/
-│   ├── routes/
-│   └── frontend/
-├── tests/
+│   ├── app/
+│   ├── assets/
+│   ├── board/
+│   ├── components/
+│   ├── core/
+│   ├── stories/
+│   ├── ui/
+│   └── web/
 └── templates/
 ```
 
@@ -386,7 +362,7 @@ installs share the same lockfile.
   organised.
 - [Tab Overview](docs/TABS.md) describes the sidebar tabs and their purpose.
 - [Deployment Guide](docs/DEPLOYMENT.md) describes building and hosting the React client.
-- [Node Backend Architecture](docs/node-architecture.md) explains Fastify setup and Miro integration.
+- [Web SDK Architecture](docs/node-architecture.md) explains the client-only structure.
 - [Miro API Costs](docs/MIRO_API_COSTS.md) explains why we cache shapes and avoid expensive board calls.
 - [Components Catalogue](docs/COMPONENTS.md) documents reusable React
   components.

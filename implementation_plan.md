@@ -2,7 +2,9 @@
 
 Purpose: Track pending improvements and code quality actions. Do not remove items; mark them done as completed. Each item lists what’s needed, where it applies, and the definition of done (DoD).
 
-Guiding principle: configure and compose established frameworks (e.g., Fastify) instead of building a custom framework.
+> **September 2025 update:** the Fastify/Prisma backend has been removed. Items that referred to `/api/*` routes or Node services are now historical and remain here only for context. New frontend-only follow-ups should be captured under dedicated sections below.
+
+Guiding principle: compose established frontend tooling (Vite, React, Miro Web SDK) instead of rebuilding infrastructure.
 
 ## Server Architecture & Lifecycle
 
@@ -125,7 +127,7 @@ Guiding principle: configure and compose established frameworks (e.g., Fastify) 
 
 - Import frontend SDK types
     - What’s needed: Use `@mirohq/websdk-types` in frontend components/hooks for stronger typing.
-    - Where: `src/frontend/**`.
+    - Where: `src/**`.
     - DoD: Frontend compiles with stronger typing; no implicit anys in these areas.
 
 - Enable `noImplicitAny`
@@ -140,13 +142,13 @@ Guiding principle: configure and compose established frameworks (e.g., Fastify) 
 
 - Frontend Miro SDK adapter (no globals)
     - What’s needed: Introduce a `BoardAdapter` wrapper for Miro SDK access and inject it where needed to avoid direct `globalThis` references.
-    - Where: `src/frontend/board/board-adapter.ts` (new), refactors in `src/frontend/**`.
+    - Where: `src/board/board-adapter.ts` (new), refactors in `src/**`.
     - DoD: All SDK calls go through adapter; tests stub adapter; no direct global casts remain.
 
 ## Linting & Formatting
 
 - Expand lint script scope
-    - What’s needed: Lint `src/frontend/`, `tests/`, and `scripts/`; fail on warnings to keep signal strong.
+    - What’s needed: Lint `src/`, `tests/`, and `scripts/`; fail on warnings to keep signal strong.
     - Where: `package.json` (`scripts.lint`).
     - DoD: `npm run lint` covers all paths and exits non‑zero on warnings.
 
@@ -183,7 +185,7 @@ Guiding principle: configure and compose established frameworks (e.g., Fastify) 
     - DoD: `npm run lint` passes and catches violations; CI enforces the rules.
 
 - Add React linting plugins
-    - What’s needed: Add `eslint-plugin-react` and `eslint-plugin-react-hooks` with recommended configs for files under `src/frontend/**`.
+    - What’s needed: Add `eslint-plugin-react` and `eslint-plugin-react-hooks` with recommended configs for files under `src/**`.
     - Where: `package.json` devDependencies and `eslint.config.mjs`.
     - DoD: Frontend lint catches hook rule violations and JSX best practices.
 
@@ -216,12 +218,12 @@ Guiding principle: configure and compose established frameworks (e.g., Fastify) 
 
 - Sections, spacing, and rhythm [Done]
     - What’s needed: Unified SidebarSection padding and row gaps; ScrollArea vertical padding; stable scrollbars; list spacing.
-    - Where: `src/frontend/ui/components/SidebarSection.tsx`, `ScrollArea.tsx`, `assets/style.css`.
+    - Where: `src/ui/components/SidebarSection.tsx`, `ScrollArea.tsx`, `assets/style.css`.
     - DoD: Consistent vertical rhythm across tabs; no cramped sections; lists and callouts scan cleanly.
 
 - Empty/Loading states [Done]
     - What’s needed: EmptyState for empty views; Skeleton for long operations (imports, jobs, cards).
-    - Where: `src/frontend/ui/components/{EmptyState,Skeleton}.tsx`; used in Cards/Structured/JobDrawer.
+    - Where: `src/ui/components/{EmptyState,Skeleton}.tsx`; used in Cards/Structured/JobDrawer.
     - DoD: Users see clear empty guidance and subtle skeletons during work.
 
 - Drawers a11y polish [Done]
@@ -231,7 +233,7 @@ Guiding principle: configure and compose established frameworks (e.g., Fastify) 
 
 - Inline guidance (InfoCallout) [Done]
     - What’s needed: Short, action-focused tips in Search, Arrange, Style, Excel; notes in Frames; advanced guidance in Structured.
-    - Where: Affected tabs under `src/frontend/ui/pages`.
+    - Where: Affected tabs under `src/ui/pages`.
     - DoD: Tips are concise, optional, and do not crowd the UI.
 
 - Field spacing normalization [Done]
@@ -271,7 +273,7 @@ Guiding principle: configure and compose established frameworks (e.g., Fastify) 
 
 - Frontend component/file naming
     - What’s needed: Audit and align filenames to `PascalCase.tsx` for components, `kebab-case.ts` for utilities.
-    - Where: `src/frontend/**`.
+    - Where: `src/**`.
     - DoD: Naming matches guide; imports updated; build and tests pass.
 
 - Logger usage policy
@@ -306,47 +308,47 @@ Guiding principle: configure and compose established frameworks (e.g., Fastify) 
 
 - BoardAdapter + Context (remove globals)
     - What’s needed: Introduce `BoardAdapter` wrapping Miro Web SDK access and provide it via React context. Replace direct `globalThis.miro`/`window.miro` references in UI and hooks (`StructuredTab`, `templates.ts`, `user-auth.ts`, etc.) with the adapter.
-    - Where: `src/frontend/board/board-adapter.ts` (new), `src/frontend/app/App.tsx` provider, refactors under `src/frontend/**`.
+    - Where: `src/board/board-adapter.ts` (new), `src/app/App.tsx` provider, refactors under `src/**`.
     - DoD: No `globalThis.miro` occurrences in app code; tests stub the adapter; typecheck and client tests pass.
 
 - Modal: replace custom trap with design-system dialog
     - What’s needed: Swap the bespoke `Modal` for the design-system/Radix Dialog primitives (proper aria attributes, focus trap, ESC handling). Remove manual `keydown` listeners and `document.querySelector` logic in favor of library behavior.
-    - Where: `src/frontend/ui/components/Modal.tsx` and all consumers.
+    - Where: `src/ui/components/Modal.tsx` and all consumers.
     - DoD: Dialog opens/closes via props, traps focus, announces title; a11y tests cover ESC, Tab/Shift+Tab cycling, and backdrop click/Enter/Space to close.
 
 - Keyboard shortcuts scoping
     - What’s needed: Scope global `window` keydown handlers (e.g., panel Ctrl+Alt+1..N in `App.tsx`) so they are active only when the panel is focused/visible; avoid conflicts with Miro shortcuts. Prefer event delegation within the panel root.
-    - Where: `src/frontend/app/App.tsx`, shared `useKeybinding` hook (new in `src/frontend/core/hooks/useKeybinding.ts`).
+    - Where: `src/app/App.tsx`, shared `useKeybinding` hook (new in `src/core/hooks/useKeybinding.ts`).
     - DoD: Keybindings work only when the app panel has focus; tests simulate focus changes and verify no global leakage.
 
 - Replace `document.getElementById` focus jumps with refs
     - What’s needed: In places like `JobDrawer`, store refs to items and move focus via ref rather than DOM id queries. Keep focus outlines visible for accessibility.
-    - Where: `src/frontend/components/JobDrawer.tsx` and similar.
+    - Where: `src/components/JobDrawer.tsx` and similar.
     - DoD: No `document.getElementById` in app code; tests verify focus moves to first failed op.
 
 - Non‑null assertions removal (frontend pass)
     - What’s needed: Remove `!` assertions in `App.tsx` and other frontend files; add guards or invariant helpers to satisfy strict typing.
-    - Where: `src/frontend/**`.
+    - Where: `src/**`.
     - DoD: `rg "\!\]"` and `rg "!\)"` find zero meaningful non‑null assertions; typecheck passes.
 
 - A11y audit and tests
     - What’s needed: Add targeted tests for roles, names, and live regions (e.g., `SyncStatusBar` uses `role="status"` with polite updates). Validate labels for all inputs and controls; ensure `summary` reflects `aria-expanded` state.
-    - Where: `tests/client/**` and component props in `src/frontend/ui/components/**`.
+    - Where: `tests/client/**` and component props in `src/ui/components/**`.
     - DoD: a11y tests pass; no axe violations in critical screens (informational only if axe is added).
 
 - Debounce and timers hygiene
     - What’s needed: Ensure all `setInterval`/`setTimeout` have cleanup paths; replace ad‑hoc debounce (e.g., search handlers) with a small `useDebouncedEffect` hook for consistency.
-    - Where: `src/frontend/components/SyncStatusBar.tsx`, `src/frontend/ui/hooks/use-search-handlers.ts`, others.
+    - Where: `src/components/SyncStatusBar.tsx`, `src/ui/hooks/use-search-handlers.ts`, others.
     - DoD: Hook used consistently; tests assert timers are cleared on unmount.
 
 - Code splitting for tabs
     - What’s needed: Lazy‑load heavy tabs (Structured, Excel) using `React.lazy` + `Suspense` with existing skeletons to reduce initial panel load.
-    - Where: `src/frontend/app/App.tsx`, `src/frontend/ui/pages/**`.
+    - Where: `src/app/App.tsx`, `src/ui/pages/**`.
     - DoD: Initial bundle decreases; skeletons render during lazy load; tests updated to await suspense.
 
 - Error boundary
     - What’s needed: Wrap the panel with an error boundary that shows a friendly error with a “Try again” action and logs details (without PII).
-    - Where: `src/frontend/app/App.tsx` (new `ErrorBoundary` component under `ui/components`).
+    - Where: `src/app/App.tsx` (new `ErrorBoundary` component under `ui/components`).
     - DoD: Uncaught render errors show the boundary; tests simulate a throwing component and assert fallback UI.
 
 - Jest‑DOM matchers and DS provider in tests
@@ -354,7 +356,7 @@ Guiding principle: configure and compose established frameworks (e.g., Fastify) 
     - Where: `tests/client/setupTests.ts` (added), test utilities.
     - DoD: Client test failures for `.toBeInTheDocument()` and Slider context are resolved; CI green.
     - What’s needed: Add `eslint-plugin-jsx-a11y` with recommended rules; fix high-signal violations.
-    - Where: `package.json` devDependency and `eslint.config.mjs`; code in `src/frontend/**`.
+    - Where: `package.json` devDependency and `eslint.config.mjs`; code in `src/**`.
     - DoD: a11y lint passes; obvious accessibility issues addressed.
 
 ## Testing & Coverage
@@ -450,7 +452,7 @@ Guiding principle: configure and compose established frameworks (e.g., Fastify) 
 
 - Optimistic operation journaling [Planned]
     - What’s needed: Persist optimistic ops journal to allow undo/rollback when Miro API rejects batch items.
-    - Where: `src/frontend/core/hooks/useOptimisticOps.ts`; backend reconciliation in `src/services/miroService.ts`.
+    - Where: `src/core/hooks/useOptimisticOps.ts`; backend reconciliation in `src/services/miroService.ts`.
     - DoD: Failed ops visibly roll back in UI with a toast and diff; journal flushed on success; tests cover happy/failed flows.
 
 - Telemetry pipeline (privacy‑first) [Planned]
@@ -462,22 +464,22 @@ Guiding principle: configure and compose established frameworks (e.g., Fastify) 
 
 - First‑run onboarding tour [Planned]
     - What’s needed: Contextual coach marks for the three core actions (Import, Layout, Sync) and a “Try with sample data” path.
-    - Where: `src/frontend/pages/HelpTab.tsx`, new `src/frontend/ui/components/CoachMarks.tsx`, integrate with `App.tsx` first‑run check (board metadata / localStorage).
+    - Where: `src/pages/HelpTab.tsx`, new `src/ui/components/CoachMarks.tsx`, integrate with `App.tsx` first‑run check (board metadata / localStorage).
     - DoD: First open shows 3–5 step tour, skippable and never auto‑repeats; sample board creates non‑destructive widgets for demo.
 
 - Command palette and shortcuts [Done]
     - What’s needed: Add `Cmd/Ctrl+K` palette to run actions (search, layout, style presets, selection ops). Document shortcuts.
-    - Where: `src/frontend/ui/components/CommandPalette.tsx` (new); wire into existing actions in `pages/` and hooks.
+    - Where: `src/ui/components/CommandPalette.tsx` (new); wire into existing actions in `pages/` and hooks.
     - DoD: Palette opens with `Cmd/Ctrl+K`; arrow/Enter navigates; actions execute; help lists available shortcuts.
 
 - Expand command palette actions [Planned]
     - What’s needed: Surface search, layout, style preset, and selection operations within the command palette.
-    - Where: `src/frontend/app/App.tsx`, `src/frontend/ui/components/CommandPalette.tsx`.
+    - Where: `src/app/App.tsx`, `src/ui/components/CommandPalette.tsx`.
     - DoD: Palette offers common actions beyond tab switching; tests cover each action.
 
 - Consistent panel IA and tabs [Planned]
     - What’s needed: Audit tab taxonomy; prioritize common tasks; reduce to 5–7 top‑level tabs; move advanced items to nested tabs with clear labels.
-    - Where: `src/frontend/ui/pages/tabs.ts`, `tab-definitions.ts`, each Tab component.
+    - Where: `src/ui/pages/tabs.ts`, `tab-definitions.ts`, each Tab component.
     - DoD: Tabs ordered by frequency; labels concise; tree fits Miro panel height without scrolling on 768px.
 
 - Settings panel (per board) [Planned]
@@ -499,12 +501,12 @@ Guiding principle: configure and compose established frameworks (e.g., Fastify) 
 
 - Job Drawer UX overhaul [Planned]
     - What’s needed: Unify progress bars, step list, errors, and retry in `JobDrawer`; add “Copy error details” and “Report issue”.
-    - Where: `src/frontend/components/JobDrawer.tsx`, `DiffDrawer.tsx` integration.
+    - Where: `src/components/JobDrawer.tsx`, `DiffDrawer.tsx` integration.
     - DoD: Users see granular progress and can retry/cancel; detailed error view available and copyable.
 
 - Error handling microcopy and remediation [Planned]
     - What’s needed: Human‑friendly error titles, causes, and next steps (e.g., “Reconnect Miro”); consistent toasts vs inline errors.
-    - Where: Shared error mapper in `src/frontend/core/*` and components.
+    - Where: Shared error mapper in `src/core/*` and components.
     - DoD: Errors are actionable; retry paths visible; no raw exception text leaks.
 
 - Empty states with guidance [Planned]
@@ -521,22 +523,22 @@ Guiding principle: configure and compose established frameworks (e.g., Fastify) 
 
 - Selection‑aware quick actions [Planned]
     - What’s needed: Show context ribbon when selection changes (group, align, style preset, tag apply, layout selection).
-    - Where: `src/frontend/components/SyncStatusBar.tsx` or new `QuickActions.tsx`; hook into `useSelection`.
+    - Where: `src/components/SyncStatusBar.tsx` or new `QuickActions.tsx`; hook into `useSelection`.
     - DoD: Selecting items reveals context actions; keyboard access works; actions disabled when invalid.
 
 - Search & filter UX upgrade [Planned]
     - What’s needed: Fuzzy search with highlight and keyboard navigation; filter by type/tag; enable “jump to on board”.
-    - Where: `src/frontend/ui/pages/SearchTab.tsx`, `node-search.ts`, `search-tools.ts`.
+    - Where: `src/ui/pages/SearchTab.tsx`, `node-search.ts`, `search-tools.ts`.
     - DoD: Query highlights matches; Up/Down selects result; Enter zooms on board; filters persist per board.
 
 - Style presets: preview and apply [Planned]
     - What’s needed: Add visual previews for presets with hover/keyboard preview‑on‑selection; allow “apply to selection”.
-    - Where: `src/frontend/ui/style-presets.ts`, `StyleTab.tsx`.
+    - Where: `src/ui/style-presets.ts`, `StyleTab.tsx`.
     - DoD: Hover previews selection without commit; click applies; keyboard left/right cycles; undo supported.
 
 - Layout tooling improvements [Planned]
     - What’s needed: Live layout preview with ghost frames; “apply to selection”; layout constraints in UI.
-    - Where: `src/frontend/core/graph/layout-*`, `LayoutEngineTab.tsx`.
+    - Where: `src/core/graph/layout-*`, `LayoutEngineTab.tsx`.
     - DoD: Preview toggles on/off; apply respects constraints; visible guidance for invalid selections.
 
 ## Performance & Scalability

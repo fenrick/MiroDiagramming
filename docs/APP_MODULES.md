@@ -4,13 +4,13 @@
 
 ## 0 Purpose
 
-This document summarises the files under `src/frontend/app/`. These
+This document summarises the files under `src/app/`. These
 modules initialise the React UI and integrate with the Miro Web SDK.
 
 ## 1 Directory Overview
 
 ```
-src/frontend/app/
+src/app/
 ```
 
 - App.tsx

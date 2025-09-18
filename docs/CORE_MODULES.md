@@ -4,14 +4,14 @@
 
 ## 0 Purpose
 
-This document summarises TypeScript modules under `src/frontend/core/`.
+This document summarises TypeScript modules under `src/core/`.
 It complements the repository map in `ARCHITECTURE.md` and explains the
 responsibility of each file.
 
 ## 1 Directory Overview
 
 ```
-src/frontend/core/
+src/core/
   data-mapper.ts
   excel-sync-service.ts
   graph/

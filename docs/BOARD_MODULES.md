@@ -5,13 +5,13 @@
 ## 0 Purpose
 
 This document summarises the individual TypeScript modules located under
-`src/frontend/board/`. It complements the repository map in
+`src/board/`. It complements the repository map in
 `ARCHITECTURE.md` and clarifies what each file is responsible for.
 
 ## 1 Directory Overview
 
 ```
-src/frontend/board/
+src/board/
 ```
 
 - board-builder.ts

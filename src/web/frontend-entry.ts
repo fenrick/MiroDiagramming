@@ -1,2 +1,2 @@
-import '../frontend/assets/style.css'
-import '../frontend/index.ts'
+import '../assets/style.css'
+import '../index.ts'

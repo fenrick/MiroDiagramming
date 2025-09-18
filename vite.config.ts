@@ -29,16 +29,12 @@ export default defineConfig(({ mode }) => {
     },
     resolve: {
       alias: {
-        '@': fileURLToPath(new URL('./src/frontend', import.meta.url)),
+        '@': fileURLToPath(new URL('./src', import.meta.url)),
       },
     },
     plugins: [react()],
     server: {
       port: parseInt(env.VITE_PORT || '3000', 10),
-      proxy: {
-        '/api': { target: env.VITE_BACKEND_URL, changeOrigin: true, secure: false },
-        '/oauth': { target: env.VITE_BACKEND_URL, changeOrigin: true, secure: false },
-      },
     },
   }
 })
