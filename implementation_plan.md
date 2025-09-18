@@ -1,122 +1,32 @@
 # Implementation Plan
 
-Purpose: Track pending improvements and code quality actions. Do not remove items; mark them done as completed. Each item lists what’s needed, where it applies, and the definition of done (DoD).
-
-> **September 2025 update:** the Fastify/Prisma backend has been removed. Items that referred to `/api/*` routes or Node services are now historical and remain here only for context. New frontend-only follow-ups should be captured under dedicated sections below.
+Purpose: Track pending improvements for the browser‑only app. This plan now excludes all legacy server/Prisma items; those have been retired with the backend and, where useful, archived under `docs/archive/`.
 
 Guiding principle: compose established frontend tooling (Vite, React, Miro Web SDK) instead of rebuilding infrastructure.
 
-## Server Architecture & Lifecycle
+## Scope
 
-- Expose `buildApp()` for tests [Done]
-    - What’s needed: Allow tests to construct the Fastify app without binding a port; avoid custom server wrappers.
-    - Where: `src/app.ts` exports `buildApp()`; `src/server.ts` starts the server directly.
-    - DoD: Integration tests import `buildApp()` and run requests via `app.inject` without network listeners.
-
-- Guard auto-start in entrypoint [Done]
-    - What’s needed: Only auto-start server when the file is executed directly.
-    - Where: `src/server.ts` using `if (require.main === module) { startServer() }`.
-    - DoD: Running tests that import the module does not start a listener.
-
-- Graceful shutdown on SIGTERM/SIGINT [Done]
-    - What’s needed: Signal handlers that `await app.close()` and stop background workers; make sure Fastify onClose hooks run.
-    - Where: `src/server.ts` (signal handlers), `src/queue/changeQueue.ts` (stop hook if needed).
-    - DoD: Sending SIGINT/SIGTERM closes the server cleanly and calls `changeQueue.stop()`; verified by lifecycle test.
-    - Notes: Implementation delegates signal wiring to the `close-with-grace` package so we do not maintain bespoke signal logic.
-
-- Health and readiness endpoints [Done]
-    - What’s needed: Provide liveness and readiness probes suitable for containers.
-    - Where: Implemented in `src/app.ts` as `GET /healthz` (liveness) and `GET /readyz` (readiness); SPA fallback excludes `/healthz*`.
-    - DoD: `/healthz` returns `{ status: 'ok' }`; `/readyz` returns 200 only when DB connectivity succeeds and the change queue is idle, 503 on DB/queue issues.
-
-- Server lifecycle integration test [Done]
-    - What’s needed: Start server/app, hit `/healthz`, then trigger shutdown and assert queue stop called.
-    - Where: `tests/integration/server/lifecycle.test.ts`.
-    - DoD: Test passes reliably and guards start/stop regressions.
+This plan covers the React panel, Web SDK helpers, quality gates, and UX. There is no Node server, no Prisma schema, no job queue, and no webhooks.
 
 ## Security
 
-- Security headers via Helmet [Done]
-    - What’s needed: Register `@fastify/helmet` with sensible defaults; disable in tests.
-    - Where: `src/app.ts` (conditional on `NODE_ENV !== 'test'`).
-    - DoD: Responses include standard security headers in non-test envs; no breakage observed.
-
-- Tighten webhook content-type and size [Done]
-    - What’s needed: Enforce `application/json`, set small `bodyLimit`, keep `rawBody` enabled for signature check.
-    - Where: `src/routes/webhook.routes.ts` (route options/schema).
-    - DoD: Route rejects invalid content types/oversized bodies; existing webhook tests pass.
-
-- Redact sensitive fields in logs [Done]
-    - What’s needed: Extend logger redaction to headers and tokens.
-    - Where: `src/config/logger.ts` (`redact.paths` to include `req.headers['x-miro-signature']`, `req.headers.cookie`, `req.headers.authorization`).
-    - DoD: Logs show `[Redacted]` for configured fields; no secrets leak in app logs.
-
-- Domain error classes and mapping [Done]
-    - What’s needed: Define lightweight domain error classes with machine-readable `code` and centralize mapping to HTTP statuses (400/401/403/409/429) in the error handler.
-    - Where: `src/config/error-response.ts`, `src/config/error-handler.ts`, thrown from services/routes.
-    - DoD: Errors include codes; centralized handler maps to correct status/payload; tests assert mappings.
+Security is limited to client concerns (e.g., safe DOM usage). No HTTP handlers or webhooks remain.
 
 ## Reliability & Operations
 
-- Liveness and readiness endpoints exposed for orchestration [Done]
-    - What’s needed: Provide `/healthz` and `/readyz` for Kubernetes/Docker health checks; readiness verifies DB and queue idle; SPA fallback excludes `/healthz/*`.
-    - Where: Implemented in `src/app.ts`.
-    - DoD: `/healthz` 200 OK, `/readyz` 200 only when ready, 503 otherwise.
-
-- Queue backpressure visibility for operations [Done]
-    - What’s needed: Emit structured logs/metrics for queue size and in‑flight counts; log WARN when queue length crosses a soft threshold; threshold configurable by env.
-    - Where: `src/queue/changeQueue.ts`; configuration via env (e.g., `QUEUE_WARN_LENGTH`).
-    - DoD: Logs contain queue metrics; WARN fires above threshold; threshold adjusted via env var.
-
-- Server lifecycle integration coverage
-    - What’s needed: Integration test that starts the app, probes health endpoints, triggers SIGINT/SIGTERM, and verifies queue stop/drain and Fastify onClose hooks.
-    - Where: `tests/integration/server/lifecycle.test.ts`.
-    - DoD: Test reliably passes and prevents regressions in start/stop behavior.
+Static hosting only. Use host‑level health checks for `index.html` as needed.
 
 ## Recent Maintenance
 
 - [Done] Remove deprecated Python backend sources under `src/miro_backend/**` and stray `__pycache__`.
-- [Done] Remove stale top-level `server/` folder to avoid confusion with `src/server.ts`.
-- [Done] Harden production static serving: add `STATIC_ROOT` env and fallbacks to `src/web/dist` and `dist/web`.
+- [Done] Remove stale top-level `server/` folder (no backend remains).
+- [Done] CI cleanup: remove Prisma/migrate steps and legacy client typecheck job; keep frontend-only gates (`format`, `lint`, `typecheck`, `test`, `build`).
 
-## Queue & Persistence
+<!-- Removed: Queue & Persistence (backend-only) -->
 
-- Persist pending `changeQueue` tasks across restarts
-    - What’s needed: Store enqueued tasks in Prisma/SQLite with minimal schema; define purge/TTL semantics and recovery order.
-    - Where: `src/queue/changeQueue.ts` (persistence integration), `prisma/schema.prisma` (schema/migration), `src/config/db` helpers.
-    - DoD: Tasks survive process restarts per documented policy; migration included; tests cover enqueue, dequeue, recovery on boot, and purge behavior.
+<!-- Removed: Miro API & Webhooks (backend-only) -->
 
-- Ensure queue drains or persists on shutdown [Done]
-    - What’s needed: On shutdown, stop accepting new work, finish in‑flight items, and either drain backlog or persist state for resumption.
-    - Where: `src/queue/changeQueue.ts` and server lifecycle in `src/server.ts`.
-    - DoD: Tests prove no tasks are lost or stuck; shutdown completes cleanly within a bounded time.
-
-- Instrument queue and apply backpressure
-    - What’s needed: Structured logging for enqueue/dequeue with sizes and latencies; configurable concurrency; soft/hard limits with clamped enqueue or shedding if needed.
-    - Where: `src/queue/changeQueue.ts`; env config for limits/concurrency.
-    - DoD: Logs/metrics available; WARN/ERROR at thresholds; behavior configurable via env.
-
-## Miro API & Webhooks
-
-- Restore shapes REST endpoints [Done]
-    - What’s needed: Provide `/api/boards/:boardId/shapes` CRUD endpoints in the Node backend so the frontend ShapeClient can create, read, update, and delete widgets without falling back to legacy code.
-    - Where: `src/routes/shapes.routes.ts`, `src/app.ts`, supporting tests in `tests/integration/integration/shapes.test.ts`.
-    - DoD: Shape routes proxy to the Miro Node SDK for shapes and text items; integration tests cover create/read/update/delete; SPA imports succeed end-to-end.
-
-- Backoff jitter and Retry‑After support
-    - What’s needed: Add full jitter to exponential backoff and honor `Retry-After` header values (seconds/date); respect 429/5xx semantics.
-    - Where: `src/miro/retry.ts` (or retry helper), with logging of chosen delay and reason.
-    - DoD: Retries wait per header when provided; otherwise exponential with jitter; logs include backoff details; unit tests cover both flows.
-
-- Use SDK async iterators for listings
-    - What’s needed: Replace manual pagination with `for await (...)` over SDK iterators; include example in docs.
-    - Where: `src/services/miroService.ts`; documentation in `docs/node-architecture.md`.
-    - DoD: List operations stream via async iteration; tests still pass; docs updated with example usage.
-
-- Replace custom webhook signature verification (when SDK helper available)
-    - What’s needed: Swap `src/utils/webhookSignature.ts` for official SDK helper, adjust route wiring and tests accordingly; keep fallback until helper is released.
-    - Where: `src/utils/webhookSignature.ts`, webhook route, and related tests.
-    - DoD: Verification uses SDK helper; tests green; fallback path documented until rollout.
+<!-- Removed: backend REST endpoints, webhooks, and retry handlers -->
 
 ## Type Safety & SDK Usage
 
@@ -130,15 +40,9 @@ Guiding principle: compose established frontend tooling (Vite, React, Miro Web S
     - Where: `src/**`.
     - DoD: Frontend compiles with stronger typing; no implicit anys in these areas.
 
-- Enable `noImplicitAny`
-    - What’s needed: Turn on `noImplicitAny` and resolve resulting errors across backend and frontend.
-    - Where: `tsconfig.json`, `tsconfig.client.json`, and code in `src/**`.
-    - DoD: `npm run typecheck` passes with `noImplicitAny` enabled.
+-- Enable `noImplicitAny` - What’s needed: Turn on `noImplicitAny` and resolve resulting errors across the frontend. - Where: `tsconfig.json` (and any client tsconfigs), and code in `src/**`. - DoD: `npm run typecheck` passes with `noImplicitAny` enabled.
 
-- Define shared DTOs
-    - What’s needed: Centralize request/response DTOs shared by backend and frontend.
-    - Where: `src/types/` (new or expanded module); refactor imports to use shared DTOs.
-    - DoD: Duplication removed; typecheck and tests pass.
+-- Define shared types - What’s needed: Centralize commonly used data shapes for UI and board helpers. - Where: `src/types/` (new or expanded module); refactor imports to use shared types. - DoD: Duplication removed; typecheck and tests pass.
 
 - Frontend Miro SDK adapter (no globals)
     - What’s needed: Introduce a `BoardAdapter` wrapper for Miro SDK access and inject it where needed to avoid direct `globalThis` references.
@@ -266,10 +170,7 @@ Guiding principle: compose established frontend tooling (Vite, React, Miro Web S
     - Where: `eslint.config.mjs`, code in `src/**`.
     - DoD: Lint clean with rule enabled; code uses safe checks.
 
-- Backend input validation with Zod
-    - What’s needed: Ensure all externally‑sourced inputs (routes, webhooks, env parsing) validate via Zod or JSON Schema.
-    - Where: `src/routes/**`, `src/utils/**`, `src/config/env.ts`.
-    - DoD: Handlers parse inputs before use; tests cover invalid input cases.
+<!-- Removed: Backend input validation (no routes/webhooks/env parsing) -->
 
 - Frontend component/file naming
     - What’s needed: Audit and align filenames to `PascalCase.tsx` for components, `kebab-case.ts` for utilities.
@@ -371,10 +272,7 @@ Guiding principle: compose established frontend tooling (Vite, React, Miro Web S
     - Where: `src/config/error-handler.test.ts`.
     - DoD: Tests assert correct codes/payloads for various error types.
 
-- Change queue behavior tests
-    - What’s needed: Mock timers to test clamping, retry/drop flows, backoff logging; verify queue drains on shutdown.
-    - Where: `src/queue/changeQueue.test.ts` and lifecycle‑related tests.
-    - DoD: All queue scenarios covered; shutdown drain verified.
+<!-- Removed: change queue tests (no queue) -->
 
 - Idempotency repository TTL tests
     - What’s needed: Mock `Date.now` to verify TTL cleanup; confirm duplicate keys extend TTL.
@@ -420,18 +318,19 @@ Guiding principle: compose established frontend tooling (Vite, React, Miro Web S
     - Where: `docs/node-architecture.md` (Server Lifecycle section).
     - DoD: Docs include lifecycle notes; aligns with `buildApp()`/`startServer()`.
 
-- Document queue persistence strategy
+<!-- Removed: queue persistence strategy -->
+
     - What’s needed: Capture persistence design, trade‑offs, and operational notes.
     - Where: `docs/node-architecture.md`.
     - DoD: Clear section explaining persistence choices and recovery.
 
 - Operational runbook [Done]
-    - What’s needed: `docs/runbook.md` covering env vars, health/readiness, shutdown notes, queue metrics.
+    - What’s needed: `docs/runbook.md` focuses on build, preview, deploy, and static host checks.
     - Where: `docs/runbook.md`.
     - DoD: Runbook exists and is referenced by deployment docs.
 
 - Update retry semantics in docs
-    - What’s needed: Add jitter/Retry‑After behavior and queue limits/telemetry to docs.
+    - What’s needed: N/A (no HTTP client/backoff layer in the frontend-only app).
     - Where: `docs/node-architecture.md`.
     - DoD: Documentation reflects current retry and telemetry patterns.
 
@@ -443,22 +342,7 @@ Guiding principle: compose established frontend tooling (Vite, React, Miro Web S
 - Add loading states to long operations (board scan, imports, diff). [Planned]
 - Audit keyboard navigation and focus order across Tabs, modals, and lists; add a11y tests. [Planned]
 
-## Jobs & Backend Infrastructure
-
-- Progressive job status API for UI progress bars [Planned]
-    - What’s needed: Add incremental job progress endpoints/events (percent, ETA, current step) to support granular progress UI and cancel.
-    - Where: `src/services/*` long‑running ops; `src/routes/*` job endpoints; extend `changeQueue` to publish progress; optional SSE at `/api/jobs/:id/events`.
-    - DoD: UI receives progress updates at least every 300ms; cancel endpoint `DELETE /api/jobs/:id` cleanly stops work; tests cover SSE and cancellation.
-
-- Optimistic operation journaling [Planned]
-    - What’s needed: Persist optimistic ops journal to allow undo/rollback when Miro API rejects batch items.
-    - Where: `src/core/hooks/useOptimisticOps.ts`; backend reconciliation in `src/services/miroService.ts`.
-    - DoD: Failed ops visibly roll back in UI with a toast and diff; journal flushed on success; tests cover happy/failed flows.
-
-- Telemetry pipeline (privacy‑first) [Planned]
-    - What’s needed: Add optional anonymized event telemetry (feature usage, latencies, errors) with user consent toggle.
-    - Where: Event sink in `src/config/logger.ts` or lightweight analytics module; opt‑in setting persisted per board.
-    - DoD: Events buffer locally and batch‑send; PII scrubbed; toggle surfaced in Settings; docs updated.
+<!-- Removed: Jobs & Backend Infrastructure (no server or SSE) -->
 
 ## UX & Navigation
 
@@ -515,9 +399,9 @@ Guiding principle: compose established frontend tooling (Vite, React, Miro Web S
     - DoD: Empty screens helpful and consistent; tracked via telemetry.
 
 - Offline/network state & retry UX [Planned]
-    - What’s needed: Show network banner, queue actions offline, auto‑retry with backoff; clear resume messaging.
-    - Where: Global app shell and network hook; integrates with queue.
-    - DoD: Temporary disconnects don’t lose actions; banner disappears on recovery.
+    - What’s needed: Show network banner and auto‑retry with backoff; clear resume messaging.
+    - Where: Global app shell and network hook.
+    - DoD: Temporary disconnects don’t lose user intent; banner disappears on recovery.
 
 ## Selection & Editing
 

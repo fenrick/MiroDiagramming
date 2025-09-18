@@ -14,14 +14,9 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
-      - run: npx prisma generate
-        env:
-          DATABASE_URL: file:./app.db
-      - run: npx prisma migrate deploy
-        env:
-          DATABASE_URL: file:./app.db
+      # Frontend-only quality gates
+      - run: npm run format
       - run: npm run lint
       - run: npm run typecheck
-      - run: npm run typecheck:client
       - run: npm test
       - run: npm run build

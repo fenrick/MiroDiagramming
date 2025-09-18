@@ -1,14 +1,14 @@
 # Frontend Build
 
-```bash
-npm install
-npm run build
-```
+This project is frontend‑only. The Vite build outputs a static bundle that runs entirely inside Miro via the Web SDK.
 
-The build step generates TypeScript types from the running backend's OpenAPI
-schema at `http://localhost:8000/openapi.json`. To regenerate the client types
-without building, run:
+Common commands:
 
 ```bash
-npm run generate-client
+npm install          # install dependencies
+npm run dev          # start Vite dev server
+npm run build        # production build (outputs to dist/)
+npm run preview      # serve the built bundle locally
 ```
+
+There is no API client generation step and no dependency on a running backend.

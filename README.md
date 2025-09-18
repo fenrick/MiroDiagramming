@@ -259,7 +259,7 @@ scopes:
 
 ## Testing
 
-Run the backend test suite:
+Run the test suite:
 
 ```bash
 npm test
@@ -296,27 +296,6 @@ All runtime messages are emitted through a shared logger defined in
 [`src/logger.ts`](src/logger.ts). Set the
 `LOG_LEVEL` environment variable to `trace`, `debug`, `info`, `warn`, `error` or
 `silent` to control verbosity. It defaults to `info`.
-
-The Fastify server uses **Logfire** for structured logging. Client log entries
-are posted to `/api/logs` so both sides share the same log stream. Background
-workers reuse the Fastify logger (`app.log`) for consistent redaction and correlation.
-
-Data persistence is handled by **Prisma**. Development and tests use SQLite
-while production targets PostgreSQL through the same models. Database schemas
-are maintained with Prisma migrations applied automatically before startup.
-
-## Change queue, cache, and logging
-
-API routes enqueue change tasks which a background worker applies using the Miro
-REST API. A lightweight SQLite cache stores board snapshots so lookups through
-`/api/cache/{board_id}` avoid redundant API calls.
-
-`src/config/logger.ts` wires Logfire into Fastify and adds a request ID
-context so every request is traceable end to end.
-
-Several new C# utilities (`ExcelLoader`, `LayoutEngine`, `InMemoryTemplateStore` and
-`ObjectMatcher`) are early prototypes. TODO markers outline the remaining work
-to match the JavaScript implementations.
 
 Example:
 
@@ -391,13 +370,13 @@ npm run build-storybook
 ## Local CI Build
 
 Run the helper script to reproduce the GitHub Actions pipeline locally. It
-executes lint checks, type verification, unit tests, the production build and
-the Storybook build in sequence. Semantic release is intentionally skipped.
+executes lint checks, type verification, unit tests, and the production build
+in sequence (Storybook build optional). Semantic release is intentionally skipped.
 
 Pull requests trigger the unified `ci.yml` workflow to run linting, type checks,
-unit tests and production builds for the Node backend and the React
-client. Pushes to `main` additionally invoke `repo-sonar.yml`, `repo-codeql.yml`
-and `repo-release.yml` for coverage, static analysis and packaging tasks.
+unit tests and the production build for the React client. Pushes to `main`
+additionally invoke `repo-sonar.yml`, `repo-codeql.yml` and `repo-release.yml`
+for coverage, static analysis and release tasks.
 
 ```bash
 npm run ci:local
@@ -420,22 +399,4 @@ the development workflow.
 This software is released into the public domain under [The Unlicense](LICENSE).
 See the LICENSE file for details.
 
-### Database (Prisma)
-
-- Import your Prisma Client in backend code with:
-
-```
-import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
-```
-
-This repo uses a singleton via `getPrisma()` in `src/config/db.ts`, which internally constructs the client once and reuses it.
-
-- Generate client and apply migrations:
-
-```
-npm run migrate:dev      # development migrations
-npm run migrate:deploy   # deploy existing migrations
-```
-
-Tip: For real-time database updates without polling, see Prisma Pulse: https://pris.ly/tip-0-pulse
+<!-- Removed: Database (Prisma) section; no backend/database in the frontend-only app. -->
