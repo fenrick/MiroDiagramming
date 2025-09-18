@@ -34,7 +34,8 @@ export function useAuthStatus(): AuthStatus {
   }, [])
 
   const signIn = useCallback(() => {
-    const board = (globalThis as { miro?: { board?: { openApp?: () => Promise<void> } } }).miro?.board
+    const board = (globalThis as { miro?: { board?: { openApp?: () => Promise<void> } } }).miro
+      ?.board
     void board?.openApp?.()
   }, [])
 

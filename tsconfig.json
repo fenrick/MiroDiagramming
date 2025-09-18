@@ -16,11 +16,5 @@
     "types": ["vite/client", "vitest", "node"]
   },
   "include": ["src/**/*", "vite.config.ts"],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "src/**/*.test.*",
-    "src/stories/**",
-    "tests/**/fixtures/**"
-  ]
+  "exclude": ["node_modules", "dist", "src/**/*.test.*", "src/stories/**", "tests/**/fixtures/**"]
 }

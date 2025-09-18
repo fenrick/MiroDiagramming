@@ -50,10 +50,7 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
   private tagsCache: TagLike[] | undefined
   private readonly tagClient: TagClient
 
-  constructor(
-    builder: BoardBuilder = new BoardBuilder(),
-    tagClient: TagClient = new TagClient(),
-  ) {
+  constructor(builder: BoardBuilder = new BoardBuilder(), tagClient: TagClient = new TagClient()) {
     super(builder)
     this.tagClient = tagClient
   }

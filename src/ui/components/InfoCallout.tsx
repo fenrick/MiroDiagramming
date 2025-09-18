@@ -11,11 +11,6 @@ type InfoCalloutProps = Readonly<{
  */
 export function InfoCallout({ title, children }: InfoCalloutProps): React.JSX.Element {
   return (
-    <Callout
-      variant="primary"
-      tone="neutral"
-      title={title}
-      description={<div>{children}</div>}
-    />
+    <Callout variant="primary" tone="neutral" title={title} description={<div>{children}</div>} />
   )
 }

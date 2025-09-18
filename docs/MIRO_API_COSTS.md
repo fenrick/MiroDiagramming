@@ -12,12 +12,12 @@ Summarise how the client reduces calls to high-cost Web SDK operations now that 
 
 The Web SDK internally maps to REST endpoints with the following indicative costs:
 
-| SDK call                  | Estimated cost*         |
-| ------------------------- | ----------------------- |
-| `miro.board.get({ type })`| ~500 points             |
-| `miro.board.getSelection()` | ~500 points          |
-| `miro.board.get({ id })`  | ~500 points             |
-| Widget mutations (`sync`) | Variable (typically 50) |
+| SDK call                    | Estimated cost\*        |
+| --------------------------- | ----------------------- |
+| `miro.board.get({ type })`  | ~500 points             |
+| `miro.board.getSelection()` | ~500 points             |
+| `miro.board.get({ id })`    | ~500 points             |
+| Widget mutations (`sync`)   | Variable (typically 50) |
 
 \*Subject to change per Miro’s rate limits. We optimise assuming the classic REST costs.
 

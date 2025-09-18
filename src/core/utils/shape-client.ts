@@ -31,7 +31,10 @@ function ensureBoard(): {
 }
 
 function toShapeData(raw: Record<string, unknown>): ShapeData {
-  const style = typeof raw.style === 'object' && raw.style !== null ? (raw.style as Record<string, unknown>) : undefined
+  const style =
+    typeof raw.style === 'object' && raw.style !== null
+      ? (raw.style as Record<string, unknown>)
+      : undefined
   return {
     shape: typeof raw.shape === 'string' ? raw.shape : 'rectangle',
     x: typeof raw.x === 'number' ? raw.x : Number(raw.x ?? 0),

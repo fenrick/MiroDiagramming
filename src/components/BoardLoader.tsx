@@ -16,35 +16,32 @@ export function BoardLoader(): JSX.Element {
 
   const SkeletonRow = (): JSX.Element => <Skeleton data-testid="skeleton" />
 
-  const fetchShapes = useCallback(
-    async (): Promise<void> => {
-      const board = globalThis.miro?.board
-      if (typeof board?.get !== 'function') {
-        setShapes([])
-        return
-      }
-      const items = await board.get({ type: 'shape' })
-      const normalized = items.map((item) => {
-        // eslint-disable-next-line no-restricted-syntax
-        const record = item as unknown as Record<string, unknown>
-        const idValue = record.id
-        return {
-          id: (typeof idValue === 'string' || typeof idValue === 'number') ? idValue : String(idValue ?? ''),
-          ...record,
-        } as ShapeSnapshot
-      })
-      setShapes(normalized)
-    },
-    [],
-  )
+  const fetchShapes = useCallback(async (): Promise<void> => {
+    const board = globalThis.miro?.board
+    if (typeof board?.get !== 'function') {
+      setShapes([])
+      return
+    }
+    const items = await board.get({ type: 'shape' })
+    const normalized = items.map((item) => {
+      // eslint-disable-next-line no-restricted-syntax
+      const record = item as unknown as Record<string, unknown>
+      const idValue = record.id
+      return {
+        id:
+          typeof idValue === 'string' || typeof idValue === 'number'
+            ? idValue
+            : String(idValue ?? ''),
+        ...record,
+      } as ShapeSnapshot
+    })
+    setShapes(normalized)
+  }, [])
 
-  const load = useCallback(
-    async (): Promise<void> => {
-      await Promise.all([fetchShapes(), new Promise((resolve) => setTimeout(resolve, 350))])
-      setLoading(false)
-    },
-    [fetchShapes],
-  )
+  const load = useCallback(async (): Promise<void> => {
+    await Promise.all([fetchShapes(), new Promise((resolve) => setTimeout(resolve, 350))])
+    setLoading(false)
+  }, [fetchShapes])
 
   useEffect(() => {
     void load()
