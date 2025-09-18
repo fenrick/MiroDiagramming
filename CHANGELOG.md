@@ -1,3 +1,21 @@
+# [2.0.0](https://github.com/fenrick/MiroDiagramming/compare/v1.22.1...v2.0.0) (2025-09-18)
+
+
+* feat!: ds/ui restructure and grid behavior ([c8821fb](https://github.com/fenrick/MiroDiagramming/commit/c8821fb7d644befd24a881e7c913c11e39ef93a7))
+
+
+### Features
+
+* **ui:** adopt DS primitives and tighten panel spacing ([339dfec](https://github.com/fenrick/MiroDiagramming/commit/339dfec532a3954e1f7d6003332c8dfb21719f66))
+
+
+### BREAKING CHANGES
+
+* - HTML entrypoints changed; app boot now at src/app.tsx, entry at src/index.ts.
+- Panel layout/spacing uses DS tokens; panel width is 368px (was 320px).
+- Arrange grid vertical fill algorithm changed; layouts differ vs prior versions.
+- Grouping option creates a frame instead of a simple group (when available).
+
 ## [1.22.1](https://github.com/fenrick/MiroDiagramming/compare/v1.22.0...v1.22.1) (2025-09-18)
 
 
