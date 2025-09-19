@@ -85,13 +85,11 @@ export class NestedLayouter {
     const Elk = await loadElk()
     const elk = new Elk()
     const result = await elk.layout(elkRoot)
-    if (typeof (log as { debug?: unknown }).debug === 'function') {
-      const sizes: Array<{ id: string; w: number; h: number }> = []
-      for (const child of result.children ?? []) {
-        this.collectDebugSizes(child, sizes)
-      }
-      log.debug({ count: sizes.length, sizes }, 'ELK nested sizes')
+    const sizes: Array<{ id: string; w: number; h: number }> = []
+    for (const child of result.children ?? []) {
+      this.collectDebugSizes(child, sizes)
     }
+    log.info({ count: sizes.length, sizes }, 'ELK nested sizes')
     const nodes: Record<string, PositionedNode> = {}
     for (const child of result.children ?? []) {
       this.collectPositions(child, nodes)

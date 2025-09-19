@@ -271,7 +271,7 @@ export class BoardBuilder {
         w: (item as { width?: number }).width,
         h: (item as { height?: number }).height,
       }
-      log.debug({ before, after }, 'Resize item')
+      log.info({ before, after }, 'Resize item')
     } catch {
       // ignore assignment failures; sync will no-op if values didn't change
     }
@@ -311,7 +311,7 @@ export class BoardBuilder {
       pos.y,
       this.frame,
     )) as BoardItem
-    log.debug(
+    log.info(
       { id: node.id, x: pos.x, y: pos.y, w: pos.width, h: pos.height },
       'Create node at size',
     )
