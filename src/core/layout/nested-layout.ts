@@ -34,6 +34,8 @@ const DEFAULT_TOP_SPACING = 50
 
 import type { ElkNode } from 'elkjs/lib/elk-api'
 
+import * as log from '../../logger'
+
 import { loadElk } from './elk-loader'
 import { getNodeDimensions } from './layout-core'
 import type { LayoutNode } from './elk-preprocessor'
@@ -83,11 +85,27 @@ export class NestedLayouter {
     const Elk = await loadElk()
     const elk = new Elk()
     const result = await elk.layout(elkRoot)
+    if (typeof (log as { debug?: unknown }).debug === 'function') {
+      const sizes: Array<{ id: string; w: number; h: number }> = []
+      for (const child of result.children ?? []) {
+        this.collectDebugSizes(child, sizes)
+      }
+      log.debug({ count: sizes.length, sizes }, 'ELK nested sizes')
+    }
     const nodes: Record<string, PositionedNode> = {}
     for (const child of result.children ?? []) {
       this.collectPositions(child, nodes)
     }
     return { nodes }
+  }
+
+  private collectDebugSizes(node: ElkNode, out: Array<{ id: string; w: number; h: number }>): void {
+    if (node.id && typeof node.width === 'number' && typeof node.height === 'number') {
+      out.push({ id: String(node.id), w: node.width, h: node.height })
+    }
+    for (const child of node.children ?? []) {
+      this.collectDebugSizes(child, out)
+    }
   }
 
   private sortValue(node: HierNode, key?: string): string {

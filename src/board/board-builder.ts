@@ -261,8 +261,17 @@ export class BoardBuilder {
   public async resizeItem(item: BoardItem, width: number, height: number): Promise<void> {
     // Use Reflect.set to handle SDK proxies and non-enumerable props reliably
     try {
+      const before = {
+        w: (item as { width?: number }).width,
+        h: (item as { height?: number }).height,
+      }
       Reflect.set(item as object, 'width', width)
       Reflect.set(item as object, 'height', height)
+      const after = {
+        w: (item as { width?: number }).width,
+        h: (item as { height?: number }).height,
+      }
+      log.debug({ before, after }, 'Resize item')
     } catch {
       // ignore assignment failures; sync will no-op if values didn't change
     }
@@ -302,6 +311,10 @@ export class BoardBuilder {
       pos.y,
       this.frame,
     )) as BoardItem
+    log.debug(
+      { id: node.id, x: pos.x, y: pos.y, w: pos.width, h: pos.height },
+      'Create node at size',
+    )
     return widget
   }
 }

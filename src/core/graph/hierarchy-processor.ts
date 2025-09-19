@@ -1,5 +1,6 @@
 import type { BaseItem, Connector, Frame, Group, GroupableItem } from '@mirohq/websdk-types'
 
+import * as log from '../../logger'
 import { BoardBuilder } from '../../board/board-builder'
 import { clearActiveFrame, registerFrame } from '../../board/frame-utils'
 import { boundingBoxFromCenter, frameOffset } from '../layout/layout-utils'
@@ -65,6 +66,7 @@ export class HierarchyProcessor extends UndoableProcessor<BaseItem | Group | Fra
       padding: opts.padding,
       topSpacing: opts.topSpacing,
     })
+    log.info({ nodes: Object.keys(result.nodes).length }, 'Nested layout produced nodes')
     const bounds = this.computeBounds(result)
     const margin = 40
     const width = bounds.maxX - bounds.minX + margin * 2
@@ -91,6 +93,10 @@ export class HierarchyProcessor extends UndoableProcessor<BaseItem | Group | Fra
       clearActiveFrame(this.builder)
     }
     await this.createWidgets(data, result.nodes, offsetX, offsetY)
+    log.debug(
+      { offsetX, offsetY, frameWidth: width, frameHeight: height },
+      'Nested offsets applied',
+    )
     const syncItems = this.lastCreated.filter((i) => i !== frame)
     await this.syncOrUndo(syncItems as Array<BaseItem | Group | Connector>)
     const target = frame ?? (this.lastCreated as Array<BaseItem | Group>)
