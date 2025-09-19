@@ -103,12 +103,16 @@ export async function createConnector(
   hint: EdgeHint | undefined,
   template?: ConnectorTemplate,
 ): Promise<Connector> {
-  const connector = await miro.board.createConnector({
+  const captions = buildCaptions(edge, template)
+  const payload: Record<string, unknown> = {
     start: { item: from.id, position: hint?.startPosition },
     end: { item: to.id, position: hint?.endPosition },
     shape: template?.shape ?? 'curved',
-    captions: buildCaptions(edge, template),
     style: template?.style as ConnectorStyle | undefined,
-  })
+  }
+  if (captions) {
+    payload.captions = captions
+  }
+  const connector = (await miro.board.createConnector(payload)) as Connector
   return connector
 }
