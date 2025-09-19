@@ -6,7 +6,6 @@ import * as log from '../logger'
 import { getBoard, getBoardWithQuery, maybeSync } from './board'
 import type { BoardQueryLike } from './board'
 import { boardCache } from './board-cache'
-import { runBatch } from './batch'
 import { createConnector } from './connector-utils'
 import { searchGroups, searchShapes } from './node-search'
 import { templateManager } from './templates'
@@ -219,11 +218,9 @@ export class BoardBuilder {
    * Batched with {@link runBatch} so multiple syncs are sent together.
    */
   public async syncAll(items: Array<BoardItem | Connector>): Promise<void> {
-    const board = getBoard()
-    await runBatch(board, async () => {
-      log.trace({ count: items.length }, 'Syncing widgets')
-      await Promise.all(items.map((i) => maybeSync(i)))
-    })
+    getBoard()
+    log.trace({ count: items.length }, 'Syncing widgets')
+    await Promise.all(items.map((i) => maybeSync(i)))
   }
 
   /**
@@ -232,11 +229,11 @@ export class BoardBuilder {
    */
   public async removeItems(items: Array<BoardItem | Connector | Frame>): Promise<void> {
     this.ensureBoard()
-    const board = getBoard()
-    await runBatch(board, async () => {
-      log.debug({ count: items.length }, 'Removing items')
-      await Promise.all(items.map((item) => miro.board.remove(item)))
-    })
+    log.debug({ count: items.length }, 'Removing items')
+    // Remove sequentially to avoid any hidden batching assumptions
+    for (const item of items) {
+      await miro.board.remove(item)
+    }
   }
 
   /** Group multiple widgets together on the board. */
