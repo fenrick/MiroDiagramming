@@ -259,12 +259,12 @@ export class BoardBuilder {
    * calls when creating complex structures.
    */
   public async resizeItem(item: BoardItem, width: number, height: number): Promise<void> {
-    const target = item as { width?: number; height?: number }
-    if (typeof target.width === 'number') {
-      target.width = width
-    }
-    if (typeof target.height === 'number') {
-      target.height = height
+    // Use Reflect.set to handle SDK proxies and non-enumerable props reliably
+    try {
+      Reflect.set(item as object, 'width', width)
+      Reflect.set(item as object, 'height', height)
+    } catch {
+      // ignore assignment failures; sync will no-op if values didn't change
     }
   }
 
