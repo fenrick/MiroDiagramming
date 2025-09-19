@@ -20,7 +20,7 @@
     "commitlint": "commitlint"
   },
   "dependencies": {
-    "@mirohq/design-system": "^1.0.23",
+    "@mirohq/design-system": "^1.1.2",
     "@mirohq/websdk-react-hooks": "^0.0.3",
     "@stitches/react": "^1.2.8",
     "d3-dsv": "^3.0.1",
