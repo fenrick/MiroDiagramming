@@ -11,13 +11,13 @@
     { "id": "cap.payments", "label": "Payments", "type": "Application" }
   ],
   "edges": [
-    { "from": "cap.customer", "to": "cap.leads" },
-    { "from": "cap.customer", "to": "cap.onboarding" },
-    { "from": "cap.customer", "to": "cap.support" },
-    { "from": "cap.onboarding", "to": "cap.identity" },
-    { "from": "cap.onboarding", "to": "cap.welcome" },
+    { "from": "cap.customer", "to": "cap.leads", "captions": "funky" },
+    { "from": "cap.customer", "to": "cap.onboarding", "captions": "funky" },
+    { "from": "cap.customer", "to": "cap.support", "captions": "funky" },
+    { "from": "cap.onboarding", "to": "cap.identity", "captions": "funky" },
+    { "from": "cap.onboarding", "to": "cap.welcome", "captions": "funky" },
 
-    { "from": "cap.billing", "to": "cap.invoice" },
-    { "from": "cap.billing", "to": "cap.payments" }
+    { "from": "cap.billing", "to": "cap.invoice", "captions": "funky" },
+    { "from": "cap.billing", "to": "cap.payments", "captions": "funky" }
   ]
 }

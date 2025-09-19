@@ -23,16 +23,60 @@ import type { ConnectorTemplate } from './templates'
  *   the edge has no label.
  */
 function buildCaptions(edge: EdgeData, template?: ConnectorTemplate): Connector['captions'] {
-  if (!edge.label) {
-    return undefined
+  const meta = edge.metadata as
+    | { caption?: unknown; captions?: unknown; label?: unknown }
+    | undefined
+
+  const fromMetaSingle =
+    (typeof meta?.caption === 'string' && meta?.caption) ||
+    (typeof meta?.label === 'string' && meta?.label)
+
+  // Prefer explicit captions array if provided in metadata
+  const fromMetaArray = Array.isArray(meta?.captions) ? (meta?.captions as unknown[]) : undefined
+
+  let captions: Connector['captions'] | undefined
+
+  if (fromMetaArray) {
+    // Accept [string] or [{ content, position?, textAlignVertical? }]
+    const mapped = fromMetaArray
+      .map((c) => {
+        if (typeof c === 'string') {
+          return { content: c }
+        }
+        if (
+          c &&
+          typeof c === 'object' &&
+          typeof (c as { content?: unknown }).content === 'string'
+        ) {
+          const obj = c as {
+            content: string
+            position?: number
+            textAlignVertical?: TextAlignVertical
+          }
+          return {
+            content: obj.content,
+            position: obj.position,
+            textAlignVertical: obj.textAlignVertical as TextAlignVertical,
+          }
+        }
+        return undefined
+      })
+      .filter(Boolean) as NonNullable<Connector['captions']>
+    captions = mapped.length ? mapped : undefined
+  } else {
+    const text = (typeof edge.label === 'string' && edge.label) || fromMetaSingle
+    if (typeof text === 'string' && text.trim()) {
+      captions = [
+        {
+          content: text,
+          position: template?.caption?.position,
+          textAlignVertical: template?.caption?.textAlignVertical as TextAlignVertical,
+        },
+      ]
+    }
   }
-  return [
-    {
-      content: edge.label,
-      position: template?.caption?.position,
-      textAlignVertical: template?.caption?.textAlignVertical as TextAlignVertical,
-    },
-  ]
+
+  return captions
 }
 
 function mergeStyle(connector: Connector, template?: ConnectorTemplate): void {
