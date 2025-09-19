@@ -1,0 +1,29 @@
+[
+  {
+    "id": "cap.customer",
+    "label": "Customer Management",
+    "type": "Strategic",
+    "children": [
+      { "id": "cap.leads", "label": "Lead Management", "type": "Strategic" },
+      {
+        "id": "cap.onboarding",
+        "label": "Onboarding",
+        "type": "Business",
+        "children": [
+          { "id": "cap.identity", "label": "Identity Verification", "type": "Application" },
+          { "id": "cap.welcome", "label": "Welcome Kit", "type": "Business" }
+        ]
+      },
+      { "id": "cap.support", "label": "Customer Support", "type": "Business" }
+    ]
+  },
+  {
+    "id": "cap.billing",
+    "label": "Billing",
+    "type": "Business",
+    "children": [
+      { "id": "cap.invoice", "label": "Invoicing", "type": "Application" },
+      { "id": "cap.payments", "label": "Payments", "type": "Application" }
+    ]
+  }
+]

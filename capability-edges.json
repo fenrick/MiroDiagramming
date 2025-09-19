@@ -1,0 +1,23 @@
+{
+  "nodes": [
+    { "id": "cap.customer", "label": "Customer Management", "type": "Strategic" },
+    { "id": "cap.leads", "label": "Lead Management", "type": "Strategic" },
+    { "id": "cap.onboarding", "label": "Onboarding", "type": "Business" },
+    { "id": "cap.identity", "label": "Identity Verification", "type": "Application" },
+    { "id": "cap.welcome", "label": "Welcome Kit", "type": "Business" },
+    { "id": "cap.support", "label": "Customer Support", "type": "Business" },
+    { "id": "cap.billing", "label": "Billing", "type": "Business" },
+    { "id": "cap.invoice", "label": "Invoicing", "type": "Application" },
+    { "id": "cap.payments", "label": "Payments", "type": "Application" }
+  ],
+  "edges": [
+    { "from": "cap.customer", "to": "cap.leads" },
+    { "from": "cap.customer", "to": "cap.onboarding" },
+    { "from": "cap.customer", "to": "cap.support" },
+    { "from": "cap.onboarding", "to": "cap.identity" },
+    { "from": "cap.onboarding", "to": "cap.welcome" },
+
+    { "from": "cap.billing", "to": "cap.invoice" },
+    { "from": "cap.billing", "to": "cap.payments" }
+  ]
+}

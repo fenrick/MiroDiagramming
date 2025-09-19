@@ -1,0 +1,11 @@
+{
+  "nodes": [
+    { "id": "n1", "label": "Receive Order", "type": "Business" },
+    { "id": "n2", "label": "Pick & Pack", "type": "Physical" },
+    { "id": "n3", "label": "Ship", "type": "Technology" }
+  ],
+  "edges": [
+    { "from": "n1", "to": "n2", "label": "flows", "metadata": { "template": "flow" } },
+    { "from": "n2", "to": "n3", "label": "flows", "metadata": { "template": "flow" } }
+  ]
+}
