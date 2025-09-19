@@ -191,23 +191,25 @@ export class BoardBuilder {
     if (!nodeMap || typeof nodeMap !== 'object') {
       throw new Error(`Invalid node map: ${JSON.stringify(nodeMap)}`)
     }
-    const board = getBoard()
-    const created = await runBatch(board, async () => {
-      const connectors = await Promise.all(
-        edges.map(async (edge, i) => {
-          const from = nodeMap[edge.from]
-          const to = nodeMap[edge.to]
-          if (!from || !to) {
-            return undefined
-          }
-          const templateName =
-            typeof edge.metadata?.template === 'string' ? edge.metadata.template : 'default'
-          const template = templateManager.getConnectorTemplate(templateName)
-          return createConnector(edge, from, to, hints?.[i], template)
-        }),
-      )
-      return connectors.filter(Boolean) as Connector[]
-    })
+    const created: Connector[] = []
+    // Create connectors sequentially; the Web SDK does not expose a bulk/batch API.
+    for (let i = 0; i < edges.length; i++) {
+      const edge = edges[i]!
+      const from = nodeMap[edge.from]
+      const to = nodeMap[edge.to]
+      if (!from || !to) {
+        continue
+      }
+      const templateName =
+        typeof edge.metadata?.template === 'string' ? edge.metadata.template : 'default'
+      const template = templateManager.getConnectorTemplate(templateName)
+      try {
+        const conn = await createConnector(edge, from, to, hints?.[i], template)
+        created.push(conn)
+      } catch {
+        // Best-effort: skip failed connector creation and continue
+      }
+    }
     log.debug({ created: created.length }, 'Edges created')
     return created
   }
