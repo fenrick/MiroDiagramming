@@ -137,13 +137,14 @@ export class TemplateManager {
     x: number,
     y: number,
     frame?: Frame,
+    overrideSize?: { width: number; height: number },
   ): Promise<GroupableItem | Group | undefined> {
     const template = this.getTemplate(name)
     if (!template) {
       throw new Error(`Template '${name}' not found`)
     }
 
-    const shapes = this.buildShapes(template, label, x, y)
+    const shapes = this.buildShapes(template, label, x, y, overrideSize)
     if (!shapes.length) {
       return undefined
     }
@@ -161,14 +162,22 @@ export class TemplateManager {
     label: string,
     x: number,
     y: number,
+    overrideSize?: { width: number; height: number },
   ): ShapeData[] {
     const shapes: ShapeData[] = []
-    for (const el of template.elements) {
-      const data = this.createElement(el, label, x, y)
+    template.elements.forEach((el, idx) => {
+      const data = this.createElement(
+        idx === 0 && overrideSize
+          ? { ...el, width: overrideSize.width, height: overrideSize.height }
+          : el,
+        label,
+        x,
+        y,
+      )
       if (data) {
         shapes.push(data)
       }
-    }
+    })
     return shapes
   }
 

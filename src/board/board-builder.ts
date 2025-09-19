@@ -310,6 +310,7 @@ export class BoardBuilder {
       pos.x,
       pos.y,
       this.frame,
+      { width: pos.width, height: pos.height },
     )) as BoardItem
     log.info(
       { id: node.id, x: pos.x, y: pos.y, w: pos.width, h: pos.height },
