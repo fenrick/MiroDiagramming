@@ -205,11 +205,19 @@ export class BoardBuilder {
       try {
         const conn = await createConnector(edge, from, to, hints?.[i], template)
         created.push(conn)
-      } catch {
-        // Best-effort: skip failed connector creation and continue
+      } catch (e) {
+        log.error(
+          {
+            edge,
+            from: from.id,
+            to: to.id,
+            error: String(e),
+          },
+          'Connector creation failed',
+        )
       }
     }
-    log.debug({ created: created.length }, 'Edges created')
+    log.info({ created: created.length }, 'Edges created')
     return created
   }
 
