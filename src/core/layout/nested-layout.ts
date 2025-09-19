@@ -35,6 +35,7 @@ const DEFAULT_TOP_SPACING = 50
 import type { ElkNode } from 'elkjs/lib/elk-api'
 
 import { loadElk } from './elk-loader'
+import { getNodeDimensions } from './layout-core'
 import type { LayoutNode } from './elk-preprocessor'
 import { prepareForElk } from './elk-preprocessor'
 
@@ -105,8 +106,9 @@ export class NestedLayouter {
     const elk: ElkNode = { id: node.id }
     const children = node.children
     if (!children?.length) {
-      elk.width = LEAF_WIDTH
-      elk.height = LEAF_HEIGHT
+      const dims = getNodeDimensions({ type: node.type, metadata: node.metadata })
+      elk.width = dims.width || LEAF_WIDTH
+      elk.height = dims.height || LEAF_HEIGHT
       return elk
     }
     const sorted = [...children].sort((a, b) =>
