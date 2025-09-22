@@ -20,16 +20,21 @@ export function useExcelSync(): (index: number, row: ExcelRow) => Promise<void> 
         return
       }
       const prev = ctx.rows[index]!
-      await enqueue({
-        apply: () => ctx.setRows((prevRows) => prevRows.map((r, i) => (i === index ? updated : r))),
-        rollback: () => ctx.setRows((prevRows) => prevRows.map((r, i) => (i === index ? prev : r))),
-        commit: () =>
-          serviceRef.current.updateShapesFromExcel([updated], {
-            idColumn: ctx.idColumn,
-            labelColumn: ctx.labelColumn,
-            templateColumn: ctx.templateColumn,
-          }),
-      })
+
+      const apply = () =>
+        ctx.setRows((prevRows) => prevRows.map((r, i) => (i === index ? updated : r)))
+
+      const rollback = () =>
+        ctx.setRows((prevRows) => prevRows.map((r, i) => (i === index ? prev : r)))
+
+      const commit = () =>
+        serviceRef.current.updateShapesFromExcel([updated], {
+          idColumn: ctx.idColumn,
+          labelColumn: ctx.labelColumn,
+          templateColumn: ctx.templateColumn,
+        })
+
+      await enqueue({ apply, rollback, commit })
     },
     [ctx, enqueue],
   )
