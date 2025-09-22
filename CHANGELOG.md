@@ -1,3 +1,20 @@
+# [2.1.0](https://github.com/fenrick/MiroDiagramming/compare/v2.0.1...v2.1.0) (2025-09-22)
+
+
+### Bug Fixes
+
+* **board:** create connectors sequentially; avoid nonexistent batch API and Promise.all aborts ([30d9ec7](https://github.com/fenrick/MiroDiagramming/commit/30d9ec756ad09aed7c66ef2fca3807e3f6b87e75))
+* **board:** resize via Reflect.set to ensure parent container sizes apply under SDK proxies ([a5cb6ba](https://github.com/fenrick/MiroDiagramming/commit/a5cb6ba4c2db7afcf8cfba8aad3a64989707360c))
+* **connector:** omit captions field when undefined to satisfy SDK validation ([32cab36](https://github.com/fenrick/MiroDiagramming/commit/32cab36c109c6623ce0bb57faeef7a3b8877e45b))
+* **nested:** create parent widgets at ELK-computed size (override template) ([d5d020b](https://github.com/fenrick/MiroDiagramming/commit/d5d020b07b518d11693835503f54743af694df2b))
+* **nested:** respect template/metadata sizes for leaf nodes in ELK hierarchy ([4aff7c8](https://github.com/fenrick/MiroDiagramming/commit/4aff7c88e3ba18f4f722a71ac34e1d0aa61765a6))
+* **structured:** stack file name above options for import form ([2213009](https://github.com/fenrick/MiroDiagramming/commit/22130093dc456fcef19c0f38aa56b7d7e0050338))
+
+
+### Features
+
+* **connector:** support captions via edge.metadata.caption(s) and metadata.label ([db3d607](https://github.com/fenrick/MiroDiagramming/commit/db3d607c61763dc2e29616e0379d6d4d21271406))
+
 ## [2.0.1](https://github.com/fenrick/MiroDiagramming/compare/v2.0.0...v2.0.1) (2025-09-22)
 
 
