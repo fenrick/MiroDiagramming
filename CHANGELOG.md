@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/fenrick/MiroDiagramming/compare/v2.0.0...v2.0.1) (2025-09-22)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @mirohq/design-system to v1.1.3 ([c20da9c](https://github.com/fenrick/MiroDiagramming/commit/c20da9c7fa4a819eab0cfcba996626ccee6127e3))
+
 # [2.0.0](https://github.com/fenrick/MiroDiagramming/compare/v1.22.1...v2.0.0) (2025-09-18)
 
 
