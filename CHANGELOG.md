@@ -1,3 +1,10 @@
+## [2.1.1](https://github.com/fenrick/MiroDiagramming/compare/v2.1.0...v2.1.1) (2025-09-22)
+
+
+### Bug Fixes
+
+* Potential fix for code scanning alert no. 23: Workflow does not contain permissions ([921f569](https://github.com/fenrick/MiroDiagramming/commit/921f56939f5cca96d2dbc43bb7d238440402ec66))
+
 # [2.1.0](https://github.com/fenrick/MiroDiagramming/compare/v2.0.1...v2.1.0) (2025-09-22)
 
 
