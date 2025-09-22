@@ -1,7 +1,6 @@
 import * as log from '../logger'
 
 import type { BoardLike, BoardQueryLike } from './types'
-import { getBoard, getBoardWithQuery } from './board'
 
 /**
  * Singleton cache for board data.
@@ -25,15 +24,13 @@ export class BoardCache {
   }
 
   /** Retrieve and cache the current selection. */
-  public async getSelection(board?: BoardLike): Promise<Array<Record<string, unknown>>> {
+  public async getSelection(board: BoardLike): Promise<Array<Record<string, unknown>>> {
     if (!this.selection) {
       log.trace('Fetching selection from board')
-      // TODO replace direct board.getSelection usage with cached backend lookup
-      const b = getBoard(board)
-      if (typeof (b as { getSelection?: unknown }).getSelection !== 'function') {
+      if (typeof (board as { getSelection?: unknown }).getSelection !== 'function') {
         throw new Error('Miro board not available')
       }
-      const raw = await b.getSelection()
+      const raw = await board.getSelection()
       this.selection = raw.map((item) => item as Record<string, unknown>)
       log.debug({ count: this.selection.length }, 'Selection cached')
     } else {
@@ -54,9 +51,8 @@ export class BoardCache {
    */
   public async getWidgets(
     types: string[],
-    board?: BoardQueryLike,
+    board: BoardQueryLike,
   ): Promise<Array<Record<string, unknown>>> {
-    const b = getBoardWithQuery(board)
     const results: Array<Record<string, unknown>> = []
     const missing: string[] = []
     for (const t of types) {
@@ -72,7 +68,7 @@ export class BoardCache {
       log.trace({ missing }, 'Fetching uncached widget types')
       const fetched = await Promise.all(
         missing.map(async (type) => {
-          const widgets = await b.get({ type })
+          const widgets = await board.get({ type })
           return [type, widgets] as const
         }),
       )
