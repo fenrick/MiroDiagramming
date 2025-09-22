@@ -31,23 +31,31 @@ export function pushToast(opts: ToastOptions): void {
 export const ToastContainer: React.FC = () => {
   const [toasts, setToasts] = React.useState<Toast[]>([])
 
+  const enqueueToast = React.useCallback((t: Toast) => {
+    setToasts((prev) => [...prev, t].slice(-3))
+  }, [])
+
+  const remove = React.useCallback((id: string) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id))
+  }, [])
+
+  const scheduleDismiss = React.useCallback(
+    (id: string) => {
+      window.setTimeout(() => remove(id), 5000)
+    },
+    [remove],
+  )
+
   React.useEffect(() => {
     const listener = (t: Toast) => {
-      setToasts((prev) => {
-        const next = [...prev, t]
-        return next.slice(-3)
-      })
-      setTimeout(() => {
-        setToasts((prev) => prev.filter((to) => to.id !== t.id))
-      }, 5000)
+      enqueueToast(t)
+      scheduleDismiss(t.id)
     }
     listeners.add(listener)
     return () => {
       listeners.delete(listener)
     }
-  }, [])
-
-  const remove = (id: string) => setToasts((prev) => prev.filter((t) => t.id !== id))
+  }, [enqueueToast, scheduleDismiss])
 
   return (
     <div className="toast-container">
