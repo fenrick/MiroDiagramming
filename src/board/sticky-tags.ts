@@ -72,15 +72,8 @@ export async function applyBracketTagsToSelectedStickies(): Promise<void> {
     pushToast({ message: 'Select sticky notes to tag.' })
     return
   }
-
   // Pre-scan all stickies to collect unique tag names across the selection
-  const allNames = new Set<string>()
-  for (const item of stickies) {
-    const t = readItemText(item)
-    if (!t) continue
-    const { tags } = extractBracketTags(t)
-    tags.forEach((n) => allNames.add(n))
-  }
+  const allNames = collectTagNames(stickies)
 
   // Ensure missing tags once (cached in tagMap). Ignore failures.
   try {
@@ -91,31 +84,8 @@ export async function applyBracketTagsToSelectedStickies(): Promise<void> {
 
   let tagged = 0
   for (const item of stickies) {
-    const text = readItemText(item)
-    if (!text) continue
-    const { tags, stripped } = extractBracketTags(text)
-    if (tags.length === 0) continue
-    try {
-      // Resolve known IDs from cache; skip names that failed creation
-      const resolvedIds = tags
-        .map((n) => tagMap.get(n)?.id)
-        .filter((id): id is string => typeof id === 'string')
-
-      const existing = ((item as { tagIds?: string[] }).tagIds ?? []) as string[]
-      const merged = Array.from(new Set([...(existing ?? []), ...resolvedIds]))
-      ;(item as { tagIds?: string[] }).tagIds = merged
-      await maybeSync(item as { sync?: () => Promise<void> })
-
-      // Only strip text if all names resolved to IDs and tagging succeeded
-      const allResolved = tags.every((n) => Boolean(tagMap.get(n)?.id))
-      if (allResolved) {
-        writeItemText(item, stripped)
-        await maybeSync(item as { sync?: () => Promise<void> })
-        tagged += 1
-      }
-    } catch {
-      // Leave the text unchanged when tagging fails
-    }
+    const changed = await applyTagsAndMaybeStrip(item, tagMap)
+    if (changed) tagged += 1
   }
   // Clear caches so subsequent reads see updated tags/text
   boardCache.reset()
@@ -125,4 +95,45 @@ export async function applyBracketTagsToSelectedStickies(): Promise<void> {
         ? `Applied tags to ${tagged} sticky note${tagged === 1 ? '' : 's'}.`
         : 'No [tags] found in selected stickies.',
   })
+}
+
+function collectTagNames(stickies: Array<Record<string, unknown>>): Set<string> {
+  const names = new Set<string>()
+  for (const item of stickies) {
+    const t = readItemText(item)
+    if (!t) continue
+    const { tags } = extractBracketTags(t)
+    tags.forEach((n) => names.add(n))
+  }
+  return names
+}
+
+async function applyTagsAndMaybeStrip(
+  item: Record<string, unknown>,
+  tagMap: Map<string, TagLike>,
+): Promise<boolean> {
+  const text = readItemText(item)
+  if (!text) return false
+  const { tags, stripped } = extractBracketTags(text)
+  if (tags.length === 0) return false
+  try {
+    const resolvedIds = tags
+      .map((n) => tagMap.get(n)?.id)
+      .filter((id): id is string => typeof id === 'string')
+
+    const existing = ((item as { tagIds?: string[] }).tagIds ?? []) as string[]
+    const merged = Array.from(new Set([...(existing ?? []), ...resolvedIds]))
+    ;(item as { tagIds?: string[] }).tagIds = merged
+    await maybeSync(item as { sync?: () => Promise<void> })
+
+    // Only strip text if all names resolved to IDs and tagging succeeded
+    const allResolved = tags.every((n) => Boolean(tagMap.get(n)?.id))
+    if (!allResolved) return false
+
+    writeItemText(item, stripped)
+    await maybeSync(item as { sync?: () => Promise<void> })
+    return true
+  } catch {
+    return false
+  }
 }
