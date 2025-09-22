@@ -1,0 +1,233 @@
+{
+  "nodes": [
+    {
+      "id": "PRO147",
+      "label": "Digital Platforms & Resources Enablement: Configure and maintain job boards, mentoring platforms, skills assessments, and self-help content; ensure data, privacy, and analytics settings.",
+      "type": "Business"
+    },
+    {
+      "id": "PRO146",
+      "label": "Career Education Design: Design employability programs (workshops, micro-courses) covering job search, CVs, interviews, networking, and professional skills; align to discipline needs.",
+      "type": "Business"
+    },
+    {
+      "id": "PRO149",
+      "label": "Individual Career Guidance & Advising: Provide 1:1 appointments covering career planning, skills gap analysis, job search strategy, and application reviews; triage to specialist supports as needed.",
+      "type": "Business"
+    },
+    {
+      "id": "PRO110",
+      "label": "Academic Planning & Pathway Design: Co-create study plans including course sequencing, load, elective choices, pathways (majors/minors), and expected completion date.",
+      "type": "Business"
+    },
+    {
+      "id": "PRO113",
+      "label": "Knowledge Management & Student Communications: Maintain advising knowledge base, FAQs, and proactive communications (alerts, deadlines, how-to guides).",
+      "type": "Business"
+    },
+    {
+      "id": "PRO381",
+      "label": "Communications & Content: Plan and deliver newsletters, stories, success profiles, and segment-specific communications across email, web, and social.",
+      "type": "Business"
+    },
+    {
+      "id": "PRO385",
+      "label": "Digital Community & Platforms: Operate alumni portals, directories, and social communities; integrate login/identity and analytics; moderate participation.",
+      "type": "Business"
+    },
+    {
+      "id": "PRO163",
+      "label": "Editorial Planning & Content Lifecycle: Operate the editorial calendar; brief, produce, review, publish and retire content; maintain source-of-truth facts and FAQs.",
+      "type": "Business"
+    },
+    {
+      "id": "PRO164",
+      "label": "Broadcast Communications Execution: Plan and send one-to-many messages (media releases, institution-wide emails/SMS, website announcements, newsletters).",
+      "type": "Business"
+    },
+    {
+      "id": "PRO145",
+      "label": "Employer & Industry Engagement: Identify, onboard, and manage relationships with employers and professional bodies; curate opportunities (jobs, internships, mentoring) and labour-market insights.",
+      "type": "Business"
+    },
+    {
+      "id": "PRO152",
+      "label": "Outcomes, Reporting & Continuous Improvement: Track participation, satisfaction, skills attainment, and graduate outcomes; run reviews and drive improvements to programs and services.",
+      "type": "Business"
+    },
+    {
+      "id": "PRO182",
+      "label": "Data, Consent & Insight Enablement: Maintain a single view of stakeholders across systems; manage consent and preferences; generate insights and propensity models.",
+      "type": "Business"
+    },
+    {
+      "id": "PRO169",
+      "label": "Measurement, Insight & Continuous Improvement: Track delivery, engagement, reach, sentiment and response SLAs; run A/B tests; drive improvement backlog.",
+      "type": "Business"
+    },
+    {
+      "id": "PRO150",
+      "label": "Experiential Learning Brokerage (Co-curricular): Source and coordinate co-curricular employability experiences (mentoring, volunteering, short projects, hackathons) distinct from for-credit WIL.",
+      "type": "Business"
+    },
+    {
+      "id": "PRO183",
+      "label": "Partner/Alliance Governance: Run steering committees, QBRs, and joint reviews; monitor KPIs, risks, and obligations; manage renewals or exit.",
+      "type": "Business"
+    },
+    {
+      "id": "PRO181",
+      "label": "Issue, Escalation & Satisfaction Management: Receive, triage, and resolve relationship issues; run surveys/health checks; execute save/retention plays where risk is detected.",
+      "type": "Business"
+    },
+    {
+      "id": "PRO109",
+      "label": "Policy Interpretation & Eligibility Guidance: Interpret academic regulations (admission variations, credit/RPL, prerequisites, enrolment rules, progression, assessment) for individual cases.",
+      "type": "Business"
+    },
+    {
+      "id": "PRO383",
+      "label": "Chapters, Volunteers & Ambassadors: Establish and support alumni chapters, advisory groups, mentors, and ambassadors; manage onboarding, training, and recognition.",
+      "type": "Business"
+    },
+    {
+      "id": "PRO386",
+      "label": "Lifelong Learning & Careers Integration: Coordinate alumni access to short courses, micro-credentials, and career services; broker mentoring and talent pipelines.",
+      "type": "Business"
+    },
+    {
+      "id": "PRO180",
+      "label": "Interaction & Engagement Execution: Run meetings, events, communications, campaigns, and joint activities per plan; capture outcomes and next actions.",
+      "type": "Business"
+    },
+    {
+      "id": "PRO148",
+      "label": "Workshops & Group Programs Delivery: Schedule, promote, and deliver employability workshops, masterclasses, and cohorts (e.g., leadership, entrepreneurship, presentation skills).",
+      "type": "Business"
+    },
+    {
+      "id": "PRO178",
+      "label": "Account & Relationship Assignment: Identify priority accounts/partners and assign accountable owners with clear objectives and coverage models.",
+      "type": "Business"
+    },
+    {
+      "id": "PRO179",
+      "label": "Relationship Planning (Account/Partner Plans): Create plans per account/partner detailing goals, stakeholders, engagement cadence, joint initiatives, risks, and measures.",
+      "type": "Business"
+    },
+    {
+      "id": "PRO151",
+      "label": "Events & Careers Fairs: Plan and deliver on-campus/virtual fairs and employer showcases; manage exhibitor onboarding, logistics, and post-event follow-up.",
+      "type": "Business"
+    },
+    {
+      "id": "PRO380",
+      "label": "Data Acquisition, Consent & Governance: Maintain alumni master data, integrate graduations, capture updates, manage consent/preferences, and ensure data quality.",
+      "type": "Business"
+    },
+    {
+      "id": "PRO384",
+      "label": "Services & Benefits Administration: Curate and deliver alumni benefits (library access, discounts, partner offers), and manage eligibility and fulfilment.",
+      "type": "Business"
+    },
+    {
+      "id": "PRO379",
+      "label": "Alumni Strategy & Segmentation: Define alumni value proposition, priority segments (year, discipline, geography, career stage), and goals across engagement, advocacy, giving, and lifelong learning.",
+      "type": "Business"
+    },
+    {
+      "id": "PRO382",
+      "label": "Events & Reunions: Design, promote, and deliver reunions, anniversaries, lectures, and networking events (in-person and virtual).",
+      "type": "Business"
+    },
+    {
+      "id": "PRO388",
+      "label": "Insight, Reporting & Continuous Improvement: Measure engagement, satisfaction, lifecycle value, and campaign/event ROI; gather feedback and drive improvements.",
+      "type": "Business"
+    },
+    {
+      "id": "PRO185",
+      "label": "Relationship Performance & Continuous Improvement: Track portfolio KPIs (engagement, satisfaction, value), identify gaps, and drive improvements to plans and processes.",
+      "type": "Business"
+    },
+    {
+      "id": "PRO176",
+      "label": "Measurement, Learning & Capability Uplift: Measure participation, diversity, sentiment, influence on decisions, and benefits; capture lessons and uplift skills and tools.",
+      "type": "Business"
+    },
+    {
+      "id": "PRO144",
+      "label": "Service Strategy & Operating Model: Define careers service scope, channels (online, drop-in, appointments), SLAs, staffing model, and escalation to academic units and central support.",
+      "type": "Business"
+    },
+    {
+      "id": "PRO165",
+      "label": "Conversational & Community Communications: Run two-way channels (contact centre, live chat, social community moderation, forums); respond to questions, triage to owners, and close the loop.",
+      "type": "Business"
+    },
+    {
+      "id": "PRO111",
+      "label": "Progression Monitoring & Proactive Outreach: Monitor grades, engagement, at-risk indicators; trigger outreach before census/exams; provide advice on remediation, load changes, or supports.",
+      "type": "Business"
+    },
+    {
+      "id": "PRO108",
+      "label": "Advising Intake & Triage: Capture enquiries via web, phone, chat, and walk-in; authenticate students; triage to self-help, generalists, or specialists.",
+      "type": "Business"
+    },
+    {
+      "id": "PRO114",
+      "label": "Quality Assurance & Compliance: Audit advice quality, measure SLAs/CSAT, review complaints, and implement corrective actions.",
+      "type": "Business"
+    },
+    { "id": "Careers Advice", "label": "Careers Advice", "type": "Strategic" },
+    { "id": "Academic Advice", "label": "Academic Advice", "type": "Strategic" },
+    { "id": "Alumni Management", "label": "Alumni Management", "type": "Strategic" },
+    {
+      "id": "Communications Management",
+      "label": "Communications Management",
+      "type": "Strategic"
+    },
+    { "id": "Relationship Management", "label": "Relationship Management", "type": "Strategic" },
+    { "id": "Engagement Management", "label": "Engagement Management", "type": "Strategic" }
+  ],
+  "edges": [
+    { "to": "PRO147", "from": "Careers Advice" },
+    { "to": "PRO146", "from": "Careers Advice" },
+    { "to": "PRO149", "from": "Careers Advice" },
+    { "to": "PRO110", "from": "Academic Advice" },
+    { "to": "PRO113", "from": "Academic Advice" },
+    { "to": "PRO381", "from": "Alumni Management" },
+    { "to": "PRO385", "from": "Alumni Management" },
+    { "to": "PRO163", "from": "Communications Management" },
+    { "to": "PRO164", "from": "Communications Management" },
+    { "to": "PRO147", "from": "Careers Advice" },
+    { "to": "PRO145", "from": "Careers Advice" },
+    { "to": "PRO152", "from": "Careers Advice" },
+    { "to": "PRO182", "from": "Relationship Management" },
+    { "to": "PRO169", "from": "Communications Management" },
+    { "to": "PRO150", "from": "Careers Advice" },
+    { "to": "PRO183", "from": "Relationship Management" },
+    { "to": "PRO181", "from": "Relationship Management" },
+    { "to": "PRO109", "from": "Academic Advice" },
+    { "to": "PRO383", "from": "Alumni Management" },
+    { "to": "PRO386", "from": "Alumni Management" },
+    { "to": "PRO180", "from": "Relationship Management" },
+    { "to": "PRO148", "from": "Careers Advice" },
+    { "to": "PRO178", "from": "Relationship Management" },
+    { "to": "PRO179", "from": "Relationship Management" },
+    { "to": "PRO151", "from": "Careers Advice" },
+    { "to": "PRO380", "from": "Alumni Management" },
+    { "to": "PRO384", "from": "Alumni Management" },
+    { "to": "PRO379", "from": "Alumni Management" },
+    { "to": "PRO382", "from": "Alumni Management" },
+    { "to": "PRO388", "from": "Alumni Management" },
+    { "to": "PRO185", "from": "Relationship Management" },
+    { "to": "PRO176", "from": "Engagement Management" },
+    { "to": "PRO144", "from": "Careers Advice" },
+    { "to": "PRO165", "from": "Communications Management" },
+    { "to": "PRO111", "from": "Academic Advice" },
+    { "to": "PRO108", "from": "Academic Advice" },
+    { "to": "PRO114", "from": "Academic Advice" }
+  ]
+}

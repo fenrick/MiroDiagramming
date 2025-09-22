@@ -91,7 +91,7 @@ export async function forEachSelection(
   const b = getBoard(board)
   const selection = await boardCache.getSelection(b)
   log.info({ count: selection.length }, 'Processing selection')
-  await Promise.all(selection.map((item) => cb(item)))
+  await Promise.all(selection.map((item) => Promise.resolve(cb(item))))
 }
 
 /**
