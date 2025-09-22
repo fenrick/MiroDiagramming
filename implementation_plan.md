@@ -21,6 +21,8 @@ Static hosting only. Use host‑level health checks for `index.html` as needed.
 - [Done] Remove deprecated Python backend sources under `src/miro_backend/**` and stray `__pycache__`.
 - [Done] Remove stale top-level `server/` folder (no backend remains).
 - [Done] CI cleanup: remove Prisma/migrate steps and legacy client typecheck job; keep frontend-only gates (`format`, `lint`, `typecheck`, `test`, `build`).
+- [Done] Break board import cycle by making `board-cache` require an explicit board param; adjust callers.
+- [Done] Reduce cognitive complexity in `logger`, `sticky-tags`, `Toast`, and `use-excel-sync` to satisfy lints.
 
 <!-- Removed: Queue & Persistence (backend-only) -->
 

@@ -42,6 +42,7 @@ There is no longer a `src/app.ts`, `src/server.ts`, or Fastify route tree. All i
 ## Board Utilities
 
 - `board/board-cache.ts` caches selections and widget queries in memory using `miro.board.get({ type })`.
+    - The cache no longer reaches for globals; callers must pass an explicit board instance. This avoids import cycles and eases testing.
 - `board/card-processor.ts` creates and updates cards directly via `miro.board.createCard`.
 - `board/sticky-tags.ts` inspects sticky note content, creates missing tags with `miro.board.createTag`, and syncs edited widgets.
 - `board/templates.ts` and `core/utils/shape-client.ts` generate shape groups using the Web SDK; no HTTP batching layer is required.
