@@ -89,12 +89,14 @@ export async function applyBracketTagsToSelectedStickies(): Promise<void> {
   }
   // Clear caches so subsequent reads see updated tags/text
   boardCache.reset()
-  pushToast({
-    message:
-      tagged > 0
-        ? `Applied tags to ${tagged} sticky note${tagged === 1 ? '' : 's'}.`
-        : 'No [tags] found in selected stickies.',
-  })
+  let message: string
+  if (tagged > 0) {
+    const plural = tagged === 1 ? '' : 's'
+    message = `Applied tags to ${tagged} sticky note${plural}.`
+  } else {
+    message = 'No [tags] found in selected stickies.'
+  }
+  pushToast({ message })
 }
 
 function collectTagNames(stickies: Array<Record<string, unknown>>): Set<string> {

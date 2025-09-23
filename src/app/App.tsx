@@ -88,7 +88,7 @@ function AppShell(): React.JSX.Element {
             ))}
           </Tabs.List>
         </Tabs>
-        <div ref={kbRef} tabIndex={0} aria-label="Panel content">
+        <div ref={kbRef} aria-label="Panel content">
           <Paragraph>{current[3]}</Paragraph>
           <CurrentComp />
         </div>
