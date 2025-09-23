@@ -105,23 +105,16 @@ export function Modal({
   return (
     <Container>
       <Backdrop
-        role="button"
-        tabIndex={0}
+        type="button"
         aria-label="Close modal"
         data-testid="modal-backdrop"
-        onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+        onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
           if (e.target === e.currentTarget) {
             onClose()
           }
         }}
-        onKeyDown={(e: React.KeyboardEvent<HTMLDivElement>) => {
-          if (e.target === e.currentTarget && (e.key === 'Enter' || e.key === ' ')) {
-            e.preventDefault()
-            onClose()
-          }
-        }}
       />
-      <Dialog role="dialog" open aria-label={title} aria-modal="true" ref={ref} size={size}>
+      <Dialog open aria-label={title} aria-modal="true" ref={ref} size={size}>
         <Header>
           <h3>{title}</h3>
           <Button variant="secondary" aria-label="Close" onClick={onClose}>
@@ -136,11 +129,12 @@ export function Modal({
 
 const Container = styled('div', { position: 'fixed', inset: 0, zIndex: 1000 })
 
-const Backdrop = styled('div', {
+const Backdrop = styled('button', {
   position: 'absolute',
   inset: 0,
   background: 'var(--colors-background-alpha-neutrals-overlay-subtle)',
   border: 'none',
+  padding: 0,
 })
 
 const Dialog = styled('dialog', {

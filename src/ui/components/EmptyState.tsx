@@ -9,7 +9,7 @@ type EmptyStateProps = Readonly<{
   icon?: React.ReactNode
 }>
 
-const Container = styled('div', {
+const Container = styled('output', {
   textAlign: 'center',
   padding: space[300],
 })
@@ -21,7 +21,7 @@ export function EmptyState({
   icon,
 }: EmptyStateProps): React.JSX.Element {
   return (
-    <Container role="status" aria-live="polite">
+    <Container aria-live="polite">
       <Callout
         title={title}
         description={description}
