@@ -41,7 +41,7 @@ export const ToastContainer: React.FC = () => {
 
   const scheduleDismiss = React.useCallback(
     (id: string) => {
-      window.setTimeout(() => remove(id), 5000)
+      globalThis.setTimeout(() => remove(id), 5000)
     },
     [remove],
   )
