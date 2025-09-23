@@ -44,6 +44,9 @@ There is no longer a `src/app.ts`, `src/server.ts`, or Fastify route tree. All i
 - `board/board-cache.ts` caches selections and widget queries in memory using `miro.board.get({ type })`.
     - The cache no longer reaches for globals; callers must pass an explicit board instance. This avoids import cycles and eases testing.
 - `board/sticky-tags.ts` now builds user messages with explicit conditionals (no nested ternaries) for clarity.
+- Command palette uses native list markup and buttons for options to improve accessibility and mobile support.
+- Empty states and loading indicators use `<output aria-live="polite">` instead of ARIA `status`.
+- Modal backdrop is a real `<button>` and the dialog uses native `<dialog>` semantics (no extra ARIA roles required).
 - `board/card-processor.ts` creates and updates cards directly via `miro.board.createCard`.
 - `board/sticky-tags.ts` inspects sticky note content, creates missing tags with `miro.board.createTag`, and syncs edited widgets.
 - `board/templates.ts` and `core/utils/shape-client.ts` generate shape groups using the Web SDK; no HTTP batching layer is required.
@@ -71,6 +74,7 @@ Output is a static bundle that can be served via `config/default.conf.template` 
 ### Developer Scripts
 
 - `scripts/generate-client.ts` uses top-level `await` and ESM-friendly path resolution (`fileURLToPath`) to invoke `openapi-typescript`. Node 20+ is required.
+- `src/index.ts` registers UI handlers at top-level (no init wrapper) to align with ES2022 module style.
 
 ## Testing Expectations
 
