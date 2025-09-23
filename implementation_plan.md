@@ -269,6 +269,24 @@ Static hosting only. Use host‑level health checks for `index.html` as needed.
 
 ## Testing & Coverage
 
+[Done] Establish testing strategy and Vitest setup
+
+- Added `docs/testing-strategy.md` describing high‑leverage seams (core utils, hooks, board helpers) and environments.
+- Kept Vitest `environmentMatchGlobs` to run jsdom tests under `tests/client/**` and node elsewhere.
+
+[Done] Core utility tests
+
+- New tests under `tests/node/**` for `string-utils`, `base64`, `unit-utils`, `aspect-ratio`, and `text-utils`.
+
+[Done] Hooks and UI tests
+
+- `useOptimisticOps` success/rollback paths with timer flushing and toast mocking.
+- Toast container push/auto‑dismiss with fake timers.
+
+[Done] Board helpers
+
+- `style-tools` unit tests for `findStyleKey` and `extractFillColor` (pure parts, no SDK calls).
+
 - Env var error handling tests
     - What’s needed: Tests for missing required envs throwing descriptive errors; tests for default `PORT` and JSON array parsing.
     - Where: `src/config/env.test.ts`.
