@@ -13,9 +13,11 @@ describe('ToastContainer', () => {
     act(() => pushToast({ message: 'Hello world' }))
     expect(screen.getByText('Hello world')).toBeInTheDocument()
 
-    // Fast-forward the 5s auto-dismiss timer and allow React state to settle
-    vi.advanceTimersByTime(5000)
-    await waitFor(() => expect(screen.queryByText('Hello world')).toBeNull())
+    // Fast-forward the 5s auto-dismiss timer within act to flush state updates
+    await act(async () => {
+      vi.advanceTimersByTime(5000)
+    })
+    expect(screen.queryByText('Hello world')).toBeNull()
 
     vi.useRealTimers()
   })
