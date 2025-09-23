@@ -43,6 +43,7 @@ There is no longer a `src/app.ts`, `src/server.ts`, or Fastify route tree. All i
 
 - `board/board-cache.ts` caches selections and widget queries in memory using `miro.board.get({ type })`.
     - The cache no longer reaches for globals; callers must pass an explicit board instance. This avoids import cycles and eases testing.
+- `board/sticky-tags.ts` now builds user messages with explicit conditionals (no nested ternaries) for clarity.
 - `board/card-processor.ts` creates and updates cards directly via `miro.board.createCard`.
 - `board/sticky-tags.ts` inspects sticky note content, creates missing tags with `miro.board.createTag`, and syncs edited widgets.
 - `board/templates.ts` and `core/utils/shape-client.ts` generate shape groups using the Web SDK; no HTTP batching layer is required.
@@ -67,10 +68,15 @@ There is no standalone authentication flow. The panel depends on being launched 
 
 Output is a static bundle that can be served via `config/default.conf.template` (no API proxying required). Environment variables now use the `VITE_*` prefix and are consumed client-side.
 
+### Developer Scripts
+
+- `scripts/generate-client.ts` uses top-level `await` and ESM-friendly path resolution (`fileURLToPath`) to invoke `openapi-typescript`. Node 20+ is required.
+
 ## Testing Expectations
 
 - Jest/Vitest client tests cover React hooks and view logic under `tests/client/`.
 - There are no integration tests hitting HTTP endpoints because none exist.
+- Client tests live under `tests/client/**` and use jsdom. A basic a11y test for the App shell ensures we avoid `tabIndex` on non-interactive containers.
 - New features should provide jsdom coverage where practical.
 
 ## Migration Notes
