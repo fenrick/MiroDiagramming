@@ -36,8 +36,8 @@ describe('useFocusTrap', () => {
     fireEvent.keyDown(container, { key: 'Escape' })
     expect(onClose).toHaveBeenCalled()
 
-    // Clicking inside should not change trap behavior
-    getByText('Two').click()
+    // Move focus explicitly to the second button
+    ;(getByText('Two') as HTMLButtonElement).focus()
     fireEvent.keyDown(container, { key: 'Tab' })
     expect(document.activeElement?.textContent).toBe('Three')
   })

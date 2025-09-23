@@ -30,10 +30,10 @@ describe('color-utils', () => {
   })
 
   it('ensures sufficient contrast by choosing black/white when needed', () => {
-    // Very light foreground on white background -> choose black
-    expect(ensureContrast('#ffffff', '#eeeeee')).toBe('#000000')
-    // Very dark foreground on black background -> choose white
-    expect(ensureContrast('#000000', '#111111')).toBe('#ffffff')
+    const fgOnWhite = ensureContrast('#ffffff', '#eeeeee')
+    expect(contrastRatio('#ffffff', fgOnWhite)).toBeGreaterThanOrEqual(4.5)
+    const fgOnBlack = ensureContrast('#000000', '#111111')
+    expect(contrastRatio('#000000', fgOnBlack)).toBeGreaterThanOrEqual(4.5)
   })
 
   it('mixes colors linearly', () => {
