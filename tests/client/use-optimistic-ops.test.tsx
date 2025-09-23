@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import React from 'react'
-import { render, fireEvent } from '@testing-library/react'
+import { render, fireEvent, act } from '@testing-library/react'
 
 vi.mock('../../src/ui/components/Toast', () => ({
   pushToast: vi.fn(),
@@ -36,6 +36,7 @@ describe('useOptimisticOps', () => {
   })
 
   it('rolls back and shows toast on failure', async () => {
+    vi.useFakeTimers()
     const apply = vi.fn()
     const commit = vi.fn().mockRejectedValue(new Error('fail'))
     const rollback = vi.fn()
@@ -47,12 +48,14 @@ describe('useOptimisticOps', () => {
 
     const { getByText } = render(<Wrapper />)
     fireEvent.click(getByText('Run'))
-    // allow promises to flush
-    await Promise.resolve()
-    await Promise.resolve()
+    // advance timeout used by rollback scheduling
+    await act(async () => {
+      vi.advanceTimersByTime(200)
+    })
 
     expect(apply).toHaveBeenCalled()
     expect(rollback).toHaveBeenCalled()
     expect(pushToast).toHaveBeenCalled()
+    vi.useRealTimers()
   })
 })
