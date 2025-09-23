@@ -43,7 +43,7 @@ There is no longer a `src/app.ts`, `src/server.ts`, or Fastify route tree. All i
 
 - `board/board-cache.ts` caches selections and widget queries in memory using `miro.board.get({ type })`.
     - The cache no longer reaches for globals; callers must pass an explicit board instance. This avoids import cycles and eases testing.
-- `board/sticky-tags.ts` now builds user messages with explicit conditionals (no nested ternaries) for clarity.
+- `board/sticky-tags.ts` replaces `Array.forEach` with `for…of` to improve readability and avoid callback nesting; user messages use explicit conditionals (no nested ternaries).
 - Command palette uses native list markup and buttons for options to improve accessibility and mobile support.
 - Empty states and loading indicators use `<output aria-live="polite">` instead of ARIA `status`.
 - Modal backdrop is a real `<button>` and the dialog uses native `<dialog>` semantics (no extra ARIA roles required).
@@ -82,6 +82,10 @@ Output is a static bundle that can be served via `config/default.conf.template` 
 - There are no integration tests hitting HTTP endpoints because none exist.
 - Client tests live under `tests/client/**` and use jsdom. A basic a11y test for the App shell ensures we avoid `tabIndex` on non-interactive containers.
 - New features should provide jsdom coverage where practical.
+
+### Portability Notes
+
+- Prefer `globalThis` over `window`/`self` for timers and globals used in shared code (e.g., `globalThis.setTimeout`). This keeps tests and Node-based tooling environments happy.
 
 ## Migration Notes
 
