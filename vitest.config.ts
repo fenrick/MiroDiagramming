@@ -11,6 +11,7 @@ export default defineConfig({
     globals: true,
     passWithNoTests: true,
     threads: false,
+    include: [],
     coverage: {
       enabled: false,
       provider: 'v8',
@@ -31,7 +32,7 @@ export default defineConfig({
         name: 'jsdom',
         environment: 'jsdom',
         setupFiles: ['tests/client/setupTests.ts'],
-        include: ['tests/client/**/*.test.tsx'],
+        include: ['tests/client/**/*.test.tsx', 'src/**/*.test.tsx'],
         exclude: ['tests/client/preview-config.test.tsx'],
       },
     ],
