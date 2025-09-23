@@ -28,6 +28,7 @@ Static hosting only. Use host‑level health checks for `index.html` as needed.
 - [Done] Migrate `scripts/generate-client.ts` to top-level await with ESM-safe path resolution; removed redundant conditional.
 - [Done] `src/index.ts` uses top-level registration for Miro UI handlers (no async init wrapper).
 - [Done] A11y polish: ButtonToolbar avoids index-based keys; CommandPalette uses native buttons; EmptyState and CardsTab loading use `<output aria-live>`; Modal backdrop is a button and `<dialog>` has native semantics.
+- [Done] CI: Exclude test files from SonarCloud coverage via `sonar.coverage.exclusions` in `.github/workflows/repo-sonar.yml`.
 
 <!-- Removed: Queue & Persistence (backend-only) -->
 
