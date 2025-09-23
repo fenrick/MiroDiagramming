@@ -23,6 +23,9 @@ Static hosting only. Use host‑level health checks for `index.html` as needed.
 - [Done] CI cleanup: remove Prisma/migrate steps and legacy client typecheck job; keep frontend-only gates (`format`, `lint`, `typecheck`, `test`, `build`).
 - [Done] Break board import cycle by making `board-cache` require an explicit board param; adjust callers.
 - [Done] Reduce cognitive complexity in `logger`, `sticky-tags`, `Toast`, and `use-excel-sync` to satisfy lints.
+- [Done] Replace nested ternary in sticky-tags toast message with explicit branching.
+- [Done] Remove `tabIndex` from non-interactive App container; updated `useKeybinding` to bind at `document` when unfocused. Added a focused unit test for the hook under `tests/client`.
+- [Done] Migrate `scripts/generate-client.ts` to top-level await with ESM-safe path resolution; removed redundant conditional.
 
 <!-- Removed: Queue & Persistence (backend-only) -->
 
