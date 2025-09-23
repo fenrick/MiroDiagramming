@@ -18,4 +18,11 @@ describe('App', () => {
     const label = firstTab.textContent?.trim()
     expect(firstTab).toHaveAttribute('aria-label', label)
   })
+
+  it('does not add tabIndex on non-interactive content region', async () => {
+    render(<App />)
+    fireEvent.click(screen.getByTestId('start-button'))
+    const region = await screen.findByLabelText('Panel content')
+    expect(region.getAttribute('tabindex')).toBeNull()
+  })
 })

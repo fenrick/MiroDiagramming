@@ -10,8 +10,10 @@ export interface Keybinding {
 }
 
 /**
- * Attach keyboard shortcuts to a container element so bindings are active
- * only when the panel has focus. Use with `tabIndex={0}` on the container.
+ * Attach keyboard shortcuts.
+ *
+ * Binds to the referenced element when available, otherwise falls back to `document`.
+ * This avoids adding `tabIndex` on non-interactive elements purely to capture focus.
  */
 export function useKeybinding(bindings: Keybinding[]) {
   const handler = React.useCallback(
@@ -36,11 +38,11 @@ export function useKeybinding(bindings: Keybinding[]) {
 
   const ref = React.useRef<HTMLDivElement | null>(null)
   React.useEffect(() => {
-    const el = ref.current
-    if (!el) return
+    const target: HTMLElement | Document | null = ref.current ?? document
+    if (!target) return
     const onKey = (evt: KeyboardEvent) => handler(evt)
-    el.addEventListener('keydown', onKey)
-    return () => el.removeEventListener('keydown', onKey)
+    target.addEventListener('keydown', onKey as EventListener)
+    return () => target.removeEventListener('keydown', onKey as EventListener)
   }, [handler])
 
   return ref
