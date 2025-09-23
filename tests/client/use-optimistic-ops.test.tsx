@@ -48,10 +48,13 @@ describe('useOptimisticOps', () => {
 
     const { getAllByText } = render(<Wrapper />)
     fireEvent.click(getAllByText('Run')[0]!)
-    // advance timeout used by rollback scheduling
+    // allow any microtasks to schedule timers, then flush timers
+    await Promise.resolve()
+    await Promise.resolve()
     await act(async () => {
       await vi.runAllTimersAsync()
     })
+    await Promise.resolve()
     await waitFor(() => expect(apply).toHaveBeenCalled())
     await waitFor(() => expect(rollback).toHaveBeenCalled())
     await waitFor(() => expect(pushToast).toHaveBeenCalled())
