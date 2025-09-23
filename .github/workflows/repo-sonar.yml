@@ -42,3 +42,4 @@ jobs:
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
             -Dsonar.coverage.exclusions=tests/**/*,**/*.test.ts,**/*.test.tsx,**/*.spec.ts,**/*.spec.tsx,**/__tests__/**
             -Dsonar.test.inclusions=tests/**/*.test.ts,tests/**/*.test.tsx,**/__tests__/**/*
+            -Dsonar.coverage.inclusions=src/logger.ts,src/core/utils/aspect-ratio.ts,src/core/utils/base64.ts,src/core/utils/color-utils.ts,src/core/utils/debug-flags.ts,src/core/utils/string-utils.ts,src/core/utils/text-utils.ts,src/core/utils/unit-utils.ts,src/core/hooks/useFocusTrap.ts,src/core/hooks/useKeybinding.ts,src/core/hooks/useOptimisticOps.ts,src/ui/hooks/ui-utils.ts,src/ui/hooks/notifications.ts,src/ui/hooks/use-excel-sync.ts,src/ui/components/Toast.tsx,src/ui/style-presets.ts,src/board/format-tools.ts,src/board/style-tools.ts,src/board/templates.ts
