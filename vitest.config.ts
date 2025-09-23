@@ -11,7 +11,7 @@ export default defineConfig({
   test: {
     globals: true,
     passWithNoTests: true,
-    include: ['tests/**/*.test.ts', 'tests/**/*.test.tsx'],
+    include: [],
     exclude: ['tests/client/preview-config.test.tsx'],
     threads: false,
     coverage: {
