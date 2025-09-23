@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import React from 'react'
-import { render, fireEvent, act } from '@testing-library/react'
+import { render, fireEvent, act, waitFor } from '@testing-library/react'
 
 vi.mock('../../src/ui/components/Toast', () => ({
   pushToast: vi.fn(),
@@ -52,10 +52,9 @@ describe('useOptimisticOps', () => {
     await act(async () => {
       await vi.runAllTimersAsync()
     })
-
-    expect(apply).toHaveBeenCalled()
-    expect(rollback).toHaveBeenCalled()
-    expect(pushToast).toHaveBeenCalled()
+    await waitFor(() => expect(apply).toHaveBeenCalled())
+    await waitFor(() => expect(rollback).toHaveBeenCalled())
+    await waitFor(() => expect(pushToast).toHaveBeenCalled())
     vi.useRealTimers()
   })
 })
