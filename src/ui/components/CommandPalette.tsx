@@ -59,23 +59,29 @@ export function CommandPalette({
         onChange={(e) => setQuery(e.target.value)}
         onKeyDown={handleKey}
       />
-      <List role="listbox">
+      <List>
         {filtered.map((cmd, i) => (
-          <Item
-            key={cmd.id}
-            role="option"
-            aria-selected={i === index}
-            data-selected={i === index}
-            onMouseEnter={() => setIndex(i)}
-            onClick={() => {
-              cmd.action()
-              onClose()
-            }}
-          >
-            {cmd.label}
-          </Item>
+          <li key={cmd.id} data-selected={i === index}>
+            <ItemButton
+              type="button"
+              aria-current={i === index ? 'true' : undefined}
+              onMouseEnter={() => setIndex(i)}
+              onClick={() => {
+                cmd.action()
+                onClose()
+              }}
+            >
+              {cmd.label}
+            </ItemButton>
+          </li>
         ))}
-        {filtered.length === 0 && <Item>No commands</Item>}
+        {filtered.length === 0 && (
+          <li>
+            <ItemButton type="button" disabled>
+              No commands
+            </ItemButton>
+          </li>
+        )}
       </List>
     </Modal>
   )
@@ -89,10 +95,14 @@ const List = styled('ul', {
   overflowY: 'auto',
 })
 
-const Item = styled('li', {
+const ItemButton = styled('button', {
+  width: '100%',
+  textAlign: 'left',
   padding: 'var(--space-100)',
   cursor: 'pointer',
-  '&[data-selected=true]': {
+  background: 'transparent',
+  border: 'none',
+  '&[aria-current=true]': {
     background: 'var(--colors-background-tertiary)',
   },
 })

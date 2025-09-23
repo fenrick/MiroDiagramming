@@ -16,16 +16,18 @@ export interface ButtonToolbarProps {
 export function ButtonToolbar({ className, children }: ButtonToolbarProps): React.JSX.Element {
   return (
     <Flex className={className} direction="column" gap={100}>
-      {React.Children.map(children, (child, index) => {
-        if (!React.isValidElement(child)) return child as React.ReactElement
+      {React.Children.toArray(children).map((node) => {
+        if (!React.isValidElement(node)) return node as React.ReactElement
+        // Use child-provided key; do not synthesize index-based keys
+        const childKey = (node as React.ReactElement).key ?? undefined
         // Make buttons full-width by default for readability in the panel
-        if (child.type === OurButton) {
-          return React.cloneElement(child, { fluid: true, key: index })
+        if (node.type === OurButton) {
+          return React.cloneElement(node, { fluid: true })
         }
         // Fallback: wrap unknown children in a block-level container
         return (
-          <div key={index} style={{ width: '100%' }}>
-            {child as React.ReactElement}
+          <div key={childKey as React.Key | undefined} style={{ width: '100%' }}>
+            {node as React.ReactElement}
           </div>
         )
       })}
