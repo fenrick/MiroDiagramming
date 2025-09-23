@@ -301,6 +301,23 @@ Static hosting only. Use host‑level health checks for `index.html` as needed.
     - Where: `vitest.config.ts` (future change), `implementation_plan.md` (tracking).
     - DoD: Thresholds eventually updated to ≥ 90% with tests supporting the increase.
 
+## Code Quality
+
+- Sticky tag extraction readability [Done]
+    - Change: Replace `Array.forEach` with `for…of` in `src/board/sticky-tags.ts` to reduce callback nesting and improve intent.
+    - Tests: Covered indirectly via existing sticky tag flows.
+
+- Toast portability [Done]
+    - Change: Use `globalThis.setTimeout` in `src/ui/components/Toast.tsx` to avoid direct `window` references.
+    - Tests: Added `tests/client/toast.test.tsx` to assert push and auto-dismiss behavior.
+
+- Excel sync nesting reduction [Done]
+    - Change: Extract helper functions for `apply`, `rollback`, and `commit` in `src/ui/hooks/use-excel-sync.ts` to keep nesting ≤ 3 levels.
+    - Tests: Added `tests/client/use-excel-sync.test.tsx` verifying optimistic row updates.
+
+- Test hygiene [Done]
+    - Change: Remove unused `vi` import in `tests/client/useKeybinding.test.tsx`.
+
 ## Developer Experience
 
 - Production Dockerfile
