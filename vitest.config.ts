@@ -7,15 +7,12 @@ export default defineConfig({
       '../src': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  // Global defaults (coverage etc.)
   test: {
-    // Default to Node; switch to jsdom for client tests via globs below
-    environment: 'node',
-    environmentMatchGlobs: [['tests/client/**', 'jsdom']],
     globals: true,
     passWithNoTests: true,
     include: ['tests/**/*.test.ts', 'tests/**/*.test.tsx'],
     exclude: ['tests/client/preview-config.test.tsx'],
-    setupFiles: ['tests/client/setupTests.ts'],
     threads: false,
     coverage: {
       // Coverage is off by default; enabled via `--coverage` or `npm run coverage`.
@@ -28,4 +25,22 @@ export default defineConfig({
       exclude: ['src/**/*.stories.{ts,tsx}', 'src/**/__mocks__/**', 'src/**/__fixtures__/**'],
     },
   },
+  // Per-project environments
+  projects: [
+    {
+      test: {
+        name: 'node',
+        environment: 'node',
+        include: ['tests/**/*.test.ts'],
+      },
+    },
+    {
+      test: {
+        name: 'jsdom',
+        environment: 'jsdom',
+        setupFiles: ['tests/client/setupTests.ts'],
+        include: ['tests/client/**/*.test.tsx'],
+      },
+    },
+  ],
 })
