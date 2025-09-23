@@ -26,6 +26,8 @@ Static hosting only. Use host‑level health checks for `index.html` as needed.
 - [Done] Replace nested ternary in sticky-tags toast message with explicit branching.
 - [Done] Remove `tabIndex` from non-interactive App container; updated `useKeybinding` to bind at `document` when unfocused. Added a focused unit test for the hook under `tests/client`.
 - [Done] Migrate `scripts/generate-client.ts` to top-level await with ESM-safe path resolution; removed redundant conditional.
+- [Done] `src/index.ts` uses top-level registration for Miro UI handlers (no async init wrapper).
+- [Done] A11y polish: ButtonToolbar avoids index-based keys; CommandPalette uses native buttons; EmptyState and CardsTab loading use `<output aria-live>`; Modal backdrop is a button and `<dialog>` has native semantics.
 
 <!-- Removed: Queue & Persistence (backend-only) -->
 
