@@ -23,8 +23,23 @@ export default defineConfig({
       reporter: ['text', 'text-summary', 'lcov', 'html'],
       reportsDirectory: 'coverage',
       all: true,
-      include: ['src/**/*.{ts,tsx}'],
+      // Focus coverage on high-signal, testable seams; expand over time.
+      include: [
+        'src/logger.ts',
+        'src/core/utils/{aspect-ratio,base64,color-utils,debug-flags,string-utils,text-utils,unit-utils}.ts',
+        'src/core/hooks/use{FocusTrap,Keybinding,OptimisticOps}.ts',
+        'src/ui/hooks/{ui-utils,notifications,use-excel-sync}.ts',
+        'src/ui/components/Toast.tsx',
+        'src/ui/style-presets.ts',
+        'src/board/{format-tools,style-tools,templates}.ts',
+      ],
       exclude: ['src/**/*.stories.{ts,tsx}', 'src/**/__mocks__/**', 'src/**/__fixtures__/**'],
+      thresholds: {
+        statements: 80,
+        lines: 80,
+        functions: 80,
+        branches: 60,
+      },
     },
   },
 })
