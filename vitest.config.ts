@@ -18,7 +18,14 @@ export default defineConfig({
     setupFiles: ['tests/client/setupTests.ts'],
     threads: false,
     coverage: {
+      // Coverage is off by default; enabled via `--coverage` or `npm run coverage`.
       enabled: false,
+      provider: 'v8',
+      reporter: ['text', 'text-summary', 'lcov', 'html'],
+      reportsDirectory: 'coverage',
+      all: true,
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: ['src/**/*.stories.{ts,tsx}', 'src/**/__mocks__/**', 'src/**/__fixtures__/**'],
     },
   },
 })
