@@ -1,3 +1,4 @@
-import { defineWorkspace } from 'vitest/config'
+import { defineConfig } from 'vitest/config'
 
-export default defineWorkspace(['vitest.config.node.ts', 'vitest.config.jsdom.ts'])
+// Minimal fallback Vite/Vitest config; actual execution uses vitest.workspace.ts
+export default defineConfig({})
