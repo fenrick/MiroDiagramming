@@ -21,5 +21,17 @@ describe('ToastContainer', () => {
 
     vi.useRealTimers()
   })
+
+  it('invokes action callback and removes toast on click', async () => {
+    render(<ToastContainer />)
+    await Promise.resolve()
+    const cb = vi.fn()
+    act(() => pushToast({ message: 'Click me', action: { label: 'Do', callback: cb } }))
+    expect(screen.getByText('Click me')).toBeTruthy()
+    const button = screen.getByText('Do')
+    act(() => button.click())
+    expect(cb).toHaveBeenCalled()
+    expect(screen.queryByText('Click me')).toBeNull()
+  })
 })
 // @vitest-environment jsdom

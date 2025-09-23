@@ -24,4 +24,11 @@ describe('debug-flags', () => {
     const mod = await import('../../src/core/utils/debug-flags')
     expect(mod.debugFlags).toEqual({})
   })
+
+  it('is empty in production mode', async () => {
+    vi.resetModules()
+    vi.stubEnv('DEV', 'false')
+    const mod = await import('../../src/core/utils/debug-flags')
+    expect(mod.debugFlags).toEqual({})
+  })
 })

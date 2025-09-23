@@ -19,4 +19,28 @@ describe('format-tools', () => {
     expect(resolved.borderColor).toBe('#000000')
     expect(resolved.fillColor).toBe('#ffffff')
   })
+
+  it.skip('applies a preset to selected items using board helpers', async () => {
+    const selection: Record<string, unknown>[] = [{ style: { color: '#111111' } }]
+    const preset: StylePreset = {
+      label: 'Test',
+      fontColor: '#000000',
+      borderColor: '#222222',
+      borderWidth: 2,
+      fillColor: '#ffffff',
+    }
+    vi.doMock('../../src/board/board-cache', () => ({
+      boardCache: {
+        getSelection: async () => selection,
+      },
+    }))
+    const { applyStylePreset } = await import('../../src/board/format-tools')
+    await applyStylePreset(preset, {} as any)
+    expect(selection[0].style).toMatchObject({
+      color: '#000000',
+      borderColor: '#222222',
+      borderWidth: 2,
+      fillColor: '#ffffff',
+    })
+  })
 })

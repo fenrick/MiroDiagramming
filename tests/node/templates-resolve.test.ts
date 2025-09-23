@@ -21,4 +21,10 @@ describe('TemplateManager resolution', () => {
     const tpl = mgr.getTemplate('Driver') // alias of Motivation in fixtures
     expect(tpl?.elements?.[0]).toBeTruthy()
   })
+
+  it('resolves connector templates including aliases', () => {
+    const mgr = TemplateManager.getInstance()
+    expect(mgr.getConnectorTemplate('flow')).toBeTruthy()
+    expect(mgr.getConnectorTemplate('flows')).toBeTruthy()
+  })
 })
