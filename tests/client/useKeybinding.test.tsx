@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { render } from '@testing-library/react'
+import { render, act } from '@testing-library/react'
 import React from 'react'
 
 import { useKeybinding } from '../../src/core/hooks/useKeybinding'
@@ -15,7 +15,9 @@ describe('useKeybinding', () => {
   it('binds to document without requiring tabIndex', () => {
     render(<KeybindingProbe />)
     const evt = new KeyboardEvent('keydown', { key: 'k' })
-    document.dispatchEvent(evt)
+    act(() => {
+      document.dispatchEvent(evt)
+    })
     // If the listener is attached to document, count updates to 1
     // We cannot read state from here easily, but lack of exceptions and
     // listener attachment are sufficient; this mainly asserts no focus trap.

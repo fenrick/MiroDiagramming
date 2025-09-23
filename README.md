@@ -146,6 +146,14 @@ The sidebar exposes extra tabs to manipulate existing widgets:
 - **Frames** renames or locks selected frames via helper utilities.
 - **Search** finds text across the board and can replace all matches.
 
+## Testing & Coverage
+
+- Unit tests use Vitest.
+- Run tests: `npm run test`
+- Coverage report (HTML + lcov): `npm run coverage` then open `coverage/index.html`.
+- Client tests that touch the DOM use jsdom; add `// @vitest-environment jsdom` at the top of those files.
+- Focus initial coverage on utilities and hooks that don’t require the live Miro SDK (e.g., color/ratio helpers, template resolution, notifications, logger, UI utils).
+
 ### Search Tools
 
 Utility helpers `searchBoardContent` and `replaceBoardContent` can query or
