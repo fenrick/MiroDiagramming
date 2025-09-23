@@ -49,7 +49,9 @@ describe('useOptimisticOps', () => {
 
     const { getAllByText } = render(<Wrapper />)
     fireEvent.click(getAllByText('Run')[0]!)
-    // advance wait(150) timer and flush
+    // allow rejection to schedule the rollback timer, then advance it
+    await Promise.resolve()
+    await Promise.resolve()
     await act(async () => {
       vi.advanceTimersByTime(200)
     })
