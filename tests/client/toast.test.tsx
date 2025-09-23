@@ -22,3 +22,4 @@ describe('ToastContainer', () => {
     vi.useRealTimers()
   })
 })
+// @vitest-environment jsdom

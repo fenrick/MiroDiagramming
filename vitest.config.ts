@@ -8,10 +8,15 @@ export default defineConfig({
     },
   },
   test: {
+    // Single project: default Node environment. Use per-file directive for jsdom
+    // e.g. add `// @vitest-environment jsdom` at the top of client test files.
+    environment: 'node',
     globals: true,
     passWithNoTests: true,
     threads: false,
-    include: [],
+    include: ['tests/**/*.test.ts', 'tests/**/*.test.tsx'],
+    exclude: ['tests/client/preview-config.test.tsx'],
+    setupFiles: ['tests/client/setupTests.ts'],
     coverage: {
       enabled: false,
       provider: 'v8',
@@ -21,24 +26,5 @@ export default defineConfig({
       include: ['src/**/*.{ts,tsx}'],
       exclude: ['src/**/*.stories.{ts,tsx}', 'src/**/__mocks__/**', 'src/**/__fixtures__/**'],
     },
-    projects: [
-      {
-        test: {
-          name: 'node',
-          environment: 'node',
-          include: ['tests/**/*.test.ts'],
-          exclude: ['tests/client/preview-config.test.tsx'],
-        },
-      },
-      {
-        test: {
-          name: 'jsdom',
-          environment: 'jsdom',
-          setupFiles: ['tests/client/setupTests.ts'],
-          include: ['tests/client/**/*.test.tsx'],
-          exclude: ['tests/client/preview-config.test.tsx'],
-        },
-      },
-    ],
   },
 })

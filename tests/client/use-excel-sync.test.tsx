@@ -62,3 +62,4 @@ describe('useExcelSync', () => {
     expect(screen.getByLabelText('row-0').textContent).toBe('Alpha*')
   })
 })
+// @vitest-environment jsdom

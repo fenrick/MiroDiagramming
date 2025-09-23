@@ -61,3 +61,4 @@ describe('useOptimisticOps', () => {
     vi.useRealTimers()
   })
 })
+// @vitest-environment jsdom
