@@ -40,7 +40,5 @@ jobs:
             -Dsonar.organization=fenrick
             -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
-            # Ensure Sonar does not consider tests for coverage
             -Dsonar.coverage.exclusions=tests/**/*,**/*.test.ts,**/*.test.tsx,**/*.spec.ts,**/*.spec.tsx,**/__tests__/**
-            # (Optional) make test files explicit for analyzers
             -Dsonar.test.inclusions=tests/**/*.test.ts,tests/**/*.test.tsx,**/__tests__/**/*
