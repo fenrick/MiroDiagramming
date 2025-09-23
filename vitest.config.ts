@@ -23,17 +23,21 @@ export default defineConfig({
     },
     projects: [
       {
-        name: 'node',
-        environment: 'node',
-        include: ['tests/**/*.test.ts'],
-        exclude: ['tests/client/preview-config.test.tsx'],
+        test: {
+          name: 'node',
+          environment: 'node',
+          include: ['tests/**/*.test.ts'],
+          exclude: ['tests/client/preview-config.test.tsx'],
+        },
       },
       {
-        name: 'jsdom',
-        environment: 'jsdom',
-        setupFiles: ['tests/client/setupTests.ts'],
-        include: ['tests/client/**/*.test.tsx', 'src/**/*.test.tsx'],
-        exclude: ['tests/client/preview-config.test.tsx'],
+        test: {
+          name: 'jsdom',
+          environment: 'jsdom',
+          setupFiles: ['tests/client/setupTests.ts'],
+          include: ['tests/client/**/*.test.tsx', 'src/**/*.test.tsx'],
+          exclude: ['tests/client/preview-config.test.tsx'],
+        },
       },
     ],
   },
