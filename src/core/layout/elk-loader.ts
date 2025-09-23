@@ -29,8 +29,9 @@ export async function loadElk(): Promise<typeof ELK> {
         if (mod.default) {
           return mod.default
         }
-        if ('ELK' in window && window.ELK) {
-          return window.ELK
+        const gt = globalThis as { ELK?: typeof ELK }
+        if (gt.ELK) {
+          return gt.ELK
         }
         throw new Error('ELK was not loaded')
       })()

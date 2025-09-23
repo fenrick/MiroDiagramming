@@ -37,8 +37,8 @@ export const CardsTab: React.FC = () => {
         undoLastImport(lastProc, () => setLastProc(undefined))
       }
     }
-    window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
+    globalThis.addEventListener('keydown', handler)
+    return () => globalThis.removeEventListener('keydown', handler)
   }, [lastProc])
 
   const handleFiles = (droppedFiles: File[]): void => {
@@ -66,7 +66,7 @@ export const CardsTab: React.FC = () => {
         })
         setProgress(100)
         setShowUndo(true)
-        setTimeout(() => setShowUndo(false), 3000)
+        globalThis.setTimeout(() => setShowUndo(false), 3000)
       } catch (e) {
         const msg = String(e)
         setError(msg)
