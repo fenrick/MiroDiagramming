@@ -10,7 +10,8 @@ export interface DebugFlags {
   count429?: number
 }
 
-const params = new URLSearchParams(window.location.search)
+const search = typeof location !== 'undefined' ? location.search : ''
+const params = new URLSearchParams(search)
 
 export const debugFlags: DebugFlags = import.meta.env.DEV
   ? {

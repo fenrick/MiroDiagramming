@@ -24,7 +24,7 @@ export class DiagramApp {
           reject(new Error('Timed out waiting for Miro board UI'))
           return
         }
-        window.setTimeout(check, 50)
+        globalThis.setTimeout(check, 50)
       }
 
       check()

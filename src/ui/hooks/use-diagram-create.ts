@@ -118,7 +118,7 @@ export function useAdvancedToggle(setShow: React.Dispatch<React.SetStateAction<b
         setShow((v) => !v)
       }
     }
-    window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
+    globalThis.addEventListener('keydown', handler)
+    return () => globalThis.removeEventListener('keydown', handler)
   }, [setShow])
 }
