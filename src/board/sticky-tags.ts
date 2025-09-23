@@ -105,7 +105,9 @@ function collectTagNames(stickies: Array<Record<string, unknown>>): Set<string> 
     const t = readItemText(item)
     if (!t) continue
     const { tags } = extractBracketTags(t)
-    tags.forEach((n) => names.add(n))
+    for (const n of tags) {
+      names.add(n)
+    }
   }
   return names
 }
