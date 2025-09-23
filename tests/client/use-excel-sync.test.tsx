@@ -10,12 +10,30 @@ vi.spyOn(ExcelSyncService.prototype, 'updateShapesFromExcel').mockResolvedValue(
 
 type Row = { id: string; label: string; template?: string }
 
+function Child() {
+  const sync = useExcelSync()
+  const [label, setLabel] = React.useState('Alpha')
+  return (
+    <div>
+      <output aria-label="row-0">{label}</output>
+      <button
+        onClick={() => {
+          // Update via hook and reflect locally
+          void sync(0, { id: '1', label: 'Alpha*' })
+          setLabel('Alpha*')
+        }}
+      >
+        Update
+      </button>
+    </div>
+  )
+}
+
 function Harness() {
   const [rows, setRows] = React.useState<Row[]>([
     { id: '1', label: 'Alpha' },
     { id: '2', label: 'Beta' },
   ])
-  const sync = useExcelSync()
 
   return (
     <ExcelDataProvider
@@ -30,16 +48,7 @@ function Harness() {
         setTemplateColumn: () => {},
       }}
     >
-      <div>
-        <output aria-label="row-0">{rows[0]?.label}</output>
-        <button
-          onClick={() => {
-            void sync(0, { ...rows[0], label: 'Alpha*' })
-          }}
-        >
-          Update
-        </button>
-      </div>
+      <Child />
     </ExcelDataProvider>
   )
 }
