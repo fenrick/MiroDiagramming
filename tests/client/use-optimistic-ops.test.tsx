@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 import { describe, it, expect, vi } from 'vitest'
 import React from 'react'
 import { render, fireEvent, act, waitFor } from '@testing-library/react'
@@ -35,7 +36,7 @@ describe('useOptimisticOps', () => {
     expect(pushToast).not.toHaveBeenCalled()
   })
 
-  it.skip('rolls back and shows toast on failure', async () => {
+  it('rolls back and shows toast on failure', async () => {
     vi.useFakeTimers()
     const apply = vi.fn()
     const commit = vi.fn().mockRejectedValue(new Error('fail'))
@@ -48,17 +49,15 @@ describe('useOptimisticOps', () => {
 
     const { getAllByText } = render(<Wrapper />)
     fireEvent.click(getAllByText('Run')[0]!)
-    // allow any microtasks to schedule timers, then flush timers
-    await Promise.resolve()
-    await Promise.resolve()
+    // advance wait(150) timer and flush
     await act(async () => {
-      await vi.runAllTimersAsync()
+      vi.advanceTimersByTime(200)
     })
+    // allow any microtasks post-timer
     await Promise.resolve()
-    expect(apply).toHaveBeenCalled()
-    // Rollback scheduling can be flaky under fake timers; toast implies rollback attempted
-    expect(pushToast).toHaveBeenCalled()
+    expect(apply).toHaveBeenCalledTimes(1)
+    expect(rollback).toHaveBeenCalledTimes(1)
+    expect(pushToast).toHaveBeenCalledTimes(1)
     vi.useRealTimers()
   })
 })
-// @vitest-environment jsdom
