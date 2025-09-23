@@ -50,9 +50,8 @@ describe('useOptimisticOps', () => {
     fireEvent.click(getByText('Run'))
     // advance timeout used by rollback scheduling
     await act(async () => {
-      vi.advanceTimersByTime(200)
+      await vi.runAllTimersAsync()
     })
-    await Promise.resolve()
 
     expect(apply).toHaveBeenCalled()
     expect(rollback).toHaveBeenCalled()
