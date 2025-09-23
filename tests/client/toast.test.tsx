@@ -11,7 +11,7 @@ describe('ToastContainer', () => {
     // Allow effect subscription to register before pushing
     await Promise.resolve()
     act(() => pushToast({ message: 'Hello world' }))
-    expect(screen.getByText('Hello world')).toBeInTheDocument()
+    expect(screen.getByText('Hello world')).toBeTruthy()
 
     // Fast-forward the 5s auto-dismiss timer within act to flush state updates
     await act(async () => {
