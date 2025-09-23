@@ -22,3 +22,4 @@ describe('useKeybinding', () => {
     expect(true).toBe(true)
   })
 })
+// @vitest-environment jsdom

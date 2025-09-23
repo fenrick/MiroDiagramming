@@ -42,3 +42,4 @@ describe('useFocusTrap', () => {
     expect(document.activeElement?.textContent).toBe('Three')
   })
 })
+// @vitest-environment jsdom
