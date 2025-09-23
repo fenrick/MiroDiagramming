@@ -504,3 +504,15 @@ Execution guidance:
     - What’s needed: Align modal tests with explicit `role="dialog"` and aria attributes; avoid brittle assumptions about attributes.
     - Where: `tests/client/modal.test.tsx` (updated).
     - DoD: Modal tests pass and reflect current a11y semantics.
+
+## Testing & Coverage
+
+- [Done] Reintroduce Vitest suites for browser-only app: add focused unit tests covering:
+    - Logger wrapper (message + attrs signatures)
+    - Notifications helpers (trimming, toast dispatch)
+    - TemplateManager style/token resolution and alias lookup
+    - Style preset conversion (`presetStyle`)
+    - UI utils (`getDropzoneStyle`, `undoLastImport`)
+- [Done] Silence React act() warning in `useKeybinding` test by wrapping key dispatch in `act`.
+- [Planned] Add smoke tests for `style-presets` derivation and `ResizeTab` numeric helpers.
+- [Planned] Add lightweight tests for search/replace text helpers with mocked board API.

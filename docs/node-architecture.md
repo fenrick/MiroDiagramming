@@ -78,10 +78,10 @@ Output is a static bundle that can be served via `config/default.conf.template` 
 
 ## Testing Expectations
 
-- Jest/Vitest client tests cover React hooks and view logic under `tests/client/`.
-- There are no integration tests hitting HTTP endpoints because none exist.
-- Client tests live under `tests/client/**` and use jsdom. A basic a11y test for the App shell ensures we avoid `tabIndex` on non-interactive containers.
-- New features should provide jsdom coverage where practical.
+- Vitest covers utilities (`tests/node/**`) and client hooks/components (`tests/client/**`).
+- No HTTP/integration tests (no backend).
+- Use jsdom for any test that renders React or touches the DOM. Add `// @vitest-environment jsdom` to those files.
+- Coverage: run `npm run coverage` for HTML + lcov. Prioritise pure helpers and hooks that don’t require a live Miro board. Recent additions include tests for the logger, notifications, template resolution, UI utils, and style formatting.
 
 ### Portability Notes
 
