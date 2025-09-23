@@ -8,8 +8,9 @@ import {
 
 describe('unit-utils', () => {
   it('converts board units to mm and inches', () => {
-    expect(boardUnitsToMm(100)).toBeCloseTo(100 * 3.2, 5)
-    expect(boardUnitsToInches(100)).toBeCloseTo((100 * 3.2) / 25.4, 5)
+    // 96 board units == 1 inch == 25.4 mm
+    expect(boardUnitsToMm(96)).toBeCloseTo(25.4, 5)
+    expect(boardUnitsToInches(192)).toBeCloseTo(2, 5)
   })
   it('converts inverse units approximately', () => {
     const mm = 123

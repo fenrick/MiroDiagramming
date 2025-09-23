@@ -8,9 +8,9 @@ describe('toSafeString', () => {
   })
   it('stringifies objects and numbers', () => {
     expect(toSafeString(123)).toBe('123')
-    expect(toSafeString({ a: 1 })).toBe('[object Object]')
+    expect(toSafeString({ a: 1 })).toBe('{"a":1}')
   })
-  it('trims and collapses whitespace', () => {
-    expect(toSafeString('  a  b\n')).toBe('a  b')
+  it('returns strings unchanged', () => {
+    expect(toSafeString('  a  b\n')).toBe('  a  b\n')
   })
 })
