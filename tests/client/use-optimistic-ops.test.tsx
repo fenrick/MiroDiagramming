@@ -24,8 +24,8 @@ describe('useOptimisticOps', () => {
       return <Harness op={() => enqueue({ apply, commit, rollback })} />
     }
 
-    const { getByText } = render(<Wrapper />)
-    fireEvent.click(getByText('Run'))
+    const { getAllByText } = render(<Wrapper />)
+    fireEvent.click(getAllByText('Run')[0]!)
     // allow promises to flush
     await Promise.resolve()
 
@@ -46,8 +46,8 @@ describe('useOptimisticOps', () => {
       return <Harness op={() => enqueue({ apply, commit, rollback })} />
     }
 
-    const { getByText } = render(<Wrapper />)
-    fireEvent.click(getByText('Run'))
+    const { getAllByText } = render(<Wrapper />)
+    fireEvent.click(getAllByText('Run')[0]!)
     // advance timeout used by rollback scheduling
     await act(async () => {
       await vi.runAllTimersAsync()
