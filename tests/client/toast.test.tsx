@@ -8,7 +8,8 @@ describe('ToastContainer', () => {
   it('renders pushed toasts and auto-dismisses them', async () => {
     vi.useFakeTimers()
     render(<ToastContainer />)
-
+    // Allow effect subscription to register before pushing
+    await Promise.resolve()
     act(() => pushToast({ message: 'Hello world' }))
     expect(screen.getByText('Hello world')).toBeInTheDocument()
 
