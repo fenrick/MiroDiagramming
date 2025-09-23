@@ -17,7 +17,7 @@ describe('useOptimisticOps', () => {
   it('runs apply and commit on success', async () => {
     const apply = vi.fn()
     const commit = vi.fn().mockResolvedValue(undefined)
-    const rollback = vi.fn()
+    const rollback = vi.fn().mockResolvedValue(undefined)
 
     function Wrapper() {
       const enqueue = useOptimisticOps()
@@ -52,6 +52,7 @@ describe('useOptimisticOps', () => {
     await act(async () => {
       vi.advanceTimersByTime(200)
     })
+    await Promise.resolve()
 
     expect(apply).toHaveBeenCalled()
     expect(rollback).toHaveBeenCalled()
