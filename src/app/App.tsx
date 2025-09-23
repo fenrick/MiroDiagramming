@@ -23,7 +23,7 @@ function AppShell(): React.JSX.Element {
   const [labelColumn, setLabelColumn] = React.useState('')
   const [templateColumn, setTemplateColumn] = React.useState('')
   const [showMeta, setShowMeta] = React.useState(() => {
-    const search = typeof location !== 'undefined' ? location.search : ''
+    const search = globalThis.location?.search ?? ''
     const params = new URLSearchParams(search)
     return params.get('command') === 'edit-metadata'
   })
