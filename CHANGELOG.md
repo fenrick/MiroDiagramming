@@ -1,3 +1,10 @@
+## [2.1.2](https://github.com/fenrick/MiroDiagramming/compare/v2.1.1...v2.1.2) (2025-09-24)
+
+
+### Bug Fixes
+
+* **ui:** use <output> for loading indicator in StructuredTab for better a11y semantics ([def7487](https://github.com/fenrick/MiroDiagramming/commit/def7487fee86ec16d72fef366faf684cebe70f9c))
+
 ## [2.1.1](https://github.com/fenrick/MiroDiagramming/compare/v2.1.0...v2.1.1) (2025-09-22)
 
 
