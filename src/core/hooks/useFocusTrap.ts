@@ -35,7 +35,7 @@ export function useFocusTrap<T extends HTMLElement>(
       if (focusable.length === 0) return
       e.preventDefault()
       const current = document.activeElement as HTMLElement | null
-      const idx = Math.max(0, current ? focusable.findIndex((el) => el === current) : 0)
+      const idx = Math.max(0, current ? focusable.indexOf(current) : 0)
       const delta = e.shiftKey ? -1 : 1
       const nextIndex = (idx + delta + focusable.length) % focusable.length
       focusable[nextIndex]!.focus()
