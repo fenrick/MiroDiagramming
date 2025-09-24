@@ -32,7 +32,7 @@ The Web SDK internally maps to REST endpoints with the following indicative cost
 ## 3 Opportunities
 
 - Extend `board-cache.ts` to persist results across sessions via `miro.board.storage` if rate limits become an issue.
-- Record lightweight metrics (counts, durations) in telemetry to spot expensive flows.
+- If metrics are needed, record lightweight counts/durations via the logger to spot expensive flows.
 - Investigate incremental selection updates via realtime events to keep the cache warm without high-cost fetches.
 
 Overall, keeping all logic client-side makes rate-limit behaviour predictable—each feature controls when it touches the board API, and caches avoid unnecessary calls.
