@@ -32,4 +32,3 @@ describe('board-cache', () => {
     boardCache.reset()
   })
 })
-

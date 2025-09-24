@@ -1,9 +1,18 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 
 import { boardCache } from '../../src/board/board-cache'
-import { forEachSelection, getBoard, getBoardWithQuery, ensureBoard, getFirstSelection, maybeSync } from '../../src/board/board'
+import {
+  forEachSelection,
+  getBoard,
+  getBoardWithQuery,
+  ensureBoard,
+  getFirstSelection,
+  maybeSync,
+} from '../../src/board/board'
 
-vi.mock('../../src/ui/hooks/notifications', () => ({ showError: vi.fn().mockResolvedValue(undefined) }))
+vi.mock('../../src/ui/hooks/notifications', () => ({
+  showError: vi.fn().mockResolvedValue(undefined),
+}))
 
 describe('board utils', () => {
   const selection = [{ id: 'a' }, { id: 'b' }]
@@ -57,4 +66,3 @@ describe('board utils', () => {
     expect(sync).toHaveBeenCalled()
   })
 })
-

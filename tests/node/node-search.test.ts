@@ -27,4 +27,3 @@ describe('node-search', () => {
     boardCache.reset()
   })
 })
-

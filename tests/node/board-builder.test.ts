@@ -10,7 +10,9 @@ vi.mock('../../src/board/connector-utils', () => ({
 }))
 vi.mock('../../src/board/templates', () => ({
   templateManager: {
-    getTemplate: vi.fn().mockReturnValue({ elements: [{ shape: 'rectangle', width: 10, height: 10 }] }),
+    getTemplate: vi
+      .fn()
+      .mockReturnValue({ elements: [{ shape: 'rectangle', width: 10, height: 10 }] }),
     createFromTemplate: vi.fn().mockResolvedValue({ id: 'new-shape', width: 0, height: 0 }),
     getConnectorTemplate: vi.fn().mockReturnValue({ style: { strokeColor: '#000' } }),
   },
@@ -34,7 +36,9 @@ describe('BoardBuilder', () => {
 
   it('findNode validates params and falls back from shapes to groups', async () => {
     const builder = new BoardBuilder()
-    await expect(builder.findNode(123 as any, 'X' as any, { get: vi.fn() } as any)).rejects.toThrow()
+    await expect(
+      builder.findNode(123 as any, 'X' as any, { get: vi.fn() } as any),
+    ).rejects.toThrow()
     ;(searchShapes as unknown as jest.Mock).mockResolvedValue(undefined)
     vi.spyOn(boardCache, 'getWidgets').mockResolvedValue([] as any)
     const group = { id: 'g' }
@@ -45,7 +49,9 @@ describe('BoardBuilder', () => {
 
   it('findNodeInSelection searches only selection', async () => {
     const builder = new BoardBuilder()
-    vi.spyOn(boardCache, 'getSelection').mockResolvedValue([{ id: 's', type: 'shape', content: 'L' }] as any)
+    vi.spyOn(boardCache, 'getSelection').mockResolvedValue([
+      { id: 's', type: 'shape', content: 'L' },
+    ] as any)
     ;(searchShapes as unknown as jest.Mock).mockResolvedValue({ id: 's' })
     const found = await builder.findNodeInSelection('type', 'L')
     expect(found).toEqual({ id: 's' })
@@ -72,5 +78,81 @@ describe('BoardBuilder', () => {
     await builder.resizeItem(item, 10, 20)
     expect(item.width).toBe(10)
     expect(item.height).toBe(20)
+  })
+
+  it('findSpace uses viewport and findEmptySpace', async () => {
+    const builder = new BoardBuilder()
+    const mockVp = { x: 100, y: 200, width: 300, height: 400 }
+    ;(globalThis as any).miro.board.viewport.get = vi.fn().mockResolvedValue(mockVp)
+    ;(globalThis as any).miro.board.findEmptySpace = vi.fn().mockResolvedValue({ x: 123, y: 456 })
+    const spot = await builder.findSpace(200, 100)
+    expect(spot).toEqual({ x: 123, y: 456 })
+    expect((globalThis as any).miro.board.findEmptySpace).toHaveBeenCalled()
+  })
+
+  it('createFrame stores frame and getFrame returns it', async () => {
+    const builder = new BoardBuilder()
+    const frame = { id: 'frame-1' }
+    ;(globalThis as any).miro.board.createFrame = vi.fn().mockResolvedValue(frame)
+    const created = await builder.createFrame(100, 50, 0, 0, 'T')
+    expect(created).toBe(frame)
+    expect(builder.getFrame()).toBe(frame)
+  })
+
+  it('zoomTo delegates to viewport.zoomTo', async () => {
+    const builder = new BoardBuilder()
+    const target = { id: 'frame' } as any
+    ;(globalThis as any).miro.board.viewport.zoomTo = vi.fn().mockResolvedValue(undefined)
+    await builder.zoomTo(target)
+    expect((globalThis as any).miro.board.viewport.zoomTo).toHaveBeenCalledWith(target)
+  })
+
+  it('syncAll invokes sync on items that support it', async () => {
+    const builder = new BoardBuilder()
+    const a = { sync: vi.fn().mockResolvedValue(undefined) }
+    const b = {} // no sync
+    ;(globalThis as any).miro.board = { ...(globalThis as any).miro.board }
+    await builder.syncAll([a as any, b as any])
+    expect(a.sync).toHaveBeenCalled()
+  })
+
+  it('createNode throws when template missing', async () => {
+    const builder = new BoardBuilder()
+    // Override templateManager mock to simulate missing template
+    const tm = await import('../../src/board/templates')
+    const spy = vi.spyOn(tm.templateManager, 'getTemplate').mockReturnValue(undefined as any)
+    await expect(
+      builder.createNode({ id: 'n', type: 'Nope', label: 'X' } as any, {
+        x: 0,
+        y: 0,
+        width: 10,
+        height: 10,
+      }),
+    ).rejects.toThrow(/Template 'Nope' not found/)
+    spy.mockRestore()
+  })
+
+  it('createNode creates widget via template and resizes it', async () => {
+    const builder = new BoardBuilder()
+    const tm = await import('../../src/board/templates')
+    const createFromTemplateSpy = vi
+      .spyOn(tm.templateManager, 'createFromTemplate')
+      .mockResolvedValue({ id: 'w1', width: 0, height: 0 } as any)
+    const getTemplateSpy = vi
+      .spyOn(tm.templateManager, 'getTemplate')
+      .mockReturnValue({ elements: [{ shape: 'rectangle' }] } as any)
+    const resizeSpy = vi.spyOn(builder as any, 'resizeItem')
+    const widget = await builder.createNode({ id: 'n1', type: 'T', label: 'L' } as any, {
+      x: 10,
+      y: 20,
+      width: 30,
+      height: 40,
+    })
+    expect(widget).toMatchObject({ id: 'w1' })
+    expect(createFromTemplateSpy).toHaveBeenCalled()
+    expect(getTemplateSpy).toHaveBeenCalled()
+    expect(resizeSpy).toHaveBeenCalledWith(expect.any(Object), 30, 40)
+    createFromTemplateSpy.mockRestore()
+    getTemplateSpy.mockRestore()
   })
 })
