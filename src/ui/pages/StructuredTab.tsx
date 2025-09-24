@@ -365,10 +365,13 @@ export const StructuredTab: React.FC = () => {
               </ButtonToolbar>
             </StickyActions>
             {progress > 0 && progress < 100 && (
-              <div aria-label="Loading" role="status" style={{ marginTop: 'var(--space-100)' }}>
+              <output
+                aria-label="Loading"
+                style={{ display: 'block', marginTop: 'var(--space-100)' }}
+              >
                 <Skeleton />
                 <Skeleton />
-              </div>
+              </output>
             )}
             {error && <p className="error">{error}</p>}
           </div>
