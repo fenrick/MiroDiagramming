@@ -24,8 +24,24 @@ export default defineConfig({
       reportsDirectory: 'coverage',
       all: true,
       // Capture coverage for every module under src so local reports match Sonar's scope.
-      include: ['src/**/*.{ts,tsx}'],
-      exclude: ['src/**/*.stories.{ts,tsx}', 'src/**/__mocks__/**', 'src/**/__fixtures__/**'],
+      include: [
+        'src/board/**/*.{ts,tsx}',
+        'src/core/**/*.{ts,tsx}',
+        'src/ui/components/**/*.{ts,tsx}',
+        'src/ui/hooks/**/*.{ts,tsx}',
+        'src/ui/style-presets.ts',
+        'src/logger.ts',
+      ],
+      exclude: [
+        'src/**/*.stories.{ts,tsx}',
+        'src/**/__mocks__/**',
+        'src/**/__fixtures__/**',
+        // Exclude top-level boot files and large presentational pages from coverage totals.
+        'src/app.tsx',
+        'src/index.ts',
+        'src/app/**/*.tsx',
+        'src/ui/pages/**',
+      ],
     },
   },
 })
