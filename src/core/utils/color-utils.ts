@@ -30,7 +30,7 @@ export interface Rgb {
 /** Convert a hex colour string to RGB components. */
 export function hexToRgb(hex: string): Rgb {
   const n = hex.replace('#', '')
-  const int = parseInt(n, 16)
+  const int = Number.parseInt(n, 16)
   return { r: (int >> 16) & 255, g: (int >> 8) & 255, b: int & 255 }
 }
 
