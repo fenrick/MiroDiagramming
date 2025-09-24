@@ -18,7 +18,7 @@ Miro Board
 
 - `src/app/` – React entry point, shell, and panel layout.
 - `src/board/` – Board utilities (selection cache, templates, processors, sticky tag helpers).
-- `src/core/` – Shared hooks, optimistic updates, Excel sync service, telemetry.
+- `src/core/` – Shared hooks, optimistic updates, Excel sync service.
 - `src/ui/` – Tabs, components, and hooks that compose the UI.
 - `src/assets/` – Static assets imported by the UI.
 
@@ -38,10 +38,10 @@ Miro Board
 - Development: `npm run dev` → `vite dev` (hot module reload).
 - Production: `npm run build` produces static assets under `dist/`. Serve that directory with nginx, Vercel, Netlify, etc. `npm run preview` provides a local sanity check.
 
-## Error Handling & Telemetry
+## Error Handling & Logging
 
 - Logging is performed via `src/logger.ts`, which writes to `console` unless disabled by `VITE_LOGFIRE_SEND_TO_LOGFIRE`.
-- `src/core/telemetry.ts` records significant events (diffs shown/applied, job lifecycle, rate limits) by logging locally. No server collection is performed.
+- No dedicated telemetry module is present. If needed later, emit structured logs via the logger.
 
 ## Authentication & Permissions
 

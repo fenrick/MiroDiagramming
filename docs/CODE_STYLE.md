@@ -42,10 +42,9 @@ These guidelines keep the client codebase consistent now that everything runs in
 - Utilities: `thing-utils.ts`
 - Test files mirror source names: `ComponentName.test.tsx`
 
-## Logging & Telemetry
+## Logging
 
 - Use the helpers from `src/logger.ts` (`info`, `debug`, `warning`, `error`).
-- Telemetry events go through `src/core/telemetry.ts`; add new event types there if required.
 
 ## Miro SDK Usage
 

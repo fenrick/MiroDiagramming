@@ -25,18 +25,18 @@ src/
   assets/      # Static assets consumed by the UI
   board/       # Board utilities (selection cache, templates, processors)
   components/  # Reusable UI primitives
-  core/        # Hooks, state, telemetry, data mappers
+  core/        # Hooks, state, data mappers
   stories/     # Optional storybook entries
   ui/          # Panel pages, hooks, and composite components
 index.html     # Single HTML entry served by Vite
 ```
 
-There is no longer a `src/app.ts`, `src/server.ts`, or Fastify route tree. All imports of `fetch('/api/...')` have been removed or replaced with SDK calls.
+There is no server or Fastify route tree. All imports of `fetch('/api/...')` have been removed or replaced with SDK calls.
 
 ## App Boot Flow
 
-1. `src/main.tsx` logs startup and initialises `DiagramApp`.
-2. `DiagramApp` mounts the React panel (`App` component) when the user launches the app.
+1. `src/index.ts` registers Miro UI handlers at top-level (icon click, custom actions).
+2. `app.html` loads `src/app.tsx`, which mounts the React panel (`App`) into `#root`.
 3. Board interactions (selection, widget creation) use helpers under `src/board/` that wrap `miro.board` methods. When running outside Miro the helpers bail out and surface a friendly warning.
 
 ## Board Utilities
@@ -55,9 +55,9 @@ There is no longer a `src/app.ts`, `src/server.ts`, or Fastify route tree. All i
 
 `core/excel-sync-service.ts` maps Excel rows to board widgets. It now depends solely on the Web SDK (`ShapeClient`) for fetch and mutation operations and no longer queues remote jobs.
 
-## Telemetry & Logging
+## Logging
 
-Telemetry events flow through `src/core/telemetry.ts` and log to the console (`src/logger.ts`). There is no HTTP log sink.
+Logging is handled by `src/logger.ts` and written to the console. There is no telemetry module or server sink.
 
 ## Auth & Rate Limits
 
