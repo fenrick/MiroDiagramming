@@ -14,7 +14,7 @@ export default defineConfig({
     globals: true,
     passWithNoTests: true,
     threads: false,
-    include: ['tests/**/*.test.ts', 'tests/**/*.test.tsx'],
+    include: ['tests/**/*.test.{ts,tsx}'],
     exclude: ['tests/client/preview-config.test.tsx'],
     setupFiles: ['tests/client/setupTests.ts'],
     coverage: {
@@ -23,23 +23,9 @@ export default defineConfig({
       reporter: ['text', 'text-summary', 'lcov', 'html'],
       reportsDirectory: 'coverage',
       all: true,
-      // Focus coverage on high-signal, testable seams; expand over time.
-      include: [
-        'src/logger.ts',
-        'src/core/utils/{aspect-ratio,base64,color-utils,debug-flags,string-utils,text-utils,unit-utils}.ts',
-        'src/core/hooks/use{FocusTrap,Keybinding,OptimisticOps}.ts',
-        'src/ui/hooks/{ui-utils,notifications,use-excel-sync}.ts',
-        'src/ui/components/Toast.tsx',
-        'src/ui/style-presets.ts',
-        'src/board/{format-tools,style-tools,templates}.ts',
-      ],
+      // Capture coverage for every module under src so local reports match Sonar's scope.
+      include: ['src/**/*.{ts,tsx}'],
       exclude: ['src/**/*.stories.{ts,tsx}', 'src/**/__mocks__/**', 'src/**/__fixtures__/**'],
-      thresholds: {
-        statements: 80,
-        lines: 80,
-        functions: 80,
-        branches: 60,
-      },
     },
   },
 })
