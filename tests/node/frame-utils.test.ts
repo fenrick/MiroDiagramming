@@ -29,4 +29,3 @@ describe('frame-utils', () => {
     expect(builder.frame).toBeUndefined()
   })
 })
-

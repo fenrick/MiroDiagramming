@@ -58,10 +58,13 @@ describe('GraphProcessor', () => {
       syncAll: vi.fn(),
       findNodeInSelection: vi.fn(),
     } as any)
-    const bad = { nodes: [{ id: 'a', type: 't', label: 'A' }], edges: [{ id: 'e', from: 'a', to: 'x' }] }
-    await expect(gp.processGraph(bad, { createFrame: false, layout: { algorithm: 'mrtree' } })).rejects.toThrow(
-      /missing node/i,
-    )
+    const bad = {
+      nodes: [{ id: 'a', type: 't', label: 'A' }],
+      edges: [{ id: 'e', from: 'a', to: 'x' }],
+    }
+    await expect(
+      gp.processGraph(bad, { createFrame: false, layout: { algorithm: 'mrtree' } }),
+    ).rejects.toThrow(/missing node/i)
   })
 
   it('uses existing widgets in layout mode instead of creating', async () => {
@@ -72,7 +75,9 @@ describe('GraphProcessor', () => {
       createEdges: vi.fn(async () => []),
       zoomTo: vi.fn(),
       syncAll: vi.fn(),
-      findNodeInSelection: vi.fn(async (t: string, l: string) => (l === 'A' ? existingA : undefined)),
+      findNodeInSelection: vi.fn(async (t: string, l: string) =>
+        l === 'A' ? existingA : undefined,
+      ),
       setFrame: vi.fn(),
     } as any
     vi.spyOn(layoutEngine, 'layoutGraph').mockResolvedValue({
@@ -90,7 +95,11 @@ describe('GraphProcessor', () => {
       ],
       edges: [],
     }
-    await gp.processGraph(data, { createFrame: false, layout: { algorithm: 'mrtree' }, existingMode: 'layout' })
+    await gp.processGraph(data, {
+      createFrame: false,
+      layout: { algorithm: 'mrtree' },
+      existingMode: 'layout',
+    })
     // Only missing node B is created
     expect(builder.createNode).toHaveBeenCalledTimes(1)
   })

@@ -12,7 +12,10 @@ vi.mock('../../src/core/utils/tag-client', () => {
   }
   return { TagClient: TagClientMock }
 })
-vi.mock('../../src/board/board', () => ({ ensureBoard: () => ({ id: 'board-1' }), maybeSync: async () => {} }))
+vi.mock('../../src/board/board', () => ({
+  ensureBoard: () => ({ id: 'board-1' }),
+  maybeSync: async () => {},
+}))
 
 import { boardCache } from '../../src/board/board-cache'
 import { pushToast } from '../../src/ui/components/Toast'
@@ -44,4 +47,3 @@ describe('sticky-tags', () => {
     expect(pushToast).toHaveBeenCalled()
   })
 })
-
