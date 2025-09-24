@@ -32,7 +32,9 @@ example both `Stakeholder` and `Driver` resolve to the `Motivation` template.
 
 Colour values must reference the official design tokens using the
 `tokens.color.<name>[shade]` syntax. These are resolved at runtime to CSS
-variables and fallback hex codes.
+variables and fallback hex codes. Numeric style values may be provided as
+strings (e.g. "12" or "12px"); units are stripped and values parsed as numbers
+at runtime.
 
 The `text` field supports the `{{label}}` placeholder which is replaced with the
 node's label. Additional `style` properties use the same keys as the Web SDK

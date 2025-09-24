@@ -65,3 +65,8 @@ src/ui/
 | design tokens                    | Design tokens consumed by components.                  |
 | pages/tabs.ts                    | Tab registration and ordering.                         |
 | pages/tab-definitions.ts         | Mapping of tab identifiers to components.              |
+
+## 3 Accessibility Notes
+
+- Loading indicators in pages (e.g., `src/ui/pages/StructuredTab.tsx`) use the
+  `<output>` element to convey progress in an accessible, semantic way.
