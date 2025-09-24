@@ -241,7 +241,7 @@ export class TemplateManager {
       return value
     }
     const m = /^(-?\d+(?:\.\d+)?)(px)?$/.exec(value)
-    return m ? parseFloat(m[1]!) : value
+    return m ? Number.parseFloat(m[1]!) : value
   }
 
   /** Create shape data for a template element. */
