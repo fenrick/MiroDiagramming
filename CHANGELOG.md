@@ -1,3 +1,10 @@
+## [2.1.3](https://github.com/fenrick/MiroDiagramming/compare/v2.1.2...v2.1.3) (2025-09-25)
+
+
+### Bug Fixes
+
+* **board:** normalise card id parsing ([4865496](https://github.com/fenrick/MiroDiagramming/commit/4865496f10918ae0a6972f043042ec4f53ad08f1))
+
 ## [2.1.2](https://github.com/fenrick/MiroDiagramming/compare/v2.1.1...v2.1.2) (2025-09-24)
 
 
