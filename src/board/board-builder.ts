@@ -19,9 +19,9 @@ export type BoardItem = BaseItem | Group
  * Helper responsible for finding, creating and updating widgets on the board.
  * Validates inputs and surfaces descriptive errors that include the offending
  * values to speed up debugging.
- * TODO introduce OO based shape interactions to support planned move/update
- * operations and improve testability.
- * TODO compute data-driven board diffs so modifications can be queued and
+ * Future enhancements tracked in `implementation_plan.md` cover introducing
+ * object-oriented shape interactions for planned move/update operations and
+ * computing data-driven board diffs so modifications can be queued and
  * persisted by the server.
  */
 export class BoardBuilder {

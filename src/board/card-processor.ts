@@ -10,6 +10,8 @@ interface TagLike {
   color?: string
 }
 
+import { getBoardWithQuery } from './board'
+import { boardCache } from './board-cache'
 import { BoardBuilder } from './board-builder'
 import { clearActiveFrame, registerFrame } from './frame-utils'
 import { calculateGrid } from './grid-layout'
@@ -31,7 +33,7 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
   /** Prefix used to embed identifiers in descriptions. */
   private static readonly ID_PREFIX = 'ID:'
   /** Regex capturing an embedded identifier. */
-  private static readonly ID_REGEX = /ID:(\s+)/
+  private static readonly ID_REGEX = /ID:\s*([^\s]+)/
   /** Regex removing any embedded identifier from text. */
   private static readonly ID_REMOVE_REGEX = /\n?ID:[^\n]*/
   /** Default width used for card widgets. */
@@ -97,6 +99,10 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
 
     await this.syncOrUndo([...created, ...updated])
 
+    if (this.cardsCache) {
+      boardCache.setWidgets('card', this.cardsCache as Array<Record<string, unknown>>)
+    }
+
     this.registerCreated(created)
     if (frame) {
       this.registerCreated(frame)
@@ -126,9 +132,22 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
    * caches the promise result so subsequent calls avoid extra lookups.
    */
   private async getBoardCards(): Promise<Card[]> {
-    // TODO use cached backend lookup instead of board.get to reduce API cost
-    this.cardsCache ??= (await miro.board.get({ type: 'card' })) as Card[]
+    if (!this.cardsCache) {
+      const board = getBoardWithQuery()
+      const widgets = await boardCache.getWidgets(['card'], board)
+      const cards: Card[] = []
+      for (const widget of widgets) {
+        if (CardProcessor.isCardWidget(widget)) {
+          cards.push(widget)
+        }
+      }
+      this.cardsCache = cards
+    }
     return this.cardsCache
+  }
+
+  private static isCardWidget(widget: unknown): widget is Card {
+    return (widget as { type?: unknown }).type === 'card'
   }
 
   /** Build a map from identifier to card for quick lookup. */
@@ -217,6 +236,10 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
       createOpts.fields = def.fields
     }
     const card = await miro.board.createCard(createOpts)
+    if (def.id) {
+      this.cardMap?.set(def.id, card)
+    }
+    this.cardsCache?.push(card)
     this.registerCreated(card)
     return card
   }

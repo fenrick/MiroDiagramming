@@ -10,10 +10,9 @@ import type { BoardLike, BoardQueryLike } from './types'
  * same information.
  */
 export class BoardCache {
-  // TODO persistent cache service backing onto Redis or SQLite for multi-process reuse
-  // TODO translate cached results to a simple data model shared with the server
-  // TODO expose a backend lookup for selection so the client never calls
-  //      board.getSelection directly.
+  // Persistent multi-process caches and shared data models are tracked in the
+  // implementation plan; this client-side cache focuses on the current panel
+  // session. Selection lookups remain local until the backend service lands.
   private selection: Array<Record<string, unknown>> | undefined
   private readonly widgets = new Map<string, Array<Record<string, unknown>>>()
 
@@ -80,6 +79,13 @@ export class BoardCache {
       log.info({ types: missing.length }, 'Cached widget query results')
     }
     return results
+  }
+
+  /** Replace cached widgets for a specific type. */
+  public setWidgets(type: string, widgets: Array<Record<string, unknown>>): void {
+    const normalised = widgets.map((item) => item as Record<string, unknown>)
+    this.widgets.set(type, normalised)
+    log.debug({ type, count: normalised.length }, 'Widget cache manually updated')
   }
 
   /** Reset all cached data. */

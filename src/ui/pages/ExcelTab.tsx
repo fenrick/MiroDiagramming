@@ -2,6 +2,8 @@ import { IconPlus, Text } from '@mirohq/design-system'
 import React from 'react'
 
 import { templateManager } from '../../board/templates'
+import { ExcelSyncService } from '../../core/excel-sync-service'
+import { ColumnMapping } from '../../core/data-mapper'
 import { excelLoader, ExcelRow } from '../../core/utils/excel-loader'
 import {
   Button,
@@ -17,7 +19,6 @@ import {
 } from '../components'
 import { PageHelp } from '../components/PageHelp'
 import { RowInspector } from '../components/RowInspector'
-import { mapRowsToNodes, ColumnMapping } from '../../core/data-mapper'
 import { TabPanel } from '../components/TabPanel'
 import { useExcelData } from '../hooks/excel-data-context'
 import { showError } from '../hooks/notifications'
@@ -25,6 +26,7 @@ import { handleLocalDrop, useExcelCreate, useExcelDrop } from '../hooks/use-exce
 import { useExcelSync } from '../hooks/use-excel-sync'
 import { StickyActions } from '../StickyActions'
 
+import { applyExcelChanges, ExcelApplyService } from './excel-apply'
 import type { TabTuple } from './tab-definitions'
 
 function loadRowsFromSource(
@@ -100,20 +102,18 @@ async function handleDrop(
 /** Sidebar tab for importing nodes from Excel files. */
 export const ExcelTab: React.FC = () => {
   const state = useExcelTabState()
-  const handleApplyChanges = React.useCallback(() => {
+  const applyServiceRef = React.useRef<ExcelApplyService>(new ExcelSyncService())
+  const handleApplyChanges = React.useCallback(async () => {
     const mapping: ColumnMapping = {
       idColumn: state.idColumn || undefined,
       labelColumn: state.labelColumn || undefined,
       templateColumn: state.templateColumn || undefined,
     }
-    const chosen = state.rows.filter((_, i) => state.selected.has(i))
-    if (chosen.length === 0) {
-      void showError('Select at least one row to apply changes.')
-      return
+    try {
+      await applyExcelChanges(applyServiceRef.current, state.rows, state.selected, mapping)
+    } catch (error) {
+      await showError(error instanceof Error ? error.message : String(error))
     }
-    // TODO: Wire this directly into the template creation flow now that the diff drawer is removed.
-    void showError('Bulk apply is temporarily disabled while the diff drawer is removed.')
-    mapRowsToNodes(chosen, mapping)
   }, [state.idColumn, state.labelColumn, state.templateColumn, state.rows, state.selected])
 
   return (
