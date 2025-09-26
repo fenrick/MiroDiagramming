@@ -1,4 +1,5 @@
 import { GraphProcessor, type ProcessOptions } from '../graph/graph-processor'
+import type { GraphData } from '../graph/graph-service'
 
 import { convertMermaidToGraph, type MermaidConversionOptions } from './mermaid-converter'
 
@@ -18,9 +19,10 @@ export class MermaidRenderer {
     return this.processor
   }
 
-  public async render(source: string, options: MermaidRenderOptions = {}): Promise<void> {
+  public async render(source: string, options: MermaidRenderOptions = {}): Promise<GraphData> {
     const { config, expectedType, ...processOptions } = options
     const graph = await convertMermaidToGraph(source, { config, expectedType })
     await this.processor.processGraph(graph, processOptions)
+    return graph
   }
 }

@@ -519,9 +519,10 @@ Execution guidance:
 
 ## Diagram Enhancements
 
-- Mermaid renderer via Miro [Planned]
+- Mermaid renderer via Miro [In progress]
     - What’s needed: Parse Mermaid text (flowchart, sequence initial focus) into internal GraphData and render via GraphProcessor so shapes/connectors come from Miro SDK.
     - Where: New `src/core/mermaid/**` utilities plus a `MermaidTab` under `src/ui/pages/`.
+    - Status: Converter, renderer, and basic panel tab shipped; follow-up work tracks live preview and style presets below.
     - DoD: Paste Mermaid sample → renders nodes/connectors positioned using ELK; errors reported inline.
 
 - Mermaid live preview [Planned]
