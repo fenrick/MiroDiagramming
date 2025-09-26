@@ -5,6 +5,7 @@ import {
   IconSquaresTwoOverlap,
   Text,
 } from '@mirohq/design-system'
+import { space } from '@mirohq/design-tokens'
 import React from 'react'
 
 import {
@@ -37,23 +38,28 @@ import { StickyActions } from '../StickyActions'
 
 import type { TabTuple } from './tab-definitions'
 
-/** Predefined button sizes used by the quick presets. */
 const PRESET_SIZES: Record<'S' | 'M' | 'L', Size> = {
   S: { width: 100, height: 100 },
   M: { width: 200, height: 150 },
   L: { width: 400, height: 300 },
 }
 
-/** Scale options for quick resizing by factors. */
 const SCALE_OPTIONS = [
   { label: '×½', factor: 0.5 },
   { label: '×2', factor: 2 },
   { label: '×3', factor: 3 },
 ] as const
 
-/** UI for the Resize tab. */
+const CONTENT_STYLE: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: space[200],
+}
+
 export const ResizeTab: React.FC = () => {
   const selection = useSelection()
+  const hasSelection = selection.length > 0
+  const selectionLabel = `${selection.length} item${selection.length === 1 ? '' : 's'}`
   const [size, setSize] = React.useState<Size>({ width: 100, height: 100 })
   const [copiedSize, setCopiedSize] = React.useState<Size | null>(null)
   const [warning, setWarning] = React.useState('')
@@ -67,35 +73,48 @@ export const ResizeTab: React.FC = () => {
     }
 
   const copy = React.useCallback(async (): Promise<void> => {
+    if (!hasSelection) {
+      return
+    }
     const s = await copySizeFromSelection()
     if (s) {
       setSize(s)
       setCopiedSize(s)
     }
-  }, [])
+  }, [hasSelection])
 
   const resetCopy = (): void => setCopiedSize(null)
 
   const apply = React.useCallback(async (): Promise<void> => {
+    if (!hasSelection) {
+      return
+    }
     const target = copiedSize ?? size
     if (target.width > 10000 || target.height > 10000) {
       setWarning("That's bigger than your board viewport")
       return
     }
     await applySizeToSelection(target)
-  }, [copiedSize, size])
+  }, [copiedSize, size, hasSelection])
 
-  const scale = React.useCallback(async (factor: number): Promise<void> => {
-    await scaleSelection(factor)
-    const updated = await copySizeFromSelection()
-    if (updated) {
-      setSize(updated)
-    }
-  }, [])
+  const scale = React.useCallback(
+    async (factor: number): Promise<void> => {
+      if (!hasSelection) {
+        return
+      }
+      await scaleSelection(factor)
+      const updated = await copySizeFromSelection()
+      if (updated) {
+        setSize(updated)
+      }
+    },
+    [hasSelection],
+  )
 
   React.useEffect(() => {
-    // Reset displayed info on selection change unless in copy mode
-    if (copiedSize) return
+    if (copiedSize) {
+      return
+    }
     const first = selection[0] as { width?: number; height?: number } | undefined
     if (first && typeof first.width === 'number' && typeof first.height === 'number') {
       setSize({ width: first.width, height: first.height })
@@ -130,113 +149,128 @@ export const ResizeTab: React.FC = () => {
 
   return (
     <TabPanel tabId="size">
-      <PageHelp content="Adjust size manually or copy from selection" />
-      {copiedSize ? (
-        <SidebarSection title="Copy mode">
-          <Paragraph>
-            Using copied size {copiedSize.width}×{copiedSize.height}. Clear to resume syncing with
-            selection.
-          </Paragraph>
+      <div style={CONTENT_STYLE}>
+        <PageHelp content="Adjust size manually or copy from selection" />
+        {copiedSize ? (
+          <SidebarSection title="Copy mode">
+            <Paragraph>
+              Using copied size {copiedSize.width}×{copiedSize.height}. Clear to resume syncing with
+              selection.
+            </Paragraph>
+          </SidebarSection>
+        ) : null}
+        {!hasSelection ? (
+          <EmptyState title="No selection" description="Select one or more items to resize." />
+        ) : null}
+        <Paragraph data-testid="size-display">
+          {copiedSize
+            ? `Copied: ${copiedSize.width}×${copiedSize.height}`
+            : `Selection: ${size.width}×${size.height}`}
+          <br />
+          {boardUnitsToMm(size.width).toFixed(1)} mm × {boardUnitsToMm(size.height).toFixed(1)} mm (
+          {boardUnitsToInches(size.width).toFixed(2)} × {boardUnitsToInches(size.height).toFixed(2)}{' '}
+          in)
+          <br />
+          {hasSelection ? `${selectionLabel} selected` : 'No selection'}
+        </Paragraph>
+        {warning && <p className="error">{warning}</p>}
+        <SidebarSection title="Manual size">
+          <Grid columns={2} gap={200}>
+            <Grid.Item columnStart={1} columnEnd={2}>
+              <InputField
+                label="Width:"
+                type="number"
+                value={String(size.width)}
+                onValueChange={(v) => update('width')(v)}
+                placeholder="Width (board units)"
+              />
+            </Grid.Item>
+            <Grid.Item columnStart={2} columnEnd={3}>
+              <InputField
+                label="Height:"
+                type="number"
+                value={String(size.height)}
+                onValueChange={(v) => update('height')(v)}
+                placeholder="Height (board units)"
+              />
+            </Grid.Item>
+            <Grid.Item columnStart={1} columnEnd={5}>
+              <SelectField
+                label="Aspect Ratio"
+                value={ratio}
+                onChange={(v) => setRatio(v as AspectRatioId | 'none')}
+                data-testid="ratio-select"
+              >
+                <SelectOption value="none">Free</SelectOption>
+                {ASPECT_RATIOS.map((r) => (
+                  <SelectOption key={r.id} value={r.id}>
+                    {r.label}
+                  </SelectOption>
+                ))}
+              </SelectField>
+            </Grid.Item>
+          </Grid>
         </SidebarSection>
-      ) : null}
-      {selection.length === 0 ? (
-        <EmptyState title="No selection" description="Select one or more items to resize." />
-      ) : null}
-      <Paragraph data-testid="size-display">
-        {copiedSize
-          ? `Copied: ${copiedSize.width}×${copiedSize.height}`
-          : `Selection: ${size.width}×${size.height}`}
-        <br />
-        {boardUnitsToMm(size.width).toFixed(1)} mm × {boardUnitsToMm(size.height).toFixed(1)} mm (
-        {boardUnitsToInches(size.width).toFixed(2)} × {boardUnitsToInches(size.height).toFixed(2)}{' '}
-        in)
-      </Paragraph>
-      {warning && <p className="error">{warning}</p>}
-      <SidebarSection title="Manual size">
-        <Grid columns={2} gap={200}>
-          <Grid.Item columnStart={1} columnEnd={2}>
-            <InputField
-              label="Width:"
-              type="number"
-              value={String(size.width)}
-              onValueChange={(v) => update('width')(v)}
-              placeholder="Width (board units)"
-            />
-          </Grid.Item>
-          <Grid.Item columnStart={2} columnEnd={3}>
-            <InputField
-              label="Height:"
-              type="number"
-              value={String(size.height)}
-              onValueChange={(v) => update('height')(v)}
-              placeholder="Height (board units)"
-            />
-          </Grid.Item>
-          <Grid.Item columnStart={1} columnEnd={5}>
-            <SelectField
-              label="Aspect Ratio"
-              value={ratio}
-              onChange={(v) => setRatio(v as AspectRatioId | 'none')}
-              data-testid="ratio-select"
+        <SidebarSection title="Presets">
+          <Grid columns={1}>
+            <Grid.Item>
+              <div>
+                {(['S', 'M', 'L'] as const).map((p) => (
+                  <Button
+                    key={p}
+                    onClick={async () => {
+                      if (!hasSelection) {
+                        return
+                      }
+                      const next = PRESET_SIZES[p]
+                      setCopiedSize(null)
+                      setSize(next)
+                      await applySizeToSelection(next)
+                    }}
+                    variant="secondary"
+                    disabled={!hasSelection}
+                  >
+                    {p}
+                  </Button>
+                ))}
+                <br />
+                {SCALE_OPTIONS.map((s) => (
+                  <Button
+                    key={s.label}
+                    onClick={() => scale(s.factor)}
+                    variant="secondary"
+                    disabled={!hasSelection}
+                  >
+                    {s.label}
+                  </Button>
+                ))}
+              </div>
+            </Grid.Item>
+          </Grid>
+        </SidebarSection>
+        <StickyActions>
+          <ButtonToolbar>
+            <Button
+              onClick={apply}
+              variant="primary"
+              iconPosition="start"
+              icon={<IconChevronRightDouble />}
+              disabled={!hasSelection}
             >
-              <SelectOption value="none">Free</SelectOption>
-              {ASPECT_RATIOS.map((r) => (
-                <SelectOption key={r.id} value={r.id}>
-                  {r.label}
-                </SelectOption>
-              ))}
-            </SelectField>
-          </Grid.Item>
-        </Grid>
-      </SidebarSection>
-      <SidebarSection title="Presets">
-        <Grid columns={1}>
-          <Grid.Item>
-            <div>
-              {(['S', 'M', 'L'] as const).map((p) => (
-                <Button
-                  key={p}
-                  onClick={async () => {
-                    const next = PRESET_SIZES[p]
-                    setCopiedSize(null)
-                    setSize(next)
-                    await applySizeToSelection(next)
-                  }}
-                  variant="secondary"
-                >
-                  {p}
-                </Button>
-              ))}
-              <br />
-              {SCALE_OPTIONS.map((s) => (
-                <Button key={s.label} onClick={() => scale(s.factor)} variant="secondary">
-                  {s.label}
-                </Button>
-              ))}
-            </div>
-          </Grid.Item>
-        </Grid>
-      </SidebarSection>
-      <StickyActions>
-        <ButtonToolbar>
-          <Button
-            onClick={apply}
-            variant="primary"
-            iconPosition="start"
-            icon={<IconChevronRightDouble />}
-          >
-            <Text>Apply Size</Text>
-          </Button>
-          <Button
-            onClick={copiedSize ? resetCopy : copy}
-            variant={copiedSize ? 'danger' : 'secondary'}
-            iconPosition="start"
-            icon={copiedSize ? <IconArrowArcLeft /> : <IconSquaresTwoOverlap />}
-          >
-            <Text>{copiedSize ? 'Clear Copy Mode' : 'Copy Size'}</Text>
-          </Button>
-        </ButtonToolbar>
-      </StickyActions>
+              <Text>Apply Size</Text>
+            </Button>
+            <Button
+              onClick={copiedSize ? resetCopy : copy}
+              variant={copiedSize ? 'danger' : 'secondary'}
+              iconPosition="start"
+              icon={copiedSize ? <IconArrowArcLeft /> : <IconSquaresTwoOverlap />}
+              disabled={!copiedSize && !hasSelection}
+            >
+              <Text>{copiedSize ? 'Clear Copy Mode' : 'Copy Size'}</Text>
+            </Button>
+          </ButtonToolbar>
+        </StickyActions>
+      </div>
     </TabPanel>
   )
 }

@@ -138,7 +138,7 @@ export const StructuredTab: React.FC = () => {
   )
 
   return (
-    <TabPanel tabId="structured" style={{ marginTop: space[200] }}>
+    <TabPanel tabId="structured">
       <PageHelp content="Flow or tree diagrams with advanced options" />
       <JsonDropZone onFiles={handleFiles} />
       {importQueue.length === 0 && (

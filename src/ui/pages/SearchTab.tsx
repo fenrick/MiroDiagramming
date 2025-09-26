@@ -1,4 +1,5 @@
 import { Grid, IconArrowRight, IconChevronRight, IconPen, Text } from '@mirohq/design-system'
+import { space } from '@mirohq/design-tokens'
 import React from 'react'
 
 import type { SearchOptions } from '../../board/search-tools'
@@ -24,6 +25,12 @@ import {
 import { StickyActions } from '../StickyActions'
 
 import type { TabTuple } from './tab-definitions'
+
+const CONTENT_STYLE: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: space[200],
+}
 
 /**
  * Sidebar tab providing board wide search and replace.
@@ -125,94 +132,97 @@ export const SearchTab: React.FC = () => {
 
   return (
     <TabPanel tabId="search">
-      <PageHelp content="Find and replace text on the board" />
-      <SidebarSection title="Find & Replace">
-        <Grid columns={2}>
-          <Grid.Item>
-            <RegexSearchField
-              label="Find"
-              value={query}
-              onChange={(v: string) => setQuery(v)}
-              regex={regex}
-              onRegexToggle={setRegex}
-              placeholder="Search board text"
-            />
-          </Grid.Item>
-          <Grid.Item>
-            <InputField
-              label="Replace"
-              value={replacement}
-              onValueChange={(v: string) => setReplacement(v)}
-              placeholder="Replacement text"
-            />
-          </Grid.Item>
-        </Grid>
-      </SidebarSection>
-      <SidebarSection title="Filters">
-        <div style={{ marginBottom: 'var(--space-200)' }}>
-          <InfoCallout title="Tips">
-            Combine type, tags, and colour to narrow matches. Toggle Regex for advanced patterns.
-            Case and whole-word are applied client-side.
-          </InfoCallout>
-        </div>
-        <FilterDropdown
-          widgetTypes={widgetTypes}
-          toggleType={toggleType}
-          tagIds={tagIds}
-          onTagIdsChange={setTagIds}
-          backgroundColor={backgroundColor}
-          onBackgroundColorChange={setBackgroundColor}
-          assignee={assignee}
-          onAssigneeChange={setAssignee}
-          creator={creator}
-          onCreatorChange={setCreator}
-          lastModifiedBy={lastModifiedBy}
-          onLastModifiedByChange={setLastModifiedBy}
-          caseSensitive={caseSensitive}
-          onCaseSensitiveChange={setCaseSensitive}
-          wholeWord={wholeWord}
-          onWholeWordChange={setWholeWord}
-        />
-      </SidebarSection>
-      <SidebarSection title="Results">
-        <Paragraph data-testid="match-count">Matches: {results.length}</Paragraph>
-        {query && results.length === 0 ? (
-          <EmptyState
-            title="No matches found"
-            description="Try adjusting filters or turning off regex."
+      <div style={CONTENT_STYLE}>
+        <PageHelp content="Find and replace text on the board" />
+        <SidebarSection title="Find & Replace">
+          <Grid columns={2}>
+            <Grid.Item>
+              <RegexSearchField
+                label="Find"
+                value={query}
+                onChange={(v: string) => setQuery(v)}
+                regex={regex}
+                onRegexToggle={setRegex}
+                placeholder="Search board text"
+              />
+            </Grid.Item>
+            <Grid.Item>
+              <InputField
+                label="Replace"
+                value={replacement}
+                onValueChange={(v: string) => setReplacement(v)}
+                placeholder="Replacement text"
+              />
+            </Grid.Item>
+          </Grid>
+        </SidebarSection>
+        <SidebarSection title="Filters">
+          <div style={{ marginBottom: space[200] }}>
+            <InfoCallout title="Tips">
+              Combine type, tags, and colour to narrow matches. Toggle Regex for advanced patterns.
+              Case and whole-word are applied client-side.
+            </InfoCallout>
+          </div>
+          <FilterDropdown
+            widgetTypes={widgetTypes}
+            toggleType={toggleType}
+            tagIds={tagIds}
+            onTagIdsChange={setTagIds}
+            backgroundColor={backgroundColor}
+            onBackgroundColorChange={setBackgroundColor}
+            assignee={assignee}
+            onAssigneeChange={setAssignee}
+            creator={creator}
+            onCreatorChange={setCreator}
+            lastModifiedBy={lastModifiedBy}
+            onLastModifiedByChange={setLastModifiedBy}
+            caseSensitive={caseSensitive}
+            onCaseSensitiveChange={setCaseSensitive}
+            wholeWord={wholeWord}
+            onWholeWordChange={setWholeWord}
           />
-        ) : null}
-        <StickyActions>
-          <ButtonToolbar>
-            <Button
-              onClick={nextMatch}
-              disabled={!results.length}
-              variant="secondary"
-              icon={<IconChevronRight />}
-              iconPosition="start"
-            >
-              <Text>Next</Text>
-            </Button>
-            <Button
-              onClick={replaceCurrent}
-              disabled={!results.length}
-              variant="secondary"
-              icon={<IconPen />}
-              iconPosition="start"
-            >
-              <Text>Replace</Text>
-            </Button>
-            <Button
-              onClick={replaceAll}
-              variant="primary"
-              icon={<IconArrowRight />}
-              iconPosition="start"
-            >
-              <Text>Replace All</Text>
-            </Button>
-          </ButtonToolbar>
-        </StickyActions>
-      </SidebarSection>
+        </SidebarSection>
+        <SidebarSection title="Results">
+          <Paragraph data-testid="match-count">Matches: {results.length}</Paragraph>
+          {query && results.length === 0 ? (
+            <EmptyState
+              title="No matches found"
+              description="Try adjusting filters or turning off regex."
+            />
+          ) : null}
+          <StickyActions>
+            <ButtonToolbar>
+              <Button
+                onClick={nextMatch}
+                disabled={!results.length}
+                variant="secondary"
+                icon={<IconChevronRight />}
+                iconPosition="start"
+              >
+                <Text>Next</Text>
+              </Button>
+              <Button
+                onClick={replaceCurrent}
+                disabled={!results.length}
+                variant="secondary"
+                icon={<IconPen />}
+                iconPosition="start"
+              >
+                <Text>Replace</Text>
+              </Button>
+              <Button
+                onClick={replaceAll}
+                disabled={!results.length}
+                variant="primary"
+                icon={<IconArrowRight />}
+                iconPosition="start"
+              >
+                <Text>Replace All</Text>
+              </Button>
+            </ButtonToolbar>
+          </StickyActions>
+        </SidebarSection>
+      </div>
     </TabPanel>
   )
 }
