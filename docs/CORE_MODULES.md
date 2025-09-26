@@ -12,8 +12,6 @@ responsibility of each file.
 
 ```
 src/core/
-  data-mapper.ts
-  excel-sync-service.ts
   graph/
     convert.ts
     graph-processor.ts
@@ -34,20 +32,16 @@ src/core/
     base64.ts
     cards.ts
     color-utils.ts
-    excel-loader.ts
     file-utils.ts
     tag-client.ts
     text-utils.ts
     unit-utils.ts
-    workbook-writer.ts
 ```
 
 ## 2 Module Purpose
 
 | File                         | Purpose                                             |
 | ---------------------------- | --------------------------------------------------- |
-| data-mapper.ts               | Map spreadsheet rows to node or card objects.       |
-| excel-sync-service.ts        | Synchronise workbook data with board widgets.       |
 | graph/convert.ts             | Convert between flat graphs and hierarchical trees. |
 | graph/graph-processor.ts     | Orchestrate graph import, layout and rendering.     |
 | graph/graph-service.ts       | Provide graph CRUD operations for the UI.           |
@@ -65,10 +59,7 @@ src/core/
 | utils/base64.ts              | Encode data in Base64 without regex backtracking.   |
 | utils/cards.ts               | Format card content for widgets.                    |
 | utils/color-utils.ts         | Map semantic color names to Miro tokens.            |
-| utils/exceljs-loader.ts      | Dynamically load ExcelJS from the CDN.              |
-| utils/excel-loader.ts        | Parse Excel files into row objects.                 |
 | utils/file-utils.ts          | Read and write local files for import/export.       |
 | utils/tag-client.ts          | Minimal client for board tag operations.            |
 | utils/text-utils.ts          | Read and write widget text content.                 |
 | utils/unit-utils.ts          | Unit conversion helpers for board measurements.     |
-| utils/workbook-writer.ts     | Output workbook rows to an Excel file.              |

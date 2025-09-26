@@ -63,11 +63,6 @@ Prefix rename and locking options from the old **Frames Tab**.
 
 ---
 
-## 3  Excel Tab
-
-Allows importing nodes from Excel workbooks. Choose a sheet, map columns and
-create widgets. Edits on the board sync back via `ExcelSyncService`.
-
 ## 4  Search Tab
 
 | Control            | Details                                            |

@@ -20,13 +20,9 @@ src/ui/
     SegmentedControl.tsx
     TabBar.tsx
   hooks/
-    excel-data-context.tsx
     notifications.ts
     ui-utils.ts
     use-diagram-create.ts
-    use-excel-handlers.ts
-    use-excel-sync.ts
-    use-row-data.ts
     use-search-handlers.ts
     use-selection.ts
   pages/
@@ -36,7 +32,6 @@ src/ui/
     StructuredTab.tsx
     LayoutEngineTab.tsx
     DummyTab.tsx
-    ExcelTab.tsx
     FramesTab.tsx
     HelpTab.tsx
     ResizeTab.tsx
@@ -50,21 +45,19 @@ src/ui/
 
 ## 2 Module Purpose
 
-| File / Folder                    | Purpose                                                |
-| -------------------------------- | ------------------------------------------------------ |
-| components/                      | Reusable UI building blocks and wrapper elements.      |
-| components/EditMetadataModal.tsx | Modal for editing board item metadata.                 |
-| components/JsonDropZone.tsx      | Drag-and-drop zone for JSON files.                     |
-| components/Modal.tsx             | Generic dialog component.                              |
-| components/RowInspector.tsx      | Displays row details in side panel.                    |
-| components/SegmentedControl.tsx  | Simple segmented switch for small options.             |
-| components/TabBar.tsx            | Horizontal list of available tabs.                     |
-| hooks/                           | React hooks for state management and board operations. |
-| pages/                           | Individual tabs rendered inside the panel.             |
-| style-presets.ts                 | Named style collections for widgets.                   |
-| design tokens                    | Design tokens consumed by components.                  |
-| pages/tabs.ts                    | Tab registration and ordering.                         |
-| pages/tab-definitions.ts         | Mapping of tab identifiers to components.              |
+| File / Folder                   | Purpose                                                |
+| ------------------------------- | ------------------------------------------------------ |
+| components/                     | Reusable UI building blocks and wrapper elements.      |
+| components/JsonDropZone.tsx     | Drag-and-drop zone for JSON files.                     |
+| components/Modal.tsx            | Generic dialog component.                              |
+| components/SegmentedControl.tsx | Simple segmented switch for small options.             |
+| components/TabBar.tsx           | Horizontal list of available tabs.                     |
+| hooks/                          | React hooks for state management and board operations. |
+| pages/                          | Individual tabs rendered inside the panel.             |
+| style-presets.ts                | Named style collections for widgets.                   |
+| design tokens                   | Design tokens consumed by components.                  |
+| pages/tabs.ts                   | Tab registration and ordering.                         |
+| pages/tab-definitions.ts        | Mapping of tab identifiers to components.              |
 
 ## 3 Accessibility Notes
 

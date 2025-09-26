@@ -18,13 +18,12 @@ Miro Board
 
 - `src/app/` – React entry point, shell, and panel layout.
 - `src/board/` – Board utilities (selection cache, templates, processors, sticky tag helpers).
-- `src/core/` – Shared hooks, optimistic updates, Excel sync service.
+- `src/core/` – Shared hooks, board utilities, layout processors.
 - `src/ui/` – Tabs, components, and hooks that compose the UI.
 - `src/assets/` – Static assets imported by the UI.
 
 ## Data Sources
 
-- **Excel / JSON uploads** – Processed client-side using `exceljs` (dynamically imported) and mapped into board operations.
 - **Board state** – Retrieved via `miro.board.get` and cached in-memory (`board-cache.ts`).
 
 ## Board Operations

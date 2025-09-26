@@ -51,10 +51,6 @@ There is no server or Fastify route tree. All imports of `fetch('/api/...')` hav
 - `board/sticky-tags.ts` inspects sticky note content, creates missing tags with `miro.board.createTag`, and syncs edited widgets.
 - `board/templates.ts` and `core/utils/shape-client.ts` generate shape groups using the Web SDK; no HTTP batching layer is required.
 
-## Data & Excel Sync
-
-`core/excel-sync-service.ts` maps Excel rows to board widgets. It now depends solely on the Web SDK (`ShapeClient`) for fetch and mutation operations and no longer queues remote jobs.
-
 ## Logging
 
 Logging is handled by `src/logger.ts` and written to the console. There is no telemetry module or server sink.

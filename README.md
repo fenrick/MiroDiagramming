@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/fenrick/MiroDiagramming/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/fenrick/MiroDiagramming/actions/workflows/ci.yml?query=branch%3Amain)
 
-Quick Tools imports graphs or cards from JSON or Excel files and builds diagrams
+Quick Tools imports graphs or cards from JSON files and builds diagrams
 on a Miro board. The application uses the **Eclipse Layout Kernel (ELK)** to
 arrange nodes and edges automatically. Shapes are generated from templates and
 each element can carry metadata that controls its appearance and placement.
@@ -356,7 +356,6 @@ installs share the same lockfile.
 - [Design Foundation](docs/FOUNDATION.md) explains tokens and theming rules.
 - [Code Style](docs/CODE_STYLE.md) outlines formatting and naming rules.
 - [UI Patterns](docs/PATTERNS.md) shows common layouts and best practices.
-- [Excel Import](docs/EXCEL_IMPORT.md) details workbook loading and sync.
 
 ## Storybook
 

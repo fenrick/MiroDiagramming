@@ -22,7 +22,7 @@ Static hosting only. Use host‑level health checks for `index.html` as needed.
 - [Done] Remove stale top-level `server/` folder (no backend remains).
 - [Done] CI cleanup: remove Prisma/migrate steps and legacy client typecheck job; keep frontend-only gates (`format`, `lint`, `typecheck`, `test`, `build`).
 - [Done] Break board import cycle by making `board-cache` require an explicit board param; adjust callers.
-- [Done] Reduce cognitive complexity in `logger`, `sticky-tags`, `Toast`, and `use-excel-sync` to satisfy lints.
+- [Done] Reduce cognitive complexity in `logger`, `sticky-tags`, and `Toast` to satisfy lints.
 - [Done] Replace nested ternary in sticky-tags toast message with explicit branching.
 - [Done] Remove `tabIndex` from non-interactive App container; updated `useKeybinding` to bind at `document` when unfocused. Added a focused unit test for the hook under `tests/client`.
 - [Done] Migrate `scripts/generate-client.ts` to top-level await with ESM-safe path resolution; removed redundant conditional.
@@ -145,7 +145,7 @@ Static hosting only. Use host‑level health checks for `index.html` as needed.
     - DoD: Screen readers announce dialog names and progress updates.
 
 - Inline guidance (InfoCallout) [Done]
-    - What’s needed: Short, action-focused tips in Search, Arrange, Style, Excel; notes in Frames; advanced guidance in Structured.
+    - What’s needed: Short, action-focused tips in Search, Arrange, Style; notes in Frames; advanced guidance in Structured.
     - Where: Affected tabs under `src/ui/pages`.
     - DoD: Tips are concise, optional, and do not crowd the UI.
 
@@ -252,7 +252,7 @@ Static hosting only. Use host‑level health checks for `index.html` as needed.
     - DoD: Hook used consistently; tests assert timers are cleared on unmount.
 
 - Code splitting for tabs
-    - What’s needed: Lazy‑load heavy tabs (Structured, Excel) using `React.lazy` + `Suspense` with existing skeletons to reduce initial panel load.
+    - What’s needed: Lazy‑load heavy tabs (e.g., Structured) using `React.lazy` + `Suspense` with existing skeletons to reduce initial panel load.
     - Where: `src/app/App.tsx`, `src/ui/pages/**`.
     - DoD: Initial bundle decreases; skeletons render during lazy load; tests updated to await suspense.
 
@@ -331,9 +331,7 @@ Static hosting only. Use host‑level health checks for `index.html` as needed.
     - Change: Use `globalThis.setTimeout` in `src/ui/components/Toast.tsx` to avoid direct `window` references.
     - Tests: Added `tests/client/toast.test.tsx` to assert push and auto-dismiss behavior.
 
-- Excel sync nesting reduction [Done]
-    - Change: Extract helper functions for `apply`, `rollback`, and `commit` in `src/ui/hooks/use-excel-sync.ts` to keep nesting ≤ 3 levels.
-    - Tests: Added `tests/client/use-excel-sync.test.tsx` verifying optimistic row updates.
+- Excel workbook tooling retired [Done]
 
 - Test hygiene [Done]
     - Change: Remove unused `vi` import in `tests/client/useKeybinding.test.tsx`.
