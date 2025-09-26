@@ -516,3 +516,20 @@ Execution guidance:
 - [Done] Silence React act() warning in `useKeybinding` test by wrapping key dispatch in `act`.
 - [Planned] Add smoke tests for `style-presets` derivation and `ResizeTab` numeric helpers.
 - [Planned] Add lightweight tests for search/replace text helpers with mocked board API.
+
+## Diagram Enhancements
+
+- Mermaid renderer via Miro [Planned]
+    - What’s needed: Parse Mermaid text (flowchart, sequence initial focus) into internal GraphData and render via GraphProcessor so shapes/connectors come from Miro SDK.
+    - Where: New `src/core/mermaid/**` utilities plus a `MermaidTab` under `src/ui/pages/`.
+    - DoD: Paste Mermaid sample → renders nodes/connectors positioned using ELK; errors reported inline.
+
+- Mermaid live preview [Planned]
+    - What’s needed: Inline diagram preview inside panel before committing to board; reuse board layout logic and throttle updates.
+    - Where: `MermaidTab` UI + new preview renderer (possibly off-screen canvas/SVG).
+    - DoD: Panel shows live preview with debounced re-render; apply button pushes to board.
+
+- Mermaid import presets & styling [Planned]
+    - What’s needed: Map Mermaid node/edge styles to design-system tokens and allow preset selection (e.g., default, technical, soft).
+    - Where: `mermaid` conversion layer + UI toggles.
+    - DoD: Users choose preset; nodes/edges adopt matching fill/border styles; persisted per session.

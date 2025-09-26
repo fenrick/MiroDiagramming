@@ -210,5 +210,24 @@
       }
     ],
     "alias": ["Deliverable", "Implementation event", "Work package", "Plateau", "Outcome", "Gap"]
+  },
+  "MermaidNode": {
+    "elements": [
+      {
+        "shape": "round_rectangle",
+        "width": 220,
+        "height": 140,
+        "style": {
+          "fillColor": "tokens.color.gray[0]",
+          "borderColor": "tokens.color.blue[500]",
+          "borderWidth": "2",
+          "color": "tokens.color.gray[900]",
+          "fontFamily": "Arial",
+          "textAlign": "center"
+        },
+        "text": "{{label}}"
+      }
+    ],
+    "alias": ["mermaid", "mermaid-node", "Mermaid"]
   }
 }
