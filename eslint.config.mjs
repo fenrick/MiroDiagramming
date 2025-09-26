@@ -1,15 +1,55 @@
 // Flat config for ESLint v9+
 import tseslint from 'typescript-eslint'
 import pluginImport from 'eslint-plugin-import'
+import sonarjs from 'eslint-plugin-sonarjs'
+import jsxA11y from 'eslint-plugin-jsx-a11y'
+import pluginReact from 'eslint-plugin-react'
+import pluginReactHooks from 'eslint-plugin-react-hooks'
+import stylistic from '@stylistic/eslint-plugin'
+
+const reactRecommended = {
+  ...pluginReact.configs.flat.recommended,
+  settings: {
+    ...(pluginReact.configs.flat.recommended.settings ?? {}),
+    react: { version: 'detect' },
+  },
+  rules: {
+    ...pluginReact.configs.flat.recommended.rules,
+    'react/react-in-jsx-scope': 'off',
+    'react/jsx-uses-react': 'off',
+  },
+}
+
+const reactHooksRecommended = {
+  plugins: { 'react-hooks': pluginReactHooks },
+  rules: {
+    ...pluginReactHooks.configs.recommended.rules,
+  },
+}
+
+const jsxA11yRecommended = {
+  files: ['**/*.{tsx,jsx}'],
+  plugins: { 'jsx-a11y': jsxA11y },
+  rules: {
+    ...jsxA11y.configs.recommended.rules,
+  },
+}
 
 export default [
   ...tseslint.configs.recommended,
+  sonarjs.configs.recommended,
+  reactRecommended,
+  reactHooksRecommended,
+  jsxA11yRecommended,
   {
-    plugins: { import: pluginImport },
+    plugins: { import: pluginImport, '@stylistic': stylistic },
     rules: {
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@stylistic/comma-dangle': ['error', 'always-multiline'],
+      '@stylistic/no-extra-semi': 'error',
+      '@stylistic/semi': ['error', 'never'],
       'import/order': [
         'error',
         {
@@ -17,6 +57,7 @@ export default [
           'newlines-between': 'always',
         },
       ],
+      'import/no-duplicates': 'error',
       'no-restricted-syntax': [
         'error',
         {
@@ -30,6 +71,9 @@ export default [
       parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
+        ecmaFeatures: {
+          jsx: true,
+        },
       },
     },
     linterOptions: {

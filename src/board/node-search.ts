@@ -1,4 +1,5 @@
 import type { BaseItem, Group } from '@mirohq/websdk-types'
+import { LRUCache } from 'lru-cache'
 
 import * as log from '../logger'
 
@@ -18,7 +19,7 @@ import { boardCache } from './board-cache'
  */
 export async function searchShapes(
   board: BoardQueryLike,
-  cache: Map<string, BaseItem> | undefined,
+  cache: LRUCache<string, BaseItem> | undefined,
   label: string,
 ): Promise<BaseItem | undefined> {
   log.trace({ label }, 'Searching shapes')
@@ -26,11 +27,11 @@ export async function searchShapes(
   if (!map) {
     log.debug('Shape cache miss')
     const widgets = await boardCache.getWidgets(['shape'], board)
-    map = new Map<string, BaseItem>()
+    map = new LRUCache<string, BaseItem>({ max: 500 })
     for (const s of widgets) {
       const content = (s as { content?: unknown }).content
       if (typeof content === 'string' && content.trim()) {
-        map!.set(content, s as BaseItem)
+        map.set(content, s as BaseItem)
       }
     }
   }

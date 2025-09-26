@@ -55,6 +55,7 @@ export function applyShapeElement(item: BaseItem, element: TemplateElement, labe
     return
   }
   const shape = item as Shape
+  const shapeRecord = shape as Shape & Record<string, unknown>
   const assignments: Array<[keyof TemplateElement, string]> = [
     ['shape', 'shape'],
     ['rotation', 'rotation'],
@@ -64,7 +65,7 @@ export function applyShapeElement(item: BaseItem, element: TemplateElement, labe
   for (const [src, dest] of assignments) {
     const value = (element as Record<string, unknown>)[src]
     if (value) {
-      ;(shape as Shape & Record<string, unknown>)[dest] = value
+      shapeRecord[dest] = value
     }
   }
   shape.content = (element.text ?? '{{label}}').replace('{{label}}', label)

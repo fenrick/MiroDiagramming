@@ -30,10 +30,10 @@ import {
   SelectField,
   SelectOption,
   SidebarSection,
+  Skeleton,
+  InfoCallout,
 } from '../components'
 import { StickyActions } from '../StickyActions'
-import { Skeleton } from '../components'
-import { InfoCallout } from '../components'
 import { JsonDropZone } from '../components/JsonDropZone'
 import { PageHelp } from '../components/PageHelp'
 import { TabPanel } from '../components/TabPanel'

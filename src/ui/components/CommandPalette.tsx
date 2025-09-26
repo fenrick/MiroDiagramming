@@ -22,6 +22,7 @@ export function CommandPalette({
 }: CommandPaletteProps): React.JSX.Element | null {
   const [query, setQuery] = React.useState('')
   const [index, setIndex] = React.useState(0)
+  const inputRef = React.useRef<HTMLInputElement>(null)
 
   const filtered = React.useMemo(
     () => commands.filter((c) => c.label.toLowerCase().includes(query.toLowerCase())),
@@ -31,6 +32,16 @@ export function CommandPalette({
   React.useEffect(() => {
     setIndex(0)
   }, [query, isOpen])
+
+  React.useEffect(() => {
+    if (!isOpen) {
+      return
+    }
+    const timer = setTimeout(() => {
+      inputRef.current?.focus({ preventScroll: true })
+    }, 0)
+    return () => clearTimeout(timer)
+  }, [isOpen])
 
   const handleKey = React.useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -54,7 +65,7 @@ export function CommandPalette({
       <label htmlFor="command-input">Command</label>
       <input
         id="command-input"
-        autoFocus
+        ref={inputRef}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         onKeyDown={handleKey}

@@ -1,4 +1,5 @@
 import type { Card, CardStyle, Frame } from '@mirohq/websdk-types'
+import { LRUCache } from 'lru-cache'
 
 import { UndoableProcessor } from '../core/graph/undoable-processor'
 import { type CardData, cardLoader } from '../core/utils/cards'
@@ -10,8 +11,6 @@ interface TagLike {
   color?: string
 }
 
-import { getBoardWithQuery } from './board'
-import { boardCache } from './board-cache'
 import { BoardBuilder } from './board-builder'
 import { clearActiveFrame, registerFrame } from './frame-utils'
 import { calculateGrid } from './grid-layout'
@@ -45,11 +44,11 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
   /** Gap between cards when arranged in a grid. */
   private static readonly CARD_GAP = 24
   /** Cached board cards when processing updates. */
-  private cardsCache: Card[] | undefined
+  private readonly cardsCache = new LRUCache<string, Card[]>({ max: 1 })
   /** Cached map from card identifier to card widget. */
-  private cardMap: Map<string, Card> | undefined
+  private readonly cardMapCache = new LRUCache<string, Map<string, Card>>({ max: 1 })
   /** Cached board tags when processing updates. */
-  private tagsCache: TagLike[] | undefined
+  private readonly tagsCache = new LRUCache<string, TagLike[]>({ max: 1 })
   private readonly tagClient: TagClient
 
   constructor(builder: BoardBuilder = new BoardBuilder(), tagClient: TagClient = new TagClient()) {
@@ -72,9 +71,9 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
     }
     this.lastCreated = []
     // Reset per-run caches to ensure fresh board state
-    this.cardsCache = undefined
-    this.cardMap = undefined
-    this.tagsCache = undefined
+    this.cardsCache.clear()
+    this.cardMapCache.clear()
+    this.tagsCache.clear()
 
     const boardTags = await this.getBoardTags()
     const tagMap = new Map(boardTags.map((t) => [t.title, t]))
@@ -99,10 +98,6 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
 
     await this.syncOrUndo([...created, ...updated])
 
-    if (this.cardsCache) {
-      boardCache.setWidgets('card', this.cardsCache as Array<Record<string, unknown>>)
-    }
-
     this.registerCreated(created)
     if (frame) {
       this.registerCreated(frame)
@@ -121,10 +116,14 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
    * results so multiple calls during a run hit the board only once.
    */
   private async getBoardTags(): Promise<TagLike[]> {
-    if (!this.tagsCache) {
-      this.tagsCache = await this.tagClient.getTags()
+    const key = 'tags'
+    const cached = this.tagsCache.get(key)
+    if (cached) {
+      return cached
     }
-    return this.tagsCache
+    const tags = await this.tagClient.getTags()
+    this.tagsCache.set(key, [...tags])
+    return tags
   }
 
   /**
@@ -132,18 +131,14 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
    * caches the promise result so subsequent calls avoid extra lookups.
    */
   private async getBoardCards(): Promise<Card[]> {
-    if (!this.cardsCache) {
-      const board = getBoardWithQuery()
-      const widgets = await boardCache.getWidgets(['card'], board)
-      const cards: Card[] = []
-      for (const widget of widgets) {
-        if (CardProcessor.isCardWidget(widget)) {
-          cards.push(widget)
-        }
-      }
-      this.cardsCache = cards
+    const key = 'cards'
+    const cached = this.cardsCache.get(key)
+    if (cached) {
+      return cached
     }
-    return this.cardsCache
+    const cards = (await miro.board.get({ type: 'card' })) as Card[]
+    this.cardsCache.set(key, [...cards])
+    return cards
   }
 
   private static isCardWidget(widget: unknown): widget is Card {
@@ -152,17 +147,20 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
 
   /** Build a map from identifier to card for quick lookup. */
   private async loadCardMap(): Promise<Map<string, Card>> {
-    if (!this.cardMap) {
+    const key = 'cardMap'
+    let map = this.cardMapCache.get(key)
+    if (!map) {
       const cards = await this.getBoardCards()
-      this.cardMap = new Map()
+      map = new Map<string, Card>()
       for (const c of cards) {
         const id = this.extractId(c.description)
         if (id) {
-          this.cardMap.set(id, c)
+          map.set(id, c)
         }
       }
+      this.cardMapCache.set(key, map)
     }
-    return this.cardMap
+    return map
   }
 
   /**
@@ -206,7 +204,8 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
         tag = await this.tagClient.createTag(name)
         if (tag) {
           tagMap.set(name, tag)
-          this.tagsCache?.push(tag)
+          const cached = this.tagsCache.get('tags') ?? []
+          this.tagsCache.set('tags', [...cached, tag])
         }
       }
       if (tag?.id) {
@@ -237,10 +236,21 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
     }
     const card = await miro.board.createCard(createOpts)
     if (def.id) {
-      this.cardMap?.set(def.id, card)
+      const mapKey = 'cardMap'
+      const existing = this.cardMapCache.get(mapKey)
+      if (existing) {
+        existing.set(def.id, card)
+      } else {
+        this.cardMapCache.set(mapKey, new Map([[def.id, card]]))
+      }
     }
-    this.cardsCache?.push(card)
-    this.registerCreated(card)
+    const cardsKey = 'cards'
+    const cached = this.cardsCache.get(cardsKey)
+    if (cached) {
+      this.cardsCache.set(cardsKey, [...cached, card])
+    } else {
+      this.cardsCache.set(cardsKey, [card])
+    }
     return card
   }
 

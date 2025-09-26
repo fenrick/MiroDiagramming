@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: 'dist',
       rollupOptions: {
-        external: ['elkjs/lib/elk.bundled.js', 'exceljs'],
+        external: ['elkjs/lib/elk.bundled.js'],
       },
     },
     resolve: {

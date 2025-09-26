@@ -58,10 +58,10 @@ function escapeRegExp(str: string): string {
  * @param pattern - Source string of the regular expression.
  * @throws {SyntaxError} If the pattern appears unsafe.
  */
-function assertRegexSafe(pattern: string): void {
-  const repeatedGroup = /\((\w)\1+\+\)/.test(pattern)
-  const nestedQuantifier = /\(.+[+*].+\)[+*?]/.test(pattern)
-  if (!safeRegex(pattern) || repeatedGroup || nestedQuantifier) {
+function assertRegexSafe(pattern: string, flags: string): void {
+  const repeatedGroup = /\((?:[^)\s]|\\.){1,8}\)(?:\+{2,}|\*{2,})/.test(pattern)
+  const nestedQuantifier = /\([^)]{0,128}[+*][^)]{0,128}\)[+*?]/.test(pattern)
+  if (!safeRegex(new RegExp(pattern, flags)) || repeatedGroup || nestedQuantifier) {
     throw new SyntaxError('Unsafe regular expression')
   }
 }
@@ -72,8 +72,8 @@ function buildRegex(opts: SearchOptions): RegExp {
     throw new SyntaxError('Pattern too long')
   }
   const pattern = opts.wholeWord ? `\\b${src}\\b` : src
-  assertRegexSafe(pattern)
   const flags = opts.caseSensitive ? 'g' : 'gi'
+  assertRegexSafe(pattern, flags)
   return new RegExp(pattern, flags)
 }
 

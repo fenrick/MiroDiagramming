@@ -7,7 +7,6 @@ export type TabId =
   | 'style'
   | 'arrange'
   | 'frames'
-  | 'excel'
   | 'search'
   | 'help'
   | 'dummy'
@@ -31,6 +30,5 @@ export interface CommandDef {
 
 /** List of global commands available in the app. */
 export const COMMANDS: CommandDef[] = [
-  { id: 'edit-metadata', label: 'Edit Metadata', shortcut: 'Ctrl+Alt+M' },
   { id: 'command-palette', label: 'Command Palette', shortcut: 'Ctrl+K' },
 ]

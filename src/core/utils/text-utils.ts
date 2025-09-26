@@ -100,11 +100,12 @@ export function readItemText(item: Record<string, unknown>): string | undefined 
  * Write text to all recognised fields on a widget-like object.
  */
 export function writeItemText(item: Record<string, unknown>, text: string): void {
-  if (typeof (item as { plainText?: string }).plainText === 'string') {
-    ;(item as { plainText?: string }).plainText = text
+  const textItem = item as { plainText?: string; content?: string }
+  if (typeof textItem.plainText === 'string') {
+    textItem.plainText = text
   }
-  if (typeof (item as { content?: string }).content === 'string') {
-    ;(item as { content?: string }).content = text
+  if (typeof textItem.content === 'string') {
+    textItem.content = text
   }
   const nested = (item as { text?: { plainText?: string; content?: string } }).text
   if (nested) {

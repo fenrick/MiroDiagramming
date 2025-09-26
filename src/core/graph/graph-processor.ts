@@ -236,9 +236,14 @@ export class GraphProcessor extends UndoableProcessor {
       if (found) {
         widget = found
         if (mode !== 'ignore') {
-          ;(widget as { x?: number; y?: number }).x = target.x
-          ;(widget as { x?: number; y?: number }).y = target.y
-          await maybeSync(widget as { sync?: () => Promise<void> })
+          const movable = widget as {
+            x?: number
+            y?: number
+            sync?: () => Promise<void>
+          }
+          movable.x = target.x
+          movable.y = target.y
+          await maybeSync(movable)
           positions[node.id] = { ...target, id: node.id }
         } else {
           const w = widget as {

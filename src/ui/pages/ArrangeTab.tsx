@@ -1,6 +1,5 @@
-import { Grid, IconChevronRightDouble, IconGrid, Text } from '@mirohq/design-system'
+import { Grid, IconChevronRightDouble, IconGrid, Text, Flex } from '@mirohq/design-system'
 import React from 'react'
-import { Flex } from '@mirohq/design-system'
 
 import { applyGridLayout, GridOptions } from '../../board/grid-tools'
 import { boardCache } from '../../board/board-cache'

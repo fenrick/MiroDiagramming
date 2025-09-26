@@ -11,14 +11,14 @@ type TagLike = Pick<TagInfo, 'id' | 'title'>
 
 function extractBracketTags(text: string): { tags: string[]; stripped: string } {
   const tagSet = new Set<string>()
-  const regex = /\[([^\]]+)\]/g
+  const tagPattern = /\[([^\[\]]{1,128})\]/g
   let match: RegExpExecArray | null
-  while ((match = regex.exec(text))) {
+  while ((match = tagPattern.exec(text))) {
     const name = match[1]?.trim()
     if (name) tagSet.add(name)
   }
   const stripped = text
-    .replace(regex, '')
+    .replace(tagPattern, '')
     .replace(/\s{2,}/g, ' ')
     .trim()
   return { tags: [...tagSet], stripped }
@@ -88,7 +88,7 @@ export async function applyBracketTagsToSelectedStickies(): Promise<void> {
     if (changed) tagged += 1
   }
   // Clear caches so subsequent reads see updated tags/text
-  boardCache.reset()
+  boardCache.reset(board)
   let message: string
   if (tagged > 0) {
     const plural = tagged === 1 ? '' : 's'

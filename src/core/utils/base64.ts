@@ -20,7 +20,13 @@ export function encodeBase64(input: string): string {
           }
           return btoa(binary)
         })()
-  return base64.replace(/=+$/, '').replace(/\+/g, '-').replace(/\//g, '_')
+  let sanitized = base64
+  while (sanitized.endsWith('=')) {
+    sanitized = sanitized.slice(0, -1)
+  }
+  sanitized = sanitized.split('+').join('-')
+  sanitized = sanitized.split('/').join('_')
+  return sanitized
 }
 
 /**
@@ -30,7 +36,7 @@ export function encodeBase64(input: string): string {
  * @returns Decoded string.
  */
 export function decodeBase64(input: string): string {
-  const normalized = input.replace(/-/g, '+').replace(/_/g, '/')
+  const normalized = input.split('-').join('+').split('_').join('/')
   const padded = normalized.padEnd(normalized.length + ((4 - (normalized.length % 4)) % 4), '=')
   if (
     typeof Buffer !== 'undefined' &&

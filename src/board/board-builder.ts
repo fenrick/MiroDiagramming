@@ -1,4 +1,5 @@
 import type { BaseItem, Connector, Frame, Group, GroupableItem } from '@mirohq/websdk-types'
+import { LRUCache } from 'lru-cache'
 
 import type { EdgeData, EdgeHint, NodeData, PositionedNode } from '../core/graph'
 import * as log from '../logger'
@@ -8,6 +9,11 @@ import type { BoardQueryLike } from './board'
 import { boardCache } from './board-cache'
 import { createConnector } from './connector-utils'
 import { searchGroups, searchShapes } from './node-search'
+import {
+  ShapeInteractionManager,
+  ShapeInteraction,
+  type ShapeUpdateOptions,
+} from './shape-interactions'
 import { templateManager } from './templates'
 
 export { updateConnector } from './connector-utils'
@@ -15,19 +21,26 @@ export { updateConnector } from './connector-utils'
 /** Union type representing a single widget or a group of widgets. */
 export type BoardItem = BaseItem | Group
 
+export type BoardDiffOperation =
+  | { kind: 'create'; node: NodeData }
+  | { kind: 'delete'; node: NodeData }
+  | { kind: 'update'; node: NodeData; previous: NodeData; changes: Partial<NodeData> }
+
 /**
  * Helper responsible for finding, creating and updating widgets on the board.
  * Validates inputs and surfaces descriptive errors that include the offending
- * values to speed up debugging.
- * Future enhancements tracked in `implementation_plan.md` cover introducing
- * object-oriented shape interactions for planned move/update operations and
- * computing data-driven board diffs so modifications can be queued and
- * persisted by the server.
+ * values to speed up debugging. Shape interactions are encapsulated in
+ * dedicated objects and every run can queue a diff of node operations for
+ * downstream persistence.
  */
 export class BoardBuilder {
   private frame: Frame | undefined
   /** Cached lookup map for shapes by label content. */
-  private shapeMap: Map<string, BaseItem> | undefined
+  private readonly shapeCache = new LRUCache<string, BaseItem>({ max: 500 })
+  /** Service encapsulating widget manipulations for shapes. */
+  private readonly shapeInteractions = new ShapeInteractionManager()
+  /** Queued diff operations awaiting persistence. */
+  private diffQueue: BoardDiffOperation[] = []
 
   /**
    * Type guard ensuring the provided value conforms to {@link NodeData}.
@@ -44,7 +57,8 @@ export class BoardBuilder {
   /** Reset any builder state between runs. */
   public reset(): void {
     this.frame = undefined
-    this.shapeMap = undefined
+    this.shapeCache.clear()
+    this.diffQueue = []
   }
 
   /** Assign a parent frame for subsequently created items. */
@@ -119,8 +133,8 @@ export class BoardBuilder {
       )
     }
     this.ensureBoard()
-    await this.loadShapeMap(board)
-    const fromShapes = await searchShapes(board, this.shapeMap as Map<string, BaseItem>, label)
+    await this.loadShapeCache(board)
+    const fromShapes = await searchShapes(board, this.shapeCache, label)
     if (fromShapes) {
       return fromShapes
     }
@@ -146,7 +160,7 @@ export class BoardBuilder {
         selection.filter((i) => (i as { type?: string }).type === t),
       getSelection: async (): Promise<Array<Record<string, unknown>>> => selection,
     }
-    const shape = await searchShapes(board, undefined, label)
+    const shape = await searchShapes(board, this.shapeCache, label)
     if (shape) {
       return shape
     }
@@ -171,6 +185,30 @@ export class BoardBuilder {
     await this.resizeItem(widget, pos.width, pos.height)
     log.debug('Node widget created')
     return widget
+  }
+
+  /** Begin a low-level interaction session for the provided shape. */
+  public beginShapeInteraction(item: BaseItem): ShapeInteraction {
+    return this.shapeInteractions.begin(item)
+  }
+
+  /** Apply a structured update to a shape widget. */
+  public async updateShape(item: BaseItem, update: ShapeUpdateOptions): Promise<void> {
+    await this.shapeInteractions.update(item, update)
+  }
+
+  /** Generate and queue a diff between the current and desired node states. */
+  public planNodeDiff(current: NodeData[], desired: NodeData[]): BoardDiffOperation[] {
+    const ops = BoardBuilder.computeDiff(current, desired)
+    this.diffQueue.push(...ops)
+    return ops
+  }
+
+  /** Retrieve any queued diff operations, clearing the internal buffer. */
+  public drainDiffQueue(): BoardDiffOperation[] {
+    const snapshot = [...this.diffQueue]
+    this.diffQueue = []
+    return snapshot
   }
 
   /**
@@ -284,20 +322,19 @@ export class BoardBuilder {
   }
 
   /** Populate the shape cache when not yet loaded. */
-  private async loadShapeMap(board: BoardQueryLike): Promise<void> {
-    if (!this.shapeMap) {
-      log.trace('Populating shape cache')
-      const widgets = await boardCache.getWidgets(['shape'], board)
-      const map = new Map<string, BaseItem>()
-      for (const s of widgets) {
-        const content = (s as { content?: unknown }).content
-        if (typeof content === 'string' && content.trim()) {
-          map.set(content, s as BaseItem)
-        }
-      }
-      this.shapeMap = map
-      log.debug({ count: map.size }, 'Shape cache ready')
+  private async loadShapeCache(board: BoardQueryLike): Promise<void> {
+    if (this.shapeCache.size > 0) {
+      return
     }
+    log.trace('Populating shape cache')
+    const widgets = await boardCache.getWidgets(['shape'], board)
+    for (const s of widgets) {
+      const content = (s as { content?: unknown }).content
+      if (typeof content === 'string' && content.trim()) {
+        this.shapeCache.set(content, s as BaseItem)
+      }
+    }
+    log.debug({ count: this.shapeCache.size }, 'Shape cache ready')
   }
 
   /**
@@ -317,5 +354,71 @@ export class BoardBuilder {
       'Create node at size',
     )
     return widget
+  }
+
+  private static computeDiff(current: NodeData[], desired: NodeData[]): BoardDiffOperation[] {
+    const currentMap = new Map(current.map((n) => [n.id, n]))
+    const visited = new Set<string>()
+    const ops: BoardDiffOperation[] = []
+
+    for (const node of desired) {
+      const existing = currentMap.get(node.id)
+      if (!existing) {
+        ops.push({ kind: 'create', node })
+        continue
+      }
+      visited.add(node.id)
+      const changes = BoardBuilder.computeNodeChanges(existing, node)
+      if (changes) {
+        ops.push({ kind: 'update', node, previous: existing, changes })
+      }
+    }
+
+    for (const node of current) {
+      if (!visited.has(node.id)) {
+        ops.push({ kind: 'delete', node })
+      }
+    }
+    return ops
+  }
+
+  private static computeNodeChanges(previous: NodeData, next: NodeData): Partial<NodeData> | null {
+    const delta: Partial<NodeData> = {}
+    if (previous.label !== next.label) {
+      delta.label = next.label
+    }
+    if (previous.type !== next.type) {
+      delta.type = next.type
+    }
+    if (!BoardBuilder.metadataEqual(previous.metadata, next.metadata)) {
+      delta.metadata = next.metadata ?? {}
+    }
+    return Object.keys(delta).length ? delta : null
+  }
+
+  private static metadataEqual(
+    a: Record<string, unknown> | undefined,
+    b: Record<string, unknown> | undefined,
+  ): boolean {
+    const normalize = (meta: Record<string, unknown> | undefined) =>
+      JSON.stringify(BoardBuilder.formatMeta(meta ?? {}))
+    return normalize(a) === normalize(b)
+  }
+
+  private static formatMeta(value: Record<string, unknown>): Record<string, unknown> {
+    const entries = Object.entries(value)
+      .map(([k, v]) => [k, BoardBuilder.formatMetaValue(v)] as const)
+      .sort(([a], [b]) => a.localeCompare(b))
+    return Object.fromEntries(entries)
+  }
+
+  private static formatMetaValue(value: unknown): unknown {
+    if (Array.isArray(value)) {
+      return value.map((v) => BoardBuilder.formatMetaValue(v))
+    }
+    if (value && typeof value === 'object') {
+      return BoardBuilder.formatMeta(value as Record<string, unknown>)
+    }
+    return value
   }
 }

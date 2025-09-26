@@ -30,8 +30,7 @@ export function calculateGrowthPlan(
   const size = (total - spacing * (items.length - 1)) / items.length
   const positions: number[] = []
   let pos = startEdge + size / 2
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  for (const _ of items) {
+  for (let i = 0; i < items.length; i += 1) {
     positions.push(pos)
     pos += size + spacing
   }

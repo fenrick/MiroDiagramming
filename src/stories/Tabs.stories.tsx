@@ -8,7 +8,6 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { ArrangeTab } from '../ui/pages/ArrangeTab'
 import { CardsTab } from '../ui/pages/CardsTab'
 import { DiagramsTab } from '../ui/pages/DiagramsTab'
-import { ExcelTab } from '../ui/pages/ExcelTab'
 import { FramesTab } from '../ui/pages/FramesTab'
 import { HelpTab } from '../ui/pages/HelpTab'
 import { LayoutEngineTab } from '../ui/pages/LayoutEngineTab'
@@ -31,7 +30,6 @@ export const Cards: Story = { render: () => <CardsTab /> }
 export const Search: Story = { render: () => <SearchTab /> }
 export const Diagrams: Story = { render: () => <DiagramsTab /> }
 export const Tools: Story = { render: () => <ToolsTab /> }
-export const Excel: Story = { render: () => <ExcelTab /> }
 export const Frames: Story = { render: () => <FramesTab /> }
 export const Help: Story = { render: () => <HelpTab /> }
 export const LayoutEngine: Story = { render: () => <LayoutEngineTab /> }
