@@ -1,3 +1,10 @@
+# [2.2.0](https://github.com/fenrick/MiroDiagramming/compare/v2.1.3...v2.2.0) (2025-09-26)
+
+
+### Features
+
+* **ui:** improve tools panel spacing and persistence ([37df243](https://github.com/fenrick/MiroDiagramming/commit/37df243c41dae68404142973e397e69963b65afc))
+
 ## [2.1.3](https://github.com/fenrick/MiroDiagramming/compare/v2.1.2...v2.1.3) (2025-09-25)
 
 
