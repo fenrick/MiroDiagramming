@@ -110,5 +110,69 @@
       "textAlignVertical": "middle"
     },
     "alias": ["associates"]
+  },
+  "inheritance": {
+    "style": {
+      "strokeColor": "tokens.color.black",
+      "strokeStyle": "normal",
+      "startStrokeCap": "none",
+      "endStrokeCap": "arrow",
+      "color": "tokens.color.black",
+      "textOrientation": "horizontal"
+    },
+    "shape": "curved",
+    "caption": {
+      "position": 0.5,
+      "textAlignVertical": "middle"
+    },
+    "alias": ["extends"]
+  },
+  "composition": {
+    "style": {
+      "strokeColor": "tokens.color.black",
+      "strokeStyle": "normal",
+      "startStrokeCap": "diamond",
+      "endStrokeCap": "arrow",
+      "color": "tokens.color.black",
+      "textOrientation": "horizontal"
+    },
+    "shape": "curved",
+    "caption": {
+      "position": 0.5,
+      "textAlignVertical": "middle"
+    },
+    "alias": ["composes"]
+  },
+  "aggregation": {
+    "style": {
+      "strokeColor": "tokens.color.black",
+      "strokeStyle": "normal",
+      "startStrokeCap": "circle",
+      "endStrokeCap": "arrow",
+      "color": "tokens.color.black",
+      "textOrientation": "horizontal"
+    },
+    "shape": "curved",
+    "caption": {
+      "position": 0.5,
+      "textAlignVertical": "middle"
+    },
+    "alias": ["aggregates"]
+  },
+  "dependency": {
+    "style": {
+      "strokeColor": "tokens.color.black",
+      "strokeStyle": "dashed",
+      "startStrokeCap": "none",
+      "endStrokeCap": "arrow",
+      "color": "tokens.color.black",
+      "textOrientation": "horizontal"
+    },
+    "shape": "curved",
+    "caption": {
+      "position": 0.5,
+      "textAlignVertical": "middle"
+    },
+    "alias": ["depends"]
   }
 }
