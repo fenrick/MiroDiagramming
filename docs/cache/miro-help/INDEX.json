@@ -1,249 +1,9 @@
 [
   {
-    "url": "https://help.miro.com/hc/en-us/articles/360017572534",
-    "status": 404,
-    "html": "docs/cache/miro-help/help-miro-com-hc-en-us-articles-360017572534.html",
-    "txt": "docs/cache/miro-help/help-miro-com-hc-en-us-articles-360017572534.txt"
-  },
-  {
-    "url": "https://help.miro.com/hc/en-us/articles/360017571594",
+    "url": "https://developers.miro.com/docs/sdk-reference",
     "status": 200,
-    "html": "docs/cache/miro-help/help-miro-com-hc-en-us-articles-360017571594.html",
-    "txt": "docs/cache/miro-help/help-miro-com-hc-en-us-articles-360017571594.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/web-sdk-overview",
-    "status": 404,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-web-sdk-overview.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-web-sdk-overview.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/web-sdk-reference",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-web-sdk-reference.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-web-sdk-reference.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/web-sdk-reference-widgets",
-    "status": 404,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-web-sdk-reference-widgets.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-web-sdk-reference-widgets.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/web-sdk-widgets-shape",
-    "status": 404,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-web-sdk-widgets-shape.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-web-sdk-widgets-shape.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/web-sdk-widgets-connector",
-    "status": 404,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-web-sdk-widgets-connector.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-web-sdk-widgets-connector.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/websdk-reference-shape-experimental",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-shape-experimental.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-shape-experimental.txt"
-  },
-  {
-    "url": "https://developers.miro.com/reference/web-sdk-reference-shapes",
-    "status": 404,
-    "html": "docs/cache/miro-help/developers-miro-com-reference-web-sdk-reference-shapes.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-reference-web-sdk-reference-shapes.txt"
-  },
-  {
-    "url": "https://developers.miro.com/reference/reference-web-sdk-shapes",
-    "status": 404,
-    "html": "docs/cache/miro-help/developers-miro-com-reference-reference-web-sdk-shapes.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-reference-reference-web-sdk-shapes.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/websdk-reference-rate-limiting",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-rate-limiting.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-rate-limiting.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/introduction",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-introduction.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-introduction.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/miro-web-sdk-vs-rest-apis",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-miro-web-sdk-vs-rest-apis.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-miro-web-sdk-vs-rest-apis.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/developer-team",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-developer-team.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-developer-team.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/create-a-developer-team",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-create-a-developer-team.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-create-a-developer-team.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/change-the-developer-team-name",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-change-the-developer-team-name.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-change-the-developer-team-name.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/delete-the-developer-team",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-delete-the-developer-team.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-delete-the-developer-team.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/migrating-a-developer-app",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-migrating-a-developer-app.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-migrating-a-developer-app.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/app-manifest",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-app-manifest.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-app-manifest.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/boards",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-boards.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-boards.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/board-items",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-board-items.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-board-items.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/children-inside-parent-items",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-children-inside-parent-items.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-children-inside-parent-items.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/app-card",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-app-card.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-app-card.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/app-card-use-cases",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-app-card-use-cases.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-app-card-use-cases.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/edit-update-and-keep-app-cards-synced",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-edit-update-and-keep-app-cards-synced.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-edit-update-and-keep-app-cards-synced.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/backend-flow-for-app-cards",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-backend-flow-for-app-cards.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-backend-flow-for-app-cards.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/card-1",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-card-1.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-card-1.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/connector_intro",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-connector_intro.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-connector_intro.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/embed-2",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-embed-2.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-embed-2.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/events",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-events.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-events.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/frame-1",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-frame-1.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-frame-1.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/image-1",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-image-1.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-image-1.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/mind-maps",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-mind-maps.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-mind-maps.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/preview-1",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-preview-1.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-preview-1.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/shape-1",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-shape-1.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-shape-1.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/stickynote-1",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-stickynote-1.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-stickynote-1.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/storage",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-storage.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-storage.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/text-1",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-text-1.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-text-1.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/tag-concepts",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-tag-concepts.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-tag-concepts.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/migrate-from-v1-to-v2",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-migrate-from-v1-to-v2.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-migrate-from-v1-to-v2.txt"
-  },
-  {
-    "url": "https://developers.miro.com/docs/web-sdk-comparison-guide",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-web-sdk-comparison-guide.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-web-sdk-comparison-guide.txt"
+    "html": "docs/cache/miro-help/developers-miro-com-docs-sdk-reference.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-sdk-reference.txt"
   },
   {
     "url": "https://developers.miro.com/docs/web-sdk-reference-guide",
@@ -252,123 +12,207 @@
     "txt": "docs/cache/miro-help/developers-miro-com-docs-web-sdk-reference-guide.txt"
   },
   {
-    "url": "https://developers.miro.com/docs/rest-api-comparison-guide",
-    "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-rest-api-comparison-guide.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-rest-api-comparison-guide.txt"
-  },
-  {
     "url": "https://developers.miro.com/docs/rest-api-reference-guide",
     "status": 200,
     "html": "docs/cache/miro-help/developers-miro-com-docs-rest-api-reference-guide.html",
     "txt": "docs/cache/miro-help/developers-miro-com-docs-rest-api-reference-guide.txt"
   },
   {
-    "url": "https://developers.miro.com/docs/miro-web-sdk-introduction",
+    "url": "https://developers.miro.com/docs/websdk-reference-interact-with-boards-and-items",
     "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-miro-web-sdk-introduction.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-miro-web-sdk-introduction.txt"
+    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-interact-with-boards-and-items.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-interact-with-boards-and-items.txt"
   },
   {
-    "url": "https://developers.miro.com/docs/miro-web-sdk-board-items-crud",
+    "url": "https://developers.miro.com/docs/websdk-reference-rate-limiting",
     "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-miro-web-sdk-board-items-crud.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-miro-web-sdk-board-items-crud.txt"
+    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-rate-limiting.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-rate-limiting.txt"
   },
   {
-    "url": "https://developers.miro.com/docs/app-panels-and-modals",
+    "url": "https://developers.miro.com/docs/websdk-reference-error-handling",
     "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-app-panels-and-modals.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-app-panels-and-modals.txt"
+    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-error-handling.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-error-handling.txt"
   },
   {
-    "url": "https://developers.miro.com/docs/guided-onboarding",
+    "url": "https://developers.miro.com/docs/websdk-reference-board",
     "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-guided-onboarding.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-guided-onboarding.txt"
+    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-board.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-board.txt"
   },
   {
-    "url": "https://developers.miro.com/docs/task-1-create-your-first-board-item-with-the-web-sdk",
+    "url": "https://developers.miro.com/docs/websdk-reference-card",
     "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-task-1-create-your-first-board-item-with-the-web-sdk.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-task-1-create-your-first-board-item-with-the-web-sdk.txt"
+    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-card.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-card.txt"
   },
   {
-    "url": "https://developers.miro.com/docs/task-2-update-an-items-properties-with-sync",
+    "url": "https://developers.miro.com/docs/websdk-reference-ui",
     "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-task-2-update-an-items-properties-with-sync.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-task-2-update-an-items-properties-with-sync.txt"
+    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-ui.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-ui.txt"
   },
   {
-    "url": "https://developers.miro.com/docs/task-3-run-your-first-app-in-miro",
+    "url": "https://developers.miro.com/docs/websdk-reference-viewport",
     "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-task-3-run-your-first-app-in-miro.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-task-3-run-your-first-app-in-miro.txt"
+    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-viewport.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-viewport.txt"
   },
   {
-    "url": "https://developers.miro.com/docs/task-4-interact-with-your-app-in-miro",
+    "url": "https://developers.miro.com/docs/websdk-reference-notifications",
     "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-task-4-interact-with-your-app-in-miro.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-task-4-interact-with-your-app-in-miro.txt"
+    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-notifications.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-notifications.txt"
   },
   {
-    "url": "https://developers.miro.com/docs/task-5-join-the-conversation",
+    "url": "https://developers.miro.com/docs/websdk-reference-app-card",
     "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-task-5-join-the-conversation.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-task-5-join-the-conversation.txt"
+    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-app-card.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-app-card.txt"
   },
   {
-    "url": "https://developers.miro.com/docs/task-6-install-a-marketplace-app",
+    "url": "https://developers.miro.com/docs/websdk-reference-experimental",
     "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-task-6-install-a-marketplace-app.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-task-6-install-a-marketplace-app.txt"
+    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-experimental.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-experimental.txt"
   },
   {
-    "url": "https://developers.miro.com/docs/task-7-add-mirotone-to-an-existing-app",
+    "url": "https://developers.miro.com/docs/websdk-reference-events",
     "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-task-7-add-mirotone-to-an-existing-app.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-task-7-add-mirotone-to-an-existing-app.txt"
+    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-events.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-events.txt"
   },
   {
-    "url": "https://developers.miro.com/docs/onboarding-wrap-up",
+    "url": "https://developers.miro.com/docs/websdk-reference-tag",
     "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-onboarding-wrap-up.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-onboarding-wrap-up.txt"
+    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-tag.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-tag.txt"
   },
   {
-    "url": "https://developers.miro.com/docs/challenge-wheres-miro",
+    "url": "https://developers.miro.com/docs/websdk-reference-custom-action-management",
     "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-challenge-wheres-miro.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-challenge-wheres-miro.txt"
+    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-custom-action-management.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-custom-action-management.txt"
   },
   {
-    "url": "https://developers.miro.com/docs/submit-and-share-your-app",
+    "url": "https://developers.miro.com/docs/websdk-reference-shape",
     "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-submit-and-share-your-app.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-submit-and-share-your-app.txt"
+    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-shape.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-shape.txt"
   },
   {
-    "url": "https://developers.miro.com/docs/share-an-app-outside-of-a-developer-team",
+    "url": "https://developers.miro.com/docs/websdk-reference-frame",
     "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-share-an-app-outside-of-a-developer-team.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-share-an-app-outside-of-a-developer-team.txt"
+    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-frame.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-frame.txt"
   },
   {
-    "url": "https://developers.miro.com/docs/understand-app-submission-requirements",
+    "url": "https://developers.miro.com/docs/websdk-reference-image",
     "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-understand-app-submission-requirements.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-understand-app-submission-requirements.txt"
+    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-image.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-image.txt"
   },
   {
-    "url": "https://developers.miro.com/docs/publish-a-miro-app",
+    "url": "https://developers.miro.com/docs/websdk-reference-sticky-note",
     "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-publish-a-miro-app.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-publish-a-miro-app.txt"
+    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-sticky-note.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-sticky-note.txt"
   },
   {
-    "url": "https://developers.miro.com/docs/share-your-ideas-with-us",
+    "url": "https://developers.miro.com/docs/websdk-reference-shape-experimental",
     "status": 200,
-    "html": "docs/cache/miro-help/developers-miro-com-docs-share-your-ideas-with-us.html",
-    "txt": "docs/cache/miro-help/developers-miro-com-docs-share-your-ideas-with-us.txt"
+    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-shape-experimental.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-shape-experimental.txt"
+  },
+  {
+    "url": "https://developers.miro.com/docs/websdk-reference-embed",
+    "status": 200,
+    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-embed.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-embed.txt"
+  },
+  {
+    "url": "https://developers.miro.com/docs/websdk-reference-connector",
+    "status": 200,
+    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-connector.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-connector.txt"
+  },
+  {
+    "url": "https://developers.miro.com/docs/websdk-reference-unsupported",
+    "status": 200,
+    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-unsupported.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-unsupported.txt"
+  },
+  {
+    "url": "https://developers.miro.com/docs/websdk-reference-mindmap-node",
+    "status": 200,
+    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-mindmap-node.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-mindmap-node.txt"
+  },
+  {
+    "url": "https://developers.miro.com/docs/websdk-reference-preview",
+    "status": 200,
+    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-preview.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-preview.txt"
+  },
+  {
+    "url": "https://developers.miro.com/docs/websdk-reference-text",
+    "status": 200,
+    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-text.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-text.txt"
+  },
+  {
+    "url": "https://developers.miro.com/docs/websdk-reference-collection",
+    "status": 200,
+    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-collection.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-collection.txt"
+  },
+  {
+    "url": "https://developers.miro.com/docs/websdk-reference-storage",
+    "status": 200,
+    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-storage.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-storage.txt"
+  },
+  {
+    "url": "https://developers.miro.com/docs/websdk-reference-collaboration",
+    "status": 200,
+    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-collaboration.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-collaboration.txt"
+  },
+  {
+    "url": "https://developers.miro.com/docs/websdk-reference-session",
+    "status": 200,
+    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-session.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-session.txt"
+  },
+  {
+    "url": "https://developers.miro.com/docs/websdk-reference-attention",
+    "status": 200,
+    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-attention.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-attention.txt"
+  },
+  {
+    "url": "https://developers.miro.com/docs/websdk-reference-group",
+    "status": 200,
+    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-group.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-group.txt"
+  },
+  {
+    "url": "https://developers.miro.com/docs/websdk-reference-history",
+    "status": 200,
+    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-history.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-history.txt"
+  },
+  {
+    "url": "https://developers.miro.com/docs/miro-live-embed-reference",
+    "status": 200,
+    "html": "docs/cache/miro-help/developers-miro-com-docs-miro-live-embed-reference.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-miro-live-embed-reference.txt"
+  },
+  {
+    "url": "https://developers.miro.com/docs/web-sdk-reference",
+    "status": 200,
+    "html": "docs/cache/miro-help/developers-miro-com-docs-web-sdk-reference.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-web-sdk-reference.txt"
   }
 ]
