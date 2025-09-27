@@ -84,7 +84,7 @@ function toNode(vertex: RawVertex): NodeData {
 }
 
 function toEdge(edge: RawEdge): EdgeData {
-  const metadata: Record<string, unknown> = { template: 'default' }
+  const metadata: Record<string, unknown> = { template: 'default', domId: edge.id }
   if (edge.classes?.length) {
     metadata.classes = [...edge.classes]
   }

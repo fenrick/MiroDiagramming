@@ -22,6 +22,7 @@ describe('convertMermaidToGraph', () => {
     expect(graph.nodes[0]?.type).toBe('MermaidNode')
     expect(graph.nodes.find((n) => n.id === 'A')?.label).toBe('Start')
     expect(graph.edges).toHaveLength(3)
+    expect(graph.edges[0]?.metadata).toMatchObject({ domId: expect.stringContaining('L_') })
     expect(graph.edges.map((e) => [e.from, e.to])).toEqual([
       ['A', 'B'],
       ['B', 'C'],

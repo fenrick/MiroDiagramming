@@ -126,6 +126,71 @@ export class GraphProcessor extends UndoableProcessor {
     await this.createConnectorsAndZoom(data, finalLayout, map, frame)
   }
 
+  public async processGraphWithLayout(
+    graph: GraphData,
+    layout: LayoutResult,
+    options: ProcessOptions = {},
+  ): Promise<void> {
+    this.nodeIdMap = {}
+    this.validateGraph(graph)
+    const existingMode: ExistingNodeMode = options.existingMode ?? 'move'
+    const existing = await this.collectExistingNodes(graph)
+    const bounds = this.layoutBounds(layout)
+    const margin = 100
+    const frameWidth = bounds.maxX - bounds.minX + margin * 2
+    const frameHeight = bounds.maxY - bounds.minY + margin * 2
+    const spot = await this.builder.findSpace(frameWidth, frameHeight)
+
+    let frame: Frame | undefined
+    if (options.createFrame !== false) {
+      frame = await registerFrame(
+        this.builder,
+        this.lastCreated,
+        frameWidth,
+        frameHeight,
+        spot,
+        options.frameTitle,
+      )
+    } else {
+      clearActiveFrame(this.builder)
+    }
+
+    const { offsetX, offsetY } = this.calculateOffset(
+      spot,
+      frameWidth,
+      frameHeight,
+      { minX: bounds.minX, minY: bounds.minY },
+      margin,
+    )
+
+    const { map, positions } = await this.createNodes(
+      graph,
+      layout,
+      offsetX,
+      offsetY,
+      existingMode,
+      existing,
+    )
+
+    const shiftedEdges = layout.edges.map((edge) => ({
+      startPoint: {
+        x: edge.startPoint.x + offsetX,
+        y: edge.startPoint.y + offsetY,
+      },
+      endPoint: {
+        x: edge.endPoint.x + offsetX,
+        y: edge.endPoint.y + offsetY,
+      },
+      bendPoints: edge.bendPoints?.map((pt) => ({
+        x: pt.x + offsetX,
+        y: pt.y + offsetY,
+      })),
+    }))
+
+    const finalLayout: LayoutResult = { nodes: positions, edges: shiftedEdges }
+    await this.createConnectorsAndZoom(graph, finalLayout, map, frame)
+  }
+
   // undoLast inherited from UndoableProcessor
 
   /**
