@@ -3,6 +3,7 @@ import mermaid from 'mermaid'
 import type { EdgeData, GraphData, NodeData } from '../graph/graph-service'
 
 import { ensureMermaidInitialized } from './config'
+import { mapEdgeClassesToTemplate, mapNodeClassesToTemplate } from './template-map'
 
 export class MermaidConversionError extends Error {
   public constructor(message: string, cause?: unknown) {
@@ -238,10 +239,11 @@ function toNode(vertex: RawVertex): NodeData {
   if (shape) {
     metadata.shape = shape
   }
+  const template = mapNodeClassesToTemplate(vertex.classes)
   return {
     id: vertex.id,
     label: normaliseLabel(vertex.text, vertex.id),
-    type: 'MermaidNode',
+    type: template ?? 'MermaidNode',
     metadata: Object.keys(metadata).length ? metadata : undefined,
   }
 }
@@ -263,6 +265,10 @@ function toEdge(edge: RawEdge): EdgeData {
   const styleOverrides = parseEdgeStyles(edge)
   if (styleOverrides) {
     metadata.styleOverrides = styleOverrides
+  }
+  const template = mapEdgeClassesToTemplate(edge.classes)
+  if (template) {
+    metadata.template = template
   }
   return {
     from: edge.start,

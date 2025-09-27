@@ -31,7 +31,7 @@ describe('convertMermaidToGraph', () => {
   })
 
   it('captures style overrides from Mermaid directives', async () => {
-    const source = `graph TD\n  A[Styled]\n  B[Plain]\n  A-->B\n  style A fill:#ffcc00,stroke:#111,stroke-width:3px,color:#222\n  linkStyle 0 stroke:#f00,stroke-width:5px,stroke-dasharray:5`
+    const source = `graph TD\n  A[Styled]\n  B[Plain]\n  A-->B\n  classDef app fill:#ffcc00,stroke:#111,stroke-width:3px,color:#222\n  class A app\n  style A fill:#ffcc00,stroke:#111,stroke-width:3px,color:#222\n  linkStyle 0 stroke:#f00,stroke-width:5px,stroke-dasharray:5`
     const graph = await convertMermaidToGraph(source)
     const styledNode = graph.nodes.find((n) => n.id === 'A')
     const nodeMeta = styledNode?.metadata as
@@ -43,6 +43,7 @@ describe('convertMermaidToGraph', () => {
       borderWidth: 3,
       textColor: '#222',
     })
+    expect(styledNode?.type).toBe('Application')
     const edgeMeta = graph.edges[0]?.metadata as
       | { styleOverrides?: Record<string, unknown> }
       | undefined
