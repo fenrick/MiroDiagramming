@@ -1,0 +1,17 @@
+@mirohq/websdk-types/experimental/api/board
+@mirohq/websdk-types/experimental/api/client
+@mirohq/websdk-types/experimental/api/commands
+@mirohq/websdk-types/experimental/api/customActions
+@mirohq/websdk-types/experimental/api/history
+@mirohq/websdk-types/experimental/api/widgets/frame
+@mirohq/websdk-types/experimental/api/widgets/group
+@mirohq/websdk-types/experimental/api/widgets/mindmapNode
+@mirohq/websdk-types/experimental/api/widgets/shape
+@mirohq/websdk-types/experimental/client/index
+@mirohq/websdk-types/experimental/features/board
+@mirohq/websdk-types/experimental/features/customAction
+@mirohq/websdk-types/experimental/features/history
+@mirohq/websdk-types/experimental/features/widgets/frame
+@mirohq/websdk-types/experimental/features/widgets/group
+@mirohq/websdk-types/experimental/features/widgets/mindmapNode
+@mirohq/websdk-types/experimental/features/widgets/shape
