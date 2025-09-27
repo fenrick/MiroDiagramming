@@ -522,7 +522,8 @@ Execution guidance:
 - Mermaid renderer via Miro [In progress]
     - What’s needed: Parse Mermaid text (flowchart, sequence initial focus) into internal GraphData and render via GraphProcessor so shapes/connectors come from Miro SDK.
     - Where: `src/core/mermaid/**` utilities plus a `MermaidTab` under `src/ui/pages/`.
-    - Status: Native Mermaid layout coordinates drive placement, node/edge styles/classes map onto native templates, and flowchart/sequence/class/state/ER diagrams all render via native Miro shapes; follow-ups include journey/gantt support and richer preset configuration.
+    - Status: Native Mermaid layout coordinates drive placement, node/edge styles/classes map onto native templates, and flowchart/sequence/class/state/ER diagrams all render via native Miro shapes. Fixed class diagram connector style (solid for `--`, dashed for `..`). Added tests for class relations (inheritance, composition, aggregation, dependency). Introduced `templates/experimentalShapeMap.json` to enable swapping in experimental shapes without code changes. Follow-ups include journey/gantt support and richer preset configuration.
+    - Next: Populate experimental shape IDs in `templates/experimentalShapeMap.json` (e.g., for MermaidClass/Entity/Actor) once confirmed from SDK docs; extend converter coverage for nested states and ER composite keys.
     - DoD: Paste Mermaid sample → renders nodes/connectors positioned using Mermaid layout; errors reported inline.
 
 - Mermaid live preview [Planned]
