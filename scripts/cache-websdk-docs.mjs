@@ -116,6 +116,64 @@ ${iconShape}
   const mods = listExperimentalModules(src)
   writeFileSafe(path.join(outDir, 'experimental-modules.txt'), mods.join('\n'))
 
+  // JSON summary for programmatic use
+  function parseEnumValues(enumBody) {
+    if (!enumBody) return []
+    return enumBody
+      .split(/\n+/)
+      .map((l) => l.trim())
+      .filter(Boolean)
+      .map((l) => {
+        const m = l.match(/=\s*"([^"]+)"/)
+        return m ? m[1] : undefined
+      })
+      .filter(Boolean)
+  }
+  function parseUnionValues(unionStr) {
+    if (!unionStr) return []
+    return unionStr
+      .split('|')
+      .map((s) => s.trim().replace(/^['"]|['"]$/g, ''))
+      .filter(Boolean)
+  }
+  const typesIndex = {
+    shapeType: parseEnumValues(shapeEnum),
+    shapeName: parseEnumValues(shapeNameEnum),
+    connectorShape: parseUnionValues(connectorShape),
+    strokeStyle: parseUnionValues(strokeStyle),
+    strokeCapShape: parseUnionValues(strokeCap),
+    stickyNoteShape: parseUnionValues(stickyShape),
+    iconShape: parseUnionValues(iconShape),
+    experimentalModules: mods,
+  }
+  writeFileSafe(path.join(outDir, 'types-index.json'), JSON.stringify(typesIndex, null, 2))
+
+  // Connector template cheat-sheet from local templates
+  try {
+    const tplPath = path.join(process.cwd(), 'templates/connectorTemplates.json')
+    const raw = fs.readFileSync(tplPath, 'utf8')
+    const tpl = JSON.parse(raw)
+    const lines = ['# Connector Templates Cheat Sheet', '']
+    const mermaidExamples = {
+      inheritance: 'Class A <|-- B',
+      composition: 'A *-- B',
+      aggregation: 'A o-- B',
+      dependency: 'A ..> B',
+      association: 'A -- B',
+    }
+    Object.entries(tpl).forEach(([name, def]) => {
+      const style = def.style || {}
+      const shape = def.shape || ''
+      lines.push(
+        `- ${name}: shape=${shape} strokeStyle=${style.strokeStyle || ''} startCap=${style.startStrokeCap || ''} endCap=${style.endStrokeCap || ''}`,
+      )
+      if (mermaidExamples[name]) {
+        lines.push(`  - Mermaid: ${mermaidExamples[name]}`)
+      }
+    })
+    writeFileSafe(path.join(outDir, 'cheatsheet.md'), lines.join('\n'))
+  } catch {}
+
   if (!fs.existsSync(path.join(outDir, 'README.md'))) {
     writeFileSafe(
       path.join(outDir, 'README.md'),
