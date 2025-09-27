@@ -11,3 +11,17 @@ export function isMermaidEnabled(): boolean {
   }
   return true
 }
+
+/**
+ * Enable use of experimental flowchart shapes where appropriate.
+ *
+ * Controlled via `VITE_MIRO_EXPERIMENTAL_SHAPES`; defaults to true so
+ * development builds benefit from richer shapes unless disabled.
+ */
+export function isExperimentalShapesEnabled(): boolean {
+  const flag = import.meta.env.VITE_MIRO_EXPERIMENTAL_SHAPES
+  if (typeof flag === 'string') {
+    return flag.toLowerCase() !== 'false'
+  }
+  return true
+}

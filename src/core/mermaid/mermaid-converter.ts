@@ -3,6 +3,7 @@ import mermaid from 'mermaid'
 import type { EdgeData, GraphData, NodeData } from '../graph/graph-service'
 
 import { ensureMermaidInitialized } from './config'
+import { isExperimentalShapesEnabled } from './feature-flags'
 import { mapEdgeClassesToTemplate, mapNodeClassesToTemplate } from './template-map'
 
 export class MermaidConversionError extends Error {
@@ -59,6 +60,14 @@ const SHAPE_MAP: Record<string, string> = {
   diamond: 'diamond',
   rhombus: 'diamond',
   hexagon: 'hexagon',
+}
+
+// Prefer experimental flowchart shapes when available and enabled.
+const EXP_FLOWCHART_SHAPES: Record<string, string> = {
+  rectangle: 'flow_chart_process',
+  round_rectangle: 'flow_chart_terminator',
+  diamond: 'flow_chart_decision',
+  circle: 'flow_chart_connector',
 }
 
 const EDGE_THICKNESS: Record<string, number> = {
@@ -179,7 +188,13 @@ function mapShape(shape?: string): string | undefined {
   if (!shape) {
     return undefined
   }
-  return SHAPE_MAP[shape.toLowerCase()]
+  const key = shape.toLowerCase()
+  const base = SHAPE_MAP[key]
+  if (!base) return undefined
+  if (isExperimentalShapesEnabled() && EXP_FLOWCHART_SHAPES[base]) {
+    return EXP_FLOWCHART_SHAPES[base]
+  }
+  return base
 }
 
 function sanitizeIdentifier(raw: string): string {
