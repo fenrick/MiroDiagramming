@@ -174,6 +174,57 @@ ${iconShape}
     writeFileSafe(path.join(outDir, 'cheatsheet.md'), lines.join('\n'))
   } catch {}
 
+  // Shape templates index and Mermaid mapping summary
+  try {
+    const shapeTplPath = path.join(process.cwd(), 'templates/shapeTemplates.json')
+    const rawShapes = fs.readFileSync(shapeTplPath, 'utf8')
+    const shapeTpl = JSON.parse(rawShapes)
+    const lines = ['# Shape Templates Index', '']
+    Object.entries(shapeTpl).forEach(([name, def]) => {
+      const elements = (def && def.elements) || []
+      const first = elements[0] || {}
+      const alias = (def && def.alias) || []
+      const shape = first.shape || ''
+      const width = first.width || ''
+      const height = first.height || ''
+      const fill = first.style?.fillColor || first.fill || ''
+      lines.push(
+        `- ${name}: shape=${shape} size=${width}x${height} fill=${fill} aliases=[${alias.join(', ')}]`,
+      )
+    })
+    writeFileSafe(path.join(outDir, 'templates-index.md'), lines.join('\n'))
+
+    // Mermaid class maps
+    const mapPath = path.join(process.cwd(), 'src/core/mermaid/template-map.ts')
+    const mapSrc = fs.readFileSync(mapPath, 'utf8')
+    function extractObject(name) {
+      const re = new RegExp(`const\\s+${name}\\s*:\\s*Record<[^>]+>\\s*=\\s*{([\\s\\S]*?)}\\n`) // naive
+      const m = mapSrc.match(re)
+      return m ? m[1] : ''
+    }
+    function toPairs(body) {
+      const pairs = []
+      body.split('\n').forEach((line) => {
+        const m = line.match(/\s*([\w]+):\s*'([^']+)'/) // key: 'value'
+        if (m) pairs.push([m[1], m[2]])
+      })
+      return pairs
+    }
+    const nodeBody = extractObject('NODE_TEMPLATE_MAP')
+    const edgeBody = extractObject('EDGE_TEMPLATE_MAP')
+    const nodePairs = toPairs(nodeBody)
+    const edgePairs = toPairs(edgeBody)
+    const mermaidLines = ['# Mermaid → Template Mapping', '', '## Nodes']
+    nodePairs.forEach(([k, v]) => {
+      mermaidLines.push(`- ${k} → ${v}`)
+    })
+    mermaidLines.push('', '## Edges')
+    edgePairs.forEach(([k, v]) => {
+      mermaidLines.push(`- ${k} → ${v}`)
+    })
+    writeFileSafe(path.join(outDir, 'mermaid-mapping.md'), mermaidLines.join('\n'))
+  } catch {}
+
   if (!fs.existsSync(path.join(outDir, 'README.md'))) {
     writeFileSafe(
       path.join(outDir, 'README.md'),

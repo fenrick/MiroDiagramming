@@ -1,0 +1,16 @@
+# Shape Templates Index
+
+- FromHereOn: shape=round_rectangle size=160x100 fill=#e2e3e4 aliases=[]
+- Motivation: shape=round_rectangle size=160x100 fill=tokens.color.lilac[350] aliases=[Stakeholder, Driver, Assessment, Goal, Outcome, Principle, Requirement, Constraint, Meaning, Value, Influencers, Vision & Mission, Goals, Objectives, Strategies, Tactics, Principles, Performance Measures]
+- Strategic: shape=round_rectangle size=160x100 fill=tokens.color.orange[350] aliases=[Resource, Capability, Course of action, Value Stream]
+- Business: shape=round_rectangle size=160x100 fill=tokens.color.sunshine[350] aliases=[Business actor, Business role, Business colalboration, Business interface, Business process, Business function, Business interaction, Product, Representation, Contact, Business object, Business service, Business event]
+- Application: shape=round_rectangle size=160x100 fill=tokens.color.blue[350] aliases=[Application component, Application interface, Application function, Data object, Application process, Application service, Application interaction, Application event, Application collaboration]
+- Technology: shape=round_rectangle size=160x100 fill=tokens.color.green[350] aliases=[Device, System software, Node, Technology function, Technology interface, Technology service, Technology interaction, Technology event, Technology process, Artifact, Technolgoy collaboration, Path, Communication network]
+- Physical: shape=round_rectangle size=160x100 fill=tokens.color.moss[350] aliases=[Equipment, Facility, Distribution Network, Material]
+- Composite: shape=round_rectangle size=160x100 fill=tokens.color.coal[350] aliases=[Location, Grouping]
+- Implementation: shape=round_rectangle size=160x100 fill=tokens.color.pink[350] aliases=[Deliverable, Implementation event, Work package, Plateau, Outcome, Gap]
+- MermaidNode: shape=round_rectangle size=220x140 fill=tokens.color.gray[0] aliases=[mermaid, mermaid-node, Mermaid]
+- MermaidActor: shape=round_rectangle size=160x80 fill=tokens.color.blue[100] aliases=[actor, participant]
+- MermaidClass: shape=rectangle size=220x120 fill=tokens.color.gray[50] aliases=[class]
+- MermaidState: shape=round_rectangle size=200x100 fill=tokens.color.green[100] aliases=[state]
+- MermaidEntity: shape=rectangle size=220x100 fill=tokens.color.orange[100] aliases=[entity, table]
