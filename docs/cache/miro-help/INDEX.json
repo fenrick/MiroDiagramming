@@ -1,0 +1,62 @@
+[
+  {
+    "url": "https://help.miro.com/hc/en-us/articles/360017572534",
+    "status": 404,
+    "html": "docs/cache/miro-help/help-miro-com-hc-en-us-articles-360017572534.html",
+    "txt": "docs/cache/miro-help/help-miro-com-hc-en-us-articles-360017572534.txt"
+  },
+  {
+    "url": "https://help.miro.com/hc/en-us/articles/360017571594",
+    "status": 403,
+    "html": "docs/cache/miro-help/help-miro-com-hc-en-us-articles-360017571594.html",
+    "txt": "docs/cache/miro-help/help-miro-com-hc-en-us-articles-360017571594.txt"
+  },
+  {
+    "url": "https://developers.miro.com/docs/web-sdk-overview",
+    "status": 404,
+    "html": "docs/cache/miro-help/developers-miro-com-docs-web-sdk-overview.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-web-sdk-overview.txt"
+  },
+  {
+    "url": "https://developers.miro.com/docs/web-sdk-reference",
+    "status": 200,
+    "html": "docs/cache/miro-help/developers-miro-com-docs-web-sdk-reference.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-web-sdk-reference.txt"
+  },
+  {
+    "url": "https://developers.miro.com/docs/web-sdk-reference-widgets",
+    "status": 404,
+    "html": "docs/cache/miro-help/developers-miro-com-docs-web-sdk-reference-widgets.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-web-sdk-reference-widgets.txt"
+  },
+  {
+    "url": "https://developers.miro.com/docs/web-sdk-widgets-shape",
+    "status": 404,
+    "html": "docs/cache/miro-help/developers-miro-com-docs-web-sdk-widgets-shape.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-web-sdk-widgets-shape.txt"
+  },
+  {
+    "url": "https://developers.miro.com/docs/web-sdk-widgets-connector",
+    "status": 404,
+    "html": "docs/cache/miro-help/developers-miro-com-docs-web-sdk-widgets-connector.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-web-sdk-widgets-connector.txt"
+  },
+  {
+    "url": "https://developers.miro.com/docs/websdk-reference-shape-experimental",
+    "status": 200,
+    "html": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-shape-experimental.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-docs-websdk-reference-shape-experimental.txt"
+  },
+  {
+    "url": "https://developers.miro.com/reference/web-sdk-reference-shapes",
+    "status": 404,
+    "html": "docs/cache/miro-help/developers-miro-com-reference-web-sdk-reference-shapes.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-reference-web-sdk-reference-shapes.txt"
+  },
+  {
+    "url": "https://developers.miro.com/reference/reference-web-sdk-shapes",
+    "status": 404,
+    "html": "docs/cache/miro-help/developers-miro-com-reference-reference-web-sdk-shapes.html",
+    "txt": "docs/cache/miro-help/developers-miro-com-reference-reference-web-sdk-shapes.txt"
+  }
+]
