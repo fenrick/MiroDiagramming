@@ -60,6 +60,14 @@ const SHAPE_MAP: Record<string, string> = {
   diamond: 'diamond',
   rhombus: 'diamond',
   hexagon: 'hexagon',
+  parallelogram: 'parallelogram',
+  trapezoid: 'trapezoid',
+  subroutine: 'flow_chart_predefined_process',
+  predefined_process: 'flow_chart_predefined_process',
+  cylinder: 'can',
+  can: 'can',
+  document: 'flow_chart_document',
+  terminator: 'flow_chart_terminator',
 }
 
 // Prefer experimental flowchart shapes when available and enabled.
@@ -68,6 +76,10 @@ const EXP_FLOWCHART_SHAPES: Record<string, string> = {
   round_rectangle: 'flow_chart_terminator',
   diamond: 'flow_chart_decision',
   circle: 'flow_chart_connector',
+  parallelogram: 'flow_chart_input_output',
+  trapezoid: 'flow_chart_manual_input',
+  can: 'flow_chart_magnetic_disk',
+  hexagon: 'flow_chart_preparation',
 }
 
 const EDGE_THICKNESS: Record<string, number> = {
