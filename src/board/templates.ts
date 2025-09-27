@@ -12,6 +12,7 @@ import type {
 import { ShapeClient, type ShapeData } from '../core/utils/shape-client'
 import connectorJson from '../../templates/connectorTemplates.json'
 import templatesJson from '../../templates/shapeTemplates.json'
+import experimentalShapeMap from '../../templates/experimentalShapeMap.json'
 
 /**
  * Single element of a shape template description.
@@ -82,6 +83,21 @@ export class TemplateManager {
         this.connectorAliasMap[a] = key
       }),
     )
+
+    // Apply experimental shape overrides when provided.
+    // The mapping file allows swapping the primary element's shape
+    // for richer, experimental Miro shapes without code changes.
+    const overrideMap = experimentalShapeMap as Record<string, string>
+    if (overrideMap && typeof overrideMap === 'object') {
+      for (const [name, shape] of Object.entries(overrideMap)) {
+        if (!shape || typeof shape !== 'string') continue
+        const key = this.aliasMap[name] ?? name
+        const tpl = this.templates[key]
+        if (tpl && Array.isArray(tpl.elements) && tpl.elements.length > 0) {
+          tpl.elements[0] = { ...tpl.elements[0], shape }
+        }
+      }
+    }
   }
 
   /**
