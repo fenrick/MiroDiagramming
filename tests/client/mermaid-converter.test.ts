@@ -71,6 +71,26 @@ describe('convertMermaidToGraph', () => {
     expect(edge.metadata).toMatchObject({ template: 'inheritance' })
   })
 
+  it('renders solid connectors for class -- relations (no dashed override)', async () => {
+    const source = `classDiagram\n  A -- B`
+    const graph = await convertMermaidToGraph(source)
+    expect(graph.edges).toHaveLength(1)
+    const meta = graph.edges[0]?.metadata as
+      | { styleOverrides?: { strokeStyle?: string } }
+      | undefined
+    expect(meta?.styleOverrides?.strokeStyle).toBeUndefined()
+  })
+
+  it('renders dashed connectors for class .. relations', async () => {
+    const source = `classDiagram\n  A .. B`
+    const graph = await convertMermaidToGraph(source)
+    expect(graph.edges).toHaveLength(1)
+    const meta = graph.edges[0]?.metadata as
+      | { styleOverrides?: { strokeStyle?: string } }
+      | undefined
+    expect(meta?.styleOverrides?.strokeStyle).toBe('dashed')
+  })
+
   it('converts state diagrams into graph data', async () => {
     const source = `stateDiagram\n  idle --> running\n  running --> finished`
     const graph = await convertMermaidToGraph(source)
