@@ -522,7 +522,7 @@ Execution guidance:
 - Mermaid renderer via Miro [In progress]
     - What’s needed: Parse Mermaid text (flowchart, sequence initial focus) into internal GraphData and render via GraphProcessor so shapes/connectors come from Miro SDK.
     - Where: `src/core/mermaid/**` utilities plus a `MermaidTab` under `src/ui/pages/`.
-    - Status: Panel now uses Mermaid’s native layout output and renders via native Miro shapes/connectors; class/style mapping and additional diagram types remain outstanding.
+    - Status: Native Mermaid layout coordinates now drive placement and we map node/edge styles onto Miro widgets; remaining work covers richer class-to-template presets and additional diagram types.
     - DoD: Paste Mermaid sample → renders nodes/connectors positioned using Mermaid layout; errors reported inline.
 
 - Mermaid live preview [Planned]

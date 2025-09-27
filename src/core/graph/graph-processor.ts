@@ -3,6 +3,7 @@ import type { BaseItem, Frame, Group } from '@mirohq/websdk-types'
 import { maybeSync } from '../../board/board'
 import { BoardBuilder } from '../../board/board-builder'
 import { clearActiveFrame, registerFrame } from '../../board/frame-utils'
+import type { TemplateElement } from '../../board/templates'
 import { layoutEngine, LayoutResult } from '../layout/elk-layout'
 import { UserLayoutOptions } from '../layout/elk-options'
 import type { PositionedNode } from '../layout/layout-core'
@@ -12,12 +13,23 @@ import { fileUtils } from '../utils/file-utils'
 
 import { edgesToHierarchy, hierarchyToEdges } from './convert'
 import { GraphData, graphService } from './graph-service'
+import type { NodeData } from './graph-service'
 import { HierarchyProcessor } from './hierarchy-processor'
 import { isNestedAlgorithm } from './layout-modes'
 import { UndoableProcessor } from './undoable-processor'
 
 /** Board widget or group item. */
 type BoardItem = BaseItem | Group
+
+type MermaidNodeMetadata = {
+  styleOverrides?: {
+    fillColor?: string
+    borderColor?: string
+    borderWidth?: number
+    textColor?: string
+  }
+  shape?: string
+}
 
 /**
  * High level orchestrator that loads graph data, runs layout and
@@ -330,10 +342,54 @@ export class GraphProcessor extends UndoableProcessor {
         this.registerCreated(widget)
         positions[node.id] = { ...target, id: node.id }
       }
+      await this.applyNodeOverrides(node, widget)
       map[node.id] = widget
       this.nodeIdMap[node.id] = widget.id
     }
     return { map, positions }
+  }
+
+  /**
+   * Apply Mermaid style overrides to a node widget when provided in metadata.
+   */
+  private async applyNodeOverrides(node: NodeData, widget: BoardItem): Promise<void> {
+    const metadata = node.metadata as MermaidNodeMetadata | undefined
+    if (!metadata) {
+      return
+    }
+    const { styleOverrides, shape } = metadata
+    if (!styleOverrides && !shape) {
+      return
+    }
+    if ((widget as { type?: string }).type !== 'shape') {
+      return
+    }
+    const style: Record<string, unknown> = {}
+    if (styleOverrides?.fillColor) {
+      style.fillColor = styleOverrides.fillColor
+    }
+    if (styleOverrides?.borderColor) {
+      style.borderColor = styleOverrides.borderColor
+    }
+    if (styleOverrides?.borderWidth !== undefined) {
+      style.borderWidth = styleOverrides.borderWidth
+    }
+    if (styleOverrides?.textColor) {
+      style.color = styleOverrides.textColor
+    }
+    const template: TemplateElement = {}
+    if (Object.keys(style).length) {
+      template.style = style
+    }
+    if (typeof shape === 'string') {
+      template.shape = shape
+    }
+    if (!template.style && !template.shape) {
+      return
+    }
+    const interaction = this.builder.beginShapeInteraction(widget as BaseItem)
+    interaction.applyTemplate(template, node.label)
+    await interaction.commit()
   }
 
   /**

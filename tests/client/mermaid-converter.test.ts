@@ -30,6 +30,28 @@ describe('convertMermaidToGraph', () => {
     ])
   })
 
+  it('captures style overrides from Mermaid directives', async () => {
+    const source = `graph TD\n  A[Styled]\n  B[Plain]\n  A-->B\n  style A fill:#ffcc00,stroke:#111,stroke-width:3px,color:#222\n  linkStyle 0 stroke:#f00,stroke-width:5px,stroke-dasharray:5`
+    const graph = await convertMermaidToGraph(source)
+    const styledNode = graph.nodes.find((n) => n.id === 'A')
+    const nodeMeta = styledNode?.metadata as
+      | { styleOverrides?: Record<string, unknown> }
+      | undefined
+    expect(nodeMeta?.styleOverrides).toMatchObject({
+      fillColor: '#ffcc00',
+      borderColor: '#111',
+      borderWidth: 3,
+      textColor: '#222',
+    })
+    const edgeMeta = graph.edges[0]?.metadata as
+      | { styleOverrides?: Record<string, unknown> }
+      | undefined
+    expect(edgeMeta?.styleOverrides).toMatchObject({
+      strokeColor: '#f00',
+      strokeWidth: 5,
+    })
+  })
+
   it('throws for unsupported diagrams', async () => {
     const source = `sequenceDiagram\n  Alice->>Bob: Hi Bob`
     await expect(convertMermaidToGraph(source)).rejects.toBeInstanceOf(MermaidConversionError)
