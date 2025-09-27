@@ -136,6 +136,17 @@ describe('convertMermaidToGraph', () => {
     expect(graph.edges[0]?.label).toContain('|| .. o{')
   })
 
+  it('parses ER entities with quoted names and preserves relation label', async () => {
+    const source = `erDiagram\n  "Order Item" ||--o{ ORDER : contains`
+    const graph = await convertMermaidToGraph(source)
+    const ids = graph.nodes.map((n) => n.id).sort()
+    expect(ids).toEqual(['ORDER', 'Order Item'])
+    expect(graph.edges).toHaveLength(1)
+    const edge = graph.edges[0]
+    expect(edge?.label).toContain('contains')
+    expect(edge?.label).toContain('|| .. o{')
+  })
+
   it('throws for unsupported diagrams', async () => {
     const source = `journey\n  title My Journey`
     await expect(convertMermaidToGraph(source)).rejects.toBeInstanceOf(MermaidConversionError)
