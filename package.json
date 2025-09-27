@@ -17,7 +17,8 @@
     "test": "vitest run",
     "coverage": "vitest run --coverage",
     "prepare": "husky",
-    "commitlint": "commitlint"
+    "commitlint": "commitlint",
+    "docs:cache:websdk": "node scripts/cache-websdk-docs.mjs"
   },
   "dependencies": {
     "@mirohq/design-system": "^1.0.23",
