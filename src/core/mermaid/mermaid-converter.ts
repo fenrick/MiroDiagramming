@@ -387,7 +387,9 @@ function convertStateDiagram(source: string): GraphData {
   return { nodes, edges }
 }
 
-function parseErRelation(line: string): { left: string; symbol: string; right: string; label?: string } | undefined {
+function parseErRelation(
+  line: string,
+): { left: string; symbol: string; right: string; label?: string } | undefined {
   const colonIndex = line.indexOf(':')
   const label = colonIndex >= 0 ? line.slice(colonIndex + 1).trim() : undefined
   const relationPart = colonIndex >= 0 ? line.slice(0, colonIndex).trim() : line.trim()
@@ -466,9 +468,10 @@ function mapClassRelationSymbol(symbol: string): {
 } {
   const relation = symbol.trim()
   const overrides: EdgeStyleOverrides = {}
+  // Mermaid class diagrams use '--' for solid and '..' for non-solid.
+  // Only apply a non-solid override for '..' relations; leave '--' as solid.
   if (relation.includes('..')) {
-    overrides.strokeStyle = 'dotted'
-  } else if (relation.includes('--')) {
+    // Use dashed as the non-solid representation in Miro.
     overrides.strokeStyle = 'dashed'
   }
   let template = 'association'
