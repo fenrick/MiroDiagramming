@@ -58,10 +58,12 @@ function decodePoints(attr: string | null): Array<{ x: number; y: number }> | un
     let json: string
     if (typeof globalThis.atob === 'function') {
       json = globalThis.atob(attr)
-    } else if (typeof Buffer !== 'undefined') {
-      json = Buffer.from(attr, 'base64').toString('utf8')
     } else {
-      json = attr
+      type NodeBufferModule = {
+        from: (input: string, encoding: string) => { toString: (encoding: string) => string }
+      }
+      const nodeBuffer = (globalThis as { Buffer?: NodeBufferModule }).Buffer
+      json = nodeBuffer ? nodeBuffer.from(attr, 'base64').toString('utf8') : attr
     }
     const parsed = JSON.parse(json) as Array<{ x: number; y: number }>
     if (!Array.isArray(parsed)) {

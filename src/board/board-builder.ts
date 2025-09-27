@@ -1,4 +1,11 @@
-import type { BaseItem, Connector, Frame, Group, GroupableItem } from '@mirohq/websdk-types'
+import type {
+  BaseItem,
+  Connector,
+  ConnectorStyle,
+  Frame,
+  Group,
+  GroupableItem,
+} from '@mirohq/websdk-types'
 import { LRUCache } from 'lru-cache'
 
 import type { EdgeData, EdgeHint, NodeData, PositionedNode } from '../core/graph'
@@ -242,6 +249,7 @@ export class BoardBuilder {
       const template = templateManager.getConnectorTemplate(templateName)
       try {
         const conn = await createConnector(edge, from, to, hints?.[i], template)
+        await this.applyConnectorStyleOverrides(conn, edge)
         created.push(conn)
       } catch (e) {
         log.error(
@@ -257,6 +265,33 @@ export class BoardBuilder {
     }
     log.info({ created: created.length }, 'Edges created')
     return created
+  }
+
+  private async applyConnectorStyleOverrides(connector: Connector, edge: EdgeData): Promise<void> {
+    const overrides = (edge.metadata as { styleOverrides?: Record<string, unknown> } | undefined)
+      ?.styleOverrides as
+      | { strokeColor?: string; strokeWidth?: number; strokeStyle?: string; color?: string }
+      | undefined
+    if (!overrides) {
+      return
+    }
+    const style: ConnectorStyle = {
+      ...(connector.style ?? ({} as ConnectorStyle)),
+    }
+    if (overrides.strokeColor) {
+      style.strokeColor = overrides.strokeColor
+    }
+    if (overrides.strokeWidth !== undefined) {
+      style.strokeWidth = overrides.strokeWidth
+    }
+    if (overrides.strokeStyle) {
+      style.strokeStyle = overrides.strokeStyle as ConnectorStyle['strokeStyle']
+    }
+    if (overrides.color) {
+      style.color = overrides.color
+    }
+    connector.style = style
+    await maybeSync(connector)
   }
 
   /**
