@@ -323,14 +323,19 @@ function convertSequenceDiagram(source: string): GraphData {
 
 const STATE_TRANSITION_PATTERNS = ['-->', '->']
 
-function parseStateTransition(line: string): { from: string; to: string } | undefined {
+function parseStateTransition(
+  line: string,
+): { from: string; to: string; label?: string } | undefined {
+  const colonIndex = line.indexOf(':')
+  const label = colonIndex >= 0 ? line.slice(colonIndex + 1).trim() : undefined
+  const relationPart = colonIndex >= 0 ? line.slice(0, colonIndex).trim() : line.trim()
   for (const pattern of STATE_TRANSITION_PATTERNS) {
-    const idx = line.indexOf(pattern)
+    const idx = relationPart.indexOf(pattern)
     if (idx > 0) {
-      const from = sanitizeIdentifier(line.slice(0, idx).trim())
-      const to = sanitizeIdentifier(line.slice(idx + pattern.length).trim())
+      const from = sanitizeIdentifier(relationPart.slice(0, idx).trim())
+      const to = sanitizeIdentifier(relationPart.slice(idx + pattern.length).trim())
       if (from && to) {
-        return { from, to }
+        return { from, to, label: label?.length ? label : undefined }
       }
     }
   }
@@ -378,6 +383,7 @@ function convertStateDiagram(source: string): GraphData {
           edges.push({
             from: transition.from,
             to: transition.to,
+            label: transition.label,
             metadata: { template: 'flow' },
           })
         }

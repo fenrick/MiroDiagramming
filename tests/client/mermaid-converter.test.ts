@@ -119,6 +119,15 @@ describe('convertMermaidToGraph', () => {
     expect(graph.edges).toHaveLength(2)
   })
 
+  it('captures labels on state transitions and supports nested blocks', async () => {
+    const source = `stateDiagram\nstate Foo {\n A --> B : t\n}\nFoo --> C : out`
+    const graph = await convertMermaidToGraph(source)
+    const ids = graph.nodes.map((n) => n.id).sort()
+    expect(ids).toEqual(['A', 'B', 'C', 'Foo'])
+    const labels = graph.edges.map((e) => e.label).filter(Boolean)
+    expect(labels.sort()).toEqual(['out', 't'])
+  })
+
   it('converts ER diagrams into graph data', async () => {
     const source = `erDiagram\n  CUSTOMER ||--o{ ORDER : places`
     const graph = await convertMermaidToGraph(source)
