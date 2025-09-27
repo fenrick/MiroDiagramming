@@ -198,17 +198,25 @@ function mapNodesFromSvg(
   graph: GraphData,
 ): Record<string, PositionedNode> {
   const nodes: Record<string, PositionedNode> = {}
-  const nodeElements = svgElement.querySelectorAll<SVGGElement>('g.node')
+  const nodeElements = Array.from(
+    svgElement.querySelectorAll<SVGGElement>('g.node, g.actor, g.classGroup, g.state, g.nodeLabel'),
+  )
   const byDomId = new Map<string, SVGGElement>()
-  nodeElements.forEach((el) => byDomId.set(el.id, el))
+  nodeElements.forEach((el) => {
+    if (el.id) {
+      byDomId.set(el.id, el)
+    }
+  })
+  let fallbackIndex = 0
 
   for (const node of graph.nodes) {
     const domId = (node.metadata as { domId?: string } | undefined)?.domId
     const element = domId ? byDomId.get(domId) : undefined
-    if (!element) {
+    const resolvedElement = element ?? nodeElements[fallbackIndex++]
+    if (!resolvedElement) {
       throw new Error(`Mermaid layout missing node element for '${node.id}'`)
     }
-    const bounds = computeNodeBounds(element)
+    const bounds = computeNodeBounds(resolvedElement)
     nodes[node.id] = {
       id: node.id,
       x: bounds.x,

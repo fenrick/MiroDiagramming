@@ -22,7 +22,9 @@ const EDGE_TEMPLATE_MAP: Record<string, string> = {
   influence: 'influence',
 }
 
-export function mapNodeClassesToTemplate(classes: readonly string[] | undefined): string | undefined {
+export function mapNodeClassesToTemplate(
+  classes: readonly string[] | undefined,
+): string | undefined {
   if (!classes) {
     return undefined
   }
@@ -36,7 +38,9 @@ export function mapNodeClassesToTemplate(classes: readonly string[] | undefined)
   return undefined
 }
 
-export function mapEdgeClassesToTemplate(classes: readonly string[] | undefined): string | undefined {
+export function mapEdgeClassesToTemplate(
+  classes: readonly string[] | undefined,
+): string | undefined {
   if (!classes) {
     return undefined
   }
