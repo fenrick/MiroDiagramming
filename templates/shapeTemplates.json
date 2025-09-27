@@ -229,5 +229,81 @@
       }
     ],
     "alias": ["mermaid", "mermaid-node", "Mermaid"]
+  },
+  "MermaidActor": {
+    "elements": [
+      {
+        "shape": "round_rectangle",
+        "width": 160,
+        "height": 80,
+        "style": {
+          "fillColor": "tokens.color.blue[100]",
+          "borderColor": "tokens.color.blue[500]",
+          "borderWidth": "2",
+          "color": "tokens.color.blue[900]",
+          "fontFamily": "Arial",
+          "textAlign": "center"
+        },
+        "text": "{{label}}"
+      }
+    ],
+    "alias": ["actor", "participant"]
+  },
+  "MermaidClass": {
+    "elements": [
+      {
+        "shape": "rectangle",
+        "width": 220,
+        "height": 120,
+        "style": {
+          "fillColor": "tokens.color.gray[50]",
+          "borderColor": "tokens.color.gray[600]",
+          "borderWidth": "2",
+          "color": "tokens.color.gray[900]",
+          "fontFamily": "Arial",
+          "textAlign": "center"
+        },
+        "text": "{{label}}"
+      }
+    ],
+    "alias": ["class"]
+  },
+  "MermaidState": {
+    "elements": [
+      {
+        "shape": "round_rectangle",
+        "width": 200,
+        "height": 100,
+        "style": {
+          "fillColor": "tokens.color.green[100]",
+          "borderColor": "tokens.color.green[500]",
+          "borderWidth": "2",
+          "color": "tokens.color.green[900]",
+          "fontFamily": "Arial",
+          "textAlign": "center"
+        },
+        "text": "{{label}}"
+      }
+    ],
+    "alias": ["state"]
+  },
+  "MermaidEntity": {
+    "elements": [
+      {
+        "shape": "rectangle",
+        "width": 220,
+        "height": 100,
+        "style": {
+          "fillColor": "tokens.color.orange[100]",
+          "borderColor": "tokens.color.orange[600]",
+          "borderWidth": "2",
+          "color": "tokens.color.orange[900]",
+          "fontFamily": "Arial",
+          "textAlign": "center"
+        },
+        "text": "{{label}}"
+      }
+    ],
+    "alias": ["entity", "table"]
   }
 }

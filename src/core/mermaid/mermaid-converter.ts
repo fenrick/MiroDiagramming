@@ -199,7 +199,14 @@ function ensureUniqueNode(
   label: string,
   type: string = 'MermaidNode',
 ): void {
-  if (nodes.some((node) => node.id === id)) {
+  const existing = nodes.find((node) => node.id === id)
+  if (existing) {
+    if (!existing.label && label) {
+      existing.label = label
+    }
+    if (type && existing.type === 'MermaidNode' && type !== existing.type) {
+      existing.type = type
+    }
     return
   }
   nodes.push({ id, label, type })
@@ -223,20 +230,11 @@ function parseParticipantLine(line: string): SequenceParticipant | undefined {
   return alias ? { id: alias, label } : undefined
 }
 
-const SEQUENCE_ARROWS = [
-  '-->>',
-  '->>',
-  '..>>',
-  '-->',
-  '..>',
-  '->',
-  '--',
-  '..',
-  '-x',
-  'x-',
-]
+const SEQUENCE_ARROWS = ['-->>', '->>', '..>>', '-->', '..>', '->', '--', '..', '-x', 'x-']
 
-function parseMessageLine(line: string): { from: string; to: string; arrow: string; label?: string } | undefined {
+function parseMessageLine(
+  line: string,
+): { from: string; to: string; arrow: string; label?: string } | undefined {
   const colonIndex = line.indexOf(':')
   const label = colonIndex >= 0 ? line.slice(colonIndex + 1).trim() : undefined
   const messagePart = colonIndex >= 0 ? line.slice(0, colonIndex).trim() : line.trim()
@@ -253,7 +251,10 @@ function parseMessageLine(line: string): { from: string; to: string; arrow: stri
   return undefined
 }
 
-function mapSequenceArrow(arrow: string): { template: string; styleOverrides?: EdgeStyleOverrides } {
+function mapSequenceArrow(arrow: string): {
+  template: string
+  styleOverrides?: EdgeStyleOverrides
+} {
   const overrides: EdgeStyleOverrides = {}
   if (arrow.includes('--')) {
     overrides.strokeStyle = 'dashed'
@@ -276,7 +277,7 @@ function convertSequenceDiagram(source: string): GraphData {
     const participant = parseParticipantLine(line)
     if (participant && !participants.has(participant.id)) {
       participants.set(participant.id, participant)
-      ensureUniqueNode(nodes, participant.id, participant.label)
+      ensureUniqueNode(nodes, participant.id, participant.label, 'MermaidActor')
     }
   }
 
@@ -287,11 +288,11 @@ function convertSequenceDiagram(source: string): GraphData {
     }
     if (!participants.has(message.from)) {
       participants.set(message.from, { id: message.from, label: message.from })
-      ensureUniqueNode(nodes, message.from, message.from)
+      ensureUniqueNode(nodes, message.from, message.from, 'MermaidActor')
     }
     if (!participants.has(message.to)) {
       participants.set(message.to, { id: message.to, label: message.to })
-      ensureUniqueNode(nodes, message.to, message.to)
+      ensureUniqueNode(nodes, message.to, message.to, 'MermaidActor')
     }
     const arrowMeta = mapSequenceArrow(message.arrow)
     edges.push({
@@ -320,7 +321,129 @@ function convertSequenceDiagram(source: string): GraphData {
   return { nodes, edges }
 }
 
-function parseClassRelation(line: string): { left: string; symbol: string; right: string; label?: string } | undefined {
+const STATE_TRANSITION_PATTERNS = ['-->', '->']
+
+function parseStateTransition(line: string): { from: string; to: string } | undefined {
+  for (const pattern of STATE_TRANSITION_PATTERNS) {
+    const idx = line.indexOf(pattern)
+    if (idx > 0) {
+      const from = sanitizeIdentifier(line.slice(0, idx).trim())
+      const to = sanitizeIdentifier(line.slice(idx + pattern.length).trim())
+      if (from && to) {
+        return { from, to }
+      }
+    }
+  }
+  return undefined
+}
+
+function convertStateDiagram(source: string): GraphData {
+  const nodes: NodeData[] = []
+  const edges: EdgeData[] = []
+  const states = new Set<string>()
+
+  const ensureState = (id: string, label: string) => {
+    if (id === '[*]') {
+      return
+    }
+    if (!states.has(id)) {
+      states.add(id)
+      ensureUniqueNode(nodes, id, label, 'MermaidState')
+    }
+  }
+
+  source
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line.length && !line.startsWith('%%') && !/^stateDiagram/i.test(line))
+    .forEach((line) => {
+      if (/^state\s+/i.test(line)) {
+        const cleaned = line.replace(/^state\s+/i, '')
+        const lower = cleaned.toLowerCase()
+        const asIndex = lower.indexOf(' as ')
+        const rawName = asIndex >= 0 ? cleaned.slice(0, asIndex) : cleaned
+        const alias = asIndex >= 0 ? cleaned.slice(asIndex + 4) : rawName
+        const id = sanitizeIdentifier((alias ?? rawName).split(/[\s{]/)[0] ?? '')
+        if (id) {
+          ensureState(id, sanitizeIdentifier(rawName))
+        }
+        return
+      }
+
+      const transition = parseStateTransition(line)
+      if (transition) {
+        ensureState(transition.from, transition.from)
+        ensureState(transition.to, transition.to)
+        if (transition.from !== '[*]' && transition.to !== '[*]') {
+          edges.push({
+            from: transition.from,
+            to: transition.to,
+            metadata: { template: 'flow' },
+          })
+        }
+      }
+    })
+
+  return { nodes, edges }
+}
+
+function parseErRelation(line: string): { left: string; symbol: string; right: string; label?: string } | undefined {
+  const colonIndex = line.indexOf(':')
+  const label = colonIndex >= 0 ? line.slice(colonIndex + 1).trim() : undefined
+  const relationPart = colonIndex >= 0 ? line.slice(0, colonIndex).trim() : line.trim()
+  const match = relationPart.match(/^(\w+)\s+([|}{o]{1,2}--[|}{o]{1,2})\s+(\w+)/)
+  if (!match) {
+    return undefined
+  }
+  return {
+    left: sanitizeIdentifier(match[1]!),
+    symbol: match[2]!,
+    right: sanitizeIdentifier(match[3]!),
+    label,
+  }
+}
+
+function formatErCardinality(symbol: string): string {
+  const [left, right] = symbol.split('--')
+  if (!left || !right) {
+    return symbol
+  }
+  return `${left} .. ${right}`
+}
+
+function convertErDiagram(source: string): GraphData {
+  const nodes: NodeData[] = []
+  const edges: EdgeData[] = []
+
+  const ensureEntity = (name: string) => ensureUniqueNode(nodes, name, name, 'MermaidEntity')
+
+  source
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line.length && !line.startsWith('%%') && !/^erDiagram/i.test(line))
+    .forEach((line) => {
+      const relation = parseErRelation(line)
+      if (!relation) {
+        return
+      }
+      ensureEntity(relation.left)
+      ensureEntity(relation.right)
+      const cardinality = formatErCardinality(relation.symbol)
+      const label = relation.label ? `${relation.label} (${cardinality})` : cardinality
+      edges.push({
+        from: relation.left,
+        to: relation.right,
+        label,
+        metadata: { template: 'association' },
+      })
+    })
+
+  return { nodes, edges }
+}
+
+function parseClassRelation(
+  line: string,
+): { left: string; symbol: string; right: string; label?: string } | undefined {
   const colonIndex = line.indexOf(':')
   const label = colonIndex >= 0 ? line.slice(colonIndex + 1).trim() : undefined
   const relationPart = colonIndex >= 0 ? line.slice(0, colonIndex).trim() : line.trim()
@@ -359,14 +482,18 @@ function mapClassRelationSymbol(symbol: string): {
     template = 'dependency'
   }
   const direction: 'forward' | 'reverse' = relation.startsWith('<') ? 'reverse' : 'forward'
-  return { template, styleOverrides: Object.keys(overrides).length ? overrides : undefined, direction }
+  return {
+    template,
+    styleOverrides: Object.keys(overrides).length ? overrides : undefined,
+    direction,
+  }
 }
 
 function convertClassDiagram(source: string): GraphData {
   const nodes: NodeData[] = []
   const edges: EdgeData[] = []
 
-  const ensureClassNode = (name: string) => ensureUniqueNode(nodes, name, name)
+  const ensureClassNode = (name: string) => ensureUniqueNode(nodes, name, name, 'MermaidClass')
 
   source
     .split(/\r?\n/)
@@ -538,6 +665,12 @@ export async function convertMermaidToGraph(
   }
   if (/^classDiagram/i.test(trimmed)) {
     return convertClassDiagram(trimmed)
+  }
+  if (/^stateDiagram/i.test(trimmed)) {
+    return convertStateDiagram(trimmed)
+  }
+  if (/^erDiagram/i.test(trimmed)) {
+    return convertErDiagram(trimmed)
   }
   try {
     ensureMermaidInitialized(options.config)

@@ -71,8 +71,23 @@ describe('convertMermaidToGraph', () => {
     expect(edge.metadata).toMatchObject({ template: 'inheritance' })
   })
 
-  it('throws for unsupported diagrams', async () => {
+  it('converts state diagrams into graph data', async () => {
+    const source = `stateDiagram\n  idle --> running\n  running --> finished`
+    const graph = await convertMermaidToGraph(source)
+    expect(graph.nodes.map((n) => n.id).sort()).toEqual(['finished', 'idle', 'running'])
+    expect(graph.edges).toHaveLength(2)
+  })
+
+  it('converts ER diagrams into graph data', async () => {
     const source = `erDiagram\n  CUSTOMER ||--o{ ORDER : places`
+    const graph = await convertMermaidToGraph(source)
+    expect(graph.nodes.map((n) => n.id).sort()).toEqual(['CUSTOMER', 'ORDER'])
+    expect(graph.edges).toHaveLength(1)
+    expect(graph.edges[0]?.label).toContain('|| .. o{')
+  })
+
+  it('throws for unsupported diagrams', async () => {
+    const source = `journey\n  title My Journey`
     await expect(convertMermaidToGraph(source)).rejects.toBeInstanceOf(MermaidConversionError)
   })
 
