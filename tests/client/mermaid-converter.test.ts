@@ -91,6 +91,27 @@ describe('convertMermaidToGraph', () => {
     expect(meta?.styleOverrides?.strokeStyle).toBe('dashed')
   })
 
+  it('maps class composition (*--) and aggregation (o--) to templates', async () => {
+    const source = `classDiagram\n  Whole *-- Part\n  Container o-- Content`
+    const graph = await convertMermaidToGraph(source)
+    expect(graph.edges).toHaveLength(2)
+    const templates = graph.edges.map((e) => (e.metadata as any)?.template)
+    expect(templates).toContain('composition')
+    expect(templates).toContain('aggregation')
+  })
+
+  it('maps class dependency (..>) to dependency template and keeps dashed style', async () => {
+    const source = `classDiagram\n  A ..> B`
+    const graph = await convertMermaidToGraph(source)
+    expect(graph.edges).toHaveLength(1)
+    const meta = graph.edges[0]?.metadata as {
+      template?: string
+      styleOverrides?: { strokeStyle?: string }
+    }
+    expect(meta?.template).toBe('dependency')
+    expect(meta?.styleOverrides?.strokeStyle).toBe('dashed')
+  })
+
   it('converts state diagrams into graph data', async () => {
     const source = `stateDiagram\n  idle --> running\n  running --> finished`
     const graph = await convertMermaidToGraph(source)
