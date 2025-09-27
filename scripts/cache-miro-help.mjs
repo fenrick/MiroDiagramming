@@ -19,6 +19,8 @@ const URLS = [
   // Readme-style reference pages that sometimes 404 via curl but are useful if available
   'https://developers.miro.com/reference/web-sdk-reference-shapes',
   'https://developers.miro.com/reference/reference-web-sdk-shapes',
+  // Rate limiting docs (requested)
+  'https://developers.miro.com/docs/websdk-reference-rate-limiting',
 ]
 
 function sanitize(name) {
@@ -51,7 +53,10 @@ function stripHtml(html) {
 async function main() {
   fs.mkdirSync(OUT_DIR, { recursive: true })
   const index = []
-  for (const url of URLS) {
+  const seen = new Set()
+  async function cacheOne(url) {
+    if (seen.has(url)) return { status: 0, text: '' }
+    seen.add(url)
     const { status, text } = await fetchPage(url)
     const slug = sanitize(url.replace(/^https?:\/\//, ''))
     const htmlPath = path.join(OUT_DIR, `${slug}.html`)
@@ -65,6 +70,32 @@ async function main() {
       txt: path.relative(process.cwd(), txtPath),
     })
     console.log('Cached', status, url)
+    return { status, text }
+  }
+
+  // Seed
+  for (const url of URLS) {
+    await cacheOne(url)
+  }
+
+  // Crawl linked docs from the rate limiting page (stay within /docs/)
+  const rateUrl = 'https://developers.miro.com/docs/websdk-reference-rate-limiting'
+  const rateSlug = sanitize(rateUrl.replace(/^https?:\/\//, ''))
+  const htmlPath = path.join(OUT_DIR, `${rateSlug}.html`)
+  if (fs.existsSync(htmlPath)) {
+    const html = fs.readFileSync(htmlPath, 'utf8')
+    const linkRe = /href=\"(\/docs\/[^\"#?]+)\"/g
+    const toVisit = new Set()
+    let m
+    while ((m = linkRe.exec(html))) {
+      const abs = `https://developers.miro.com${m[1]}`
+      toVisit.add(abs)
+    }
+    let count = 0
+    for (const u of toVisit) {
+      if (count++ > 50) break
+      await cacheOne(u)
+    }
   }
   fs.writeFileSync(path.join(OUT_DIR, 'INDEX.json'), JSON.stringify(index, null, 2))
 }
