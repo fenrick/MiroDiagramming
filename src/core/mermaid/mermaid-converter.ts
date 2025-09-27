@@ -86,6 +86,11 @@ type EdgeStyleOverrides = {
   color?: string
 }
 
+type SequenceParticipant = {
+  id: string
+  label: string
+}
+
 function normaliseLabel(candidate: string | undefined, fallback: string): string {
   if (typeof candidate !== 'string') {
     return fallback
@@ -175,6 +180,233 @@ function mapShape(shape?: string): string | undefined {
     return undefined
   }
   return SHAPE_MAP[shape.toLowerCase()]
+}
+
+function sanitizeIdentifier(raw: string): string {
+  let value = raw
+  if (value.startsWith('"')) {
+    value = value.slice(1)
+  }
+  if (value.endsWith('"')) {
+    value = value.slice(0, -1)
+  }
+  return value
+}
+
+function ensureUniqueNode(
+  nodes: NodeData[],
+  id: string,
+  label: string,
+  type: string = 'MermaidNode',
+): void {
+  if (nodes.some((node) => node.id === id)) {
+    return
+  }
+  nodes.push({ id, label, type })
+}
+
+function parseParticipantLine(line: string): SequenceParticipant | undefined {
+  const cleaned = line.replace(/^(participant|actor)\s+/i, '')
+  const lower = cleaned.toLowerCase()
+  const asIndex = lower.indexOf(' as ')
+  let rawName = cleaned
+  let rawAlias: string | undefined
+  if (asIndex >= 0) {
+    rawName = cleaned.slice(0, asIndex)
+    rawAlias = cleaned.slice(asIndex + 4)
+  }
+  if (!rawName) {
+    return undefined
+  }
+  const alias = sanitizeIdentifier((rawAlias ?? rawName).trim())
+  const label = sanitizeIdentifier(rawName.trim())
+  return alias ? { id: alias, label } : undefined
+}
+
+const SEQUENCE_ARROWS = [
+  '-->>',
+  '->>',
+  '..>>',
+  '-->',
+  '..>',
+  '->',
+  '--',
+  '..',
+  '-x',
+  'x-',
+]
+
+function parseMessageLine(line: string): { from: string; to: string; arrow: string; label?: string } | undefined {
+  const colonIndex = line.indexOf(':')
+  const label = colonIndex >= 0 ? line.slice(colonIndex + 1).trim() : undefined
+  const messagePart = colonIndex >= 0 ? line.slice(0, colonIndex).trim() : line.trim()
+  for (const arrow of SEQUENCE_ARROWS) {
+    const idx = messagePart.indexOf(arrow)
+    if (idx > 0) {
+      const from = messagePart.slice(0, idx).trim()
+      const to = messagePart.slice(idx + arrow.length).trim()
+      if (from && to) {
+        return { from, to, arrow, label: label?.length ? label : undefined }
+      }
+    }
+  }
+  return undefined
+}
+
+function mapSequenceArrow(arrow: string): { template: string; styleOverrides?: EdgeStyleOverrides } {
+  const overrides: EdgeStyleOverrides = {}
+  if (arrow.includes('--')) {
+    overrides.strokeStyle = 'dashed'
+  }
+  if (arrow.includes('..')) {
+    overrides.strokeStyle = 'dotted'
+  }
+  return {
+    template: arrow.includes('>>') ? 'flow' : 'default',
+    styleOverrides: Object.keys(overrides).length ? overrides : undefined,
+  }
+}
+
+function convertSequenceDiagram(source: string): GraphData {
+  const participants = new Map<string, SequenceParticipant>()
+  const nodes: NodeData[] = []
+  const edges: EdgeData[] = []
+
+  const processParticipant = (line: string) => {
+    const participant = parseParticipantLine(line)
+    if (participant && !participants.has(participant.id)) {
+      participants.set(participant.id, participant)
+      ensureUniqueNode(nodes, participant.id, participant.label)
+    }
+  }
+
+  const processMessage = (line: string) => {
+    const message = parseMessageLine(line)
+    if (!message) {
+      return
+    }
+    if (!participants.has(message.from)) {
+      participants.set(message.from, { id: message.from, label: message.from })
+      ensureUniqueNode(nodes, message.from, message.from)
+    }
+    if (!participants.has(message.to)) {
+      participants.set(message.to, { id: message.to, label: message.to })
+      ensureUniqueNode(nodes, message.to, message.to)
+    }
+    const arrowMeta = mapSequenceArrow(message.arrow)
+    edges.push({
+      from: message.from,
+      to: message.to,
+      label: message.label,
+      metadata: {
+        template: arrowMeta.template,
+        styleOverrides: arrowMeta.styleOverrides,
+      },
+    })
+  }
+
+  source
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line.length && !line.startsWith('%%') && !/^sequenceDiagram/i.test(line))
+    .forEach((line) => {
+      if (/^(participant|actor)\s+/i.test(line)) {
+        processParticipant(line)
+      } else if (!/^(activate|deactivate|loop|end|note\s+)/i.test(line)) {
+        processMessage(line)
+      }
+    })
+
+  return { nodes, edges }
+}
+
+function parseClassRelation(line: string): { left: string; symbol: string; right: string; label?: string } | undefined {
+  const colonIndex = line.indexOf(':')
+  const label = colonIndex >= 0 ? line.slice(colonIndex + 1).trim() : undefined
+  const relationPart = colonIndex >= 0 ? line.slice(0, colonIndex).trim() : line.trim()
+  const parts = relationPart.split(/\s+/)
+  if (parts.length < 3) {
+    return undefined
+  }
+  return {
+    left: sanitizeIdentifier(parts[0]!),
+    symbol: parts[1]!,
+    right: sanitizeIdentifier(parts[2]!),
+    label,
+  }
+}
+
+function mapClassRelationSymbol(symbol: string): {
+  template: string
+  styleOverrides?: EdgeStyleOverrides
+  direction: 'forward' | 'reverse'
+} {
+  const relation = symbol.trim()
+  const overrides: EdgeStyleOverrides = {}
+  if (relation.includes('..')) {
+    overrides.strokeStyle = 'dotted'
+  } else if (relation.includes('--')) {
+    overrides.strokeStyle = 'dashed'
+  }
+  let template = 'association'
+  if (relation.includes('<|') || relation.includes('|>')) {
+    template = 'inheritance'
+  } else if (relation.includes('*')) {
+    template = 'composition'
+  } else if (relation.includes('o')) {
+    template = 'aggregation'
+  } else if (relation.includes('..')) {
+    template = 'dependency'
+  }
+  const direction: 'forward' | 'reverse' = relation.startsWith('<') ? 'reverse' : 'forward'
+  return { template, styleOverrides: Object.keys(overrides).length ? overrides : undefined, direction }
+}
+
+function convertClassDiagram(source: string): GraphData {
+  const nodes: NodeData[] = []
+  const edges: EdgeData[] = []
+
+  const ensureClassNode = (name: string) => ensureUniqueNode(nodes, name, name)
+
+  source
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line.length && !line.startsWith('%%') && !/^classDiagram/i.test(line))
+    .forEach((line) => {
+      const relation = parseClassRelation(line)
+      if (relation) {
+        ensureClassNode(relation.left)
+        ensureClassNode(relation.right)
+        const mapping = mapClassRelationSymbol(relation.symbol)
+        const from = mapping.direction === 'forward' ? relation.left : relation.right
+        const to = mapping.direction === 'forward' ? relation.right : relation.left
+        edges.push({
+          from,
+          to,
+          label: relation.label,
+          metadata: {
+            template: mapping.template,
+            styleOverrides: mapping.styleOverrides,
+          },
+        })
+        return
+      }
+
+      if (/^class\s+/i.test(line)) {
+        const name = sanitizeIdentifier(line.replace(/^class\s+/i, '').split(/[\s{]/)[0] ?? '')
+        if (name) {
+          ensureClassNode(name)
+        }
+        return
+      }
+
+      const propertyMatch = line.match(/^([^\s:]+)\s*:/)
+      if (propertyMatch) {
+        ensureClassNode(sanitizeIdentifier(propertyMatch[1]!))
+      }
+    })
+
+  return { nodes, edges }
 }
 
 function extractLinkStyles(source: string): Map<number, EdgeStyleOverrides> {
@@ -300,6 +532,12 @@ export async function convertMermaidToGraph(
   const trimmed = source.trim()
   if (!trimmed) {
     throw new MermaidConversionError('Mermaid definition is empty')
+  }
+  if (/^sequenceDiagram/i.test(trimmed)) {
+    return convertSequenceDiagram(trimmed)
+  }
+  if (/^classDiagram/i.test(trimmed)) {
+    return convertClassDiagram(trimmed)
   }
   try {
     ensureMermaidInitialized(options.config)

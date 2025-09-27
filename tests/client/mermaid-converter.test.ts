@@ -53,8 +53,26 @@ describe('convertMermaidToGraph', () => {
     })
   })
 
+  it('converts sequence diagrams into graph data', async () => {
+    const source = `sequenceDiagram\n  participant Alice\n  participant Bob\n  Alice->>Bob: Hello`
+    const graph = await convertMermaidToGraph(source)
+    expect(graph.nodes.map((n) => n.id)).toEqual(['Alice', 'Bob'])
+    expect(graph.edges).toHaveLength(1)
+    expect(graph.edges[0]).toMatchObject({ from: 'Alice', to: 'Bob', label: 'Hello' })
+  })
+
+  it('converts class diagrams into graph data', async () => {
+    const source = `classDiagram\n  ClassA <|-- ClassB : inherits`
+    const graph = await convertMermaidToGraph(source)
+    expect(graph.nodes.map((n) => n.id).sort()).toEqual(['ClassA', 'ClassB'])
+    expect(graph.edges).toHaveLength(1)
+    const edge = graph.edges[0]
+    expect([edge.from, edge.to].sort()).toEqual(['ClassA', 'ClassB'])
+    expect(edge.metadata).toMatchObject({ template: 'inheritance' })
+  })
+
   it('throws for unsupported diagrams', async () => {
-    const source = `sequenceDiagram\n  Alice->>Bob: Hi Bob`
+    const source = `erDiagram\n  CUSTOMER ||--o{ ORDER : places`
     await expect(convertMermaidToGraph(source)).rejects.toBeInstanceOf(MermaidConversionError)
   })
 
