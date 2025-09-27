@@ -399,7 +399,8 @@ function parseErRelation(
   const colonIndex = line.indexOf(':')
   const label = colonIndex >= 0 ? line.slice(colonIndex + 1).trim() : undefined
   const relationPart = colonIndex >= 0 ? line.slice(0, colonIndex).trim() : line.trim()
-  const match = relationPart.match(/^(\w+)\s+([|}{o]{1,2}--[|}{o]{1,2})\s+(\w+)/)
+  // Support plain identifiers (\w+) or quoted names with spaces.
+  const match = relationPart.match(/^("[^"]+"|\w+)\s+([|}{o]{1,2}--[|}{o]{1,2})\s+("[^"]+"|\w+)/)
   if (!match) {
     return undefined
   }
