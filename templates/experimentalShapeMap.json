@@ -1,1 +1,5 @@
-{}
+{
+  "Application": "flow_chart_process",
+  "Business": "flow_chart_decision",
+  "MermaidNode": "flow_chart_process"
+}
