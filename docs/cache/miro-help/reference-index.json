@@ -1,0 +1,613 @@
+{
+  "generatedAt": "2025-09-27T13:33:54.584Z",
+  "pageCount": 31,
+  "pages": [
+    {
+      "file": "developers-miro-com-docs-websdk-reference-app-card.txt",
+      "title": "App card",
+      "url": "https://miro.com/docs/websdk/reference/app/card",
+      "mentions": {
+        "flowChartCodes": [],
+        "shapeType": ["can", "cross", "star"],
+        "shapeName": ["can", "cross", "star"],
+        "connectorShape": [],
+        "strokeStyle": [],
+        "strokeCapShape": ["arrow"],
+        "stickyNoteShape": ["square"]
+      }
+    },
+    {
+      "file": "developers-miro-com-docs-websdk-reference-attention.txt",
+      "title": "Attention",
+      "url": "https://miro.com/docs/websdk/reference/attention",
+      "mentions": {
+        "flowChartCodes": [],
+        "shapeType": ["can", "star"],
+        "shapeName": ["can", "star"],
+        "connectorShape": [],
+        "strokeStyle": [],
+        "strokeCapShape": [],
+        "stickyNoteShape": []
+      }
+    },
+    {
+      "file": "developers-miro-com-docs-websdk-reference-board.txt",
+      "title": "Board",
+      "url": "https://miro.com/docs/websdk/reference/board",
+      "mentions": {
+        "flowChartCodes": [],
+        "shapeType": [
+          "can",
+          "circle",
+          "cross",
+          "rectangle",
+          "round_rectangle",
+          "star",
+          "triangle",
+          "wedge_round_rectangle_callout"
+        ],
+        "shapeName": [
+          "can",
+          "circle",
+          "cross",
+          "rectangle",
+          "round_rectangle",
+          "star",
+          "triangle",
+          "wedge_round_rectangle_callout"
+        ],
+        "connectorShape": ["elbowed"],
+        "strokeStyle": ["dashed", "normal"],
+        "strokeCapShape": ["diamond", "stealth", "triangle"],
+        "stickyNoteShape": ["rectangle", "square"]
+      }
+    },
+    {
+      "file": "developers-miro-com-docs-websdk-reference-card.txt",
+      "title": "Card",
+      "url": "https://miro.com/docs/websdk/reference/card",
+      "mentions": {
+        "flowChartCodes": [],
+        "shapeType": ["can", "cross", "star"],
+        "shapeName": ["can", "cross", "star"],
+        "connectorShape": [],
+        "strokeStyle": [],
+        "strokeCapShape": ["arrow", "none"],
+        "stickyNoteShape": ["square"]
+      }
+    },
+    {
+      "file": "developers-miro-com-docs-websdk-reference-collaboration.txt",
+      "title": "Collaboration",
+      "url": "https://miro.com/docs/websdk/reference/collaboration",
+      "mentions": {
+        "flowChartCodes": [],
+        "shapeType": ["can", "cross", "star"],
+        "shapeName": ["can", "cross", "star"],
+        "connectorShape": [],
+        "strokeStyle": [],
+        "strokeCapShape": [],
+        "stickyNoteShape": []
+      }
+    },
+    {
+      "file": "developers-miro-com-docs-websdk-reference-collection.txt",
+      "title": "Storage collection",
+      "url": "https://miro.com/docs/websdk/reference/collection",
+      "mentions": {
+        "flowChartCodes": [],
+        "shapeType": ["can", "star"],
+        "shapeName": ["can", "star"],
+        "connectorShape": [],
+        "strokeStyle": [],
+        "strokeCapShape": [],
+        "stickyNoteShape": []
+      }
+    },
+    {
+      "file": "developers-miro-com-docs-websdk-reference-connector.txt",
+      "title": "Connector",
+      "url": "https://miro.com/docs/websdk/reference/connector",
+      "mentions": {
+        "flowChartCodes": [],
+        "shapeType": ["can", "cross", "star", "triangle"],
+        "shapeName": ["can", "cross", "star", "triangle"],
+        "connectorShape": ["curved", "elbowed", "straight"],
+        "strokeStyle": ["dashed", "dotted", "normal"],
+        "strokeCapShape": [
+          "arrow",
+          "diamond",
+          "erd_many",
+          "erd_one",
+          "erd_one_or_many",
+          "erd_only_one",
+          "erd_zero_or_many",
+          "erd_zero_or_one",
+          "filled_diamond",
+          "filled_oval",
+          "filled_triangle",
+          "none",
+          "oval",
+          "rounded_stealth",
+          "stealth",
+          "triangle"
+        ],
+        "stickyNoteShape": []
+      }
+    },
+    {
+      "file": "developers-miro-com-docs-websdk-reference-custom-action-management.txt",
+      "title": "Custom Action Management",
+      "url": "https://miro.com/docs/websdk/reference/custom/action/management",
+      "mentions": {
+        "flowChartCodes": [],
+        "shapeType": ["can", "star"],
+        "shapeName": ["can", "star"],
+        "connectorShape": [],
+        "strokeStyle": [],
+        "strokeCapShape": [],
+        "stickyNoteShape": []
+      }
+    },
+    {
+      "file": "developers-miro-com-docs-websdk-reference-embed.txt",
+      "title": "Embed",
+      "url": "https://miro.com/docs/websdk/reference/embed",
+      "mentions": {
+        "flowChartCodes": [],
+        "shapeType": ["can", "cross", "star"],
+        "shapeName": ["can", "cross", "star"],
+        "connectorShape": [],
+        "strokeStyle": [],
+        "strokeCapShape": ["arrow"],
+        "stickyNoteShape": []
+      }
+    },
+    {
+      "file": "developers-miro-com-docs-websdk-reference-error-handling.txt",
+      "title": "Error handling",
+      "url": "https://miro.com/docs/websdk/reference/error/handling",
+      "mentions": {
+        "flowChartCodes": [],
+        "shapeType": ["can", "star"],
+        "shapeName": ["can", "star"],
+        "connectorShape": [],
+        "strokeStyle": [],
+        "strokeCapShape": [],
+        "stickyNoteShape": []
+      }
+    },
+    {
+      "file": "developers-miro-com-docs-websdk-reference-events.txt",
+      "title": "Realtime Events",
+      "url": "https://miro.com/docs/websdk/reference/events",
+      "mentions": {
+        "flowChartCodes": [],
+        "shapeType": ["can", "star"],
+        "shapeName": ["can", "star"],
+        "connectorShape": [],
+        "strokeStyle": [],
+        "strokeCapShape": [],
+        "stickyNoteShape": []
+      }
+    },
+    {
+      "file": "developers-miro-com-docs-websdk-reference-experimental.txt",
+      "title": "Experimental",
+      "url": "https://miro.com/docs/websdk/reference/experimental",
+      "mentions": {
+        "flowChartCodes": [],
+        "shapeType": ["can", "star"],
+        "shapeName": ["can", "star"],
+        "connectorShape": [],
+        "strokeStyle": [],
+        "strokeCapShape": [],
+        "stickyNoteShape": []
+      }
+    },
+    {
+      "file": "developers-miro-com-docs-websdk-reference-frame.txt",
+      "title": "Frame",
+      "url": "https://miro.com/docs/websdk/reference/frame",
+      "mentions": {
+        "flowChartCodes": [],
+        "shapeType": ["can", "cross", "star"],
+        "shapeName": ["can", "cross", "star"],
+        "connectorShape": [],
+        "strokeStyle": [],
+        "strokeCapShape": ["arrow"],
+        "stickyNoteShape": []
+      }
+    },
+    {
+      "file": "developers-miro-com-docs-websdk-reference-group.txt",
+      "title": "Group",
+      "url": "https://miro.com/docs/websdk/reference/group",
+      "mentions": {
+        "flowChartCodes": [],
+        "shapeType": ["can", "star"],
+        "shapeName": ["can", "star"],
+        "connectorShape": [],
+        "strokeStyle": [],
+        "strokeCapShape": [],
+        "stickyNoteShape": []
+      }
+    },
+    {
+      "file": "developers-miro-com-docs-websdk-reference-history.txt",
+      "title": "History",
+      "url": "https://miro.com/docs/websdk/reference/history",
+      "mentions": {
+        "flowChartCodes": [],
+        "shapeType": ["can", "star"],
+        "shapeName": ["can", "star"],
+        "connectorShape": [],
+        "strokeStyle": [],
+        "strokeCapShape": [],
+        "stickyNoteShape": []
+      }
+    },
+    {
+      "file": "developers-miro-com-docs-websdk-reference-image.txt",
+      "title": "Image",
+      "url": "https://miro.com/docs/websdk/reference/image",
+      "mentions": {
+        "flowChartCodes": [],
+        "shapeType": ["can", "cross", "star"],
+        "shapeName": ["can", "cross", "star"],
+        "connectorShape": [],
+        "strokeStyle": [],
+        "strokeCapShape": ["arrow"],
+        "stickyNoteShape": []
+      }
+    },
+    {
+      "file": "developers-miro-com-docs-websdk-reference-interact-with-boards-and-items.txt",
+      "title": "Interact with boards and items",
+      "url": "https://miro.com/docs/websdk/reference/interact/with/boards/and/items",
+      "mentions": {
+        "flowChartCodes": [],
+        "shapeType": ["can", "star"],
+        "shapeName": ["can", "star"],
+        "connectorShape": [],
+        "strokeStyle": [],
+        "strokeCapShape": [],
+        "stickyNoteShape": []
+      }
+    },
+    {
+      "file": "developers-miro-com-docs-websdk-reference-mindmap-node.txt",
+      "title": "Mindmap Node",
+      "url": "https://miro.com/docs/websdk/reference/mindmap/node",
+      "mentions": {
+        "flowChartCodes": [],
+        "shapeType": ["can", "cross", "rectangle", "round_rectangle", "star"],
+        "shapeName": ["can", "cross", "rectangle", "round_rectangle", "star"],
+        "connectorShape": [],
+        "strokeStyle": ["dashed", "dotted", "normal"],
+        "strokeCapShape": ["arrow"],
+        "stickyNoteShape": ["rectangle"]
+      }
+    },
+    {
+      "file": "developers-miro-com-docs-websdk-reference-notifications.txt",
+      "title": "Notifications",
+      "url": "https://miro.com/docs/websdk/reference/notifications",
+      "mentions": {
+        "flowChartCodes": [],
+        "shapeType": ["can", "star"],
+        "shapeName": ["can", "star"],
+        "connectorShape": [],
+        "strokeStyle": [],
+        "strokeCapShape": [],
+        "stickyNoteShape": []
+      }
+    },
+    {
+      "file": "developers-miro-com-docs-websdk-reference-preview.txt",
+      "title": "Preview",
+      "url": "https://miro.com/docs/websdk/reference/preview",
+      "mentions": {
+        "flowChartCodes": [],
+        "shapeType": ["can", "cross", "star"],
+        "shapeName": ["can", "cross", "star"],
+        "connectorShape": [],
+        "strokeStyle": [],
+        "strokeCapShape": ["arrow"],
+        "stickyNoteShape": []
+      }
+    },
+    {
+      "file": "developers-miro-com-docs-websdk-reference-rate-limiting.txt",
+      "title": "Rate limiting",
+      "url": "https://miro.com/docs/websdk/reference/rate/limiting",
+      "mentions": {
+        "flowChartCodes": [],
+        "shapeType": ["can", "star"],
+        "shapeName": ["can", "star"],
+        "connectorShape": [],
+        "strokeStyle": [],
+        "strokeCapShape": [],
+        "stickyNoteShape": []
+      }
+    },
+    {
+      "file": "developers-miro-com-docs-websdk-reference-session.txt",
+      "title": "Session",
+      "url": "https://miro.com/docs/websdk/reference/session",
+      "mentions": {
+        "flowChartCodes": [],
+        "shapeType": ["can", "star"],
+        "shapeName": ["can", "star"],
+        "connectorShape": [],
+        "strokeStyle": [],
+        "strokeCapShape": [],
+        "stickyNoteShape": []
+      }
+    },
+    {
+      "file": "developers-miro-com-docs-websdk-reference-shape-experimental.txt",
+      "title": "Shape experimental",
+      "url": "https://miro.com/docs/websdk/reference/shape/experimental",
+      "mentions": {
+        "flowChartCodes": [
+          "flow_chart_connector",
+          "flow_chart_decision",
+          "flow_chart_delay",
+          "flow_chart_display",
+          "flow_chart_document",
+          "flow_chart_input_output",
+          "flow_chart_internal_storage",
+          "flow_chart_magnetic_disk",
+          "flow_chart_magnetic_drum",
+          "flow_chart_manual_input",
+          "flow_chart_manual_operation",
+          "flow_chart_merge",
+          "flow_chart_multidocument",
+          "flow_chart_note_curly_left",
+          "flow_chart_note_curly_right",
+          "flow_chart_note_square",
+          "flow_chart_offpage_connector",
+          "flow_chart_online_storage",
+          "flow_chart_or",
+          "flow_chart_predefined_process",
+          "flow_chart_predefined_process_2",
+          "flow_chart_preparation",
+          "flow_chart_process",
+          "flow_chart_summing_junction",
+          "flow_chart_terminator"
+        ],
+        "shapeType": [
+          "can",
+          "circle",
+          "cloud",
+          "cross",
+          "flow_chart_predefined_process",
+          "hexagon",
+          "left_arrow",
+          "left_brace",
+          "left_right_arrow",
+          "octagon",
+          "parallelogram",
+          "pentagon",
+          "rectangle",
+          "rhombus",
+          "right_arrow",
+          "right_brace",
+          "round_rectangle",
+          "star",
+          "trapezoid",
+          "triangle",
+          "wedge_round_rectangle_callout"
+        ],
+        "shapeName": [
+          "can",
+          "circle",
+          "cloud",
+          "cross",
+          "flow_chart_connector",
+          "flow_chart_decision",
+          "flow_chart_delay",
+          "flow_chart_display",
+          "flow_chart_document",
+          "flow_chart_input_output",
+          "flow_chart_internal_storage",
+          "flow_chart_magnetic_disk",
+          "flow_chart_magnetic_drum",
+          "flow_chart_manual_input",
+          "flow_chart_manual_operation",
+          "flow_chart_merge",
+          "flow_chart_multidocument",
+          "flow_chart_note_curly_left",
+          "flow_chart_note_curly_right",
+          "flow_chart_note_square",
+          "flow_chart_offpage_connector",
+          "flow_chart_online_storage",
+          "flow_chart_or",
+          "flow_chart_predefined_process",
+          "flow_chart_predefined_process_2",
+          "flow_chart_preparation",
+          "flow_chart_process",
+          "flow_chart_summing_junction",
+          "flow_chart_terminator",
+          "hexagon",
+          "left_arrow",
+          "left_brace",
+          "left_right_arrow",
+          "octagon",
+          "parallelogram",
+          "pentagon",
+          "rectangle",
+          "rhombus",
+          "right_arrow",
+          "right_brace",
+          "round_rectangle",
+          "star",
+          "trapezoid",
+          "triangle",
+          "wedge_round_rectangle_callout"
+        ],
+        "connectorShape": [],
+        "strokeStyle": ["dashed", "dotted", "normal"],
+        "strokeCapShape": ["arrow", "triangle"],
+        "stickyNoteShape": ["rectangle", "square"]
+      }
+    },
+    {
+      "file": "developers-miro-com-docs-websdk-reference-shape.txt",
+      "title": "Shape",
+      "url": "https://miro.com/docs/websdk/reference/shape",
+      "mentions": {
+        "flowChartCodes": ["flow_chart_predefined_process"],
+        "shapeType": [
+          "can",
+          "circle",
+          "cloud",
+          "cross",
+          "flow_chart_predefined_process",
+          "hexagon",
+          "left_arrow",
+          "left_brace",
+          "left_right_arrow",
+          "octagon",
+          "parallelogram",
+          "pentagon",
+          "rectangle",
+          "rhombus",
+          "right_arrow",
+          "right_brace",
+          "round_rectangle",
+          "star",
+          "trapezoid",
+          "triangle",
+          "wedge_round_rectangle_callout"
+        ],
+        "shapeName": [
+          "can",
+          "circle",
+          "cloud",
+          "cross",
+          "flow_chart_predefined_process",
+          "hexagon",
+          "left_arrow",
+          "left_brace",
+          "left_right_arrow",
+          "octagon",
+          "parallelogram",
+          "pentagon",
+          "rectangle",
+          "rhombus",
+          "right_arrow",
+          "right_brace",
+          "round_rectangle",
+          "star",
+          "trapezoid",
+          "triangle",
+          "wedge_round_rectangle_callout"
+        ],
+        "connectorShape": [],
+        "strokeStyle": ["dashed", "dotted", "normal"],
+        "strokeCapShape": ["arrow", "triangle"],
+        "stickyNoteShape": ["rectangle", "square"]
+      }
+    },
+    {
+      "file": "developers-miro-com-docs-websdk-reference-sticky-note.txt",
+      "title": "Sticky Note",
+      "url": "https://miro.com/docs/websdk/reference/sticky/note",
+      "mentions": {
+        "flowChartCodes": [],
+        "shapeType": ["can", "cross", "rectangle", "star"],
+        "shapeName": ["can", "cross", "rectangle", "star"],
+        "connectorShape": [],
+        "strokeStyle": [],
+        "strokeCapShape": ["arrow"],
+        "stickyNoteShape": ["rectangle", "square"]
+      }
+    },
+    {
+      "file": "developers-miro-com-docs-websdk-reference-storage.txt",
+      "title": "Storage",
+      "url": "https://miro.com/docs/websdk/reference/storage",
+      "mentions": {
+        "flowChartCodes": [],
+        "shapeType": ["can", "star"],
+        "shapeName": ["can", "star"],
+        "connectorShape": [],
+        "strokeStyle": [],
+        "strokeCapShape": [],
+        "stickyNoteShape": []
+      }
+    },
+    {
+      "file": "developers-miro-com-docs-websdk-reference-tag.txt",
+      "title": "Tag",
+      "url": "https://miro.com/docs/websdk/reference/tag",
+      "mentions": {
+        "flowChartCodes": [],
+        "shapeType": ["can", "star"],
+        "shapeName": ["can", "star"],
+        "connectorShape": [],
+        "strokeStyle": [],
+        "strokeCapShape": [],
+        "stickyNoteShape": []
+      }
+    },
+    {
+      "file": "developers-miro-com-docs-websdk-reference-text.txt",
+      "title": "Text",
+      "url": "https://miro.com/docs/websdk/reference/text",
+      "mentions": {
+        "flowChartCodes": [],
+        "shapeType": ["can", "cross", "star"],
+        "shapeName": ["can", "cross", "star"],
+        "connectorShape": [],
+        "strokeStyle": [],
+        "strokeCapShape": ["arrow"],
+        "stickyNoteShape": []
+      }
+    },
+    {
+      "file": "developers-miro-com-docs-websdk-reference-ui.txt",
+      "title": "Board UI",
+      "url": "https://miro.com/docs/websdk/reference/ui",
+      "mentions": {
+        "flowChartCodes": [],
+        "shapeType": ["can", "star"],
+        "shapeName": ["can", "star"],
+        "connectorShape": [],
+        "strokeStyle": [],
+        "strokeCapShape": [],
+        "stickyNoteShape": []
+      }
+    },
+    {
+      "file": "developers-miro-com-docs-websdk-reference-unsupported.txt",
+      "title": "Unsupported",
+      "url": "https://miro.com/docs/websdk/reference/unsupported",
+      "mentions": {
+        "flowChartCodes": [],
+        "shapeType": ["can", "cross", "star"],
+        "shapeName": ["can", "cross", "star"],
+        "connectorShape": [],
+        "strokeStyle": [],
+        "strokeCapShape": ["arrow"],
+        "stickyNoteShape": []
+      }
+    },
+    {
+      "file": "developers-miro-com-docs-websdk-reference-viewport.txt",
+      "title": "Viewport",
+      "url": "https://miro.com/docs/websdk/reference/viewport",
+      "mentions": {
+        "flowChartCodes": [],
+        "shapeType": ["can", "cross", "star"],
+        "shapeName": ["can", "cross", "star"],
+        "connectorShape": [],
+        "strokeStyle": [],
+        "strokeCapShape": [],
+        "stickyNoteShape": []
+      }
+    }
+  ]
+}
