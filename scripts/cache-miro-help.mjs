@@ -4,24 +4,8 @@ import path from 'node:path'
 
 const OUT_DIR = path.join(process.cwd(), 'docs/cache/miro-help')
 
-const URLS = [
-  // Help Center: flowchart shapes semantics
-  'https://help.miro.com/hc/en-us/articles/360017572534',
-  'https://help.miro.com/hc/en-us/articles/360017571594',
-  // Developer docs (may be dynamic; we still cache responses for reference)
-  'https://developers.miro.com/docs/web-sdk-overview',
-  'https://developers.miro.com/docs/web-sdk-reference',
-  'https://developers.miro.com/docs/web-sdk-reference-widgets',
-  'https://developers.miro.com/docs/web-sdk-widgets-shape',
-  'https://developers.miro.com/docs/web-sdk-widgets-connector',
-  // Explicit experimental shape reference (provided by user)
-  'https://developers.miro.com/docs/websdk-reference-shape-experimental',
-  // Readme-style reference pages that sometimes 404 via curl but are useful if available
-  'https://developers.miro.com/reference/web-sdk-reference-shapes',
-  'https://developers.miro.com/reference/reference-web-sdk-shapes',
-  // Rate limiting docs (requested)
-  'https://developers.miro.com/docs/websdk-reference-rate-limiting',
-]
+// Reference-only crawl, seeded from the SDK reference hub.
+const URLS = ['https://developers.miro.com/docs/sdk-reference']
 
 function sanitize(name) {
   return name
@@ -73,28 +57,30 @@ async function main() {
     return { status, text }
   }
 
-  // Seed
-  for (const url of URLS) {
-    await cacheOne(url)
+  // BFS crawl limited to /docs/ pages that are SDK reference sections.
+  const queue = [...URLS]
+  let processed = 0
+  const limit = 120
+  const linkRe = /href=\"(\/docs\/[^\"#?]+)\"/g
+  function isReferencePath(p) {
+    return (
+      p.startsWith('/docs/sdk-reference') ||
+      p.includes('reference') ||
+      p.startsWith('/docs/websdk-reference')
+    )
   }
-
-  // Crawl linked docs from the rate limiting page (stay within /docs/)
-  const rateUrl = 'https://developers.miro.com/docs/websdk-reference-rate-limiting'
-  const rateSlug = sanitize(rateUrl.replace(/^https?:\/\//, ''))
-  const htmlPath = path.join(OUT_DIR, `${rateSlug}.html`)
-  if (fs.existsSync(htmlPath)) {
-    const html = fs.readFileSync(htmlPath, 'utf8')
-    const linkRe = /href=\"(\/docs\/[^\"#?]+)\"/g
-    const toVisit = new Set()
+  while (queue.length && processed < limit) {
+    const url = queue.shift()
+    const { status, text } = await cacheOne(url)
+    processed++
+    if (!text || status !== 200) continue
+    // Enqueue same-domain /docs/ links that match reference filter
     let m
-    while ((m = linkRe.exec(html))) {
-      const abs = `https://developers.miro.com${m[1]}`
-      toVisit.add(abs)
-    }
-    let count = 0
-    for (const u of toVisit) {
-      if (count++ > 50) break
-      await cacheOne(u)
+    while ((m = linkRe.exec(text))) {
+      const pathRel = m[1]
+      if (!isReferencePath(pathRel)) continue
+      const abs = `https://developers.miro.com${pathRel}`
+      if (!seen.has(abs)) queue.push(abs)
     }
   }
   fs.writeFileSync(path.join(OUT_DIR, 'INDEX.json'), JSON.stringify(index, null, 2))
