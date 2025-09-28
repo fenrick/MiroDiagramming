@@ -36,7 +36,7 @@
     "zustand": "^5.0.0"
   },
   "devDependencies": {
-    "@commitlint/config-conventional": "^19.8.1",
+    "@commitlint/config-conventional": "^20.0.0",
     "@mirohq/websdk-types": "^2.9.0",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
@@ -53,7 +53,7 @@
     "@vitejs/plugin-react": "^5.0.2",
     "@vitest/coverage-v8": "^3.2.4",
     "c8": "^10.0.0",
-    "commitlint": "^19.8.1",
+    "commitlint": "^20.0.0",
     "eslint": "^9.36.0",
     "eslint-config-prettier": "^10.0.0",
     "eslint-plugin-import": "^2.29.1",
