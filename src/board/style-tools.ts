@@ -22,39 +22,71 @@ import {
  */
 export function findStyleKey(style: Record<string, unknown>, keys: string[]): string | null {
   for (const key of keys) {
-    if (style[key] !== undefined) {
+    if (Object.prototype.hasOwnProperty.call(style, key)) {
       return key
     }
   }
   return null
 }
 
+function readFill(style: Record<string, unknown>, key: 'fillColor' | 'backgroundColor'): string {
+  const s = style as { fillColor?: unknown; backgroundColor?: unknown }
+  if (key === 'fillColor') {
+    return typeof s.fillColor === 'string' ? s.fillColor : resolveColor(colors.white, colors.white)
+  }
+  return typeof s.backgroundColor === 'string'
+    ? s.backgroundColor
+    : resolveColor(colors.white, colors.white)
+}
+
+function readFont(style: Record<string, unknown>, key: 'color' | 'textColor' | null): string {
+  const s = style as { color?: unknown; textColor?: unknown }
+  if (key === 'color') {
+    return typeof s.color === 'string'
+      ? s.color
+      : resolveColor(colors['gray-700'], colors['gray-700'])
+  }
+  if (key === 'textColor') {
+    return typeof s.textColor === 'string'
+      ? s.textColor
+      : resolveColor(colors['gray-700'], colors['gray-700'])
+  }
+  return resolveColor(colors['gray-700'], colors['gray-700'])
+}
+
 /** Retrieve the property name used for widget fill colour. */
 function getFillKey(style: Record<string, unknown>): 'fillColor' | 'backgroundColor' | null {
-  const key = findStyleKey(style, ['fillColor', 'backgroundColor'])
-  return key && typeof style[key] === 'string' ? (key as 'fillColor' | 'backgroundColor') : null
+  const s = style as { fillColor?: unknown; backgroundColor?: unknown }
+  if (typeof s.fillColor === 'string') return 'fillColor'
+  if (typeof s.backgroundColor === 'string') return 'backgroundColor'
+  return null
 }
 
 /** Retrieve the property name used for widget font colour. */
 function getFontKey(style: Record<string, unknown>): 'color' | 'textColor' | null {
-  const key = findStyleKey(style, ['color', 'textColor'])
-  return key && typeof style[key] === 'string' ? (key as 'color' | 'textColor') : null
+  const s = style as { color?: unknown; textColor?: unknown }
+  if (typeof s.color === 'string') return 'color'
+  if (typeof s.textColor === 'string') return 'textColor'
+  return null
 }
 
 /** Retrieve the property name used for widget opacity. */
 function getOpacityKey(style: Record<string, unknown>): 'fillOpacity' | 'opacity' | null {
-  const key = findStyleKey(style, ['fillOpacity', 'opacity'])
-  return key && typeof style[key] === 'number' ? (key as 'fillOpacity' | 'opacity') : null
+  const s = style as { fillOpacity?: unknown; opacity?: unknown }
+  if (typeof s.fillOpacity === 'number') return 'fillOpacity'
+  if (typeof s.opacity === 'number') return 'opacity'
+  return null
 }
 
 /** Retrieve the property name used for border width. */
 function getBorderWidthKey(
   style: Record<string, unknown>,
 ): 'borderWidth' | 'strokeWidth' | 'lineWidth' | null {
-  const key = findStyleKey(style, ['borderWidth', 'strokeWidth', 'lineWidth'])
-  return key && typeof style[key] === 'number'
-    ? (key as 'borderWidth' | 'strokeWidth' | 'lineWidth')
-    : null
+  const s = style as { borderWidth?: unknown; strokeWidth?: unknown; lineWidth?: unknown }
+  if (typeof s.borderWidth === 'number') return 'borderWidth'
+  if (typeof s.strokeWidth === 'number') return 'strokeWidth'
+  if (typeof s.lineWidth === 'number') return 'lineWidth'
+  return null
 }
 
 /**
@@ -73,16 +105,21 @@ export async function tweakFillColor(delta: number, board?: BoardLike): Promise<
       return
     }
     const fontKey = getFontKey(style)
-    const fill =
-      typeof style[fillKey] === 'string' ? style[fillKey] : resolveColor(colors.white, colors.white)
-    const font =
-      fontKey && typeof style[fontKey] === 'string'
-        ? style[fontKey]
-        : resolveColor(colors['gray-700'], colors['gray-700'])
+    const fill = readFill(style, fillKey)
+    const font = readFont(style, fontKey)
     const newFill = adjustColor(fill, delta)
-    style[fillKey] = newFill
+    if (fillKey === 'fillColor') {
+      ;(style as { fillColor?: string }).fillColor = newFill
+    } else {
+      ;(style as { backgroundColor?: string }).backgroundColor = newFill
+    }
     if (fontKey) {
-      style[fontKey] = ensureContrast(newFill, font)
+      const contrasted = ensureContrast(newFill, font)
+      if (fontKey === 'color') {
+        ;(style as { color?: string }).color = contrasted
+      } else {
+        ;(style as { textColor?: string }).textColor = contrasted
+      }
     }
     item.style = style
     await maybeSync(item as Syncable)
@@ -141,7 +178,11 @@ export async function tweakOpacity(delta: number, board?: BoardLike): Promise<vo
     }
     let next = current + delta
     next = Math.max(0, Math.min(1, next))
-    style[key] = next
+    if (key === 'fillOpacity') {
+      ;(style as { fillOpacity?: number }).fillOpacity = next
+    } else {
+      ;(style as { opacity?: number }).opacity = next
+    }
     item.style = style
     await maybeSync(item as Syncable)
   }, board)
@@ -168,7 +209,13 @@ export async function tweakBorderWidth(delta: number, board?: BoardLike): Promis
       return
     }
     const next = Math.max(0, current + delta)
-    style[key] = next
+    if (key === 'borderWidth') {
+      ;(style as { borderWidth?: number }).borderWidth = next
+    } else if (key === 'strokeWidth') {
+      ;(style as { strokeWidth?: number }).strokeWidth = next
+    } else {
+      ;(style as { lineWidth?: number }).lineWidth = next
+    }
     item.style = style
     await maybeSync(item as Syncable)
   }, board)

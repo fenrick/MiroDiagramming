@@ -267,8 +267,37 @@ export class TemplateManager {
     if (typeof value !== 'string') {
       return value
     }
-    const m = /^(-?\d+(?:\.\d+)?)(?:px)?$/.exec(value)
-    return m ? Number.parseFloat(m[1]!) : value
+    const trimmed = value.trim()
+    const core = trimmed.endsWith('px') ? trimmed.slice(0, -2) : trimmed
+    const parsed = this.parseSimpleNumber(core)
+    return parsed ?? value
+  }
+
+  private parseSimpleNumber(input: string): number | null {
+    if (input.length === 0) return null
+    let index = 0
+    if (input[0] === '-') {
+      index = 1
+      if (index >= input.length) return null
+    }
+    let sawDigit = false
+    let dotSeen = false
+    for (; index < input.length; index += 1) {
+      const ch = input[index]!
+      if (ch >= '0' && ch <= '9') {
+        sawDigit = true
+        continue
+      }
+      if (ch === '.' && !dotSeen) {
+        dotSeen = true
+        // Next char must be a digit
+        const next = input[index + 1]
+        if (!(next && next >= '0' && next <= '9')) return null
+        continue
+      }
+      return null
+    }
+    return sawDigit ? Number.parseFloat(input) : null
   }
 
   /** Create shape data for a template element. */

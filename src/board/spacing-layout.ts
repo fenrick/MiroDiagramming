@@ -19,13 +19,17 @@ export function calculateGrowthPlan(
   if (items.length === 0) {
     return { size: 0, positions: [] }
   }
-  const sizeKey = axis === 'x' ? 'width' : 'height'
+  const sizeKey: 'width' | 'height' = axis === 'x' ? 'width' : 'height'
   const first = items[0]!
   const last = items.at(-1)!
   /* c8 ignore next */
-  const startEdge = (first[axis] ?? 0) - getDimension(first, sizeKey) / 2
+  const firstPos =
+    axis === 'x' ? ((first as { x?: number }).x ?? 0) : ((first as { y?: number }).y ?? 0)
   /* c8 ignore next */
-  const endEdge = (last[axis] ?? 0) + getDimension(last, sizeKey) / 2
+  const lastPos =
+    axis === 'x' ? ((last as { x?: number }).x ?? 0) : ((last as { y?: number }).y ?? 0)
+  const startEdge = firstPos - getDimension(first, sizeKey) / 2
+  const endEdge = lastPos + getDimension(last, sizeKey) / 2
   const total = endEdge - startEdge
   const size = (total - spacing * (items.length - 1)) / items.length
   const positions: number[] = []
@@ -44,7 +48,11 @@ export function calculateGrowthPlan(
  * @param key - Dimension property name ('width' or 'height').
  * @returns The numeric dimension or `0` when unavailable.
  */
-export function getDimension(item: Record<string, number>, key: string): number {
-  const value = item[key]
+export function getDimension(item: Record<string, number>, key: 'width' | 'height'): number {
+  if (key === 'width') {
+    const value = (item as { width?: number }).width
+    return typeof value === 'number' ? value : 0
+  }
+  const value = (item as { height?: number }).height
   return typeof value === 'number' ? value : 0
 }

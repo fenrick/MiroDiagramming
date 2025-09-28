@@ -46,23 +46,35 @@ export async function applySpacingLayout(
   const sizeKey = axis === 'x' ? 'width' : 'height'
   const items = [...selection].toSorted(
     /* c8 ignore next */
-    (a, b) =>
-      ((a as Record<string, number>)[axis] ?? 0) - ((b as Record<string, number>)[axis] ?? 0),
+    (a, b) => {
+      const ax = axis === 'x' ? ((a as { x?: number }).x ?? 0) : ((a as { y?: number }).y ?? 0)
+      const bx = axis === 'x' ? ((b as { x?: number }).x ?? 0) : ((b as { y?: number }).y ?? 0)
+      return ax - bx
+    },
   ) as Array<Record<string, number> & Syncable>
   const mode = options.mode ?? 'move'
   if (mode === 'grow') {
     const plan = calculateGrowthPlan(items, axis, options.spacing)
     await Promise.all(
       items.map(async (item, index) => {
-        item[sizeKey] = plan.size
-        item[axis] = plan.positions[index]!
+        if (sizeKey === 'width') {
+          ;(item as { width?: number }).width = plan.size
+        } else {
+          ;(item as { height?: number }).height = plan.size
+        }
+        const pos = plan.positions.at(index) ?? 0
+        if (axis === 'x') {
+          ;(item as { x?: number }).x = pos
+        } else {
+          ;(item as { y?: number }).y = pos
+        }
         await maybeSync(item)
       }),
     )
     return
   }
   const first = items[0]!
-  let position = first[axis] ?? 0
+  let position = axis === 'x' ? (first.x ?? 0) : (first.y ?? 0)
   await moveWidget(first, axis, position)
 
   let previous: Record<string, number> & Syncable = first
@@ -88,6 +100,10 @@ async function moveWidget(
   axis: 'x' | 'y',
   position: number,
 ): Promise<void> {
-  item[axis] = position
+  if (axis === 'x') {
+    ;(item as { x?: number }).x = position
+  } else {
+    ;(item as { y?: number }).y = position
+  }
   await maybeSync(item)
 }
