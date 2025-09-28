@@ -14,9 +14,7 @@ import {
   Skeleton,
 } from '../components'
 import { StickyActions } from '../StickyActions'
-import { JsonDropZone } from '../components/JsonDropZone'
-import { PageHelp } from '../components/PageHelp'
-import { TabPanel } from '../components/TabPanel'
+import { JsonDropZone, PageHelp, TabPanel } from '../components'
 import { showError } from '../hooks/notifications'
 import { undoLastImport } from '../hooks/ui-utilities'
 

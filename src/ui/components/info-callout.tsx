@@ -1,7 +1,7 @@
 import { Callout } from '@mirohq/design-system'
 import React from 'react'
 
-import { Markdown } from './Markdown'
+import { Markdown } from './markdown'
 
 type InfoCalloutProperties = Readonly<{
   title?: string

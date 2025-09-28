@@ -1,7 +1,7 @@
 import { Flex } from '@mirohq/design-system'
 import React from 'react'
 
-import { Button as OurButton } from './Button'
+import { Button as OurButton } from './button'
 
 export interface ButtonToolbarProperties {
   /** Optional className for container styling. */

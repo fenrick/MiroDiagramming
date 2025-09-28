@@ -5,7 +5,7 @@ import { useDropzone } from 'react-dropzone'
 
 import { getDropzoneStyle } from '../hooks/ui-utilities'
 
-import { Button } from './Button'
+import { Button } from './button'
 
 export type JsonDropZoneProperties = Readonly<{
   /** Callback invoked with selected files. */

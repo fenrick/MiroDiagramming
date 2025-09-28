@@ -2,7 +2,7 @@ import React from 'react'
 import { Flex } from '@mirohq/design-system'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 
-import { Button } from './Button'
+import { Button } from './button'
 
 export interface SegmentedOption {
   readonly label: string

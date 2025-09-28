@@ -6,7 +6,7 @@ import { isMermaidEnabled } from '../../core/mermaid'
 import { PageHelp } from '../components/page-help'
 import { TabPanel } from '../components/tab-panel'
 
-import { CardsTab } from './CardsTab'
+import { CardsTab } from './cards-tab'
 import { LayoutEngineTab } from './layout-engine-tab'
 import { MermaidTab } from './mermaid-tab'
 import { StructuredTab } from './structured-tab'

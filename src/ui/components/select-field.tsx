@@ -1,7 +1,7 @@
 import { Form, styled } from '@mirohq/design-system'
 import React from 'react'
 
-import { Select } from './Select'
+import { Select } from './select'
 
 export type SelectFieldProperties = Readonly<
   Omit<React.ComponentProps<typeof Select>, 'className' | 'style' | 'onChange'> & {

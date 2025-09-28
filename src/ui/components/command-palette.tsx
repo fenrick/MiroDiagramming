@@ -1,7 +1,7 @@
 import { styled } from '@mirohq/design-system'
 import React from 'react'
 
-import { Modal } from './Modal'
+import { Modal } from './modal'
 
 export interface CommandItem {
   readonly id: string

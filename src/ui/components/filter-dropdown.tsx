@@ -2,7 +2,7 @@ import { DropdownMenu, Flex, IconButton, IconFunnel } from '@mirohq/design-syste
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import React from 'react'
 
-import { InputField } from './InputField'
+import { InputField } from './input-field'
 
 export interface FilterDropdownProperties {
   widgetTypes: string[]

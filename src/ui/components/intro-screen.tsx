@@ -4,8 +4,8 @@ import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import introText from '../intro.md?raw'
 import { ScrollArea } from '../ScrollArea'
 
-import { Button } from './Button'
-import { Markdown } from './Markdown'
+import { Button } from './button'
+import { Markdown } from './markdown'
 
 export interface IntroScreenProperties {
   /** Called when the user chooses to start the app. */

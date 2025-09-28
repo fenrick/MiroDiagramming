@@ -1,7 +1,7 @@
 import { IconButton, IconQuestionMarkCircle, styled } from '@mirohq/design-system'
 import React from 'react'
 
-import { Tooltip } from './Tooltip'
+import { Tooltip } from './tooltip'
 
 export interface PageHelpProperties {
   /** Descriptive text explaining the current page. */

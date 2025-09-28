@@ -1,7 +1,7 @@
 import React from 'react'
 import { styled } from '@mirohq/design-system'
 
-import { Button } from './Button'
+import { Button } from './button'
 
 export interface ModalProperties {
   /** Dialog title displayed in the header. */
