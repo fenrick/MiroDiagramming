@@ -66,8 +66,8 @@ export function calculateGrid(
     let col = 0
     for (let c = 0; c < cols; c += 1) {
       const s = colStarts[c]!
-      const e = s + colSizes[c]!
-      if (index >= s && index < e) {
+      const end = s + colSizes[c]!
+      if (index >= s && index < end) {
         col = c
         break
       }
