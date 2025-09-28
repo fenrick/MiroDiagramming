@@ -12,7 +12,7 @@ vi.mock('../../src/board/board', async (orig) => {
 })
 
 // Mock registerFrame to return a dummy frame
-vi.mock('../../src/board/frame-utils', async (orig) => {
+vi.mock('../../src/board/frame-utilities', async (orig) => {
   const mod: any = await (orig as any)()
   return {
     ...mod,

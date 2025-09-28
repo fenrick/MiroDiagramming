@@ -18,7 +18,7 @@ import {
 } from '../components'
 import { PageHelp } from '../components/page-help'
 import { TabPanel } from '../components/tab-panel'
-import { StickyActions } from '../StickyActions'
+import { StickyActions } from '../sticky-actions'
 import { applyBracketTagsToSelectedStickies } from '../../board/sticky-tags'
 import { useSelection } from '../hooks/use-selection'
 

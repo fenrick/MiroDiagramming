@@ -2,7 +2,7 @@ import type { BaseItem, Frame, Group } from '@mirohq/websdk-types'
 
 import { maybeSync } from '../../board/board'
 import { type BoardBuilder } from '../../board/board-builder'
-import { clearActiveFrame, registerFrame } from '../../board/frame-utils'
+import { clearActiveFrame, registerFrame } from '../../board/frame-utilities'
 import type { TemplateElement } from '../../board/templates'
 import { layoutEngine, type LayoutResult } from '../layout/elk-layout'
 import { type UserLayoutOptions } from '../layout/elk-options'

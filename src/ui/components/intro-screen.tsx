@@ -2,7 +2,7 @@ import React from 'react'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 
 import introText from '../intro.md?raw'
-import { ScrollArea } from '../ScrollArea'
+import { ScrollArea } from '../scroll-area'
 
 import { Button } from './button'
 import { Markdown } from './markdown'

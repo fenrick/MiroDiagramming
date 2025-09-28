@@ -12,7 +12,7 @@ interface TagLike {
 }
 
 import { BoardBuilder } from './board-builder'
-import { clearActiveFrame, registerFrame } from './frame-utils'
+import { clearActiveFrame, registerFrame } from './frame-utilities'
 import { calculateGrid } from './grid-layout'
 
 export interface CardProcessOptions {

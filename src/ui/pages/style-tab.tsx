@@ -20,7 +20,7 @@ import {
   Paragraph,
   SidebarSection,
 } from '../components'
-import { StickyActions } from '../StickyActions'
+import { StickyActions } from '../sticky-actions'
 import { PageHelp } from '../components/page-help'
 import { TabPanel } from '../components/tab-panel'
 import { useSelection } from '../hooks/use-selection'

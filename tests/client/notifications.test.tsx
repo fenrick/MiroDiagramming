@@ -18,7 +18,7 @@ describe('notifications helpers', () => {
       debug: (msg: string) => debugSpy(msg),
     }))
     const toastSpy = vi.fn()
-    vi.doMock('../../src/ui/components/Toast', () => ({
+    vi.doMock('../../src/ui/components/toast', () => ({
       pushToast: (opts: { message: string }) => toastSpy(opts),
     }))
 
@@ -35,7 +35,7 @@ describe('notifications helpers', () => {
 
   it('shows API error message derived from status', async () => {
     const toastSpy = vi.fn()
-    vi.doMock('../../src/ui/components/Toast', () => ({
+    vi.doMock('../../src/ui/components/toast', () => ({
       pushToast: (opts: { message: string }) => toastSpy(opts),
     }))
     const mod = await import('../../src/ui/hooks/notifications')

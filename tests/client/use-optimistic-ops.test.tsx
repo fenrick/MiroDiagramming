@@ -3,12 +3,12 @@ import { describe, it, expect, vi } from 'vitest'
 import React from 'react'
 import { render, fireEvent, act, waitFor } from '@testing-library/react'
 
-vi.mock('../../src/ui/components/Toast', () => ({
+vi.mock('../../src/ui/components/toast', () => ({
   pushToast: vi.fn(),
 }))
 
-import { useOptimisticOps } from '../../src/core/hooks/useOptimisticOps'
-import { pushToast } from '../../src/ui/components/Toast'
+import { useOptimisticOps } from '../../src/core/hooks/use-optimistic-ops'
+import { pushToast } from '../../src/ui/components/toast'
 
 function Harness({ op }: { op: () => Promise<void> }) {
   return <button onClick={() => void op()}>Run</button>

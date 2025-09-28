@@ -4,8 +4,8 @@ import * as React from 'react'
 import { Tooltip } from '../ui/components'
 import { Paragraph } from '../ui/components/paragraph'
 import { ToastContainer } from '../ui/components/toast'
-import { PanelShell } from '../ui/PanelShell'
-import { ScrollArea } from '../ui/ScrollArea'
+import { PanelShell } from '../ui/panel-shell'
+import { ScrollArea } from '../ui/scroll-area'
 import { type Tab, TAB_DATA } from '../ui/pages/tabs'
 
 /**

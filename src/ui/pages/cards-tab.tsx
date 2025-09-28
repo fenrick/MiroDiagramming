@@ -16,7 +16,7 @@ import {
   PageHelp,
   TabPanel,
 } from '../components'
-import { StickyActions } from '../StickyActions'
+import { StickyActions } from '../sticky-actions'
 import { showError } from '../hooks/notifications'
 import { undoLastImport } from '../hooks/ui-utilities'
 

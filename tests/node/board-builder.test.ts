@@ -4,7 +4,7 @@ vi.mock('../../src/board/node-search', () => ({
   searchShapes: vi.fn(),
   searchGroups: vi.fn(),
 }))
-vi.mock('../../src/board/connector-utils', () => ({
+vi.mock('../../src/board/connector-utilities', () => ({
   createConnector: vi.fn(),
   updateConnector: vi.fn(),
 }))
@@ -19,7 +19,7 @@ vi.mock('../../src/board/templates', () => ({
 }))
 
 import { searchGroups, searchShapes } from '../../src/board/node-search'
-import { createConnector } from '../../src/board/connector-utils'
+import { createConnector } from '../../src/board/connector-utilities'
 import { BoardBuilder } from '../../src/board/board-builder'
 import { boardCache } from '../../src/board/board-cache'
 

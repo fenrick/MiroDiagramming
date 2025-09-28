@@ -123,9 +123,9 @@ vi.mock('../../src/ui/components/TabPanel', async () => {
 
 describe('Heavy pages smoke render with mocks', () => {
   it('renders Cards/Diagrams/Structured tabs', async () => {
-    const { CardsTab } = await import('../../src/ui/pages/CardsTab')
-    const { DiagramsTab } = await import('../../src/ui/pages/DiagramsTab')
-    const { StructuredTab } = await import('../../src/ui/pages/StructuredTab')
+    const { CardsTab } = await import('../../src/ui/pages/cards-tab')
+    const { DiagramsTab } = await import('../../src/ui/pages/diagrams-tab')
+    const { StructuredTab } = await import('../../src/ui/pages/structured-tab')
 
     const r1 = render(React.createElement(CardsTab))
     expect(r1.container).toBeTruthy()

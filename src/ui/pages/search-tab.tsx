@@ -22,7 +22,7 @@ import {
   useReplaceAll,
   useReplaceCurrent,
 } from '../hooks/use-search-handlers'
-import { StickyActions } from '../StickyActions'
+import { StickyActions } from '../sticky-actions'
 
 import type { TabTuple } from './tab-definitions'
 

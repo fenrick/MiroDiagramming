@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { render, act } from '@testing-library/react'
 import React from 'react'
 
-import { useKeybinding } from '../../src/core/hooks/useKeybinding'
+import { useKeybinding } from '../../src/core/hooks/use-keybinding'
 
 function KeybindingProbe() {
   const called = React.useRef(0)

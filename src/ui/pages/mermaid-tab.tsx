@@ -24,7 +24,7 @@ import {
   TabPanel,
   TextareaField,
 } from '../components'
-import { StickyActions } from '../StickyActions'
+import { StickyActions } from '../sticky-actions'
 
 const STORAGE_KEY = 'miro.mermaid.definition'
 const SAMPLE_DEFINITION = `graph TD

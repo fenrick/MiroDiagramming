@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import React from 'react'
 import { render, fireEvent } from '@testing-library/react'
 
-import { useFocusTrap } from '../../src/core/hooks/useFocusTrap'
+import { useFocusTrap } from '../../src/core/hooks/use-focus-trap'
 
 function TrapHarness({ active, onClose }: { active: boolean; onClose: () => void }) {
   const ref = useFocusTrap<HTMLDivElement>(active, onClose)

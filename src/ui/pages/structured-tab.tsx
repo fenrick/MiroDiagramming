@@ -33,7 +33,7 @@ import {
   Skeleton,
   InfoCallout,
 } from '../components'
-import { StickyActions } from '../StickyActions'
+import { StickyActions } from '../sticky-actions'
 import { JsonDropZone } from '../components/json-drop-zone'
 import { PageHelp } from '../components/page-help'
 import { TabPanel } from '../components/tab-panel'
@@ -363,7 +363,7 @@ export const StructuredTab: React.FC = () => {
                   <Button
                     onClick={() =>
                       undoLastImport(lastProc, () =>
-                        setLastProc((previous) => undefined as typeof previous),
+                        setLastProc((_previous) => undefined as typeof _previous),
                       )
                     }
                     variant="secondary"

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 
-vi.mock('../../src/ui/components/Toast', () => ({ pushToast: vi.fn() }))
+vi.mock('../../src/ui/components/toast', () => ({ pushToast: vi.fn() }))
 vi.mock('../../src/core/utils/tag-client', () => {
   class TagClientMock {
     async getTags() {
@@ -18,7 +18,7 @@ vi.mock('../../src/board/board', () => ({
 }))
 
 import { boardCache } from '../../src/board/board-cache'
-import { pushToast } from '../../src/ui/components/Toast'
+import { pushToast } from '../../src/ui/components/toast'
 import { applyBracketTagsToSelectedStickies } from '../../src/board/sticky-tags'
 
 describe('sticky-tags', () => {
