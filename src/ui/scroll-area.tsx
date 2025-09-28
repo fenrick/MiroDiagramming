@@ -6,21 +6,25 @@ import { ScrollArea as DSScrollArea } from '@mirohq/design-system-scroll-area'
  */
 export function ScrollArea({ children }: { children: React.ReactNode }): React.JSX.Element {
   return (
-    <DSScrollArea type="hover" style={{ flex: 1, minHeight: 0 }}>
-      <DSScrollArea.Viewport
-        style={{
-          flex: 1,
-          paddingTop: 'var(--space-200)',
-          paddingBottom: 'var(--space-300)',
-          scrollbarGutter: 'stable both-edges',
-          overscrollBehavior: 'contain',
-        }}
-      >
-        {children}
-      </DSScrollArea.Viewport>
-      <DSScrollArea.Scrollbar orientation="vertical">
-        <DSScrollArea.Thumb />
-      </DSScrollArea.Scrollbar>
-    </DSScrollArea>
+    <div style={{ flex: 1, minHeight: 0 }}>
+      <DSScrollArea type="hover">
+        <DSScrollArea.Viewport>
+          <div
+            style={{
+              flex: 1,
+              paddingTop: 'var(--space-200)',
+              paddingBottom: 'var(--space-300)',
+              scrollbarGutter: 'stable both-edges',
+              overscrollBehavior: 'contain',
+            }}
+          >
+            {children}
+          </div>
+        </DSScrollArea.Viewport>
+        <DSScrollArea.Scrollbar orientation="vertical">
+          <DSScrollArea.Thumb />
+        </DSScrollArea.Scrollbar>
+      </DSScrollArea>
+    </div>
   )
 }

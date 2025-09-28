@@ -1,5 +1,4 @@
 import React from 'react'
-import { Primitive } from '@mirohq/design-system'
 
 /**
  * Wraps tab content with appropriate ARIA attributes.
@@ -21,7 +20,7 @@ export const TabPanel: React.FC<TabPanelProperties> = ({
   style,
   ...properties
 }) => (
-  <Primitive.div
+  <div
     id={`panel-${tabId}`}
     role="tabpanel"
     aria-labelledby={`tab-${tabId}`}
@@ -29,5 +28,5 @@ export const TabPanel: React.FC<TabPanelProperties> = ({
     {...properties}
   >
     {children}
-  </Primitive.div>
+  </div>
 )
