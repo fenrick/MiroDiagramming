@@ -90,10 +90,11 @@ export class NestedLayouter {
       this.collectDebugSizes(child, sizes)
     }
     log.info({ count: sizes.length, sizes }, 'ELK nested sizes')
-    const nodes: Record<string, PositionedNode> = {}
+    const nodeMap = new Map<string, PositionedNode>()
     for (const child of result.children ?? []) {
-      this.collectPositions(child, nodes)
+      this.collectPositions(child, nodeMap)
     }
+    const nodes = Object.fromEntries(nodeMap)
     return { nodes }
   }
 
@@ -107,9 +108,12 @@ export class NestedLayouter {
   }
 
   private sortValue(node: HierNode, key?: string): string {
-    const metaValue = key ? node.metadata?.[key] : undefined
-    if (metaValue !== undefined) {
-      return String(metaValue)
+    if (key && node.metadata && typeof node.metadata === 'object') {
+      const metaMap = new Map<string, unknown>(Object.entries(node.metadata))
+      const metaValue = metaMap.get(key)
+      if (metaValue !== undefined) {
+        return String(metaValue)
+      }
     }
     return node.label ?? node.id
   }
@@ -141,7 +145,7 @@ export class NestedLayouter {
 
   private collectChildPositions(
     node: ElkNode,
-    map: Record<string, PositionedNode>,
+    map: Map<string, PositionedNode>,
     offsetX: number,
     offsetY: number,
   ): void {
@@ -154,7 +158,7 @@ export class NestedLayouter {
 
   private collectPositions(
     node: ElkNode,
-    map: Record<string, PositionedNode>,
+    map: Map<string, PositionedNode>,
     offsetX = 0,
     offsetY = 0,
   ): void {
@@ -163,7 +167,7 @@ export class NestedLayouter {
     const isInvisible =
       (node as LayoutNode).properties?.invisible === true || String(node.id).startsWith('spacer_')
     if (pos && !isInvisible) {
-      map[node.id] = pos
+      map.set(String(node.id), pos)
     }
     this.collectChildPositions(node, map, offsetX, offsetY)
   }

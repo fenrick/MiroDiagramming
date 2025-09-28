@@ -236,10 +236,13 @@ export class BoardBuilder {
       throw new TypeError(`Invalid node map: ${JSON.stringify(nodeMap)}`)
     }
     const created: Connector[] = []
+    // Convert to a Map to avoid dynamic property access on arbitrary objects
+    const nodeLookup = new Map<string, BoardItem>(Object.entries(nodeMap))
     // Create connectors sequentially; the Web SDK does not expose a bulk/batch API.
-    for (const [index, edge] of edges.entries()) {
-      const from = nodeMap[edge.from]
-      const to = nodeMap[edge.to]
+    const hintIter = Array.isArray(hints) ? hints[Symbol.iterator]() : undefined
+    for (const edge of edges) {
+      const from = nodeLookup.get(edge.from)
+      const to = nodeLookup.get(edge.to)
       if (!from || !to) {
         continue
       }
@@ -247,7 +250,8 @@ export class BoardBuilder {
         typeof edge.metadata?.template === 'string' ? edge.metadata.template : 'default'
       const template = templateManager.getConnectorTemplate(templateName)
       try {
-        const conn = await createConnector(edge, from, to, hints?.[index], template)
+        const hint = hintIter?.next().value as EdgeHint | undefined
+        const conn = await createConnector(edge, from, to, hint, template)
         await this.applyConnectorStyleOverrides(conn, edge)
         created.push(conn)
       } catch (error) {

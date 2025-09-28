@@ -53,26 +53,20 @@ export function calculateGrid(
   // Distribute items across exactly `cols` columns: the first `extra` columns get one more item.
   const base = Math.floor(count / cols)
   const extra = count % cols
-  const colSizes = Array.from({ length: cols }, (_, c) => base + (c < extra ? 1 : 0))
-  const colStarts: number[] = []
-  let start = 0
-  for (let c = 0; c < cols; c += 1) {
-    colStarts[c] = start
-    start += colSizes[c]!
-  }
-
   for (let index = 0; index < count; index += 1) {
-    // Find the column that contains index i based on the distribution above
+    // Determine column and row without indexing into an offsets array
     let col = 0
+    let start = 0
     for (let c = 0; c < cols; c += 1) {
-      const s = colStarts[c]!
-      const end = s + colSizes[c]!
-      if (index >= s && index < end) {
+      const size = base + (c < extra ? 1 : 0)
+      const end = start + size
+      if (index < end) {
         col = c
         break
       }
+      start = end
     }
-    const row = index - colStarts[col]!
+    const row = index - start
     positions.push({
       x: col * (width + config.padding),
       y: row * (height + config.padding),

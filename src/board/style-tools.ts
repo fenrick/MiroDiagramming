@@ -78,6 +78,18 @@ function getOpacityKey(style: Record<string, unknown>): 'fillOpacity' | 'opacity
   return null
 }
 
+function readOpacity(
+  style: Record<string, unknown>,
+  key: 'fillOpacity' | 'opacity',
+): number | undefined {
+  if (key === 'fillOpacity') {
+    const v = (style as { fillOpacity?: unknown }).fillOpacity
+    return typeof v === 'number' ? v : undefined
+  }
+  const v = (style as { opacity?: unknown }).opacity
+  return typeof v === 'number' ? v : undefined
+}
+
 /** Retrieve the property name used for border width. */
 function getBorderWidthKey(
   style: Record<string, unknown>,
@@ -87,6 +99,22 @@ function getBorderWidthKey(
   if (typeof s.strokeWidth === 'number') return 'strokeWidth'
   if (typeof s.lineWidth === 'number') return 'lineWidth'
   return null
+}
+
+function readBorderWidth(
+  style: Record<string, unknown>,
+  key: 'borderWidth' | 'strokeWidth' | 'lineWidth',
+): number | undefined {
+  if (key === 'borderWidth') {
+    const v = (style as { borderWidth?: unknown }).borderWidth
+    return typeof v === 'number' ? v : undefined
+  }
+  if (key === 'strokeWidth') {
+    const v = (style as { strokeWidth?: unknown }).strokeWidth
+    return typeof v === 'number' ? v : undefined
+  }
+  const v = (style as { lineWidth?: unknown }).lineWidth
+  return typeof v === 'number' ? v : undefined
 }
 
 /**
@@ -141,8 +169,12 @@ export function extractFillColor(item: Record<string, unknown> | undefined): str
   if (!key) {
     return null
   }
-  const fill = style[key]
-  return typeof fill === 'string' ? resolveColor(fill, colors.white) : null
+  if (key === 'fillColor') {
+    const fill = (style as { fillColor?: unknown }).fillColor
+    return typeof fill === 'string' ? resolveColor(fill, colors.white) : null
+  }
+  const bg = (style as { backgroundColor?: unknown }).backgroundColor
+  return typeof bg === 'string' ? resolveColor(bg, colors.white) : null
 }
 
 /**
@@ -172,7 +204,7 @@ export async function tweakOpacity(delta: number, board?: BoardLike): Promise<vo
     if (!key) {
       return
     }
-    const current = style[key]
+    const current = readOpacity(style, key)
     if (typeof current !== 'number') {
       return
     }
@@ -204,7 +236,7 @@ export async function tweakBorderWidth(delta: number, board?: BoardLike): Promis
     if (!key) {
       return
     }
-    const current = style[key]
+    const current = readBorderWidth(style, key)
     if (typeof current !== 'number') {
       return
     }
