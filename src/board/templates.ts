@@ -73,15 +73,15 @@ export class TemplateManager {
   private readonly api = new ShapeClient()
 
   private constructor() {
-    for (const [key, def] of Object.entries(this.templates))
-      if (def.alias)
-        for (const a of def.alias) {
+    for (const [key, definition] of Object.entries(this.templates))
+      if (definition.alias)
+        for (const a of definition.alias) {
           this.aliasMap[a] = key
         }
 
-    for (const [key, def] of Object.entries(this.connectorTemplates))
-      if (def.alias)
-        for (const a of def.alias) {
+    for (const [key, definition] of Object.entries(this.connectorTemplates))
+      if (definition.alias)
+        for (const a of definition.alias) {
           this.connectorAliasMap[a] = key
         }
 
