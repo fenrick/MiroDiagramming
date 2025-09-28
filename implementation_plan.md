@@ -165,7 +165,7 @@ Static hosting only. Use host‑level health checks for `index.html` as needed.
     - DoD: Advanced panel reads as cohesive groups; spacing aligns to tokens.
 
 - Keyboard & focus order checks [Planned]
-    - What’s needed: Verify Tabs → first section → fields → StickyActions order; add tests where useful.
+    - What’s needed: Verify Tabs → first section → fields → StickyActions order; add tests where useful. No custom shortcuts in Miro add‑in.
     - Where: tests under `tests/client/*`.
     - DoD: Keyboard-only users can operate core flows easily; tests pass.
 
@@ -236,10 +236,22 @@ Static hosting only. Use host‑level health checks for `index.html` as needed.
     - Where: `src/ui/components/Modal.tsx` and all consumers.
     - DoD: Dialog opens/closes via props, traps focus, announces title; a11y tests cover ESC, Tab/Shift+Tab cycling, and backdrop click/Enter/Space to close.
 
-- Keyboard shortcuts scoping
-    - What’s needed: Scope global `window` keydown handlers (e.g., panel Ctrl+Alt+1..N in `App.tsx`) so they are active only when the panel is focused/visible; avoid conflicts with Miro shortcuts. Prefer event delegation within the panel root.
-    - Where: `src/app/App.tsx`, shared `useKeybinding` hook (new in `src/core/hooks/useKeybinding.ts`).
-    - DoD: Keybindings work only when the app panel has focus; tests simulate focus changes and verify no global leakage.
+- Remove custom keyboard shortcuts [Done]
+    - Change: No global shortcuts (e.g., Ctrl+Alt+1..N) or command palette in the add‑in.
+    - Where: `src/app/App.tsx`, docs.
+    - DoD: No shortcut code remains; docs updated.
+
+## Lint/Sonar Alignment
+
+- ESLint ↔ Sonar Clean Code parity [Planned]
+    - What’s needed: Introduce a stricter lint profile mirroring Sonar medium/low rules (e.g., consistent-type-imports, curly, duplication). Apply incrementally by directory to keep `--max-warnings=0` green.
+    - Where: `eslint.config.mjs` alternate config; CI optional matrix job.
+    - DoD: Primary lint stays clean; the stricter profile passes for `src/board/**` and `src/ui/**` progressively.
+
+- Migrate imports to `import type` [Planned]
+    - What’s needed: Convert type-only imports across `src/**`; enable rule as error once migration reaches 90%.
+    - Where: Codebase-wide.
+    - DoD: `rg` shows near-zero violations; rule flipped to error.
 
 - Replace `document.getElementById` focus jumps with refs
     - What’s needed: In places like `JobDrawer`, store refs to items and move focus via ref rather than DOM id queries. Keep focus outlines visible for accessibility.
