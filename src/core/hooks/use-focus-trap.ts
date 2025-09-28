@@ -41,7 +41,8 @@ export function useFocusTrap<T extends HTMLElement>(
       const index = Math.max(0, current ? focusable.indexOf(current) : 0)
       const delta = event.shiftKey ? -1 : 1
       const nextIndex = (index + delta + focusable.length) % focusable.length
-      focusable[nextIndex]!.focus()
+      const next = focusable.at(nextIndex)
+      next?.focus()
     }
 
     container.addEventListener('keydown', handleKey)
