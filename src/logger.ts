@@ -15,14 +15,30 @@ const ENABLE_CONSOLE = (import.meta.env.VITE_LOGFIRE_SEND_TO_LOGFIRE ?? 'false')
 
 type Level = 'info' | 'debug' | 'trace' | 'warn' | 'error'
 
-const consoleMethod: Record<Level, (message?: unknown, ...optionalParameters: unknown[]) => void> =
-  {
-    info: console.info.bind(console),
-    debug: console.debug.bind(console),
-    trace: console.debug.bind(console),
-    warn: console.warn.bind(console),
-    error: console.error.bind(console),
+function getConsoleMethod(
+  level: Level,
+): (message?: unknown, ...optionalParameters: unknown[]) => void {
+  switch (level) {
+    case 'info': {
+      return console.info.bind(console)
+    }
+    case 'debug': {
+      return console.debug.bind(console)
+    }
+    case 'trace': {
+      return console.debug.bind(console)
+    }
+    case 'warn': {
+      return console.warn.bind(console)
+    }
+    case 'error': {
+      return console.error.bind(console)
+    }
+    default: {
+      return console.log.bind(console)
+    }
   }
+}
 
 function log(level: Level, message: string, attributes?: Attributes) {
   if (!ENABLE_CONSOLE) {
@@ -30,7 +46,7 @@ function log(level: Level, message: string, attributes?: Attributes) {
   }
   const payload = attributes && Object.keys(attributes).length > 0 ? attributes : undefined
   const prefix = `[${SERVICE}] ${message}`
-  const emit = consoleMethod[level]
+  const emit = getConsoleMethod(level)
   return payload ? emit(prefix, payload) : emit(prefix)
 }
 

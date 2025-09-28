@@ -98,7 +98,11 @@ export function useNextMatch(
     }
     const next = (currentIndex + 1) % results.length
     setCurrentIndex(next)
-    const { item } = results[next]!
+    const current = results.at(next)
+    if (!current) {
+      return
+    }
+    const { item } = current
     await focusOnItem(item)
   }, [currentIndex, focusOnItem, results, setCurrentIndex])
 }
@@ -127,7 +131,7 @@ export function useReplaceCurrent(
     if (results.length === 0) {
       return
     }
-    const current = results[currentIndex]
+    const current = results.at(currentIndex)
     if (!current) {
       return
     }

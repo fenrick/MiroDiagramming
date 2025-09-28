@@ -60,7 +60,7 @@ export function CommandPalette({
         }
         case 'Enter': {
           event.preventDefault()
-          filtered[index]?.action()
+          filtered.at(index)?.action()
           onClose()
 
           break

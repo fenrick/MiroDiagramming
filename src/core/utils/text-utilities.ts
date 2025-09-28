@@ -42,26 +42,31 @@ export function getTextFields(item: Record<string, unknown>): Array<[string, str
  */
 export function getStringAtPath(item: Record<string, unknown>, path: string): string | undefined {
   switch (path) {
-    case 'title':
+    case 'title': {
       return typeof (item as { title?: unknown }).title === 'string'
         ? ((item as { title?: string }).title as string)
         : undefined
-    case 'content':
+    }
+    case 'content': {
       return typeof (item as { content?: unknown }).content === 'string'
         ? ((item as { content?: string }).content as string)
         : undefined
-    case 'plainText':
+    }
+    case 'plainText': {
       return typeof (item as { plainText?: unknown }).plainText === 'string'
         ? ((item as { plainText?: string }).plainText as string)
         : undefined
-    case 'description':
+    }
+    case 'description': {
       return typeof (item as { description?: unknown }).description === 'string'
         ? ((item as { description?: string }).description as string)
         : undefined
-    case 'text':
+    }
+    case 'text': {
       return typeof (item as { text?: unknown }).text === 'string'
         ? ((item as { text?: string }).text as string)
         : undefined
+    }
     case 'text.plainText': {
       const nested = (item as { text?: { plainText?: unknown } }).text
       return nested && typeof nested.plainText === 'string' ? nested.plainText : undefined
@@ -70,9 +75,24 @@ export function getStringAtPath(item: Record<string, unknown>, path: string): st
       const nested = (item as { text?: { content?: unknown } }).text
       return nested && typeof nested.content === 'string' ? nested.content : undefined
     }
-    default:
-      // Unsupported path: explicitly return undefined instead of dynamic lookup
-      return undefined
+    default: {
+      // Generic, safe read guarded by own-property checks and Reflect
+      if (!path || path.includes('__proto__') || path.includes('constructor')) {
+        return undefined
+      }
+      const parts = path.split('.')
+      let reference: unknown = item
+      for (const part of parts) {
+        if (!reference || typeof reference !== 'object') {
+          return undefined
+        }
+        if (!Object.prototype.hasOwnProperty.call(reference, part)) {
+          return undefined
+        }
+        reference = Reflect.get(reference as object, part)
+      }
+      return typeof reference === 'string' ? (reference as string) : undefined
+    }
   }
 }
 
@@ -85,36 +105,36 @@ export function getStringAtPath(item: Record<string, unknown>, path: string): st
 export function setStringAtPath(item: Record<string, unknown>, path: string, value: string): void {
   switch (path) {
     case 'title': {
-      const obj = item as { title?: unknown }
-      if (typeof obj.title === 'string') {
+      const object = item as { title?: unknown }
+      if (typeof object.title === 'string') {
         ;(item as { title?: string }).title = value
       }
       return
     }
     case 'content': {
-      const obj = item as { content?: unknown }
-      if (typeof obj.content === 'string') {
+      const object = item as { content?: unknown }
+      if (typeof object.content === 'string') {
         ;(item as { content?: string }).content = value
       }
       return
     }
     case 'plainText': {
-      const obj = item as { plainText?: unknown }
-      if (typeof obj.plainText === 'string') {
+      const object = item as { plainText?: unknown }
+      if (typeof object.plainText === 'string') {
         ;(item as { plainText?: string }).plainText = value
       }
       return
     }
     case 'description': {
-      const obj = item as { description?: unknown }
-      if (typeof obj.description === 'string') {
+      const object = item as { description?: unknown }
+      if (typeof object.description === 'string') {
         ;(item as { description?: string }).description = value
       }
       return
     }
     case 'text': {
-      const obj = item as { text?: unknown }
-      if (typeof obj.text === 'string') {
+      const object = item as { text?: unknown }
+      if (typeof object.text === 'string') {
         ;(item as { text?: string }).text = value
       }
       return
@@ -133,9 +153,40 @@ export function setStringAtPath(item: Record<string, unknown>, path: string, val
       }
       return
     }
-    default:
-      // Unsupported path; do nothing to avoid dynamic writes
+    default: {
+      // Generic, safe write guarded by own-property checks and Reflect
+      if (!path || path.includes('__proto__') || path.includes('constructor')) {
+        return
+      }
+      const parts = path.split('.')
+      let reference: unknown = item
+      for (let index = 0; index < parts.length - 1; index += 1) {
+        const part = parts[index]!
+        if (!reference || typeof reference !== 'object') {
+          return
+        }
+        if (!Object.prototype.hasOwnProperty.call(reference, part)) {
+          return
+        }
+        const next = Reflect.get(reference as object, part)
+        if (!next || typeof next !== 'object') {
+          return
+        }
+        reference = next
+      }
+      const last = parts.at(-1) as string
+      if (!reference || typeof reference !== 'object') {
+        return
+      }
+      if (!Object.prototype.hasOwnProperty.call(reference, last)) {
+        return
+      }
+      const current = Reflect.get(reference as object, last)
+      if (typeof current === 'string') {
+        Reflect.set(reference as object, last, value)
+      }
       return
+    }
   }
 }
 

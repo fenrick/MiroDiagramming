@@ -36,9 +36,8 @@ export const errorToastText = {
  * @returns Localised error message.
  */
 export function getErrorToastMessage(status: number): string {
-  if (status === 429 || status === 401) {
-    return errorToastText[status]
-  }
+  if (status === 429) return errorToastText[429]
+  if (status === 401) return errorToastText[401]
   if (status >= 500 && status < 600) {
     return errorToastText[500]
   }
