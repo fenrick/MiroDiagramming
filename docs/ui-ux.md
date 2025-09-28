@@ -18,7 +18,7 @@ Rationale:
 - Prefer official components: Tabs, Form controls, Tooltip, Callout, Icons from `@mirohq/design-system`.
 - Use tokens for all spacing, color, radius, and typography (`@mirohq/design-tokens`). Avoid hard-coded values.
 - Motion and affordances: subtle, fast interactions aligned to design-system defaults; no custom heavy animation.
-- Accessibility: keyboard reachability, visible focus, and semantic headings per section.
+- Accessibility: visible focus and semantic headings per section. No custom global keyboard shortcuts are provided in the Miro add‑in context.
 
 ## Implementation Plan (Actionable)
 
@@ -40,7 +40,7 @@ Phase 2 – Adopt in existing screens
 Phase 3 – Refinements
 
 6. Add consistent empty/loading states for long operations [Partially done: EmptyState]
-7. Audit focus order and keyboard shortcuts (Tabs, modals, lists) [In progress]
+7. Audit focus order for Tabs, modals, lists (no custom shortcuts) [In progress]
 8. Add storybook stories for primitives and key flows [Pending]
 
 ## Notes on Libraries

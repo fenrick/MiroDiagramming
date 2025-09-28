@@ -46,10 +46,12 @@ export default [
     rules: {
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       '@typescript-eslint/no-explicit-any': 'error',
+      // Sonar alignment rules can be enabled in a dedicated stricter config.
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       '@stylistic/comma-dangle': ['error', 'always-multiline'],
       '@stylistic/no-extra-semi': 'error',
       '@stylistic/semi': ['error', 'never'],
+      // Keep additional structural rules in a separate pass to avoid churn.
       'import/order': [
         'error',
         {
@@ -58,6 +60,7 @@ export default [
         },
       ],
       'import/no-duplicates': 'error',
+      // Sonar duplication/complexity checks handled by SonarCloud; leave off here.
       'no-restricted-syntax': [
         'error',
         {

@@ -58,6 +58,11 @@ Static hosting only. Use host‑level health checks for `index.html` as needed.
     - Where: `src/board/board-adapter.ts` (new), refactors in `src/**`.
     - DoD: All SDK calls go through adapter; tests stub adapter; no direct global casts remain.
 
+- Board Adapter docs [New]
+    - What’s needed: Use `docs/WEBSDK_BOARD_ADAPTER.md` as the reference for the adapter surface and migration steps.
+    - Where: `docs/WEBSDK_BOARD_ADAPTER.md`.
+    - DoD: PRs that touch board access link to this doc and follow the pattern.
+
 ## Linting & Formatting
 
 - Expand lint script scope
@@ -213,6 +218,11 @@ Static hosting only. Use host‑level health checks for `index.html` as needed.
 
 - React accessibility linting
   [Planned]
+
+- Panel UX Checklist adoption [New]
+    - What’s needed: Reference `docs/MIRO_PANEL_UX_CHECKLIST.md` in PR descriptions for UI changes; verify each point for affected screens.
+    - Where: PR template/review practice.
+    - DoD: UI PRs link the checklist; reviewers confirm compliance.
 
 ## Frontend UX Quality
 

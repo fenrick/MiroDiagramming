@@ -74,7 +74,7 @@ See **TABS.md** for full blueprint. Additional rules:
 
 - Never nest more than one tabset per view.
 - Keep persistent tabs count ≤ 5; overflow icons collapse into **More** popover.
-- Provide keyboard shortcuts Control Alt 1–9 to jump between tabs (documented in
+- Do not implement custom global keyboard shortcuts in the Miro add‑in; rely on native navigation and component semantics.
   on-boarding).
 
 ---

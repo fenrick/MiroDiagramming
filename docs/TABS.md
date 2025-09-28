@@ -4,7 +4,7 @@ _Explicit UI + interaction walkthrough for every tab (June 2025)_
 
 This document narrows focus to the **five sidebar tabs** in the Quick Tools
 add‑on. Each tab section specifies panel layout, visible controls, states,
-interaction flows, tool‑tips, keyboard shortcuts and validation rules—so any
+interaction flows, tool‑tips and validation rules—so any
 developer can translate designs into code with zero ambiguity.
 
 ---
@@ -34,8 +34,7 @@ layouts under **Pages/Tabs** in Storybook.
 | 4    | Cards options      | as per old Cards tab                   | Search, tag filter and create button           | –             |
 | 5    | Layout Engine      | Placeholder text                       | Coming soon                                    | –             |
 
-**Tooltip for invalid row** – "Edge refers to missing node '‘%id%’.'" Shortcut:
-**⌘/** toggles the **Advanced options** accordion on the Diagram tab.
+**Tooltip for invalid row** – "Edge refers to missing node '‘%id%’.'" Advanced options are toggled via the UI only.
 
 ---
 
@@ -88,13 +87,7 @@ Shows a getting started guide and a collapsible changelog.
 
 ## Global Keyboard Shortcuts
 
-| Action          | Mac | Win/Linux |
-| --------------- | --- | --------- |
-| Undo            | ⌘Z  | CtrlZ     |
-| Redo            | ⌘⇧Z | Ctrl⇧Z    |
-| Copy Size       | ⌥C  | AltC      |
-| Apply Size      | ⌥V  | AltV      |
-| Command Palette | ⌘K  | CtrlK     |
+Custom shortcuts are not provided in the Miro add‑in context. Rely on native component navigation and Miro’s own shortcuts.
 
 ## Board Actions
 

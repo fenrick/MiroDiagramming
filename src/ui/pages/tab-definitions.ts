@@ -19,16 +19,4 @@ export type TabTuple = readonly [
   Component: React.FC,
 ]
 
-export interface CommandDef {
-  /** Unique identifier used for keyboard shortcuts. */
-  id: string
-  /** Visible label for menus. */
-  label: string
-  /** Shortcut string for documentation. */
-  shortcut: string
-}
-
-/** List of global commands available in the app. */
-export const COMMANDS: CommandDef[] = [
-  { id: 'command-palette', label: 'Command Palette', shortcut: 'Ctrl+K' },
-]
+// No global command palette in Miro add‑ins.
