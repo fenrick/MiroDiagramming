@@ -22,6 +22,12 @@ describe('TemplateManager resolution', () => {
     expect(tpl?.elements?.[0]).toBeTruthy()
   })
 
+  it('resolves aliases containing ampersands', () => {
+    const mgr = TemplateManager.getInstance()
+    const tpl = mgr.getTemplate('Vision & Mission') // alias present in fixtures
+    expect(tpl?.elements?.[0]).toBeTruthy()
+  })
+
   it('resolves connector templates including aliases', () => {
     const mgr = TemplateManager.getInstance()
     expect(mgr.getConnectorTemplate('flow')).toBeTruthy()

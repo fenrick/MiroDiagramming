@@ -34,8 +34,12 @@ export const isSafeCssProperty = (value: string): boolean => /^[a-z-]+$/.test(va
 /** Allow standard lookup identifiers composed of alphanumerics and separators. */
 export const isSafeLookupKey = (value: string): boolean => /^[\w.-]+$/.test(value)
 
-/** Allow user-facing aliases consisting of letters, digits, spaces and separators. */
-export const isSafeAliasKey = (value: string): boolean => /^[\w .-]+$/.test(value)
+/**
+ * Allow user-facing aliases consisting of letters, digits, spaces and
+ * separators. Include `&` to support existing shipped aliases like
+ * "Vision & Mission" from templates/shapeTemplates.json.
+ */
+export const isSafeAliasKey = (value: string): boolean => /^[\w .&-]+$/.test(value)
 
 /** Allow class names emitted by Mermaid (letters, digits, dash or underscore). */
 export const isSafeClassName = (value: string): boolean => /^[\w-]+$/.test(value)
