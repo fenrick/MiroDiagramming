@@ -32,6 +32,7 @@ Static hosting only. Use host‑level health checks for `index.html` as needed.
 - [Done] CI: Align SonarCloud coverage scope with Vitest targets using `sonar.coverage.inclusions` so coverage reflects unit-tested modules.
 - [Done] Abbreviations: rename `*Props` types to `*Properties` in UI; rename `ui-utils.ts` to `ui-utilities.ts` and update imports/tests/docs; rename `FileUtils` to `FileUtilities` and export `fileUtilities` singleton.
 - [Done] ESLint: lower `sonarjs/cognitive-complexity` threshold from 15 to 8 to tighten maintainability checks.
+- [Done] Security lint: remove object‑injection sinks in `nested-layout`, `grid-layout`, `style-tools`, and edge creation path in `board-builder`.
 
 <!-- Removed: Queue & Persistence (backend-only) -->
 
