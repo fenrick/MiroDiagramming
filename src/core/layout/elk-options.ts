@@ -98,7 +98,34 @@ function validateEnum<T>(value: unknown, allowed: readonly T[], fallback: T): T 
 
 export function validateLayoutOptions(options: Partial<UserLayoutOptions>): UserLayoutOptions {
   const algorithm = validateEnum(options.algorithm, ALGORITHMS, DEFAULT_LAYOUT_OPTIONS.algorithm)
-  const defaults = ALGORITHM_DEFAULTS[algorithm]
+  const defaults = ((): Omit<UserLayoutOptions, 'algorithm'> => {
+    switch (algorithm) {
+      case 'mrtree': {
+        return ALGORITHM_DEFAULTS.mrtree
+      }
+      case 'layered': {
+        return ALGORITHM_DEFAULTS.layered
+      }
+      case 'force': {
+        return ALGORITHM_DEFAULTS.force
+      }
+      case 'rectpacking': {
+        return ALGORITHM_DEFAULTS.rectpacking
+      }
+      case 'rectstacking': {
+        return ALGORITHM_DEFAULTS.rectstacking
+      }
+      case 'box': {
+        return ALGORITHM_DEFAULTS.box
+      }
+      case 'radial': {
+        return ALGORITHM_DEFAULTS.radial
+      }
+      default: {
+        return ALGORITHM_DEFAULTS.mrtree
+      }
+    }
+  })()
 
   const direction = validateEnum(options.direction, DIRECTIONS, defaults.direction)
   const spacing =

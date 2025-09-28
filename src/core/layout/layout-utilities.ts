@@ -37,7 +37,7 @@ export function computeEdgeHints(
   },
 ): EdgeHint[] {
   return layout.edges.map((edge, index) => {
-    const info = graph.edges[index]
+    const info = graph.edges.at(index)
     if (!info) {
       return {}
     }
