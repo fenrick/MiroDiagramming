@@ -10,6 +10,7 @@ vi.mock('@mirohq/design-system', () => {
   const Text = ({ children, ...rest }: any) => React.createElement('span', rest, children)
   const styled = (tag: any, _styles?: any) => (props: any) => React.createElement(tag, props)
   return {
+    Box: P,
     Grid: Object.assign(P, { Item: P }),
     Button: Btn,
     ButtonToolbar: P,
@@ -22,6 +23,7 @@ vi.mock('@mirohq/design-system', () => {
     IconPlus: () => null,
     IconArrowArcLeft: () => null,
     IconLockClosed: () => null,
+    IconChevronRightDouble: () => null,
     IconPen: () => null,
     IconQuestionMarkCircle: () => null,
     IconSquareArrowIn: () => null,
@@ -37,6 +39,7 @@ vi.mock('@mirohq/design-system', () => {
     Tabs: Object.assign((p: any) => React.createElement('div', null, p.children), {
       List: (p: any) => React.createElement('div', null, p.children),
       Trigger: (p: any) => React.createElement('button', { type: 'button' }, p.children),
+      Content: (p: any) => React.createElement('div', null, p.children),
     }),
   }
 })
@@ -51,6 +54,7 @@ vi.mock('../../src/ui/components', async () => {
   return {
     Button: Btn,
     ButtonToolbar: P,
+    Paragraph: ({ children }: any) => React.createElement('p', null, children),
     Checkbox: ({ label, ...rest }: any) =>
       React.createElement(
         'label',
@@ -67,6 +71,17 @@ vi.mock('../../src/ui/components', async () => {
         null,
         label,
         React.createElement('input', {
+          value,
+          onChange: (e: any) => onValueChange?.(e.target.value),
+          ...rest,
+        }),
+      ),
+    TextareaField: ({ label, value, onValueChange, ...rest }: any) =>
+      React.createElement(
+        'label',
+        null,
+        label,
+        React.createElement('textarea', {
           value,
           onChange: (e: any) => onValueChange?.(e.target.value),
           ...rest,
@@ -99,7 +114,11 @@ vi.mock('../../src/ui/components/PageHelp', async () => {
 })
 vi.mock('../../src/ui/components/TabPanel', async () => {
   const React = (await import('react')).default
-  return { TabPanel: (p: any) => React.createElement('div', p, p.children) }
+  // Drop tabId to avoid React unknown prop warning in jsdom
+  return {
+    TabPanel: ({ tabId: _tabId, children, ...rest }: any) =>
+      React.createElement('div', rest, children),
+  }
 })
 
 describe('Heavy pages smoke render with mocks', () => {
