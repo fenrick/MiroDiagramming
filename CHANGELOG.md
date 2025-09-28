@@ -1,3 +1,31 @@
+# [2.4.0](https://github.com/fenrick/MiroDiagramming/compare/v2.3.0...v2.4.0) (2025-09-28)
+
+
+### Bug Fixes
+
+* **board:** avoid callback reference; use toSorted; safe size guard ([4926a87](https://github.com/fenrick/MiroDiagramming/commit/4926a87187b7322c78c48e877940cd02355da5c9))
+* **board:** avoid dynamic key assignment in element-utilities to reduce injection risk ([5c97778](https://github.com/fenrick/MiroDiagramming/commit/5c9777838958a90bca4a085abda6c40be04dc3b8))
+* **board:** reduce object-injection warnings in spacing/style tools ([0df326b](https://github.com/fenrick/MiroDiagramming/commit/0df326b57225d8a24111dfafb714e12ca59eec6b))
+* **board:** rename loop variable in grid-layout for lint clarity ([ccf446e](https://github.com/fenrick/MiroDiagramming/commit/ccf446e838eb52528d227e39ffed994f60e236fe))
+* **board:** rename loop vars in templates; toSorted + safe catch; explicit size guard; no callback reference ([ddf6710](https://github.com/fenrick/MiroDiagramming/commit/ddf671004ef7a1cab91791b50cd987d2b68ef4a4))
+* **board:** sanitize shape style colors before SDK calls (hex-only) ([0f5a5c2](https://github.com/fenrick/MiroDiagramming/commit/0f5a5c2e4270446e74b71991623d73fe88dba045))
+* **board:** use Array.at for positions to reduce object-injection lint noise ([35f6a38](https://github.com/fenrick/MiroDiagramming/commit/35f6a38bee18f5658e71a8c60701baa6be82fa56))
+* **core,ui:** lint fixes (promises, code points, scoping, toSorted, no-callback-ref, unused param) ([c550e6d](https://github.com/fenrick/MiroDiagramming/commit/c550e6d1d342695adeb1050efb19c6fc956ae746))
+* **core:** avoid indexed access in use-focus-trap (object-injection lint) ([cf25321](https://github.com/fenrick/MiroDiagramming/commit/cf25321afc5375f62491f61d6a4762dd59bdb87d))
+* **core:** explicit length checks in mermaid converter filters (lint: explicit-length-check) ([de64f8b](https://github.com/fenrick/MiroDiagramming/commit/de64f8b9ae8a9c901976d7003e3da9ae316682a0))
+* **core:** make regex groups non-capturing; lower complexity in state/class converters ([aac71e3](https://github.com/fenrick/MiroDiagramming/commit/aac71e30e70d9a3e24b071ec564dee0d2456b7a4))
+* **core:** remove array index lookups (use .at) in layout utils; add switch braces in elk-options ([ee03916](https://github.com/fenrick/MiroDiagramming/commit/ee0391613abe5cc6bacfc8eded216970b6e8c938))
+* **hooks+layout:** kebab-case hook files and event param names; remove unused regex capture in templates; lift dynamic import in elk-loader ([4c9fd67](https://github.com/fenrick/MiroDiagramming/commit/4c9fd67710e73800fc767a1433aee7c9da3bb5a3))
+* **hooks+layout:** rename event params; map param names in layout-core; remove unused capture; lift dynamic import ([dd8b09c](https://github.com/fenrick/MiroDiagramming/commit/dd8b09c88427b063fc4d30f4b161fbb51652df5b))
+* **mermaid:** sanitize flowchart shapes and CSS colors; prevent invalid shape types at creation ([79cf153](https://github.com/fenrick/MiroDiagramming/commit/79cf153323388c32863b3595913cf300d8d30fe6))
+* **ui:** align import paths with kebab-case filenames ([41a3873](https://github.com/fenrick/MiroDiagramming/commit/41a3873bf5bcd5b718641055b25592151e6b749d))
+* **ui:** stop passing className/style into design-system styled components (wrap with div) ([52fa168](https://github.com/fenrick/MiroDiagramming/commit/52fa168ced05cc65ff81455eef33dbeb52a9d2d3))
+
+
+### Features
+
+* **ux:** remove shortcuts and command palette ([c4d835e](https://github.com/fenrick/MiroDiagramming/commit/c4d835e8d66aba2090e96907e18c2ae1f0717b58))
+
 # [2.3.0](https://github.com/fenrick/MiroDiagramming/compare/v2.2.0...v2.3.0) (2025-09-28)
 
 
