@@ -17,7 +17,9 @@ export function ButtonToolbar({ className, children }: ButtonToolbarProps): Reac
   return (
     <Flex className={className} direction="column" gap={100}>
       {React.Children.toArray(children).map((node) => {
-        if (!React.isValidElement(node)) return node as React.ReactElement
+        if (!React.isValidElement(node)) {
+          return node as React.ReactElement
+        }
         // Use child-provided key; do not synthesize index-based keys
         const childKey = (node as React.ReactElement).key ?? undefined
         // Make buttons full-width by default for readability in the panel

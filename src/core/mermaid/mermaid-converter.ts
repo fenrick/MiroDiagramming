@@ -126,17 +126,23 @@ function parseCssDeclarations(entries?: string[]): Record<string, string> {
     return declarations
   }
   for (const entry of entries) {
-    if (!entry) continue
+    if (!entry) {
+      continue
+    }
     const rules = entry
       .split(';')
       .map((segment) => segment.trim())
       .filter(Boolean)
     for (const rule of rules) {
       const [rawProp, rawValue] = rule.split(':')
-      if (!rawProp || rawValue === undefined) continue
+      if (!rawProp || rawValue === undefined) {
+        continue
+      }
       const prop = rawProp.trim().toLowerCase()
       const value = rawValue.trim()
-      if (!value) continue
+      if (!value) {
+        continue
+      }
       declarations[prop] = value
     }
   }
@@ -144,7 +150,9 @@ function parseCssDeclarations(entries?: string[]): Record<string, string> {
 }
 
 function parseLength(value: string | undefined): number | undefined {
-  if (!value) return undefined
+  if (!value) {
+    return undefined
+  }
   const numeric = Number.parseFloat(value.replace(/px$/i, ''))
   return Number.isFinite(numeric) ? numeric : undefined
 }
@@ -202,7 +210,9 @@ function mapShape(shape?: string): string | undefined {
   }
   const key = shape.toLowerCase()
   const base = SHAPE_MAP[key]
-  if (!base) return undefined
+  if (!base) {
+    return undefined
+  }
   if (isExperimentalShapesEnabled() && EXP_FLOWCHART_SHAPES[base]) {
     return EXP_FLOWCHART_SHAPES[base]
   }
@@ -267,7 +277,9 @@ function splitSequenceMessage(
     if (idx > 0) {
       let from = messagePart.slice(0, idx).trim()
       let to = messagePart.slice(idx + arrow.length).trim()
-      if (!from || !to) continue
+      if (!from || !to) {
+        continue
+      }
 
       if (from.endsWith('+') || from.endsWith('-')) {
         from = from.slice(0, -1)
@@ -277,7 +289,9 @@ function splitSequenceMessage(
       }
       from = from.trim()
       to = to.trim()
-      if (!from || !to) continue
+      if (!from || !to) {
+        continue
+      }
       return { from, to, arrow }
     }
   }
@@ -595,9 +609,13 @@ function extractLinkStyles(source: string): Map<number, EdgeStyleOverrides> {
   const pattern = /linkStyle\s+(default|\d+)\s+([^\n]+)/gi
   for (const match of source.matchAll(pattern)) {
     const target = match[1]
-    if (!target) continue
+    if (!target) {
+      continue
+    }
     const rawDeclaration = match[2]
-    if (!rawDeclaration) continue
+    if (!rawDeclaration) {
+      continue
+    }
     const normalized = rawDeclaration.trim().replace(/,/g, ';')
     const edge = {
       id: '',
@@ -607,7 +625,9 @@ function extractLinkStyles(source: string): Map<number, EdgeStyleOverrides> {
       classes: [] as string[],
     } as RawEdge
     const style = parseEdgeStyles(edge)
-    if (!style) continue
+    if (!style) {
+      continue
+    }
     if (target === 'default') {
       defaultStyle = style
     } else {

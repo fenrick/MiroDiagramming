@@ -3,23 +3,23 @@ import { space } from '@mirohq/design-tokens'
 import React from 'react'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 
-import { ExistingNodeMode, GraphProcessor } from '../../core/graph/graph-processor'
-import { HierarchyProcessor } from '../../core/graph/hierarchy-processor'
+import { type ExistingNodeMode, type GraphProcessor } from '../../core/graph/graph-processor'
+import { type HierarchyProcessor } from '../../core/graph/hierarchy-processor'
 import {
   ALGORITHMS,
   DEFAULT_LAYOUT_OPTIONS,
   DIRECTIONS,
   EDGE_ROUTING_MODES,
   EDGE_ROUTINGS,
-  ElkAlgorithm,
-  ElkDirection,
-  ElkEdgeRouting,
-  ElkEdgeRoutingMode,
-  ElkOptimizationGoal,
+  type ElkAlgorithm,
+  type ElkDirection,
+  type ElkEdgeRouting,
+  type ElkEdgeRoutingMode,
+  type ElkOptimizationGoal,
   OPTIMIZATION_GOALS,
-  UserLayoutOptions,
+  type UserLayoutOptions,
 } from '../../core/layout/elk-options'
-import { ASPECT_RATIOS, AspectRatioId } from '../../core/utils/aspect-ratio'
+import { ASPECT_RATIOS, type AspectRatioId } from '../../core/utils/aspect-ratio'
 import {
   Button,
   ButtonToolbar,
@@ -38,7 +38,7 @@ import { JsonDropZone } from '../components/JsonDropZone'
 import { PageHelp } from '../components/PageHelp'
 import { TabPanel } from '../components/TabPanel'
 import { undoLastImport } from '../hooks/ui-utils'
-import { LayoutChoice, useAdvancedToggle, useDiagramCreate } from '../hooks/use-diagram-create'
+import { type LayoutChoice, useDiagramCreate } from '../hooks/use-diagram-create'
 
 /**
  * Queue the first file from a drop event for import.
@@ -96,6 +96,9 @@ const LAYOUT_DESCRIPTIONS: Record<LayoutChoice, string> = {
 
 /** UI for the Structured sub-tab. */
 
+const ADVANCED_LABEL = 'Advanced options'
+const SP200 = 'var(--space-200)'
+
 export const StructuredTab: React.FC = () => {
   const [importQueue, setImportQueue] = React.useState<File[]>([])
   const [layoutChoice, setLayoutChoice] = React.useState<LayoutChoice>('Layered')
@@ -112,7 +115,7 @@ export const StructuredTab: React.FC = () => {
     undefined,
   )
 
-  useAdvancedToggle(setShowAdvanced)
+  // No custom keyboard toggles; advanced options are controlled via details/summary only.
 
   const handleFiles = React.useCallback(
     (droppedFiles: File[]): void => handleFileDrop(droppedFiles, setImportQueue, setError),
@@ -171,7 +174,7 @@ export const StructuredTab: React.FC = () => {
                 ))}
               </SelectField>
               <InfoCallout title="Layout options">
-                <ul style={{ margin: 0, paddingLeft: 'var(--space-200)' }}>
+                <ul style={{ margin: 0, paddingLeft: SP200 }}>
                   {LAYOUTS.map((l) => (
                     <li key={`desc-${l}`}>{LAYOUT_DESCRIPTIONS[l]}</li>
                   ))}
@@ -188,20 +191,21 @@ export const StructuredTab: React.FC = () => {
                   placeholder="Frame title"
                 />
               )}
+              {/** Advanced options details */}
               <details
                 open={showAdvanced}
-                aria-label="Advanced options"
+                aria-label={ADVANCED_LABEL}
                 onToggle={(e) => setShowAdvanced((e.target as HTMLDetailsElement).open)}
               >
-                <summary aria-expanded={showAdvanced}>Advanced options</summary>
-                <div style={{ marginBottom: 'var(--space-200)' }}>
+                <summary aria-expanded={showAdvanced}>{ADVANCED_LABEL}</summary>
+                <div style={{ marginBottom: SP200 }}>
                   <InfoCallout title="Existing nodes">
                     Choose how existing items on the board are treated during layout. “Move into
                     place” repositions items, “Use for layout” anchors them, and “Keep position”
                     leaves them untouched.
                   </InfoCallout>
                 </div>
-                <div style={{ display: 'grid', rowGap: 'var(--space-200)' }}>
+                <div style={{ display: 'grid', rowGap: SP200 }}>
                   <InputField
                     label="Spacing"
                     type="number"

@@ -19,6 +19,11 @@ export type JsonDropZoneProps = Readonly<{
  * drag-and-drop and file picker interactions invoke `onFiles` uniformly.
  */
 export function JsonDropZone({ onFiles }: JsonDropZoneProps): React.JSX.Element {
+  const SP200 = 'var(--space-200)'
+  const MSG_SELECT = 'Select JSON file'
+  const MSG_DROP = 'Drop your JSON file here'
+  const MSG_INSTRUCTIONS =
+    'Press Enter to open the file picker or drop a JSON file on the area above.'
   const dropzone = useDropzone({
     accept: { 'application/json': ['.json'] },
     maxFiles: 1,
@@ -54,20 +59,18 @@ export function JsonDropZone({ onFiles }: JsonDropZoneProps): React.JSX.Element 
           />
         </VisuallyHidden>
         {dropzone.isDragAccept ? (
-          <p style={{ margin: 'var(--space-200)' }}>Drop your JSON file here</p>
+          <p style={{ margin: SP200 }}>{MSG_DROP}</p>
         ) : (
-          <div style={{ padding: 'var(--space-200)' }}>
+          <div style={{ padding: SP200 }}>
             <Button variant="primary" iconPosition="start" icon={<IconSquareArrowIn />}>
-              <Text>Select JSON file</Text>
+              <Text>{MSG_SELECT}</Text>
             </Button>
-            <p style={{ marginTop: 'var(--space-200)' }}>Or drop your JSON file here</p>
+            <p style={{ marginTop: SP200 }}>Or {MSG_DROP}</p>
           </div>
         )}
       </div>
       <VisuallyHidden asChild>
-        <p id="dropzone-instructions">
-          Press Enter to open the file picker or drop a JSON file on the area above.
-        </p>
+        <p id="dropzone-instructions">{MSG_INSTRUCTIONS}</p>
       </VisuallyHidden>
     </>
   )

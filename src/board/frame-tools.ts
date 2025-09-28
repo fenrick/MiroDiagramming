@@ -1,6 +1,6 @@
 import * as log from '../logger'
 
-import { BoardLike, getBoard, maybeSync, Syncable } from './board'
+import { type BoardLike, getBoard, maybeSync, type Syncable } from './board'
 import { boardCache } from './board-cache'
 
 /** Options for renaming selected frames. */

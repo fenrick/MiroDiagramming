@@ -30,9 +30,13 @@ export function useFocusTrap<T extends HTMLElement>(
         onClose()
         return
       }
-      if (e.key !== 'Tab') return
+      if (e.key !== 'Tab') {
+        return
+      }
       const focusable = getFocusable()
-      if (focusable.length === 0) return
+      if (focusable.length === 0) {
+        return
+      }
       e.preventDefault()
       const current = document.activeElement as HTMLElement | null
       const idx = Math.max(0, current ? focusable.indexOf(current) : 0)

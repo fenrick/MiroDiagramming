@@ -1,7 +1,7 @@
 import * as log from '../logger'
 import { getTextFields } from '../core/utils/text-utils'
 
-import { BoardLike, getBoard, maybeSync, Syncable } from './board'
+import { type BoardLike, getBoard, maybeSync, type Syncable } from './board'
 import { boardCache } from './board-cache'
 import { calculateGridPositions } from './grid-layout'
 

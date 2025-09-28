@@ -39,7 +39,9 @@ export function useKeybinding(bindings: Keybinding[]) {
   const ref = React.useRef<HTMLDivElement | null>(null)
   React.useEffect(() => {
     const target: HTMLElement | Document | null = ref.current ?? document
-    if (!target) return
+    if (!target) {
+      return
+    }
     const onKey = (evt: KeyboardEvent) => handler(evt)
     target.addEventListener('keydown', onKey as EventListener)
     return () => target.removeEventListener('keydown', onKey as EventListener)

@@ -11,7 +11,13 @@ export interface Size {
   height: number
 }
 
-import { BoardLike, forEachSelection, getFirstSelection, maybeSync, Syncable } from './board'
+import {
+  type BoardLike,
+  forEachSelection,
+  getFirstSelection,
+  maybeSync,
+  type Syncable,
+} from './board'
 
 /**
  * Retrieve the width and height of the first selected widget.

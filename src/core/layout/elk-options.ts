@@ -1,4 +1,4 @@
-import { ASPECT_RATIO_IDS, AspectRatioId } from '../utils/aspect-ratio'
+import { ASPECT_RATIO_IDS, type AspectRatioId } from '../utils/aspect-ratio'
 
 /**
  * Supported ELK layout algorithms. Extend when enabling additional

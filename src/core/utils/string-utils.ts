@@ -1,6 +1,6 @@
 /** Safely convert a value to string, JSON encoding objects. */
 export function toSafeString(value: unknown): string {
-  if (value == null) {
+  if (value === null || value === undefined) {
     return ''
   }
 

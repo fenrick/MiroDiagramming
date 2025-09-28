@@ -102,7 +102,9 @@ function computeNodeBounds(nodeEl: SVGGElement): {
 
   const updateBounds = (points: Array<{ x: number; y: number }>) => {
     for (const { x, y } of points) {
-      if (!Number.isFinite(x) || !Number.isFinite(y)) continue
+      if (!Number.isFinite(x) || !Number.isFinite(y)) {
+        continue
+      }
       minX = Math.min(minX, groupOffset.x + x)
       minY = Math.min(minY, groupOffset.y + y)
       maxX = Math.max(maxX, groupOffset.x + x)

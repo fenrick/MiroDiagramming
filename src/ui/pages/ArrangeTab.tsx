@@ -2,9 +2,9 @@ import { Grid, IconChevronRightDouble, IconGrid, Text, Flex } from '@mirohq/desi
 import { space } from '@mirohq/design-tokens'
 import React from 'react'
 
-import { applyGridLayout, GridOptions } from '../../board/grid-tools'
+import { applyGridLayout, type GridOptions } from '../../board/grid-tools'
 import { boardCache } from '../../board/board-cache'
-import { applySpacingLayout, SpacingOptions } from '../../board/spacing-tools'
+import { applySpacingLayout, type SpacingOptions } from '../../board/spacing-tools'
 import {
   Button,
   ButtonToolbar,

@@ -1,5 +1,5 @@
 import { Button as DSButton } from '@mirohq/design-system'
-import { CSS } from '@stitches/react'
+import { type CSS } from '@stitches/react'
 import React from 'react'
 
 export type ButtonProps = Readonly<

@@ -5,7 +5,13 @@ import { colors } from '@mirohq/design-tokens'
 
 import { adjustColor, ensureContrast, resolveColor } from '../core/utils/color-utils'
 
-import { BoardLike, forEachSelection, getFirstSelection, maybeSync, Syncable } from './board'
+import {
+  type BoardLike,
+  forEachSelection,
+  getFirstSelection,
+  maybeSync,
+  type Syncable,
+} from './board'
 
 /**
  * Return the first style property present in the provided list.

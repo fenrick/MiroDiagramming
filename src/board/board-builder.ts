@@ -18,7 +18,7 @@ import { createConnector } from './connector-utils'
 import { searchGroups, searchShapes } from './node-search'
 import {
   ShapeInteractionManager,
-  ShapeInteraction,
+  type ShapeInteraction,
   type ShapeUpdateOptions,
 } from './shape-interactions'
 import { templateManager } from './templates'
@@ -162,7 +162,7 @@ export class BoardBuilder {
     }
     this.ensureBoard()
     const selection = await boardCache.getSelection(getBoard())
-    const board: import('./board').BoardQueryLike = {
+    const board: BoardQueryLike = {
       get: async ({ type: t }): Promise<Array<Record<string, unknown>>> =>
         selection.filter((i) => (i as { type?: string }).type === t),
       getSelection: async (): Promise<Array<Record<string, unknown>>> => selection,

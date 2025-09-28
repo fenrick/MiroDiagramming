@@ -3,8 +3,8 @@ import React from 'react'
 import {
   replaceBoardContent,
   searchBoardContent,
-  SearchOptions,
-  SearchResult,
+  type SearchOptions,
+  type SearchResult,
 } from '../../board/search-tools'
 
 /**

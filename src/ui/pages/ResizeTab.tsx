@@ -12,11 +12,11 @@ import {
   applySizeToSelection,
   copySizeFromSelection,
   scaleSelection,
-  Size,
+  type Size,
 } from '../../board/resize-tools'
 import {
   ASPECT_RATIOS,
-  AspectRatioId,
+  type AspectRatioId,
   aspectRatioValue,
   ratioHeight,
 } from '../../core/utils/aspect-ratio'

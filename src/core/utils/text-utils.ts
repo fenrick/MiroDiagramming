@@ -86,13 +86,20 @@ export function setStringAtPath(item: Record<string, unknown>, path: string, val
  */
 export function readItemText(item: Record<string, unknown>): string | undefined {
   const text = (item as { plainText?: string }).plainText
-  if (typeof text === 'string' && text.length > 0) return text
+  if (typeof text === 'string' && text.length > 0) {
+    return text
+  }
   const content = (item as { content?: string }).content
-  if (typeof content === 'string') return content
+  if (typeof content === 'string') {
+    return content
+  }
   const nested = (item as { text?: { plainText?: string; content?: string } }).text
-  if (nested && typeof nested.plainText === 'string' && nested.plainText.length > 0)
+  if (nested && typeof nested.plainText === 'string' && nested.plainText.length > 0) {
     return nested.plainText
-  if (nested && typeof nested.content === 'string') return nested.content
+  }
+  if (nested && typeof nested.content === 'string') {
+    return nested.content
+  }
   return undefined
 }
 
@@ -109,8 +116,12 @@ export function writeItemText(item: Record<string, unknown>, text: string): void
   }
   const nested = (item as { text?: { plainText?: string; content?: string } }).text
   if (nested) {
-    if (typeof nested.plainText === 'string') nested.plainText = text
-    if (typeof nested.content === 'string') nested.content = text
+    if (typeof nested.plainText === 'string') {
+      nested.plainText = text
+    }
+    if (typeof nested.content === 'string') {
+      nested.content = text
+    }
   }
 }
 

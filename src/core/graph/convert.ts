@@ -1,6 +1,6 @@
-import { HierNode } from '../layout/nested-layout'
+import { type HierNode } from '../layout/nested-layout'
 
-import { EdgeData, GraphData, NodeData } from './graph-service'
+import { type EdgeData, type GraphData, type NodeData } from './graph-service'
 
 /**
  * Transform a flat edge list into a nested hierarchy structure.

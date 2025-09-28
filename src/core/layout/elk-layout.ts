@@ -1,7 +1,7 @@
-import { GraphData } from '../graph'
+import { type GraphData } from '../graph'
 
-import { UserLayoutOptions } from './elk-options'
-import { LayoutResult, performLayout } from './layout-core'
+import { type UserLayoutOptions } from './elk-options'
+import { type LayoutResult, performLayout } from './layout-core'
 
 /**
  * LayoutEngine executes ELK layout directly within the main thread.

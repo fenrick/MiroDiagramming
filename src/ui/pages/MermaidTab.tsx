@@ -9,7 +9,7 @@ import {
 import { space } from '@mirohq/design-tokens'
 import React from 'react'
 
-import { ExistingNodeMode } from '../../core/graph/graph-processor'
+import { type ExistingNodeMode } from '../../core/graph/graph-processor'
 import { MermaidConversionError, MermaidRenderer } from '../../core/mermaid'
 import * as log from '../../logger'
 import {
@@ -75,7 +75,9 @@ export const MermaidTab: React.FC = () => {
   }
 
   React.useEffect(() => {
-    if (typeof globalThis === 'undefined') return
+    if (typeof globalThis === 'undefined') {
+      return
+    }
     try {
       globalThis.localStorage?.setItem(STORAGE_KEY, definition)
     } catch {

@@ -25,7 +25,9 @@ const consoleMethod: Record<Level, (message?: unknown, ...optionalParams: unknow
 }
 
 function log(level: Level, message: string, attrs?: Attrs) {
-  if (!ENABLE_CONSOLE) return
+  if (!ENABLE_CONSOLE) {
+    return
+  }
   const payload = attrs && Object.keys(attrs).length > 0 ? attrs : undefined
   const prefix = `[${SERVICE}] ${message}`
   const emit = consoleMethod[level]

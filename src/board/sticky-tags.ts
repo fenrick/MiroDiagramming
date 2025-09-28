@@ -15,7 +15,9 @@ function extractBracketTags(text: string): { tags: string[]; stripped: string } 
   let match: RegExpExecArray | null
   while ((match = tagPattern.exec(text))) {
     const name = match[1]?.trim()
-    if (name) tagSet.add(name)
+    if (name) {
+      tagSet.add(name)
+    }
   }
   const stripped = text
     .replace(tagPattern, '')
@@ -43,7 +45,9 @@ async function ensureTagIds(
         tagMap.set(name, tag)
       }
     }
-    if (tag?.id) ids.push(tag.id)
+    if (tag?.id) {
+      ids.push(tag.id)
+    }
   }
   return ids
 }
@@ -85,7 +89,9 @@ export async function applyBracketTagsToSelectedStickies(): Promise<void> {
   let tagged = 0
   for (const item of stickies) {
     const changed = await applyTagsAndMaybeStrip(item, tagMap)
-    if (changed) tagged += 1
+    if (changed) {
+      tagged += 1
+    }
   }
   // Clear caches so subsequent reads see updated tags/text
   boardCache.reset(board)
@@ -103,7 +109,9 @@ function collectTagNames(stickies: Array<Record<string, unknown>>): Set<string> 
   const names = new Set<string>()
   for (const item of stickies) {
     const t = readItemText(item)
-    if (!t) continue
+    if (!t) {
+      continue
+    }
     const { tags } = extractBracketTags(t)
     for (const n of tags) {
       names.add(n)
@@ -117,9 +125,13 @@ async function applyTagsAndMaybeStrip(
   tagMap: Map<string, TagLike>,
 ): Promise<boolean> {
   const text = readItemText(item)
-  if (!text) return false
+  if (!text) {
+    return false
+  }
   const { tags, stripped } = extractBracketTags(text)
-  if (tags.length === 0) return false
+  if (tags.length === 0) {
+    return false
+  }
   try {
     const resolvedIds = tags
       .map((n) => tagMap.get(n)?.id)
@@ -132,7 +144,9 @@ async function applyTagsAndMaybeStrip(
 
     // Only strip text if all names resolved to IDs and tagging succeeded
     const allResolved = tags.every((n) => Boolean(tagMap.get(n)?.id))
-    if (!allResolved) return false
+    if (!allResolved) {
+      return false
+    }
 
     writeItemText(item, stripped)
     await maybeSync(item as { sync?: () => Promise<void> })

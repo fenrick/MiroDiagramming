@@ -91,11 +91,17 @@ export class TemplateManager {
   private applyExperimentalOverrides(): void {
     const flag = (import.meta as ImportMeta).env?.VITE_MIRO_EXPERIMENTAL_SHAPES
     const expEnabled = typeof flag === 'string' ? flag.toLowerCase() !== 'false' : true
-    if (!expEnabled) return
+    if (!expEnabled) {
+      return
+    }
     const overrideMap = experimentalShapeMap as Record<string, string>
-    if (!overrideMap || typeof overrideMap !== 'object') return
+    if (!overrideMap || typeof overrideMap !== 'object') {
+      return
+    }
     for (const [name, shape] of Object.entries(overrideMap)) {
-      if (!shape || typeof shape !== 'string') continue
+      if (!shape || typeof shape !== 'string') {
+        continue
+      }
       const key = this.aliasMap[name] ?? name
       const tpl = this.templates[key]
       if (tpl && Array.isArray(tpl.elements) && tpl.elements.length > 0) {

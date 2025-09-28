@@ -2,7 +2,8 @@ import React from 'react'
 
 import { GraphProcessor } from '../../core/graph/graph-processor'
 import { HierarchyProcessor } from '../../core/graph/hierarchy-processor'
-import { ElkAlgorithm, UserLayoutOptions } from '../../core/layout/elk-options'
+import type { ElkAlgorithm, UserLayoutOptions } from '../../core/layout/elk-options'
+import type { ExistingNodeMode } from '../../core/graph/graph-processor'
 
 import { showError } from './notifications'
 
@@ -26,7 +27,7 @@ interface CreateOptions {
   layoutOpts: UserLayoutOptions
   nestedPadding: number
   nestedTopSpacing: number
-  existingMode: import('../../core/graph/graph-processor').ExistingNodeMode
+  existingMode: ExistingNodeMode
 }
 
 /**
@@ -110,15 +111,4 @@ export function useDiagramCreate(
  *
  * @param setShow - State setter controlling visibility of the panel.
  */
-export function useAdvancedToggle(setShow: React.Dispatch<React.SetStateAction<boolean>>): void {
-  React.useEffect(() => {
-    const handler = (e: KeyboardEvent): void => {
-      if ((e.metaKey || e.ctrlKey) && e.key === '/') {
-        e.preventDefault()
-        setShow((v) => !v)
-      }
-    }
-    globalThis.addEventListener('keydown', handler)
-    return () => globalThis.removeEventListener('keydown', handler)
-  }, [setShow])
-}
+// No custom keyboard shortcuts in Miro add-ins.

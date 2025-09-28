@@ -4,7 +4,7 @@ import * as log from '../../logger'
 import { BoardBuilder } from '../../board/board-builder'
 import { clearActiveFrame, registerFrame } from '../../board/frame-utils'
 import { boundingBoxFromCenter, frameOffset } from '../layout/layout-utils'
-import { HierNode, layoutHierarchy, NestedLayoutResult } from '../layout/nested-layout'
+import { type HierNode, layoutHierarchy, type NestedLayoutResult } from '../layout/nested-layout'
 import { fileUtils } from '../utils/file-utils'
 
 import { edgesToHierarchy } from './convert'

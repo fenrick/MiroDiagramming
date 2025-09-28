@@ -54,7 +54,9 @@ export const SearchTab: React.FC = () => {
       zoomToObject?: (i: unknown) => Promise<void>
     }
     const vp = globalThis.miro?.board?.viewport as ViewportAPI | undefined
-    if (!vp) return
+    if (!vp) {
+      return
+    }
     if (typeof vp.zoomToObject === 'function') {
       await vp.zoomToObject(item)
     } else {

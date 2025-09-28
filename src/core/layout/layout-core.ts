@@ -1,11 +1,11 @@
 import type { ElkNode } from 'elkjs/lib/elk-api'
 
 import { templateManager } from '../../board/templates'
-import { GraphData } from '../graph'
+import { type GraphData } from '../graph'
 import { aspectRatioValue } from '../utils/aspect-ratio'
 
 import { loadElk } from './elk-loader'
-import { UserLayoutOptions, validateLayoutOptions } from './elk-options'
+import { type UserLayoutOptions, validateLayoutOptions } from './elk-options'
 
 export interface PositionedNode {
   id: string

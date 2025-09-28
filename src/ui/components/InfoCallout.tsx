@@ -21,13 +21,21 @@ export function InfoCallout({
   children,
 }: InfoCalloutProps): React.JSX.Element | null {
   const hasContent = React.useMemo(() => {
-    if (typeof markdown === 'string' && markdown.trim().length > 0) return true
-    if (children === undefined || children === null) return false
-    if (typeof children === 'string') return children.trim().length > 0
+    if (typeof markdown === 'string' && markdown.trim().length > 0) {
+      return true
+    }
+    if (children === undefined || children === null) {
+      return false
+    }
+    if (typeof children === 'string') {
+      return children.trim().length > 0
+    }
     const arr = React.Children.toArray(children)
-    return arr.some((node) => (typeof node === 'string' ? node.trim().length > 0 : node != null))
+    return arr.some((node) => (typeof node === 'string' ? node.trim().length > 0 : node !== null))
   }, [markdown, children])
-  if (!hasContent) return null
+  if (!hasContent) {
+    return null
+  }
   return (
     <Callout
       variant="primary"

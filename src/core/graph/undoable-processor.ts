@@ -1,4 +1,4 @@
-import { BoardBuilder } from '../../board/board-builder'
+import { type BoardBuilder } from '../../board/board-builder'
 import type { BoardEntity } from '../../board/item-types'
 import { syncOrUndo as syncHelper, undoWidgets } from '../../board/undo-utils'
 
