@@ -56,18 +56,18 @@ export function applyShapeElement(item: BaseItem, element: TemplateElement, labe
     return
   }
   const shape = item as Shape
-  const shapeRecord = shape as Shape & Record<string, unknown>
-  const assignments: Array<[keyof TemplateElement, string]> = [
-    ['shape', 'shape'],
-    ['rotation', 'rotation'],
-    ['width', 'width'],
-    ['height', 'height'],
-  ]
-  for (const [sourceKey, destinationKey] of assignments) {
-    const value = (element as Record<string, unknown>)[sourceKey]
-    if (value) {
-      shapeRecord[destinationKey] = value
-    }
+  if (typeof element.shape === 'string') {
+    // Shape type is a string alias; cast to the SDK union for assignment.
+    ;(shape as Shape & { shape: unknown }).shape = element.shape as unknown
+  }
+  if (typeof element.rotation === 'number') {
+    shape.rotation = element.rotation
+  }
+  if (typeof element.width === 'number') {
+    shape.width = element.width
+  }
+  if (typeof element.height === 'number') {
+    shape.height = element.height
   }
   shape.content = (element.text ?? '{{label}}').replace('{{label}}', label)
   shape.style = buildShapeStyle(shape.style as Partial<ShapeStyle>, element)

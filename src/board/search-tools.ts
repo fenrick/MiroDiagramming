@@ -58,10 +58,11 @@ function escapeRegExp(string_: string): string {
  * @param pattern - Source string of the regular expression.
  * @throws {SyntaxError} If the pattern appears unsafe.
  */
-function assertRegexSafe(pattern: string, flags: string): void {
+function assertRegexSafe(pattern: string, _flags: string): void {
   const repeatedGroup = /\((?:[^)\s]|\\.){1,8}\)(?:\+{2,}|\*{2,})/.test(pattern)
   const nestedQuantifier = /\([^)]{0,128}[+*][^)]{0,128}\)[+*?]/.test(pattern)
-  if (!safeRegex(new RegExp(pattern, flags)) || repeatedGroup || nestedQuantifier) {
+  // Pass a string to safe-regex to avoid constructing a dynamic RegExp here.
+  if (!safeRegex(pattern) || repeatedGroup || nestedQuantifier) {
     throw new SyntaxError('Unsafe regular expression')
   }
 }
