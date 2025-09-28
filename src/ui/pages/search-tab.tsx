@@ -71,24 +71,33 @@ export const SearchTab: React.FC = () => {
       .map((t) => t.trim())
       .filter(Boolean)
     const options: SearchOptions = { query }
-    const add = <K extends keyof SearchOptions>(
-      cond: boolean,
-      key: K,
-      value: SearchOptions[K],
-    ): void => {
-      if (cond) {
-        options[key] = value
-      }
+    if (widgetTypes.length > 0) {
+      options.widgetTypes = [...widgetTypes]
     }
-    add(widgetTypes.length > 0, 'widgetTypes', widgetTypes)
-    add(tags.length > 0, 'tagIds', tags)
-    add(Boolean(backgroundColor), 'backgroundColor', backgroundColor)
-    add(Boolean(assignee), 'assignee', assignee)
-    add(Boolean(creator), 'creator', creator)
-    add(Boolean(lastModifiedBy), 'lastModifiedBy', lastModifiedBy)
-    add(caseSensitive, 'caseSensitive', true)
-    add(wholeWord, 'wholeWord', true)
-    add(regex, 'regex', true)
+    if (tags.length > 0) {
+      options.tagIds = tags
+    }
+    if (backgroundColor) {
+      options.backgroundColor = backgroundColor
+    }
+    if (assignee) {
+      options.assignee = assignee
+    }
+    if (creator) {
+      options.creator = creator
+    }
+    if (lastModifiedBy) {
+      options.lastModifiedBy = lastModifiedBy
+    }
+    if (caseSensitive) {
+      options.caseSensitive = true
+    }
+    if (wholeWord) {
+      options.wholeWord = true
+    }
+    if (regex) {
+      options.regex = true
+    }
     return options
   }, [
     query,

@@ -40,60 +40,42 @@ export function getTextFields(item: Record<string, unknown>): Array<[string, str
 /**
  * Retrieve a string at a dot-notated path from the given item.
  */
+const TEXT_GETTERS = {
+  title: (item: Record<string, unknown>) =>
+    typeof (item as { title?: unknown }).title === 'string'
+      ? (item as { title?: string }).title
+      : undefined,
+  content: (item: Record<string, unknown>) =>
+    typeof (item as { content?: unknown }).content === 'string'
+      ? (item as { content?: string }).content
+      : undefined,
+  plainText: (item: Record<string, unknown>) =>
+    typeof (item as { plainText?: unknown }).plainText === 'string'
+      ? (item as { plainText?: string }).plainText
+      : undefined,
+  description: (item: Record<string, unknown>) =>
+    typeof (item as { description?: unknown }).description === 'string'
+      ? (item as { description?: string }).description
+      : undefined,
+  text: (item: Record<string, unknown>) =>
+    typeof (item as { text?: unknown }).text === 'string'
+      ? (item as { text?: string }).text
+      : undefined,
+  'text.plainText': (item: Record<string, unknown>) => {
+    const nested = (item as { text?: { plainText?: unknown } }).text
+    return nested && typeof nested.plainText === 'string' ? nested.plainText : undefined
+  },
+  'text.content': (item: Record<string, unknown>) => {
+    const nested = (item as { text?: { content?: unknown } }).text
+    return nested && typeof nested.content === 'string' ? nested.content : undefined
+  },
+} as const
+
+type TextPath = keyof typeof TEXT_GETTERS
+
 export function getStringAtPath(item: Record<string, unknown>, path: string): string | undefined {
-  switch (path) {
-    case 'title': {
-      return typeof (item as { title?: unknown }).title === 'string'
-        ? ((item as { title?: string }).title as string)
-        : undefined
-    }
-    case 'content': {
-      return typeof (item as { content?: unknown }).content === 'string'
-        ? ((item as { content?: string }).content as string)
-        : undefined
-    }
-    case 'plainText': {
-      return typeof (item as { plainText?: unknown }).plainText === 'string'
-        ? ((item as { plainText?: string }).plainText as string)
-        : undefined
-    }
-    case 'description': {
-      return typeof (item as { description?: unknown }).description === 'string'
-        ? ((item as { description?: string }).description as string)
-        : undefined
-    }
-    case 'text': {
-      return typeof (item as { text?: unknown }).text === 'string'
-        ? ((item as { text?: string }).text as string)
-        : undefined
-    }
-    case 'text.plainText': {
-      const nested = (item as { text?: { plainText?: unknown } }).text
-      return nested && typeof nested.plainText === 'string' ? nested.plainText : undefined
-    }
-    case 'text.content': {
-      const nested = (item as { text?: { content?: unknown } }).text
-      return nested && typeof nested.content === 'string' ? nested.content : undefined
-    }
-    default: {
-      // Generic, safe read guarded by own-property checks and Reflect
-      if (!path || path.includes('__proto__') || path.includes('constructor')) {
-        return undefined
-      }
-      const parts = path.split('.')
-      let reference: unknown = item
-      for (const part of parts) {
-        if (!reference || typeof reference !== 'object') {
-          return undefined
-        }
-        if (!Object.prototype.hasOwnProperty.call(reference, part)) {
-          return undefined
-        }
-        reference = Reflect.get(reference as object, part)
-      }
-      return typeof reference === 'string' ? (reference as string) : undefined
-    }
-  }
+  const getter = TEXT_GETTERS[path as TextPath]
+  return getter ? getter(item) : undefined
 }
 
 /**
@@ -102,91 +84,50 @@ export function getStringAtPath(item: Record<string, unknown>, path: string): st
  * Attempts to mutate only existing string properties and guards against
  * prototype pollution by ignoring `__proto__` and `constructor` segments.
  */
+const TEXT_SETTERS: Record<TextPath, (item: Record<string, unknown>, value: string) => void> = {
+  title: (item, value) => {
+    if (typeof (item as { title?: unknown }).title === 'string') {
+      ;(item as { title?: string }).title = value
+    }
+  },
+  content: (item, value) => {
+    if (typeof (item as { content?: unknown }).content === 'string') {
+      ;(item as { content?: string }).content = value
+    }
+  },
+  plainText: (item, value) => {
+    if (typeof (item as { plainText?: unknown }).plainText === 'string') {
+      ;(item as { plainText?: string }).plainText = value
+    }
+  },
+  description: (item, value) => {
+    if (typeof (item as { description?: unknown }).description === 'string') {
+      ;(item as { description?: string }).description = value
+    }
+  },
+  text: (item, value) => {
+    if (typeof (item as { text?: unknown }).text === 'string') {
+      ;(item as { text?: string }).text = value
+    }
+  },
+  'text.plainText': (item, value) => {
+    const nested = (item as { text?: { plainText?: unknown } }).text
+    if (nested && typeof nested.plainText === 'string') {
+      ;(nested as { plainText?: string }).plainText = value
+    }
+  },
+  'text.content': (item, value) => {
+    const nested = (item as { text?: { content?: unknown } }).text
+    if (nested && typeof nested.content === 'string') {
+      ;(nested as { content?: string }).content = value
+    }
+  },
+}
+
 export function setStringAtPath(item: Record<string, unknown>, path: string, value: string): void {
-  switch (path) {
-    case 'title': {
-      const object = item as { title?: unknown }
-      if (typeof object.title === 'string') {
-        ;(item as { title?: string }).title = value
-      }
-      return
-    }
-    case 'content': {
-      const object = item as { content?: unknown }
-      if (typeof object.content === 'string') {
-        ;(item as { content?: string }).content = value
-      }
-      return
-    }
-    case 'plainText': {
-      const object = item as { plainText?: unknown }
-      if (typeof object.plainText === 'string') {
-        ;(item as { plainText?: string }).plainText = value
-      }
-      return
-    }
-    case 'description': {
-      const object = item as { description?: unknown }
-      if (typeof object.description === 'string') {
-        ;(item as { description?: string }).description = value
-      }
-      return
-    }
-    case 'text': {
-      const object = item as { text?: unknown }
-      if (typeof object.text === 'string') {
-        ;(item as { text?: string }).text = value
-      }
-      return
-    }
-    case 'text.plainText': {
-      const nested = (item as { text?: { plainText?: unknown } }).text
-      if (nested && typeof nested.plainText === 'string') {
-        ;(nested as { plainText?: string }).plainText = value
-      }
-      return
-    }
-    case 'text.content': {
-      const nested = (item as { text?: { content?: unknown } }).text
-      if (nested && typeof nested.content === 'string') {
-        ;(nested as { content?: string }).content = value
-      }
-      return
-    }
-    default: {
-      // Generic, safe write guarded by own-property checks and Reflect
-      if (!path || path.includes('__proto__') || path.includes('constructor')) {
-        return
-      }
-      const parts = path.split('.')
-      let reference: unknown = item
-      for (let index = 0; index < parts.length - 1; index += 1) {
-        const part = parts[index]!
-        if (!reference || typeof reference !== 'object') {
-          return
-        }
-        if (!Object.prototype.hasOwnProperty.call(reference, part)) {
-          return
-        }
-        const next = Reflect.get(reference as object, part)
-        if (!next || typeof next !== 'object') {
-          return
-        }
-        reference = next
-      }
-      const last = parts.at(-1) as string
-      if (!reference || typeof reference !== 'object') {
-        return
-      }
-      if (!Object.prototype.hasOwnProperty.call(reference, last)) {
-        return
-      }
-      const current = Reflect.get(reference as object, last)
-      if (typeof current === 'string') {
-        Reflect.set(reference as object, last, value)
-      }
-      return
-    }
+  const setter = TEXT_SETTERS[path as TextPath]
+  if (setter) {
+    setter(item, value)
   }
 }
 

@@ -63,9 +63,23 @@ export function handleFileDrop(
   setError(null)
 }
 
-const LAYOUTS = ['Layered', 'Tree', 'Grid', 'Nested', 'Radial', 'Box', 'Rect Packing'] as const
+const LAYOUT_CONFIGS = [
+  { id: 'Layered', description: 'Flow diagrams with layers' },
+  { id: 'Tree', description: 'Compact hierarchical tree' },
+  { id: 'Grid', description: 'Organic force-directed grid' },
+  { id: 'Nested', description: 'Containers sized to fit children' },
+  { id: 'Radial', description: 'Circular layout around a hub' },
+  { id: 'Box', description: 'Uniform box grid' },
+  { id: 'Rect Packing', description: 'Fits rectangles within parents' },
+] as const satisfies ReadonlyArray<{ id: LayoutChoice; description: string }>
 
-const OPTION_VISIBILITY: Record<
+const LAYOUTS = LAYOUT_CONFIGS.map((config) => config.id) as readonly LayoutChoice[]
+
+const LAYOUT_DESCRIPTION_MAP = new Map<LayoutChoice, string>(
+  LAYOUT_CONFIGS.map((config) => [config.id, config.description]),
+)
+
+const OPTION_VISIBILITY = new Map<
   ElkAlgorithm,
   {
     aspectRatio: boolean
@@ -73,26 +87,15 @@ const OPTION_VISIBILITY: Record<
     edgeRoutingMode?: boolean
     optimizationGoal?: boolean
   }
-> = {
-  layered: { aspectRatio: true, edgeRouting: true },
-  mrtree: { aspectRatio: true, edgeRoutingMode: true },
-  force: { aspectRatio: true },
-  rectpacking: { aspectRatio: true, optimizationGoal: true },
-  rectstacking: { aspectRatio: true },
-  box: { aspectRatio: true },
-  radial: { aspectRatio: true },
-}
-
-/** Descriptions for layout choices shown inline when importing graphs. */
-const LAYOUT_DESCRIPTIONS: Record<LayoutChoice, string> = {
-  Layered: 'Flow diagrams with layers',
-  Tree: 'Compact hierarchical tree',
-  Grid: 'Organic force-directed grid',
-  Nested: 'Containers sized to fit children',
-  Radial: 'Circular layout around a hub',
-  Box: 'Uniform box grid',
-  'Rect Packing': 'Fits rectangles within parents',
-}
+>([
+  ['layered', { aspectRatio: true, edgeRouting: true }],
+  ['mrtree', { aspectRatio: true, edgeRoutingMode: true }],
+  ['force', { aspectRatio: true }],
+  ['rectpacking', { aspectRatio: true, optimizationGoal: true }],
+  ['rectstacking', { aspectRatio: true }],
+  ['box', { aspectRatio: true }],
+  ['radial', { aspectRatio: true }],
+])
 
 /** UI for the Structured sub-tab. */
 
@@ -115,6 +118,7 @@ export const StructuredTab: React.FC = () => {
   const [lastProc, setLastProc] = React.useState<GraphProcessor | HierarchyProcessor | undefined>(
     null as unknown as GraphProcessor | HierarchyProcessor | undefined,
   )
+  const optionVisibility = OPTION_VISIBILITY.get(layoutOptions.algorithm)
 
   // No custom keyboard toggles; advanced options are controlled via details/summary only.
 
@@ -177,7 +181,7 @@ export const StructuredTab: React.FC = () => {
               <InfoCallout title="Layout options">
                 <ul style={{ margin: 0, paddingLeft: SP200 }}>
                   {LAYOUTS.map((l) => (
-                    <li key={`desc-${l}`}>{LAYOUT_DESCRIPTIONS[l]}</li>
+                    <li key={`desc-${l}`}>{LAYOUT_DESCRIPTION_MAP.get(l)}</li>
                   ))}
                 </ul>
               </InfoCallout>
@@ -215,7 +219,7 @@ export const StructuredTab: React.FC = () => {
                       setLayoutOptions({ ...layoutOptions, spacing: Number(v) })
                     }
                   />
-                  {OPTION_VISIBILITY[layoutOptions.algorithm].aspectRatio && (
+                  {optionVisibility?.aspectRatio && (
                     <SelectField
                       label="Aspect ratio"
                       value={layoutOptions.aspectRatio}
@@ -275,10 +279,10 @@ export const StructuredTab: React.FC = () => {
                     </SelectOption>
                   ))}
                 </SelectField>
-                {OPTION_VISIBILITY[layoutOptions.algorithm].edgeRouting && (
+                {optionVisibility?.edgeRouting && (
                   <SelectField
                     label="Edge routing"
-                    value={layoutOptions.edgeRouting as ElkEdgeRouting}
+                    value={(layoutOptions.edgeRouting ?? 'default') as ElkEdgeRouting}
                     onChange={(v) =>
                       setLayoutOptions({
                         ...layoutOptions,
@@ -293,10 +297,10 @@ export const StructuredTab: React.FC = () => {
                     ))}
                   </SelectField>
                 )}
-                {OPTION_VISIBILITY[layoutOptions.algorithm].edgeRoutingMode && (
+                {optionVisibility?.edgeRoutingMode && (
                   <SelectField
                     label="Routing mode"
-                    value={layoutOptions.edgeRoutingMode as ElkEdgeRoutingMode}
+                    value={(layoutOptions.edgeRoutingMode ?? 'default') as ElkEdgeRoutingMode}
                     onChange={(v) =>
                       setLayoutOptions({
                         ...layoutOptions,
@@ -311,10 +315,10 @@ export const StructuredTab: React.FC = () => {
                     ))}
                   </SelectField>
                 )}
-                {OPTION_VISIBILITY[layoutOptions.algorithm].optimizationGoal && (
+                {optionVisibility?.optimizationGoal && (
                   <SelectField
                     label="Optimisation goal"
-                    value={layoutOptions.optimizationGoal as ElkOptimizationGoal}
+                    value={(layoutOptions.optimizationGoal ?? 'balanced') as ElkOptimizationGoal}
                     onChange={(v) =>
                       setLayoutOptions({
                         ...layoutOptions,

@@ -22,18 +22,18 @@ const SUB_TABS: TabItem[] = [
   { id: 'frames', label: 'Frames' },
 ]
 
-const SUB_TAB_COMPONENTS: Record<SubTabId, React.FC> = {
-  size: ResizeTab,
-  style: StyleTab,
-  arrange: ArrangeTab,
-  frames: FramesTab,
-}
+const SUB_TAB_COMPONENTS = new Map<SubTabId, React.FC>([
+  ['size', ResizeTab],
+  ['style', StyleTab],
+  ['arrange', ArrangeTab],
+  ['frames', FramesTab],
+])
 
 const LAST_USED_SUB_TAB_KEY = 'miro.tools.last-sub-tab'
 const DEFAULT_SUB_TAB: SubTabId = 'size'
 
 const isSubTabId = (value: string | null): value is SubTabId =>
-  value !== null && Object.prototype.hasOwnProperty.call(SUB_TAB_COMPONENTS, value)
+  value !== null && SUB_TABS.some((tab) => tab.id === value)
 
 const getStoredSubTab = (): SubTabId => {
   if (typeof globalThis === 'undefined') {
@@ -79,7 +79,10 @@ export const ToolsTab: React.FC = () => {
         </Tabs.List>
         <div style={{ marginTop: space[200] }}>
           {SUB_TABS.map(({ id }) => {
-            const Component = SUB_TAB_COMPONENTS[id]
+            const Component = SUB_TAB_COMPONENTS.get(id)
+            if (!Component) {
+              return null
+            }
             return (
               <Tabs.Content key={id} value={id} asChild>
                 <Component />

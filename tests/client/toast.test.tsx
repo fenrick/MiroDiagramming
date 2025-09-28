@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen, act } from '@testing-library/react'
 import React from 'react'
 
-import { ToastContainer, pushToast } from '../../src/ui/components/Toast'
+import { ToastContainer, pushToast } from '../../src/ui/components/toast'
 
 describe('ToastContainer', () => {
   it('renders pushed toasts and auto-dismisses them', async () => {

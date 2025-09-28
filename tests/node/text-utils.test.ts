@@ -21,11 +21,11 @@ describe('text-utils', () => {
     expect((item as any).text.content).toBe('B')
   })
 
-  it('gets and sets values at nested paths', () => {
-    const item: Record<string, unknown> = { a: { b: { c: 'x' } } }
-    expect(getStringAtPath(item, 'a.b.c')).toBe('x')
-    setStringAtPath(item, 'a.b.c', 'y')
-    expect(getStringAtPath(item, 'a.b.c')).toBe('y')
+  it('gets and sets values on nested text objects', () => {
+    const item: Record<string, unknown> = { text: { plainText: 'x', content: 'x' } }
+    expect(getStringAtPath(item, 'text.plainText')).toBe('x')
+    setStringAtPath(item, 'text.plainText', 'y')
+    expect(getStringAtPath(item, 'text.plainText')).toBe('y')
   })
 
   it('lists candidate text fields', () => {

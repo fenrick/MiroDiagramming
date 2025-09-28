@@ -75,6 +75,7 @@ function buildRegex(options: SearchOptions): RegExp {
   const pattern = options.wholeWord ? `\\b${source}\\b` : source
   const flags = options.caseSensitive ? 'g' : 'gi'
   assertRegexSafe(pattern, flags)
+  // eslint-disable-next-line security/detect-non-literal-regexp -- pattern validated by assertRegexSafe.
   return new RegExp(pattern, flags)
 }
 

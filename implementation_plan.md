@@ -231,7 +231,7 @@ Static hosting only. Use host‑level health checks for `index.html` as needed.
 
 - BoardAdapter + Context (remove globals)
     - What’s needed: Introduce `BoardAdapter` wrapping Miro Web SDK access and provide it via React context. Replace direct `globalThis.miro`/`window.miro` references in UI and hooks (`StructuredTab`, `templates.ts`, etc.) with the adapter.
-    - Where: `src/board/board-adapter.ts` (new), `src/app/App.tsx` provider, refactors under `src/**`.
+    - Where: `src/board/board-adapter.ts` (new), `src/app/app.tsx` provider, refactors under `src/**`.
     - DoD: No `globalThis.miro` occurrences in app code; tests stub the adapter; typecheck and client tests pass.
 
 - Modal: replace custom trap with design-system dialog
@@ -241,7 +241,7 @@ Static hosting only. Use host‑level health checks for `index.html` as needed.
 
 - Remove custom keyboard shortcuts [Done]
     - Change: No global shortcuts (e.g., Ctrl+Alt+1..N) or command palette in the add‑in.
-    - Where: `src/app/App.tsx`, docs.
+    - Where: `src/app/app.tsx`, docs.
     - DoD: No shortcut code remains; docs updated.
 
 ## Lint/Sonar Alignment
@@ -262,7 +262,7 @@ Static hosting only. Use host‑level health checks for `index.html` as needed.
     - DoD: No `document.getElementById` in app code; tests verify focus moves to first failed op.
 
 - Non‑null assertions removal (frontend pass)
-    - What’s needed: Remove `!` assertions in `App.tsx` and other frontend files; add guards or invariant helpers to satisfy strict typing.
+    - What’s needed: Remove `!` assertions in `app.tsx` and other frontend files; add guards or invariant helpers to satisfy strict typing.
     - Where: `src/**`.
     - DoD: `rg "\!\]"` and `rg "!\)"` find zero meaningful non‑null assertions; typecheck passes.
 
@@ -278,12 +278,12 @@ Static hosting only. Use host‑level health checks for `index.html` as needed.
 
 - Code splitting for tabs
     - What’s needed: Lazy‑load heavy tabs (e.g., Structured) using `React.lazy` + `Suspense` with existing skeletons to reduce initial panel load.
-    - Where: `src/app/App.tsx`, `src/ui/pages/**`.
+    - Where: `src/app/app.tsx`, `src/ui/pages/**`.
     - DoD: Initial bundle decreases; skeletons render during lazy load; tests updated to await suspense.
 
 - Error boundary
     - What’s needed: Wrap the panel with an error boundary that shows a friendly error with a “Try again” action and logs details (without PII).
-    - Where: `src/app/App.tsx` (new `ErrorBoundary` component under `ui/components`).
+    - Where: `src/app/app.tsx` (new `ErrorBoundary` component under `ui/components`).
     - DoD: Uncaught render errors show the boundary; tests simulate a throwing component and assert fallback UI.
 
 - Jest‑DOM matchers and DS provider in tests
@@ -425,7 +425,7 @@ Static hosting only. Use host‑level health checks for `index.html` as needed.
 
 - Expand command palette actions [Planned]
     - What’s needed: Surface search, layout, style preset, and selection operations within the command palette.
-    - Where: `src/app/App.tsx`, `src/ui/components/CommandPalette.tsx`.
+    - Where: `src/app/app.tsx`, `src/ui/components/CommandPalette.tsx`.
     - DoD: Palette offers common actions beyond tab switching; tests cover each action.
 
 - Consistent panel IA and tabs [Planned]

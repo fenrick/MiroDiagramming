@@ -10,6 +10,12 @@ import type {
 } from '@mirohq/websdk-types'
 
 import { ShapeClient, type ShapeData } from '../core/utils/shape-client'
+import {
+  isSafeAliasKey,
+  isSafeLookupKey,
+  isSafeStyleProperty,
+  sanitizeObjectKey,
+} from '../core/utils/object-safety'
 import connectorJson from '../../templates/connectorTemplates.json'
 import templatesJson from '../../templates/shapeTemplates.json'
 import experimentalShapeMap from '../../templates/experimentalShapeMap.json'
@@ -58,32 +64,126 @@ export interface ConnectorTemplateCollection {
   [key: string]: ConnectorTemplate
 }
 
+const TEMPLATE_KEY_PATTERN = (value: string): boolean => isSafeAliasKey(value)
+
+const SHAPE_WHITELIST = new Set<ShapeType>([
+  'rectangle',
+  'circle',
+  'triangle',
+  'wedge_round_rectangle_callout',
+  'round_rectangle',
+  'rhombus',
+  'parallelogram',
+  'star',
+  'right_arrow',
+  'left_arrow',
+  'pentagon',
+  'hexagon',
+  'octagon',
+  'trapezoid',
+  'flow_chart_predefined_process',
+  'left_right_arrow',
+  'cloud',
+  'left_brace',
+  'right_brace',
+  'cross',
+  'can',
+  'text',
+])
+
+const COLOR_LOOKUP = new Map<string, string>(Object.entries(colors as Record<string, string>))
+
+function sanitizeShapeType(shape: string | undefined): ShapeType {
+  if (!shape) {
+    return 'rectangle'
+  }
+  if (shape === 'diamond') {
+    return 'rhombus'
+  }
+  if (shape.startsWith('flow_chart_') && shape !== 'flow_chart_predefined_process') {
+    return 'rectangle'
+  }
+  return (SHAPE_WHITELIST.has(shape as ShapeType) ? shape : 'rectangle') as ShapeType
+}
+
+function buildTemplateEntries(raw: Record<string, unknown>): Array<[string, TemplateDefinition]> {
+  const entries: Array<[string, TemplateDefinition]> = []
+  for (const [key, value] of Object.entries(raw)) {
+    if (key === 'stylePresets') {
+      continue
+    }
+    const safeKey = sanitizeObjectKey(key, TEMPLATE_KEY_PATTERN)
+    if (!safeKey) {
+      continue
+    }
+    entries.push([safeKey, value as TemplateDefinition])
+  }
+  return entries
+}
+
+function buildConnectorEntries(
+  raw: Record<string, ConnectorTemplate>,
+): Array<[string, ConnectorTemplate]> {
+  const entries: Array<[string, ConnectorTemplate]> = []
+  for (const [key, value] of Object.entries(raw)) {
+    const safeKey = sanitizeObjectKey(key, TEMPLATE_KEY_PATTERN)
+    if (!safeKey) {
+      continue
+    }
+    entries.push([safeKey, value])
+  }
+  return entries
+}
+
 export class TemplateManager {
   private static instance: TemplateManager
   private static readonly rawTemplates = templatesJson as Record<string, unknown>
-  public readonly templates: TemplateCollection = Object.fromEntries(
-    Object.entries(TemplateManager.rawTemplates)
-      .filter(([k]) => k !== 'stylePresets')
-      .map(([key, value]) => [key, value as TemplateDefinition]),
-  ) as TemplateCollection
-  public readonly connectorTemplates: ConnectorTemplateCollection =
+  private static readonly rawConnectorTemplates =
     (connectorJson as Record<string, ConnectorTemplate>) ?? {}
-  private readonly aliasMap: Record<string, string> = {}
-  private readonly connectorAliasMap: Record<string, string> = {}
+  private static readonly templateEntries = buildTemplateEntries(TemplateManager.rawTemplates)
+  private static readonly connectorEntries = buildConnectorEntries(
+    TemplateManager.rawConnectorTemplates,
+  )
+  public readonly templates: TemplateCollection = Object.fromEntries(
+    TemplateManager.templateEntries,
+  ) as TemplateCollection
+  public readonly connectorTemplates: ConnectorTemplateCollection = Object.fromEntries(
+    TemplateManager.connectorEntries,
+  ) as ConnectorTemplateCollection
+  private readonly templateMap = new Map<string, TemplateDefinition>(
+    TemplateManager.templateEntries,
+  )
+  private readonly connectorTemplateMap = new Map<string, ConnectorTemplate>(
+    TemplateManager.connectorEntries,
+  )
+  private readonly aliasMap = new Map<string, string>()
+  private readonly connectorAliasMap = new Map<string, string>()
   private readonly api = new ShapeClient()
 
   private constructor() {
-    for (const [key, definition] of Object.entries(this.templates))
-      if (definition.alias)
-        for (const a of definition.alias) {
-          this.aliasMap[a] = key
+    for (const [key, definition] of this.templateMap.entries()) {
+      if (!definition.alias) {
+        continue
+      }
+      for (const alias of definition.alias) {
+        const safeAlias = sanitizeObjectKey(alias, isSafeAliasKey)
+        if (safeAlias) {
+          this.aliasMap.set(safeAlias, key)
         }
+      }
+    }
 
-    for (const [key, definition] of Object.entries(this.connectorTemplates))
-      if (definition.alias)
-        for (const a of definition.alias) {
-          this.connectorAliasMap[a] = key
+    for (const [key, definition] of this.connectorTemplateMap.entries()) {
+      if (!definition.alias) {
+        continue
+      }
+      for (const alias of definition.alias) {
+        const safeAlias = sanitizeObjectKey(alias, isSafeAliasKey)
+        if (safeAlias) {
+          this.connectorAliasMap.set(safeAlias, key)
         }
+      }
+    }
 
     // Apply experimental shape overrides when enabled via env flag.
     this.applyExperimentalOverrides()
@@ -103,10 +203,14 @@ export class TemplateManager {
       if (!shape || typeof shape !== 'string') {
         continue
       }
-      const key = this.aliasMap[name] ?? name
-      const tpl = this.templates[key]
+      const safeName = sanitizeObjectKey(name, isSafeAliasKey)
+      if (!safeName) {
+        continue
+      }
+      const key = this.aliasMap.get(safeName) ?? safeName
+      const tpl = this.templateMap.get(key)
       if (tpl && Array.isArray(tpl.elements) && tpl.elements.length > 0) {
-        tpl.elements[0] = { ...tpl.elements[0], shape }
+        tpl.elements[0] = { ...tpl.elements[0], shape: sanitizeShapeType(shape) }
       }
     }
   }
@@ -128,28 +232,42 @@ export class TemplateManager {
 
   /** Apply token and numeric resolution to style values. */
   public resolveStyle(style: Record<string, unknown>): Record<string, unknown> {
-    const result: Record<string, unknown> = {}
-    for (const [k, v] of Object.entries(style)) {
-      const token = this.resolveToken(v)
-      result[k] = this.parseNumeric(token)
+    const entries: Array<[string, unknown]> = []
+    for (const [key, value] of Object.entries(style)) {
+      const safeKey = sanitizeObjectKey(key, isSafeStyleProperty)
+      if (!safeKey) {
+        continue
+      }
+      const token = this.resolveToken(value)
+      entries.push([safeKey, this.parseNumeric(token)])
     }
-    return result
+    return Object.fromEntries(entries) as Record<string, unknown>
   }
 
   /** Lookup a shape template by name. */
   public getTemplate(name: string): TemplateDefinition | undefined {
-    const direct = this.templates[name]
+    const safeName = sanitizeObjectKey(name, isSafeAliasKey)
+    if (!safeName) {
+      return undefined
+    }
+    const direct = this.templateMap.get(safeName)
     if (direct) {
       return direct
     }
-    const alias = this.aliasMap[name]
-    return alias ? this.templates[alias] : undefined
+    const alias = this.aliasMap.get(safeName)
+    return alias ? this.templateMap.get(alias) : undefined
   }
 
   /** Retrieve a connector styling template by name. */
   public getConnectorTemplate(name: string): ConnectorTemplate | undefined {
-    const key = name in this.connectorTemplates ? name : this.connectorAliasMap[name]
-    const tpl = key ? this.connectorTemplates[key] : undefined
+    const safeName = sanitizeObjectKey(name, isSafeAliasKey)
+    if (!safeName) {
+      return undefined
+    }
+    const key = this.connectorTemplateMap.has(safeName)
+      ? safeName
+      : this.connectorAliasMap.get(safeName)
+    const tpl = key ? this.connectorTemplateMap.get(key) : undefined
     if (!tpl) {
       return undefined
     }
@@ -240,7 +358,11 @@ export class TemplateManager {
     }
     const [, name, shade] = match
     const key = `${name}-${shade}`
-    return (colors as Record<string, string>)[key]
+    const safeKey = sanitizeObjectKey(key, isSafeLookupKey)
+    if (!safeKey) {
+      return undefined
+    }
+    return COLOR_LOOKUP.get(safeKey)
   }
 
   /**
@@ -283,7 +405,7 @@ export class TemplateManager {
     let digitCount = 0
     let dotCount = 0
     for (; index < input.length; index += 1) {
-      const ch = input[index]!
+      const ch = input.charAt(index)
       if (ch >= '0' && ch <= '9') {
         digitCount += 1
         continue
@@ -306,38 +428,6 @@ export class TemplateManager {
     x: number,
     y: number,
   ): ShapeData {
-    const sanitizeShape = (shape: string | undefined): ShapeType => {
-      const allowed = new Set<ShapeType>([
-        'rectangle',
-        'circle',
-        'triangle',
-        'wedge_round_rectangle_callout',
-        'round_rectangle',
-        'rhombus',
-        'parallelogram',
-        'star',
-        'right_arrow',
-        'left_arrow',
-        'pentagon',
-        'hexagon',
-        'octagon',
-        'trapezoid',
-        'flow_chart_predefined_process',
-        'left_right_arrow',
-        'cloud',
-        'left_brace',
-        'right_brace',
-        'cross',
-        'can',
-        'text',
-      ])
-      if (!shape) return 'rectangle'
-      if (shape === 'diamond') return 'rhombus'
-      if (shape.startsWith('flow_chart_') && shape !== 'flow_chart_predefined_process') {
-        return 'rectangle'
-      }
-      return (allowed.has(shape as ShapeType) ? shape : 'rectangle') as ShapeType
-    }
     const style: Partial<ShapeStyle> & Record<string, unknown> = this.resolveStyle(
       element.style ?? {},
     )
@@ -345,7 +435,7 @@ export class TemplateManager {
       style.fillColor = this.resolveToken(element.fill) as string
     }
     return {
-      shape: sanitizeShape(element.shape),
+      shape: sanitizeShapeType(element.shape),
       x,
       y,
       width: element.width ?? 0,

@@ -8,7 +8,7 @@ describe('style-presets', () => {
   })
 
   it('derives a preset with sensible defaults and resolved values', () => {
-    const any = stylePresets[STYLE_PRESET_NAMES[0]!]!
+    const any = stylePresets.get(STYLE_PRESET_NAMES[0]!)!
     expect(any.label.length).toBeGreaterThan(0)
     expect(typeof any.borderWidth).toBe('number')
     expect(typeof any.fillColor).toBe('string')

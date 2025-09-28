@@ -13,12 +13,12 @@ modules initialise the React UI and integrate with the Miro Web SDK.
 src/app/
 ```
 
-- App.tsx
+- app.tsx
 - diagram-app.ts
 
 ## 2 Module Purpose
 
 | File           | Purpose                                                      |
 | -------------- | ------------------------------------------------------------ |
-| App.tsx        | React root component that renders the tabbed user interface. |
+| app.tsx        | React root component that renders the tabbed user interface. |
 | diagram-app.ts | Singleton that registers Web SDK events and opens the panel. |

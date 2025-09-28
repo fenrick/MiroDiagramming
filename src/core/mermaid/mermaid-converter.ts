@@ -5,6 +5,12 @@ import type { EdgeData, GraphData, NodeData } from '../graph/graph-service'
 import { ensureMermaidInitialized } from './config'
 import { isExperimentalShapesEnabled } from './feature-flags'
 import { mapEdgeClassesToTemplate, mapNodeClassesToTemplate } from './template-map'
+import {
+  isSafeClassName,
+  isSafeCssProperty,
+  isSafeLookupKey,
+  sanitizeObjectKey,
+} from '../utils/object-safety'
 
 export class MermaidConversionError extends Error {
   public constructor(message: string, cause?: unknown) {
@@ -50,29 +56,38 @@ type FlowchartDatabase = {
 
 const SUPPORTED_TYPES = new Set(['flowchart', 'flowchart-v2'])
 
-const SHAPE_MAP: Record<string, string> = {
-  rect: 'rectangle',
-  rectangle: 'rectangle',
-  square: 'rectangle',
-  round_rect: 'round_rectangle',
-  stadium: 'round_rectangle',
-  circle: 'circle',
-  diamond: 'rhombus',
-  rhombus: 'rhombus',
-  hexagon: 'hexagon',
-  parallelogram: 'parallelogram',
-  trapezoid: 'trapezoid',
-  subroutine: 'flow_chart_predefined_process',
-  predefined_process: 'flow_chart_predefined_process',
-  cylinder: 'can',
-  can: 'can',
-}
+const SHAPE_MAP = new Map<string, string>([
+  ['rect', 'rectangle'],
+  ['rectangle', 'rectangle'],
+  ['square', 'rectangle'],
+  ['round_rect', 'round_rectangle'],
+  ['stadium', 'round_rectangle'],
+  ['circle', 'circle'],
+  ['diamond', 'rhombus'],
+  ['rhombus', 'rhombus'],
+  ['hexagon', 'hexagon'],
+  ['parallelogram', 'parallelogram'],
+  ['trapezoid', 'trapezoid'],
+  ['subroutine', 'flow_chart_predefined_process'],
+  ['predefined_process', 'flow_chart_predefined_process'],
+  ['cylinder', 'can'],
+  ['can', 'can'],
+])
 
 // Prefer experimental flowchart shapes when available and enabled.
-const EXP_FLOWCHART_SHAPES: Record<string, string> = {
+const EXP_FLOWCHART_SHAPES = new Map<string, string>([
   // Restrict to shapes known to be accepted by the SDK
-  rectangle: 'rectangle',
-  round_rectangle: 'round_rectangle',
+  ['rectangle', 'rectangle'],
+  ['round_rectangle', 'round_rectangle'],
+])
+
+function safeLookup<V>(
+  source: ReadonlyMap<string, V>,
+  key: string,
+  validator: (candidate: string) => boolean,
+): V | undefined {
+  const safeKey = sanitizeObjectKey(key, validator)
+  return safeKey ? source.get(safeKey) : undefined
 }
 const ALLOWED_SHAPES = new Set([
   'rectangle',
@@ -98,16 +113,16 @@ const ALLOWED_SHAPES = new Set([
   'can',
 ])
 
-const EDGE_THICKNESS: Record<string, number> = {
-  'edge-thickness-thin': 1,
-  'edge-thickness-thick': 4,
-  'edge-thickness-invisible': 0,
-}
+const EDGE_THICKNESS = new Map<string, number>([
+  ['edge-thickness-thin', 1],
+  ['edge-thickness-thick', 4],
+  ['edge-thickness-invisible', 0],
+])
 
-const EDGE_PATTERN: Record<string, 'dashed' | 'dotted'> = {
-  'edge-pattern-dashed': 'dashed',
-  'edge-pattern-dotted': 'dotted',
-}
+const EDGE_PATTERN = new Map<string, 'dashed' | 'dotted'>([
+  ['edge-pattern-dashed', 'dashed'],
+  ['edge-pattern-dotted', 'dotted'],
+])
 
 type NodeStyleOverrides = {
   fillColor?: string
@@ -137,9 +152,9 @@ function normaliseLabel(candidate: string | undefined, fallback: string): string
 }
 
 function parseCssDeclarations(entries?: string[]): Record<string, string> {
-  const declarations: Record<string, string> = {}
+  const declarations = new Map<string, string>()
   if (!entries) {
-    return declarations
+    return {}
   }
   for (const entry of entries) {
     if (!entry) {
@@ -159,10 +174,14 @@ function parseCssDeclarations(entries?: string[]): Record<string, string> {
       if (!value) {
         continue
       }
-      declarations[property] = value
+      const safeProperty = sanitizeObjectKey(property, isSafeCssProperty)
+      if (!safeProperty) {
+        continue
+      }
+      declarations.set(safeProperty, value)
     }
   }
-  return declarations
+  return Object.fromEntries(declarations)
 }
 
 function parseLength(value: string | undefined): number | undefined {
@@ -221,13 +240,15 @@ function parseEdgeStyles(edge: RawEdge): EdgeStyleOverrides | undefined {
   if (css.color) {
     overrides.color = css.color
   }
-  const patternFromClasses = edge.classes?.map((cls) => EDGE_PATTERN[cls]).find(Boolean)
+  const patternFromClasses = edge.classes
+    ?.map((cls) => safeLookup(EDGE_PATTERN, cls, isSafeClassName))
+    .find(Boolean)
   const patternFromStroke =
     edge.stroke === 'dashed' || edge.stroke === 'dotted' ? edge.stroke : undefined
   overrides.strokeStyle = patternFromStroke ?? patternFromClasses
   if (!overrides.strokeWidth) {
     const widthFromClass = edge.classes
-      ?.map((cls) => EDGE_THICKNESS[cls])
+      ?.map((cls) => safeLookup(EDGE_THICKNESS, cls, isSafeClassName))
       .find((value) => value !== undefined)
     if (widthFromClass !== undefined) {
       overrides.strokeWidth = widthFromClass
@@ -241,12 +262,13 @@ function mapShape(shape?: string): string | undefined {
     return undefined
   }
   const key = shape.toLowerCase()
-  const base = SHAPE_MAP[key]
+  const base = safeLookup(SHAPE_MAP, key, isSafeLookupKey)
   if (!base) {
     return undefined
   }
-  const candidate =
-    isExperimentalShapesEnabled() && EXP_FLOWCHART_SHAPES[base] ? EXP_FLOWCHART_SHAPES[base] : base
+  const candidate = isExperimentalShapesEnabled()
+    ? (safeLookup(EXP_FLOWCHART_SHAPES, base, isSafeLookupKey) ?? base)
+    : base
   return ALLOWED_SHAPES.has(candidate) ? candidate : 'rectangle'
 }
 

@@ -1,6 +1,7 @@
 import templatesJson from '../../templates/shapeTemplates.json'
 import type { TemplateElement } from '../board/templates'
 import { templateManager } from '../board/templates'
+import { isSafeAliasKey, sanitizeObjectKey } from '../core/utils/object-safety'
 
 /** Definition of a named style preset. */
 export interface StylePreset {
@@ -61,11 +62,22 @@ function templateToPreset(name: string, template: { elements?: TemplateElement[]
 
 const rawTemplates = templatesJson as Record<string, unknown>
 
-export const stylePresets: Record<string, StylePreset> = Object.fromEntries(
-  Object.entries(rawTemplates)
-    .filter(([name]) => name !== 'stylePresets')
-    .map(([name, tpl]) => [name, templateToPreset(name, tpl as { elements?: TemplateElement[] })]),
-)
+const presetEntries: Array<[string, StylePreset]> = []
+for (const [name, tpl] of Object.entries(rawTemplates)) {
+  if (name === 'stylePresets') {
+    continue
+  }
+  const safeName = sanitizeObjectKey(name, isSafeAliasKey)
+  if (!safeName) {
+    continue
+  }
+  presetEntries.push([
+    safeName,
+    templateToPreset(safeName, tpl as { elements?: TemplateElement[] }),
+  ])
+}
+
+export const stylePresets: ReadonlyMap<string, StylePreset> = new Map(presetEntries)
 
 /** Array of preset names in insertion order. */
-export const STYLE_PRESET_NAMES = Object.keys(stylePresets)
+export const STYLE_PRESET_NAMES = presetEntries.map(([name]) => name)

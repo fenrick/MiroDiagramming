@@ -41,12 +41,18 @@ function parseTranslate(transform: string | null): { x: number; y: number } {
   if (!transform) {
     return { x: 0, y: 0 }
   }
-  const match = /translate\(([^,\s]+)(?:[,\s]+([^\s)]+))?/i.exec(transform)
-  if (!match) {
+  const start = transform.indexOf('(')
+  const end = transform.indexOf(')', start + 1)
+  if (start === -1 || end === -1 || end <= start + 1) {
     return { x: 0, y: 0 }
   }
-  const x = Number.parseFloat(match[1] ?? '0')
-  const y = Number.parseFloat(match[2] ?? '0')
+  const content = transform.slice(start + 1, end)
+  const parts = content
+    .split(/[,\s]+/)
+    .map((part) => part.trim())
+    .filter(Boolean)
+  const x = Number.parseFloat(parts[0] ?? '0')
+  const y = Number.parseFloat((parts.length > 1 ? parts[1] : parts[0]) ?? '0')
   return { x, y }
 }
 

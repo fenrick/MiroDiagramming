@@ -55,10 +55,23 @@ export const ArrangeTab: React.FC = () => {
 
   const updateNumber =
     (key: 'cols' | 'padding') =>
-    (value: string): void =>
-      setGrid({ ...grid, [key]: Number(value) })
-  const toggle = (key: 'groupResult' | 'sortByName') => (): void =>
-    setGrid({ ...grid, [key]: !grid[key] })
+    (value: string): void => {
+      const numeric = Number(value)
+      setGrid((current) => {
+        if (key === 'cols') {
+          return { ...current, cols: numeric }
+        }
+        return { ...current, padding: numeric }
+      })
+    }
+  const toggle = (key: 'groupResult' | 'sortByName') => (): void => {
+    setGrid((current) => {
+      if (key === 'groupResult') {
+        return { ...current, groupResult: !current.groupResult }
+      }
+      return { ...current, sortByName: !current.sortByName }
+    })
+  }
   const setOrientation = (value: string): void =>
     setGrid({ ...grid, sortOrientation: value as 'horizontal' | 'vertical' })
   const updateAxis = (axis: string): void => {

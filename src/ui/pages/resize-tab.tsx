@@ -38,11 +38,13 @@ import { StickyActions } from '../sticky-actions'
 
 import type { TabTuple } from './tab-definitions'
 
-const PRESET_SIZES: Record<'S' | 'M' | 'L', Size> = {
-  S: { width: 100, height: 100 },
-  M: { width: 200, height: 150 },
-  L: { width: 400, height: 300 },
-}
+type PresetKey = 'S' | 'M' | 'L'
+
+const PRESET_SIZES: ReadonlyMap<PresetKey, Size> = new Map<PresetKey, Size>([
+  ['S', { width: 100, height: 100 }],
+  ['M', { width: 200, height: 150 }],
+  ['L', { width: 400, height: 300 }],
+])
 
 const SCALE_OPTIONS = [
   { label: '×½', factor: 0.5 },
@@ -68,7 +70,13 @@ export const ResizeTab: React.FC = () => {
   const update =
     (key: keyof Size) =>
     (value: string): void => {
-      setSize({ ...size, [key]: Number(value) })
+      const numeric = Number(value)
+      setSize((current) => {
+        if (key === 'width') {
+          return { ...current, width: numeric }
+        }
+        return { ...current, height: numeric }
+      })
       setWarning('')
     }
 
@@ -224,10 +232,14 @@ export const ResizeTab: React.FC = () => {
                       if (!hasSelection) {
                         return
                       }
-                      const next = PRESET_SIZES[p]
+                      const preset = PRESET_SIZES.get(p)
+                      if (!preset) {
+                        return
+                      }
+                      const target = { ...preset }
                       setCopiedSize(null)
-                      setSize(next)
-                      await applySizeToSelection(next)
+                      setSize(target)
+                      await applySizeToSelection(target)
                     }}
                     variant="secondary"
                     disabled={!hasSelection}

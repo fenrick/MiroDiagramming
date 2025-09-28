@@ -4,7 +4,7 @@ import { render } from '@testing-library/react'
 import React from 'react'
 import { marked } from 'marked'
 
-import { Markdown } from '../../src/ui/components/Markdown'
+import { Markdown } from '../../src/ui/components/markdown'
 
 describe('Markdown', () => {
   it('renders parsed HTML and applies a custom class name', () => {

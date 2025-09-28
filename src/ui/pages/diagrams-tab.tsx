@@ -26,12 +26,12 @@ const ALL_SUB_TABS: TabItem[] = [
   { id: 'mermaid', label: 'Mermaid' },
 ]
 
-const SUB_TAB_COMPONENTS: Record<SubTabId, React.FC> = {
-  structured: StructuredTab,
-  cards: CardsTab,
-  layout: LayoutEngineTab,
-  mermaid: MermaidTab,
-}
+const SUB_TAB_COMPONENTS = new Map<SubTabId, React.FC>([
+  ['structured', StructuredTab],
+  ['cards', CardsTab],
+  ['layout', LayoutEngineTab],
+  ['mermaid', MermaidTab],
+])
 
 const LAST_USED_SUB_TAB_KEY = 'miro.diagrams.last-sub-tab'
 const DEFAULT_SUB_TAB: SubTabId = 'structured'
@@ -106,7 +106,10 @@ export const DiagramsTab: React.FC = () => {
         </Tabs.List>
         <div style={{ marginTop: space[200] }}>
           {subTabs.map(({ id }) => {
-            const Component = SUB_TAB_COMPONENTS[id]
+            const Component = SUB_TAB_COMPONENTS.get(id)
+            if (!Component) {
+              return null
+            }
             return (
               <Tabs.Content key={id} value={id} asChild>
                 <Component />

@@ -225,7 +225,7 @@ export const StyleTab: React.FC = () => {
           <StickyActions>
             <ButtonToolbar>
               {STYLE_PRESET_NAMES.map((name) => {
-                const preset = stylePresets[name]
+                const preset = stylePresets.get(name)
                 if (!preset) {
                   return null
                 }

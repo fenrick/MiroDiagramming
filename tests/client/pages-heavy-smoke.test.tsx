@@ -100,19 +100,19 @@ vi.mock('../../src/ui/components', async () => {
 })
 
 // Mock direct component imports used by pages
-vi.mock('../../src/ui/components/Button', async () => {
+vi.mock('../../src/ui/components/button', async () => {
   const React = (await import('react')).default
   return { Button: (p: any) => React.createElement('button', p, p.children) }
 })
-vi.mock('../../src/ui/components/JsonDropZone', async () => {
+vi.mock('../../src/ui/components/json-drop-zone', async () => {
   const React = (await import('react')).default
   return { JsonDropZone: (p: any) => React.createElement('div', null, 'drop', p.children) }
 })
-vi.mock('../../src/ui/components/PageHelp', async () => {
+vi.mock('../../src/ui/components/page-help', async () => {
   const React = (await import('react')).default
   return { PageHelp: (p: any) => React.createElement('div', null, p.content) }
 })
-vi.mock('../../src/ui/components/TabPanel', async () => {
+vi.mock('../../src/ui/components/tab-panel', async () => {
   const React = (await import('react')).default
   // Drop tabId to avoid React unknown prop warning in jsdom
   return {
