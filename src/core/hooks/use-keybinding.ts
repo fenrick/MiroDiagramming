@@ -42,7 +42,7 @@ export function useKeybinding(bindings: Keybinding[]) {
     if (!target) {
       return
     }
-    const onKey = (ev: KeyboardEvent) => handler(ev)
+    const onKey = (event: KeyboardEvent) => handler(event)
     target.addEventListener('keydown', onKey as EventListener)
     return () => target.removeEventListener('keydown', onKey as EventListener)
   }, [handler])
