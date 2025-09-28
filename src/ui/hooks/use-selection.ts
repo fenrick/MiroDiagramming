@@ -32,11 +32,18 @@ export function useSelection(board?: BoardLike): Array<Record<string, unknown>> 
       }
       log.trace('Fetching selection due to missing event payload')
       boardCache.clearSelection()
-      boardCache.getSelection(b).then((s) => {
-        if (active) {
-          setSel(s)
-        }
-      })
+      return boardCache
+        .getSelection(b)
+        .then((selection) => {
+          if (active) {
+            setSel(selection)
+          }
+          return selection
+        })
+        .catch((error) => {
+          log.warn({ error }, 'Failed to fetch selection')
+          return [] as Array<Record<string, unknown>>
+        })
     }
     update()
     b.ui?.on('selection:update', update)

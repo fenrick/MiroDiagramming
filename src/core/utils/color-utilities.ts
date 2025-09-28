@@ -35,8 +35,9 @@ export function hexToRgb(hex: string): Rgb {
 }
 
 /** Convert RGB colour components to a hex string. */
+const toHex = (v: number): string => v.toString(16).padStart(2, '0')
+
 export function rgbToHex(rgb: Rgb): string {
-  const toHex = (v: number): string => v.toString(16).padStart(2, '0')
   return `#${toHex(rgb.r)}${toHex(rgb.g)}${toHex(rgb.b)}`
 }
 
@@ -59,11 +60,12 @@ export function adjustColor(hex: string, amount: number): string {
 }
 
 /** Calculate the relative luminance of an RGB colour. */
+const toLinear = (v: number): number => {
+  const n = v / 255
+  return n <= 0.039_28 ? n / 12.92 : Math.pow((n + 0.055) / 1.055, 2.4)
+}
+
 export function luminance(rgb: Rgb): number {
-  const toLinear = (v: number): number => {
-    const n = v / 255
-    return n <= 0.039_28 ? n / 12.92 : Math.pow((n + 0.055) / 1.055, 2.4)
-  }
   return 0.2126 * toLinear(rgb.r) + 0.7152 * toLinear(rgb.g) + 0.0722 * toLinear(rgb.b)
 }
 

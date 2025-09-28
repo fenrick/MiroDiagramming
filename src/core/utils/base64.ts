@@ -16,7 +16,7 @@ export function encodeBase64(input: string): string {
           const bytes = new TextEncoder().encode(input)
           let binary = ''
           for (const byte of bytes) {
-            binary += String.fromCharCode(byte)
+            binary += String.fromCodePoint(byte)
           }
           return btoa(binary)
         })()
@@ -45,6 +45,6 @@ export function decodeBase64(input: string): string {
     return Buffer.from(padded, 'base64').toString('utf8')
   }
   const binary = atob(padded)
-  const bytes = Uint8Array.from(binary, (c) => c.charCodeAt(0))
+  const bytes = Uint8Array.from(binary, (c) => c.codePointAt(0) ?? 0)
   return new TextDecoder().decode(bytes)
 }

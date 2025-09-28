@@ -127,7 +127,7 @@ export class NestedLayouter {
       elk.height = dims.height || LEAF_HEIGHT
       return elk
     }
-    const sorted = [...children].sort((a, b) =>
+    const sorted = children.toSorted((a, b) =>
       this.sortValue(a, sortKey).localeCompare(this.sortValue(b, sortKey)),
     )
     elk.children = sorted.map((c) => this.buildElkNode(c, sortKey, padding))

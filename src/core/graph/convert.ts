@@ -19,7 +19,7 @@ export function edgesToHierarchy(graph: GraphData): HierNode[] {
   }
   const build = (id: string): HierNode => {
     const n = nodeMap.get(id) as NodeData
-    const kids = children[id]?.map(build)
+    const kids = children[id]?.map((childId) => build(childId))
     return {
       id: n.id,
       label: n.label,
