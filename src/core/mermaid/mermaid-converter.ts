@@ -250,7 +250,7 @@ function ensureUniqueNode(
 }
 
 function parseParticipantLine(line: string): SequenceParticipant | undefined {
-  const cleaned = line.replace(/^(participant|actor)\s+/i, '')
+  const cleaned = line.replace(/^(?:participant|actor)\s+/i, '')
   const lower = cleaned.toLowerCase()
   const asIndex = lower.indexOf(' as ')
   let rawName = cleaned
@@ -369,9 +369,9 @@ function convertSequenceDiagram(source: string): GraphData {
     .filter(
       (line) => line.length > 0 && !line.startsWith('%%') && !/^sequenceDiagram/i.test(line),
     )) {
-    if (/^(participant|actor)\s+/i.test(line)) {
+    if (/^(?:participant|actor)\s+/i.test(line)) {
       processParticipant(line)
-    } else if (!/^(activate|deactivate|loop|end|note\s+)/i.test(line)) {
+    } else if (!/^(?:activate|deactivate|loop|end|note\s+)/i.test(line)) {
       processMessage(line)
     }
   }
@@ -415,35 +415,38 @@ function convertStateDiagram(source: string): GraphData {
     }
   }
 
-  for (const line of source
+  const lines = source
     .split(/\r?\n/)
     .map((line) => line.trim())
-    .filter((line) => line.length > 0 && !line.startsWith('%%') && !/^stateDiagram/i.test(line))) {
-    if (/^state\s+/i.test(line)) {
-      const cleaned = line.replace(/^state\s+/i, '')
-      const lower = cleaned.toLowerCase()
-      const asIndex = lower.indexOf(' as ')
-      const rawName = asIndex === -1 ? cleaned : cleaned.slice(0, asIndex)
-      const alias = asIndex === -1 ? rawName : cleaned.slice(asIndex + 4)
-      const id = sanitizeIdentifier((alias ?? rawName).split(/[\s{]/)[0] ?? '')
-      if (id) {
-        ensureState(id, sanitizeIdentifier(rawName))
-      }
-      continue
-    }
+    .filter((line) => line.length > 0 && !line.startsWith('%%') && !/^stateDiagram/i.test(line))
 
+  // Pass 1: register states via declarations
+  for (const line of lines) {
+    if (!/^state\s+/i.test(line)) continue
+    const cleaned = line.replace(/^state\s+/i, '')
+    const lower = cleaned.toLowerCase()
+    const asIndex = lower.indexOf(' as ')
+    const rawName = asIndex === -1 ? cleaned : cleaned.slice(0, asIndex)
+    const alias = asIndex === -1 ? rawName : cleaned.slice(asIndex + 4)
+    const id = sanitizeIdentifier((alias ?? rawName).split(/[\s{]/)[0] ?? '')
+    if (id) {
+      ensureState(id, sanitizeIdentifier(rawName))
+    }
+  }
+
+  // Pass 2: transitions
+  for (const line of lines) {
     const transition = parseStateTransition(line)
-    if (transition) {
-      ensureState(transition.from, transition.from)
-      ensureState(transition.to, transition.to)
-      if (transition.from !== '[*]' && transition.to !== '[*]') {
-        edges.push({
-          from: transition.from,
-          to: transition.to,
-          label: transition.label,
-          metadata: { template: 'flow' },
-        })
-      }
+    if (!transition) continue
+    ensureState(transition.from, transition.from)
+    ensureState(transition.to, transition.to)
+    if (transition.from !== '[*]' && transition.to !== '[*]') {
+      edges.push({
+        from: transition.from,
+        to: transition.to,
+        label: transition.label,
+        metadata: { template: 'flow' },
+      })
     }
   }
 
@@ -561,40 +564,43 @@ function convertClassDiagram(source: string): GraphData {
 
   const ensureClassNode = (name: string) => ensureUniqueNode(nodes, name, name, 'MermaidClass')
 
-  for (const line of source
+  const lines = source
     .split(/\r?\n/)
     .map((line) => line.trim())
-    .filter((line) => line.length > 0 && !line.startsWith('%%') && !/^classDiagram/i.test(line))) {
-    const relation = parseClassRelation(line)
-    if (relation) {
-      ensureClassNode(relation.left)
-      ensureClassNode(relation.right)
-      const mapping = mapClassRelationSymbol(relation.symbol)
-      const from = mapping.direction === 'forward' ? relation.left : relation.right
-      const to = mapping.direction === 'forward' ? relation.right : relation.left
-      edges.push({
-        from,
-        to,
-        label: relation.label,
-        metadata: {
-          template: mapping.template,
-          styleOverrides: mapping.styleOverrides,
-        },
-      })
-      continue
-    }
+    .filter((line) => line.length > 0 && !line.startsWith('%%') && !/^classDiagram/i.test(line))
 
+  const handleRelation = (line: string): boolean => {
+    const relation = parseClassRelation(line)
+    if (!relation) return false
+    ensureClassNode(relation.left)
+    ensureClassNode(relation.right)
+    const mapping = mapClassRelationSymbol(relation.symbol)
+    const from = mapping.direction === 'forward' ? relation.left : relation.right
+    const to = mapping.direction === 'forward' ? relation.right : relation.left
+    edges.push({
+      from,
+      to,
+      label: relation.label,
+      metadata: { template: mapping.template, styleOverrides: mapping.styleOverrides },
+    })
+    return true
+  }
+
+  const handleDeclarationOrProperty = (line: string): void => {
     if (/^class\s+/i.test(line)) {
       const name = sanitizeIdentifier(line.replace(/^class\s+/i, '').split(/[\s{]/)[0] ?? '')
-      if (name) {
-        ensureClassNode(name)
-      }
-      continue
+      if (name) ensureClassNode(name)
+      return
     }
-
     const propertyMatch = line.match(/^([^\s:]+)\s*:/)
     if (propertyMatch) {
       ensureClassNode(sanitizeIdentifier(propertyMatch[1]!))
+    }
+  }
+
+  for (const line of lines) {
+    if (!handleRelation(line)) {
+      handleDeclarationOrProperty(line)
     }
   }
 

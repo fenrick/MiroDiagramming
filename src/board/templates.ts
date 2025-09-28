@@ -280,24 +280,23 @@ export class TemplateManager {
       index = 1
       if (index >= input.length) return null
     }
-    let sawDigit = false
-    let dotSeen = false
+    let digitCount = 0
+    let dotCount = 0
     for (; index < input.length; index += 1) {
       const ch = input[index]!
       if (ch >= '0' && ch <= '9') {
-        sawDigit = true
+        digitCount += 1
         continue
       }
-      if (ch === '.' && !dotSeen) {
-        dotSeen = true
-        // Next char must be a digit
-        const next = input[index + 1]
-        if (!(next && next >= '0' && next <= '9')) return null
+      if (ch === '.') {
+        dotCount += 1
+        if (dotCount > 1) return null
         continue
       }
       return null
     }
-    return sawDigit ? Number.parseFloat(input) : null
+    if (digitCount === 0) return null
+    return Number.parseFloat(input)
   }
 
   /** Create shape data for a template element. */
