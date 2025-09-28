@@ -44,7 +44,7 @@ export async function applySpacingLayout(
 
   const axis = options.axis
   const sizeKey = axis === 'x' ? 'width' : 'height'
-  const items = [...selection].sort(
+  const items = [...selection].toSorted(
     /* c8 ignore next */
     (a, b) =>
       ((a as Record<string, number>)[axis] ?? 0) - ((b as Record<string, number>)[axis] ?? 0),

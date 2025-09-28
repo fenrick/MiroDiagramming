@@ -41,7 +41,7 @@ export async function applyGridLayout(options: GridOptions, board?: BoardLike): 
   log.info('Applying grid layout')
   const selection = await boardCache.getSelection(b)
   let items = options.sortByName
-    ? [...selection].sort((a, b) => getName(a).localeCompare(getName(b)))
+    ? [...selection].toSorted((a, b) => getName(a).localeCompare(getName(b)))
     : selection
   items = items.filter(
     (index) =>
@@ -101,7 +101,9 @@ export async function applyGridLayout(options: GridOptions, board?: BoardLike): 
           try {
             // @ts-expect-error runtime API
             await frame.add?.(index)
-          } catch {}
+          } catch {
+            // ignore best-effort add failures
+          }
         }),
       )
     } catch {

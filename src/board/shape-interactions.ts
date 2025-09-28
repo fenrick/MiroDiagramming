@@ -78,11 +78,13 @@ export class ShapeInteractionManager {
     if (update.position) {
       interaction.move(update.position)
     }
-    if (
-      update.size &&
-      (typeof update.size.width === 'number' || typeof update.size.height === 'number')
-    ) {
-      interaction.resize(update.size)
+    const widthDefined = typeof update.size?.width === 'number'
+    const heightDefined = typeof update.size?.height === 'number'
+    if (widthDefined || heightDefined) {
+      interaction.resize({
+        ...(widthDefined ? { width: update.size?.width } : {}),
+        ...(heightDefined ? { height: update.size?.height } : {}),
+      })
     }
     if (typeof update.rotation === 'number') {
       interaction.rotate(update.rotation)

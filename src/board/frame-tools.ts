@@ -114,7 +114,7 @@ export async function lockSelectedFrames(board?: BoardLike): Promise<void> {
   const b = getBoard(board)
   log.info('Locking selected frames')
   const selection = await boardCache.getSelection(b)
-  const frames = selection.filter(isFrame)
+  const frames = selection.filter((item) => isFrame(item))
   await Promise.all(frames.map((frame) => lockFrame(frame)))
   log.debug({ count: frames.length }, 'Frames locked')
 }
