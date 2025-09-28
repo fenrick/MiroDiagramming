@@ -14,7 +14,7 @@ import * as log from '../logger'
 import { getBoard, getBoardWithQuery, maybeSync } from './board'
 import type { BoardQueryLike } from './board'
 import { boardCache } from './board-cache'
-import { createConnector } from './connector-utilities'
+import { createConnector } from './connector-utils'
 import { searchGroups, searchShapes } from './node-search'
 import {
   ShapeInteractionManager,
@@ -23,7 +23,7 @@ import {
 } from './shape-interactions'
 import { templateManager } from './templates'
 
-export { updateConnector } from './connector-utilities'
+export { updateConnector } from './connector-utils'
 
 /** Union type representing a single widget or a group of widgets. */
 export type BoardItem = BaseItem | Group

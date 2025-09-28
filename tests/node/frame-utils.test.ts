@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 
-import { registerFrame, clearActiveFrame } from '../../src/board/frame-utils'
+import { registerFrame, clearActiveFrame } from '../../src/board/frame-utilities'
 
 class BuilderStub {
   frame: any

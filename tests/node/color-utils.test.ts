@@ -8,7 +8,7 @@ import {
   ensureContrast,
   mixColors,
   resolveColor,
-} from '../../src/core/utils/color-utils'
+} from '../../src/core/utils/color-utilities'
 
 describe('color-utils', () => {
   it('converts between hex and rgb', () => {

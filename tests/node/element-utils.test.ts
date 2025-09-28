@@ -6,7 +6,7 @@ import {
   applyShapeElement,
   applyTextElement,
   buildShapeStyle,
-} from '../../src/board/element-utils'
+} from '../../src/board/element-utilities'
 
 describe('element-utils', () => {
   it('builds shape style with template defaults', () => {

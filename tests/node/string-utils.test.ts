@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { toSafeString } from '../../src/core/utils/string-utils'
+import { toSafeString } from '../../src/core/utils/string-utilities'
 
 describe('toSafeString', () => {
   it('returns empty string for nullish', () => {

@@ -12,9 +12,11 @@ import {
   EmptyState,
   SidebarSection,
   Skeleton,
+  JsonDropZone,
+  PageHelp,
+  TabPanel,
 } from '../components'
 import { StickyActions } from '../StickyActions'
-import { JsonDropZone, PageHelp, TabPanel } from '../components'
 import { showError } from '../hooks/notifications'
 import { undoLastImport } from '../hooks/ui-utilities'
 
