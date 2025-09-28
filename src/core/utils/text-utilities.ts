@@ -41,15 +41,39 @@ export function getTextFields(item: Record<string, unknown>): Array<[string, str
  * Retrieve a string at a dot-notated path from the given item.
  */
 export function getStringAtPath(item: Record<string, unknown>, path: string): string | undefined {
-  const parts = path.split('.')
-  let reference: unknown = item
-  for (const p of parts) {
-    if (!reference || typeof reference !== 'object') {
-      return undefined
+  switch (path) {
+    case 'title':
+      return typeof (item as { title?: unknown }).title === 'string'
+        ? ((item as { title?: string }).title as string)
+        : undefined
+    case 'content':
+      return typeof (item as { content?: unknown }).content === 'string'
+        ? ((item as { content?: string }).content as string)
+        : undefined
+    case 'plainText':
+      return typeof (item as { plainText?: unknown }).plainText === 'string'
+        ? ((item as { plainText?: string }).plainText as string)
+        : undefined
+    case 'description':
+      return typeof (item as { description?: unknown }).description === 'string'
+        ? ((item as { description?: string }).description as string)
+        : undefined
+    case 'text':
+      return typeof (item as { text?: unknown }).text === 'string'
+        ? ((item as { text?: string }).text as string)
+        : undefined
+    case 'text.plainText': {
+      const nested = (item as { text?: { plainText?: unknown } }).text
+      return nested && typeof nested.plainText === 'string' ? nested.plainText : undefined
     }
-    reference = (reference as Record<string, unknown>)[p]
+    case 'text.content': {
+      const nested = (item as { text?: { content?: unknown } }).text
+      return nested && typeof nested.content === 'string' ? nested.content : undefined
+    }
+    default:
+      // Unsupported path: explicitly return undefined instead of dynamic lookup
+      return undefined
   }
-  return typeof reference === 'string' ? reference : undefined
 }
 
 /**
@@ -59,25 +83,59 @@ export function getStringAtPath(item: Record<string, unknown>, path: string): st
  * prototype pollution by ignoring `__proto__` and `constructor` segments.
  */
 export function setStringAtPath(item: Record<string, unknown>, path: string, value: string): void {
-  const parts = path.split('.')
-  let reference: Record<string, unknown> = item
-  for (let index = 0; index < parts.length - 1; index++) {
-    const key = parts[index]!
-    if (key === '__proto__' || key === 'constructor') {
+  switch (path) {
+    case 'title': {
+      const obj = item as { title?: unknown }
+      if (typeof obj.title === 'string') {
+        ;(item as { title?: string }).title = value
+      }
       return
     }
-    const next = reference[key]
-    if (!next || typeof next !== 'object') {
+    case 'content': {
+      const obj = item as { content?: unknown }
+      if (typeof obj.content === 'string') {
+        ;(item as { content?: string }).content = value
+      }
       return
     }
-    reference = next as Record<string, unknown>
-  }
-  const last = parts.at(-1)!
-  if (last === '__proto__' || last === 'constructor') {
-    return
-  }
-  if (typeof reference[last] === 'string') {
-    reference[last] = value
+    case 'plainText': {
+      const obj = item as { plainText?: unknown }
+      if (typeof obj.plainText === 'string') {
+        ;(item as { plainText?: string }).plainText = value
+      }
+      return
+    }
+    case 'description': {
+      const obj = item as { description?: unknown }
+      if (typeof obj.description === 'string') {
+        ;(item as { description?: string }).description = value
+      }
+      return
+    }
+    case 'text': {
+      const obj = item as { text?: unknown }
+      if (typeof obj.text === 'string') {
+        ;(item as { text?: string }).text = value
+      }
+      return
+    }
+    case 'text.plainText': {
+      const nested = (item as { text?: { plainText?: unknown } }).text
+      if (nested && typeof nested.plainText === 'string') {
+        ;(nested as { plainText?: string }).plainText = value
+      }
+      return
+    }
+    case 'text.content': {
+      const nested = (item as { text?: { content?: unknown } }).text
+      if (nested && typeof nested.content === 'string') {
+        ;(nested as { content?: string }).content = value
+      }
+      return
+    }
+    default:
+      // Unsupported path; do nothing to avoid dynamic writes
+      return
   }
 }
 
