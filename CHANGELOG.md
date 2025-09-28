@@ -1,3 +1,28 @@
+# [2.3.0](https://github.com/fenrick/MiroDiagramming/compare/v2.2.0...v2.3.0) (2025-09-28)
+
+
+### Bug Fixes
+
+* **mermaid:** class relations solid for -- ([8b47aa7](https://github.com/fenrick/MiroDiagramming/commit/8b47aa791f1c76019a4f98a0f55ca14bdc8564e1))
+* **mermaid:** strip activation markers (+/-) when parsing sequence messages ([d81345f](https://github.com/fenrick/MiroDiagramming/commit/d81345f530bfb98712601e68317da431a786afe3))
+
+
+### Features
+
+* **mermaid:** add flowchart converter and renderer ([6548d45](https://github.com/fenrick/MiroDiagramming/commit/6548d459a782efefbc74ce67ac2ac120b028f177))
+* **mermaid:** add labels to state transitions; nested block parsing covered by edges ([8c0f962](https://github.com/fenrick/MiroDiagramming/commit/8c0f962140783b68e9cf23c1786edb1d156a261e))
+* **mermaid:** add panel tab for flowchart rendering ([08253bb](https://github.com/fenrick/MiroDiagramming/commit/08253bb18fcffa9fccae5b57b2bea81f07fb10f9))
+* **mermaid:** broaden diagram support ([6f0bca9](https://github.com/fenrick/MiroDiagramming/commit/6f0bca9ad1b036db0b9d9f1de00461a7ad6cd6d3))
+* **mermaid:** er parser accepts quoted entity names; add tests ([bd523c0](https://github.com/fenrick/MiroDiagramming/commit/bd523c05593249e75d805e7b0c83611b71db6dc6))
+* **mermaid:** extend shape mapping for flowchart shapes ([b9532f8](https://github.com/fenrick/MiroDiagramming/commit/b9532f8ddacb5a496bcdd27ac0185cf16ad704ed))
+* **mermaid:** map classes to templates ([1be7c73](https://github.com/fenrick/MiroDiagramming/commit/1be7c73c508b3b7bdb2b284661046212f2ad27c5))
+* **mermaid:** map styles to native widgets ([13c004f](https://github.com/fenrick/MiroDiagramming/commit/13c004fac215db334db4b1ab385716874bf26c40))
+* **mermaid:** prefer experimental flowchart shapes ([dd67c5b](https://github.com/fenrick/MiroDiagramming/commit/dd67c5bcce717eac222c85a03eabcfa897d2fc73))
+* **mermaid:** support sequence and class diagrams ([a30f627](https://github.com/fenrick/MiroDiagramming/commit/a30f627a8434234c23243fd90d8ea2b6df223d78))
+* **mermaid:** use native layout engine ([9a9bfd0](https://github.com/fenrick/MiroDiagramming/commit/9a9bfd09ee835e316c9038f63db6a1559d56ffbd))
+* **templates:** map Application/Business/MermaidNode to experimental flowchart shapes via overrides ([7287216](https://github.com/fenrick/MiroDiagramming/commit/7287216fe66096c80771aa5556ce7383d16dd405))
+* **templates:** support experimental shape overrides via templates/experimentalShapeMap.json ([b295d3f](https://github.com/fenrick/MiroDiagramming/commit/b295d3f00d7ddf2f41b9646cd6cebe21c72557a0))
+
 # [2.2.0](https://github.com/fenrick/MiroDiagramming/compare/v2.1.3...v2.2.0) (2025-09-26)
 
 
