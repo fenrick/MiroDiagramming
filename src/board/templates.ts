@@ -306,6 +306,38 @@ export class TemplateManager {
     x: number,
     y: number,
   ): ShapeData {
+    const sanitizeShape = (shape: string | undefined): ShapeType => {
+      const allowed = new Set<ShapeType>([
+        'rectangle',
+        'circle',
+        'triangle',
+        'wedge_round_rectangle_callout',
+        'round_rectangle',
+        'rhombus',
+        'parallelogram',
+        'star',
+        'right_arrow',
+        'left_arrow',
+        'pentagon',
+        'hexagon',
+        'octagon',
+        'trapezoid',
+        'flow_chart_predefined_process',
+        'left_right_arrow',
+        'cloud',
+        'left_brace',
+        'right_brace',
+        'cross',
+        'can',
+        'text',
+      ])
+      if (!shape) return 'rectangle'
+      if (shape === 'diamond') return 'rhombus'
+      if (shape.startsWith('flow_chart_') && shape !== 'flow_chart_predefined_process') {
+        return 'rectangle'
+      }
+      return (allowed.has(shape as ShapeType) ? shape : 'rectangle') as ShapeType
+    }
     const style: Partial<ShapeStyle> & Record<string, unknown> = this.resolveStyle(
       element.style ?? {},
     )
@@ -313,7 +345,7 @@ export class TemplateManager {
       style.fillColor = this.resolveToken(element.fill) as string
     }
     return {
-      shape: element.shape as ShapeType,
+      shape: sanitizeShape(element.shape),
       x,
       y,
       width: element.width ?? 0,

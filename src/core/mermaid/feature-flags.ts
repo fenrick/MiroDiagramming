@@ -21,7 +21,7 @@ export function isMermaidEnabled(): boolean {
 export function isExperimentalShapesEnabled(): boolean {
   const flag = import.meta.env.VITE_MIRO_EXPERIMENTAL_SHAPES
   if (typeof flag === 'string') {
-    return flag.toLowerCase() !== 'false'
+    return flag.toLowerCase() === 'true'
   }
-  return true
+  return false
 }

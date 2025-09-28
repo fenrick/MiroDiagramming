@@ -57,8 +57,8 @@ const SHAPE_MAP: Record<string, string> = {
   round_rect: 'round_rectangle',
   stadium: 'round_rectangle',
   circle: 'circle',
-  diamond: 'diamond',
-  rhombus: 'diamond',
+  diamond: 'rhombus',
+  rhombus: 'rhombus',
   hexagon: 'hexagon',
   parallelogram: 'parallelogram',
   trapezoid: 'trapezoid',
@@ -66,21 +66,37 @@ const SHAPE_MAP: Record<string, string> = {
   predefined_process: 'flow_chart_predefined_process',
   cylinder: 'can',
   can: 'can',
-  document: 'flow_chart_document',
-  terminator: 'flow_chart_terminator',
 }
 
 // Prefer experimental flowchart shapes when available and enabled.
 const EXP_FLOWCHART_SHAPES: Record<string, string> = {
-  rectangle: 'flow_chart_process',
-  round_rectangle: 'flow_chart_terminator',
-  diamond: 'flow_chart_decision',
-  circle: 'flow_chart_connector',
-  parallelogram: 'flow_chart_input_output',
-  trapezoid: 'flow_chart_manual_input',
-  can: 'flow_chart_magnetic_disk',
-  hexagon: 'flow_chart_preparation',
+  // Restrict to shapes known to be accepted by the SDK
+  rectangle: 'rectangle',
+  round_rectangle: 'round_rectangle',
 }
+const ALLOWED_SHAPES = new Set([
+  'rectangle',
+  'circle',
+  'triangle',
+  'wedge_round_rectangle_callout',
+  'round_rectangle',
+  'rhombus',
+  'parallelogram',
+  'star',
+  'right_arrow',
+  'left_arrow',
+  'pentagon',
+  'hexagon',
+  'octagon',
+  'trapezoid',
+  'flow_chart_predefined_process',
+  'left_right_arrow',
+  'cloud',
+  'left_brace',
+  'right_brace',
+  'cross',
+  'can',
+])
 
 const EDGE_THICKNESS: Record<string, number> = {
   'edge-thickness-thin': 1,
@@ -157,14 +173,23 @@ function parseLength(value: string | undefined): number | undefined {
   return Number.isFinite(numeric) ? numeric : undefined
 }
 
+import { resolveColor } from '../utils/color-utilities'
+import { colors } from '@mirohq/design-tokens'
+
 function parseNodeStyles(vertex: RawVertex): NodeStyleOverrides | undefined {
   const css = parseCssDeclarations(vertex.styles)
   const overrides: NodeStyleOverrides = {}
   if (css.fill) {
-    overrides.fillColor = css.fill
+    const value = css.fill.toLowerCase()
+    if (value !== 'none' && value !== 'transparent') {
+      overrides.fillColor = resolveColor(value, colors.white)
+    }
   }
   if (css.stroke) {
-    overrides.borderColor = css.stroke
+    const value = css.stroke.toLowerCase()
+    if (value !== 'none' && value !== 'transparent') {
+      overrides.borderColor = resolveColor(value, colors.black)
+    }
   }
   const borderWidth = parseLength(css['stroke-width'])
   if (borderWidth !== undefined) {
@@ -213,10 +238,9 @@ function mapShape(shape?: string): string | undefined {
   if (!base) {
     return undefined
   }
-  if (isExperimentalShapesEnabled() && EXP_FLOWCHART_SHAPES[base]) {
-    return EXP_FLOWCHART_SHAPES[base]
-  }
-  return base
+  const candidate =
+    isExperimentalShapesEnabled() && EXP_FLOWCHART_SHAPES[base] ? EXP_FLOWCHART_SHAPES[base] : base
+  return ALLOWED_SHAPES.has(candidate) ? candidate : 'rectangle'
 }
 
 function sanitizeIdentifier(raw: string): string {
