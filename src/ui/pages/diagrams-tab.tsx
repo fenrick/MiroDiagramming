@@ -3,8 +3,8 @@ import { space } from '@mirohq/design-tokens'
 import React from 'react'
 
 import { isMermaidEnabled } from '../../core/mermaid'
-import { PageHelp } from '../components/PageHelp'
-import { TabPanel } from '../components/TabPanel'
+import { PageHelp } from '../components/page-help'
+import { TabPanel } from '../components/tab-panel'
 
 import { CardsTab } from './CardsTab'
 import { LayoutEngineTab } from './layout-engine-tab'

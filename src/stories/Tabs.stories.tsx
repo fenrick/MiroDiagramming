@@ -6,7 +6,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
 import { ArrangeTab } from '../ui/pages/arrange-tab'
-import { CardsTab } from '../ui/pages/CardsTab'
+import { CardsTab } from '../ui/pages/cards-tab'
 import { DiagramsTab } from '../ui/pages/diagrams-tab'
 import { FramesTab } from '../ui/pages/frames-tab'
 import { HelpTab } from '../ui/pages/help-tab'

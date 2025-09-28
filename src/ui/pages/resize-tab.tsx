@@ -20,7 +20,7 @@ import {
   aspectRatioValue,
   ratioHeight,
 } from '../../core/utils/aspect-ratio'
-import { boardUnitsToInches, boardUnitsToMm } from '../../core/utils/unit-utils'
+import { boardUnitsToInches, boardUnitsToMm } from '../../core/utils/unit-utilities'
 import {
   Button,
   ButtonToolbar,
@@ -31,8 +31,8 @@ import {
   SelectOption,
   SidebarSection,
 } from '../components'
-import { PageHelp } from '../components/PageHelp'
-import { TabPanel } from '../components/TabPanel'
+import { PageHelp } from '../components/page-help'
+import { TabPanel } from '../components/tab-panel'
 import { useSelection } from '../hooks/use-selection'
 import { StickyActions } from '../StickyActions'
 

@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { TabPanel } from '../components/TabPanel'
+import { TabPanel } from '../components/tab-panel'
 
 import type { TabTuple } from './tab-definitions'
 

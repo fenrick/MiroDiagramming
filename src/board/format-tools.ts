@@ -1,4 +1,4 @@
-import { resolveColor } from '../core/utils/color-utils'
+import { resolveColor } from '../core/utils/color-utilities'
 import type { StylePreset } from '../ui/style-presets'
 
 import { type BoardLike, forEachSelection, maybeSync, type Syncable } from './board'

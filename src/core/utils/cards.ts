@@ -1,6 +1,6 @@
 import type { CardField, CardStyle, CardTaskStatus } from '@mirohq/websdk-types'
 
-import { fileUtils as fileUtilities } from './file-utils'
+import { fileUtilities } from './file-utilities'
 
 export interface CardData {
   /** Optional unique identifier for updating existing cards. */

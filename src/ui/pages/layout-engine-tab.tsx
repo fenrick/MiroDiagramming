@@ -1,8 +1,8 @@
 import React from 'react'
 
 import { Paragraph, SidebarSection } from '../components'
-import { PageHelp } from '../components/PageHelp'
-import { TabPanel } from '../components/TabPanel'
+import { PageHelp } from '../components/page-help'
+import { TabPanel } from '../components/tab-panel'
 
 /** Placeholder for future layout engine options. */
 export const LayoutEngineTab: React.FC = () => (

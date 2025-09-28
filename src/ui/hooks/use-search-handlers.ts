@@ -8,7 +8,7 @@ import {
 } from '../../board/search-tools'
 
 /**
- * Perform a board search with a 300 ms debounce.
+ * Perform a board search with a 300 ms debounce.
  *
  * @param query - Text to search for.
  * @param buildOptions - Builder returning search options for the query.
@@ -33,9 +33,9 @@ export function useDebouncedSearch(
         setCurrentIndex(-1)
         return
       }
-      const res = await searchBoardContent(buildOptions())
-      setResults(res)
-      setCurrentIndex(res.length > 0 ? 0 : -1)
+      const refreshedResults = await searchBoardContent(buildOptions())
+      setResults(refreshedResults)
+      setCurrentIndex(refreshedResults.length > 0 ? 0 : -1)
     }, 300)
     return () => clearTimeout(handle)
   }, [buildOptions, query])
@@ -71,9 +71,9 @@ export function useReplaceAll(
       focusOnItem,
     )
     if (count) {
-      const res = await searchBoardContent(buildOptions())
-      setResults(res)
-      setCurrentIndex(res.length > 0 ? 0 : -1)
+      const refreshedResults = await searchBoardContent(buildOptions())
+      setResults(refreshedResults)
+      setCurrentIndex(refreshedResults.length > 0 ? 0 : -1)
     }
   }, [buildOptions, focusOnItem, query, replacement, setCurrentIndex, setResults])
 }
@@ -140,8 +140,10 @@ export function useReplaceCurrent(
       board,
       focusOnItem,
     )
-    const res = await searchBoardContent(buildOptions())
-    setResults(res)
-    setCurrentIndex(res.length > 0 ? Math.min(currentIndex, res.length - 1) : -1)
+    const refreshedResults = await searchBoardContent(buildOptions())
+    setResults(refreshedResults)
+    setCurrentIndex(
+      refreshedResults.length > 0 ? Math.min(currentIndex, refreshedResults.length - 1) : -1,
+    )
   }, [buildOptions, currentIndex, focusOnItem, replacement, results, setCurrentIndex, setResults])
 }

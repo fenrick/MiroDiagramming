@@ -3,7 +3,7 @@
  */
 import { colors } from '@mirohq/design-tokens'
 
-import { adjustColor, ensureContrast, resolveColor } from '../core/utils/color-utils'
+import { adjustColor, ensureContrast, resolveColor } from '../core/utils/color-utilities'
 
 import {
   type BoardLike,

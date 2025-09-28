@@ -34,10 +34,10 @@ import {
   InfoCallout,
 } from '../components'
 import { StickyActions } from '../StickyActions'
-import { JsonDropZone } from '../components/JsonDropZone'
-import { PageHelp } from '../components/PageHelp'
-import { TabPanel } from '../components/TabPanel'
-import { undoLastImport } from '../hooks/ui-utils'
+import { JsonDropZone } from '../components/json-drop-zone'
+import { PageHelp } from '../components/page-help'
+import { TabPanel } from '../components/tab-panel'
+import { undoLastImport } from '../hooks/ui-utilities'
 import { type LayoutChoice, useDiagramCreate } from '../hooks/use-diagram-create'
 
 /**
@@ -362,9 +362,8 @@ export const StructuredTab: React.FC = () => {
                 {lastProc && (
                   <Button
                     onClick={() =>
-                      undoLastImport(
-                        lastProc,
-                        () => setLastProc((previous) => undefined as typeof previous),
+                      undoLastImport(lastProc, () =>
+                        setLastProc((previous) => undefined as typeof previous),
                       )
                     }
                     variant="secondary"

@@ -10,7 +10,7 @@ import {
   tweakFillColor,
   tweakOpacity,
 } from '../../board/style-tools'
-import { adjustColor } from '../../core/utils/color-utils'
+import { adjustColor } from '../../core/utils/color-utilities'
 import {
   Button,
   ButtonToolbar,
@@ -21,8 +21,8 @@ import {
   SidebarSection,
 } from '../components'
 import { StickyActions } from '../StickyActions'
-import { PageHelp } from '../components/PageHelp'
-import { TabPanel } from '../components/TabPanel'
+import { PageHelp } from '../components/page-help'
+import { TabPanel } from '../components/tab-panel'
 import { useSelection } from '../hooks/use-selection'
 import { STYLE_PRESET_NAMES, stylePresets } from '../style-presets'
 

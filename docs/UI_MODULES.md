@@ -21,7 +21,7 @@ src/ui/
     TabBar.tsx
   hooks/
     notifications.ts
-    ui-utils.ts
+    ui-utilities.ts
     use-diagram-create.ts
     use-search-handlers.ts
     use-selection.ts

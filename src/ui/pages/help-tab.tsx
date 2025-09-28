@@ -3,8 +3,8 @@ import React, { useState } from 'react'
 
 import changelog from '../../../CHANGELOG.md?raw'
 import { Button, Markdown, Paragraph, SidebarSection } from '../components'
-import { PageHelp } from '../components/PageHelp'
-import { TabPanel } from '../components/TabPanel'
+import { PageHelp } from '../components/page-help'
+import { TabPanel } from '../components/tab-panel'
 
 import type { TabTuple } from './tab-definitions'
 

@@ -1,6 +1,6 @@
 import safeRegex from 'safe-regex'
 
-import { getTextFields, getStringAtPath, setStringAtPath } from '../core/utils/text-utils'
+import { getTextFields, getStringAtPath, setStringAtPath } from '../core/utils/text-utilities'
 
 import { type BoardQueryLike, getBoardWithQuery, maybeSync, type Syncable } from './board'
 import { boardCache } from './board-cache'

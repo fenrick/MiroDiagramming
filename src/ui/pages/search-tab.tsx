@@ -14,8 +14,8 @@ import {
   RegexSearchField,
   SidebarSection,
 } from '../components'
-import { PageHelp } from '../components/PageHelp'
-import { TabPanel } from '../components/TabPanel'
+import { PageHelp } from '../components/page-help'
+import { TabPanel } from '../components/tab-panel'
 import {
   useDebouncedSearch,
   useNextMatch,

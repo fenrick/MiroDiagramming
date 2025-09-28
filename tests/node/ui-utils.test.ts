@@ -1,9 +1,9 @@
 import { describe, it, expect, vi } from 'vitest'
 import { colors } from '@mirohq/design-tokens'
 
-import { getDropzoneStyle, undoLastImport } from '../../src/ui/hooks/ui-utils'
+import { getDropzoneStyle, undoLastImport } from '../../src/ui/hooks/ui-utilities'
 
-describe('ui-utils', () => {
+describe('ui-utilities', () => {
   it('computes dropzone border color by state', () => {
     expect(getDropzoneStyle('base').borderColor).toBe(colors['alpha-black-400'])
     expect(getDropzoneStyle('accept').borderColor).toBe(colors['green-700'])

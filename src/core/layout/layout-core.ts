@@ -49,7 +49,7 @@ export function getNodeDimensions(node: {
   metadata?: { width?: number; height?: number }
 }): { width: number; height: number } {
   const tpl = templateManager.getTemplate(node.type)
-  const dims = tpl?.elements.find((el) => el.width && el.height)
+  const dims = tpl?.elements.find((element) => element.width && element.height)
   const width = resolveDimension(node.metadata?.width, dims?.width, DEFAULT_WIDTH)
   const height = resolveDimension(node.metadata?.height, dims?.height, DEFAULT_HEIGHT)
   return { width, height }

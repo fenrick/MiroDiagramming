@@ -12,8 +12,8 @@ import {
   InfoCallout,
 } from '../components'
 import { StickyActions } from '../StickyActions'
-import { PageHelp } from '../components/PageHelp'
-import { TabPanel } from '../components/TabPanel'
+import { PageHelp } from '../components/page-help'
+import { TabPanel } from '../components/tab-panel'
 import { useSelection } from '../hooks/use-selection'
 
 import type { TabTuple } from './tab-definitions'

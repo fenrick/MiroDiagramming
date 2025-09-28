@@ -11,7 +11,7 @@
  */
 import * as log from '../../logger'
 import { getErrorToastMessage } from '../microcopy'
-import { pushToast } from '../components/Toast'
+import { pushToast } from '../components/toast'
 
 export async function showError(message: string): Promise<void> {
   const trimmed = message.length > 80 ? `${message.slice(0, 77)}...` : message

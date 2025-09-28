@@ -1,8 +1,8 @@
 import type { BaseItem } from '@mirohq/websdk-types'
 
 import { TagClient, type TagInfo } from '../core/utils/tag-client'
-import { readItemText, writeItemText } from '../core/utils/text-utils'
-import { pushToast } from '../ui/components/Toast'
+import { readItemText, writeItemText } from '../core/utils/text-utilities'
+import { pushToast } from '../ui/components/toast'
 
 import { ensureBoard, maybeSync, type BoardLike } from './board'
 import { boardCache } from './board-cache'

@@ -2,8 +2,8 @@ import { Tabs } from '@mirohq/design-system'
 import { space } from '@mirohq/design-tokens'
 import React from 'react'
 
-import { PageHelp } from '../components/PageHelp'
-import { TabPanel } from '../components/TabPanel'
+import { PageHelp } from '../components/page-help'
+import { TabPanel } from '../components/tab-panel'
 
 import { ArrangeTab } from './arrange-tab'
 import { FramesTab } from './frames-tab'

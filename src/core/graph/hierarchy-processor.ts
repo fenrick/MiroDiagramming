@@ -3,9 +3,9 @@ import type { BaseItem, Connector, Frame, Group, GroupableItem } from '@mirohq/w
 import * as log from '../../logger'
 import { BoardBuilder } from '../../board/board-builder'
 import { clearActiveFrame, registerFrame } from '../../board/frame-utilities'
-import { boundingBoxFromCenter, frameOffset } from '../layout/layout-utils'
+import { boundingBoxFromCenter, frameOffset } from '../layout/layout-utilities'
 import { type HierNode, layoutHierarchy, type NestedLayoutResult } from '../layout/nested-layout'
-import { fileUtils as fileUtilities } from '../utils/file-utils'
+import { fileUtilities } from '../utils/file-utilities'
 
 import { edgesToHierarchy } from './convert'
 import type { GraphData } from './graph-service'

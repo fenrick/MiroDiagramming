@@ -16,8 +16,8 @@ import {
   SidebarSection,
   InfoCallout,
 } from '../components'
-import { PageHelp } from '../components/PageHelp'
-import { TabPanel } from '../components/TabPanel'
+import { PageHelp } from '../components/page-help'
+import { TabPanel } from '../components/tab-panel'
 import { StickyActions } from '../StickyActions'
 import { applyBracketTagsToSelectedStickies } from '../../board/sticky-tags'
 import { useSelection } from '../hooks/use-selection'
