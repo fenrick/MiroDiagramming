@@ -30,6 +30,7 @@ Static hosting only. Use host‑level health checks for `index.html` as needed.
 - [Done] A11y polish: ButtonToolbar avoids index-based keys; CommandPalette uses native buttons; EmptyState and CardsTab loading use `<output aria-live>`; Modal backdrop is a button and `<dialog>` has native semantics.
 - [Done] CI: Exclude test files from SonarCloud coverage via `sonar.coverage.exclusions` in `.github/workflows/repo-sonar.yml`.
 - [Done] CI: Align SonarCloud coverage scope with Vitest targets using `sonar.coverage.inclusions` so coverage reflects unit-tested modules.
+- [Done] Abbreviations: rename `*Props` types to `*Properties` in UI; rename `ui-utils.ts` to `ui-utilities.ts` and update imports/tests/docs; rename `FileUtils` to `FileUtilities` and export `fileUtilities` singleton.
 
 <!-- Removed: Queue & Persistence (backend-only) -->
 
