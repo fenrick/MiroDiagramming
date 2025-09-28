@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 
-import { handleFileDrop } from '../../src/ui/pages/StructuredTab'
+import { handleFileDrop } from '../../src/ui/pages/structured-tab'
 
 describe('StructuredTab handleFileDrop', () => {
   it('queues first dropped file and clears error', () => {

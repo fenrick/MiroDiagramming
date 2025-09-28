@@ -5,7 +5,7 @@ import {
   writeItemText,
   getStringAtPath,
   setStringAtPath,
-} from '../../src/core/utils/text-utils'
+} from '../../src/core/utils/text-utilities'
 
 describe('text-utils', () => {
   it('reads and writes item text via common and nested paths', () => {

@@ -4,7 +4,7 @@ import {
   boardUnitsToInches,
   mmToBoardUnits,
   inchesToBoardUnits,
-} from '../../src/core/utils/unit-utils'
+} from '../../src/core/utils/unit-utilities'
 
 describe('unit-utils', () => {
   it('converts board units to mm and inches', () => {

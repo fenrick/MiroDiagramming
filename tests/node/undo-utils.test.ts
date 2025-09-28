@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 
-import { syncOrUndo, undoWidgets } from '../../src/board/undo-utils'
+import { syncOrUndo, undoWidgets } from '../../src/board/undo-utilities'
 
 describe('undo-utils', () => {
   it('undoWidgets removes items and clears registry', async () => {
