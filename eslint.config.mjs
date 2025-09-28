@@ -33,7 +33,7 @@ export default [
     ignores: ['dist/**', 'coverage/**', '**/*.min.js'],
     rules: {
       // Sonar-like maintainability signal
-      'sonarjs/cognitive-complexity': ['error', 15],
+      'sonarjs/cognitive-complexity': ['error', 8],
 
       // Keep noise down where packs overlap
       'unicorn/no-null': 'off', // often too strict
