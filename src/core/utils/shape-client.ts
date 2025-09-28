@@ -56,7 +56,7 @@ function applyShapeData(target: Shape, data: ShapeData): void {
   if (data.style) {
     target.style = {
       ...(target.style ?? ({} as Partial<ShapeStyle>)),
-      ...data.style,
+      ...sanitizeStyle(data.style),
     } as ShapeStyle
   }
   if (typeof data.text === 'string') {
@@ -66,6 +66,41 @@ function applyShapeData(target: Shape, data: ShapeData): void {
   if (typeof data.shape === 'string') {
     Reflect.set(target, 'shape', data.shape as ShapeType)
   }
+}
+
+function sanitizeStyle(style: Record<string, unknown>): Partial<ShapeStyle> {
+  const out: Partial<ShapeStyle> = {}
+  const hex = /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i
+  // fill color
+  const fill = (style as { fillColor?: unknown }).fillColor
+  if (typeof fill === 'string' && hex.test(fill)) {
+    out.fillColor = fill
+  }
+  // border color
+  const border = (style as { borderColor?: unknown }).borderColor
+  if (typeof border === 'string' && hex.test(border)) {
+    ;(out as Record<string, unknown>).borderColor = border
+  }
+  // border width
+  const bw = (style as { borderWidth?: unknown }).borderWidth
+  if (typeof bw === 'number' && Number.isFinite(bw) && bw >= 0) {
+    ;(out as Record<string, unknown>).borderWidth = bw
+  }
+  // text color
+  const color = (style as { color?: unknown }).color
+  if (typeof color === 'string' && hex.test(color)) {
+    ;(out as Record<string, unknown>).color = color
+  }
+  // pass through known numeric opacities
+  const fillOpacity = (style as { fillOpacity?: unknown }).fillOpacity
+  if (typeof fillOpacity === 'number') {
+    ;(out as Record<string, unknown>).fillOpacity = Math.max(0, Math.min(1, fillOpacity))
+  }
+  const opacity = (style as { opacity?: unknown }).opacity
+  if (typeof opacity === 'number') {
+    ;(out as Record<string, unknown>).opacity = Math.max(0, Math.min(1, opacity))
+  }
+  return out
 }
 
 async function fetchShape(id: string): Promise<Shape | undefined> {
@@ -102,7 +137,7 @@ export class ShapeClient {
           width: shape.width,
           height: shape.height,
           rotation: shape.rotation,
-          style: shape.style,
+          style: shape.style ? sanitizeStyle(shape.style) : undefined,
           content: shape.text,
         }),
       ),

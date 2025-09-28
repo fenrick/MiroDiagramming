@@ -179,16 +179,23 @@ import { colors } from '@mirohq/design-tokens'
 function parseNodeStyles(vertex: RawVertex): NodeStyleOverrides | undefined {
   const css = parseCssDeclarations(vertex.styles)
   const overrides: NodeStyleOverrides = {}
+  const hexRegex = /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i
   if (css.fill) {
     const value = css.fill.toLowerCase()
     if (value !== 'none' && value !== 'transparent') {
-      overrides.fillColor = resolveColor(value, colors.white)
+      const resolved = resolveColor(value, colors.white)
+      if (hexRegex.test(resolved)) {
+        overrides.fillColor = resolved
+      }
     }
   }
   if (css.stroke) {
     const value = css.stroke.toLowerCase()
     if (value !== 'none' && value !== 'transparent') {
-      overrides.borderColor = resolveColor(value, colors.black)
+      const resolved = resolveColor(value, colors.black)
+      if (hexRegex.test(resolved)) {
+        overrides.borderColor = resolved
+      }
     }
   }
   const borderWidth = parseLength(css['stroke-width'])
