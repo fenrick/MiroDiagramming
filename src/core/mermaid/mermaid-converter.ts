@@ -366,7 +366,9 @@ function convertSequenceDiagram(source: string): GraphData {
   for (const line of source
     .split(/\r?\n/)
     .map((line) => line.trim())
-    .filter((line) => line.length && !line.startsWith('%%') && !/^sequenceDiagram/i.test(line))) {
+    .filter(
+      (line) => line.length > 0 && !line.startsWith('%%') && !/^sequenceDiagram/i.test(line),
+    )) {
     if (/^(participant|actor)\s+/i.test(line)) {
       processParticipant(line)
     } else if (!/^(activate|deactivate|loop|end|note\s+)/i.test(line)) {
@@ -416,7 +418,7 @@ function convertStateDiagram(source: string): GraphData {
   for (const line of source
     .split(/\r?\n/)
     .map((line) => line.trim())
-    .filter((line) => line.length && !line.startsWith('%%') && !/^stateDiagram/i.test(line))) {
+    .filter((line) => line.length > 0 && !line.startsWith('%%') && !/^stateDiagram/i.test(line))) {
     if (/^state\s+/i.test(line)) {
       const cleaned = line.replace(/^state\s+/i, '')
       const lower = cleaned.toLowerCase()
@@ -484,7 +486,7 @@ function convertErDiagram(source: string): GraphData {
   for (const line of source
     .split(/\r?\n/)
     .map((line) => line.trim())
-    .filter((line) => line.length && !line.startsWith('%%') && !/^erDiagram/i.test(line))) {
+    .filter((line) => line.length > 0 && !line.startsWith('%%') && !/^erDiagram/i.test(line))) {
     const relation = parseErRelation(line)
     if (!relation) {
       continue
@@ -562,7 +564,7 @@ function convertClassDiagram(source: string): GraphData {
   for (const line of source
     .split(/\r?\n/)
     .map((line) => line.trim())
-    .filter((line) => line.length && !line.startsWith('%%') && !/^classDiagram/i.test(line))) {
+    .filter((line) => line.length > 0 && !line.startsWith('%%') && !/^classDiagram/i.test(line))) {
     const relation = parseClassRelation(line)
     if (relation) {
       ensureClassNode(relation.left)
