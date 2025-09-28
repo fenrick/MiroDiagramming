@@ -17,17 +17,17 @@ export interface Keybinding {
  */
 export function useKeybinding(bindings: Keybinding[]) {
   const handler = React.useCallback(
-    (e: KeyboardEvent) => {
-      const key = e.key.toLowerCase()
+    (event: KeyboardEvent) => {
+      const key = event.key.toLowerCase()
       for (const b of bindings) {
         if (
           key === b.key.toLowerCase() &&
-          (b.ctrl ?? false) === e.ctrlKey &&
-          (b.alt ?? false) === e.altKey &&
-          (b.shift ?? false) === e.shiftKey &&
-          (b.meta ?? false) === e.metaKey
+          (b.ctrl ?? false) === event.ctrlKey &&
+          (b.alt ?? false) === event.altKey &&
+          (b.shift ?? false) === event.shiftKey &&
+          (b.meta ?? false) === event.metaKey
         ) {
-          e.preventDefault()
+          event.preventDefault()
           b.onMatch()
           return
         }
@@ -42,7 +42,7 @@ export function useKeybinding(bindings: Keybinding[]) {
     if (!target) {
       return
     }
-    const onKey = (event: KeyboardEvent) => handler(event)
+    const onKey = (ev: KeyboardEvent) => handler(ev)
     target.addEventListener('keydown', onKey as EventListener)
     return () => target.removeEventListener('keydown', onKey as EventListener)
   }, [handler])

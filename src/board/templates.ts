@@ -267,7 +267,7 @@ export class TemplateManager {
     if (typeof value !== 'string') {
       return value
     }
-    const m = /^(-?\d+(?:\.\d+)?)(px)?$/.exec(value)
+    const m = /^(-?\d+(?:\.\d+)?)(?:px)?$/.exec(value)
     return m ? Number.parseFloat(m[1]!) : value
   }
 

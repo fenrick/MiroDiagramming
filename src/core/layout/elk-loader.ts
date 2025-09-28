@@ -9,6 +9,8 @@ import type ELK from 'elkjs/lib/elk.bundled.js'
  */
 let elkPromise: Promise<typeof ELK> | null = null
 
+const dynamicImport = (path: string) => import(/* @vite-ignore */ path)
+
 /**
  * Retrieve the ELK constructor. Subsequent calls return the cached value.
  */
@@ -19,13 +21,11 @@ export async function loadElk(): Promise<typeof ELK> {
 
   const isNode = typeof process !== 'undefined' && process.release?.name === 'node'
 
-  const dynamic = (p: string) => import(/* @vite-ignore */ p)
-
   elkPromise = isNode
-    ? dynamic('elkjs/lib/elk.bundled.js').then((m) => m.default)
+    ? dynamicImport('elkjs/lib/elk.bundled.js').then((m) => m.default)
     : (async () => {
         const url = 'https://cdn.jsdelivr.net/npm/elkjs@0.10.0/lib/elk.bundled.js'
-        const module_ = (await dynamic(url)) as { default?: typeof ELK }
+        const module_ = (await dynamicImport(url)) as { default?: typeof ELK }
         if (module_.default) {
           return module_.default
         }
