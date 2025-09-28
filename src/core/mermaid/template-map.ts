@@ -1,37 +1,37 @@
-const NODE_TEMPLATE_MAP: Record<string, string> = {
-  system: 'Technology',
-  technology: 'Technology',
-  process: 'Application',
-  application: 'Application',
-  app: 'Application',
-  decision: 'Business',
-  business: 'Business',
-  data: 'Physical',
-  database: 'Physical',
-  note: 'Motivation',
-  info: 'Motivation',
-  actor: 'MermaidActor',
-  participant: 'MermaidActor',
-  class: 'MermaidClass',
-  state: 'MermaidState',
-  entity: 'MermaidEntity',
-  table: 'MermaidEntity',
-  databaseentity: 'MermaidEntity',
-}
+const NODE_TEMPLATE_MAP = new Map<string, string>([
+  ['system', 'Technology'],
+  ['technology', 'Technology'],
+  ['process', 'Application'],
+  ['application', 'Application'],
+  ['app', 'Application'],
+  ['decision', 'Business'],
+  ['business', 'Business'],
+  ['data', 'Physical'],
+  ['database', 'Physical'],
+  ['note', 'Motivation'],
+  ['info', 'Motivation'],
+  ['actor', 'MermaidActor'],
+  ['participant', 'MermaidActor'],
+  ['class', 'MermaidClass'],
+  ['state', 'MermaidState'],
+  ['entity', 'MermaidEntity'],
+  ['table', 'MermaidEntity'],
+  ['databaseentity', 'MermaidEntity'],
+])
 
-const EDGE_TEMPLATE_MAP: Record<string, string> = {
-  dashed: 'flow',
-  flow: 'flow',
-  realization: 'realization',
-  realizes: 'realization',
-  accesses: 'access',
-  access: 'access',
-  influence: 'influence',
-  inheritance: 'inheritance',
-  dependency: 'dependency',
-  composition: 'composition',
-  aggregation: 'aggregation',
-}
+const EDGE_TEMPLATE_MAP = new Map<string, string>([
+  ['dashed', 'flow'],
+  ['flow', 'flow'],
+  ['realization', 'realization'],
+  ['realizes', 'realization'],
+  ['accesses', 'access'],
+  ['access', 'access'],
+  ['influence', 'influence'],
+  ['inheritance', 'inheritance'],
+  ['dependency', 'dependency'],
+  ['composition', 'composition'],
+  ['aggregation', 'aggregation'],
+])
 
 export function mapNodeClassesToTemplate(
   classes: readonly string[] | undefined,
@@ -41,7 +41,7 @@ export function mapNodeClassesToTemplate(
   }
   for (const cls of classes) {
     const key = cls.toLowerCase()
-    const template = NODE_TEMPLATE_MAP[key]
+    const template = NODE_TEMPLATE_MAP.get(key)
     if (template) {
       return template
     }
@@ -57,7 +57,7 @@ export function mapEdgeClassesToTemplate(
   }
   for (const cls of classes) {
     const key = cls.toLowerCase()
-    const template = EDGE_TEMPLATE_MAP[key]
+    const template = EDGE_TEMPLATE_MAP.get(key)
     if (template) {
       return template
     }
