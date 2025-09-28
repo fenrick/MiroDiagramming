@@ -11,7 +11,7 @@ type TagLike = Pick<TagInfo, 'id' | 'title'>
 
 function extractBracketTags(text: string): { tags: string[]; stripped: string } {
   const tagSet = new Set<string>()
-  const tagPattern = /\[([^\[\]]{1,128})\]/g
+  const tagPattern = /\[([^[\]]{1,128})\]/g
   let match: RegExpExecArray | null
   while ((match = tagPattern.exec(text))) {
     const name = match[1]?.trim()
@@ -20,8 +20,8 @@ function extractBracketTags(text: string): { tags: string[]; stripped: string } 
     }
   }
   const stripped = text
-    .replace(tagPattern, '')
-    .replace(/\s{2,}/g, ' ')
+    .replaceAll(tagPattern, '')
+    .replaceAll(/\s{2,}/g, ' ')
     .trim()
   return { tags: [...tagSet], stripped }
 }
@@ -71,8 +71,8 @@ export async function applyBracketTagsToSelectedStickies(): Promise<void> {
   const tagMap = await getTagMap(client)
 
   const selection = await boardCache.getSelection(board)
-  const stickies = selection.filter((i) => (i as BaseItem).type === 'sticky_note')
-  if (!stickies.length) {
+  const stickies = selection.filter((index) => (index as BaseItem).type === 'sticky_note')
+  if (stickies.length === 0) {
     pushToast({ message: 'Select sticky notes to tag.' })
     return
   }
@@ -138,7 +138,7 @@ async function applyTagsAndMaybeStrip(
       .filter((id): id is string => typeof id === 'string')
 
     const existing = ((item as { tagIds?: string[] }).tagIds ?? []) as string[]
-    const merged = Array.from(new Set([...(existing ?? []), ...resolvedIds]))
+    const merged = [...new Set([...(existing ?? []), ...resolvedIds])]
     ;(item as { tagIds?: string[] }).tagIds = merged
     await maybeSync(item as { sync?: () => Promise<void> })
 

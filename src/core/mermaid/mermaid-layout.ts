@@ -12,7 +12,7 @@ type MermaidLayoutOptions = Readonly<{
 
 function ensureDom(): void {
   if (typeof document === 'undefined' || typeof document.createElement !== 'function') {
-    throw new Error('Mermaid layout requires a browser-like DOM environment')
+    throw new TypeError('Mermaid layout requires a browser-like DOM environment')
   }
 }
 
@@ -27,13 +27,13 @@ function createHiddenContainer(): HTMLElement {
   ensureDom()
   const container = document.createElement('div')
   Object.assign(container.style, HIDDEN_CONTAINER_STYLE)
-  document.body.appendChild(container)
+  document.body.append(container)
   return container
 }
 
 function removeHiddenContainer(container: HTMLElement): void {
   if (container.parentNode) {
-    container.parentNode.removeChild(container)
+    container.remove()
   }
 }
 
@@ -41,7 +41,7 @@ function parseTranslate(transform: string | null): { x: number; y: number } {
   if (!transform) {
     return { x: 0, y: 0 }
   }
-  const match = /translate\(([^,\s]+)(?:[,\s]+([^\s\)]+))?/i.exec(transform)
+  const match = /translate\(([^,\s]+)(?:[,\s]+([^\s)]+))?/i.exec(transform)
   if (!match) {
     return { x: 0, y: 0 }
   }
@@ -50,20 +50,20 @@ function parseTranslate(transform: string | null): { x: number; y: number } {
   return { x, y }
 }
 
-function decodePoints(attr: string | null): Array<{ x: number; y: number }> | undefined {
-  if (!attr) {
+function decodePoints(attribute: string | null): Array<{ x: number; y: number }> | undefined {
+  if (!attribute) {
     return undefined
   }
   try {
     let json: string
     if (typeof globalThis.atob === 'function') {
-      json = globalThis.atob(attr)
+      json = globalThis.atob(attribute)
     } else {
       type NodeBufferModule = {
         from: (input: string, encoding: string) => { toString: (encoding: string) => string }
       }
       const nodeBuffer = (globalThis as { Buffer?: NodeBufferModule }).Buffer
-      json = nodeBuffer ? nodeBuffer.from(attr, 'base64').toString('utf8') : attr
+      json = nodeBuffer ? nodeBuffer.from(attribute, 'base64').toString('utf8') : attribute
     }
     const parsed = JSON.parse(json) as Array<{ x: number; y: number }>
     if (!Array.isArray(parsed)) {
@@ -75,15 +75,15 @@ function decodePoints(attr: string | null): Array<{ x: number; y: number }> | un
   }
 }
 
-function computeNodeBounds(nodeEl: SVGGElement): {
+function computeNodeBounds(nodeElement: SVGGElement): {
   x: number
   y: number
   width: number
   height: number
 } {
-  if (typeof nodeEl.getBBox === 'function') {
+  if (typeof nodeElement.getBBox === 'function') {
     try {
-      const box = nodeEl.getBBox()
+      const box = nodeElement.getBBox()
       if (Number.isFinite(box.width) && Number.isFinite(box.height)) {
         return { x: box.x, y: box.y, width: box.width, height: box.height }
       }
@@ -98,7 +98,7 @@ function computeNodeBounds(nodeEl: SVGGElement): {
   let maxX = Number.NEGATIVE_INFINITY
   let maxY = Number.NEGATIVE_INFINITY
 
-  const groupOffset = parseTranslate(nodeEl.getAttribute('transform'))
+  const groupOffset = parseTranslate(nodeElement.getAttribute('transform'))
 
   const updateBounds = (points: Array<{ x: number; y: number }>) => {
     for (const { x, y } of points) {
@@ -112,7 +112,7 @@ function computeNodeBounds(nodeEl: SVGGElement): {
     }
   }
 
-  nodeEl.querySelectorAll('rect, circle, ellipse, polygon, path').forEach((element) => {
+  for (const element of nodeElement.querySelectorAll('rect, circle, ellipse, polygon, path')) {
     const tag = element.tagName.toLowerCase()
     if (tag === 'rect') {
       const x = Number.parseFloat(element.getAttribute('x') ?? '0')
@@ -125,7 +125,7 @@ function computeNodeBounds(nodeEl: SVGGElement): {
         { x: x + width, y: y + height },
         { x, y: y + height },
       ])
-      return
+      continue
     }
     if (tag === 'circle') {
       const cx = Number.parseFloat(element.getAttribute('cx') ?? '0')
@@ -135,7 +135,7 @@ function computeNodeBounds(nodeEl: SVGGElement): {
         { x: cx - r, y: cy - r },
         { x: cx + r, y: cy + r },
       ])
-      return
+      continue
     }
     if (tag === 'ellipse') {
       const cx = Number.parseFloat(element.getAttribute('cx') ?? '0')
@@ -146,25 +146,26 @@ function computeNodeBounds(nodeEl: SVGGElement): {
         { x: cx - rx, y: cy - ry },
         { x: cx + rx, y: cy + ry },
       ])
-      return
+      continue
     }
     if (tag === 'polygon') {
       const subTransform = parseTranslate(element.getAttribute('transform'))
-      const pointsAttr = element.getAttribute('points') ?? ''
-      const pointPairs = pointsAttr
+      const pointsAttribute = element.getAttribute('points') ?? ''
+      const pointPairs = pointsAttribute
         .trim()
         .split(/\s+/)
         .map((pair) => pair.split(',').map((value) => Number.parseFloat(value)))
         .filter(
-          (pair): pair is [number, number] => pair.length === 2 && pair.every(Number.isFinite),
+          (pair): pair is [number, number] =>
+            pair.length === 2 && pair.every((n) => Number.isFinite(n)),
         )
         .map(([x, y]) => ({ x: x + subTransform.x, y: y + subTransform.y }))
       updateBounds(pointPairs)
-      return
+      continue
     }
     if (tag === 'path') {
       // Path shapes are complex; rely on stroke bounding approximated via data attribute when available.
-      const dataBounds = element.getAttribute('data-bounds')
+      const dataBounds = (element as HTMLElement | SVGElement).dataset?.bounds ?? null
       if (dataBounds) {
         try {
           const parsed = JSON.parse(dataBounds) as {
@@ -177,11 +178,13 @@ function computeNodeBounds(nodeEl: SVGGElement): {
             { x: parsed.x, y: parsed.y },
             { x: parsed.x + parsed.width, y: parsed.y + parsed.height },
           ])
-          return
-        } catch {}
+          continue
+        } catch {
+          // ignore decode errors for path data-bounds
+        }
       }
     }
-  })
+  }
 
   if (
     !Number.isFinite(minX) ||
@@ -200,15 +203,17 @@ function mapNodesFromSvg(
   graph: GraphData,
 ): Record<string, PositionedNode> {
   const nodes: Record<string, PositionedNode> = {}
-  const nodeElements = Array.from(
-    svgElement.querySelectorAll<SVGGElement>('g.node, g.actor, g.classGroup, g.state, g.nodeLabel'),
-  )
+  const nodeElements = [
+    ...svgElement.querySelectorAll<SVGGElement>(
+      'g.node, g.actor, g.classGroup, g.state, g.nodeLabel',
+    ),
+  ]
   const byDomId = new Map<string, SVGGElement>()
-  nodeElements.forEach((el) => {
-    if (el.id) {
-      byDomId.set(el.id, el)
+  for (const element of nodeElements) {
+    if (element.id) {
+      byDomId.set(element.id, element)
     }
-  })
+  }
   let fallbackIndex = 0
 
   for (const node of graph.nodes) {
@@ -240,15 +245,15 @@ function mapEdgesFromSvg(
     const path = domId
       ? (svgElement.querySelector(`path[data-id="${domId}"]`) as SVGPathElement | null)
       : null
-    const points = path ? decodePoints(path.getAttribute('data-points')) : undefined
+    const points = path ? decodePoints(path.dataset.points ?? null) : undefined
     if (points && points.length >= 2) {
       const start = points[0]!
-      const end = points[points.length - 1]!
+      const end = points.at(-1)!
       const rest = points.slice(1, -1)
       return {
         startPoint: start,
         endPoint: end,
-        bendPoints: rest.length ? rest : undefined,
+        bendPoints: rest.length > 0 ? rest : undefined,
       }
     }
     const from = nodePositions[edge.from]

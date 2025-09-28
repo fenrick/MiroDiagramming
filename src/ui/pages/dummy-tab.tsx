@@ -11,4 +11,4 @@ export const DummyTab: React.FC = () => (
   </TabPanel>
 )
 
-export const tabDef: TabTuple = [99, 'dummy', 'Dummy', 'Test only dummy tab', DummyTab]
+export const tabDefinition: TabTuple = [99, 'dummy', 'Dummy', 'Test only dummy tab', DummyTab]

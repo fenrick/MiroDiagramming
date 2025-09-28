@@ -4,9 +4,9 @@ import * as React from 'react'
 import { createRoot } from 'react-dom/client'
 import { createTheme, themes } from '@mirohq/design-system'
 
-import { App as QuickToolsApp } from './app/App'
+import { App as QuickToolsApp } from './app/app'
 
-const container = document.getElementById('root')
+const container = document.querySelector<HTMLElement>('#root')
 if (container) {
   const themeClass = createTheme(themes.light)
   container.classList.add(themeClass)

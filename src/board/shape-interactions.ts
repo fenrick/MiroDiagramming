@@ -1,7 +1,7 @@
 import type { BaseItem, Shape } from '@mirohq/websdk-types'
 
 import type { TemplateElement } from './templates'
-import { applyShapeElement } from './element-utils'
+import { applyShapeElement } from './element-utilities'
 import type { Syncable } from './board'
 
 export interface ShapeUpdateOptions {
@@ -78,7 +78,10 @@ export class ShapeInteractionManager {
     if (update.position) {
       interaction.move(update.position)
     }
-    if (update.size) {
+    if (
+      update.size &&
+      (typeof update.size.width === 'number' || typeof update.size.height === 'number')
+    ) {
       interaction.resize(update.size)
     }
     if (typeof update.rotation === 'number') {

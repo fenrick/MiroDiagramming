@@ -17,7 +17,6 @@ export class TagClient {
     const tags = await board.get({ type: 'tag' })
     const result: TagInfo[] = []
     for (const tag of tags) {
-      // eslint-disable-next-line no-restricted-syntax
       const record = tag as unknown as { id?: unknown; title?: unknown; color?: unknown }
       const { id, title } = record
       if (typeof id === 'string' && typeof title === 'string') {

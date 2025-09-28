@@ -5,10 +5,10 @@ import React from 'react'
 import { PageHelp } from '../components/PageHelp'
 import { TabPanel } from '../components/TabPanel'
 
-import { ArrangeTab } from './ArrangeTab'
-import { FramesTab } from './FramesTab'
-import { ResizeTab } from './ResizeTab'
-import { StyleTab } from './StyleTab'
+import { ArrangeTab } from './arrange-tab'
+import { FramesTab } from './frames-tab'
+import { ResizeTab } from './resize-tab'
+import { StyleTab } from './style-tab'
 import type { TabTuple } from './tab-definitions'
 
 type SubTabId = 'size' | 'style' | 'arrange' | 'frames'
@@ -92,7 +92,7 @@ export const ToolsTab: React.FC = () => {
   )
 }
 
-export const tabDef: TabTuple = [
+export const tabDefinition: TabTuple = [
   5,
   'tools',
   'Tools',

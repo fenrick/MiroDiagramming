@@ -15,20 +15,23 @@ export interface RenameOptions {
  * @param opts - Prefix configuration.
  * @param board - Optional board API override for testing.
  */
-export async function renameSelectedFrames(opts: RenameOptions, board?: BoardLike): Promise<void> {
+export async function renameSelectedFrames(
+  options: RenameOptions,
+  board?: BoardLike,
+): Promise<void> {
   const b = getBoard(board)
   log.info('Renaming selected frames')
   const selection = await boardCache.getSelection(b)
   const frames = selection.filter(
     (
-      i,
-    ): i is Record<string, unknown> & {
+      index,
+    ): index is Record<string, unknown> & {
       x?: number
       y?: number
       type?: string
-    } => (i as { type?: string }).type === 'frame',
+    } => (index as { type?: string }).type === 'frame',
   )
-  if (!frames.length) {
+  if (frames.length === 0) {
     return
   }
   frames.sort((a, b) => {
@@ -42,8 +45,8 @@ export async function renameSelectedFrames(opts: RenameOptions, board?: BoardLik
     return ax - bx
   })
   await Promise.all(
-    frames.map(async (frame, i) => {
-      frame.title = `${opts.prefix}${i}`
+    frames.map(async (frame, index) => {
+      frame.title = `${options.prefix}${index}`
       await maybeSync(frame as Syncable)
     }),
   )

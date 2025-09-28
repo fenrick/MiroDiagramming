@@ -96,23 +96,23 @@ function validateEnum<T>(value: unknown, allowed: readonly T[], fallback: T): T 
   return allowed.includes(value as T) ? (value as T) : fallback
 }
 
-export function validateLayoutOptions(opts: Partial<UserLayoutOptions>): UserLayoutOptions {
-  const algorithm = validateEnum(opts.algorithm, ALGORITHMS, DEFAULT_LAYOUT_OPTIONS.algorithm)
+export function validateLayoutOptions(options: Partial<UserLayoutOptions>): UserLayoutOptions {
+  const algorithm = validateEnum(options.algorithm, ALGORITHMS, DEFAULT_LAYOUT_OPTIONS.algorithm)
   const defaults = ALGORITHM_DEFAULTS[algorithm]
 
-  const direction = validateEnum(opts.direction, DIRECTIONS, defaults.direction)
+  const direction = validateEnum(options.direction, DIRECTIONS, defaults.direction)
   const spacing =
-    typeof opts.spacing === 'number' && opts.spacing > 0 ? opts.spacing : defaults.spacing
-  const aspectRatio = validateEnum(opts.aspectRatio, ASPECT_RATIO_IDS, defaults.aspectRatio)
+    typeof options.spacing === 'number' && options.spacing > 0 ? options.spacing : defaults.spacing
+  const aspectRatio = validateEnum(options.aspectRatio, ASPECT_RATIO_IDS, defaults.aspectRatio)
 
   const edgeRouting = defaults.edgeRouting
-    ? validateEnum(opts.edgeRouting, EDGE_ROUTINGS, defaults.edgeRouting)
+    ? validateEnum(options.edgeRouting, EDGE_ROUTINGS, defaults.edgeRouting)
     : undefined
   const edgeRoutingMode = defaults.edgeRoutingMode
-    ? validateEnum(opts.edgeRoutingMode, EDGE_ROUTING_MODES, defaults.edgeRoutingMode)
+    ? validateEnum(options.edgeRoutingMode, EDGE_ROUTING_MODES, defaults.edgeRoutingMode)
     : undefined
   const optimizationGoal = defaults.optimizationGoal
-    ? validateEnum(opts.optimizationGoal, OPTIMIZATION_GOALS, defaults.optimizationGoal)
+    ? validateEnum(options.optimizationGoal, OPTIMIZATION_GOALS, defaults.optimizationGoal)
     : undefined
 
   return {

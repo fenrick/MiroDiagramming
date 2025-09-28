@@ -6,15 +6,15 @@
  * mutate widget text.
  */
 
-function pushIfString(arr: Array<[string, string]>, key: string, value: unknown): void {
+function pushIfString(array: Array<[string, string]>, key: string, value: unknown): void {
   if (typeof value === 'string') {
-    arr.push([key, value])
+    array.push([key, value])
   }
 }
 
-function pushNestedText(arr: Array<[string, string]>, text: Record<string, unknown>): void {
-  pushIfString(arr, 'text.plainText', text.plainText)
-  pushIfString(arr, 'text.content', text.content)
+function pushNestedText(array: Array<[string, string]>, text: Record<string, unknown>): void {
+  pushIfString(array, 'text.plainText', text.plainText)
+  pushIfString(array, 'text.content', text.content)
 }
 
 /**
@@ -42,14 +42,14 @@ export function getTextFields(item: Record<string, unknown>): Array<[string, str
  */
 export function getStringAtPath(item: Record<string, unknown>, path: string): string | undefined {
   const parts = path.split('.')
-  let ref: unknown = item
+  let reference: unknown = item
   for (const p of parts) {
-    if (!ref || typeof ref !== 'object') {
+    if (!reference || typeof reference !== 'object') {
       return undefined
     }
-    ref = (ref as Record<string, unknown>)[p]
+    reference = (reference as Record<string, unknown>)[p]
   }
-  return typeof ref === 'string' ? ref : undefined
+  return typeof reference === 'string' ? reference : undefined
 }
 
 /**
@@ -60,24 +60,24 @@ export function getStringAtPath(item: Record<string, unknown>, path: string): st
  */
 export function setStringAtPath(item: Record<string, unknown>, path: string, value: string): void {
   const parts = path.split('.')
-  let ref: Record<string, unknown> = item
-  for (let i = 0; i < parts.length - 1; i++) {
-    const key = parts[i]!
+  let reference: Record<string, unknown> = item
+  for (let index = 0; index < parts.length - 1; index++) {
+    const key = parts[index]!
     if (key === '__proto__' || key === 'constructor') {
       return
     }
-    const next = ref[key]
+    const next = reference[key]
     if (!next || typeof next !== 'object') {
       return
     }
-    ref = next as Record<string, unknown>
+    reference = next as Record<string, unknown>
   }
-  const last = parts[parts.length - 1]!
+  const last = parts.at(-1)!
   if (last === '__proto__' || last === 'constructor') {
     return
   }
-  if (typeof ref[last] === 'string') {
-    ref[last] = value
+  if (typeof reference[last] === 'string') {
+    reference[last] = value
   }
 }
 

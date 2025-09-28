@@ -31,28 +31,31 @@ export interface SpacingOptions {
  * synchronised immediately after its coordinates are updated so the
  * board reflects the new layout.
  */
-export async function applySpacingLayout(opts: SpacingOptions, board?: BoardLike): Promise<void> {
+export async function applySpacingLayout(
+  options: SpacingOptions,
+  board?: BoardLike,
+): Promise<void> {
   const b = getBoard(board)
   log.info('Applying spacing layout')
   const selection = await boardCache.getSelection(b)
-  if (!selection.length) {
+  if (selection.length === 0) {
     return
   }
 
-  const axis = opts.axis
+  const axis = options.axis
   const sizeKey = axis === 'x' ? 'width' : 'height'
   const items = [...selection].sort(
     /* c8 ignore next */
     (a, b) =>
       ((a as Record<string, number>)[axis] ?? 0) - ((b as Record<string, number>)[axis] ?? 0),
   ) as Array<Record<string, number> & Syncable>
-  const mode = opts.mode ?? 'move'
+  const mode = options.mode ?? 'move'
   if (mode === 'grow') {
-    const plan = calculateGrowthPlan(items, axis, opts.spacing)
+    const plan = calculateGrowthPlan(items, axis, options.spacing)
     await Promise.all(
-      items.map(async (item, i) => {
+      items.map(async (item, index) => {
         item[sizeKey] = plan.size
-        item[axis] = plan.positions[i]!
+        item[axis] = plan.positions[index]!
         await maybeSync(item)
       }),
     )
@@ -62,13 +65,13 @@ export async function applySpacingLayout(opts: SpacingOptions, board?: BoardLike
   let position = first[axis] ?? 0
   await moveWidget(first, axis, position)
 
-  let prev: Record<string, number> & Syncable = first
-  for (const curr of items.slice(1)) {
-    const prevSize = getDimension(prev, sizeKey)
-    const currSize = getDimension(curr, sizeKey)
-    position += prevSize / 2 + opts.spacing + currSize / 2
-    await moveWidget(curr, axis, position)
-    prev = curr
+  let previous: Record<string, number> & Syncable = first
+  for (const current of items.slice(1)) {
+    const previousSize = getDimension(previous, sizeKey)
+    const currentSize = getDimension(current, sizeKey)
+    position += previousSize / 2 + options.spacing + currentSize / 2
+    await moveWidget(current, axis, position)
+    previous = current
   }
   log.debug({ count: items.length }, 'Spacing layout complete')
 }

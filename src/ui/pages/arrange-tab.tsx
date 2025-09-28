@@ -96,12 +96,12 @@ export const ArrangeTab: React.FC = () => {
     <TabPanel tabId="arrange">
       <div style={CONTENT_STYLE}>
         <PageHelp content="Grid and spacing tools" />
-        {!hasSelection ? (
+        {hasSelection ? null : (
           <EmptyState
             title="No selection"
             description="Select the widgets you want to arrange before running these tools."
           />
-        ) : null}
+        )}
         <SidebarSection title="Grid">
           <Grid columns={2}>
             <Grid.Item>
@@ -236,4 +236,10 @@ export const ArrangeTab: React.FC = () => {
     </TabPanel>
   )
 }
-export const tabDef: TabTuple = [4, 'arrange', 'Arrange', 'Grid and spacing tools', ArrangeTab]
+export const tabDefinition: TabTuple = [
+  4,
+  'arrange',
+  'Arrange',
+  'Grid and spacing tools',
+  ArrangeTab,
+]

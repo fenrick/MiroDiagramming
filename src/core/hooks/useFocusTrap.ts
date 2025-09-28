@@ -11,18 +11,17 @@ export function useFocusTrap<T extends HTMLElement>(
   active: boolean,
   onClose: () => void,
 ): React.RefObject<T> {
-  const ref = React.useRef<T>(null)
+  const reference = React.useRef<T>(null)
 
   React.useEffect(() => {
-    if (!active || !ref.current) {
+    if (!active || !reference.current) {
       return
     }
-    const container = ref.current
+    const container = reference.current
     const selector =
       'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"]):not([role="toolbar"])'
 
-    const getFocusable = (): HTMLElement[] =>
-      Array.from(container.querySelectorAll<HTMLElement>(selector))
+    const getFocusable = (): HTMLElement[] => [...container.querySelectorAll<HTMLElement>(selector)]
 
     const handleKey = (e: KeyboardEvent): void => {
       if (e.key === 'Escape') {
@@ -39,9 +38,9 @@ export function useFocusTrap<T extends HTMLElement>(
       }
       e.preventDefault()
       const current = document.activeElement as HTMLElement | null
-      const idx = Math.max(0, current ? focusable.indexOf(current) : 0)
+      const index = Math.max(0, current ? focusable.indexOf(current) : 0)
       const delta = e.shiftKey ? -1 : 1
-      const nextIndex = (idx + delta + focusable.length) % focusable.length
+      const nextIndex = (index + delta + focusable.length) % focusable.length
       focusable[nextIndex]!.focus()
     }
 
@@ -54,5 +53,5 @@ export function useFocusTrap<T extends HTMLElement>(
     }
   }, [active, onClose])
 
-  return ref
+  return reference
 }

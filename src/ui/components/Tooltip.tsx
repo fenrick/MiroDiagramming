@@ -1,7 +1,7 @@
 import { Tooltip as DSTooltip } from '@mirohq/design-system'
 import React from 'react'
 
-export interface TooltipProps {
+export interface TooltipProperties {
   /** Text displayed inside the tooltip. */
   readonly content: React.ReactNode
   /** Element triggering the tooltip on hover or focus. */
@@ -23,7 +23,7 @@ export function Tooltip({
   children,
   side = 'top',
   align = 'center',
-}: TooltipProps): React.JSX.Element {
+}: TooltipProperties): React.JSX.Element {
   return (
     <DSTooltip.Provider delayDuration={0} skipDelayDuration={0}>
       <DSTooltip delayDuration={0} skipDelayDuration={0}>

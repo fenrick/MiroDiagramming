@@ -13,6 +13,6 @@ export type FormGroupProps = Readonly<React.ComponentProps<typeof Form.Field>>
  */
 const StyledFormField = styled(Form.Field, { marginBottom: space.small })
 
-export function FormGroup({ children, ...props }: FormGroupProps): React.JSX.Element {
-  return <StyledFormField {...props}>{children}</StyledFormField>
+export function FormGroup({ children, ...properties }: FormGroupProps): React.JSX.Element {
+  return <StyledFormField {...properties}>{children}</StyledFormField>
 }

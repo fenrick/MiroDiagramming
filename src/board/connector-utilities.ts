@@ -38,31 +38,27 @@ function buildCaptions(edge: EdgeData, template?: ConnectorTemplate): Connector[
 
   if (fromMetaArray) {
     // Accept [string] or [{ content, position?, textAlignVertical? }]
-    const mapped = fromMetaArray
-      .map((c) => {
-        if (typeof c === 'string') {
-          return { content: c }
+    const mapped = fromMetaArray.flatMap((c) => {
+      if (typeof c === 'string') {
+        return [{ content: c }]
+      }
+      if (c && typeof c === 'object' && typeof (c as { content?: unknown }).content === 'string') {
+        const caption = c as {
+          content: string
+          position?: number
+          textAlignVertical?: TextAlignVertical
         }
-        if (
-          c &&
-          typeof c === 'object' &&
-          typeof (c as { content?: unknown }).content === 'string'
-        ) {
-          const obj = c as {
-            content: string
-            position?: number
-            textAlignVertical?: TextAlignVertical
-          }
-          return {
-            content: obj.content,
-            position: obj.position,
-            textAlignVertical: obj.textAlignVertical as TextAlignVertical,
-          }
-        }
-        return undefined
-      })
-      .filter(Boolean) as NonNullable<Connector['captions']>
-    captions = mapped.length ? mapped : undefined
+        return [
+          {
+            content: caption.content,
+            position: caption.position,
+            textAlignVertical: caption.textAlignVertical as TextAlignVertical,
+          },
+        ]
+      }
+      return []
+    }) as NonNullable<Connector['captions']>
+    captions = mapped.length > 0 ? mapped : undefined
   } else {
     const text = (typeof edge.label === 'string' && edge.label) || fromMetaSingle
     if (typeof text === 'string' && text.trim()) {
@@ -91,16 +87,12 @@ function mergeStyle(connector: Connector, template?: ConnectorTemplate): void {
 
 function applyHint(connector: Connector, hint?: EdgeHint): void {
   if (hint?.startPosition) {
-    connector.start = {
-      ...(connector.start ?? {}),
-      position: hint.startPosition,
-    } as Connector['start']
+    const baseStart = connector.start ? { ...connector.start } : ({} as Connector['start'])
+    connector.start = { ...baseStart, position: hint.startPosition }
   }
   if (hint?.endPosition) {
-    connector.end = {
-      ...(connector.end ?? {}),
-      position: hint.endPosition,
-    } as Connector['end']
+    const baseEnd = connector.end ? { ...connector.end } : ({} as Connector['end'])
+    connector.end = { ...baseEnd, position: hint.endPosition }
   }
 }
 
@@ -152,7 +144,9 @@ export async function createConnector(
     start: { item: from.id, position: hint?.startPosition },
     end: { item: to.id, position: hint?.endPosition },
     shape: template?.shape ?? 'curved',
-    style: template?.style as ConnectorStyle | undefined,
+  }
+  if (template?.style) {
+    payload.style = template.style as ConnectorStyle
   }
   if (captions) {
     payload.captions = captions

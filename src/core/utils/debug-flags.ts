@@ -11,11 +11,11 @@ export interface DebugFlags {
 }
 
 const search = globalThis.location?.search ?? ''
-const params = new URLSearchParams(search)
+const parameters = new URLSearchParams(search)
 
 export const debugFlags: DebugFlags = import.meta.env.DEV
   ? {
-      limits: params.get('debugLimits') ?? undefined,
-      count429: params.get('debug429') ? Number(params.get('debug429')) : undefined,
+      limits: parameters.get('debugLimits') ?? undefined,
+      count429: parameters.get('debug429') ? Number(parameters.get('debug429')) : undefined,
     }
   : {}

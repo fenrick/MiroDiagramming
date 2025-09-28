@@ -1,7 +1,7 @@
 import { Form, Input, Switch } from '@mirohq/design-system'
 import React from 'react'
 
-export interface RegexSearchFieldProps
+export interface RegexSearchFieldProperties
   extends Omit<React.ComponentProps<typeof Input>, 'onChange'> {
   /** Visible label text. */
   label: React.ReactNode
@@ -18,8 +18,11 @@ export interface RegexSearchFieldProps
 /**
  * Input field with an inline toggle to enable regular expression search.
  */
-export const RegexSearchField = React.forwardRef<HTMLInputElement, RegexSearchFieldProps>(
-  function RegexSearchField({ label, onChange, regex, onRegexToggle, id, value, ...props }, ref) {
+export const RegexSearchField = React.forwardRef<HTMLInputElement, RegexSearchFieldProperties>(
+  function RegexSearchField(
+    { label, onChange, regex, onRegexToggle, id, value, ...properties },
+    reference,
+  ) {
     const generatedId = React.useId()
     const inputId = id ?? generatedId
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void =>
@@ -31,10 +34,10 @@ export const RegexSearchField = React.forwardRef<HTMLInputElement, RegexSearchFi
         <div className="search-input">
           <Input
             id={inputId}
-            ref={ref}
+            ref={reference}
             value={value}
             onChange={handleChange}
-            {...(props as React.ComponentProps<typeof Input>)}
+            {...(properties as React.ComponentProps<typeof Input>)}
           />
           <Switch
             aria-label="Regex"

@@ -20,10 +20,10 @@ const StyledParagraph = styled(DSParagraph, {
 
 export function Paragraph({
   children,
-  ...props
+  ...properties
 }: ParagraphProps & { children?: React.ReactNode }): React.JSX.Element {
   return (
-    <StyledParagraph size="small" {...props}>
+    <StyledParagraph size="small" {...properties}>
       {children}
     </StyledParagraph>
   )

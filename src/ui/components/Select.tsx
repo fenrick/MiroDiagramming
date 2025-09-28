@@ -46,6 +46,6 @@ export function Select({
 export type SelectOptionProps = Readonly<React.ComponentProps<typeof DSSelect.Item>>
 
 /** Option element for `Select`. */
-export function SelectOption({ children, ...props }: SelectOptionProps): React.JSX.Element {
-  return <DSSelect.Item {...props}>{children}</DSSelect.Item>
+export function SelectOption({ children, ...properties }: SelectOptionProps): React.JSX.Element {
+  return <DSSelect.Item {...properties}>{children}</DSSelect.Item>
 }

@@ -25,9 +25,9 @@ export async function loadElk(): Promise<typeof ELK> {
     ? dynamic('elkjs/lib/elk.bundled.js').then((m) => m.default)
     : (async () => {
         const url = 'https://cdn.jsdelivr.net/npm/elkjs@0.10.0/lib/elk.bundled.js'
-        const mod = (await dynamic(url)) as { default?: typeof ELK }
-        if (mod.default) {
-          return mod.default
+        const module_ = (await dynamic(url)) as { default?: typeof ELK }
+        if (module_.default) {
+          return module_.default
         }
         const gt = globalThis as { ELK?: typeof ELK }
         if (gt.ELK) {

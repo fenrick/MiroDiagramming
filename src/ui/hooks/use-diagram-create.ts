@@ -43,7 +43,7 @@ interface CreateOptions {
  */
 export function useDiagramCreate(
   importQueue: File[],
-  opts: CreateOptions,
+  options: CreateOptions,
   setImportQueue: React.Dispatch<React.SetStateAction<File[]>>,
   setProgress: React.Dispatch<React.SetStateAction<number>>,
   setError: React.Dispatch<React.SetStateAction<string | null>>,
@@ -57,13 +57,13 @@ export function useDiagramCreate(
     setError(null)
     for (const file of importQueue) {
       try {
-        if (opts.layoutChoice === 'Nested') {
+        if (options.layoutChoice === 'Nested') {
           setLastProc(hierarchyProcessor)
           await hierarchyProcessor.processFile(file, {
-            createFrame: opts.withFrame,
-            frameTitle: opts.frameTitle || undefined,
-            padding: opts.nestedPadding,
-            topSpacing: opts.nestedTopSpacing,
+            createFrame: options.withFrame,
+            frameTitle: options.frameTitle || undefined,
+            padding: options.nestedPadding,
+            topSpacing: options.nestedTopSpacing,
           })
         } else {
           setLastProc(graphProcessor)
@@ -76,27 +76,27 @@ export function useDiagramCreate(
             Box: 'box',
             'Rect Packing': 'rectpacking',
           }
-          const selectedAlg = opts.showAdvanced
-            ? opts.layoutOpts.algorithm
-            : algorithmMap[opts.layoutChoice]
+          const selectedAlg = options.showAdvanced
+            ? options.layoutOpts.algorithm
+            : algorithmMap[options.layoutChoice]
           await graphProcessor.processFile(file, {
-            createFrame: opts.withFrame,
-            frameTitle: opts.frameTitle || undefined,
-            layout: { ...opts.layoutOpts, algorithm: selectedAlg },
-            existingMode: opts.existingMode,
+            createFrame: options.withFrame,
+            frameTitle: options.frameTitle || undefined,
+            layout: { ...options.layoutOpts, algorithm: selectedAlg },
+            existingMode: options.existingMode,
           })
         }
         setProgress(100)
-      } catch (e) {
-        const msg = String(e)
-        setError(msg)
-        await showError(msg)
+      } catch (error) {
+        const message = String(error)
+        setError(message)
+        await showError(message)
       }
     }
     setImportQueue([])
   }, [
     importQueue,
-    opts,
+    options,
     graphProcessor,
     hierarchyProcessor,
     setError,

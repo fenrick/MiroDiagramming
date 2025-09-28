@@ -22,12 +22,14 @@ const StyledFormField = styled(Form.Field, {
 })
 
 export const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(function InputField(
-  { label, onValueChange, id, ...props },
-  ref,
+  { label, onValueChange, id, ...properties },
+  reference,
 ) {
   const generatedId = React.useId()
   const inputId = id ?? generatedId
-  const { onChange: externalOnChange, ...restProps } = props as React.ComponentProps<typeof Input>
+  const { onChange: externalOnChange, ...restProperties } = properties as React.ComponentProps<
+    typeof Input
+  >
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     externalOnChange?.(e)
     onValueChange?.(e.target.value)
@@ -36,7 +38,7 @@ export const InputField = React.forwardRef<HTMLInputElement, InputFieldProps>(fu
   return (
     <StyledFormField>
       <Form.Label htmlFor={inputId}>{label}</Form.Label>
-      <Input id={inputId} ref={ref} onChange={handleChange} {...restProps} />
+      <Input id={inputId} ref={reference} onChange={handleChange} {...restProperties} />
     </StyledFormField>
   )
 })

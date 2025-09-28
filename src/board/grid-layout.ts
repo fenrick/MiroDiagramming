@@ -38,9 +38,9 @@ export function calculateGrid(
 
   if (!config.vertical) {
     // Row-major (horizontal) fill: left → right across rows, then wrap
-    for (let i = 0; i < count; i += 1) {
-      const col = i % cols
-      const row = Math.floor(i / cols)
+    for (let index = 0; index < count; index += 1) {
+      const col = index % cols
+      const row = Math.floor(index / cols)
       positions.push({
         x: col * (width + config.padding),
         y: row * (height + config.padding),
@@ -61,18 +61,18 @@ export function calculateGrid(
     start += colSizes[c]!
   }
 
-  for (let i = 0; i < count; i += 1) {
+  for (let index = 0; index < count; index += 1) {
     // Find the column that contains index i based on the distribution above
     let col = 0
     for (let c = 0; c < cols; c += 1) {
       const s = colStarts[c]!
       const e = s + colSizes[c]!
-      if (i >= s && i < e) {
+      if (index >= s && index < e) {
         col = c
         break
       }
     }
-    const row = i - colStarts[col]!
+    const row = index - colStarts[col]!
     positions.push({
       x: col * (width + config.padding),
       y: row * (height + config.padding),
@@ -90,7 +90,7 @@ export function calculateGrid(
  * @param cellHeight - Height of each grid cell.
  */
 export function calculateGridPositions(
-  opts: {
+  options: {
     cols: number
     padding: number
     sortOrientation?: 'horizontal' | 'vertical'
@@ -100,9 +100,9 @@ export function calculateGridPositions(
   cellHeight: number,
 ): GridPosition[] {
   const config: GridConfig = {
-    cols: opts.cols,
-    padding: opts.padding,
-    vertical: opts.sortOrientation === 'vertical',
+    cols: options.cols,
+    padding: options.padding,
+    vertical: options.sortOrientation === 'vertical',
   }
   return calculateGrid(count, config, cellWidth, cellHeight)
 }

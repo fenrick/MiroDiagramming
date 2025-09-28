@@ -2,7 +2,7 @@ import { Heading, Paragraph, styled } from '@mirohq/design-system'
 import { space } from '@mirohq/design-tokens'
 import React from 'react'
 
-type SidebarSectionProps = Readonly<{
+type SidebarSectionProperties = Readonly<{
   title: string
   description?: string
   children?: React.ReactNode
@@ -24,7 +24,7 @@ export function SidebarSection({
   title,
   description,
   children,
-}: SidebarSectionProps): React.JSX.Element {
+}: SidebarSectionProperties): React.JSX.Element {
   return (
     <Wrapper>
       <Heading level={2}>{title}</Heading>

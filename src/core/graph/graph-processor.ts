@@ -2,14 +2,14 @@ import type { BaseItem, Frame, Group } from '@mirohq/websdk-types'
 
 import { maybeSync } from '../../board/board'
 import { type BoardBuilder } from '../../board/board-builder'
-import { clearActiveFrame, registerFrame } from '../../board/frame-utils'
+import { clearActiveFrame, registerFrame } from '../../board/frame-utilities'
 import type { TemplateElement } from '../../board/templates'
 import { layoutEngine, type LayoutResult } from '../layout/elk-layout'
 import { type UserLayoutOptions } from '../layout/elk-options'
 import type { PositionedNode } from '../layout/layout-core'
 import { boundingBoxFromTopLeft, computeEdgeHints, frameOffset } from '../layout/layout-utils'
 import type { HierNode } from '../layout/nested-layout'
-import { fileUtils } from '../utils/file-utils'
+import { fileUtils as fileUtilities } from '../utils/file-utils'
 
 import { edgesToHierarchy, hierarchyToEdges } from './convert'
 import { type GraphData, graphService, type NodeData } from './graph-service'
@@ -71,7 +71,7 @@ export class GraphProcessor extends UndoableProcessor {
    * Load a JSON graph file and process it.
    */
   public async processFile(file: File, options: ProcessOptions = {}): Promise<void> {
-    fileUtils.validateFile(file)
+    fileUtilities.validateFile(file)
     const data = await graphService.loadAnyGraph(file)
     await this.processGraph(data, options)
   }
@@ -103,7 +103,9 @@ export class GraphProcessor extends UndoableProcessor {
     const spot = await this.builder.findSpace(frameWidth, frameHeight)
 
     let frame: Frame | undefined
-    if (options.createFrame !== false) {
+    if (options.createFrame === false) {
+      clearActiveFrame(this.builder)
+    } else {
       frame = await registerFrame(
         this.builder,
         this.lastCreated,
@@ -112,8 +114,6 @@ export class GraphProcessor extends UndoableProcessor {
         spot,
         options.frameTitle,
       )
-    } else {
-      clearActiveFrame(this.builder)
     }
 
     const { offsetX, offsetY } = this.calculateOffset(
@@ -153,7 +153,9 @@ export class GraphProcessor extends UndoableProcessor {
     const spot = await this.builder.findSpace(frameWidth, frameHeight)
 
     let frame: Frame | undefined
-    if (options.createFrame !== false) {
+    if (options.createFrame === false) {
+      clearActiveFrame(this.builder)
+    } else {
       frame = await registerFrame(
         this.builder,
         this.lastCreated,
@@ -162,8 +164,6 @@ export class GraphProcessor extends UndoableProcessor {
         spot,
         options.frameTitle,
       )
-    } else {
-      clearActiveFrame(this.builder)
     }
 
     const { offsetX, offsetY } = this.calculateOffset(
@@ -244,7 +244,7 @@ export class GraphProcessor extends UndoableProcessor {
       nodes: data.nodes.map((n) => {
         const w = existing[n.id] as { x?: number; y?: number } | undefined
         return w && typeof w.x === 'number' && typeof w.y === 'number'
-          ? { ...n, metadata: { ...(n.metadata ?? {}), x: w.x, y: w.y } }
+          ? { ...n, metadata: { ...n.metadata, x: w.x, y: w.y } }
           : n
       }),
       edges: data.edges,
@@ -259,13 +259,13 @@ export class GraphProcessor extends UndoableProcessor {
    */
   private async processNestedGraph(
     graph: GraphData | HierNode[],
-    opts: ProcessOptions,
+    options: ProcessOptions,
   ): Promise<void> {
     const hp = new HierarchyProcessor(this.builder)
     const hierarchy = Array.isArray(graph) ? graph : edgesToHierarchy(graph)
     await hp.processHierarchy(hierarchy, {
-      createFrame: opts.createFrame,
-      frameTitle: opts.frameTitle,
+      createFrame: options.createFrame,
+      frameTitle: options.frameTitle,
     })
     this.lastCreated = hp.getLastCreated()
   }
@@ -311,17 +311,7 @@ export class GraphProcessor extends UndoableProcessor {
       let widget: BoardItem
       if (found) {
         widget = found
-        if (mode !== 'ignore') {
-          const movable = widget as {
-            x?: number
-            y?: number
-            sync?: () => Promise<void>
-          }
-          movable.x = target.x
-          movable.y = target.y
-          await maybeSync(movable)
-          positions[node.id] = { ...target, id: node.id }
-        } else {
+        if (mode === 'ignore') {
           const w = widget as {
             x?: number
             y?: number
@@ -335,6 +325,16 @@ export class GraphProcessor extends UndoableProcessor {
             width: w.width ?? target.width,
             height: w.height ?? target.height,
           }
+        } else {
+          const movable = widget as {
+            x?: number
+            y?: number
+            sync?: () => Promise<void>
+          }
+          movable.x = target.x
+          movable.y = target.y
+          await maybeSync(movable)
+          positions[node.id] = { ...target, id: node.id }
         }
       } else {
         widget = await this.builder.createNode(node, target)
@@ -377,7 +377,7 @@ export class GraphProcessor extends UndoableProcessor {
       style.color = styleOverrides.textColor
     }
     const template: TemplateElement = {}
-    if (Object.keys(style).length) {
+    if (Object.keys(style).length > 0) {
       template.style = style
     }
     if (typeof shape === 'string') {
@@ -404,11 +404,7 @@ export class GraphProcessor extends UndoableProcessor {
     const connectors = await this.builder.createEdges(graph.edges, nodeMap, edgeHints)
     this.registerCreated(connectors)
     await this.syncOrUndo([...Object.values(nodeMap), ...connectors])
-    if (frame) {
-      await this.builder.zoomTo(frame)
-    } else {
-      await this.builder.zoomTo(Object.values(nodeMap))
-    }
+    await (frame ? this.builder.zoomTo(frame) : this.builder.zoomTo(Object.values(nodeMap)))
   }
 
   /**

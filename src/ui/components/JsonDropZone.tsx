@@ -40,7 +40,7 @@ export function JsonDropZone({ onFiles }: JsonDropZoneProps): React.JSX.Element 
     return getDropzoneStyle(state)
   }, [dropzone.isDragAccept, dropzone.isDragReject])
 
-  const { onChange, ...fileInputProps } = dropzone.getInputProps()
+  const { onChange, ...fileInputProperties } = dropzone.getInputProps()
 
   return (
     <>
@@ -55,7 +55,7 @@ export function JsonDropZone({ onFiles }: JsonDropZoneProps): React.JSX.Element 
             data-testid="file-input"
             onChange={onChange}
             aria-label="JSON file input"
-            {...fileInputProps}
+            {...fileInputProperties}
           />
         </VisuallyHidden>
         {dropzone.isDragAccept ? (

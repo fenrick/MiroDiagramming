@@ -28,7 +28,7 @@ export const CardsTab: React.FC = () => {
   const [frameTitle, setFrameTitle] = React.useState('')
   const [progress, setProgress] = React.useState<number>(0)
   const [error, setError] = React.useState<string | null>(null)
-  const [lastProc, setLastProc] = React.useState<CardProcessor | undefined>(undefined)
+  const [lastProc, setLastProc] = React.useState<CardProcessor | undefined>()
 
   React.useEffect(() => {
     const handler = (e: KeyboardEvent): void => {
@@ -42,7 +42,7 @@ export const CardsTab: React.FC = () => {
   }, [lastProc])
 
   const handleFiles = (droppedFiles: File[]): void => {
-    if (!droppedFiles.length) {
+    if (droppedFiles.length === 0) {
       return
     }
     const file = droppedFiles[0]
@@ -67,10 +67,10 @@ export const CardsTab: React.FC = () => {
         setProgress(100)
         setShowUndo(true)
         globalThis.setTimeout(() => setShowUndo(false), 3000)
-      } catch (e) {
-        const msg = String(e)
-        setError(msg)
-        await showError(msg)
+      } catch (error_) {
+        const message = String(error_)
+        setError(message)
+        await showError(message)
       }
     }
     setFiles([])

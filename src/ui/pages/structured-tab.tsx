@@ -52,7 +52,7 @@ export function handleFileDrop(
   setImportQueue: React.Dispatch<React.SetStateAction<File[]>>,
   setError: React.Dispatch<React.SetStateAction<string | null>>,
 ): void {
-  if (!droppedFiles.length) {
+  if (droppedFiles.length === 0) {
     return
   }
   const file = droppedFiles[0]
@@ -105,14 +105,15 @@ export const StructuredTab: React.FC = () => {
   const [showAdvanced, setShowAdvanced] = React.useState(false)
   const [withFrame, setWithFrame] = React.useState(false)
   const [frameTitle, setFrameTitle] = React.useState('')
-  const [layoutOpts, setLayoutOpts] = React.useState<UserLayoutOptions>(DEFAULT_LAYOUT_OPTIONS)
+  const [layoutOptions, setLayoutOptions] =
+    React.useState<UserLayoutOptions>(DEFAULT_LAYOUT_OPTIONS)
   const [nestedPadding, setNestedPadding] = React.useState(20)
   const [nestedTopSpacing, setNestedTopSpacing] = React.useState(50)
   const [existingMode, setExistingMode] = React.useState<ExistingNodeMode>('move')
   const [progress, setProgress] = React.useState<number>(0)
   const [error, setError] = React.useState<string | null>(null)
   const [lastProc, setLastProc] = React.useState<GraphProcessor | HierarchyProcessor | undefined>(
-    undefined,
+    null as unknown as GraphProcessor | HierarchyProcessor | undefined,
   )
 
   // No custom keyboard toggles; advanced options are controlled via details/summary only.
@@ -129,7 +130,7 @@ export const StructuredTab: React.FC = () => {
       showAdvanced,
       withFrame,
       frameTitle,
-      layoutOpts,
+      layoutOpts: layoutOptions,
       nestedPadding,
       nestedTopSpacing,
       existingMode,
@@ -195,7 +196,7 @@ export const StructuredTab: React.FC = () => {
               <details
                 open={showAdvanced}
                 aria-label={ADVANCED_LABEL}
-                onToggle={(e) => setShowAdvanced((e.target as HTMLDetailsElement).open)}
+                onToggle={(event) => setShowAdvanced((event.target as HTMLDetailsElement).open)}
               >
                 <summary aria-expanded={showAdvanced}>{ADVANCED_LABEL}</summary>
                 <div style={{ marginBottom: SP200 }}>
@@ -209,16 +210,18 @@ export const StructuredTab: React.FC = () => {
                   <InputField
                     label="Spacing"
                     type="number"
-                    value={String(layoutOpts.spacing)}
-                    onValueChange={(v) => setLayoutOpts({ ...layoutOpts, spacing: Number(v) })}
+                    value={String(layoutOptions.spacing)}
+                    onValueChange={(v) =>
+                      setLayoutOptions({ ...layoutOptions, spacing: Number(v) })
+                    }
                   />
-                  {OPTION_VISIBILITY[layoutOpts.algorithm].aspectRatio && (
+                  {OPTION_VISIBILITY[layoutOptions.algorithm].aspectRatio && (
                     <SelectField
                       label="Aspect ratio"
-                      value={layoutOpts.aspectRatio}
+                      value={layoutOptions.aspectRatio}
                       onChange={(v) =>
-                        setLayoutOpts({
-                          ...layoutOpts,
+                        setLayoutOptions({
+                          ...layoutOptions,
                           aspectRatio: v as AspectRatioId,
                         })
                       }
@@ -242,10 +245,10 @@ export const StructuredTab: React.FC = () => {
                 </SelectField>
                 <SelectField
                   label="Algorithm"
-                  value={layoutOpts.algorithm}
+                  value={layoutOptions.algorithm}
                   onChange={(v) =>
-                    setLayoutOpts({
-                      ...layoutOpts,
+                    setLayoutOptions({
+                      ...layoutOptions,
                       algorithm: v as ElkAlgorithm,
                     })
                   }
@@ -258,10 +261,10 @@ export const StructuredTab: React.FC = () => {
                 </SelectField>
                 <SelectField
                   label="Direction"
-                  value={layoutOpts.direction}
+                  value={layoutOptions.direction}
                   onChange={(v) =>
-                    setLayoutOpts({
-                      ...layoutOpts,
+                    setLayoutOptions({
+                      ...layoutOptions,
                       direction: v as ElkDirection,
                     })
                   }
@@ -272,31 +275,31 @@ export const StructuredTab: React.FC = () => {
                     </SelectOption>
                   ))}
                 </SelectField>
-                {OPTION_VISIBILITY[layoutOpts.algorithm].edgeRouting && (
+                {OPTION_VISIBILITY[layoutOptions.algorithm].edgeRouting && (
                   <SelectField
                     label="Edge routing"
-                    value={layoutOpts.edgeRouting as ElkEdgeRouting}
+                    value={layoutOptions.edgeRouting as ElkEdgeRouting}
                     onChange={(v) =>
-                      setLayoutOpts({
-                        ...layoutOpts,
+                      setLayoutOptions({
+                        ...layoutOptions,
                         edgeRouting: v as ElkEdgeRouting,
                       })
                     }
                   >
-                    {EDGE_ROUTINGS.map((e) => (
-                      <SelectOption key={e} value={e}>
-                        {e}
+                    {EDGE_ROUTINGS.map((routing) => (
+                      <SelectOption key={routing} value={routing}>
+                        {routing}
                       </SelectOption>
                     ))}
                   </SelectField>
                 )}
-                {OPTION_VISIBILITY[layoutOpts.algorithm].edgeRoutingMode && (
+                {OPTION_VISIBILITY[layoutOptions.algorithm].edgeRoutingMode && (
                   <SelectField
                     label="Routing mode"
-                    value={layoutOpts.edgeRoutingMode as ElkEdgeRoutingMode}
+                    value={layoutOptions.edgeRoutingMode as ElkEdgeRoutingMode}
                     onChange={(v) =>
-                      setLayoutOpts({
-                        ...layoutOpts,
+                      setLayoutOptions({
+                        ...layoutOptions,
                         edgeRoutingMode: v as ElkEdgeRoutingMode,
                       })
                     }
@@ -308,13 +311,13 @@ export const StructuredTab: React.FC = () => {
                     ))}
                   </SelectField>
                 )}
-                {OPTION_VISIBILITY[layoutOpts.algorithm].optimizationGoal && (
+                {OPTION_VISIBILITY[layoutOptions.algorithm].optimizationGoal && (
                   <SelectField
                     label="Optimisation goal"
-                    value={layoutOpts.optimizationGoal as ElkOptimizationGoal}
+                    value={layoutOptions.optimizationGoal as ElkOptimizationGoal}
                     onChange={(v) =>
-                      setLayoutOpts({
-                        ...layoutOpts,
+                      setLayoutOptions({
+                        ...layoutOptions,
                         optimizationGoal: v as ElkOptimizationGoal,
                       })
                     }
@@ -358,7 +361,12 @@ export const StructuredTab: React.FC = () => {
                 </Button>
                 {lastProc && (
                   <Button
-                    onClick={() => undoLastImport(lastProc, () => setLastProc(undefined))}
+                    onClick={() =>
+                      undoLastImport(
+                        lastProc,
+                        () => setLastProc((previous) => undefined as typeof previous),
+                      )
+                    }
                     variant="secondary"
                     iconPosition="start"
                     icon={<IconArrowArcLeft />}

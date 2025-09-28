@@ -73,16 +73,17 @@ export class TemplateManager {
   private readonly api = new ShapeClient()
 
   private constructor() {
-    Object.entries(this.templates).forEach(([key, def]) =>
-      def.alias?.forEach((a) => {
-        this.aliasMap[a] = key
-      }),
-    )
-    Object.entries(this.connectorTemplates).forEach(([key, def]) =>
-      def.alias?.forEach((a) => {
-        this.connectorAliasMap[a] = key
-      }),
-    )
+    for (const [key, def] of Object.entries(this.templates))
+      if (def.alias)
+        for (const a of def.alias) {
+          this.aliasMap[a] = key
+        }
+
+    for (const [key, def] of Object.entries(this.connectorTemplates))
+      if (def.alias)
+        for (const a of def.alias) {
+          this.connectorAliasMap[a] = key
+        }
 
     // Apply experimental shape overrides when enabled via env flag.
     this.applyExperimentalOverrides()
@@ -128,10 +129,10 @@ export class TemplateManager {
   /** Apply token and numeric resolution to style values. */
   public resolveStyle(style: Record<string, unknown>): Record<string, unknown> {
     const result: Record<string, unknown> = {}
-    Object.entries(style).forEach(([k, v]) => {
+    for (const [k, v] of Object.entries(style)) {
       const token = this.resolveToken(v)
       result[k] = this.parseNumeric(token)
-    })
+    }
     return result
   }
 
@@ -171,7 +172,7 @@ export class TemplateManager {
     }
 
     const shapes = this.buildShapes(template, label, x, y, overrideSize)
-    if (!shapes.length) {
+    if (shapes.length === 0) {
       return undefined
     }
     const createdShapes = await this.api.createShapes(shapes)
@@ -191,11 +192,11 @@ export class TemplateManager {
     overrideSize?: { width: number; height: number },
   ): ShapeData[] {
     const shapes: ShapeData[] = []
-    template.elements.forEach((el, idx) => {
+    for (const [index, element] of template.elements.entries()) {
       const data = this.createElement(
-        idx === 0 && overrideSize
-          ? { ...el, width: overrideSize.width, height: overrideSize.height }
-          : el,
+        index === 0 && overrideSize
+          ? { ...element, width: overrideSize.width, height: overrideSize.height }
+          : element,
         label,
         x,
         y,
@@ -203,7 +204,7 @@ export class TemplateManager {
       if (data) {
         shapes.push(data)
       }
-    })
+    }
     return shapes
   }
 
@@ -330,12 +331,15 @@ export class TemplateManager {
     y: number,
   ): ShapeData | undefined {
     switch (this.getElementType(element)) {
-      case 'shape':
+      case 'shape': {
         return this.createShapeData(element, label, x, y)
-      case 'text':
+      }
+      case 'text': {
         return this.createTextData(element, label, x, y)
-      default:
+      }
+      default: {
         return undefined
+      }
     }
   }
 }

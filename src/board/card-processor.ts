@@ -12,7 +12,7 @@ interface TagLike {
 }
 
 import { BoardBuilder } from './board-builder'
-import { clearActiveFrame, registerFrame } from './frame-utils'
+import { clearActiveFrame, registerFrame } from './frame-utilities'
 import { calculateGrid } from './grid-layout'
 
 export interface CardProcessOptions {
@@ -32,7 +32,7 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
   /** Prefix used to embed identifiers in descriptions. */
   private static readonly ID_PREFIX = 'ID:'
   /** Regex capturing an embedded identifier. */
-  private static readonly ID_REGEX = /ID:\s*([^\s]+)/
+  private static readonly ID_REGEX = /ID:\s*(\S+)/
   /** Regex removing any embedded identifier from text. */
   private static readonly ID_REMOVE_REGEX = /\n?ID:[^\n]*/
   /** Default width used for card widgets. */
@@ -67,7 +67,7 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
    */
   public async processCards(cards: CardData[], options: CardProcessOptions = {}): Promise<void> {
     if (!Array.isArray(cards)) {
-      throw new Error('Invalid cards')
+      throw new TypeError('Invalid cards')
     }
     this.lastCreated = []
     // Reset per-run caches to ensure fresh board state
@@ -83,7 +83,7 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
     const { toCreate, toUpdate } = this.partitionCards(cards, map)
 
     const updated = await Promise.all(
-      toUpdate.map((item) => this.updateCardWidget(item.card, item.def, tagMap)),
+      toUpdate.map((item) => this.updateCardWidget(item.card, item.definition, tagMap)),
     )
 
     let created: Card[] = []
@@ -104,7 +104,7 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
     }
 
     const target: Frame | Card[] = frame ?? [...created, ...updated]
-    if (created.length || updated.length) {
+    if (created.length > 0 || updated.length > 0) {
       await this.builder.zoomTo(target)
     }
   }
@@ -170,19 +170,19 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
   private partitionCards(
     cards: CardData[],
     map: Map<string, Card>,
-  ): { toCreate: CardData[]; toUpdate: Array<{ card: Card; def: CardData }> } {
+  ): { toCreate: CardData[]; toUpdate: Array<{ card: Card; definition: CardData }> } {
     const toCreate: CardData[] = []
-    const toUpdate: Array<{ card: Card; def: CardData }> = []
+    const toUpdate: Array<{ card: Card; definition: CardData }> = []
 
-    for (const def of cards) {
-      if (def.id) {
-        const existing = map.get(def.id)
+    for (const definition of cards) {
+      if (definition.id) {
+        const existing = map.get(definition.id)
         if (existing) {
-          toUpdate.push({ card: existing, def })
+          toUpdate.push({ card: existing, definition })
           continue
         }
       }
-      toCreate.push(def)
+      toCreate.push(definition)
     }
 
     return { toCreate, toUpdate }
@@ -216,32 +216,32 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
   }
 
   private async createCardWidget(
-    def: CardData,
+    definition: CardData,
     x: number,
     y: number,
     tagMap: Map<string, TagLike>,
   ): Promise<Card> {
-    const tagIds = await this.ensureTagIds(def.tags, tagMap)
-    const createOpts: Record<string, unknown> = {
-      title: def.title,
-      description: this.encodeDescription(def.description, def.id),
+    const tagIds = await this.ensureTagIds(definition.tags, tagMap)
+    const createOptions: Record<string, unknown> = {
+      title: definition.title,
+      description: this.encodeDescription(definition.description, definition.id),
       tagIds,
-      style: def.style as CardStyle,
-      taskStatus: def.taskStatus,
+      style: definition.style as CardStyle,
+      taskStatus: definition.taskStatus,
       x,
       y,
     }
-    if (def.fields) {
-      createOpts.fields = def.fields
+    if (definition.fields) {
+      createOptions.fields = definition.fields
     }
-    const card = await miro.board.createCard(createOpts)
-    if (def.id) {
+    const card = await miro.board.createCard(createOptions)
+    if (definition.id) {
       const mapKey = 'cardMap'
       const existing = this.cardMapCache.get(mapKey)
       if (existing) {
-        existing.set(def.id, card)
+        existing.set(definition.id, card)
       } else {
-        this.cardMapCache.set(mapKey, new Map([[def.id, card]]))
+        this.cardMapCache.set(mapKey, new Map([[definition.id, card]]))
       }
     }
     const cardsKey = 'cards'
@@ -257,19 +257,19 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
   /** Update an existing card with data from the definition. */
   private async updateCardWidget(
     card: Card,
-    def: CardData,
+    definition: CardData,
     tagMap: Map<string, TagLike>,
   ): Promise<Card> {
-    const tagIds = await this.ensureTagIds(def.tags, tagMap)
-    card.title = def.title
-    card.description = this.encodeDescription(def.description, def.id)
+    const tagIds = await this.ensureTagIds(definition.tags, tagMap)
+    card.title = definition.title
+    card.description = this.encodeDescription(definition.description, definition.id)
     card.tagIds = tagIds
-    if (def.fields) {
-      card.fields = def.fields
+    if (definition.fields) {
+      card.fields = definition.fields
     }
-    card.style = def.style as CardStyle
-    if (def.taskStatus) {
-      card.taskStatus = def.taskStatus
+    card.style = definition.style as CardStyle
+    if (definition.taskStatus) {
+      card.taskStatus = definition.taskStatus
     }
     return card
   }
@@ -296,8 +296,12 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
       CardProcessor.CARD_WIDTH,
       CardProcessor.CARD_HEIGHT,
     )
-    const maxX = grid.reduce((m, p) => Math.max(m, p.x), 0)
-    const maxY = grid.reduce((m, p) => Math.max(m, p.y), 0)
+    let maxX = 0
+    let maxY = 0
+    for (const point of grid) {
+      if (point.x > maxX) maxX = point.x
+      if (point.y > maxY) maxY = point.y
+    }
     const totalWidth = maxX + CardProcessor.CARD_WIDTH + CardProcessor.CARD_MARGIN * 2
     const totalHeight = maxY + CardProcessor.CARD_HEIGHT + CardProcessor.CARD_MARGIN * 2
     const spot = await this.builder.findSpace(totalWidth, totalHeight)
@@ -364,18 +368,21 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
     frame?: Frame,
   ): Promise<Card[]> {
     const cards = await Promise.all(
-      defs.map((def, i) =>
+      defs.map((definition, index) =>
         this.createCardWidget(
-          def,
+          definition,
           layout.startX +
-            (i % layout.columns) * (CardProcessor.CARD_WIDTH + CardProcessor.CARD_GAP),
+            (index % layout.columns) * (CardProcessor.CARD_WIDTH + CardProcessor.CARD_GAP),
           layout.startY +
-            Math.floor(i / layout.columns) * (CardProcessor.CARD_HEIGHT + CardProcessor.CARD_GAP),
+            Math.floor(index / layout.columns) *
+              (CardProcessor.CARD_HEIGHT + CardProcessor.CARD_GAP),
           tagMap,
         ),
       ),
     )
-    cards.forEach((c) => frame?.add(c))
+    for (const card of cards) {
+      frame?.add(card)
+    }
     return cards
   }
 }

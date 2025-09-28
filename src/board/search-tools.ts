@@ -45,8 +45,8 @@ export interface ReplaceOptions extends SearchOptions {
   replacement: string
 }
 
-function escapeRegExp(str: string): string {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+function escapeRegExp(string_: string): string {
+  return string_.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`)
 }
 
 /**
@@ -66,13 +66,13 @@ function assertRegexSafe(pattern: string, flags: string): void {
   }
 }
 
-function buildRegex(opts: SearchOptions): RegExp {
-  const src = opts.regex ? opts.query : escapeRegExp(opts.query)
-  if (src.length > 200) {
+function buildRegex(options: SearchOptions): RegExp {
+  const source = options.regex ? options.query : escapeRegExp(options.query)
+  if (source.length > 200) {
     throw new SyntaxError('Pattern too long')
   }
-  const pattern = opts.wholeWord ? `\\b${src}\\b` : src
-  const flags = opts.caseSensitive ? 'g' : 'gi'
+  const pattern = options.wholeWord ? `\\b${source}\\b` : source
+  const flags = options.caseSensitive ? 'g' : 'gi'
   assertRegexSafe(pattern, flags)
   return new RegExp(pattern, flags)
 }
@@ -106,13 +106,13 @@ function collectMatches(item: Record<string, unknown>, pattern: RegExp): SearchR
  * Retrieve candidate widgets from the board based on type and selection.
  */
 async function queryBoardItems(
-  opts: SearchOptions,
+  options: SearchOptions,
   board: BoardQueryLike,
 ): Promise<Record<string, unknown>[]> {
-  if (opts.inSelection) {
+  if (options.inSelection) {
     return boardCache.getSelection(board)
   }
-  const types = opts.widgetTypes?.length ? opts.widgetTypes : ['widget']
+  const types = options.widgetTypes?.length ? options.widgetTypes : ['widget']
   return boardCache.getWidgets(types, board)
 }
 
@@ -122,51 +122,51 @@ async function queryBoardItems(
  * Each option in {@link SearchOptions} corresponds to a simple check. The
  * returned function returns `true` only when all configured checks succeed.
  */
-function buildFilter(opts: SearchOptions): (item: Record<string, unknown>) => boolean {
-  const checks: Array<(i: Record<string, unknown>) => boolean> = []
+function buildFilter(options: SearchOptions): (item: Record<string, unknown>) => boolean {
+  const checks: Array<(index: Record<string, unknown>) => boolean> = []
 
-  if (opts.widgetTypes) {
-    const types = new Set(opts.widgetTypes)
-    checks.push((i) => types.has((i as { type?: string }).type ?? ''))
+  if (options.widgetTypes) {
+    const types = new Set(options.widgetTypes)
+    checks.push((index) => types.has((index as { type?: string }).type ?? ''))
   }
 
-  if (opts.tagIds) {
-    const tagsWanted = new Set(opts.tagIds)
-    checks.push((i) => {
-      const tags = (i as { tagIds?: string[] }).tagIds
+  if (options.tagIds) {
+    const tagsWanted = new Set(options.tagIds)
+    checks.push((index) => {
+      const tags = (index as { tagIds?: string[] }).tagIds
       return Array.isArray(tags) && tags.some((id) => tagsWanted.has(id))
     })
   }
 
-  if (opts.backgroundColor) {
-    const colour = opts.backgroundColor.toLowerCase()
-    checks.push((i) => {
-      const style = (i.style ?? {}) as Record<string, unknown>
+  if (options.backgroundColor) {
+    const colour = options.backgroundColor.toLowerCase()
+    checks.push((index) => {
+      const style = (index.style ?? {}) as Record<string, unknown>
       const fill = (style.fillColor ?? style.backgroundColor) as string | undefined
       return typeof fill === 'string' && fill.toLowerCase() === colour
     })
   }
 
-  if (opts.assignee) {
-    const assigneeId = opts.assignee
-    checks.push((i) => {
+  if (options.assignee) {
+    const assigneeId = options.assignee
+    checks.push((index) => {
       const assignee =
-        (i as { assignee?: string; assigneeId?: string }).assignee ??
-        (i as { assigneeId?: string }).assigneeId
+        (index as { assignee?: string; assigneeId?: string }).assignee ??
+        (index as { assigneeId?: string }).assigneeId
       return assignee === assigneeId
     })
   }
 
-  if (opts.creator) {
-    const creator = opts.creator
-    checks.push((i) => (i as { createdBy?: string }).createdBy === creator)
+  if (options.creator) {
+    const creator = options.creator
+    checks.push((index) => (index as { createdBy?: string }).createdBy === creator)
   }
 
-  if (opts.lastModifiedBy) {
-    const modifier = opts.lastModifiedBy
-    checks.push((i) => (i as { lastModifiedBy?: string }).lastModifiedBy === modifier)
+  if (options.lastModifiedBy) {
+    const modifier = options.lastModifiedBy
+    checks.push((index) => (index as { lastModifiedBy?: string }).lastModifiedBy === modifier)
   }
-  return (item: Record<string, unknown>) => checks.every((fn) => fn(item))
+  return (item: Record<string, unknown>) => checks.every((function_) => function_(item))
 }
 
 /**
@@ -182,13 +182,13 @@ function buildFilter(opts: SearchOptions): (item: Record<string, unknown>) => bo
  *   `opts.regex` is enabled.
  */
 export async function searchBoardContent(
-  opts: SearchOptions,
+  options: SearchOptions,
   board?: BoardQueryLike,
 ): Promise<SearchResult[]> {
   const b = getBoardWithQuery(board)
-  const items = await queryBoardItems(opts, b)
-  const filter = buildFilter(opts)
-  const pattern = buildRegex(opts)
+  const items = await queryBoardItems(options, b)
+  const filter = buildFilter(options)
+  const pattern = buildRegex(options)
   const results: SearchResult[] = []
   for (const item of items) {
     if (!filter(item)) {
@@ -214,13 +214,13 @@ export async function searchBoardContent(
  *   `opts.regex` is set.
  */
 export async function replaceBoardContent(
-  opts: ReplaceOptions,
+  options: ReplaceOptions,
   board?: BoardQueryLike,
   onMatch?: (item: Record<string, unknown>) => Promise<void> | void,
 ): Promise<number> {
   const b = getBoardWithQuery(board)
-  const matches = await searchBoardContent(opts, b)
-  const pattern = buildRegex(opts)
+  const matches = await searchBoardContent(options, b)
+  const pattern = buildRegex(options)
   let count = 0
   for (const { item, field } of matches) {
     if (onMatch) {
@@ -232,7 +232,7 @@ export async function replaceBoardContent(
     }
     const updated = current.replace(pattern, () => {
       count += 1
-      return opts.replacement
+      return options.replacement
     })
     if (updated !== current) {
       setStringAtPath(item, field, updated)

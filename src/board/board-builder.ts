@@ -14,7 +14,7 @@ import * as log from '../logger'
 import { getBoard, getBoardWithQuery, maybeSync } from './board'
 import type { BoardQueryLike } from './board'
 import { boardCache } from './board-cache'
-import { createConnector } from './connector-utils'
+import { createConnector } from './connector-utilities'
 import { searchGroups, searchShapes } from './node-search'
 import {
   ShapeInteractionManager,
@@ -23,7 +23,7 @@ import {
 } from './shape-interactions'
 import { templateManager } from './templates'
 
-export { updateConnector } from './connector-utils'
+export { updateConnector } from './connector-utilities'
 
 /** Union type representing a single widget or a group of widgets. */
 export type BoardItem = BaseItem | Group
@@ -135,7 +135,7 @@ export class BoardBuilder {
     board: BoardQueryLike = getBoardWithQuery(),
   ): Promise<BoardItem | undefined> {
     if (typeof type !== 'string' || typeof label !== 'string') {
-      throw new Error(
+      throw new TypeError(
         `Invalid search parameters: type=${JSON.stringify(type)}, label=${JSON.stringify(label)}`,
       )
     }
@@ -156,7 +156,7 @@ export class BoardBuilder {
    */
   public async findNodeInSelection(type: unknown, label: unknown): Promise<BoardItem | undefined> {
     if (typeof type !== 'string' || typeof label !== 'string') {
-      throw new Error(
+      throw new TypeError(
         `Invalid search parameters: type=${JSON.stringify(type)}, label=${JSON.stringify(label)}`,
       )
     }
@@ -164,7 +164,7 @@ export class BoardBuilder {
     const selection = await boardCache.getSelection(getBoard())
     const board: BoardQueryLike = {
       get: async ({ type: t }): Promise<Array<Record<string, unknown>>> =>
-        selection.filter((i) => (i as { type?: string }).type === t),
+        selection.filter((item) => (item as { type?: string }).type === t),
       getSelection: async (): Promise<Array<Record<string, unknown>>> => selection,
     }
     const shape = await searchShapes(board, this.shapeCache, label)
@@ -178,15 +178,15 @@ export class BoardBuilder {
   public async createNode(node: unknown, pos: PositionedNode): Promise<BoardItem> {
     log.info({ type: (node as NodeData)?.type }, 'Creating node')
     if (!pos || typeof pos.x !== 'number' || typeof pos.y !== 'number') {
-      throw new Error(`Invalid position: ${JSON.stringify(pos)}`)
+      throw new TypeError(`Invalid position: ${JSON.stringify(pos)}`)
     }
     if (!BoardBuilder.isNodeData(node)) {
-      throw new Error(`Invalid node: ${JSON.stringify(node)}`)
+      throw new TypeError(`Invalid node: ${JSON.stringify(node)}`)
     }
     const nodeData = node
-    const templateDef = templateManager.getTemplate(nodeData.type)
-    if (!templateDef) {
-      throw new Error(`Template '${nodeData.type}' not found`)
+    const templateDefinition = templateManager.getTemplate(nodeData.type)
+    if (!templateDefinition) {
+      throw new TypeError(`Template '${nodeData.type}' not found`)
     }
     const widget = await this.createNewNode(nodeData, pos)
     await this.resizeItem(widget, pos.width, pos.height)
@@ -229,16 +229,15 @@ export class BoardBuilder {
     hints?: EdgeHint[],
   ): Promise<Connector[]> {
     if (!Array.isArray(edges)) {
-      throw new Error(`Invalid edges: ${JSON.stringify(edges)}`)
+      throw new TypeError(`Invalid edges: ${JSON.stringify(edges)}`)
     }
     log.info({ count: edges.length }, 'Creating edges')
     if (!nodeMap || typeof nodeMap !== 'object') {
-      throw new Error(`Invalid node map: ${JSON.stringify(nodeMap)}`)
+      throw new TypeError(`Invalid node map: ${JSON.stringify(nodeMap)}`)
     }
     const created: Connector[] = []
     // Create connectors sequentially; the Web SDK does not expose a bulk/batch API.
-    for (let i = 0; i < edges.length; i++) {
-      const edge = edges[i]!
+    for (const [index, edge] of edges.entries()) {
       const from = nodeMap[edge.from]
       const to = nodeMap[edge.to]
       if (!from || !to) {
@@ -248,16 +247,16 @@ export class BoardBuilder {
         typeof edge.metadata?.template === 'string' ? edge.metadata.template : 'default'
       const template = templateManager.getConnectorTemplate(templateName)
       try {
-        const conn = await createConnector(edge, from, to, hints?.[i], template)
+        const conn = await createConnector(edge, from, to, hints?.[index], template)
         await this.applyConnectorStyleOverrides(conn, edge)
         created.push(conn)
-      } catch (e) {
+      } catch (error) {
         log.error(
           {
             edge,
             from: from.id,
             to: to.id,
-            error: String(e),
+            error: String(error),
           },
           'Connector creation failed',
         )
@@ -301,7 +300,7 @@ export class BoardBuilder {
   public async syncAll(items: Array<BoardItem | Connector>): Promise<void> {
     getBoard()
     log.trace({ count: items.length }, 'Syncing widgets')
-    await Promise.all(items.map((i) => maybeSync(i)))
+    await Promise.all(items.map((item) => maybeSync(item)))
   }
 
   /**
@@ -352,7 +351,7 @@ export class BoardBuilder {
 
   private ensureBoard(): void {
     if (typeof miro === 'undefined' || !miro?.board) {
-      throw new Error('Miro board not initialized')
+      throw new TypeError('Miro board not initialized')
     }
   }
 
@@ -428,7 +427,7 @@ export class BoardBuilder {
     if (!BoardBuilder.metadataEqual(previous.metadata, next.metadata)) {
       delta.metadata = next.metadata ?? {}
     }
-    return Object.keys(delta).length ? delta : null
+    return Object.keys(delta).length > 0 ? delta : null
   }
 
   private static metadataEqual(
@@ -443,7 +442,7 @@ export class BoardBuilder {
   private static formatMeta(value: Record<string, unknown>): Record<string, unknown> {
     const entries = Object.entries(value)
       .map(([k, v]) => [k, BoardBuilder.formatMetaValue(v)] as const)
-      .sort(([a], [b]) => a.localeCompare(b))
+      .toSorted(([a], [b]) => a.localeCompare(b))
     return Object.fromEntries(entries)
   }
 

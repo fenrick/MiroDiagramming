@@ -20,9 +20,9 @@ interface Toast extends ToastOptions {
 const listeners = new Set<(t: Toast) => void>()
 
 /** Emit a toast to all listeners. */
-export function pushToast(opts: ToastOptions): void {
-  const toast: Toast = { id: crypto.randomUUID(), ...opts }
-  listeners.forEach((l) => l(toast))
+export function pushToast(options: ToastOptions): void {
+  const toast: Toast = { id: crypto.randomUUID(), ...options }
+  for (const l of listeners) l(toast)
 }
 
 /**
@@ -32,11 +32,11 @@ export const ToastContainer: React.FC = () => {
   const [toasts, setToasts] = React.useState<Toast[]>([])
 
   const enqueueToast = React.useCallback((t: Toast) => {
-    setToasts((prev) => [...prev, t].slice(-3))
+    setToasts((previous) => [...previous, t].slice(-3))
   }, [])
 
   const remove = React.useCallback((id: string) => {
-    setToasts((prev) => prev.filter((t) => t.id !== id))
+    setToasts((previous) => previous.filter((t) => t.id !== id))
   }, [])
 
   const scheduleDismiss = React.useCallback(

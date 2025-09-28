@@ -3,7 +3,7 @@ import React from 'react'
 
 import { Button as OurButton } from './Button'
 
-export interface ButtonToolbarProps {
+export interface ButtonToolbarProperties {
   /** Optional className for container styling. */
   className?: string
   /** Buttons to display inside the toolbar. */
@@ -13,7 +13,7 @@ export interface ButtonToolbarProps {
 /**
  * Wraps design-system Toolbar to arrange buttons consistently.
  */
-export function ButtonToolbar({ className, children }: ButtonToolbarProps): React.JSX.Element {
+export function ButtonToolbar({ className, children }: ButtonToolbarProperties): React.JSX.Element {
   return (
     <Flex className={className} direction="column" gap={100}>
       {React.Children.toArray(children).map((node) => {

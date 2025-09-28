@@ -25,10 +25,11 @@ export function buildShapeStyle(
   existing: Partial<ShapeStyle> | undefined,
   element: TemplateElement,
 ): ShapeStyle {
-  const style: Record<string, unknown> = {
-    ...(existing ?? {}),
-    ...templateManager.resolveStyle(element.style ?? {}),
+  const style: Record<string, unknown> = {}
+  if (existing) {
+    Object.assign(style, existing)
   }
+  Object.assign(style, templateManager.resolveStyle(element.style ?? {}))
   if (element.fill && style.fillColor === undefined) {
     style.fillColor = templateManager.resolveStyle({ fillColor: element.fill }).fillColor as string
   }
@@ -62,10 +63,10 @@ export function applyShapeElement(item: BaseItem, element: TemplateElement, labe
     ['width', 'width'],
     ['height', 'height'],
   ]
-  for (const [src, dest] of assignments) {
-    const value = (element as Record<string, unknown>)[src]
+  for (const [sourceKey, destinationKey] of assignments) {
+    const value = (element as Record<string, unknown>)[sourceKey]
     if (value) {
-      shapeRecord[dest] = value
+      shapeRecord[destinationKey] = value
     }
   }
   shape.content = (element.text ?? '{{label}}').replace('{{label}}', label)
@@ -91,10 +92,12 @@ export function applyTextElement(item: BaseItem, element: TemplateElement, label
   const text = item as Text
   text.content = (element.text ?? '{{label}}').replace('{{label}}', label)
   if (element.style) {
-    text.style = {
-      ...(text.style ?? ({} as Partial<TextStyle>)),
-      ...(templateManager.resolveStyle(element.style) as Partial<TextStyle>),
-    } as TextStyle
+    const next: Record<string, unknown> = {}
+    if (text.style) {
+      Object.assign(next, text.style as Partial<TextStyle>)
+    }
+    Object.assign(next, templateManager.resolveStyle(element.style) as Partial<TextStyle>)
+    text.style = next as TextStyle
   }
 }
 

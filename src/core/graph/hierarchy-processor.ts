@@ -2,10 +2,10 @@ import type { BaseItem, Connector, Frame, Group, GroupableItem } from '@mirohq/w
 
 import * as log from '../../logger'
 import { BoardBuilder } from '../../board/board-builder'
-import { clearActiveFrame, registerFrame } from '../../board/frame-utils'
+import { clearActiveFrame, registerFrame } from '../../board/frame-utilities'
 import { boundingBoxFromCenter, frameOffset } from '../layout/layout-utils'
 import { type HierNode, layoutHierarchy, type NestedLayoutResult } from '../layout/nested-layout'
-import { fileUtils } from '../utils/file-utils'
+import { fileUtils as fileUtilities } from '../utils/file-utils'
 
 import { edgesToHierarchy } from './convert'
 import type { GraphData } from './graph-service'
@@ -36,15 +36,13 @@ export class HierarchyProcessor extends UndoableProcessor<BaseItem | Group | Fra
    * @param file File containing the hierarchy array.
    * @param opts Optional behaviour flags such as frame creation.
    */
-  public async processFile(file: File, opts: HierarchyProcessOptions = {}): Promise<void> {
-    fileUtils.validateFile(file)
-    const text = await fileUtils.readFileAsText(file)
+  public async processFile(file: File, options: HierarchyProcessOptions = {}): Promise<void> {
+    fileUtilities.validateFile(file)
+    const text = await fileUtilities.readFileAsText(file)
     const parsed = JSON.parse(text) as unknown
-    if (Array.isArray(parsed)) {
-      await this.processHierarchy(parsed as HierNode[], opts)
-    } else {
-      await this.processHierarchy(parsed as GraphData, opts)
-    }
+    await (Array.isArray(parsed)
+      ? this.processHierarchy(parsed as HierNode[], options)
+      : this.processHierarchy(parsed as GraphData, options))
   }
 
   /**
@@ -54,17 +52,17 @@ export class HierarchyProcessor extends UndoableProcessor<BaseItem | Group | Fra
    */
   public async processHierarchy(
     roots: HierNode[] | GraphData,
-    opts: HierarchyProcessOptions = {},
+    options: HierarchyProcessOptions = {},
   ): Promise<void> {
     const data = Array.isArray(roots) ? roots : edgesToHierarchy(roots)
     if (!Array.isArray(data)) {
-      throw new Error('Invalid hierarchy')
+      throw new TypeError('Invalid hierarchy')
     }
     this.lastCreated = []
     const result = await layoutHierarchy(data, {
-      sortKey: opts.sortKey,
-      padding: opts.padding,
-      topSpacing: opts.topSpacing,
+      sortKey: options.sortKey,
+      padding: options.padding,
+      topSpacing: options.topSpacing,
     })
     log.info({ nodes: Object.keys(result.nodes).length }, 'Nested layout produced nodes')
     const bounds = this.computeBounds(result)
@@ -80,24 +78,24 @@ export class HierarchyProcessor extends UndoableProcessor<BaseItem | Group | Fra
       margin,
     )
     let frame: Frame | undefined
-    if (opts.createFrame !== false) {
+    if (options.createFrame === false) {
+      clearActiveFrame(this.builder)
+    } else {
       frame = await registerFrame(
         this.builder,
         this.lastCreated,
         width,
         height,
         spot,
-        opts.frameTitle,
+        options.frameTitle,
       )
-    } else {
-      clearActiveFrame(this.builder)
     }
     await this.createWidgets(data, result.nodes, offsetX, offsetY)
     log.debug(
       { offsetX, offsetY, frameWidth: width, frameHeight: height },
       'Nested offsets applied',
     )
-    const syncItems = this.lastCreated.filter((i) => i !== frame)
+    const syncItems = this.lastCreated.filter((index) => index !== frame)
     await this.syncOrUndo(syncItems as Array<BaseItem | Group | Connector>)
     const target = frame ?? (this.lastCreated as Array<BaseItem | Group>)
     await this.builder.zoomTo(target)
@@ -149,7 +147,9 @@ export class HierarchyProcessor extends UndoableProcessor<BaseItem | Group | Fra
     }
 
     // Remove children from undo list; they will be represented by the group.
-    this.lastCreated = this.lastCreated.filter((i) => !childWidgets.includes(i as GroupableItem))
+    this.lastCreated = this.lastCreated.filter(
+      (index) => !childWidgets.includes(index as GroupableItem),
+    )
     const group = await this.builder.groupItems([widget as GroupableItem, ...childWidgets])
     this.registerCreated(group)
     return group

@@ -20,9 +20,9 @@ export function useSelection(board?: BoardLike): Array<Record<string, unknown>> 
       return
     }
     let active = true
-    const update = (ev?: { items: unknown[] }): void => {
-      if (ev && Array.isArray(ev.items)) {
-        const items = ev.items as Array<Record<string, unknown>>
+    const update = (event?: { items: unknown[] }): void => {
+      if (event && Array.isArray(event.items)) {
+        const items = event.items as Array<Record<string, unknown>>
         log.trace({ count: items.length }, 'Selection event received')
         boardCache.setSelection(items)
         if (active) {

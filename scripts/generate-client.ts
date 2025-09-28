@@ -11,11 +11,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const bin = path.resolve(__dirname, '../node_modules/.bin/openapi-typescript')
 const outPath = path.resolve(__dirname, '../src/frontend/generated/client.ts')
 const url = process.env.OPENAPI_URL ?? path.resolve(__dirname, '../openapi.json')
-const args = [url, '--output', outPath]
+const arguments_ = [url, '--output', outPath]
 
 try {
-  await execFileAsync(bin, args)
+  await execFileAsync(bin, arguments_)
 } catch (error) {
   console.error(error)
-  process.exit(1)
+  throw error instanceof Error ? error : new Error(String(error))
 }

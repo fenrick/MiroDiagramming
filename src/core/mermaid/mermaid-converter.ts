@@ -43,7 +43,7 @@ type RawEdge = {
   styles?: string[]
 }
 
-type FlowchartDb = {
+type FlowchartDatabase = {
   getVertices?: () => Map<string, RawVertex> | undefined
   getEdges?: () => RawEdge[] | undefined
 }
@@ -117,7 +117,7 @@ function normaliseLabel(candidate: string | undefined, fallback: string): string
     return fallback
   }
   const trimmed = candidate.trim()
-  return trimmed.length ? trimmed : fallback
+  return trimmed.length > 0 ? trimmed : fallback
 }
 
 function parseCssDeclarations(entries?: string[]): Record<string, string> {
@@ -134,16 +134,16 @@ function parseCssDeclarations(entries?: string[]): Record<string, string> {
       .map((segment) => segment.trim())
       .filter(Boolean)
     for (const rule of rules) {
-      const [rawProp, rawValue] = rule.split(':')
-      if (!rawProp || rawValue === undefined) {
+      const [rawProperty, rawValue] = rule.split(':')
+      if (!rawProperty || rawValue === undefined) {
         continue
       }
-      const prop = rawProp.trim().toLowerCase()
+      const property = rawProperty.trim().toLowerCase()
       const value = rawValue.trim()
       if (!value) {
         continue
       }
-      declarations[prop] = value
+      declarations[property] = value
     }
   }
   return declarations
@@ -173,7 +173,7 @@ function parseNodeStyles(vertex: RawVertex): NodeStyleOverrides | undefined {
   if (css.color) {
     overrides.textColor = css.color
   }
-  return Object.keys(overrides).length ? overrides : undefined
+  return Object.keys(overrides).length > 0 ? overrides : undefined
 }
 
 function parseEdgeStyles(edge: RawEdge): EdgeStyleOverrides | undefined {
@@ -201,7 +201,7 @@ function parseEdgeStyles(edge: RawEdge): EdgeStyleOverrides | undefined {
       overrides.strokeWidth = widthFromClass
     }
   }
-  return Object.keys(overrides).length ? overrides : undefined
+  return Object.keys(overrides).length > 0 ? overrides : undefined
 }
 
 function mapShape(shape?: string): string | undefined {
@@ -255,7 +255,7 @@ function parseParticipantLine(line: string): SequenceParticipant | undefined {
   const asIndex = lower.indexOf(' as ')
   let rawName = cleaned
   let rawAlias: string | undefined
-  if (asIndex >= 0) {
+  if (asIndex !== -1) {
     rawName = cleaned.slice(0, asIndex)
     rawAlias = cleaned.slice(asIndex + 4)
   }
@@ -273,10 +273,10 @@ function splitSequenceMessage(
   messagePart: string,
 ): { from: string; to: string; arrow: string } | undefined {
   for (const arrow of SEQUENCE_ARROWS) {
-    const idx = messagePart.indexOf(arrow)
-    if (idx > 0) {
-      let from = messagePart.slice(0, idx).trim()
-      let to = messagePart.slice(idx + arrow.length).trim()
+    const index = messagePart.indexOf(arrow)
+    if (index > 0) {
+      let from = messagePart.slice(0, index).trim()
+      let to = messagePart.slice(index + arrow.length).trim()
       if (!from || !to) {
         continue
       }
@@ -302,7 +302,7 @@ function parseMessageLine(
   line: string,
 ): { from: string; to: string; arrow: string; label?: string } | undefined {
   const colonIndex = line.indexOf(':')
-  const label = colonIndex >= 0 ? line.slice(colonIndex + 1).trim() : undefined
+  const label = colonIndex === -1 ? undefined : line.slice(colonIndex + 1).trim()
   const messagePart = colonIndex >= 0 ? line.slice(0, colonIndex).trim() : line.trim()
   const split = splitSequenceMessage(messagePart)
   return split ? { ...split, label: label?.length ? label : undefined } : undefined
@@ -321,7 +321,7 @@ function mapSequenceArrow(arrow: string): {
   }
   return {
     template: arrow.includes('>>') ? 'flow' : 'default',
-    styleOverrides: Object.keys(overrides).length ? overrides : undefined,
+    styleOverrides: Object.keys(overrides).length > 0 ? overrides : undefined,
   }
 }
 
@@ -363,17 +363,16 @@ function convertSequenceDiagram(source: string): GraphData {
     })
   }
 
-  source
+  for (const line of source
     .split(/\r?\n/)
     .map((line) => line.trim())
-    .filter((line) => line.length && !line.startsWith('%%') && !/^sequenceDiagram/i.test(line))
-    .forEach((line) => {
-      if (/^(participant|actor)\s+/i.test(line)) {
-        processParticipant(line)
-      } else if (!/^(activate|deactivate|loop|end|note\s+)/i.test(line)) {
-        processMessage(line)
-      }
-    })
+    .filter((line) => line.length && !line.startsWith('%%') && !/^sequenceDiagram/i.test(line))) {
+    if (/^(participant|actor)\s+/i.test(line)) {
+      processParticipant(line)
+    } else if (!/^(activate|deactivate|loop|end|note\s+)/i.test(line)) {
+      processMessage(line)
+    }
+  }
 
   return { nodes, edges }
 }
@@ -384,13 +383,13 @@ function parseStateTransition(
   line: string,
 ): { from: string; to: string; label?: string } | undefined {
   const colonIndex = line.indexOf(':')
-  const label = colonIndex >= 0 ? line.slice(colonIndex + 1).trim() : undefined
+  const label = colonIndex === -1 ? undefined : line.slice(colonIndex + 1).trim()
   const relationPart = colonIndex >= 0 ? line.slice(0, colonIndex).trim() : line.trim()
   for (const pattern of STATE_TRANSITION_PATTERNS) {
-    const idx = relationPart.indexOf(pattern)
-    if (idx > 0) {
-      const from = sanitizeIdentifier(relationPart.slice(0, idx).trim())
-      const to = sanitizeIdentifier(relationPart.slice(idx + pattern.length).trim())
+    const index = relationPart.indexOf(pattern)
+    if (index > 0) {
+      const from = sanitizeIdentifier(relationPart.slice(0, index).trim())
+      const to = sanitizeIdentifier(relationPart.slice(index + pattern.length).trim())
       if (from && to) {
         return { from, to, label: label?.length ? label : undefined }
       }
@@ -414,38 +413,37 @@ function convertStateDiagram(source: string): GraphData {
     }
   }
 
-  source
+  for (const line of source
     .split(/\r?\n/)
     .map((line) => line.trim())
-    .filter((line) => line.length && !line.startsWith('%%') && !/^stateDiagram/i.test(line))
-    .forEach((line) => {
-      if (/^state\s+/i.test(line)) {
-        const cleaned = line.replace(/^state\s+/i, '')
-        const lower = cleaned.toLowerCase()
-        const asIndex = lower.indexOf(' as ')
-        const rawName = asIndex >= 0 ? cleaned.slice(0, asIndex) : cleaned
-        const alias = asIndex >= 0 ? cleaned.slice(asIndex + 4) : rawName
-        const id = sanitizeIdentifier((alias ?? rawName).split(/[\s{]/)[0] ?? '')
-        if (id) {
-          ensureState(id, sanitizeIdentifier(rawName))
-        }
-        return
+    .filter((line) => line.length && !line.startsWith('%%') && !/^stateDiagram/i.test(line))) {
+    if (/^state\s+/i.test(line)) {
+      const cleaned = line.replace(/^state\s+/i, '')
+      const lower = cleaned.toLowerCase()
+      const asIndex = lower.indexOf(' as ')
+      const rawName = asIndex === -1 ? cleaned : cleaned.slice(0, asIndex)
+      const alias = asIndex === -1 ? rawName : cleaned.slice(asIndex + 4)
+      const id = sanitizeIdentifier((alias ?? rawName).split(/[\s{]/)[0] ?? '')
+      if (id) {
+        ensureState(id, sanitizeIdentifier(rawName))
       }
+      continue
+    }
 
-      const transition = parseStateTransition(line)
-      if (transition) {
-        ensureState(transition.from, transition.from)
-        ensureState(transition.to, transition.to)
-        if (transition.from !== '[*]' && transition.to !== '[*]') {
-          edges.push({
-            from: transition.from,
-            to: transition.to,
-            label: transition.label,
-            metadata: { template: 'flow' },
-          })
-        }
+    const transition = parseStateTransition(line)
+    if (transition) {
+      ensureState(transition.from, transition.from)
+      ensureState(transition.to, transition.to)
+      if (transition.from !== '[*]' && transition.to !== '[*]') {
+        edges.push({
+          from: transition.from,
+          to: transition.to,
+          label: transition.label,
+          metadata: { template: 'flow' },
+        })
       }
-    })
+    }
+  }
 
   return { nodes, edges }
 }
@@ -454,7 +452,7 @@ function parseErRelation(
   line: string,
 ): { left: string; symbol: string; right: string; label?: string } | undefined {
   const colonIndex = line.indexOf(':')
-  const label = colonIndex >= 0 ? line.slice(colonIndex + 1).trim() : undefined
+  const label = colonIndex === -1 ? undefined : line.slice(colonIndex + 1).trim()
   const relationPart = colonIndex >= 0 ? line.slice(0, colonIndex).trim() : line.trim()
   // Support plain identifiers (\w+) or quoted names with spaces.
   const match = relationPart.match(/^("[^"]+"|\w+)\s+([|}{o]{1,2}--[|}{o]{1,2})\s+("[^"]+"|\w+)/)
@@ -483,26 +481,25 @@ function convertErDiagram(source: string): GraphData {
 
   const ensureEntity = (name: string) => ensureUniqueNode(nodes, name, name, 'MermaidEntity')
 
-  source
+  for (const line of source
     .split(/\r?\n/)
     .map((line) => line.trim())
-    .filter((line) => line.length && !line.startsWith('%%') && !/^erDiagram/i.test(line))
-    .forEach((line) => {
-      const relation = parseErRelation(line)
-      if (!relation) {
-        return
-      }
-      ensureEntity(relation.left)
-      ensureEntity(relation.right)
-      const cardinality = formatErCardinality(relation.symbol)
-      const label = relation.label ? `${relation.label} (${cardinality})` : cardinality
-      edges.push({
-        from: relation.left,
-        to: relation.right,
-        label,
-        metadata: { template: 'association' },
-      })
+    .filter((line) => line.length && !line.startsWith('%%') && !/^erDiagram/i.test(line))) {
+    const relation = parseErRelation(line)
+    if (!relation) {
+      continue
+    }
+    ensureEntity(relation.left)
+    ensureEntity(relation.right)
+    const cardinality = formatErCardinality(relation.symbol)
+    const label = relation.label ? `${relation.label} (${cardinality})` : cardinality
+    edges.push({
+      from: relation.left,
+      to: relation.right,
+      label,
+      metadata: { template: 'association' },
     })
+  }
 
   return { nodes, edges }
 }
@@ -511,7 +508,7 @@ function parseClassRelation(
   line: string,
 ): { left: string; symbol: string; right: string; label?: string } | undefined {
   const colonIndex = line.indexOf(':')
-  const label = colonIndex >= 0 ? line.slice(colonIndex + 1).trim() : undefined
+  const label = colonIndex === -1 ? undefined : line.slice(colonIndex + 1).trim()
   const relationPart = colonIndex >= 0 ? line.slice(0, colonIndex).trim() : line.trim()
   const parts = relationPart.split(/\s+/)
   if (parts.length < 3) {
@@ -551,7 +548,7 @@ function mapClassRelationSymbol(symbol: string): {
   const direction: 'forward' | 'reverse' = relation.startsWith('<') ? 'reverse' : 'forward'
   return {
     template,
-    styleOverrides: Object.keys(overrides).length ? overrides : undefined,
+    styleOverrides: Object.keys(overrides).length > 0 ? overrides : undefined,
     direction,
   }
 }
@@ -562,43 +559,42 @@ function convertClassDiagram(source: string): GraphData {
 
   const ensureClassNode = (name: string) => ensureUniqueNode(nodes, name, name, 'MermaidClass')
 
-  source
+  for (const line of source
     .split(/\r?\n/)
     .map((line) => line.trim())
-    .filter((line) => line.length && !line.startsWith('%%') && !/^classDiagram/i.test(line))
-    .forEach((line) => {
-      const relation = parseClassRelation(line)
-      if (relation) {
-        ensureClassNode(relation.left)
-        ensureClassNode(relation.right)
-        const mapping = mapClassRelationSymbol(relation.symbol)
-        const from = mapping.direction === 'forward' ? relation.left : relation.right
-        const to = mapping.direction === 'forward' ? relation.right : relation.left
-        edges.push({
-          from,
-          to,
-          label: relation.label,
-          metadata: {
-            template: mapping.template,
-            styleOverrides: mapping.styleOverrides,
-          },
-        })
-        return
-      }
+    .filter((line) => line.length && !line.startsWith('%%') && !/^classDiagram/i.test(line))) {
+    const relation = parseClassRelation(line)
+    if (relation) {
+      ensureClassNode(relation.left)
+      ensureClassNode(relation.right)
+      const mapping = mapClassRelationSymbol(relation.symbol)
+      const from = mapping.direction === 'forward' ? relation.left : relation.right
+      const to = mapping.direction === 'forward' ? relation.right : relation.left
+      edges.push({
+        from,
+        to,
+        label: relation.label,
+        metadata: {
+          template: mapping.template,
+          styleOverrides: mapping.styleOverrides,
+        },
+      })
+      continue
+    }
 
-      if (/^class\s+/i.test(line)) {
-        const name = sanitizeIdentifier(line.replace(/^class\s+/i, '').split(/[\s{]/)[0] ?? '')
-        if (name) {
-          ensureClassNode(name)
-        }
-        return
+    if (/^class\s+/i.test(line)) {
+      const name = sanitizeIdentifier(line.replace(/^class\s+/i, '').split(/[\s{]/)[0] ?? '')
+      if (name) {
+        ensureClassNode(name)
       }
+      continue
+    }
 
-      const propertyMatch = line.match(/^([^\s:]+)\s*:/)
-      if (propertyMatch) {
-        ensureClassNode(sanitizeIdentifier(propertyMatch[1]!))
-      }
-    })
+    const propertyMatch = line.match(/^([^\s:]+)\s*:/)
+    if (propertyMatch) {
+      ensureClassNode(sanitizeIdentifier(propertyMatch[1]!))
+    }
+  }
 
   return { nodes, edges }
 }
@@ -616,7 +612,7 @@ function extractLinkStyles(source: string): Map<number, EdgeStyleOverrides> {
     if (!rawDeclaration) {
       continue
     }
-    const normalized = rawDeclaration.trim().replace(/,/g, ';')
+    const normalized = rawDeclaration.trim().replaceAll(',', ';')
     const edge = {
       id: '',
       start: '',
@@ -660,7 +656,7 @@ function toNode(vertex: RawVertex): NodeData {
   if (vertex.domId) {
     metadata.domId = vertex.domId
   }
-  if (vertex.props && Object.keys(vertex.props).length) {
+  if (vertex.props && Object.keys(vertex.props).length > 0) {
     metadata.props = { ...vertex.props }
   }
   const styleOverrides = parseNodeStyles(vertex)
@@ -676,7 +672,7 @@ function toNode(vertex: RawVertex): NodeData {
     id: vertex.id,
     label: normaliseLabel(vertex.text, vertex.id),
     type: template ?? 'MermaidNode',
-    metadata: Object.keys(metadata).length ? metadata : undefined,
+    metadata: Object.keys(metadata).length > 0 ? metadata : undefined,
   }
 }
 
@@ -705,17 +701,17 @@ function toEdge(edge: RawEdge): EdgeData {
   return {
     from: edge.start,
     to: edge.end,
-    label: edge.text && edge.text.trim().length ? edge.text.trim() : undefined,
+    label: edge.text && edge.text.trim().length > 0 ? edge.text.trim() : undefined,
     metadata,
   }
 }
 
-function getFlowchartDb(diagram: unknown): FlowchartDb {
+function getFlowchartDatabase(diagram: unknown): FlowchartDatabase {
   if (!diagram || typeof diagram !== 'object') {
     return {}
   }
-  const db = (diagram as { db?: unknown }).db
-  return db && typeof db === 'object' ? (db as FlowchartDb) : {}
+  const database = (diagram as { db?: unknown }).db
+  return database && typeof database === 'object' ? (database as FlowchartDatabase) : {}
 }
 
 /**
@@ -760,14 +756,14 @@ export async function convertMermaidToGraph(
       )
     }
     const diagram = await mermaid.mermaidAPI.getDiagramFromText(trimmed)
-    const db = getFlowchartDb(diagram)
-    const vertices = db.getVertices?.()
-    const edges = db.getEdges?.()
+    const database = getFlowchartDatabase(diagram)
+    const vertices = database.getVertices?.()
+    const edges = database.getEdges?.()
     if (!vertices || !(vertices instanceof Map)) {
       throw new MermaidConversionError('Mermaid diagram did not expose vertex data')
     }
-    const nodeList = Array.from(vertices.values()).map((vertex) => toNode(vertex))
-    if (!nodeList.length) {
+    const nodeList = [...vertices.values()].map((vertex) => toNode(vertex))
+    if (nodeList.length === 0) {
       throw new MermaidConversionError('Mermaid diagram has no nodes to render')
     }
     const linkStyles = extractLinkStyles(trimmed)
@@ -781,7 +777,7 @@ export async function convertMermaidToGraph(
             converted.metadata = {
               ...converted.metadata,
               styleOverrides: {
-                ...(meta.styleOverrides ?? {}),
+                ...meta.styleOverrides,
                 ...style,
               },
             }

@@ -4,7 +4,7 @@ import React from 'react'
 
 import { InputField } from './InputField'
 
-export interface FilterDropdownProps {
+export interface FilterDropdownProperties {
   widgetTypes: string[]
   toggleType: (t: string) => void
   tagIds: string
@@ -45,7 +45,7 @@ export function FilterDropdown({
   onCaseSensitiveChange,
   wholeWord,
   onWholeWordChange,
-}: Readonly<FilterDropdownProps>): React.JSX.Element {
+}: Readonly<FilterDropdownProperties>): React.JSX.Element {
   return (
     <DropdownMenu>
       <DropdownMenu.Trigger asChild>

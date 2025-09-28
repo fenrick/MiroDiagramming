@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /**
  * Lightweight console-backed logger for the browser.
  *
@@ -9,26 +8,27 @@
  * server-oriented Logfire dependency.
  */
 
-type Attrs = Record<string, unknown> | undefined
+type Attributes = Record<string, unknown> | undefined
 
 const SERVICE = import.meta.env.VITE_LOGFIRE_SERVICE_NAME ?? 'miro-frontend'
 const ENABLE_CONSOLE = (import.meta.env.VITE_LOGFIRE_SEND_TO_LOGFIRE ?? 'false') !== 'true'
 
 type Level = 'info' | 'debug' | 'trace' | 'warn' | 'error'
 
-const consoleMethod: Record<Level, (message?: unknown, ...optionalParams: unknown[]) => void> = {
-  info: console.info.bind(console),
-  debug: console.debug.bind(console),
-  trace: console.debug.bind(console),
-  warn: console.warn.bind(console),
-  error: console.error.bind(console),
-}
+const consoleMethod: Record<Level, (message?: unknown, ...optionalParameters: unknown[]) => void> =
+  {
+    info: console.info.bind(console),
+    debug: console.debug.bind(console),
+    trace: console.debug.bind(console),
+    warn: console.warn.bind(console),
+    error: console.error.bind(console),
+  }
 
-function log(level: Level, message: string, attrs?: Attrs) {
+function log(level: Level, message: string, attributes?: Attributes) {
   if (!ENABLE_CONSOLE) {
     return
   }
-  const payload = attrs && Object.keys(attrs).length > 0 ? attrs : undefined
+  const payload = attributes && Object.keys(attributes).length > 0 ? attributes : undefined
   const prefix = `[${SERVICE}] ${message}`
   const emit = consoleMethod[level]
   return payload ? emit(prefix, payload) : emit(prefix)
@@ -37,7 +37,7 @@ function log(level: Level, message: string, attrs?: Attrs) {
 function wrap(level: Level) {
   return (a: string | Record<string, unknown>, b?: string | Record<string, unknown>) => {
     if (typeof a === 'string') {
-      log(level, a, b as Attrs)
+      log(level, a, b as Attributes)
     } else {
       log(level, b as string, a)
     }

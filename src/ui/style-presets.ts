@@ -28,17 +28,19 @@ const DEFAULT_PRESET: StylePreset = {
 /**
  * Derive a style preset from the first element of a template.
  */
-function valueOrDefault<T>(val: T | undefined, def: T): T {
-  return val ?? def
+function valueOrDefault<T>(value: T | undefined, defaultValue: T): T {
+  return value ?? defaultValue
 }
 
-function templateToPreset(name: string, tpl: { elements?: TemplateElement[] }): StylePreset {
-  const el = tpl.elements?.[0]
-  const resolved = templateManager.resolveStyle(el?.style ?? {})
+function templateToPreset(name: string, template: { elements?: TemplateElement[] }): StylePreset {
+  const element = template.elements?.[0]
+  const resolved = templateManager.resolveStyle(element?.style ?? {})
   const fill = valueOrDefault(
     resolved.fillColor as string | undefined,
     valueOrDefault(
-      templateManager.resolveStyle({ fillColor: el?.fill ?? '' }).fillColor as string | undefined,
+      templateManager.resolveStyle({ fillColor: element?.fill ?? '' }).fillColor as
+        | string
+        | undefined,
       '',
     ),
   )

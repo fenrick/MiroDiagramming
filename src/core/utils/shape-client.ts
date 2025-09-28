@@ -17,7 +17,7 @@ export type ShapeOperation =
   | { op: 'delete'; id: string }
 
 function ensureBoard(): {
-  createShape: (props?: Record<string, unknown>) => Promise<Shape>
+  createShape: (properties?: Record<string, unknown>) => Promise<Shape>
   get: (query: { id?: string; type?: string }) => Promise<Array<unknown>>
 } {
   const board = globalThis.miro?.board
@@ -89,7 +89,7 @@ export class ShapeClient {
 
   /** Create multiple shapes and return their widget representations. */
   public async createShapes(shapes: ShapeData[]): Promise<Shape[]> {
-    if (!shapes.length) {
+    if (shapes.length === 0) {
       return []
     }
     const board = ensureBoard()
@@ -134,15 +134,26 @@ export class ShapeClient {
   /** Apply a series of shape mutations sequentially. */
   public async applyOperations(ops: ReadonlyArray<ShapeOperation>): Promise<void> {
     for (const op of ops) {
-      if (op.op === 'create') {
-        await this.createShape(toShapeData(op.data))
-      } else if (op.op === 'update') {
-        if (!op.id) {
-          continue
+      switch (op.op) {
+        case 'create': {
+          await this.createShape(toShapeData(op.data))
+
+          break
         }
-        await this.updateShape(op.id, toShapeData(op.data))
-      } else if (op.op === 'delete') {
-        await this.deleteShape(op.id)
+        case 'update': {
+          if (!op.id) {
+            continue
+          }
+          await this.updateShape(op.id, toShapeData(op.data))
+
+          break
+        }
+        case 'delete': {
+          await this.deleteShape(op.id)
+
+          break
+        }
+        // No default
       }
     }
   }

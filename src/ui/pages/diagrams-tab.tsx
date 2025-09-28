@@ -7,9 +7,9 @@ import { PageHelp } from '../components/PageHelp'
 import { TabPanel } from '../components/TabPanel'
 
 import { CardsTab } from './CardsTab'
-import { LayoutEngineTab } from './LayoutEngineTab'
-import { MermaidTab } from './MermaidTab'
-import { StructuredTab } from './StructuredTab'
+import { LayoutEngineTab } from './layout-engine-tab'
+import { MermaidTab } from './mermaid-tab'
+import { StructuredTab } from './structured-tab'
 import type { TabTuple } from './tab-definitions'
 
 /**
@@ -119,7 +119,7 @@ export const DiagramsTab: React.FC = () => {
   )
 }
 
-export const tabDef: TabTuple = [
+export const tabDefinition: TabTuple = [
   1,
   'diagrams',
   'Diagrams',

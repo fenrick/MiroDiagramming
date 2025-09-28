@@ -36,15 +36,15 @@ export function computeEdgeHints(
     }>
   },
 ): EdgeHint[] {
-  return layout.edges.map((edge, i) => {
-    const info = graph.edges[i]
+  return layout.edges.map((edge, index) => {
+    const info = graph.edges[index]
     if (!info) {
       return {}
     }
-    const src = layout.nodes[info.from]
+    const source = layout.nodes[info.from]
     const tgt = layout.nodes[info.to]
     return {
-      startPosition: src ? relativePosition(src, edge.startPoint) : undefined,
+      startPosition: source ? relativePosition(source, edge.startPoint) : undefined,
       endPosition: tgt ? relativePosition(tgt, edge.endPoint) : undefined,
     }
   })
@@ -75,12 +75,12 @@ export function boundingBoxFromTopLeft(nodes: Record<string, NodePosition>): Bou
   let minY = Infinity
   let maxX = -Infinity
   let maxY = -Infinity
-  Object.values(nodes).forEach(({ x, y, width, height }) => {
+  for (const { x, y, width, height } of Object.values(nodes)) {
     minX = Math.min(minX, x)
     minY = Math.min(minY, y)
     maxX = Math.max(maxX, x + width)
     maxY = Math.max(maxY, y + height)
-  })
+  }
   return { minX, minY, maxX, maxY }
 }
 
@@ -95,14 +95,14 @@ export function boundingBoxFromCenter(nodes: Record<string, NodePosition>): Boun
   let minY = Infinity
   let maxX = -Infinity
   let maxY = -Infinity
-  Object.values(nodes).forEach(({ x, y, width, height }) => {
+  for (const { x, y, width, height } of Object.values(nodes)) {
     const halfW = width / 2
     const halfH = height / 2
     minX = Math.min(minX, x - halfW)
     minY = Math.min(minY, y - halfH)
     maxX = Math.max(maxX, x + halfW)
     maxY = Math.max(maxY, y + halfH)
-  })
+  }
   return { minX, minY, maxX, maxY }
 }
 

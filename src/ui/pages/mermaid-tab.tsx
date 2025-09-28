@@ -69,9 +69,9 @@ export const MermaidTab: React.FC = () => {
     { variant: 'success'; message: string } | { variant: 'error'; message: string } | null
   >(null)
 
-  const rendererRef = React.useRef<MermaidRenderer>()
-  if (!rendererRef.current) {
-    rendererRef.current = new MermaidRenderer()
+  const rendererReference = React.useRef<MermaidRenderer>()
+  if (!rendererReference.current) {
+    rendererReference.current = new MermaidRenderer()
   }
 
   React.useEffect(() => {
@@ -103,7 +103,7 @@ export const MermaidTab: React.FC = () => {
       setStatus({ variant: 'error', message: 'Add a Mermaid definition before rendering.' })
       return
     }
-    const renderer = rendererRef.current!
+    const renderer = rendererReference.current!
     setRendering(true)
     setStatus(null)
     try {

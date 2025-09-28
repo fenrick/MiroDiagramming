@@ -93,12 +93,12 @@ export const StyleTab: React.FC = () => {
     <TabPanel tabId="style">
       <div style={CONTENT_STYLE}>
         <PageHelp content="Lighten or darken the fill colour of selected shapes" />
-        {!hasSelection ? (
+        {hasSelection ? null : (
           <EmptyState
             title="No selection"
             description="Select one or more items to apply styling."
           />
-        ) : null}
+        )}
         <SidebarSection title="Adjust Colors">
           <Flex direction="column" gap={200}>
             <Paragraph>
@@ -259,7 +259,7 @@ export const StyleTab: React.FC = () => {
   )
 }
 
-export const tabDef: TabTuple = [
+export const tabDefinition: TabTuple = [
   3,
   'style',
   'Colours',

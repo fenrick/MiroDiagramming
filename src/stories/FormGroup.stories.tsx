@@ -11,5 +11,5 @@ export default meta
 type Story = StoryObj<typeof FormGroup>
 
 export const Default: Story = {
-  render: (args) => <FormGroup {...args}>Content</FormGroup>,
+  render: (arguments_) => <FormGroup {...arguments_}>Content</FormGroup>,
 }

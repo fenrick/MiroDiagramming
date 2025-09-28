@@ -36,21 +36,21 @@ function getName(item: Record<string, unknown>): string {
  * position. Widgets can optionally be sorted alphabetically and grouped
  * together after layout so they remain fixed in relation to each other.
  */
-export async function applyGridLayout(opts: GridOptions, board?: BoardLike): Promise<void> {
+export async function applyGridLayout(options: GridOptions, board?: BoardLike): Promise<void> {
   const b = getBoard(board)
   log.info('Applying grid layout')
   const selection = await boardCache.getSelection(b)
-  let items = opts.sortByName
+  let items = options.sortByName
     ? [...selection].sort((a, b) => getName(a).localeCompare(getName(b)))
     : selection
   items = items.filter(
-    (i) =>
-      typeof (i as { width?: number }).width === 'number' &&
-      typeof (i as { height?: number }).height === 'number' &&
-      typeof (i as { x?: number }).x === 'number' &&
-      typeof (i as { y?: number }).y === 'number',
+    (index) =>
+      typeof (index as { width?: number }).width === 'number' &&
+      typeof (index as { height?: number }).height === 'number' &&
+      typeof (index as { x?: number }).x === 'number' &&
+      typeof (index as { y?: number }).y === 'number',
   )
-  if (!items.length) {
+  if (items.length === 0) {
     return
   }
   const first = items[0] as {
@@ -59,23 +59,23 @@ export async function applyGridLayout(opts: GridOptions, board?: BoardLike): Pro
     width: number
     height: number
   }
-  const positions = calculateGridPositions(opts, items.length, first.width, first.height)
+  const positions = calculateGridPositions(options, items.length, first.width, first.height)
   await Promise.all(
-    items.map(async (item: Record<string, unknown>, i: number) => {
-      const pos = positions[i]!
+    items.map(async (item: Record<string, unknown>, index: number) => {
+      const pos = positions[index]!
       item.x = first.x + pos.x
       item.y = first.y + pos.y
       await maybeSync(item as Syncable)
     }),
   )
-  if (opts.groupResult) {
+  if (options.groupResult) {
     try {
       // Compute a bounding frame and add items to it
-      const boxes = items.map((i) => {
-        const x = (i as { x: number }).x
-        const y = (i as { y: number }).y
-        const w = (i as { width: number }).width
-        const h = (i as { height: number }).height
+      const boxes = items.map((index) => {
+        const x = (index as { x: number }).x
+        const y = (index as { y: number }).y
+        const w = (index as { width: number }).width
+        const h = (index as { height: number }).height
         const left = x - w / 2
         const top = y - h / 2
         const right = x + w / 2
@@ -86,7 +86,7 @@ export async function applyGridLayout(opts: GridOptions, board?: BoardLike): Pro
       const top = Math.min(...boxes.map((b) => b.top))
       const right = Math.max(...boxes.map((b) => b.right))
       const bottom = Math.max(...boxes.map((b) => b.bottom))
-      const pad = Math.max(20, Math.min(opts.padding * 2, 80))
+      const pad = Math.max(20, Math.min(options.padding * 2, 80))
       const width = right - left + pad * 2
       const height = bottom - top + pad * 2
       const cx = left + (right - left) / 2
@@ -94,13 +94,13 @@ export async function applyGridLayout(opts: GridOptions, board?: BoardLike): Pro
 
       const { BoardBuilder } = await import('./board-builder')
       const builder = new BoardBuilder()
-      const frame = await builder.createFrame(width, height, cx, cy, opts.frameTitle)
+      const frame = await builder.createFrame(width, height, cx, cy, options.frameTitle)
       // Best-effort add; ignore if API is not available in types
       await Promise.all(
-        items.map(async (i) => {
+        items.map(async (index) => {
           try {
             // @ts-expect-error runtime API
-            await frame.add?.(i)
+            await frame.add?.(index)
           } catch {}
         }),
       )

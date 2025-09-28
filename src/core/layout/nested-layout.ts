@@ -69,17 +69,17 @@ export class NestedLayouter {
    */
   public async layoutHierarchy(
     roots: HierNode[],
-    opts: NestedLayoutOptions = {},
+    options: NestedLayoutOptions = {},
   ): Promise<NestedLayoutResult> {
-    const padding = opts.padding ?? DEFAULT_PADDING
-    const topSpacing = opts.topSpacing ?? DEFAULT_TOP_SPACING
+    const padding = options.padding ?? DEFAULT_PADDING
+    const topSpacing = options.topSpacing ?? DEFAULT_TOP_SPACING
     const elkRoot: LayoutNode = {
       id: 'root',
       layoutOptions: {
         'elk.algorithm': 'org.eclipse.elk.rectpacking',
         'elk.spacing.nodeNode': String(padding),
       },
-      children: roots.map((r) => this.buildElkNode(r, opts.sortKey, padding)),
+      children: roots.map((r) => this.buildElkNode(r, options.sortKey, padding)),
     }
     prepareForElk(elkRoot, topSpacing, LEAF_WIDTH)
     const Elk = await loadElk()
@@ -177,7 +177,7 @@ export const nestedLayouter = new NestedLayouter()
  */
 export function layoutHierarchy(
   roots: HierNode[],
-  opts: NestedLayoutOptions = {},
+  options: NestedLayoutOptions = {},
 ): Promise<NestedLayoutResult> {
-  return nestedLayouter.layoutHierarchy(roots, opts)
+  return nestedLayouter.layoutHierarchy(roots, options)
 }

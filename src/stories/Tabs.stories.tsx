@@ -5,17 +5,17 @@
  */
 import type { Meta, StoryObj } from '@storybook/react'
 
-import { ArrangeTab } from '../ui/pages/ArrangeTab'
+import { ArrangeTab } from '../ui/pages/arrange-tab'
 import { CardsTab } from '../ui/pages/CardsTab'
-import { DiagramsTab } from '../ui/pages/DiagramsTab'
-import { FramesTab } from '../ui/pages/FramesTab'
-import { HelpTab } from '../ui/pages/HelpTab'
-import { LayoutEngineTab } from '../ui/pages/LayoutEngineTab'
-import { ResizeTab } from '../ui/pages/ResizeTab'
-import { SearchTab } from '../ui/pages/SearchTab'
-import { StructuredTab } from '../ui/pages/StructuredTab'
-import { StyleTab } from '../ui/pages/StyleTab'
-import { ToolsTab } from '../ui/pages/ToolsTab'
+import { DiagramsTab } from '../ui/pages/diagrams-tab'
+import { FramesTab } from '../ui/pages/frames-tab'
+import { HelpTab } from '../ui/pages/help-tab'
+import { LayoutEngineTab } from '../ui/pages/layout-engine-tab'
+import { ResizeTab } from '../ui/pages/resize-tab'
+import { SearchTab } from '../ui/pages/search-tab'
+import { StructuredTab } from '../ui/pages/structured-tab'
+import { StyleTab } from '../ui/pages/style-tab'
+import { ToolsTab } from '../ui/pages/tools-tab'
 
 const meta: Meta = {
   title: 'Pages/Tabs',

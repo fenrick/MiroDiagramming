@@ -2,7 +2,7 @@ import type { BaseItem, Connector, Group } from '@mirohq/websdk-types'
 
 import { BoardBuilder } from '../../board/board-builder'
 import type { HierNode } from '../layout/nested-layout'
-import { fileUtils } from '../utils/file-utils'
+import { fileUtils as fileUtilities } from '../utils/file-utils'
 
 export interface NodeData {
   id: string
@@ -56,8 +56,8 @@ export class GraphService {
 
   /** Load and parse JSON graph data from a file. */
   public async loadGraph(file: File): Promise<GraphData> {
-    fileUtils.validateFile(file)
-    const text = await fileUtils.readFileAsText(file)
+    fileUtilities.validateFile(file)
+    const text = await fileUtilities.readFileAsText(file)
     const data = JSON.parse(text) as unknown
     if (
       !data ||
@@ -80,13 +80,13 @@ export class GraphService {
    * @throws {Error} If the JSON structure is not recognised.
    */
   public async loadAnyGraph(file: File): Promise<GraphData | HierNode[]> {
-    fileUtils.validateFile(file)
-    const text = await fileUtils.readFileAsText(file)
+    fileUtilities.validateFile(file)
+    const text = await fileUtilities.readFileAsText(file)
     const data = JSON.parse(text) as unknown
-    const isObj = data !== null && typeof data === 'object'
-    const hasNodes = isObj && Array.isArray((data as { nodes?: unknown }).nodes)
-    const hasEdges = isObj && Array.isArray((data as { edges?: unknown }).edges)
-    if (isObj && hasNodes && hasEdges) {
+    const isObject = data !== null && typeof data === 'object'
+    const hasNodes = isObject && Array.isArray((data as { nodes?: unknown }).nodes)
+    const hasEdges = isObject && Array.isArray((data as { edges?: unknown }).edges)
+    if (isObject && hasNodes && hasEdges) {
       this.resetBoardCache()
       return data as GraphData
     }

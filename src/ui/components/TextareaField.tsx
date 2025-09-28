@@ -20,10 +20,13 @@ const StyledTextarea = styled(Textarea, {
 })
 
 export const TextareaField = React.forwardRef<HTMLTextAreaElement, TextareaFieldProps>(
-  function TextareaField({ label, onValueChange, id, value, defaultValue, ...props }, ref) {
+  function TextareaField(
+    { label, onValueChange, id, value, defaultValue, ...properties },
+    reference,
+  ) {
     const generatedId = React.useId()
     const textareaId = id ?? generatedId
-    const { onChange: externalOnChange, ...restProps } = props as React.ComponentProps<
+    const { onChange: externalOnChange, ...restProperties } = properties as React.ComponentProps<
       typeof Textarea
     >
     const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>): void => {
@@ -36,11 +39,11 @@ export const TextareaField = React.forwardRef<HTMLTextAreaElement, TextareaField
         <Form.Label htmlFor={textareaId}>{label}</Form.Label>
         <StyledTextarea
           id={textareaId}
-          ref={ref}
+          ref={reference}
           value={value}
           defaultValue={defaultValue}
           onChange={handleChange}
-          {...restProps}
+          {...restProperties}
         />
       </StyledFormField>
     )

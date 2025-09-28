@@ -2,7 +2,7 @@ import { Callout, styled } from '@mirohq/design-system'
 import { space } from '@mirohq/design-tokens'
 import React from 'react'
 
-type EmptyStateProps = Readonly<{
+type EmptyStateProperties = Readonly<{
   title: string
   description?: string
   action?: React.ReactNode
@@ -19,7 +19,7 @@ export function EmptyState({
   description,
   action,
   icon,
-}: EmptyStateProps): React.JSX.Element {
+}: EmptyStateProperties): React.JSX.Element {
   return (
     <Container aria-live="polite">
       <Callout

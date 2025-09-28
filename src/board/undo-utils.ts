@@ -10,8 +10,8 @@ import type { BoardEntity } from './item-types'
  * @param registry - Collection of widgets created in the last run.
  */
 export async function undoWidgets(builder: BoardBuilder, registry: BoardEntity[]): Promise<void> {
-  if (registry.length) {
-    const items = registry.slice()
+  if (registry.length > 0) {
+    const items = [...registry]
     await builder.removeItems(items)
     registry.length = 0
   }
@@ -35,8 +35,8 @@ export async function syncOrUndo(
 ): Promise<void> {
   try {
     await builder.syncAll(items)
-  } catch (err) {
+  } catch (error) {
     await undoWidgets(builder, registry)
-    throw err
+    throw error
   }
 }

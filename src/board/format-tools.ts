@@ -31,7 +31,10 @@ export function presetStyle(preset: StylePreset): PresetStyle {
  */
 export async function applyStylePreset(preset: StylePreset, board?: BoardLike): Promise<void> {
   await forEachSelection(async (item: Record<string, unknown>) => {
-    const style = { ...(item.style ?? {}) } as Record<string, unknown>
+    const style: Record<string, unknown> = {}
+    if (item.style) {
+      Object.assign(style, item.style as Record<string, unknown>)
+    }
     const resolved = presetStyle(preset)
     style.color = resolved.color
     style.borderColor = resolved.borderColor

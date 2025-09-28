@@ -9,7 +9,7 @@ export interface CommandItem {
   readonly action: () => void
 }
 
-export interface CommandPaletteProps {
+export interface CommandPaletteProperties {
   readonly isOpen: boolean
   readonly onClose: () => void
   readonly commands: readonly CommandItem[]
@@ -19,10 +19,10 @@ export function CommandPalette({
   isOpen,
   onClose,
   commands,
-}: CommandPaletteProps): React.JSX.Element | null {
+}: CommandPaletteProperties): React.JSX.Element | null {
   const [query, setQuery] = React.useState('')
   const [index, setIndex] = React.useState(0)
-  const inputRef = React.useRef<HTMLInputElement>(null)
+  const inputReference = React.useRef<HTMLInputElement>(null)
 
   const filtered = React.useMemo(
     () => commands.filter((c) => c.label.toLowerCase().includes(query.toLowerCase())),
@@ -38,23 +38,34 @@ export function CommandPalette({
       return
     }
     const timer = setTimeout(() => {
-      inputRef.current?.focus({ preventScroll: true })
+      inputReference.current?.focus({ preventScroll: true })
     }, 0)
     return () => clearTimeout(timer)
   }, [isOpen])
 
   const handleKey = React.useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === 'ArrowDown') {
-        e.preventDefault()
-        setIndex((i) => Math.min(i + 1, filtered.length - 1))
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault()
-        setIndex((i) => Math.max(i - 1, 0))
-      } else if (e.key === 'Enter') {
-        e.preventDefault()
-        filtered[index]?.action()
-        onClose()
+      switch (e.key) {
+        case 'ArrowDown': {
+          e.preventDefault()
+          setIndex((index_) => Math.min(index_ + 1, filtered.length - 1))
+
+          break
+        }
+        case 'ArrowUp': {
+          e.preventDefault()
+          setIndex((index_) => Math.max(index_ - 1, 0))
+
+          break
+        }
+        case 'Enter': {
+          e.preventDefault()
+          filtered[index]?.action()
+          onClose()
+
+          break
+        }
+        // No default
       }
     },
     [filtered, index, onClose],
@@ -65,18 +76,18 @@ export function CommandPalette({
       <label htmlFor="command-input">Command</label>
       <input
         id="command-input"
-        ref={inputRef}
+        ref={inputReference}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         onKeyDown={handleKey}
       />
       <List>
-        {filtered.map((cmd, i) => (
-          <li key={cmd.id} data-selected={i === index}>
+        {filtered.map((cmd, index_) => (
+          <li key={cmd.id} data-selected={index_ === index}>
             <ItemButton
               type="button"
-              aria-current={i === index ? 'true' : undefined}
-              onMouseEnter={() => setIndex(i)}
+              aria-current={index_ === index ? 'true' : undefined}
+              onMouseEnter={() => setIndex(index_)}
               onClick={() => {
                 cmd.action()
                 onClose()

@@ -70,7 +70,7 @@ export const HelpTab: React.FC = () => {
   )
 }
 
-export const tabDef: TabTuple = [
+export const tabDefinition: TabTuple = [
   99,
   'help',
   'Help',

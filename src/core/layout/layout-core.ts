@@ -61,26 +61,26 @@ export function getNodeDimensions(node: {
  * @param opts - Normalised layout options.
  * @returns ELK configuration for {@link performLayout}.
  */
-export function buildElkGraphOptions(opts: UserLayoutOptions): Record<string, string> {
+export function buildElkGraphOptions(options: UserLayoutOptions): Record<string, string> {
   return {
     'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
-    'elk.algorithm': opts.algorithm,
+    'elk.algorithm': options.algorithm,
     'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF',
     'elk.layered.mergeEdges': 'false',
-    'elk.direction': opts.direction,
-    'elk.layered.spacing.nodeNodeBetweenLayers': String(opts.spacing),
-    'elk.spacing.nodeNode': String(opts.spacing),
+    'elk.direction': options.direction,
+    'elk.layered.spacing.nodeNodeBetweenLayers': String(options.spacing),
+    'elk.spacing.nodeNode': String(options.spacing),
     'elk.layered.unnecessaryBendpoints': 'true',
     'elk.layered.cycleBreaking.strategy': 'GREEDY',
-    ...(opts.aspectRatio && {
-      'elk.aspectRatio': String(aspectRatioValue(opts.aspectRatio)),
+    ...(options.aspectRatio && {
+      'elk.aspectRatio': String(aspectRatioValue(options.aspectRatio)),
     }),
-    ...(opts.edgeRouting && { 'elk.edgeRouting': opts.edgeRouting }),
-    ...(opts.edgeRoutingMode && {
-      'elk.mrtree.edgeRoutingMode': opts.edgeRoutingMode,
+    ...(options.edgeRouting && { 'elk.edgeRouting': options.edgeRouting }),
+    ...(options.edgeRoutingMode && {
+      'elk.mrtree.edgeRoutingMode': options.edgeRoutingMode,
     }),
-    ...(opts.optimizationGoal && {
-      'elk.rectpacking.widthApproximation.optimizationGoal': opts.optimizationGoal,
+    ...(options.optimizationGoal && {
+      'elk.rectpacking.widthApproximation.optimizationGoal': options.optimizationGoal,
     }),
   }
 }
@@ -99,13 +99,13 @@ export interface LayoutResult {
  */
 export async function performLayout(
   data: GraphData,
-  opts: Partial<UserLayoutOptions> = {},
+  options: Partial<UserLayoutOptions> = {},
 ): Promise<LayoutResult> {
   const Elk = await loadElk()
   const elk = new Elk()
-  const userOpts = validateLayoutOptions(opts)
+  const userOptions = validateLayoutOptions(options)
 
-  const elkGraph = buildElkGraph(data, userOpts)
+  const elkGraph = buildElkGraph(data, userOptions)
   const layouted = await elk.layout(elkGraph)
 
   const nodes = mapNodes(layouted.children)
@@ -117,13 +117,13 @@ export async function performLayout(
 /**
  * Convert graph data into ELK's expected structure.
  */
-function buildElkGraph(data: GraphData, opts: UserLayoutOptions): ElkNode {
+function buildElkGraph(data: GraphData, options: UserLayoutOptions): ElkNode {
   return {
     id: 'root',
-    layoutOptions: buildElkGraphOptions(opts),
+    layoutOptions: buildElkGraphOptions(options),
     children: data.nodes.map((n) => ({ id: n.id, ...getNodeDimensions(n) })),
-    edges: data.edges.map((e, idx) => ({
-      id: `e${idx}`,
+    edges: data.edges.map((e, index) => ({
+      id: `e${index}`,
       sources: [e.from],
       targets: [e.to],
     })),

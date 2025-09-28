@@ -12,8 +12,8 @@ export function resolveColor(token: string, fallback: string): string {
   if (token.startsWith('var(')) {
     if (typeof document !== 'undefined') {
       const name = token.slice(4, -1)
-      const val = getComputedStyle(document.documentElement).getPropertyValue(name)
-      return (val.trim() || fallback).toLowerCase()
+      const value = getComputedStyle(document.documentElement).getPropertyValue(name)
+      return (value.trim() || fallback).toLowerCase()
     }
     return fallback.toLowerCase()
   }
@@ -62,7 +62,7 @@ export function adjustColor(hex: string, amount: number): string {
 export function luminance(rgb: Rgb): number {
   const toLinear = (v: number): number => {
     const n = v / 255
-    return n <= 0.03928 ? n / 12.92 : Math.pow((n + 0.055) / 1.055, 2.4)
+    return n <= 0.039_28 ? n / 12.92 : Math.pow((n + 0.055) / 1.055, 2.4)
   }
   return 0.2126 * toLinear(rgb.r) + 0.7152 * toLinear(rgb.g) + 0.0722 * toLinear(rgb.b)
 }

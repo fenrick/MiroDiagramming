@@ -29,14 +29,14 @@ export function SelectField({
   label,
   onChange,
   children,
-  ...props
+  ...properties
 }: SelectFieldProps): React.JSX.Element {
   const handleChange = (value: string): void => onChange?.(value)
 
   return (
     <StyledFormField>
       <StyledLabel>{label}</StyledLabel>
-      <StyledSelect onChange={handleChange} {...props}>
+      <StyledSelect onChange={handleChange} {...properties}>
         {children}
       </StyledSelect>
     </StyledFormField>

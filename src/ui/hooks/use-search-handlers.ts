@@ -35,7 +35,7 @@ export function useDebouncedSearch(
       }
       const res = await searchBoardContent(buildOptions())
       setResults(res)
-      setCurrentIndex(res.length ? 0 : -1)
+      setCurrentIndex(res.length > 0 ? 0 : -1)
     }, 300)
     return () => clearTimeout(handle)
   }, [buildOptions, query])
@@ -73,7 +73,7 @@ export function useReplaceAll(
     if (count) {
       const res = await searchBoardContent(buildOptions())
       setResults(res)
-      setCurrentIndex(res.length ? 0 : -1)
+      setCurrentIndex(res.length > 0 ? 0 : -1)
     }
   }, [buildOptions, focusOnItem, query, replacement, setCurrentIndex, setResults])
 }
@@ -93,7 +93,7 @@ export function useNextMatch(
   focusOnItem: (item: unknown) => Promise<void>,
 ): () => Promise<void> {
   return React.useCallback(async () => {
-    if (!results.length) {
+    if (results.length === 0) {
       return
     }
     const next = (currentIndex + 1) % results.length
@@ -124,7 +124,7 @@ export function useReplaceCurrent(
   focusOnItem: (item: unknown) => Promise<void>,
 ): () => Promise<void> {
   return React.useCallback(async () => {
-    if (!results.length) {
+    if (results.length === 0) {
       return
     }
     const current = results[currentIndex]
@@ -142,6 +142,6 @@ export function useReplaceCurrent(
     )
     const res = await searchBoardContent(buildOptions())
     setResults(res)
-    setCurrentIndex(res.length ? Math.min(currentIndex, res.length - 1) : -1)
+    setCurrentIndex(res.length > 0 ? Math.min(currentIndex, res.length - 1) : -1)
   }, [buildOptions, currentIndex, focusOnItem, replacement, results, setCurrentIndex, setResults])
 }

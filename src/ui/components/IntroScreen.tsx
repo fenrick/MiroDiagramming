@@ -7,7 +7,7 @@ import { ScrollArea } from '../ScrollArea'
 import { Button } from './Button'
 import { Markdown } from './Markdown'
 
-export interface IntroScreenProps {
+export interface IntroScreenProperties {
   /** Called when the user chooses to start the app. */
   readonly onStart: () => void
 }
@@ -18,7 +18,7 @@ export interface IntroScreenProps {
  * Keeping the initial view lightweight avoids early Miro API calls until the
  * user opts into using the toolset.
  */
-export function IntroScreen({ onStart }: IntroScreenProps): React.JSX.Element {
+export function IntroScreen({ onStart }: IntroScreenProperties): React.JSX.Element {
   return (
     <ScrollArea>
       <div className="intro-screen" data-testid="intro-screen">

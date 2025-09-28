@@ -1,108 +1,62 @@
-// Flat config for ESLint v9+
+// eslint.config.js (ESLint v9 flat config)
+import js from '@eslint/js'
 import tseslint from 'typescript-eslint'
-import pluginImport from 'eslint-plugin-import'
 import sonarjs from 'eslint-plugin-sonarjs'
-import jsxA11y from 'eslint-plugin-jsx-a11y'
-import pluginReact from 'eslint-plugin-react'
-import pluginReactHooks from 'eslint-plugin-react-hooks'
-import stylistic from '@stylistic/eslint-plugin'
-
-const reactRecommended = {
-  ...pluginReact.configs.flat.recommended,
-  settings: {
-    ...(pluginReact.configs.flat.recommended.settings ?? {}),
-    react: { version: 'detect' },
-  },
-  rules: {
-    ...pluginReact.configs.flat.recommended.rules,
-    'react/react-in-jsx-scope': 'off',
-    'react/jsx-uses-react': 'off',
-  },
-}
-
-const reactHooksRecommended = {
-  plugins: { 'react-hooks': pluginReactHooks },
-  rules: {
-    ...pluginReactHooks.configs.recommended.rules,
-  },
-}
-
-const jsxA11yRecommended = {
-  files: ['**/*.{tsx,jsx}'],
-  plugins: { 'jsx-a11y': jsxA11y },
-  rules: {
-    ...jsxA11y.configs.recommended.rules,
-  },
-}
+import importPlugin from 'eslint-plugin-import'
+import promise from 'eslint-plugin-promise'
+import regexp from 'eslint-plugin-regexp'
+import unicorn from 'eslint-plugin-unicorn'
+import security from 'eslint-plugin-security'
 
 export default [
+  // Base JS rules roughly equivalent to the “core” checks Sonar also relies on
+  js.configs.recommended,
+
+  // TypeScript: parser + recommended rules (mirrors many Clean Code correctness/readability checks)
   ...tseslint.configs.recommended,
+
+  // Sonar’s own ESLint rules (subset of SonarQube’s JS/TS rules)
   sonarjs.configs.recommended,
-  reactRecommended,
-  reactHooksRecommended,
-  jsxA11yRecommended,
+
+  // High-value community rule packs that cover areas Sonar also cares about
+  importPlugin.flatConfigs.recommended,
+  promise.configs['flat/recommended'],
+  regexp.configs['flat/recommended'],
+  unicorn.configs['flat/recommended'],
+
+  // Security hygiene rules (note: NOT equivalent to Sonar’s taint analysis)
+  security.configs.recommended,
+
+  // Project-specific tweaks
   {
-    plugins: { import: pluginImport, '@stylistic': stylistic },
+    name: 'project-overrides',
+    ignores: ['dist/**', 'coverage/**', '**/*.min.js'],
     rules: {
-      'no-console': ['warn', { allow: ['warn', 'error'] }],
-      '@typescript-eslint/no-explicit-any': 'error',
-      // Sonar Clean Code alignment (primary set)
-      '@typescript-eslint/consistent-type-imports': [
-        'error',
-        { prefer: 'type-imports', fixStyle: 'inline-type-imports' },
-      ],
-      curly: ['error', 'all'],
-      eqeqeq: ['error', 'always'],
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
-      '@stylistic/comma-dangle': ['error', 'always-multiline'],
-      '@stylistic/no-extra-semi': 'error',
-      '@stylistic/semi': ['error', 'never'],
-      'import/order': [
-        'error',
-        {
-          groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
-          'newlines-between': 'always',
-        },
-      ],
-      'import/no-duplicates': 'error',
-      // Sonar duplication/complexity checks: keep as warnings to avoid churn, but visible locally.
-      'sonarjs/no-duplicate-string': 'warn',
-      'sonarjs/cognitive-complexity': ['warn', 20],
-      'no-restricted-syntax': [
-        'error',
-        {
-          selector: 'TSAsExpression > TSAsExpression[typeAnnotation.type="TSUnknownKeyword"]',
-          message:
-            "Avoid double assertions. Use typed helpers or module augmentation instead of 'as unknown as'.",
-        },
-      ],
+      // Sonar-like maintainability signal
+      'sonarjs/cognitive-complexity': ['error', 15],
+
+      // Keep noise down where packs overlap
+      'unicorn/no-null': 'off', // often too strict
+      'unicorn/prefer-module': 'off', // off if you still use CommonJS
+      'import/no-unresolved': 'off', // leave to TS when using path aliases
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/explicit-module-boundary-types': 'off',
     },
+  },
+
+  // Stronger TS settings for .ts/.tsx only
+  {
+    files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
+      parser: tseslint.parser,
       parserOptions: {
-        ecmaVersion: 'latest',
-        sourceType: 'module',
-        ecmaFeatures: {
-          jsx: true,
-        },
+        project: false, // set your tsconfig path & turn on type-aware rules if desired
       },
     },
-    linterOptions: {
-      reportUnusedDisableDirectives: true,
-    },
-  },
-  {
-    files: ['**/*.ts'],
-    ignores: ['dist/**', 'node_modules/**'],
-  },
-  {
-    files: ['tests/**/*.{ts,tsx}'],
     rules: {
-      // Tests often use flexible shapes and mocks
-      '@typescript-eslint/no-explicit-any': 'off',
-      // Allow double assertions in tests where handy for setup/mocks
-      'no-restricted-syntax': 'off',
-      // Relax import grouping/order in tests to allow mock-first patterns
-      'import/order': 'off',
+      // Turn on a few type-aware-ish constraints even without full type-checker
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/consistent-type-imports': 'error',
     },
   },
 ]

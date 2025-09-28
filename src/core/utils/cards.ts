@@ -1,6 +1,6 @@
 import type { CardField, CardStyle, CardTaskStatus } from '@mirohq/websdk-types'
 
-import { fileUtils } from './file-utils'
+import { fileUtils as fileUtilities } from './file-utils'
 
 export interface CardData {
   /** Optional unique identifier for updating existing cards. */
@@ -47,8 +47,8 @@ export class CardLoader {
 
   /** Load and parse card data from an uploaded file. */
   public async loadCards(file: File): Promise<CardData[]> {
-    fileUtils.validateFile(file)
-    const text = await fileUtils.readFileAsText(file)
+    fileUtilities.validateFile(file)
+    const text = await fileUtilities.readFileAsText(file)
     const data = JSON.parse(text) as unknown
     if (!data || typeof data !== 'object' || !Array.isArray((data as { cards?: unknown }).cards)) {
       throw new Error('Invalid card data')
@@ -74,7 +74,7 @@ export class CardLoader {
       result.fields = raw.fields as CardField[]
     }
     result.taskStatus = raw.taskStatus as CardTaskStatus | undefined
-    if (Object.keys(style).length) {
+    if (Object.keys(style).length > 0) {
       result.style = style
     }
     return result

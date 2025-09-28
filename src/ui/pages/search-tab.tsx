@@ -51,22 +51,18 @@ export const SearchTab: React.FC = () => {
   const focusOnItem = React.useCallback(async (item: unknown): Promise<void> => {
     type ViewportAPI = {
       zoomTo: (items: unknown[]) => Promise<void>
-      zoomToObject?: (i: unknown) => Promise<void>
+      zoomToObject?: (item: unknown) => Promise<void>
     }
     const vp = globalThis.miro?.board?.viewport as ViewportAPI | undefined
     if (!vp) {
       return
     }
-    if (typeof vp.zoomToObject === 'function') {
-      await vp.zoomToObject(item)
-    } else {
-      await vp.zoomTo([item])
-    }
+    await (typeof vp.zoomToObject === 'function' ? vp.zoomToObject(item) : vp.zoomTo([item]))
   }, [])
 
   const toggleType = (type: string): void =>
-    setWidgetTypes((prev) =>
-      prev.includes(type) ? prev.filter((t) => t !== type) : [...prev, type],
+    setWidgetTypes((previous) =>
+      previous.includes(type) ? previous.filter((t) => t !== type) : [...previous, type],
     )
 
   const buildOptions = React.useCallback((): SearchOptions => {
@@ -74,14 +70,14 @@ export const SearchTab: React.FC = () => {
       .split(',')
       .map((t) => t.trim())
       .filter(Boolean)
-    const opts: SearchOptions = { query }
+    const options: SearchOptions = { query }
     const add = <K extends keyof SearchOptions>(
       cond: boolean,
       key: K,
       value: SearchOptions[K],
     ): void => {
       if (cond) {
-        opts[key] = value
+        options[key] = value
       }
     }
     add(widgetTypes.length > 0, 'widgetTypes', widgetTypes)
@@ -93,7 +89,7 @@ export const SearchTab: React.FC = () => {
     add(caseSensitive, 'caseSensitive', true)
     add(wholeWord, 'wholeWord', true)
     add(regex, 'regex', true)
-    return opts
+    return options
   }, [
     query,
     widgetTypes,
@@ -196,7 +192,7 @@ export const SearchTab: React.FC = () => {
             <ButtonToolbar>
               <Button
                 onClick={nextMatch}
-                disabled={!results.length}
+                disabled={results.length === 0}
                 variant="secondary"
                 icon={<IconChevronRight />}
                 iconPosition="start"
@@ -205,7 +201,7 @@ export const SearchTab: React.FC = () => {
               </Button>
               <Button
                 onClick={replaceCurrent}
-                disabled={!results.length}
+                disabled={results.length === 0}
                 variant="secondary"
                 icon={<IconPen />}
                 iconPosition="start"
@@ -214,7 +210,7 @@ export const SearchTab: React.FC = () => {
               </Button>
               <Button
                 onClick={replaceAll}
-                disabled={!results.length}
+                disabled={results.length === 0}
                 variant="primary"
                 icon={<IconArrowRight />}
                 iconPosition="start"
@@ -229,7 +225,7 @@ export const SearchTab: React.FC = () => {
   )
 }
 
-export const tabDef: TabTuple = [
+export const tabDefinition: TabTuple = [
   8,
   'search',
   'Search',

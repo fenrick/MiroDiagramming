@@ -10,7 +10,7 @@
 export function encodeBase64(input: string): string {
   const base64 =
     typeof Buffer !== 'undefined' &&
-    (typeof window === 'undefined' || typeof window.btoa !== 'function')
+    (globalThis.window === undefined || typeof globalThis.btoa !== 'function')
       ? Buffer.from(input, 'utf8').toString('base64')
       : (() => {
           const bytes = new TextEncoder().encode(input)
@@ -40,7 +40,7 @@ export function decodeBase64(input: string): string {
   const padded = normalized.padEnd(normalized.length + ((4 - (normalized.length % 4)) % 4), '=')
   if (
     typeof Buffer !== 'undefined' &&
-    (typeof window === 'undefined' || typeof window.atob !== 'function')
+    (globalThis.window === undefined || typeof globalThis.atob !== 'function')
   ) {
     return Buffer.from(padded, 'base64').toString('utf8')
   }

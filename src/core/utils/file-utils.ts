@@ -33,14 +33,14 @@ export class FileUtils {
     }
     return new Promise((resolve, reject) => {
       const reader = new FileReader()
-      reader.onload = (e) => {
+      reader.addEventListener('load', (e) => {
         if (!e.target) {
           reject(new Error('Failed to load file'))
           return
         }
         log.info('File loaded via FileReader')
         resolve(e.target.result as string)
-      }
+      })
       reader.onerror = () => reject(new Error('Failed to load file'))
       reader.readAsText(file, 'utf-8')
     })

@@ -73,13 +73,15 @@ class SessionStoragePersistence implements BoardCachePersistence {
     }
     const prefix = SessionStoragePersistence.prefix()
     const toRemove: string[] = []
-    for (let i = 0; i < this.storage.length; i += 1) {
-      const key = this.storage.key(i)
+    for (let index = 0; index < this.storage.length; index += 1) {
+      const key = this.storage.key(index)
       if (key && key.startsWith(prefix)) {
         toRemove.push(key)
       }
     }
-    toRemove.forEach((key) => this.storage.removeItem(key))
+    for (const key of toRemove) {
+      this.storage.removeItem(key)
+    }
   }
 
   private static prefix(): string {
@@ -95,7 +97,7 @@ const DEFAULT_BOARD_KEY = '__default__'
 
 const defaultLoader: SelectionLoader = async (board: BoardLike) => {
   if (typeof (board as { getSelection?: unknown }).getSelection !== 'function') {
-    throw new Error('Miro board not available')
+    throw new TypeError('Miro board not available')
   }
   const raw = await board.getSelection()
   return raw.map((item) => item as Record<string, unknown>)
@@ -134,7 +136,7 @@ export class BoardCache {
   public setSelection(items: Array<Record<string, unknown>>, board?: BoardLike): void {
     log.debug({ count: items.length }, 'Selection updated from event')
     const key = BoardCache.resolveBoardId(board)
-    const summary = items.map(BoardCache.toSummary)
+    const summary = items.map((item) => BoardCache.toSummary(item))
     this.selectionCache.set(key, items)
     this.selectionSummaryCache.set(key, summary)
     this.persistSelection(key, summary)
@@ -147,23 +149,23 @@ export class BoardCache {
     if (!selection) {
       const summary = this.restoreSelectionSummary(key)
       if (summary) {
-        selection = summary.map(BoardCache.fromSummary)
+        selection = summary.map((entry) => BoardCache.fromSummary(entry))
         this.selectionSummaryCache.set(key, summary)
         this.selectionCache.set(key, selection)
       }
     }
-    if (!selection) {
-      log.trace('Fetching selection from board source')
-      const raw = await this.selectionLoader(board)
-      selection = raw
-      const summary = raw.map(BoardCache.toSummary)
-      this.selectionCache.set(key, selection)
-      this.selectionSummaryCache.set(key, summary)
-      this.persistSelection(key, summary)
-      log.debug({ count: selection.length }, 'Selection cached from loader')
-    } else {
+    if (selection) {
       log.trace('Selection cache hit')
+      return selection
     }
+    log.trace('Fetching selection from board source')
+    const raw = await this.selectionLoader(board)
+    selection = raw
+    const summary = raw.map((item) => BoardCache.toSummary(item))
+    this.selectionCache.set(key, selection)
+    this.selectionSummaryCache.set(key, summary)
+    this.persistSelection(key, summary)
+    log.debug({ count: selection.length }, 'Selection cached from loader')
     return selection
   }
 
@@ -179,7 +181,7 @@ export class BoardCache {
     }
     if (!summary) {
       const selection = await this.getSelection(board)
-      summary = selection.map(BoardCache.toSummary)
+      summary = selection.map((item) => BoardCache.toSummary(item))
       this.selectionSummaryCache.set(key, summary)
       this.persistSelection(key, summary)
     }
@@ -222,7 +224,7 @@ export class BoardCache {
         missing.push(t)
       }
     }
-    if (missing.length) {
+    if (missing.length > 0) {
       log.trace({ missing }, 'Fetching uncached widget types')
       const fetched = await Promise.all(
         missing.map(async (type) => {
@@ -350,8 +352,8 @@ export class BoardCache {
   }
 
   private static createDefaultPersistence(): BoardCachePersistence {
-    if (typeof window !== 'undefined' && window.sessionStorage) {
-      return new SessionStoragePersistence(window.sessionStorage)
+    if (typeof globalThis !== 'undefined' && globalThis.window?.sessionStorage) {
+      return new SessionStoragePersistence(globalThis.window.sessionStorage)
     }
     return new InMemoryPersistence()
   }

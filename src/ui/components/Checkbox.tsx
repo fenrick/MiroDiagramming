@@ -22,7 +22,7 @@ export function Checkbox({
   value,
   onChange,
   id,
-  ...props
+  ...properties
 }: CheckboxProps): React.JSX.Element {
   const handleChange = (checked: boolean): void => onChange?.(checked)
   const generatedId = React.useId()
@@ -37,7 +37,7 @@ export function Checkbox({
         onChecked={() => handleChange(true)}
         onUnchecked={() => handleChange(false)}
         aria-labelledby={labelId}
-        {...props}
+        {...properties}
       />
       <label id={labelId} htmlFor={inputId}>
         {label}

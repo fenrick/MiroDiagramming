@@ -45,8 +45,8 @@ function getIconSlots(
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  { variant = 'primary', size, icon, iconPosition = 'start', css, children, ...props },
-  ref,
+  { variant = 'primary', size, icon, iconPosition = 'start', css, children, ...properties },
+  reference,
 ) {
   const largeByDefault = variant === 'primary' || variant === 'secondary' || variant === 'danger'
   const finalSize = size ?? (largeByDefault ? 'large' : 'medium')
@@ -54,7 +54,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(function 
   const { start, end } = getIconSlots(icon, iconPosition)
 
   return (
-    <DSButton ref={ref} variant={variant} size={finalSize} css={css} {...props}>
+    <DSButton ref={reference} variant={variant} size={finalSize} css={css} {...properties}>
       {start}
       <DSButton.Label>{children}</DSButton.Label>
       {end}

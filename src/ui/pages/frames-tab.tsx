@@ -30,7 +30,7 @@ const isFrame = (item: Record<string, unknown>): boolean =>
 export const FramesTab: React.FC = () => {
   const [prefix, setPrefix] = React.useState('Frame-')
   const selection = useSelection()
-  const frames = React.useMemo(() => selection.filter(isFrame), [selection])
+  const frames = React.useMemo(() => selection.filter((item) => isFrame(item)), [selection])
   const hasFrames = frames.length > 0
   const hasSelection = selection.length > 0
   const emptyStateDescription = hasSelection
@@ -61,7 +61,7 @@ export const FramesTab: React.FC = () => {
     <TabPanel tabId="frames">
       <div style={CONTENT_STYLE}>
         <PageHelp content="Rename or lock selected frames" />
-        {!hasFrames ? <EmptyState title="No frames" description={emptyStateDescription} /> : null}
+        {hasFrames ? null : <EmptyState title="No frames" description={emptyStateDescription} />}
         <SidebarSection title="Rename Frames">
           <div style={{ marginBottom: space[200] }}>
             <InfoCallout title="Selection">
@@ -117,4 +117,10 @@ export const FramesTab: React.FC = () => {
   )
 }
 
-export const tabDef: TabTuple = [2, 'frames', 'Frames', 'Rename or lock selected frames', FramesTab]
+export const tabDefinition: TabTuple = [
+  2,
+  'frames',
+  'Frames',
+  'Rename or lock selected frames',
+  FramesTab,
+]

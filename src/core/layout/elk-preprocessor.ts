@@ -20,7 +20,7 @@ const DEFAULT_WIDTH = 200
 /**
  * Insert an invisible spacer node as the first child when missing.
  */
-function insertSpacer(node: LayoutNode, opts: Required<SpacerOptions>): void {
+function insertSpacer(node: LayoutNode, options: Required<SpacerOptions>): void {
   const children = node.children ?? []
   if (children.length === 0) {
     return
@@ -34,8 +34,8 @@ function insertSpacer(node: LayoutNode, opts: Required<SpacerOptions>): void {
 
   const spacer: LayoutNode = {
     id: `spacer_${node.id}`,
-    width: node.width ?? opts.defaultWidth,
-    height: opts.topMargin,
+    width: node.width ?? options.defaultWidth,
+    height: options.topMargin,
     labels: [],
     ports: [],
     properties: { invisible: true },
@@ -71,5 +71,5 @@ export function prepareForElk(
 
   applyAlgorithm(node)
   insertSpacer(node, { topMargin, defaultWidth })
-  node.children.forEach((child) => prepareForElk(child, topMargin, defaultWidth))
+  for (const child of node.children) prepareForElk(child, topMargin, defaultWidth)
 }

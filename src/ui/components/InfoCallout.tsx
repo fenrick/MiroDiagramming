@@ -3,7 +3,7 @@ import React from 'react'
 
 import { Markdown } from './Markdown'
 
-type InfoCalloutProps = Readonly<{
+type InfoCalloutProperties = Readonly<{
   title?: string
   /** Optional markdown content; rendered when provided. */
   markdown?: string
@@ -19,7 +19,7 @@ export function InfoCallout({
   title,
   markdown,
   children,
-}: InfoCalloutProps): React.JSX.Element | null {
+}: InfoCalloutProperties): React.JSX.Element | null {
   const hasContent = React.useMemo(() => {
     if (typeof markdown === 'string' && markdown.trim().length > 0) {
       return true
@@ -30,8 +30,8 @@ export function InfoCallout({
     if (typeof children === 'string') {
       return children.trim().length > 0
     }
-    const arr = React.Children.toArray(children)
-    return arr.some((node) => (typeof node === 'string' ? node.trim().length > 0 : node !== null))
+    const array = React.Children.toArray(children)
+    return array.some((node) => (typeof node === 'string' ? node.trim().length > 0 : node !== null))
   }, [markdown, children])
   if (!hasContent) {
     return null

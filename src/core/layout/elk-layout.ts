@@ -24,9 +24,9 @@ export class LayoutEngine {
    */
   public async layoutGraph(
     data: GraphData,
-    opts: Partial<UserLayoutOptions> = {},
+    options: Partial<UserLayoutOptions> = {},
   ): Promise<LayoutResult> {
-    return performLayout(data, opts)
+    return performLayout(data, options)
   }
 }
 

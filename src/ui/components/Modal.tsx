@@ -3,7 +3,7 @@ import { styled } from '@mirohq/design-system'
 
 import { Button } from './Button'
 
-export interface ModalProps {
+export interface ModalProperties {
   /** Dialog title displayed in the header. */
   readonly title: string
   /** Whether the modal is visible. */
@@ -28,14 +28,14 @@ export function Modal({
   onClose,
   size = 'medium',
   children,
-}: ModalProps): React.JSX.Element | null {
-  const ref = React.useRef<HTMLDialogElement>(null)
+}: ModalProperties): React.JSX.Element | null {
+  const reference = React.useRef<HTMLDialogElement>(null)
 
   React.useEffect(() => {
     if (!isOpen) {
       return
     }
-    const root = ref.current
+    const root = reference.current
     if (!root) {
       return
     }
@@ -46,14 +46,14 @@ export function Modal({
   }, [isOpen])
 
   const getFocusables = React.useCallback((): HTMLElement[] => {
-    if (!ref.current) {
+    if (!reference.current) {
       return []
     }
-    return Array.from(
-      ref.current.querySelectorAll<HTMLElement>(
+    return [
+      ...reference.current.querySelectorAll<HTMLElement>(
         'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
       ),
-    )
+    ]
   }, [])
 
   const trapTab = React.useCallback(
@@ -66,7 +66,7 @@ export function Modal({
         return false
       }
       const first = nodes[0]!
-      const last = nodes[nodes.length - 1]!
+      const last = nodes.at(-1)!
       const active = document.activeElement as HTMLElement
       if (e.shiftKey && active === first) {
         last.focus()
@@ -114,7 +114,7 @@ export function Modal({
           }
         }}
       />
-      <Dialog open aria-label={title} aria-modal="true" ref={ref} size={size}>
+      <Dialog open aria-label={title} aria-modal="true" ref={reference} size={size}>
         <Header>
           <h3>{title}</h3>
           <Button variant="secondary" aria-label="Close" onClick={onClose}>

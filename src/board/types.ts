@@ -1,7 +1,7 @@
 export interface BoardUILike {
-  on(event: 'selection:update', handler: (ev: { items: unknown[] }) => void): void
+  on(event: 'selection:update', handler: (event_: { items: unknown[] }) => void): void
 
-  off?(event: 'selection:update', handler: (ev: { items: unknown[] }) => void): void
+  off?(event: 'selection:update', handler: (event_: { items: unknown[] }) => void): void
 }
 
 export interface BoardLike {
@@ -9,7 +9,7 @@ export interface BoardLike {
 
   getSelection(): Promise<Array<unknown>>
 
-  group?(opts: { items: Array<unknown> }): Promise<unknown>
+  group?(options: { items: Array<unknown> }): Promise<unknown>
 
   startBatch?(): Promise<void>
 
@@ -19,5 +19,5 @@ export interface BoardLike {
 }
 
 export interface BoardQueryLike extends BoardLike {
-  get(opts: { type: string }): Promise<Array<unknown>>
+  get(options: { type: string }): Promise<Array<unknown>>
 }

@@ -11,5 +11,3 @@ declare global {
     miro?: Miro
   }
 }
-
-export {}

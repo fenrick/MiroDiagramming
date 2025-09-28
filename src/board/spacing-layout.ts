@@ -7,7 +7,7 @@
 
 /** Compute linear offsets for a given count and spacing. */
 export function calculateSpacingOffsets(count: number, spacing: number): number[] {
-  return Array.from({ length: count }, (_, i) => i * spacing)
+  return Array.from({ length: count }, (_, index) => index * spacing)
 }
 
 /** Plan widget positions and size when distributing by growth. */
@@ -21,7 +21,7 @@ export function calculateGrowthPlan(
   }
   const sizeKey = axis === 'x' ? 'width' : 'height'
   const first = items[0]!
-  const last = items[items.length - 1]!
+  const last = items.at(-1)!
   /* c8 ignore next */
   const startEdge = (first[axis] ?? 0) - getDimension(first, sizeKey) / 2
   /* c8 ignore next */
@@ -30,7 +30,7 @@ export function calculateGrowthPlan(
   const size = (total - spacing * (items.length - 1)) / items.length
   const positions: number[] = []
   let pos = startEdge + size / 2
-  for (let i = 0; i < items.length; i += 1) {
+  for (let index = 0; index < items.length; index += 1) {
     positions.push(pos)
     pos += size + spacing
   }
@@ -45,6 +45,6 @@ export function calculateGrowthPlan(
  * @returns The numeric dimension or `0` when unavailable.
  */
 export function getDimension(item: Record<string, number>, key: string): number {
-  const val = item[key]
-  return typeof val === 'number' ? val : 0
+  const value = item[key]
+  return typeof value === 'number' ? value : 0
 }

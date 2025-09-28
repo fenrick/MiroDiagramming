@@ -59,16 +59,16 @@ export async function searchGroups(
     if (typeof (group as { getItems?: unknown }).getItems !== 'function') {
       continue
     }
-    // eslint-disable-next-line no-restricted-syntax
+
     const groupItem = group as unknown as Group
     const items = await groupItem.getItems()
     if (!Array.isArray(items)) {
       continue
     }
     const found = items.find(
-      (i) =>
-        typeof (i as { content?: string }).content === 'string' &&
-        (i as { content?: string }).content === label,
+      (index) =>
+        typeof (index as { content?: string }).content === 'string' &&
+        (index as { content?: string }).content === label,
     )
     if (found) {
       log.debug('Group found via child content')

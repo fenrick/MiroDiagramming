@@ -19,7 +19,7 @@ export function getBoard(board?: BoardLike): BoardLike {
   log.trace('Resolving board instance')
   const b = board ?? globalThis.miro?.board
   if (!b) {
-    throw new Error('Miro board not available')
+    throw new TypeError('Miro board not available')
   }
   log.debug('Board resolved')
   return b
@@ -85,13 +85,13 @@ export async function getFirstSelection(
  * @param board - Optional board API overriding `miro.board` for testing.
  */
 export async function forEachSelection(
-  cb: (item: Record<string, unknown>) => Promise<void> | void,
+  callback: (item: Record<string, unknown>) => Promise<void> | void,
   board?: BoardLike,
 ): Promise<void> {
   const b = getBoard(board)
   const selection = await boardCache.getSelection(b)
   log.info({ count: selection.length }, 'Processing selection')
-  await Promise.all(selection.map((item) => Promise.resolve(cb(item))))
+  await Promise.all(selection.map((item) => Promise.resolve(callback(item))))
 }
 
 /**

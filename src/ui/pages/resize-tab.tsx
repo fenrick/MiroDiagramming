@@ -90,7 +90,7 @@ export const ResizeTab: React.FC = () => {
       return
     }
     const target = copiedSize ?? size
-    if (target.width > 10000 || target.height > 10000) {
+    if (target.width > 10_000 || target.height > 10_000) {
       setWarning("That's bigger than your board viewport")
       return
     }
@@ -127,19 +127,21 @@ export const ResizeTab: React.FC = () => {
     if (ratio === 'none') {
       return
     }
-    setSize((prev) => {
-      const h = ratioHeight(prev.width, aspectRatioValue(ratio))
-      return prev.height === h ? prev : { ...prev, height: h }
+    setSize((previous) => {
+      const heightCalculated = ratioHeight(previous.width, aspectRatioValue(ratio))
+      return previous.height === heightCalculated
+        ? previous
+        : { ...previous, height: heightCalculated }
     })
   }, [ratio, size.width])
 
   React.useEffect(() => {
-    const handler = (e: KeyboardEvent): void => {
-      if (e.altKey && e.key.toLowerCase() === 'c') {
-        e.preventDefault()
+    const handler = (event: KeyboardEvent): void => {
+      if (event.altKey && event.key.toLowerCase() === 'c') {
+        event.preventDefault()
         copy()
-      } else if (e.altKey && e.key.toLowerCase() === 'v') {
-        e.preventDefault()
+      } else if (event.altKey && event.key.toLowerCase() === 'v') {
+        event.preventDefault()
         apply()
       }
     }
@@ -159,9 +161,9 @@ export const ResizeTab: React.FC = () => {
             </Paragraph>
           </SidebarSection>
         ) : null}
-        {!hasSelection ? (
+        {hasSelection ? null : (
           <EmptyState title="No selection" description="Select one or more items to resize." />
-        ) : null}
+        )}
         <Paragraph data-testid="size-display">
           {copiedSize
             ? `Copied: ${copiedSize.width}×${copiedSize.height}`
@@ -274,7 +276,7 @@ export const ResizeTab: React.FC = () => {
     </TabPanel>
   )
 }
-export const tabDef: TabTuple = [
+export const tabDefinition: TabTuple = [
   2,
   'size',
   'Size',
