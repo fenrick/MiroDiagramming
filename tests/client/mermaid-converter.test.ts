@@ -61,6 +61,31 @@ describe('convertMermaidToGraph', () => {
     expect(graph.edges[0]).toMatchObject({ from: 'Alice', to: 'Bob', label: 'Hello' })
   })
 
+  it('strips activation markers (+/-) around sequence arrows', async () => {
+    const source = `sequenceDiagram\n  participant Alice\n  participant John\n  Alice->>+John: Hello\n  John-->>-Alice: Reply`
+    const graph = await convertMermaidToGraph(source)
+    // Nodes should be the declared participants without accidental + or - prefixes
+    expect(graph.nodes.map((n) => n.id).sort()).toEqual(['Alice', 'John'])
+    // Both messages should connect between the correct participants
+    expect(graph.edges).toHaveLength(2)
+    expect(graph.edges[0]).toMatchObject({ from: 'Alice', to: 'John', label: 'Hello' })
+    expect(graph.edges[1]).toMatchObject({ from: 'John', to: 'Alice', label: 'Reply' })
+  })
+
+  it('ignores activation/deactivation control lines and preserves labels', async () => {
+    const source = `sequenceDiagram\n  participant A\n  participant B\n  A->>+B: activate via arrow\n  activate B\n  B-->>A: still works\n  deactivate B\n  B-->>-A: deact via arrow`
+    const graph = await convertMermaidToGraph(source)
+    expect(graph.nodes.map((n) => n.id).sort()).toEqual(['A', 'B'])
+    // Three message edges; two control lines are ignored
+    expect(graph.edges).toHaveLength(3)
+    const pairs = graph.edges.map((e) => [e.from, e.to])
+    expect(pairs).toEqual([
+      ['A', 'B'],
+      ['B', 'A'],
+      ['B', 'A'],
+    ])
+  })
+
   it('converts class diagrams into graph data', async () => {
     const source = `classDiagram\n  ClassA <|-- ClassB : inherits`
     const graph = await convertMermaidToGraph(source)

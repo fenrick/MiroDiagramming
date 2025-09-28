@@ -259,23 +259,39 @@ function parseParticipantLine(line: string): SequenceParticipant | undefined {
 
 const SEQUENCE_ARROWS = ['-->>', '->>', '..>>', '-->', '..>', '->', '--', '..', '-x', 'x-']
 
+function splitSequenceMessage(
+  messagePart: string,
+): { from: string; to: string; arrow: string } | undefined {
+  for (const arrow of SEQUENCE_ARROWS) {
+    const idx = messagePart.indexOf(arrow)
+    if (idx > 0) {
+      let from = messagePart.slice(0, idx).trim()
+      let to = messagePart.slice(idx + arrow.length).trim()
+      if (!from || !to) continue
+
+      if (from.endsWith('+') || from.endsWith('-')) {
+        from = from.slice(0, -1)
+      }
+      if (to.startsWith('+') || to.startsWith('-')) {
+        to = to.slice(1)
+      }
+      from = from.trim()
+      to = to.trim()
+      if (!from || !to) continue
+      return { from, to, arrow }
+    }
+  }
+  return undefined
+}
+
 function parseMessageLine(
   line: string,
 ): { from: string; to: string; arrow: string; label?: string } | undefined {
   const colonIndex = line.indexOf(':')
   const label = colonIndex >= 0 ? line.slice(colonIndex + 1).trim() : undefined
   const messagePart = colonIndex >= 0 ? line.slice(0, colonIndex).trim() : line.trim()
-  for (const arrow of SEQUENCE_ARROWS) {
-    const idx = messagePart.indexOf(arrow)
-    if (idx > 0) {
-      const from = messagePart.slice(0, idx).trim()
-      const to = messagePart.slice(idx + arrow.length).trim()
-      if (from && to) {
-        return { from, to, arrow, label: label?.length ? label : undefined }
-      }
-    }
-  }
-  return undefined
+  const split = splitSequenceMessage(messagePart)
+  return split ? { ...split, label: label?.length ? label : undefined } : undefined
 }
 
 function mapSequenceArrow(arrow: string): {
