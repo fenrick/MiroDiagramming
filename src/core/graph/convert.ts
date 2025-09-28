@@ -10,16 +10,20 @@ import { type EdgeData, type GraphData, type NodeData } from './graph-service'
  */
 export function edgesToHierarchy(graph: GraphData): HierNode[] {
   const nodeMap = new Map(graph.nodes.map((n) => [n.id, n]))
-  const children: Record<string, string[]> = {}
+  const children = new Map<string, string[]>()
   const childSet = new Set<string>()
   for (const edge of graph.edges) {
-    const list = children[edge.from] ?? (children[edge.from] = [])
+    let list = children.get(edge.from)
+    if (!list) {
+      list = []
+      children.set(edge.from, list)
+    }
     list.push(edge.to)
     childSet.add(edge.to)
   }
   const build = (id: string): HierNode => {
     const n = nodeMap.get(id) as NodeData
-    const kids = children[id]?.map((childId) => build(childId))
+    const kids = (children.get(id) ?? []).map((childId) => build(childId))
     return {
       id: n.id,
       label: n.label,
