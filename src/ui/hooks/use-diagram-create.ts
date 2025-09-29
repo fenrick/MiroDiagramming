@@ -55,37 +55,40 @@ export function useDiagramCreate(
   return React.useCallback(async () => {
     setProgress(0)
     setError(null)
+    const algorithmMap: Record<LayoutChoice, ElkAlgorithm> = {
+      Layered: 'layered',
+      Tree: 'mrtree',
+      Grid: 'force',
+      Nested: 'rectpacking',
+      Radial: 'radial',
+      Box: 'box',
+      'Rect Packing': 'rectpacking',
+    }
+    const processNested = async (file: File): Promise<void> => {
+      setLastProc(hierarchyProcessor)
+      await hierarchyProcessor.processFile(file, {
+        createFrame: options.withFrame,
+        frameTitle: options.frameTitle || undefined,
+        padding: options.nestedPadding,
+        topSpacing: options.nestedTopSpacing,
+      })
+    }
+    const processFlat = async (file: File): Promise<void> => {
+      setLastProc(graphProcessor)
+      const selectedAlg = options.showAdvanced
+        ? options.layoutOpts.algorithm
+        : algorithmMap[options.layoutChoice]
+      await graphProcessor.processFile(file, {
+        createFrame: options.withFrame,
+        frameTitle: options.frameTitle || undefined,
+        layout: { ...options.layoutOpts, algorithm: selectedAlg },
+        existingMode: options.existingMode,
+      })
+    }
     for (const file of importQueue) {
       try {
-        if (options.layoutChoice === 'Nested') {
-          setLastProc(hierarchyProcessor)
-          await hierarchyProcessor.processFile(file, {
-            createFrame: options.withFrame,
-            frameTitle: options.frameTitle || undefined,
-            padding: options.nestedPadding,
-            topSpacing: options.nestedTopSpacing,
-          })
-        } else {
-          setLastProc(graphProcessor)
-          const algorithmMap: Record<LayoutChoice, ElkAlgorithm> = {
-            Layered: 'layered',
-            Tree: 'mrtree',
-            Grid: 'force',
-            Nested: 'rectpacking',
-            Radial: 'radial',
-            Box: 'box',
-            'Rect Packing': 'rectpacking',
-          }
-          const selectedAlg = options.showAdvanced
-            ? options.layoutOpts.algorithm
-            : algorithmMap[options.layoutChoice]
-          await graphProcessor.processFile(file, {
-            createFrame: options.withFrame,
-            frameTitle: options.frameTitle || undefined,
-            layout: { ...options.layoutOpts, algorithm: selectedAlg },
-            existingMode: options.existingMode,
-          })
-        }
+        if (options.layoutChoice === 'Nested') await processNested(file)
+        else await processFlat(file)
         setProgress(100)
       } catch (error) {
         const message = String(error)
