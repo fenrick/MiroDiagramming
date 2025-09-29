@@ -1,3 +1,10 @@
+## [2.6.2](https://github.com/fenrick/MiroDiagramming/compare/v2.6.1...v2.6.2) (2025-09-29)
+
+
+### Bug Fixes
+
+* **parser:** replace risky regex with string parsing in parseSubgraphs ([db5db1b](https://github.com/fenrick/MiroDiagramming/commit/db5db1b8052c703530edddc6e6e03c2f1f18d782))
+
 ## [2.6.1](https://github.com/fenrick/MiroDiagramming/compare/v2.6.0...v2.6.1) (2025-09-29)
 
 
