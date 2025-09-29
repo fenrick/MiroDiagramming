@@ -12,7 +12,7 @@ export function relativePosition(
 ): { x: number; y: number } {
   const fx = (pt.x - node.x) / node.width
   const fy = (pt.y - node.y) / node.height
-  const clamp = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v)
+  const clamp = (v: number) => (v < 0 ? 0 : Math.min(v, 1))
   return { x: clamp(fx), y: clamp(fy) }
 }
 
@@ -89,14 +89,14 @@ function suggestConnectorShape(edge: {
   // Tolerance for near-axis alignment
   const tol = 0.01
   let manhattanSegments = 0
-  for (let i = 0; i < points.length - 1; i += 1) {
-    const a = points[i]!
-    const b = points[i + 1]!
+  for (let index = 0; index < points.length - 1; index += 1) {
+    const a = points[index]!
+    const b = points[index + 1]!
     const dx = Math.abs(b.x - a.x)
     const dy = Math.abs(b.y - a.y)
-    const len = Math.max(dx, dy)
-    if (len === 0) continue
-    const isAxisAligned = dx / len < tol || dy / len < tol
+    const length = Math.max(dx, dy)
+    if (length === 0) continue
+    const isAxisAligned = dx / length < tol || dy / length < tol
     if (isAxisAligned) manhattanSegments += 1
   }
   const ratio = manhattanSegments / (points.length - 1)
@@ -105,15 +105,19 @@ function suggestConnectorShape(edge: {
 
 function sideToFraction(side: 'N' | 'E' | 'S' | 'W'): { x: number; y: number } {
   switch (side) {
-    case 'N':
+    case 'N': {
       return { x: 0.5, y: 0 }
-    case 'S':
+    }
+    case 'S': {
       return { x: 0.5, y: 1 }
-    case 'E':
+    }
+    case 'E': {
       return { x: 1, y: 0.5 }
+    }
     case 'W':
-    default:
+    default: {
       return { x: 0, y: 0.5 }
+    }
   }
 }
 

@@ -13,17 +13,13 @@ type DagreOptions = Partial<UserLayoutOptions> & {
 }
 
 function rankdir(direction: DagreOptions['direction']): 'TB' | 'BT' | 'LR' | 'RL' {
-  switch (direction) {
-    case 'DOWN':
-      return 'TB'
-    case 'UP':
-      return 'BT'
-    case 'LEFT':
-      return 'RL'
-    case 'RIGHT':
-    default:
-      return 'LR'
+  const map: Record<string, 'TB' | 'BT' | 'LR' | 'RL'> = {
+    DOWN: 'TB',
+    UP: 'BT',
+    LEFT: 'RL',
+    RIGHT: 'LR',
   }
+  return map[direction ?? 'RIGHT'] ?? 'LR'
 }
 
 async function baseLayoutGraphDagre(
@@ -31,14 +27,14 @@ async function baseLayoutGraphDagre(
   options: DagreOptions = {},
 ): Promise<LayoutResult> {
   const g = new dagre.graphlib.Graph({ multigraph: true, compound: false })
-  const dir = rankdir(options.direction ?? 'RIGHT')
+  const rankDirection = rankdir(options.direction ?? 'RIGHT')
   // Dagre expects `nodesep` and `ranksep`. Prefer explicit `nodeSpacing`/`rankSpacing`
   // when provided (from Mermaid), otherwise fall back to a single `spacing` knob.
   const defaultSpacing = typeof options.spacing === 'number' ? options.spacing : 60
   const nodesep = typeof options.nodeSpacing === 'number' ? options.nodeSpacing : defaultSpacing
   const ranksep = typeof options.rankSpacing === 'number' ? options.rankSpacing : defaultSpacing
   g.setGraph({
-    rankdir: dir,
+    rankdir: rankDirection,
     // Align nodes to the upper edge of each rank to avoid "staircase" drift
     align: 'UL',
     // Standard dagre tunables
@@ -64,7 +60,7 @@ async function baseLayoutGraphDagre(
   // Use Dagre's computed coordinates as-is to preserve spacing semantics.
 
   const nodes: Record<string, PositionedNode> = {}
-  g.nodes().forEach((id: string) => {
+  for (const id of g.nodes()) {
     const n = g.node(id) as { x: number; y: number; width: number; height: number }
     nodes[id] = {
       id,
@@ -73,23 +69,23 @@ async function baseLayoutGraphDagre(
       width: n.width,
       height: n.height,
     }
-  })
+  }
 
   const edges: PositionedEdge[] = []
-  g.edges().forEach((e: { v: string; w: string; name?: string }) => {
-    const info = g.edge(e) as { points?: Array<{ x: number; y: number }> }
+  for (const edgeReference of g.edges()) {
+    const info = g.edge(edgeReference) as { points?: Array<{ x: number; y: number }> }
     const pts = info.points ?? []
     if (pts.length >= 2) {
       const start = pts[0]!
-      const end = pts[pts.length - 1]!
+      const end = pts.at(-1)!
       const bends = pts.slice(1, -1)
       edges.push({
         startPoint: start,
         endPoint: end,
-        bendPoints: bends.length ? bends : undefined,
+        bendPoints: bends.length > 0 ? bends : undefined,
       })
     }
-  })
+  }
 
   return { nodes, edges }
 }
@@ -220,12 +216,12 @@ export async function layoutGraphDagre(
     if (!c) return undefined
     if (c.childrenNodes.includes(nodeId)) return nodeId
     // climb up via parent pointers
-    let curParent = getParentId(nodeId, data)
-    while (curParent) {
-      const parentCluster = tree.get(curParent)
+    let currentParent = getParentId(nodeId, data)
+    while (currentParent) {
+      const parentCluster = tree.get(currentParent)
       if (!parentCluster) break
-      if (parentCluster.parent === clusterId) return curParent
-      curParent = parentCluster.parent
+      if (parentCluster.parent === clusterId) return currentParent
+      currentParent = parentCluster.parent
     }
     return undefined
   }
@@ -317,7 +313,6 @@ export async function layoutGraphDagre(
   const roots = [...tree.values()].filter((c) => !c.parent).map((c) => c.id)
   const inheritDir = options.direction ?? 'RIGHT'
   for (const r of roots) {
-    // eslint-disable-next-line no-await-in-loop
     await layoutClusterRecursive(r, inheritDir)
   }
 
@@ -364,18 +359,18 @@ export async function layoutGraphDagre(
     const box = boundingBox(laid.nodes)
     const cx = p.x + p.width / 2
     const cy = p.y + p.height / 2
-    const distL = cx - box.minX
-    const distR = box.maxX - cx
-    const distT = cy - box.minY
-    const distB = box.maxY - cy
-    const min = Math.min(distL, distR, distT, distB)
-    if (min === distL) return 'W'
-    if (min === distR) return 'E'
-    if (min === distT) return 'N'
+    const distributionL = cx - box.minX
+    const distributionR = box.maxX - cx
+    const distributionT = cy - box.minY
+    const distributionB = box.maxY - cy
+    const min = Math.min(distributionL, distributionR, distributionT, distributionB)
+    if (min === distributionL) return 'W'
+    if (min === distributionR) return 'E'
+    if (min === distributionT) return 'N'
     return 'S'
   }
 
-  for (const [idx, e] of data.edges.entries()) {
+  for (const [index, e] of data.edges.entries()) {
     const rf = rootOf(e.from)
     const rt = rootOf(e.to)
     // Internal edges fully within a single root cluster are handled inside during expansion; skip here
@@ -384,11 +379,11 @@ export async function layoutGraphDagre(
     }
     const ofrom = rf ?? e.from
     const oto = rt ?? e.to
-    outerEdges.push({ from: ofrom, to: oto, sourceIdx: idx })
+    outerEdges.push({ from: ofrom, to: oto, sourceIdx: index })
     const hint: { from?: EdgeHintSide; to?: EdgeHintSide } = {}
     if (rf) hint.from = computeSide(rf, e.from)
     if (rt) hint.to = computeSide(rt, e.to)
-    edgeSideHints.set(idx, hint)
+    edgeSideHints.set(index, hint)
   }
 
   const outerGraph: GraphData = {
@@ -493,7 +488,7 @@ export async function layoutGraphDagre(
         // Recurse deeper
         if (subCluster.childrenClusters.length > 0) {
           // Call expandCluster recursively; rely on finalNodes[sub] acting as proxy
-          // eslint-disable-next-line @typescript-eslint/no-use-before-define
+
           expandCluster(sub, subOffX - padding, subOffY - padding)
         }
       }
@@ -527,9 +522,9 @@ export async function layoutGraphDagre(
   }
 
   // Add outer edge paths per outerLayout (with hintSides calculated earlier)
-  for (let i = 0; i < outerEdges.length; i += 1) {
-    const orig = outerEdges[i]!.sourceIdx
-    const epos = outerLayout.edges[i]
+  for (const [index, outerEdge] of outerEdges.entries()) {
+    const orig = outerEdge!.sourceIdx
+    const epos = outerLayout.edges[index]
     if (epos) {
       finalEdges.push({
         startPoint: epos.startPoint,

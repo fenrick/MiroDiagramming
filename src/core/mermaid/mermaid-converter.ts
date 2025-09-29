@@ -145,21 +145,21 @@ type SequenceParticipant = {
 
 function decodeEntities(text: string): string {
   return text
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&amp;/g, '&')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
+    .replaceAll('&lt;', '<')
+    .replaceAll('&gt;', '>')
+    .replaceAll('&amp;', '&')
+    .replaceAll('&quot;', '"')
+    .replaceAll('&#39;', "'")
 }
 
 function stripMarkdown(text: string): string {
   let t = text
   // Remove emphasis markers *...* and _..._
-  t = t.replace(/\*(.*?)\*/g, '$1').replace(/_(.*?)_/g, '$1')
+  t = t.replaceAll(/\*(.*?)\*/g, '$1').replaceAll(/_(.*?)_/g, '$1')
   // Remove inline code backticks
-  t = t.replace(/`+/g, '')
+  t = t.replaceAll(/`+/g, '')
   // Collapse multiple spaces
-  t = t.replace(/[\t\f\v]+/g, ' ')
+  t = t.replaceAll(/[\t\f\v]+/g, ' ')
   return t
 }
 
@@ -240,18 +240,18 @@ function parseClassDefs(source: string): Map<string, ClassStyle> {
       .split(',')
       .map((s) => s.trim())
       .filter(Boolean)
-    const obj: ClassStyle = {}
+    const object: ClassStyle = {}
     for (const entry of entries) {
       const [k, v] = entry.split(':')
       if (!k || v === undefined) continue
       const key = k.trim()
-      const val = v.trim()
-      if (key && val) {
+      const value = v.trim()
+      if (key && value) {
         // @ts-expect-error dynamic
-        obj[key] = val
+        object[key] = value
       }
     }
-    map.set(name, obj)
+    map.set(name, object)
   }
   return map
 }
@@ -271,7 +271,7 @@ function parseSubgraphs(source: string): {
   for (const raw of lines) {
     const line = raw.trim()
     if (!line) continue
-    const open = /^(?:subgraph)\s+(.+)$/i.exec(line)
+    const open = /^subgraph\s+(.+)$/i.exec(line)
     if (open) {
       let name = open[1]!.trim()
       // strip trailing title in brackets: "subgraph one [Title]"
@@ -279,7 +279,7 @@ function parseSubgraphs(source: string): {
       if (bracket) name = bracket[1]!.trim()
       names.add(name)
       if (stack.length > 0) {
-        parents.set(name, stack[stack.length - 1]!)
+        parents.set(name, stack.at(-1)!)
       }
       stack.push(name)
       continue
@@ -290,8 +290,8 @@ function parseSubgraphs(source: string): {
     }
     // Per-mermaid, a subgraph can contain a local `direction LR|RL|TB|BT`.
     if (stack.length > 0) {
-      const current = stack[stack.length - 1]!
-      const dm = /^direction\s+([A-Za-z]{2})\b/i.exec(line)
+      const current = stack.at(-1)!
+      const dm = /^direction\s+([A-Z]{2})\b/i.exec(line)
       if (dm) {
         const code = dm[1]!.toUpperCase()
         if (code === 'LR' || code === 'RL' || code === 'TB' || code === 'BT') {
@@ -300,7 +300,7 @@ function parseSubgraphs(source: string): {
         continue
       }
       // capture simple identifiers on this line (A, a1, etc.)
-      const re = /\b([A-Za-z0-9_][A-Za-z0-9_-]*)\b/g
+      const re = /\b(\w[\w-]*)\b/g
       let m: RegExpExecArray | null
       while ((m = re.exec(line))) {
         const id = sanitizeIdentifier(m[1]!)
@@ -982,10 +982,10 @@ export async function convertMermaidToGraph(
         }
         if (Object.keys(merged).length > 0) {
           node.metadata = {
-            ...(node.metadata ?? {}),
+            ...node.metadata,
             styleOverrides: {
-              ...((node.metadata as { styleOverrides?: NodeStyleOverrides } | undefined)
-                ?.styleOverrides ?? {}),
+              ...(node.metadata as { styleOverrides?: NodeStyleOverrides } | undefined)
+                ?.styleOverrides,
               ...merged,
             },
           }
@@ -996,7 +996,7 @@ export async function convertMermaidToGraph(
     for (const node of nodeList) {
       const parent = subgraphMap.membership.get(node.id)
       if (parent) {
-        node.metadata = { ...(node.metadata ?? {}), parent }
+        node.metadata = { ...node.metadata, parent }
       }
     }
     // Add container nodes for each subgraph so layout can compute bounds
@@ -1004,23 +1004,39 @@ export async function convertMermaidToGraph(
       code: 'LR' | 'RL' | 'TB' | 'BT' | undefined,
     ): 'UP' | 'DOWN' | 'LEFT' | 'RIGHT' | undefined => {
       switch (code) {
-        case 'LR':
+        case 'LR': {
           return 'RIGHT'
-        case 'RL':
+        }
+        case 'RL': {
           return 'LEFT'
-        case 'TB':
+        }
+        case 'TB': {
           return 'DOWN'
-        case 'BT':
+        }
+        case 'BT': {
           return 'UP'
-        default:
+        }
+        default: {
           return undefined
+        }
       }
     }
 
     for (const name of subgraphMap.names) {
       // Avoid collisions when a node shares the same id
       const exists = nodeList.some((n) => n.id === name)
-      if (!exists) {
+      if (exists) {
+        // If a node with the same id exists, at least annotate subgraph metadata/parent
+        const existing = nodeList.find((n) => n.id === name)!
+        const subgraphDirection = mapDirection(subgraphMap.directions.get(name))
+        const parentSubgraph = subgraphMap.parents.get(name)
+        existing.metadata = {
+          ...existing.metadata,
+          isSubgraph: true,
+          ...(subgraphDirection ? { subgraphDirection } : {}),
+          ...(parentSubgraph ? { parent: parentSubgraph } : {}),
+        }
+      } else {
         const subgraphDirection = mapDirection(subgraphMap.directions.get(name))
         const meta: Record<string, unknown> = subgraphDirection
           ? { isSubgraph: true, subgraphDirection }
@@ -1035,17 +1051,6 @@ export async function convertMermaidToGraph(
           type: 'Composite',
           metadata: meta,
         })
-      } else {
-        // If a node with the same id exists, at least annotate subgraph metadata/parent
-        const existing = nodeList.find((n) => n.id === name)!
-        const subgraphDirection = mapDirection(subgraphMap.directions.get(name))
-        const parentSubgraph = subgraphMap.parents.get(name)
-        existing.metadata = {
-          ...(existing.metadata ?? {}),
-          isSubgraph: true,
-          ...(subgraphDirection ? { subgraphDirection } : {}),
-          ...(parentSubgraph ? { parent: parentSubgraph } : {}),
-        }
       }
     }
     if (nodeList.length === 0) {

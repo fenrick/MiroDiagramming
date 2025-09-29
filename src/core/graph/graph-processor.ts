@@ -201,11 +201,12 @@ export class GraphProcessor extends UndoableProcessor {
         nodes: graph.nodes.map((n) => {
           const m = measured[n.id]
           if (!m) return n
-          const prevW = positions[n.id]?.width
-          const prevH = positions[n.id]?.height
-          const width = prevW && Math.abs(m.width - prevW) <= epsilon ? prevW : m.width
-          const height = prevH && Math.abs(m.height - prevH) <= epsilon ? prevH : m.height
-          return { ...n, metadata: { ...(n.metadata ?? {}), width, height } }
+          const previousW = positions[n.id]?.width
+          const previousH = positions[n.id]?.height
+          const width = previousW && Math.abs(m.width - previousW) <= epsilon ? previousW : m.width
+          const height =
+            previousH && Math.abs(m.height - previousH) <= epsilon ? previousH : m.height
+          return { ...n, metadata: { ...n.metadata, width, height } }
         }),
         edges: graph.edges,
       }
@@ -385,13 +386,13 @@ export class GraphProcessor extends UndoableProcessor {
     }
     // Create subgraph containers first, deepest-first, to render behind descendants
     const depth = (id: string): number => {
-      let d = 0
-      let cur = id
-      while (containerParent.has(cur)) {
-        d += 1
-        cur = containerParent.get(cur)!
+      let depthCount = 0
+      let current = id
+      while (containerParent.has(current)) {
+        depthCount += 1
+        current = containerParent.get(current)!
       }
-      return d
+      return depthCount
     }
     const subgraphNames = [...new Set([...subgraphChildren.keys(), ...containerParent.keys()])]
     subgraphNames.sort((a, b) => depth(b) - depth(a))
@@ -439,12 +440,17 @@ export class GraphProcessor extends UndoableProcessor {
       try {
         const palette = ['#F2F4FC', '#EFF9EC', '#FFEEDE', '#FEF2FF', '#FFFAE7', '#F7F7F7']
         let hash = 0
-        for (let i = 0; i < name.length; i += 1) hash = (hash * 31 + name.charCodeAt(i)) >>> 0
+        for (let index = 0; index < name.length; index += 1) {
+          const code = name.codePointAt(index) ?? 0
+          hash = (hash * 31 + code) >>> 0
+        }
         const color = palette[hash % palette.length]!
         const interaction = this.builder.beginShapeInteraction(container as BaseItem)
         interaction.applyTemplate({ style: { fillColor: color } }, name)
         await interaction.commit()
-      } catch {}
+      } catch {
+        // Best-effort tint; ignore styling failures in tests or limited SDK contexts.
+      }
       this.registerCreated(container)
       map[name] = container
     }
