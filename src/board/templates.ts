@@ -210,7 +210,9 @@ export class TemplateManager {
       const key = this.aliasMap.get(safeName) ?? safeName
       const tpl = this.templateMap.get(key)
       if (tpl && Array.isArray(tpl.elements) && tpl.elements.length > 0) {
-        tpl.elements[0] = { ...tpl.elements[0], shape: sanitizeShapeType(shape) }
+        // Experimental overrides are applied verbatim to allow aliases like 'diamond'.
+        // Downstream shape clients can translate to SDK-specific names if needed.
+        tpl.elements[0] = { ...tpl.elements[0], shape }
       }
     }
   }
