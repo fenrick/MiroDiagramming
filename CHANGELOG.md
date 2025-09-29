@@ -1,3 +1,11 @@
+## [2.4.1](https://github.com/fenrick/MiroDiagramming/compare/v2.4.0...v2.4.1) (2025-09-29)
+
+
+### Bug Fixes
+
+* **core:** allow & in alias keys to preserve existing presets ([c9b9183](https://github.com/fenrick/MiroDiagramming/commit/c9b91838a62e10590571675f7ca124a8da60ffca))
+* **security:** harden dynamic lookups across board utilities ([9c258db](https://github.com/fenrick/MiroDiagramming/commit/9c258db3af0c793e43f01fefbb08321b4a987580))
+
 # [2.4.0](https://github.com/fenrick/MiroDiagramming/compare/v2.3.0...v2.4.0) (2025-09-28)
 
 
