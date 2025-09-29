@@ -14,6 +14,7 @@ export function PanelShell({ children }: { children: React.ReactNode }): React.J
         flexDirection: 'column',
         flex: 1,
         height: '100%',
+        minHeight: 0,
         boxSizing: 'border-box',
         maxWidth: 'var(--size-drawer)',
         paddingLeft: '$100',

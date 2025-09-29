@@ -78,6 +78,45 @@ Static hosting only. Use host‑level health checks for `index.html` as needed.
     - Where: Codebase‑wide; specifically `tests/client/style-presets.test.ts[x]`.
     - DoD: `npm run lint` clean with zero warnings.
 
+## Mermaid → Miro Rendering (Dagre‑first)
+
+Goal
+
+- Treat Mermaid as a DSL only. Parse to our graph model, lay out with Dagre (default) or ELK (optional), and render to Miro widgets. Avoid reading Mermaid SVG for geometry.
+
+Steps
+
+1. Add Dagre layout engine [In Progress]
+
+- Implement `src/core/layout/dagre-layout.ts` returning `LayoutResult` (positions, bendpoints) from `GraphData`.
+- Map our `UserLayoutOptions` to Dagre (direction, spacing).
+
+2. Engine selection & flags [Pending]
+
+- New env flag `VITE_MERMAID_LAYOUT_ENGINE = dagre | elk | mermaid`.
+- Wire `MermaidRenderer` to choose engine based on the flag. Keep default = `mermaid` to avoid test churn; docs will recommend `dagre` in real boards.
+
+3. Parser‑only philosophy [Pending]
+
+- Evaluate `@mermaid-js/parser` to build a typed AST → IR converter, decoupling from Mermaid’s internal db structures.
+- Start with flowchart; plan state/class as follow‑ups.
+
+4. Remove SVG‑geometry dependency [Pending]
+
+- Keep `src/core/mermaid/mermaid-layout.ts` behind the `mermaid` engine only for legacy comparison.
+- Switch app defaults to `dagre` after bake‑in.
+
+5. Docs & UX [Pending]
+
+- Update `docs/node-architecture.md` to describe the pipeline and engine flag.
+- Optional toggle in Mermaid tab under “Advanced”.
+
+6. Edge cases & polish [Pending]
+
+- Subgraphs/clusters → frames.
+- Edge labels → positioned text.
+- Basic text measurement heuristic for better node sizing.
+
 - Maintain formatting
     - What’s needed: Ensure Prettier config is applied consistently; run formatter in CI/local.
     - Where: Project root via `npm run format:write` (or equivalent).

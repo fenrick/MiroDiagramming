@@ -86,3 +86,28 @@ Output is a static bundle that can be served via `config/default.conf.template` 
 ## Migration Notes
 
 If you spot references to the removed Node backend (Prisma, Fastify, `/api` route calls), please delete or rewrite them. `implementation_plan.md` tracks any follow-up clean-up – update that document whenever you finish an item.
+
+## Diagram Rendering Pipeline
+
+We treat Mermaid as a DSL and run our own layout.
+
+- Parse Mermaid → Graph IR (nodes, edges, groups)
+- Layout IR with selected engine
+    - `dagre` (default target for Mermaid diagrams)
+    - `elk` (optional)
+    - `mermaid` (legacy; reads SVG geometry; use only for comparison)
+- Render IR to Miro widgets (shapes, text, connectors, frames)
+
+Why
+
+- Avoid reliance on Mermaid’s SVG/DOM renderer for geometry (fragile in non‑browser contexts).
+- Keep predictable, headless layouts in browser and tests.
+
+Configuration
+
+- `VITE_MERMAID_LAYOUT_ENGINE=dagre|elk|mermaid` (temporary default: `mermaid` to keep tests stable; we will flip to `dagre` after bake‑in.)
+
+Notes
+
+- Shape/type mapping still comes from Mermaid classes and our template map.
+- Edge labels are rendered as positioned text items when provided by the engine.

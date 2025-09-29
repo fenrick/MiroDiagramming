@@ -209,10 +209,9 @@ function mapNodesFromSvg(
   graph: GraphData,
 ): Record<string, PositionedNode> {
   const nodes: Record<string, PositionedNode> = {}
+  // Collect graphic groups that represent actual nodes; exclude label-only wrappers.
   const nodeElements = [
-    ...svgElement.querySelectorAll<SVGGElement>(
-      'g.node, g.actor, g.classGroup, g.state, g.nodeLabel',
-    ),
+    ...svgElement.querySelectorAll<SVGGElement>('g.node, g.actor, g.classGroup, g.state'),
   ]
   const byDomId = new Map<string, SVGGElement>()
   for (const element of nodeElements) {

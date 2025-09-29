@@ -176,7 +176,19 @@ export class BoardBuilder {
 
   /** Create or update a node widget from a template. */
   public async createNode(node: unknown, pos: PositionedNode): Promise<BoardItem> {
-    log.info({ type: (node as NodeData)?.type }, 'Creating node')
+    const nd = node as NodeData
+    const meta = (nd?.metadata ?? {}) as Record<string, unknown>
+    log.info(
+      {
+        type: nd?.type,
+        label: nd?.label,
+        mermaidType: meta.mermaidType,
+        mermaidShape: meta.mermaidShape,
+        mappedShape: meta.shape,
+        classes: meta.classes,
+      },
+      'Creating node',
+    )
     if (!pos || typeof pos.x !== 'number' || typeof pos.y !== 'number') {
       throw new TypeError(`Invalid position: ${JSON.stringify(pos)}`)
     }

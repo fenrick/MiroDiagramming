@@ -1,4 +1,5 @@
 import React from 'react'
+import { Box } from '@mirohq/design-system'
 import { ScrollArea as DSScrollArea } from '@mirohq/design-system-scroll-area'
 
 /**
@@ -6,8 +7,8 @@ import { ScrollArea as DSScrollArea } from '@mirohq/design-system-scroll-area'
  */
 export function ScrollArea({ children }: { children: React.ReactNode }): React.JSX.Element {
   return (
-    <div style={{ flex: 1, minHeight: 0 }}>
-      <DSScrollArea type="hover">
+    <Box css={{ flex: 1, minHeight: 0, height: '100%' }}>
+      <DSScrollArea type="hover" css={{ height: '100%' }}>
         <DSScrollArea.Viewport>
           <div
             style={{
@@ -25,6 +26,6 @@ export function ScrollArea({ children }: { children: React.ReactNode }): React.J
           <DSScrollArea.Thumb />
         </DSScrollArea.Scrollbar>
       </DSScrollArea>
-    </div>
+    </Box>
   )
 }

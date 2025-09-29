@@ -143,12 +143,34 @@ type SequenceParticipant = {
   label: string
 }
 
+function decodeEntities(text: string): string {
+  return text
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+}
+
+function stripMarkdown(text: string): string {
+  let t = text
+  // Remove emphasis markers *...* and _..._
+  t = t.replace(/\*(.*?)\*/g, '$1').replace(/_(.*?)_/g, '$1')
+  // Remove inline code backticks
+  t = t.replace(/`+/g, '')
+  // Collapse multiple spaces
+  t = t.replace(/[\t\f\v]+/g, ' ')
+  return t
+}
+
 function normaliseLabel(candidate: string | undefined, fallback: string): string {
   if (typeof candidate !== 'string') {
     return fallback
   }
   const trimmed = candidate.trim()
-  return trimmed.length > 0 ? trimmed : fallback
+  if (trimmed.length === 0) return fallback
+  const decoded = decodeEntities(trimmed)
+  return stripMarkdown(decoded)
 }
 
 function parseCssDeclarations(entries?: string[]): Record<string, string> {
@@ -194,6 +216,92 @@ function parseLength(value: string | undefined): number | undefined {
 
 import { resolveColor } from '../utils/color-utilities'
 import { colors } from '@mirohq/design-tokens'
+
+type ClassStyle = {
+  fill?: string
+  stroke?: string
+  color?: string
+  ['stroke-dasharray']?: string
+}
+
+function parseClassDefs(source: string): Map<string, ClassStyle> {
+  const map = new Map<string, ClassStyle>()
+  const lines = source.split(/\r?\n/)
+  for (const raw of lines) {
+    const line = raw.trim()
+    if (!/^classDef\s+/i.test(line)) continue
+    const rest = line.replace(/^classDef\s+/i, '')
+    const [namePart, stylePart] = rest.split(/\s+/, 2)
+    const name = namePart?.trim()
+    const style = stylePart?.trim()
+    if (!name || !style) continue
+    // style is comma-separated CSS-like list: fill:#fff,stroke:#000,color:#111
+    const entries = style
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean)
+    const obj: ClassStyle = {}
+    for (const entry of entries) {
+      const [k, v] = entry.split(':')
+      if (!k || v === undefined) continue
+      const key = k.trim()
+      const val = v.trim()
+      if (key && val) {
+        // @ts-expect-error dynamic
+        obj[key] = val
+      }
+    }
+    map.set(name, obj)
+  }
+  return map
+}
+
+function parseSubgraphs(source: string): {
+  names: Set<string>
+  membership: Map<string, string>
+} {
+  const names = new Set<string>()
+  const membership = new Map<string, string>()
+  const lines = source.split(/\r?\n/)
+  let current: string | null = null
+  for (const raw of lines) {
+    const line = raw.trim()
+    if (!line) continue
+    const open = /^(?:subgraph)\s+(.+)$/i.exec(line)
+    if (open) {
+      current = open[1]!.trim()
+      // strip trailing title in brackets: "subgraph one [Title]"
+      const bracket = /^(.*?)\s*\[/.exec(current)
+      if (bracket) current = bracket[1]!.trim()
+      names.add(current)
+      continue
+    }
+    if (/^end\b/i.test(line)) {
+      current = null
+      continue
+    }
+    if (current) {
+      // capture simple identifiers on this line (A, a1, etc.)
+      const re = /\b([A-Za-z0-9_][A-Za-z0-9_-]*)\b/g
+      let m: RegExpExecArray | null
+      while ((m = re.exec(line))) {
+        const id = m[1]!
+        // skip Mermaid keywords like subgraph/end/flowchart/graph
+        if (
+          /^(subgraph|end|flowchart|graph|classDiagram|stateDiagram|sequenceDiagram|erDiagram)$/i.test(
+            id,
+          )
+        ) {
+          continue
+        }
+        if (!membership.has(id)) {
+          membership.set(id, current)
+        }
+      }
+    }
+  }
+  return { names, membership }
+}
 
 function parseNodeStyles(vertex: RawVertex): NodeStyleOverrides | undefined {
   const css = parseCssDeclarations(vertex.styles)
@@ -724,7 +832,9 @@ function toNode(vertex: RawVertex): NodeData {
   if (styleOverrides) {
     metadata.styleOverrides = styleOverrides
   }
-  const shape = mapShape(vertex.shape)
+  // Mermaid's flowchart db sometimes exposes shape on `type` instead of `shape`.
+  // Prefer `shape`, fall back to `type` when it looks like a known shape keyword.
+  const shape = mapShape(vertex.shape ?? vertex.type)
   if (shape) {
     metadata.shape = shape
   }
@@ -786,6 +896,9 @@ export async function convertMermaidToGraph(
   source: string,
   options: MermaidConversionOptions = {},
 ): Promise<GraphData> {
+  // Parse subgraph blocks ahead of conversion to capture membership.
+  const subgraphMap = parseSubgraphs(source)
+  const classDefs = parseClassDefs(source)
   const trimmed = source.trim()
   if (!trimmed) {
     throw new MermaidConversionError('Mermaid definition is empty')
@@ -824,6 +937,58 @@ export async function convertMermaidToGraph(
       throw new MermaidConversionError('Mermaid diagram did not expose vertex data')
     }
     const nodeList = [...vertices.values()].map((vertex) => toNode(vertex))
+    // Apply classDef styles if present
+    if (classDefs.size > 0) {
+      for (const node of nodeList) {
+        const cls = (node.metadata as { classes?: string[] } | undefined)?.classes
+        if (!cls || cls.length === 0) continue
+        const merged: NodeStyleOverrides = {}
+        for (const c of cls) {
+          const def = classDefs.get(c)
+          if (!def) continue
+          if (def.fill) {
+            const resolved = resolveColor(def.fill.toLowerCase(), colors.white)
+            if (/^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(resolved)) {
+              merged.fillColor = resolved
+            }
+          }
+          if (def.stroke) {
+            const resolved = resolveColor(def.stroke.toLowerCase(), colors.black)
+            if (/^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(resolved)) {
+              merged.borderColor = resolved
+            }
+          }
+          if (def.color) {
+            merged.textColor = def.color
+          }
+        }
+        if (Object.keys(merged).length > 0) {
+          node.metadata = {
+            ...(node.metadata ?? {}),
+            styleOverrides: {
+              ...((node.metadata as { styleOverrides?: NodeStyleOverrides } | undefined)
+                ?.styleOverrides ?? {}),
+              ...merged,
+            },
+          }
+        }
+      }
+    }
+    // Mark parent membership on nodes present inside subgraph blocks
+    for (const node of nodeList) {
+      const parent = subgraphMap.membership.get(node.id)
+      if (parent) {
+        node.metadata = { ...(node.metadata ?? {}), parent }
+      }
+    }
+    // Add container nodes for each subgraph so layout can compute bounds
+    for (const name of subgraphMap.names) {
+      // Avoid collisions when a node shares the same id
+      const exists = nodeList.some((n) => n.id === name)
+      if (!exists) {
+        nodeList.push({ id: name, label: name, type: 'Composite', metadata: { isSubgraph: true } })
+      }
+    }
     if (nodeList.length === 0) {
       throw new MermaidConversionError('Mermaid diagram has no nodes to render')
     }
@@ -832,6 +997,8 @@ export async function convertMermaidToGraph(
     const edgeList = Array.isArray(edges)
       ? edges.map((edge, index) => {
           const converted = toEdge(edge)
+          // Preserve edges that reference subgraph names (e.g., one --> two)
+          // These will connect frames if created for subgraphs.
           const style = linkStyles.get(index) ?? defaultLinkStyle
           if (style) {
             const meta = (converted.metadata ?? {}) as { styleOverrides?: EdgeStyleOverrides }

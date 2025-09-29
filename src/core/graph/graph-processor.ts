@@ -1,4 +1,4 @@
-import type { BaseItem, Frame, Group } from '@mirohq/websdk-types'
+import type { BaseItem, Frame, Group, GroupableItem } from '@mirohq/websdk-types'
 
 import { maybeSync } from '../../board/board'
 import { type BoardBuilder } from '../../board/board-builder'
@@ -12,6 +12,7 @@ import type { HierNode } from '../layout/nested-layout'
 import { fileUtilities } from '../utils/file-utilities'
 
 import { edgesToHierarchy, hierarchyToEdges } from './convert'
+import * as log from '../../logger'
 import { type GraphData, graphService, type NodeData } from './graph-service'
 import { HierarchyProcessor } from './hierarchy-processor'
 import { isNestedAlgorithm } from './layout-modes'
@@ -297,16 +298,70 @@ export class GraphProcessor extends UndoableProcessor {
   }> {
     const map: Record<string, BoardItem> = {}
     const positions: Record<string, PositionedNode> = {}
+    const subgraphChildren = new Map<string, string[]>()
+    for (const n of graph.nodes) {
+      const parent = (n.metadata as { parent?: string } | undefined)?.parent
+      if (parent) {
+        const list = subgraphChildren.get(parent) ?? []
+        list.push(n.id)
+        subgraphChildren.set(parent, list)
+      }
+    }
+    // Create subgraph containers first to ensure they render behind children
+    for (const [name, children] of subgraphChildren) {
+      if (children.length === 0) continue
+      let minX = Number.POSITIVE_INFINITY
+      let minY = Number.POSITIVE_INFINITY
+      let maxX = Number.NEGATIVE_INFINITY
+      let maxY = Number.NEGATIVE_INFINITY
+      for (const id of children) {
+        const pos = layout.nodes[id]
+        if (!pos) continue
+        const x = pos.x + offsetX
+        const y = pos.y + offsetY
+        minX = Math.min(minX, x)
+        minY = Math.min(minY, y)
+        maxX = Math.max(maxX, x + pos.width)
+        maxY = Math.max(maxY, y + pos.height)
+      }
+      if (!Number.isFinite(minX) || !Number.isFinite(minY)) continue
+      const padding = 40
+      const width = maxX - minX + padding * 2
+      const height = maxY - minY + padding * 2
+      const centerX = minX + (maxX - minX) / 2
+      const centerY = minY + (maxY - minY) / 2
+      const container = await this.builder.createNode(
+        { id: name, label: name, type: 'Composite' },
+        { x: centerX, y: centerY, width, height },
+      )
+      // Soft tint
+      try {
+        const palette = ['#F2F4FC', '#EFF9EC', '#FFEEDE', '#FEF2FF', '#FFFAE7', '#F7F7F7']
+        let hash = 0
+        for (let i = 0; i < name.length; i += 1) hash = (hash * 31 + name.charCodeAt(i)) >>> 0
+        const color = palette[hash % palette.length]!
+        const interaction = this.builder.beginShapeInteraction(container as BaseItem)
+        interaction.applyTemplate({ style: { fillColor: color } }, name)
+        await interaction.commit()
+      } catch {}
+      this.registerCreated(container)
+      map[name] = container
+    }
     for (const node of graph.nodes) {
+      const isSubgraph =
+        (node.metadata as { isSubgraph?: boolean } | undefined)?.isSubgraph === true
+      if (isSubgraph) {
+        // Skip creating a widget for subgraph container; a frame will be created later.
+        continue
+      }
       const pos = layout.nodes[node.id]
       if (!pos) {
         throw new Error(`Missing layout for node ${node.id}`)
       }
-      const target: PositionedNode = {
-        ...pos,
-        x: pos.x + offsetX,
-        y: pos.y + offsetY,
-      }
+      // Positions from layout are top-left; Miro expects centre coordinates.
+      const centerX = pos.x + offsetX + pos.width / 2
+      const centerY = pos.y + offsetY + pos.height / 2
+      const target: PositionedNode = { ...pos, x: pos.x + offsetX, y: pos.y + offsetY }
       const found = existing[node.id]
       let widget: BoardItem
       if (found) {
@@ -331,13 +386,18 @@ export class GraphProcessor extends UndoableProcessor {
             y?: number
             sync?: () => Promise<void>
           }
-          movable.x = target.x
-          movable.y = target.y
+          movable.x = centerX
+          movable.y = centerY
           await maybeSync(movable)
           positions[node.id] = { ...target, id: node.id }
         }
       } else {
-        widget = await this.builder.createNode(node, target)
+        widget = await this.builder.createNode(node, {
+          x: centerX,
+          y: centerY,
+          width: target.width,
+          height: target.height,
+        })
         this.registerCreated(widget)
         positions[node.id] = { ...target, id: node.id }
       }
@@ -345,7 +405,30 @@ export class GraphProcessor extends UndoableProcessor {
       map[node.id] = widget
       this.nodeIdMap[node.id] = widget.id
     }
+    // Group subgraph containers with their children
+    await this.groupSubgraphs(subgraphChildren, map)
     return { map, positions }
+  }
+
+  private async groupSubgraphs(
+    subgraphChildren: Map<string, string[]>,
+    nodeMap: Record<string, BoardItem>,
+  ): Promise<void> {
+    for (const [name, children] of subgraphChildren) {
+      const container = nodeMap[name] as unknown as GroupableItem | undefined
+      if (!container) continue
+      const members: GroupableItem[] = []
+      for (const id of children) {
+        const w = nodeMap[id] as unknown as GroupableItem | undefined
+        if (w) members.push(w)
+      }
+      if (members.length === 0) continue
+      try {
+        await this.builder.groupItems([container, ...members])
+      } catch {
+        // ignore grouping failures
+      }
+    }
   }
 
   /**
@@ -363,6 +446,7 @@ export class GraphProcessor extends UndoableProcessor {
     if ((widget as { type?: string }).type !== 'shape') {
       return
     }
+    const beforeShape = (widget as { shape?: string }).shape
     const style: Record<string, unknown> = {}
     if (styleOverrides?.fillColor) {
       style.fillColor = styleOverrides.fillColor
@@ -389,6 +473,8 @@ export class GraphProcessor extends UndoableProcessor {
     const interaction = this.builder.beginShapeInteraction(widget as BaseItem)
     interaction.applyTemplate(template, node.label)
     await interaction.commit()
+    const afterShape = (widget as { shape?: string }).shape
+    log.info({ id: node.id, beforeShape, afterShape }, 'Applied Mermaid shape override')
   }
 
   /**

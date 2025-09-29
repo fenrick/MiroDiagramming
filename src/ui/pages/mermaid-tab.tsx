@@ -1,7 +1,6 @@
 import {
   Button,
   Callout,
-  Checkbox,
   IconArrowArcLeft,
   IconChevronRightDouble,
   Text,
@@ -14,6 +13,7 @@ import { MermaidConversionError, MermaidRenderer } from '../../core/mermaid'
 import * as log from '../../logger'
 import {
   ButtonToolbar,
+  Checkbox,
   InfoCallout,
   InputField,
   PageHelp,
@@ -61,7 +61,15 @@ export const MermaidTab: React.FC = () => {
       return SAMPLE_DEFINITION
     }
   })
-  const [withFrame, setWithFrame] = React.useState(true)
+  const [withFrame, setWithFrame] = React.useState<boolean>(() => {
+    if (typeof globalThis === 'undefined') return false
+    try {
+      const raw = globalThis.localStorage?.getItem('miro.mermaid.withFrame')
+      return raw ? raw === 'true' : false
+    } catch {
+      return false
+    }
+  })
   const [frameTitle, setFrameTitle] = React.useState('')
   const [existingMode, setExistingMode] = React.useState<ExistingNodeMode>('move')
   const [isRendering, setRendering] = React.useState(false)
@@ -84,6 +92,15 @@ export const MermaidTab: React.FC = () => {
       // Ignore storage failures (private browsing, quota exceeded, etc.).
     }
   }, [definition])
+
+  React.useEffect(() => {
+    if (typeof globalThis === 'undefined') return
+    try {
+      globalThis.localStorage?.setItem('miro.mermaid.withFrame', String(withFrame))
+    } catch {
+      // ignore
+    }
+  }, [withFrame])
 
   const trimmedDefinition = definition.trim()
   const isDefinitionEmpty = trimmedDefinition.length === 0

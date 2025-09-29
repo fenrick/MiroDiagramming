@@ -14,9 +14,16 @@ const StyledFormField = styled(Form.Field, {
 })
 
 const StyledTextarea = styled(Textarea, {
-  width: '100%',
-  minHeight: '12rem',
-  resize: 'vertical',
+  // DS Textarea renders an outer div and the actual textarea inside with
+  // data-form-element="textarea". Target the inner element for size/resize.
+  '& [data-form-element="textarea"]': {
+    minHeight: '12rem',
+    resize: 'vertical',
+    padding: 'var(--space-xsmall) 12px var(--space-xsmall)',
+    display: 'inline-block',
+    scrollbarWidth: 'thin',
+    boxSizing: 'border-box',
+  },
 })
 
 export const TextareaField = React.forwardRef<HTMLTextAreaElement, TextareaFieldProperties>(
