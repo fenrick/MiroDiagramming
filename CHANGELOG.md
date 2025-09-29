@@ -1,3 +1,10 @@
+# [2.6.0](https://github.com/fenrick/MiroDiagramming/compare/v2.5.0...v2.6.0) (2025-09-29)
+
+
+### Features
+
+* **layout:** nested subgraphs via Dagre proxies ([5939ebe](https://github.com/fenrick/MiroDiagramming/commit/5939ebe3289f8b9ea58f8d9bc32f69c22084b5e2))
+
 # [2.5.0](https://github.com/fenrick/MiroDiagramming/compare/v2.4.1...v2.5.0) (2025-09-29)
 
 
