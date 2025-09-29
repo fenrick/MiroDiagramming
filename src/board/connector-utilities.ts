@@ -22,6 +22,47 @@ import type { ConnectorTemplate } from './templates'
  * @returns The caption array expected by the Miro SDK or `undefined` when
  *   the edge has no label.
  */
+function captionsFromArray(values: unknown[]): Connector['captions'] | undefined {
+  const mapped = values.flatMap((entry) => {
+    if (typeof entry === 'string') {
+      return [{ content: entry }]
+    }
+    if (
+      entry &&
+      typeof entry === 'object' &&
+      typeof (entry as { content?: unknown }).content === 'string'
+    ) {
+      const c = entry as {
+        content: string
+        position?: number
+        textAlignVertical?: TextAlignVertical
+      }
+      return [
+        {
+          content: c.content,
+          position: c.position,
+          textAlignVertical: c.textAlignVertical as TextAlignVertical,
+        },
+      ]
+    }
+    return []
+  }) as NonNullable<Connector['captions']>
+  return mapped.length > 0 ? mapped : undefined
+}
+
+function captionFromSingle(text: unknown, template?: ConnectorTemplate): Connector['captions'] {
+  if (typeof text === 'string' && text.trim()) {
+    return [
+      {
+        content: text,
+        position: template?.caption?.position,
+        textAlignVertical: template?.caption?.textAlignVertical as TextAlignVertical,
+      },
+    ]
+  }
+  return undefined
+}
+
 function buildCaptions(edge: EdgeData, template?: ConnectorTemplate): Connector['captions'] {
   const meta = edge.metadata as
     | { caption?: unknown; captions?: unknown; label?: unknown }
@@ -34,45 +75,11 @@ function buildCaptions(edge: EdgeData, template?: ConnectorTemplate): Connector[
   // Prefer explicit captions array if provided in metadata
   const fromMetaArray = Array.isArray(meta?.captions) ? (meta?.captions as unknown[]) : undefined
 
-  let captions: Connector['captions'] | undefined
-
   if (fromMetaArray) {
-    // Accept [string] or [{ content, position?, textAlignVertical? }]
-    const mapped = fromMetaArray.flatMap((c) => {
-      if (typeof c === 'string') {
-        return [{ content: c }]
-      }
-      if (c && typeof c === 'object' && typeof (c as { content?: unknown }).content === 'string') {
-        const caption = c as {
-          content: string
-          position?: number
-          textAlignVertical?: TextAlignVertical
-        }
-        return [
-          {
-            content: caption.content,
-            position: caption.position,
-            textAlignVertical: caption.textAlignVertical as TextAlignVertical,
-          },
-        ]
-      }
-      return []
-    }) as NonNullable<Connector['captions']>
-    captions = mapped.length > 0 ? mapped : undefined
-  } else {
-    const text = (typeof edge.label === 'string' && edge.label) || fromMetaSingle
-    if (typeof text === 'string' && text.trim()) {
-      captions = [
-        {
-          content: text,
-          position: template?.caption?.position,
-          textAlignVertical: template?.caption?.textAlignVertical as TextAlignVertical,
-        },
-      ]
-    }
+    return captionsFromArray(fromMetaArray)
   }
-
-  return captions
+  const text = (typeof edge.label === 'string' && edge.label) || fromMetaSingle
+  return captionFromSingle(text, template)
 }
 
 function mergeStyle(connector: Connector, template?: ConnectorTemplate): void {

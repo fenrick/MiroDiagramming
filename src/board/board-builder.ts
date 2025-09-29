@@ -248,38 +248,42 @@ export class BoardBuilder {
       throw new TypeError(`Invalid node map: ${JSON.stringify(nodeMap)}`)
     }
     const created: Connector[] = []
-    // Convert to a Map to avoid dynamic property access on arbitrary objects
     const nodeLookup = new Map<string, BoardItem>(Object.entries(nodeMap))
-    // Create connectors sequentially; the Web SDK does not expose a bulk/batch API.
-    const hintIter = Array.isArray(hints) ? hints[Symbol.iterator]() : undefined
+    const hintList = Array.isArray(hints) ? hints : []
+    let hintIndex = 0
     for (const edge of edges) {
-      const from = nodeLookup.get(edge.from)
-      const to = nodeLookup.get(edge.to)
-      if (!from || !to) {
-        continue
-      }
-      const templateName =
-        typeof edge.metadata?.template === 'string' ? edge.metadata.template : 'default'
-      const template = templateManager.getConnectorTemplate(templateName)
-      try {
-        const hint = hintIter?.next().value as EdgeHint | undefined
-        const conn = await createConnector(edge, from, to, hint, template)
-        await this.applyConnectorStyleOverrides(conn, edge)
-        created.push(conn)
-      } catch (error) {
-        log.error(
-          {
-            edge,
-            from: from.id,
-            to: to.id,
-            error: String(error),
-          },
-          'Connector creation failed',
-        )
-      }
+      const hint = hintList[hintIndex++]
+      const result = await this.createSingleConnector(edge, nodeLookup, hint)
+      if (result) created.push(result)
     }
     log.info({ created: created.length }, 'Edges created')
     return created
+  }
+
+  private async createSingleConnector(
+    edge: EdgeData,
+    nodeLookup: Map<string, BoardItem>,
+    hint?: EdgeHint,
+  ): Promise<Connector | undefined> {
+    const from = nodeLookup.get(edge.from)
+    const to = nodeLookup.get(edge.to)
+    if (!from || !to) {
+      return undefined
+    }
+    const templateName =
+      typeof edge.metadata?.template === 'string' ? edge.metadata.template : 'default'
+    const template = templateManager.getConnectorTemplate(templateName)
+    try {
+      const conn = await createConnector(edge, from, to, hint, template)
+      await this.applyConnectorStyleOverrides(conn, edge)
+      return conn
+    } catch (error) {
+      log.error(
+        { edge, from: from.id, to: to.id, error: String(error) },
+        'Connector creation failed',
+      )
+      return undefined
+    }
   }
 
   private async applyConnectorStyleOverrides(connector: Connector, edge: EdgeData): Promise<void> {

@@ -32,12 +32,10 @@ export function calculateGrowthPlan(
   const endEdge = lastPos + getDimension(last, sizeKey) / 2
   const total = endEdge - startEdge
   const size = (total - spacing * (items.length - 1)) / items.length
-  const positions: number[] = []
-  let pos = startEdge + size / 2
-  for (const _ of items) {
-    positions.push(pos)
-    pos += size + spacing
-  }
+  const positions = Array.from(
+    { length: items.length },
+    (_unused, index) => startEdge + size / 2 + index * (size + spacing),
+  )
   return { size, positions }
 }
 

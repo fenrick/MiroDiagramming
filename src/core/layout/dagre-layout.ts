@@ -394,19 +394,19 @@ export async function layoutGraphDagre(
     return 'S'
   }
 
-  for (const [index, e] of data.edges.entries()) {
-    const rf = rootOf(e.from)
-    const rt = rootOf(e.to)
+  for (const [index, edgeItem] of data.edges.entries()) {
+    const rf = rootOf(edgeItem.from)
+    const rt = rootOf(edgeItem.to)
     // Internal edges fully within a single root cluster are handled inside during expansion; skip here
     if (rf && rt && rf === rt) {
       continue
     }
-    const ofrom = rf ?? e.from
-    const oto = rt ?? e.to
+    const ofrom = rf ?? edgeItem.from
+    const oto = rt ?? edgeItem.to
     outerEdges.push({ from: ofrom, to: oto, sourceIdx: index })
     const hint: { from?: EdgeHintSide; to?: EdgeHintSide } = {}
-    if (rf) hint.from = computeSide(rf, e.from)
-    if (rt) hint.to = computeSide(rt, e.to)
+    if (rf) hint.from = computeSide(rf, edgeItem.from)
+    if (rt) hint.to = computeSide(rt, edgeItem.to)
     edgeSideHints.set(index, hint)
   }
 
@@ -435,7 +435,7 @@ export async function layoutGraphDagre(
   }
 
   // Expand clusters depth-first
-  const expandCluster = (clusterId: string, originX: number, originY: number): void => {
+  const expandCluster = (clusterId: string): void => {
     const proxy = outerLayout.nodes[clusterId]
     if (!proxy) return
     // Record proxy itself so GraphProcessor can size frames directly
@@ -519,7 +519,7 @@ export async function layoutGraphDagre(
     }
   }
 
-  for (const r of roots) expandCluster(r, 0, 0)
+  for (const r of roots) expandCluster(r)
 
   // Internal edge paths: we will only include those between immediate leaves within each cluster
   // Offset them to absolute using recorded proxy positions in finalNodes

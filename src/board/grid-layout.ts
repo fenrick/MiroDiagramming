@@ -33,44 +33,46 @@ export function calculateGrid(
   width: number,
   height: number,
 ): GridPosition[] {
-  const positions: GridPosition[] = []
   const cols = Math.max(1, config.cols)
+  return config.vertical
+    ? computeColumnMajorPositions(count, cols, width, height, config.padding)
+    : computeRowMajorPositions(count, cols, width, height, config.padding)
+}
 
-  if (!config.vertical) {
-    // Row-major (horizontal) fill: left → right across rows, then wrap
-    for (let index = 0; index < count; index += 1) {
-      const col = index % cols
-      const row = Math.floor(index / cols)
-      positions.push({
-        x: col * (width + config.padding),
-        y: row * (height + config.padding),
-      })
-    }
-    return positions
+function computeRowMajorPositions(
+  count: number,
+  cols: number,
+  width: number,
+  height: number,
+  padding: number,
+): GridPosition[] {
+  const positions: GridPosition[] = []
+  for (let index = 0; index < count; index += 1) {
+    const col = index % cols
+    const row = Math.floor(index / cols)
+    positions.push({ x: col * (width + padding), y: row * (height + padding) })
   }
+  return positions
+}
 
-  // Column-major (vertical) fill that still respects the requested column count.
-  // Distribute items across exactly `cols` columns: the first `extra` columns get one more item.
+function computeColumnMajorPositions(
+  count: number,
+  cols: number,
+  width: number,
+  height: number,
+  padding: number,
+): GridPosition[] {
+  const positions: GridPosition[] = []
   const base = Math.floor(count / cols)
   const extra = count % cols
-  for (let index = 0; index < count; index += 1) {
-    // Determine column and row without indexing into an offsets array
-    let col = 0
-    let start = 0
-    for (let c = 0; c < cols; c += 1) {
-      const size = base + (c < extra ? 1 : 0)
-      const end = start + size
-      if (index < end) {
-        col = c
-        break
-      }
-      start = end
+  let cursor = 0
+  for (let col = 0; col < cols; col += 1) {
+    const size = base + (col < extra ? 1 : 0)
+    for (let row = 0; row < size; row += 1) {
+      if (cursor >= count) break
+      positions[cursor] = { x: col * (width + padding), y: row * (height + padding) }
+      cursor += 1
     }
-    const row = index - start
-    positions.push({
-      x: col * (width + config.padding),
-      y: row * (height + config.padding),
-    })
   }
   return positions
 }

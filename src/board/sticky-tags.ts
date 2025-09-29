@@ -63,46 +63,58 @@ async function ensureTagIds(
  */
 export async function applyBracketTagsToSelectedStickies(): Promise<void> {
   const maybeBoard = ensureBoard() as (BoardLike & { id?: string }) | undefined
-  if (!maybeBoard?.id) {
-    return
-  }
+  if (!maybeBoard?.id) return
   const board = maybeBoard as BoardLike & { id: string }
   const client = new TagClient()
   const tagMap = await getTagMap(client)
 
+  const stickies = await getSelectedStickies(board)
+  if (stickies.length === 0) return
+
+  await ensureTagMapForSelection(stickies, client, tagMap)
+  const tagged = await tagStickies(stickies, tagMap)
+
+  boardCache.reset(board)
+  let message = 'No [tags] found in selected stickies.'
+  if (tagged > 0) {
+    const plural = tagged === 1 ? '' : 's'
+    message = `Applied tags to ${tagged} sticky note${plural}.`
+  }
+  pushToast({ message })
+}
+
+async function getSelectedStickies(board: BoardLike): Promise<Record<string, unknown>[]> {
   const selection = await boardCache.getSelection(board)
   const stickies = selection.filter((index) => (index as BaseItem).type === 'sticky_note')
   if (stickies.length === 0) {
     pushToast({ message: 'Select sticky notes to tag.' })
-    return
   }
-  // Pre-scan all stickies to collect unique tag names across the selection
-  const allNames = collectTagNames(stickies)
+  return stickies
+}
 
-  // Ensure missing tags once (cached in tagMap). Ignore failures.
+async function ensureTagMapForSelection(
+  stickies: Record<string, unknown>[],
+  client: TagClient,
+  tagMap: Map<string, TagLike>,
+): Promise<void> {
+  const allNames = collectTagNames(stickies)
   try {
     await ensureTagIds([...allNames], tagMap, client)
   } catch {
     // Best-effort: unresolved names simply won't be in tagMap
   }
+}
 
+async function tagStickies(
+  stickies: Record<string, unknown>[],
+  tagMap: Map<string, TagLike>,
+): Promise<number> {
   let tagged = 0
   for (const item of stickies) {
     const changed = await applyTagsAndMaybeStrip(item, tagMap)
-    if (changed) {
-      tagged += 1
-    }
+    if (changed) tagged += 1
   }
-  // Clear caches so subsequent reads see updated tags/text
-  boardCache.reset(board)
-  let message: string
-  if (tagged > 0) {
-    const plural = tagged === 1 ? '' : 's'
-    message = `Applied tags to ${tagged} sticky note${plural}.`
-  } else {
-    message = 'No [tags] found in selected stickies.'
-  }
-  pushToast({ message })
+  return tagged
 }
 
 function collectTagNames(stickies: Record<string, unknown>[]): Set<string> {
