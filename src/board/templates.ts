@@ -47,9 +47,7 @@ export interface TemplateDefinition {
   alias?: string[]
 }
 
-export interface TemplateCollection {
-  [key: string]: TemplateDefinition
-}
+export type TemplateCollection = Record<string, TemplateDefinition>
 
 /** Definition for connector styling templates. */
 export interface ConnectorTemplate {
@@ -60,9 +58,7 @@ export interface ConnectorTemplate {
   alias?: string[]
 }
 
-export interface ConnectorTemplateCollection {
-  [key: string]: ConnectorTemplate
-}
+export type ConnectorTemplateCollection = Record<string, ConnectorTemplate>
 
 const TEMPLATE_KEY_PATTERN = (value: string): boolean => isSafeAliasKey(value)
 
@@ -106,8 +102,8 @@ function sanitizeShapeType(shape: string | undefined): ShapeType {
   return (SHAPE_WHITELIST.has(shape as ShapeType) ? shape : 'rectangle') as ShapeType
 }
 
-function buildTemplateEntries(raw: Record<string, unknown>): Array<[string, TemplateDefinition]> {
-  const entries: Array<[string, TemplateDefinition]> = []
+function buildTemplateEntries(raw: Record<string, unknown>): [string, TemplateDefinition][] {
+  const entries: [string, TemplateDefinition][] = []
   for (const [key, value] of Object.entries(raw)) {
     if (key === 'stylePresets') {
       continue
@@ -123,8 +119,8 @@ function buildTemplateEntries(raw: Record<string, unknown>): Array<[string, Temp
 
 function buildConnectorEntries(
   raw: Record<string, ConnectorTemplate>,
-): Array<[string, ConnectorTemplate]> {
-  const entries: Array<[string, ConnectorTemplate]> = []
+): [string, ConnectorTemplate][] {
+  const entries: [string, ConnectorTemplate][] = []
   for (const [key, value] of Object.entries(raw)) {
     const safeKey = sanitizeObjectKey(key, TEMPLATE_KEY_PATTERN)
     if (!safeKey) {
@@ -234,7 +230,7 @@ export class TemplateManager {
 
   /** Apply token and numeric resolution to style values. */
   public resolveStyle(style: Record<string, unknown>): Record<string, unknown> {
-    const entries: Array<[string, unknown]> = []
+    const entries: [string, unknown][] = []
     for (const [key, value] of Object.entries(style)) {
       const safeKey = sanitizeObjectKey(key, isSafeStyleProperty)
       if (!safeKey) {
@@ -329,7 +325,7 @@ export class TemplateManager {
   }
 
   private async fetchCreatedItems(
-    results: Array<GroupableItem>,
+    results: GroupableItem[],
     frame?: Frame,
   ): Promise<GroupableItem[]> {
     const items: GroupableItem[] = []

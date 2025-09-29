@@ -32,15 +32,15 @@ export interface EdgeHint {
  * @returns A list of edge hints mapping each edge's start and end positions.
  */
 export function computeEdgeHints(
-  graph: { edges: Array<{ from: string; to: string }> },
+  graph: { edges: { from: string; to: string }[] },
   layout: {
     nodes: Record<string, { x: number; y: number; width: number; height: number }>
-    edges: Array<{
+    edges: {
       startPoint: { x: number; y: number }
       endPoint: { x: number; y: number }
-      bendPoints?: Array<{ x: number; y: number }>
+      bendPoints?: { x: number; y: number }[]
       hintSides?: { start?: 'N' | 'E' | 'S' | 'W'; end?: 'N' | 'E' | 'S' | 'W' }
-    }>
+    }[]
   },
 ): EdgeHint[] {
   return layout.edges.map((edge, index) => {
@@ -76,7 +76,7 @@ export function computeEdgeHints(
 function suggestConnectorShape(edge: {
   startPoint: { x: number; y: number }
   endPoint: { x: number; y: number }
-  bendPoints?: Array<{ x: number; y: number }>
+  bendPoints?: { x: number; y: number }[]
 }): 'elbowed' | 'curved' | 'straight' {
   const points = [edge.startPoint, ...(edge.bendPoints ?? []), edge.endPoint]
   if (points.length <= 2) {

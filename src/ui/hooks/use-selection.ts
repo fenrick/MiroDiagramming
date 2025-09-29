@@ -10,8 +10,8 @@ import * as log from '../../logger'
  * It listens for board selection updates via `miro.board.ui.on`
  * when available.
  */
-export function useSelection(board?: BoardLike): Array<Record<string, unknown>> {
-  const [sel, setSel] = React.useState<Array<Record<string, unknown>>>([])
+export function useSelection(board?: BoardLike): Record<string, unknown>[] {
+  const [sel, setSel] = React.useState<Record<string, unknown>[]>([])
   React.useEffect(() => {
     let b: BoardLike
     try {
@@ -22,7 +22,7 @@ export function useSelection(board?: BoardLike): Array<Record<string, unknown>> 
     let active = true
     const update = (event?: { items: unknown[] }): void => {
       if (event && Array.isArray(event.items)) {
-        const items = event.items as Array<Record<string, unknown>>
+        const items = event.items as Record<string, unknown>[]
         log.trace({ count: items.length }, 'Selection event received')
         boardCache.setSelection(items)
         if (active) {
@@ -42,7 +42,7 @@ export function useSelection(board?: BoardLike): Array<Record<string, unknown>> 
         })
         .catch((error) => {
           log.warn({ error }, 'Failed to fetch selection')
-          return [] as Array<Record<string, unknown>>
+          return [] as Record<string, unknown>[]
         })
     }
     update()

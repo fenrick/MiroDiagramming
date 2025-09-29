@@ -13,7 +13,10 @@ import type { TabTuple } from './tab-definitions'
 
 type SubTabId = 'size' | 'style' | 'arrange' | 'frames'
 
-type TabItem = { id: SubTabId; label: string }
+interface TabItem {
+  id: SubTabId
+  label: string
+}
 
 const SUB_TABS: TabItem[] = [
   { id: 'size', label: 'Size' },

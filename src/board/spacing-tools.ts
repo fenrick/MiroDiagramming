@@ -51,7 +51,7 @@ export async function applySpacingLayout(
       const bx = axis === 'x' ? ((b as { x?: number }).x ?? 0) : ((b as { y?: number }).y ?? 0)
       return ax - bx
     },
-  ) as Array<Record<string, number> & Syncable>
+  ) as (Record<string, number> & Syncable)[]
   const mode = options.mode ?? 'move'
   if (mode === 'grow') {
     const plan = calculateGrowthPlan(items, axis, options.spacing)
@@ -73,7 +73,7 @@ export async function applySpacingLayout(
     )
     return
   }
-  const first = items[0]!
+  const first = items[0]
   let position = axis === 'x' ? (first.x ?? 0) : (first.y ?? 0)
   await moveWidget(first, axis, position)
 

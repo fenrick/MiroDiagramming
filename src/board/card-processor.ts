@@ -170,9 +170,9 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
   private partitionCards(
     cards: CardData[],
     map: Map<string, Card>,
-  ): { toCreate: CardData[]; toUpdate: Array<{ card: Card; definition: CardData }> } {
+  ): { toCreate: CardData[]; toUpdate: { card: Card; definition: CardData }[] } {
     const toCreate: CardData[] = []
-    const toUpdate: Array<{ card: Card; definition: CardData }> = []
+    const toUpdate: { card: Card; definition: CardData }[] = []
 
     for (const definition of cards) {
       if (definition.id) {

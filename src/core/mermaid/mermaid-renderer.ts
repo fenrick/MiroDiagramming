@@ -67,13 +67,15 @@ export class MermaidRenderer {
   private static isPoorlySpaced(layout: LayoutResult): boolean {
     const nodes = Object.values(layout.nodes)
     for (let index = 0; index < nodes.length; index += 1) {
-      const a = nodes[index]!
+      const a = nodes[index]
+      if (!a) continue
       const ax1 = a.x
       const ay1 = a.y
       const ax2 = a.x + a.width
       const ay2 = a.y + a.height
       for (let index_ = index + 1; index_ < nodes.length; index_ += 1) {
-        const b = nodes[index_]!
+        const b = nodes[index_]
+        if (!b) continue
         const bx1 = b.x
         const by1 = b.y
         const bx2 = b.x + b.width
@@ -92,24 +94,14 @@ export class MermaidRenderer {
     // Examples: "flowchart TD", "flowchart LR", "flowchart-v2 BT", "graph RL"
     const m = /\b(?:flowchart|flowchart-v2|graph)\s+([A-Z]{2})\b/i.exec(source)
     if (!m) return undefined
-    const code = m[1]!.toUpperCase()
-    switch (code) {
-      case 'TD': {
-        return 'DOWN'
-      }
-      case 'BT': {
-        return 'UP'
-      }
-      case 'LR': {
-        return 'RIGHT'
-      }
-      case 'RL': {
-        return 'LEFT'
-      }
-      default: {
-        return undefined
-      }
+    const code = (m[1] ?? '').toUpperCase()
+    const map: Record<string, 'UP' | 'DOWN' | 'LEFT' | 'RIGHT'> = {
+      TD: 'DOWN',
+      BT: 'UP',
+      LR: 'RIGHT',
+      RL: 'LEFT',
     }
+    return map[code]
   }
 
   private static frontmatterLayout(source: string): 'dagre' | 'elk' | 'mermaid' | null {
@@ -119,7 +111,7 @@ export class MermaidRenderer {
     if (!m) return null
     const body = m
     const lm = /\blayout:\s*(dagre|elk|mermaid)\b/i.exec(body)
-    return lm ? (lm[1]!.toLowerCase() as 'dagre' | 'elk' | 'mermaid') : null
+    return lm ? ((lm[1] ?? '').toLowerCase() as 'dagre' | 'elk' | 'mermaid') : null
   }
 
   /**
@@ -131,33 +123,40 @@ export class MermaidRenderer {
     nodeSpacing: number | undefined
     rankSpacing: number | undefined
   } {
-    // Front-matter YAML: ---\nconfig:\n  flowchart:\n    nodeSpacing: 40\n    rankSpacing: 60\n---
     const fm = MermaidRenderer.extractFrontMatter(source)
-    if (fm) {
-      const body = fm
-      const nodeM = /\bnodeSpacing\s*:\s*(\d+(?:\.\d+)?)\b/i.exec(body)
-      const rankM = /\brankSpacing\s*:\s*(\d+(?:\.\d+)?)\b/i.exec(body)
-      const nodeSpacing = nodeM ? Number(nodeM[1]) : undefined
-      const rankSpacing = rankM ? Number(rankM[1]) : undefined
-      if (Number.isFinite(nodeSpacing) || Number.isFinite(rankSpacing)) {
-        return { nodeSpacing, rankSpacing }
-      }
-    }
-    // Init directive: %%{init: { flowchart: { nodeSpacing: 50, rankSpacing: 60 } }}%%
+    const fromFm = fm ? MermaidRenderer.parseSpacingFromFrontMatter(fm) : null
+    if (fromFm) return fromFm
     const init = MermaidRenderer.extractInitDirective(source)
-    if (init) {
-      try {
-        const parsed = JSON.parse(init) as {
-          flowchart?: { nodeSpacing?: number; rankSpacing?: number }
-        }
-        const nodeSpacing = parsed.flowchart?.nodeSpacing
-        const rankSpacing = parsed.flowchart?.rankSpacing
-        return { nodeSpacing, rankSpacing }
-      } catch {
-        // ignore JSON parsing errors
+    const fromInit = init ? MermaidRenderer.parseSpacingFromInit(init) : null
+    return fromInit ?? { nodeSpacing: undefined, rankSpacing: undefined }
+  }
+
+  private static parseSpacingFromFrontMatter(
+    body: string,
+  ): { nodeSpacing: number | undefined; rankSpacing: number | undefined } | null {
+    const nodeM = /\bnodeSpacing\s*:\s*(\d+(?:\.\d+)?)\b/i.exec(body)
+    const rankM = /\brankSpacing\s*:\s*(\d+(?:\.\d+)?)\b/i.exec(body)
+    const nodeSpacing = nodeM ? Number(nodeM[1]) : undefined
+    const rankSpacing = rankM ? Number(rankM[1]) : undefined
+    return Number.isFinite(nodeSpacing) || Number.isFinite(rankSpacing)
+      ? { nodeSpacing, rankSpacing }
+      : null
+  }
+
+  private static parseSpacingFromInit(
+    jsonText: string,
+  ): { nodeSpacing: number | undefined; rankSpacing: number | undefined } | null {
+    try {
+      const parsed = JSON.parse(jsonText) as {
+        flowchart?: { nodeSpacing?: number; rankSpacing?: number }
       }
+      return {
+        nodeSpacing: parsed.flowchart?.nodeSpacing,
+        rankSpacing: parsed.flowchart?.rankSpacing,
+      }
+    } catch {
+      return null
     }
-    return { nodeSpacing: undefined, rankSpacing: undefined }
   }
 
   // Faster, lint-friendly front-matter extraction without heavy regex

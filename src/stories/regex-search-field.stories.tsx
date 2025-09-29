@@ -15,7 +15,11 @@ export const Default: Story = {
     label: 'Find',
     value: 'foo',
     regex: false,
-    onChange: () => {},
-    onRegexToggle: () => {},
+    onChange: (v: string) => {
+      console.log('onChange', v)
+    },
+    onRegexToggle: (v: boolean) => {
+      console.log('onRegexToggle', v)
+    },
   },
 }

@@ -13,20 +13,36 @@ type Story = StoryObj<typeof FilterDropdown>
 export const Default: Story = {
   args: {
     widgetTypes: [],
-    toggleType: () => {},
+    toggleType: () => {
+      console.log('toggleType')
+    },
     tagIds: '',
-    onTagIdsChange: () => {},
+    onTagIdsChange: (v: string) => {
+      console.log('onTagIdsChange', v)
+    },
     backgroundColor: '',
-    onBackgroundColorChange: () => {},
+    onBackgroundColorChange: (v: string) => {
+      console.log('onBackgroundColorChange', v)
+    },
     assignee: '',
-    onAssigneeChange: () => {},
+    onAssigneeChange: (v: string) => {
+      console.log('onAssigneeChange', v)
+    },
     creator: '',
-    onCreatorChange: () => {},
+    onCreatorChange: (v: string) => {
+      console.log('onCreatorChange', v)
+    },
     lastModifiedBy: '',
-    onLastModifiedByChange: () => {},
+    onLastModifiedByChange: (v: string) => {
+      console.log('onLastModifiedByChange', v)
+    },
     caseSensitive: false,
-    onCaseSensitiveChange: () => {},
+    onCaseSensitiveChange: (v: boolean) => {
+      console.log('onCaseSensitiveChange', v)
+    },
     wholeWord: false,
-    onWholeWordChange: () => {},
+    onWholeWordChange: (v: boolean) => {
+      console.log('onWholeWordChange', v)
+    },
   },
 }

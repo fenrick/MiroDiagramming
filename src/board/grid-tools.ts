@@ -62,7 +62,7 @@ export async function applyGridLayout(options: GridOptions, board?: BoardLike): 
   const positions = calculateGridPositions(options, items.length, first.width, first.height)
   await Promise.all(
     items.map(async (item: Record<string, unknown>, index: number) => {
-      const pos = positions.at(index)!
+      const pos = positions[index]
       item.x = first.x + pos.x
       item.y = first.y + pos.y
       await maybeSync(item as Syncable)

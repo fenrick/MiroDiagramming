@@ -2,12 +2,10 @@ import { debug } from './logger'
 
 type SpanCallback<T> = () => T | Promise<T>
 
-type SpanOptions<T> = {
+interface SpanOptions<T> {
   callback: SpanCallback<T>
 }
 
-export async function span<T>(name: string, options: SpanOptions<Promise<T>>): Promise<T>
-export async function span<T>(name: string, options: SpanOptions<T | Promise<T>>): Promise<T>
 export async function span<T>(name: string, options: SpanOptions<T | Promise<T>>): Promise<T> {
   const start = performance.now()
   try {

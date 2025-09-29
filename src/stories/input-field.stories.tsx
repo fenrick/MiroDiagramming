@@ -11,5 +11,11 @@ export default meta
 type Story = StoryObj<typeof InputField>
 
 export const Default: Story = {
-  args: { label: 'Name', placeholder: 'Enter text', onValueChange: () => {} },
+  args: {
+    label: 'Name',
+    placeholder: 'Enter text',
+    onValueChange: (v: string) => {
+      console.log('onValueChange', v)
+    },
+  },
 }

@@ -96,8 +96,8 @@ export class HierarchyProcessor extends UndoableProcessor<BaseItem | Group | Fra
       'Nested offsets applied',
     )
     const syncItems = this.lastCreated.filter((index) => index !== frame)
-    await this.syncOrUndo(syncItems as Array<BaseItem | Group | Connector>)
-    const target = frame ?? (this.lastCreated as Array<BaseItem | Group>)
+    await this.syncOrUndo(syncItems as (BaseItem | Group | Connector)[])
+    const target = frame ?? (this.lastCreated as (BaseItem | Group)[])
     await this.builder.zoomTo(target)
   }
 

@@ -31,7 +31,7 @@ export async function undoWidgets(builder: BoardBuilder, registry: BoardEntity[]
 export async function syncOrUndo(
   builder: BoardBuilder,
   registry: BoardEntity[],
-  items: Array<BaseItem | Group | Connector>,
+  items: (BaseItem | Group | Connector)[],
 ): Promise<void> {
   try {
     await builder.syncAll(items)

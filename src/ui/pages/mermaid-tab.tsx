@@ -44,7 +44,7 @@ const STATUS_STYLE: React.CSSProperties = {
   marginTop: space[100],
 }
 
-const EXISTING_MODE_OPTIONS: ReadonlyArray<{ id: ExistingNodeMode; label: string }> = [
+const EXISTING_MODE_OPTIONS: readonly { id: ExistingNodeMode; label: string }[] = [
   { id: 'move', label: 'Move into new layout' },
   { id: 'layout', label: 'Use selection positions' },
   { id: 'ignore', label: 'Keep existing positions' },
@@ -77,10 +77,7 @@ export const MermaidTab: React.FC = () => {
     { variant: 'success'; message: string } | { variant: 'error'; message: string } | null
   >(null)
 
-  const rendererReference = React.useRef<MermaidRenderer>()
-  if (!rendererReference.current) {
-    rendererReference.current = new MermaidRenderer()
-  }
+  const rendererReference = React.useRef<MermaidRenderer>(new MermaidRenderer())
 
   React.useEffect(() => {
     if (typeof globalThis === 'undefined') {
@@ -120,7 +117,7 @@ export const MermaidTab: React.FC = () => {
       setStatus({ variant: 'error', message: 'Add a Mermaid definition before rendering.' })
       return
     }
-    const renderer = rendererReference.current!
+    const renderer = rendererReference.current
     setRendering(true)
     setStatus(null)
     try {

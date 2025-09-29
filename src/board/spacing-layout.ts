@@ -12,7 +12,7 @@ export function calculateSpacingOffsets(count: number, spacing: number): number[
 
 /** Plan widget positions and size when distributing by growth. */
 export function calculateGrowthPlan(
-  items: Array<Record<string, number>>,
+  items: Record<string, number>[],
   axis: 'x' | 'y',
   spacing: number,
 ): { size: number; positions: number[] } {
@@ -20,8 +20,8 @@ export function calculateGrowthPlan(
     return { size: 0, positions: [] }
   }
   const sizeKey: 'width' | 'height' = axis === 'x' ? 'width' : 'height'
-  const first = items[0]!
-  const last = items.at(-1)!
+  const first = items[0] as Record<string, number>
+  const last = items.at(-1) as Record<string, number>
   /* c8 ignore next */
   const firstPos =
     axis === 'x' ? ((first as { x?: number }).x ?? 0) : ((first as { y?: number }).y ?? 0)
@@ -34,7 +34,7 @@ export function calculateGrowthPlan(
   const size = (total - spacing * (items.length - 1)) / items.length
   const positions: number[] = []
   let pos = startEdge + size / 2
-  for (let index = 0; index < items.length; index += 1) {
+  for (const _ of items) {
     positions.push(pos)
     pos += size + spacing
   }

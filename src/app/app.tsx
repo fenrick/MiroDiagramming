@@ -14,10 +14,11 @@ import { type Tab, TAB_DATA } from '../ui/pages/tabs'
  * the component to be reused in tests without side effects.
  */
 function AppShell(): React.JSX.Element {
-  const [tab, setTab] = React.useState<Tab>(TAB_DATA[0]![1])
+  const initialTab = (TAB_DATA[0]?.[1] ?? 'diagrams') as Tab
+  const [tab, setTab] = React.useState<Tab>(initialTab)
   // Tab ids available for data-driven rendering only
-  const current = TAB_DATA.find((t) => t[1] === tab)!
-  const CurrentComp = current[4]
+  const current = TAB_DATA.find((t) => t[1] === tab) ?? TAB_DATA[0]
+  const CurrentComp: React.FC = current ? (current[4] as React.FC) : () => null
   // No global keyboard shortcuts or command palette in Miro add-ins.
 
   return (
@@ -41,7 +42,7 @@ function AppShell(): React.JSX.Element {
         </Tabs.List>
       </Tabs>
       <div aria-label="Panel content">
-        <Paragraph>{current[3]}</Paragraph>
+        <Paragraph>{(current && current[3]) || ''}</Paragraph>
         <CurrentComp />
       </div>
       <ToastContainer />

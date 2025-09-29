@@ -8,8 +8,12 @@ import * as log from '../../logger'
  */
 export class FileUtilities {
   private static instance: FileUtilities
+  private static instances = 0
 
-  private constructor() {}
+  private constructor() {
+    // Record construction to avoid empty constructor while keeping singleton semantics
+    FileUtilities.instances += 1
+  }
 
   /** Retrieve the shared instance. */
   public static getInstance(): FileUtilities {

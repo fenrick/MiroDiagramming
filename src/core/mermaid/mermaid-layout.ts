@@ -56,7 +56,7 @@ function parseTranslate(transform: string | null): { x: number; y: number } {
   return { x, y }
 }
 
-function decodePoints(attribute: string | null): Array<{ x: number; y: number }> | undefined {
+function decodePoints(attribute: string | null): { x: number; y: number }[] | undefined {
   if (!attribute) {
     return undefined
   }
@@ -65,13 +65,13 @@ function decodePoints(attribute: string | null): Array<{ x: number; y: number }>
     if (typeof globalThis.atob === 'function') {
       json = globalThis.atob(attribute)
     } else {
-      type NodeBufferModule = {
+      interface NodeBufferModule {
         from: (input: string, encoding: string) => { toString: (encoding: string) => string }
       }
       const nodeBuffer = (globalThis as { Buffer?: NodeBufferModule }).Buffer
       json = nodeBuffer ? nodeBuffer.from(attribute, 'base64').toString('utf8') : attribute
     }
-    const parsed = JSON.parse(json) as Array<{ x: number; y: number }>
+    const parsed = JSON.parse(json) as { x: number; y: number }[]
     if (!Array.isArray(parsed)) {
       return undefined
     }
@@ -106,7 +106,7 @@ function computeNodeBounds(nodeElement: SVGGElement): {
 
   const groupOffset = parseTranslate(nodeElement.getAttribute('transform'))
 
-  const updateBounds = (points: Array<{ x: number; y: number }>) => {
+  const updateBounds = (points: { x: number; y: number }[]) => {
     for (const { x, y } of points) {
       if (!Number.isFinite(x) || !Number.isFinite(y)) {
         continue
@@ -252,8 +252,8 @@ function mapEdgesFromSvg(
       : null
     const points = path ? decodePoints(path.dataset.points ?? null) : undefined
     if (points && points.length >= 2) {
-      const start = points[0]!
-      const end = points.at(-1)!
+      const start = points[0] as { x: number; y: number }
+      const end = points.at(-1) as { x: number; y: number }
       const rest = points.slice(1, -1)
       return {
         startPoint: start,

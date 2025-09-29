@@ -6,13 +6,13 @@
  * mutate widget text.
  */
 
-function pushIfString(array: Array<[string, string]>, key: string, value: unknown): void {
+function pushIfString(array: [string, string][], key: string, value: unknown): void {
   if (typeof value === 'string') {
     array.push([key, value])
   }
 }
 
-function pushNestedText(array: Array<[string, string]>, text: Record<string, unknown>): void {
+function pushNestedText(array: [string, string][], text: Record<string, unknown>): void {
   pushIfString(array, 'text.plainText', text.plainText)
   pushIfString(array, 'text.content', text.content)
 }
@@ -23,8 +23,8 @@ function pushNestedText(array: Array<[string, string]>, text: Record<string, unk
  * The returned array preserves the discovery order of fields such as `title`,
  * `content`, `plainText`, `description` and nested `text` properties.
  */
-export function getTextFields(item: Record<string, unknown>): Array<[string, string]> {
-  const fields: Array<[string, string]> = []
+export function getTextFields(item: Record<string, unknown>): [string, string][] {
+  const fields: [string, string][] = []
   pushIfString(fields, 'title', item.title)
   pushIfString(fields, 'content', item.content)
   pushIfString(fields, 'plainText', item.plainText)

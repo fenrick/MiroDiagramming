@@ -26,7 +26,7 @@ export interface MermaidConversionOptions {
   expectedType?: 'flowchart' | 'flowchart-v2'
 }
 
-type RawVertex = {
+interface RawVertex {
   id: string
   text?: string
   type?: string
@@ -37,7 +37,7 @@ type RawVertex = {
   props?: Record<string, unknown>
 }
 
-type RawEdge = {
+interface RawEdge {
   id: string
   start: string
   end: string
@@ -49,7 +49,7 @@ type RawEdge = {
   styles?: string[]
 }
 
-type FlowchartDatabase = {
+interface FlowchartDatabase {
   getVertices?: () => Map<string, RawVertex> | undefined
   getEdges?: () => RawEdge[] | undefined
 }
@@ -124,21 +124,21 @@ const EDGE_PATTERN = new Map<string, 'dashed' | 'dotted'>([
   ['edge-pattern-dotted', 'dotted'],
 ])
 
-type NodeStyleOverrides = {
+interface NodeStyleOverrides {
   fillColor?: string
   borderColor?: string
   borderWidth?: number
   textColor?: string
 }
 
-type EdgeStyleOverrides = {
+interface EdgeStyleOverrides {
   strokeColor?: string
   strokeWidth?: number
   strokeStyle?: 'dashed' | 'dotted'
   color?: string
 }
 
-type SequenceParticipant = {
+interface SequenceParticipant {
   id: string
   label: string
 }
@@ -217,7 +217,7 @@ function parseLength(value: string | undefined): number | undefined {
 import { resolveColor } from '../utils/color-utilities'
 import { colors } from '@mirohq/design-tokens'
 
-type ClassStyle = {
+interface ClassStyle {
   fill?: string
   stroke?: string
   color?: string
@@ -413,7 +413,7 @@ function ensureUniqueNode(
   nodes: NodeData[],
   id: string,
   label: string,
-  type: string = 'MermaidNode',
+  type = 'MermaidNode',
 ): void {
   const existing = nodes.find((node) => node.id === id)
   if (existing) {

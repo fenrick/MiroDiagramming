@@ -13,7 +13,8 @@ export default [
   js.configs.recommended,
 
   // TypeScript: parser + recommended rules (mirrors many Clean Code correctness/readability checks)
-  ...tseslint.configs.recommended,
+  ...tseslint.configs.strict,
+  ...tseslint.configs.stylistic,
 
   // Sonar’s own ESLint rules (subset of SonarQube’s JS/TS rules)
   sonarjs.configs.recommended,

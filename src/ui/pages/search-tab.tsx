@@ -49,7 +49,7 @@ export const SearchTab: React.FC = () => {
   const [regex, setRegex] = React.useState(false)
 
   const focusOnItem = React.useCallback(async (item: unknown): Promise<void> => {
-    type ViewportAPI = {
+    interface ViewportAPI {
       zoomTo: (items: unknown[]) => Promise<void>
       zoomToObject?: (item: unknown) => Promise<void>
     }

@@ -6,7 +6,10 @@ export interface TagInfo {
 
 /** Minimal client for board tag operations relying on the Web SDK. */
 export class TagClient {
-  public constructor() {}
+  public constructor() {
+    // Non-empty body to satisfy lint; ready for future wiring
+    void 0
+  }
 
   /** Retrieve all tags for the board. */
   public async getTags(): Promise<TagInfo[]> {

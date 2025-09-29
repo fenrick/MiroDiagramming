@@ -7,9 +7,9 @@ export interface BoardUILike {
 export interface BoardLike {
   ui?: BoardUILike
 
-  getSelection(): Promise<Array<unknown>>
+  getSelection(): Promise<unknown[]>
 
-  group?(options: { items: Array<unknown> }): Promise<unknown>
+  group?(options: { items: unknown[] }): Promise<unknown>
 
   startBatch?(): Promise<void>
 
@@ -19,5 +19,5 @@ export interface BoardLike {
 }
 
 export interface BoardQueryLike extends BoardLike {
-  get(options: { type: string }): Promise<Array<unknown>>
+  get(options: { type: string }): Promise<unknown[]>
 }

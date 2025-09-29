@@ -17,7 +17,10 @@ import type { TabTuple } from './tab-definitions'
  */
 type SubTabId = 'structured' | 'cards' | 'layout' | 'mermaid'
 
-type TabItem = { id: SubTabId; label: string }
+interface TabItem {
+  id: SubTabId
+  label: string
+}
 
 const ALL_SUB_TABS: TabItem[] = [
   { id: 'structured', label: 'Structured' },

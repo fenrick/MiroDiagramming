@@ -20,7 +20,7 @@ export interface BoardCachePersistence {
   clear(boardId?: string): void
 }
 
-type SelectionLoader = (board: BoardLike) => Promise<Array<Record<string, unknown>>>
+type SelectionLoader = (board: BoardLike) => Promise<Record<string, unknown>[]>
 
 class InMemoryPersistence implements BoardCachePersistence {
   private readonly store = new Map<string, CacheSnapshot>()
@@ -111,9 +111,9 @@ const defaultLoader: SelectionLoader = async (board: BoardLike) => {
  * avoid repeated round-trips to the Web SDK.
  */
 export class BoardCache {
-  private readonly selectionCache = new LRUCache<string, Array<Record<string, unknown>>>({ max: 5 })
+  private readonly selectionCache = new LRUCache<string, Record<string, unknown>[]>({ max: 5 })
   private readonly selectionSummaryCache = new LRUCache<string, BoardWidgetSummary[]>({ max: 10 })
-  private readonly widgetCache = new LRUCache<string, Array<Record<string, unknown>>>({ max: 60 })
+  private readonly widgetCache = new LRUCache<string, Record<string, unknown>[]>({ max: 60 })
   private readonly persistence: BoardCachePersistence
   private selectionLoader: SelectionLoader
 
@@ -127,13 +127,13 @@ export class BoardCache {
 
   /** Override the selection loader with a backend-powered fetcher. */
   public useBackendSelection(
-    fetcher: (boardId: string) => Promise<Array<Record<string, unknown>>>,
+    fetcher: (boardId: string) => Promise<Record<string, unknown>[]>,
   ): void {
     this.selectionLoader = async (board) => fetcher(BoardCache.resolveBoardId(board))
   }
 
   /** Store the current selection in the cache. */
-  public setSelection(items: Array<Record<string, unknown>>, board?: BoardLike): void {
+  public setSelection(items: Record<string, unknown>[], board?: BoardLike): void {
     log.debug({ count: items.length }, 'Selection updated from event')
     const key = BoardCache.resolveBoardId(board)
     const summary = items.map((item) => BoardCache.toSummary(item))
@@ -143,7 +143,7 @@ export class BoardCache {
   }
 
   /** Retrieve and cache the current selection. */
-  public async getSelection(board: BoardLike): Promise<Array<Record<string, unknown>>> {
+  public async getSelection(board: BoardLike): Promise<Record<string, unknown>[]> {
     const key = BoardCache.resolveBoardId(board)
     let selection = this.selectionCache.get(key)
     if (!selection) {
@@ -210,9 +210,9 @@ export class BoardCache {
   public async getWidgets(
     types: string[],
     board: BoardQueryLike,
-  ): Promise<Array<Record<string, unknown>>> {
+  ): Promise<Record<string, unknown>[]> {
     const boardId = BoardCache.resolveBoardId(board as BoardLike)
-    const results: Array<Record<string, unknown>> = []
+    const results: Record<string, unknown>[] = []
     const missing: string[] = []
     for (const t of types) {
       const cacheKey = BoardCache.widgetKey(boardId, t)
@@ -243,11 +243,7 @@ export class BoardCache {
   }
 
   /** Replace cached widgets for a specific type. */
-  public setWidgets(
-    type: string,
-    widgets: Array<Record<string, unknown>>,
-    board?: BoardLike,
-  ): void {
+  public setWidgets(type: string, widgets: Record<string, unknown>[], board?: BoardLike): void {
     const normalised = widgets.map((item) => item as Record<string, unknown>)
     const boardId = BoardCache.resolveBoardId(board)
     this.widgetCache.set(BoardCache.widgetKey(boardId, type), normalised)
@@ -381,7 +377,7 @@ export class BoardCache {
   }
 
   private static clearWidgetEntries(
-    cache: LRUCache<string, Array<Record<string, unknown>>>,
+    cache: LRUCache<string, Record<string, unknown>[]>,
     boardId: string,
   ): void {
     for (const key of cache.keys()) {

@@ -10,4 +10,10 @@ export default meta
 
 type Story = StoryObj<typeof JsonDropZone>
 
-export const Default: Story = { args: { onFiles: () => {} } }
+export const Default: Story = {
+  args: {
+    onFiles: (files: File[]) => {
+      console.log('onFiles', files.length)
+    },
+  },
+}

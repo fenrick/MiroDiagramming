@@ -12,7 +12,9 @@ type DagreOptions = Partial<UserLayoutOptions> & {
   rankSpacing?: number
 }
 
-function rankdir(direction: DagreOptions['direction']): 'TB' | 'BT' | 'LR' | 'RL' {
+type RankDirection = 'TB' | 'BT' | 'LR' | 'RL'
+
+function rankdir(direction: DagreOptions['direction']): RankDirection {
   const map: Record<string, 'TB' | 'BT' | 'LR' | 'RL'> = {
     DOWN: 'TB',
     UP: 'BT',
@@ -22,43 +24,39 @@ function rankdir(direction: DagreOptions['direction']): 'TB' | 'BT' | 'LR' | 'RL
   return map[direction ?? 'RIGHT'] ?? 'LR'
 }
 
-async function baseLayoutGraphDagre(
-  data: GraphData,
-  options: DagreOptions = {},
-): Promise<LayoutResult> {
-  const g = new dagre.graphlib.Graph({ multigraph: true, compound: false })
-  const rankDirection = rankdir(options.direction ?? 'RIGHT')
-  // Dagre expects `nodesep` and `ranksep`. Prefer explicit `nodeSpacing`/`rankSpacing`
-  // when provided (from Mermaid), otherwise fall back to a single `spacing` knob.
-  const defaultSpacing = typeof options.spacing === 'number' ? options.spacing : 60
-  const nodesep = typeof options.nodeSpacing === 'number' ? options.nodeSpacing : defaultSpacing
-  const ranksep = typeof options.rankSpacing === 'number' ? options.rankSpacing : defaultSpacing
-  g.setGraph({
-    rankdir: rankDirection,
-    // Align nodes to the upper edge of each rank to avoid "staircase" drift
+function createDagreGraph(settings: {
+  direction: DagreOptions['direction']
+  nodesep: number
+  ranksep: number
+  edgesep: number
+}): dagre.graphlib.Graph {
+  const graph = new dagre.graphlib.Graph({ multigraph: true, compound: false })
+  graph.setGraph({
+    rankdir: rankdir(settings.direction ?? 'RIGHT'),
     align: 'UL',
-    // Standard dagre tunables
-    nodesep,
-    ranksep,
-    edgesep: Math.max(10, Math.min(40, defaultSpacing / 3)),
+    nodesep: settings.nodesep,
+    ranksep: settings.ranksep,
+    edgesep: settings.edgesep,
     ranker: 'tight-tree',
-    // acyclicer left as default to avoid over-constraining in complex graphs
   })
-  g.setDefaultEdgeLabel(() => ({}))
+  graph.setDefaultEdgeLabel(() => ({}))
+  return graph
+}
 
+function populateGraph(g: dagre.graphlib.Graph, data: GraphData): void {
   for (const node of data.nodes) {
     const dims = getNodeDimensions(node)
     g.setNode(node.id, { width: dims.width, height: dims.height })
   }
-  for (const [index, edge] of data.edges.entries()) {
+  let index = 0
+  for (const edge of data.edges) {
     const weight = typeof edge.label === 'string' && /\byes\b/i.test(edge.label) ? 3 : 1
     g.setEdge(edge.from, edge.to, { weight }, `e${index}`)
+    index += 1
   }
+}
 
-  dagre.layout(g)
-
-  // Use Dagre's computed coordinates as-is to preserve spacing semantics.
-
+function extractLayout(g: dagre.graphlib.Graph): LayoutResult {
   const nodes: Record<string, PositionedNode> = {}
   for (const id of g.nodes()) {
     const n = g.node(id) as { x: number; y: number; width: number; height: number }
@@ -70,14 +68,13 @@ async function baseLayoutGraphDagre(
       height: n.height,
     }
   }
-
   const edges: PositionedEdge[] = []
   for (const edgeReference of g.edges()) {
-    const info = g.edge(edgeReference) as { points?: Array<{ x: number; y: number }> }
+    const info = g.edge(edgeReference) as { points?: { x: number; y: number }[] }
     const pts = info.points ?? []
     if (pts.length >= 2) {
-      const start = pts[0]!
-      const end = pts.at(-1)!
+      const start = pts[0] as { x: number; y: number }
+      const end = pts.at(-1) as { x: number; y: number }
       const bends = pts.slice(1, -1)
       edges.push({
         startPoint: start,
@@ -86,8 +83,25 @@ async function baseLayoutGraphDagre(
       })
     }
   }
-
   return { nodes, edges }
+}
+
+async function baseLayoutGraphDagre(
+  data: GraphData,
+  options: DagreOptions = {},
+): Promise<LayoutResult> {
+  const defaultSpacing = typeof options.spacing === 'number' ? options.spacing : 60
+  const nodesep = typeof options.nodeSpacing === 'number' ? options.nodeSpacing : defaultSpacing
+  const ranksep = typeof options.rankSpacing === 'number' ? options.rankSpacing : defaultSpacing
+  const g = createDagreGraph({
+    direction: options.direction ?? 'RIGHT',
+    nodesep,
+    ranksep,
+    edgesep: Math.max(10, Math.min(40, defaultSpacing / 3)),
+  })
+  populateGraph(g, data)
+  dagre.layout(g)
+  return extractLayout(g)
 }
 
 function hasSubgraphs(data: GraphData): boolean {
@@ -132,7 +146,12 @@ function boundingBox(nodes: Record<string, PositionedNode>): {
 }
 
 // Cluster structures for nested subgraphs
-type Cluster = { id: string; parent?: string; childrenNodes: string[]; childrenClusters: string[] }
+interface Cluster {
+  id: string
+  parent?: string
+  childrenNodes: string[]
+  childrenClusters: string[]
+}
 
 function buildClusterTree(data: GraphData): Map<string, Cluster> {
   const clusters = new Map<string, Cluster>()
@@ -229,13 +248,13 @@ export async function layoutGraphDagre(
   // Recursively layout clusters bottom-up to compute proxy sizes and inner child positions
   const layoutClusterRecursive = async (
     clusterId: string,
-    inheritedDir: DagreOptions['direction'],
+    inheritedDirection: DagreOptions['direction'],
   ): Promise<void> => {
     const c = tree.get(clusterId)
     if (!c) return
     // Layout child clusters first to obtain their sizes
     for (const sub of c.childrenClusters) {
-      if (!sizes.has(sub)) await layoutClusterRecursive(sub, inheritedDir)
+      if (!sizes.has(sub)) await layoutClusterRecursive(sub, inheritedDirection)
     }
     // Build local graph of immediate items (leaf nodes + child cluster proxies)
     const g = new dagre.graphlib.Graph({ multigraph: true, compound: false })
@@ -245,11 +264,15 @@ export async function layoutGraphDagre(
     // Mermaid rule: ignore local direction if any descendant node links outside the cluster
     const leaves = descendantLeaves(clusterId)
     const hasExternal = data.edges.some(
-      (e) => (leaves.has(e.from) && !leaves.has(e.to)) || (!leaves.has(e.from) && leaves.has(e.to)),
+      (edge) =>
+        (leaves.has(edge.from) && !leaves.has(edge.to)) ||
+        (!leaves.has(edge.from) && leaves.has(edge.to)),
     )
-    const dir = hasExternal ? inheritedDir : clusterDirection(clusterId, data, inheritedDir)
+    const directionLocal = hasExternal
+      ? inheritedDirection
+      : clusterDirection(clusterId, data, inheritedDirection)
     g.setGraph({
-      rankdir: rankdirFor(dir),
+      rankdir: rankdirFor(directionLocal),
       align: 'UL',
       nodesep,
       ranksep,
@@ -260,7 +283,8 @@ export async function layoutGraphDagre(
 
     // Add immediate leaf nodes with real dimensions
     for (const id of c.childrenNodes) {
-      const node = data.nodes.find((n) => n.id === id)!
+      const node = data.nodes.find((n) => n.id === id)
+      if (!node) continue
       const dims = getNodeDimensions(node)
       g.setNode(id, { width: dims.width, height: dims.height })
     }
@@ -270,13 +294,13 @@ export async function layoutGraphDagre(
       g.setNode(id, { width: size.width, height: size.height })
     }
     // Add edges mapped to immediate items within this cluster (leaf/cluster)
-    for (const [index, e] of data.edges.entries()) {
+    for (const [index, edge] of data.edges.entries()) {
       // only consider edges whose endpoints are within this cluster's descendants
-      if (!leaves.has(e.from) || !leaves.has(e.to)) continue
-      const from = mapNodeToImmediateAt(e.from, clusterId)
-      const to = mapNodeToImmediateAt(e.to, clusterId)
+      if (!leaves.has(edge.from) || !leaves.has(edge.to)) continue
+      const from = mapNodeToImmediateAt(edge.from, clusterId)
+      const to = mapNodeToImmediateAt(edge.to, clusterId)
       if (!from || !to) continue
-      const weight = typeof e.label === 'string' && /\byes\b/i.test(e.label) ? 3 : 1
+      const weight = typeof edge.label === 'string' && /\byes\b/i.test(edge.label) ? 3 : 1
       g.setEdge(from, to, { weight }, `c${clusterId}:${index}`)
     }
 
@@ -289,19 +313,15 @@ export async function layoutGraphDagre(
     let maxX = Number.NEGATIVE_INFINITY
     let maxY = Number.NEGATIVE_INFINITY
     for (const id of g.nodes()) {
-      const n = g.node(id) as { x: number; y: number; width: number; height: number }
-      if (!n) continue
-      nodes[id] = {
-        id,
-        x: n.x - n.width / 2,
-        y: n.y - n.height / 2,
-        width: n.width,
-        height: n.height,
-      }
-      minX = Math.min(minX, nodes[id]!.x)
-      minY = Math.min(minY, nodes[id]!.y)
-      maxX = Math.max(maxX, nodes[id]!.x + nodes[id]!.width)
-      maxY = Math.max(maxY, nodes[id]!.y + nodes[id]!.height)
+      const nodeBox = g.node(id) as { x: number; y: number; width: number; height: number }
+      if (!nodeBox) continue
+      const x = nodeBox.x - nodeBox.width / 2
+      const y = nodeBox.y - nodeBox.height / 2
+      nodes[id] = { id, x, y, width: nodeBox.width, height: nodeBox.height }
+      minX = Math.min(minX, x)
+      minY = Math.min(minY, y)
+      maxX = Math.max(maxX, x + nodeBox.width)
+      maxY = Math.max(maxY, y + nodeBox.height)
     }
     const width = Math.max(minProxyW, maxX - minX + padding * 2)
     const height = Math.max(minProxyH, maxY - minY + padding * 2 + labelTopPadding)
@@ -311,9 +331,9 @@ export async function layoutGraphDagre(
 
   // Kick off recursive layout from all roots (clusters without parents)
   const roots = [...tree.values()].filter((c) => !c.parent).map((c) => c.id)
-  const inheritDir = options.direction ?? 'RIGHT'
+  const inheritedDirection = options.direction ?? 'RIGHT'
   for (const r of roots) {
-    await layoutClusterRecursive(r, inheritDir)
+    await layoutClusterRecursive(r, inheritedDirection)
   }
 
   // Build outer graph: top-level cluster proxies + top-level loose nodes
@@ -333,7 +353,11 @@ export async function layoutGraphDagre(
   }
 
   // Collapse edges for outer level: endpoints map to root cluster ids or loose node ids
-  type OuterEdge = { from: string; to: string; sourceIdx: number }
+  interface OuterEdge {
+    from: string
+    to: string
+    sourceIdx: number
+  }
   const outerEdges: OuterEdge[] = []
   type EdgeHintSide = 'N' | 'E' | 'S' | 'W'
   const edgeSideHints = new Map<number, { from?: EdgeHintSide; to?: EdgeHintSide }>()
@@ -507,11 +531,12 @@ export async function layoutGraphDagre(
     const off = { x: proxy.x + padding, y: proxy.y + padding }
     // Build local dagre again to harvest edges in the same order as layout.edges (empty in our innerLayouts)
     // Simpler: recompute edges between immediate leaves only
-    for (const e of data.edges) {
-      if (!cluster.childrenNodes.includes(e.from) || !cluster.childrenNodes.includes(e.to)) continue
+    for (const edge of data.edges) {
+      if (!cluster.childrenNodes.includes(edge.from) || !cluster.childrenNodes.includes(edge.to))
+        continue
       // There is no stored edge path array; approximate with straight segment between centres within cluster
-      const s = layout.nodes[e.from]
-      const t = layout.nodes[e.to]
+      const s = layout.nodes[edge.from]
+      const t = layout.nodes[edge.to]
       if (s && t) {
         finalEdges.push({
           startPoint: { x: s.x + off.x + s.width / 2, y: s.y + off.y + s.height / 2 },
@@ -523,7 +548,7 @@ export async function layoutGraphDagre(
 
   // Add outer edge paths per outerLayout (with hintSides calculated earlier)
   for (const [index, outerEdge] of outerEdges.entries()) {
-    const orig = outerEdge!.sourceIdx
+    const orig = outerEdge.sourceIdx
     const epos = outerLayout.edges[index]
     if (epos) {
       finalEdges.push({

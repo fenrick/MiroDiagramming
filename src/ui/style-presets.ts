@@ -62,7 +62,7 @@ function templateToPreset(name: string, template: { elements?: TemplateElement[]
 
 const rawTemplates = templatesJson as Record<string, unknown>
 
-const presetEntries: Array<[string, StylePreset]> = []
+const presetEntries: [string, StylePreset][] = []
 for (const [name, tpl] of Object.entries(rawTemplates)) {
   if (name === 'stylePresets') {
     continue

@@ -163,9 +163,9 @@ export class BoardBuilder {
     this.ensureBoard()
     const selection = await boardCache.getSelection(getBoard())
     const board: BoardQueryLike = {
-      get: async ({ type: t }): Promise<Array<Record<string, unknown>>> =>
+      get: async ({ type: t }): Promise<Record<string, unknown>[]> =>
         selection.filter((item) => (item as { type?: string }).type === t),
-      getSelection: async (): Promise<Array<Record<string, unknown>>> => selection,
+      getSelection: async (): Promise<Record<string, unknown>[]> => selection,
     }
     const shape = await searchShapes(board, this.shapeCache, label)
     if (shape) {
@@ -313,7 +313,7 @@ export class BoardBuilder {
    * Call `.sync()` on each widget if the method exists.
    * Batched with {@link runBatch} so multiple syncs are sent together.
    */
-  public async syncAll(items: Array<BoardItem | Connector>): Promise<void> {
+  public async syncAll(items: (BoardItem | Connector)[]): Promise<void> {
     getBoard()
     log.trace({ count: items.length }, 'Syncing widgets')
     await Promise.all(items.map((item) => maybeSync(item)))
@@ -323,7 +323,7 @@ export class BoardBuilder {
    * Remove the provided widgets from the board.
    * Deletion is wrapped in {@link runBatch} to reduce network chatter.
    */
-  public async removeItems(items: Array<BoardItem | Connector | Frame>): Promise<void> {
+  public async removeItems(items: (BoardItem | Connector | Frame)[]): Promise<void> {
     this.ensureBoard()
     log.debug({ count: items.length }, 'Removing items')
     // Remove sequentially to avoid any hidden batching assumptions

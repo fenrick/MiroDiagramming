@@ -71,7 +71,7 @@ const LAYOUT_CONFIGS = [
   { id: 'Radial', description: 'Circular layout around a hub' },
   { id: 'Box', description: 'Uniform box grid' },
   { id: 'Rect Packing', description: 'Fits rectangles within parents' },
-] as const satisfies ReadonlyArray<{ id: LayoutChoice; description: string }>
+] as const satisfies readonly { id: LayoutChoice; description: string }[]
 
 const LAYOUTS = LAYOUT_CONFIGS.map((config) => config.id) as readonly LayoutChoice[]
 

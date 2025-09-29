@@ -105,7 +105,7 @@ export async function applyBracketTagsToSelectedStickies(): Promise<void> {
   pushToast({ message })
 }
 
-function collectTagNames(stickies: Array<Record<string, unknown>>): Set<string> {
+function collectTagNames(stickies: Record<string, unknown>[]): Set<string> {
   const names = new Set<string>()
   for (const item of stickies) {
     const t = readItemText(item)

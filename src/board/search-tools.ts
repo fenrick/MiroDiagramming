@@ -125,7 +125,7 @@ async function queryBoardItems(
  * returned function returns `true` only when all configured checks succeed.
  */
 function buildFilter(options: SearchOptions): (item: Record<string, unknown>) => boolean {
-  const checks: Array<(index: Record<string, unknown>) => boolean> = []
+  const checks: ((index: Record<string, unknown>) => boolean)[] = []
 
   if (options.widgetTypes) {
     const types = new Set(options.widgetTypes)
