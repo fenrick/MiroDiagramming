@@ -1,3 +1,10 @@
+## [2.6.1](https://github.com/fenrick/MiroDiagramming/compare/v2.6.0...v2.6.1) (2025-09-29)
+
+
+### Bug Fixes
+
+* **templates:** apply experimental shape overrides verbatim (preserve 'diamond'); all tests passing ([4be2405](https://github.com/fenrick/MiroDiagramming/commit/4be24059d54335e4ca5186060d73b670e120662c))
+
 # [2.6.0](https://github.com/fenrick/MiroDiagramming/compare/v2.5.0...v2.6.0) (2025-09-29)
 
 
