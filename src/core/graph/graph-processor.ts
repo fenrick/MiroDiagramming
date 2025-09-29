@@ -369,42 +369,72 @@ export class GraphProcessor extends UndoableProcessor {
   }> {
     const map: Record<string, BoardItem> = {}
     const positions: Record<string, PositionedNode> = {}
+    // Build nested subgraph relationships for both leaves and subgraph containers
     const subgraphChildren = new Map<string, string[]>()
+    const containerParent = new Map<string, string>() // subgraphId -> parent subgraph id
     for (const n of graph.nodes) {
-      const parent = (n.metadata as { parent?: string } | undefined)?.parent
-      if (parent) {
-        const list = subgraphChildren.get(parent) ?? []
+      const meta = n.metadata as { parent?: string; isSubgraph?: boolean } | undefined
+      if (meta?.parent) {
+        const list = subgraphChildren.get(meta.parent) ?? []
         list.push(n.id)
-        subgraphChildren.set(parent, list)
+        subgraphChildren.set(meta.parent, list)
+        if (meta.isSubgraph) {
+          containerParent.set(n.id, meta.parent)
+        }
       }
     }
-    // Create subgraph containers first to ensure they render behind children
-    for (const [name, children] of subgraphChildren) {
-      if (children.length === 0) continue
-      let minX = Number.POSITIVE_INFINITY
-      let minY = Number.POSITIVE_INFINITY
-      let maxX = Number.NEGATIVE_INFINITY
-      let maxY = Number.NEGATIVE_INFINITY
-      for (const id of children) {
-        const pos = layout.nodes[id]
-        if (!pos) continue
-        const x = pos.x + offsetX
-        const y = pos.y + offsetY
-        minX = Math.min(minX, x)
-        minY = Math.min(minY, y)
-        maxX = Math.max(maxX, x + pos.width)
-        maxY = Math.max(maxY, y + pos.height)
+    // Create subgraph containers first, deepest-first, to render behind descendants
+    const depth = (id: string): number => {
+      let d = 0
+      let cur = id
+      while (containerParent.has(cur)) {
+        d += 1
+        cur = containerParent.get(cur)!
       }
-      if (!Number.isFinite(minX) || !Number.isFinite(minY)) continue
-      const padding = 40
-      const width = maxX - minX + padding * 2
-      const height = maxY - minY + padding * 2
-      const centerX = minX + (maxX - minX) / 2
-      const centerY = minY + (maxY - minY) / 2
-      const container = await this.builder.createNode(
-        { id: name, label: name, type: 'Composite' },
-        { x: centerX, y: centerY, width, height },
-      )
+      return d
+    }
+    const subgraphNames = [...new Set([...subgraphChildren.keys(), ...containerParent.keys()])]
+    subgraphNames.sort((a, b) => depth(b) - depth(a))
+    for (const name of subgraphNames) {
+      const children = subgraphChildren.get(name) ?? []
+      if (children.length === 0) continue
+      // Prefer using container proxy position from layout when present
+      const proxy = layout.nodes[name]
+      let container
+      if (proxy) {
+        const centerX = proxy.x + offsetX + proxy.width / 2
+        const centerY = proxy.y + offsetY + proxy.height / 2
+        container = await this.builder.createNode(
+          { id: name, label: name, type: 'Composite' },
+          { x: centerX, y: centerY, width: proxy.width, height: proxy.height },
+        )
+      } else {
+        // Fallback: compute from children bbox
+        let minX = Number.POSITIVE_INFINITY
+        let minY = Number.POSITIVE_INFINITY
+        let maxX = Number.NEGATIVE_INFINITY
+        let maxY = Number.NEGATIVE_INFINITY
+        for (const id of children) {
+          const pos = layout.nodes[id]
+          if (!pos) continue
+          const x = pos.x + offsetX
+          const y = pos.y + offsetY
+          minX = Math.min(minX, x)
+          minY = Math.min(minY, y)
+          maxX = Math.max(maxX, x + pos.width)
+          maxY = Math.max(maxY, y + pos.height)
+        }
+        if (!Number.isFinite(minX) || !Number.isFinite(minY)) continue
+        const padding = 40
+        const width = maxX - minX + padding * 2
+        const height = maxY - minY + padding * 2
+        const centerX = minX + (maxX - minX) / 2
+        const centerY = minY + (maxY - minY) / 2
+        container = await this.builder.createNode(
+          { id: name, label: name, type: 'Composite' },
+          { x: centerX, y: centerY, width, height },
+        )
+      }
       // Soft tint
       try {
         const palette = ['#F2F4FC', '#EFF9EC', '#FFEEDE', '#FEF2FF', '#FFFAE7', '#F7F7F7']
