@@ -143,7 +143,8 @@ export async function createConnector(
   const payload: Record<string, unknown> = {
     start: { item: from.id, position: hint?.startPosition },
     end: { item: to.id, position: hint?.endPosition },
-    shape: template?.shape ?? 'curved',
+    // Prefer template shape, then hint suggestion, then default to curved.
+    shape: template?.shape ?? hint?.shape ?? 'curved',
   }
   if (template?.style) {
     payload.style = template.style as ConnectorStyle

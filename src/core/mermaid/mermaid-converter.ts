@@ -259,9 +259,11 @@ function parseClassDefs(source: string): Map<string, ClassStyle> {
 function parseSubgraphs(source: string): {
   names: Set<string>
   membership: Map<string, string>
+  directions: Map<string, 'LR' | 'RL' | 'TB' | 'BT'>
 } {
   const names = new Set<string>()
   const membership = new Map<string, string>()
+  const directions = new Map<string, 'LR' | 'RL' | 'TB' | 'BT'>()
   const lines = source.split(/\r?\n/)
   let current: string | null = null
   for (const raw of lines) {
@@ -279,6 +281,17 @@ function parseSubgraphs(source: string): {
     if (/^end\b/i.test(line)) {
       current = null
       continue
+    }
+    // Per-mermaid, a subgraph can contain a local `direction LR|RL|TB|BT`.
+    if (current) {
+      const dm = /^direction\s+([A-Za-z]{2})\b/i.exec(line)
+      if (dm) {
+        const code = dm[1]!.toUpperCase()
+        if (code === 'LR' || code === 'RL' || code === 'TB' || code === 'BT') {
+          directions.set(current, code)
+        }
+        continue
+      }
     }
     if (current) {
       // capture simple identifiers on this line (A, a1, etc.)
@@ -300,7 +313,7 @@ function parseSubgraphs(source: string): {
       }
     }
   }
-  return { names, membership }
+  return { names, membership, directions }
 }
 
 function parseNodeStyles(vertex: RawVertex): NodeStyleOverrides | undefined {
@@ -982,11 +995,36 @@ export async function convertMermaidToGraph(
       }
     }
     // Add container nodes for each subgraph so layout can compute bounds
+    const mapDirection = (
+      code: 'LR' | 'RL' | 'TB' | 'BT' | undefined,
+    ): 'UP' | 'DOWN' | 'LEFT' | 'RIGHT' | undefined => {
+      switch (code) {
+        case 'LR':
+          return 'RIGHT'
+        case 'RL':
+          return 'LEFT'
+        case 'TB':
+          return 'DOWN'
+        case 'BT':
+          return 'UP'
+        default:
+          return undefined
+      }
+    }
+
     for (const name of subgraphMap.names) {
       // Avoid collisions when a node shares the same id
       const exists = nodeList.some((n) => n.id === name)
       if (!exists) {
-        nodeList.push({ id: name, label: name, type: 'Composite', metadata: { isSubgraph: true } })
+        const subgraphDirection = mapDirection(subgraphMap.directions.get(name))
+        nodeList.push({
+          id: name,
+          label: name,
+          type: 'Composite',
+          metadata: subgraphDirection
+            ? { isSubgraph: true, subgraphDirection }
+            : { isSubgraph: true },
+        })
       }
     }
     if (nodeList.length === 0) {

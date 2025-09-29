@@ -10,12 +10,17 @@ export function relativePosition(
   node: { x: number; y: number; width: number; height: number },
   pt: { x: number; y: number },
 ): { x: number; y: number } {
-  return { x: (pt.x - node.x) / node.width, y: (pt.y - node.y) / node.height }
+  const fx = (pt.x - node.x) / node.width
+  const fy = (pt.y - node.y) / node.height
+  const clamp = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v)
+  return { x: clamp(fx), y: clamp(fy) }
 }
 
 export interface EdgeHint {
   startPosition?: { x: number; y: number }
   endPosition?: { x: number; y: number }
+  /** Optional suggestion for connector shape based on path geometry. */
+  shape?: 'straight' | 'elbowed' | 'curved'
 }
 
 /**
@@ -33,6 +38,8 @@ export function computeEdgeHints(
     edges: Array<{
       startPoint: { x: number; y: number }
       endPoint: { x: number; y: number }
+      bendPoints?: Array<{ x: number; y: number }>
+      hintSides?: { start?: 'N' | 'E' | 'S' | 'W'; end?: 'N' | 'E' | 'S' | 'W' }
     }>
   },
 ): EdgeHint[] {
@@ -43,11 +50,83 @@ export function computeEdgeHints(
     }
     const source = layout.nodes[info.from]
     const tgt = layout.nodes[info.to]
+    const fractionalFrom = edge.hintSides?.start
+      ? sideToFraction(edge.hintSides.start)
+      : source
+        ? relativePosition(source, edge.startPoint)
+        : undefined
+    const fractionalTo = edge.hintSides?.end
+      ? sideToFraction(edge.hintSides.end)
+      : tgt
+        ? relativePosition(tgt, edge.endPoint)
+        : undefined
+    const shape =
+      edge.hintSides?.start && edge.hintSides.end
+        ? preferredShapeForSides(edge.hintSides.start, edge.hintSides.end)
+        : suggestConnectorShape(edge)
     return {
-      startPosition: source ? relativePosition(source, edge.startPoint) : undefined,
-      endPosition: tgt ? relativePosition(tgt, edge.endPoint) : undefined,
+      startPosition: fractionalFrom,
+      endPosition: fractionalTo,
+      shape,
     }
   })
+}
+
+/** Determine whether a polyline is primarily Manhattan (axis-aligned) or not. */
+function suggestConnectorShape(edge: {
+  startPoint: { x: number; y: number }
+  endPoint: { x: number; y: number }
+  bendPoints?: Array<{ x: number; y: number }>
+}): 'elbowed' | 'curved' | 'straight' {
+  const points = [edge.startPoint, ...(edge.bendPoints ?? []), edge.endPoint]
+  if (points.length <= 2) {
+    // With no bends, prefer straight if the delta strongly favors one axis.
+    const dx = Math.abs(points[1]!.x - points[0]!.x)
+    const dy = Math.abs(points[1]!.y - points[0]!.y)
+    if (dx < 1 || dy < 1) return 'straight'
+    return dx === 0 || dy === 0 ? 'straight' : 'curved'
+  }
+  // Tolerance for near-axis alignment
+  const tol = 0.01
+  let manhattanSegments = 0
+  for (let i = 0; i < points.length - 1; i += 1) {
+    const a = points[i]!
+    const b = points[i + 1]!
+    const dx = Math.abs(b.x - a.x)
+    const dy = Math.abs(b.y - a.y)
+    const len = Math.max(dx, dy)
+    if (len === 0) continue
+    const isAxisAligned = dx / len < tol || dy / len < tol
+    if (isAxisAligned) manhattanSegments += 1
+  }
+  const ratio = manhattanSegments / (points.length - 1)
+  return ratio > 0.8 ? 'elbowed' : 'curved'
+}
+
+function sideToFraction(side: 'N' | 'E' | 'S' | 'W'): { x: number; y: number } {
+  switch (side) {
+    case 'N':
+      return { x: 0.5, y: 0 }
+    case 'S':
+      return { x: 0.5, y: 1 }
+    case 'E':
+      return { x: 1, y: 0.5 }
+    case 'W':
+    default:
+      return { x: 0, y: 0.5 }
+  }
+}
+
+function preferredShapeForSides(
+  from: 'N' | 'E' | 'S' | 'W',
+  to: 'N' | 'E' | 'S' | 'W',
+): 'elbowed' | 'curved' | 'straight' {
+  const opposite = (a: string, b: string) =>
+    (a === 'E' && b === 'W') ||
+    (a === 'W' && b === 'E') ||
+    (a === 'N' && b === 'S') ||
+    (a === 'S' && b === 'N')
+  return opposite(from, to) ? 'elbowed' : 'curved'
 }
 
 export interface NodePosition {

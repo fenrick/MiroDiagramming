@@ -17,8 +17,8 @@ vi.mock('../../src/core/mermaid/mermaid-converter', () => ({
   ),
 }))
 
-vi.mock('../../src/core/mermaid/mermaid-layout', () => ({
-  computeMermaidLayout: vi.fn(
+vi.mock('../../src/core/layout/dagre-layout', () => ({
+  layoutGraphDagre: vi.fn(
     async () =>
       ({
         nodes: {
@@ -36,14 +36,14 @@ vi.mock('../../src/core/mermaid/mermaid-layout', () => ({
 }))
 
 const { convertMermaidToGraph } = await import('../../src/core/mermaid/mermaid-converter')
-const { computeMermaidLayout } = await import('../../src/core/mermaid/mermaid-layout')
+const { layoutGraphDagre } = await import('../../src/core/layout/dagre-layout')
 
 describe('MermaidRenderer', () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
-  it('uses mermaid layout to drive the board processor', async () => {
+  it('uses Dagre layout to drive the board processor by default', async () => {
     const processed: { graph: GraphData; layout: LayoutResult; options: unknown }[] = []
     const fakeProcessor = {
       processGraphWithLayout: vi.fn(async (graph: GraphData, layout: LayoutResult, options) => {
@@ -54,7 +54,7 @@ describe('MermaidRenderer', () => {
     const result = await renderer.render('graph TD\nA-->B', { createFrame: false })
 
     expect(convertMermaidToGraph).toHaveBeenCalledTimes(1)
-    expect(computeMermaidLayout).toHaveBeenCalledTimes(1)
+    expect(layoutGraphDagre).toHaveBeenCalledTimes(1)
     expect(fakeProcessor.processGraphWithLayout).toHaveBeenCalledTimes(1)
     expect(result.nodes).toHaveLength(2)
     expect(processed[0]?.layout.nodes.A).toEqual({ id: 'A', x: 10, y: 20, width: 60, height: 30 })

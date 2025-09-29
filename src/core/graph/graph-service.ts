@@ -33,6 +33,7 @@ export interface PositionedNode {
 export interface EdgeHint {
   startPosition?: { x: number; y: number }
   endPosition?: { x: number; y: number }
+  shape?: 'straight' | 'elbowed' | 'curved'
 }
 
 export class GraphService {

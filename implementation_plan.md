@@ -86,25 +86,25 @@ Goal
 
 Steps
 
-1. Add Dagre layout engine [In Progress]
+1. Add Dagre layout engine [Done]
 
-- Implement `src/core/layout/dagre-layout.ts` returning `LayoutResult` (positions, bendpoints) from `GraphData`.
-- Map our `UserLayoutOptions` to Dagre (direction, spacing).
+- Implemented `src/core/layout/dagre-layout.ts` returning `LayoutResult` (positions, bendpoints) from `GraphData`.
+- Map our layout options to Dagre (direction via LR/RL/TB/BT rankdir; spacing maps Mermaid `nodeSpacing`→`nodesep`, `rankSpacing`→`ranksep`; defaults ≈ 50).
 
-2. Engine selection & flags [Pending]
+2. Engine selection & flags [Done]
 
-- New env flag `VITE_MERMAID_LAYOUT_ENGINE = dagre | elk | mermaid`.
-- Wire `MermaidRenderer` to choose engine based on the flag. Keep default = `mermaid` to avoid test churn; docs will recommend `dagre` in real boards.
+- Env flag `VITE_MERMAID_LAYOUT_ENGINE = dagre | elk | mermaid` supported.
+- `MermaidRenderer` chooses engine based on the flag or front‑matter. Default = `dagre`; Mermaid DOM layout is only used when explicitly requested or as a fallback.
 
 3. Parser‑only philosophy [Pending]
 
 - Evaluate `@mermaid-js/parser` to build a typed AST → IR converter, decoupling from Mermaid’s internal db structures.
 - Start with flowchart; plan state/class as follow‑ups.
 
-4. Remove SVG‑geometry dependency [Pending]
+4. Remove SVG‑geometry dependency [Done]
 
-- Keep `src/core/mermaid/mermaid-layout.ts` behind the `mermaid` engine only for legacy comparison.
-- Switch app defaults to `dagre` after bake‑in.
+- Keep `src/core/mermaid/mermaid-layout.ts` behind a fallback flag only; normal rendering routes through Dagre.
+- Default switched to `dagre`.
 
 5. Docs & UX [Pending]
 

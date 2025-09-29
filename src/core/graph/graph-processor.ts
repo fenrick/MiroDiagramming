@@ -5,6 +5,7 @@ import { type BoardBuilder } from '../../board/board-builder'
 import { clearActiveFrame, registerFrame } from '../../board/frame-utilities'
 import type { TemplateElement } from '../../board/templates'
 import { layoutEngine, type LayoutResult } from '../layout/elk-layout'
+import { layoutGraphDagre } from '../layout/dagre-layout'
 import { type UserLayoutOptions } from '../layout/elk-options'
 import type { PositionedNode } from '../layout/layout-core'
 import { boundingBoxFromTopLeft, computeEdgeHints, frameOffset } from '../layout/layout-utilities'
@@ -183,24 +184,94 @@ export class GraphProcessor extends UndoableProcessor {
       existingMode,
       existing,
     )
-
-    const shiftedEdges = layout.edges.map((edge) => ({
-      startPoint: {
-        x: edge.startPoint.x + offsetX,
-        y: edge.startPoint.y + offsetY,
-      },
-      endPoint: {
-        x: edge.endPoint.x + offsetX,
-        y: edge.endPoint.y + offsetY,
-      },
-      bendPoints: edge.bendPoints?.map((pt) => ({
-        x: pt.x + offsetX,
-        y: pt.y + offsetY,
-      })),
-    }))
-
-    const finalLayout: LayoutResult = { nodes: positions, edges: shiftedEdges }
-    await this.createConnectorsAndZoom(graph, finalLayout, map, frame)
+    const converge = (options.layout as { converge?: boolean } | undefined)?.converge === true
+    if (converge) {
+      // Measure actual sizes from created widgets
+      const epsilon = 3
+      const measured: Record<string, { width: number; height: number }> = {}
+      for (const [id, item] of Object.entries(map)) {
+        const w = (item as { width?: number }).width
+        const h = (item as { height?: number }).height
+        if (typeof w === 'number' && typeof h === 'number') {
+          measured[id] = { width: w, height: h }
+        }
+      }
+      // Build updated graph with measured sizes as metadata
+      const updated: GraphData = {
+        nodes: graph.nodes.map((n) => {
+          const m = measured[n.id]
+          if (!m) return n
+          const prevW = positions[n.id]?.width
+          const prevH = positions[n.id]?.height
+          const width = prevW && Math.abs(m.width - prevW) <= epsilon ? prevW : m.width
+          const height = prevH && Math.abs(m.height - prevH) <= epsilon ? prevH : m.height
+          return { ...n, metadata: { ...(n.metadata ?? {}), width, height } }
+        }),
+        edges: graph.edges,
+      }
+      // Re-run Dagre using measured sizes
+      const spacing = options.layout?.spacing ?? 50
+      const direction = options.layout?.direction ?? 'RIGHT'
+      const second = await layoutGraphDagre(updated, {
+        direction,
+        nodeSpacing: (options.layout as any)?.nodeSpacing ?? spacing,
+        rankSpacing: (options.layout as any)?.rankSpacing ?? spacing,
+      })
+      const newBounds = this.layoutBounds(second)
+      const dx = bounds.minX - newBounds.minX
+      const dy = bounds.minY - newBounds.minY
+      const grid = (options.layout as { gridSnap?: number } | undefined)?.gridSnap ?? 8
+      const snap = (v: number) => (grid > 0 ? Math.round(v / grid) * grid : v)
+      // Move widgets to new positions
+      for (const n of graph.nodes) {
+        const pos = second.nodes[n.id]
+        if (!pos) continue
+        const item = map[n.id] as { x?: number; y?: number; sync?: () => Promise<void> } | undefined
+        if (!item) continue
+        const nx = snap(pos.x + offsetX + dx + pos.width / 2)
+        const ny = snap(pos.y + offsetY + dy + pos.height / 2)
+        item.x = nx
+        item.y = ny
+        await maybeSync(item)
+      }
+      const shiftedEdges2 = second.edges.map((edge) => ({
+        startPoint: { x: edge.startPoint.x + offsetX + dx, y: edge.startPoint.y + offsetY + dy },
+        endPoint: { x: edge.endPoint.x + offsetX + dx, y: edge.endPoint.y + offsetY + dy },
+        bendPoints: edge.bendPoints?.map((pt) => ({
+          x: pt.x + offsetX + dx,
+          y: pt.y + offsetY + dy,
+        })),
+        hintSides: edge.hintSides,
+      }))
+      const finalLayout: LayoutResult = {
+        nodes: Object.fromEntries(
+          Object.entries(second.nodes).map(([id, p]) => [
+            id,
+            { ...p, x: p.x + offsetX + dx, y: p.y + offsetY + dy, id } as any,
+          ]),
+        ),
+        edges: shiftedEdges2,
+      }
+      await this.createConnectorsAndZoom(graph, finalLayout, map, frame)
+    } else {
+      const shiftedEdges = layout.edges.map((edge) => ({
+        startPoint: {
+          x: edge.startPoint.x + offsetX,
+          y: edge.startPoint.y + offsetY,
+        },
+        endPoint: {
+          x: edge.endPoint.x + offsetX,
+          y: edge.endPoint.y + offsetY,
+        },
+        bendPoints: edge.bendPoints?.map((pt) => ({
+          x: pt.x + offsetX,
+          y: pt.y + offsetY,
+        })),
+        hintSides: edge.hintSides,
+      }))
+      const finalLayout: LayoutResult = { nodes: positions, edges: shiftedEdges }
+      await this.createConnectorsAndZoom(graph, finalLayout, map, frame)
+    }
   }
 
   // undoLast inherited from UndoableProcessor

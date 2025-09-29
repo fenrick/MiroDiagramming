@@ -26,23 +26,34 @@ export class MermaidRenderer {
     const { config, expectedType, ...processOptions } = options
     const graph = await convertMermaidToGraph(source, { config, expectedType })
     const fmEngine = MermaidRenderer.frontmatterLayout(source)
-    const mermaidLayout = await computeMermaidLayout(source, graph, { config })
-    const layoutEngine =
-      fmEngine ?? (import.meta as ImportMeta).env?.VITE_MERMAID_LAYOUT_ENGINE ?? 'mermaid'
-    const layout =
-      layoutEngine === 'dagre'
-        ? await layoutGraphDagre(graph, {
-            ...processOptions.layout,
-            direction:
-              MermaidRenderer.directionFromSource(source) ?? processOptions.layout?.direction,
-          })
-        : mermaidLayout
+    const engine =
+      fmEngine ?? (import.meta as ImportMeta).env?.VITE_MERMAID_LAYOUT_ENGINE ?? 'dagre'
+
+    let layout: LayoutResult
+    if (engine === 'mermaid') {
+      // Explicitly requested Mermaid DOM geometry (legacy/compare path)
+      layout = await computeMermaidLayout(source, graph, { config })
+    } else {
+      // Dagre-first path: map Mermaid direction and spacing to Dagre
+      const direction =
+        MermaidRenderer.directionFromSource(source) ?? processOptions.layout?.direction
+      const { nodeSpacing, rankSpacing } = MermaidRenderer.spacingFromSource(source)
+      layout = await layoutGraphDagre(graph, {
+        ...processOptions.layout,
+        direction,
+        nodeSpacing: nodeSpacing ?? processOptions.layout?.spacing ?? 50,
+        rankSpacing: rankSpacing ?? processOptions.layout?.spacing ?? 50,
+      })
+    }
+
+    // Optional last-resort fallback to Mermaid DOM layout when enabled
     const fallbackEnabled =
       typeof (import.meta as ImportMeta).env?.VITE_MERMAID_LAYOUT_FALLBACK === 'string'
         ? (import.meta as ImportMeta).env.VITE_MERMAID_LAYOUT_FALLBACK.toLowerCase() === 'true'
         : false
-    if (fallbackEnabled && MermaidRenderer.isPoorlySpaced(layout)) {
-      await this.processor.processGraph(graph, processOptions)
+    if (engine !== 'mermaid' && fallbackEnabled && MermaidRenderer.isPoorlySpaced(layout)) {
+      const mermaidLayout = await computeMermaidLayout(source, graph, { config })
+      await this.processor.processGraphWithLayout(graph, mermaidLayout, processOptions)
     } else {
       await this.processor.processGraphWithLayout(graph, layout, processOptions)
     }
@@ -104,5 +115,43 @@ export class MermaidRenderer {
     const body = m[1] ?? ''
     const lm = /\blayout:\s*(dagre|elk|mermaid)\b/i.exec(body)
     return lm ? (lm[1]!.toLowerCase() as 'dagre' | 'elk' | 'mermaid') : null
+  }
+
+  /**
+   * Extract flowchart spacing from Mermaid front-matter or init directive.
+   * Mirrors Mermaid's `flowchart: { nodeSpacing, rankSpacing }` semantics.
+   * Defaults to ~50px each when not specified.
+   */
+  private static spacingFromSource(source: string): {
+    nodeSpacing: number | undefined
+    rankSpacing: number | undefined
+  } {
+    // Front-matter YAML: ---\nconfig:\n  flowchart:\n    nodeSpacing: 40\n    rankSpacing: 60\n---
+    const fm = /^---\s*([\s\S]*?)\n---/m.exec(source)
+    if (fm) {
+      const body = fm[1] ?? ''
+      const nodeM = /\bnodeSpacing\s*:\s*(\d+(?:\.\d+)?)\b/i.exec(body)
+      const rankM = /\brankSpacing\s*:\s*(\d+(?:\.\d+)?)\b/i.exec(body)
+      const nodeSpacing = nodeM ? Number(nodeM[1]) : undefined
+      const rankSpacing = rankM ? Number(rankM[1]) : undefined
+      if (Number.isFinite(nodeSpacing) || Number.isFinite(rankSpacing)) {
+        return { nodeSpacing, rankSpacing }
+      }
+    }
+    // Init directive: %%{init: { flowchart: { nodeSpacing: 50, rankSpacing: 60 } }}%%
+    const init = /%%\{\s*init\s*:\s*(\{[\s\S]*?\})\s*}\s*%%/i.exec(source)
+    if (init) {
+      try {
+        const parsed = JSON.parse(init[1]!) as {
+          flowchart?: { nodeSpacing?: number; rankSpacing?: number }
+        }
+        const nodeSpacing = parsed.flowchart?.nodeSpacing
+        const rankSpacing = parsed.flowchart?.rankSpacing
+        return { nodeSpacing, rankSpacing }
+      } catch {
+        // ignore JSON parsing errors
+      }
+    }
+    return { nodeSpacing: undefined, rankSpacing: undefined }
   }
 }

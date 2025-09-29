@@ -19,6 +19,8 @@ export interface PositionedEdge {
   startPoint: { x: number; y: number }
   endPoint: { x: number; y: number }
   bendPoints?: { x: number; y: number }[]
+  /** Optional attachment side hints for start/end, used for connector routing. */
+  hintSides?: { start?: 'N' | 'E' | 'S' | 'W'; end?: 'N' | 'E' | 'S' | 'W' }
 }
 
 const DEFAULT_WIDTH = 180
