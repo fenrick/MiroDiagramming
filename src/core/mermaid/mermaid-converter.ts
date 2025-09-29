@@ -271,12 +271,15 @@ function parseSubgraphs(source: string): {
   for (const raw of lines) {
     const line = raw.trim()
     if (!line) continue
-    const open = /^subgraph\s+(.+)$/i.exec(line)
-    if (open) {
-      let name = open[1]!.trim()
-      // strip trailing title in brackets: "subgraph one [Title]"
-      const bracket = /^(.*?)\s*\[/.exec(name)
-      if (bracket) name = bracket[1]!.trim()
+    // Detect "subgraph <name>" without regex to avoid backtracking concerns
+    const lineLower = line.toLowerCase()
+    if (lineLower.startsWith('subgraph ')) {
+      let name = line.slice('subgraph '.length).trim()
+      // Strip trailing title in brackets: e.g. "subgraph one [Title]"
+      const bracketIndex = name.indexOf('[')
+      if (bracketIndex !== -1) {
+        name = name.slice(0, bracketIndex).trim()
+      }
       names.add(name)
       if (stack.length > 0) {
         parents.set(name, stack.at(-1)!)

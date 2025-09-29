@@ -87,8 +87,7 @@ export function useDiagramCreate(
     }
     for (const file of importQueue) {
       try {
-        if (options.layoutChoice === 'Nested') await processNested(file)
-        else await processFlat(file)
+        await (options.layoutChoice === 'Nested' ? processNested(file) : processFlat(file))
         setProgress(100)
       } catch (error) {
         const message = String(error)
