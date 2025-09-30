@@ -1,9 +1,13 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, afterEach } from 'vitest'
 
 import { GraphProcessor } from '../../src/core/graph/graph-processor'
 import { layoutEngine } from '../../src/core/layout/elk-layout'
 
 describe('GraphProcessor', () => {
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
   it('processGraph creates nodes, edges and zooms', async () => {
     const gpBuilder = {
       findSpace: vi.fn().mockResolvedValue({ x: 0, y: 0 }),
@@ -102,5 +106,67 @@ describe('GraphProcessor', () => {
     })
     // Only missing node B is created
     expect(builder.createNode).toHaveBeenCalledTimes(1)
+  })
+
+  it('applies Mermaid metadata overrides to created shapes', async () => {
+    const applyTemplate = vi.fn()
+    const commit = vi.fn().mockResolvedValue(undefined)
+    const builder = {
+      findSpace: vi.fn().mockResolvedValue({ x: 0, y: 0 }),
+      createNode: vi.fn(async (_n: any) => ({
+        id: `w-${_n.id}`,
+        type: 'shape',
+        shape: 'rectangle',
+      })),
+      createEdges: vi.fn(async () => []),
+      zoomTo: vi.fn(),
+      syncAll: vi.fn(),
+      beginShapeInteraction: vi.fn(() => ({ applyTemplate, commit })),
+      findNodeInSelection: vi.fn(async () => undefined),
+      setFrame: vi.fn(),
+    } as any
+    vi.spyOn(layoutEngine, 'layoutGraph').mockResolvedValue({
+      nodes: { a: { id: 'a', x: 0, y: 0, width: 40, height: 20 } },
+      edges: [],
+    } as any)
+
+    const gp = new GraphProcessor(builder)
+    await gp.processGraph(
+      {
+        nodes: [
+          {
+            id: 'a',
+            type: 'MermaidNode',
+            label: 'Styled',
+            metadata: {
+              styleOverrides: {
+                fillColor: '#f00',
+                borderColor: '#0f0',
+                borderWidth: 2,
+                textColor: '#00f',
+              },
+              shape: 'hexagon',
+            },
+          },
+        ],
+        edges: [],
+      },
+      { createFrame: false, layout: { algorithm: 'mrtree' } },
+    )
+
+    expect(builder.beginShapeInteraction).toHaveBeenCalled()
+    expect(applyTemplate).toHaveBeenCalledWith(
+      {
+        style: {
+          fillColor: '#f00',
+          borderColor: '#0f0',
+          borderWidth: 2,
+          color: '#00f',
+        },
+        shape: 'hexagon',
+      },
+      'Styled',
+    )
+    expect(commit).toHaveBeenCalled()
   })
 })

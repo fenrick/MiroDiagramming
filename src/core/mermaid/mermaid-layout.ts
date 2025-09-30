@@ -10,10 +10,20 @@ type MermaidLayoutOptions = Readonly<{
   config?: Parameters<typeof mermaid.initialize>[0]
 }>
 
-function ensureDom(): void {
-  if (typeof document === 'undefined' || typeof document.createElement !== 'function') {
+function ensureDom(): Document {
+  const candidate = globalThis as {
+    document?: {
+      body?: HTMLElement | null
+      createElementNS?: unknown
+    }
+  }
+  const documentCandidate = candidate.document
+  const body = documentCandidate?.body ?? null
+  const createElementNs = documentCandidate?.createElementNS
+  if (!documentCandidate || typeof createElementNs !== 'function' || !body) {
     throw new TypeError('Mermaid layout requires a browser-like DOM environment')
   }
+  return documentCandidate as Document
 }
 
 const HIDDEN_CONTAINER_STYLE = Object.freeze({
@@ -24,10 +34,10 @@ const HIDDEN_CONTAINER_STYLE = Object.freeze({
 })
 
 function createHiddenContainer(): HTMLElement {
-  ensureDom()
-  const container = document.createElement('div')
+  const documentReference = ensureDom()
+  const container = documentReference.createElementNS('http://www.w3.org/1999/xhtml', 'div')
   Object.assign(container.style, HIDDEN_CONTAINER_STYLE)
-  document.body.append(container)
+  documentReference.body.append(container)
   return container
 }
 
@@ -75,7 +85,10 @@ function decodePoints(attribute: string | null): { x: number; y: number }[] | un
     if (!Array.isArray(parsed)) {
       return undefined
     }
-    return parsed.map((pt) => ({ x: Number(pt.x), y: Number(pt.y) }))
+    return parsed.map((pt) => ({
+      x: typeof pt.x === 'number' ? pt.x : Number.parseFloat(String(pt.x)),
+      y: typeof pt.y === 'number' ? pt.y : Number.parseFloat(String(pt.y)),
+    }))
   } catch {
     return undefined
   }
@@ -171,7 +184,7 @@ function computeNodeBounds(nodeElement: SVGGElement): {
     }
     if (tag === 'path') {
       // Path shapes are complex; rely on stroke bounding approximated via data attribute when available.
-      const dataBounds = (element as HTMLElement | SVGElement).dataset?.bounds ?? null
+      const dataBounds = (element as HTMLElement | SVGElement).dataset.bounds ?? null
       if (dataBounds) {
         try {
           const parsed = JSON.parse(dataBounds) as {
@@ -247,7 +260,7 @@ function mapEdgesFromSvg(
 ): PositionedEdge[] {
   return graph.edges.map((edge) => {
     const domId = (edge.metadata as { domId?: string } | undefined)?.domId
-    const path = domId ? svgElement.querySelector(`path[data-id="${domId}"]`) : null
+    const path = domId ? svgElement.querySelector<SVGPathElement>(`path[data-id="${domId}"]`) : null
     const points = path ? decodePoints(path.dataset.points ?? null) : undefined
     if (points && points.length >= 2) {
       const start = points[0] as { x: number; y: number }
@@ -282,12 +295,12 @@ export async function computeMermaidLayout(
   ensureMermaidInitialized(options.config)
   ensureDom()
   renderSequence = (renderSequence + 1) % Number.MAX_SAFE_INTEGER
-  const id = `mermaid-layout-${renderSequence}`
-  const { svg } = await mermaid.mermaidAPI.render(id, source)
+  const id = `mermaid-layout-${String(renderSequence)}`
+  const { svg } = await mermaid.render(id, source)
   const container = createHiddenContainer()
   try {
     container.innerHTML = svg
-    const svgElement = container.querySelector('svg')
+    const svgElement = container.querySelector<SVGSVGElement>('svg')
     if (!svgElement) {
       throw new Error('Failed to render Mermaid diagram: SVG element missing')
     }
