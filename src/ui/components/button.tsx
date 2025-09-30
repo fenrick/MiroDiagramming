@@ -1,15 +1,24 @@
 import { Button as DSButton } from '@mirohq/design-system'
 import { type CSS } from '@stitches/react'
 import React from 'react'
+import type { ButtonHTMLAttributes } from 'react'
+
+type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'ghost' | 'danger'
+type ButtonSize = 'small' | 'medium' | 'large' | 'x-large'
+
+type NativeButtonProperties = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'className' | 'style'>
 
 export type ButtonProperties = Readonly<
-  Omit<
-    React.ComponentProps<typeof DSButton>,
-    'variant' | 'size' | 'className' | 'style' | 'css'
-  > & {
-    variant?: 'primary' | 'secondary' | 'tertiary' | 'ghost' | 'danger'
+  NativeButtonProperties & {
+    /** Optional design-system fluid layout toggle. */
+    fluid?: boolean
+    /** Optional loading indicator toggle. */
+    loading?: boolean
+    /** Optional CSS override for the button. */
+    css?: CSS
+    variant?: ButtonVariant
     /** Optional size override. */
-    size?: 'small' | 'medium' | 'large' | 'x-large'
+    size?: ButtonSize
     /** Optional icon shown inside the button. */
     icon?: React.ReactNode
     /**
@@ -17,8 +26,6 @@ export type ButtonProperties = Readonly<
      * @default 'start'
      */
     iconPosition?: 'start' | 'end'
-    /** Optional CSS override for the button. */
-    css?: CSS
   }
 >
 
@@ -29,19 +36,10 @@ function getIconSlots(
   if (!icon) {
     return { start: null, end: null }
   }
-  if (iconPosition === 'start') {
-    return {
-      start: <DSButton.IconSlot key="icon-start">{icon}</DSButton.IconSlot>,
-      end: null,
-    }
-  }
-  if (iconPosition === 'end') {
-    return {
-      start: null,
-      end: <DSButton.IconSlot key="icon-end">{icon}</DSButton.IconSlot>,
-    }
-  }
-  return { start: null, end: null }
+
+  const slot = <DSButton.IconSlot key={`icon-${iconPosition}`}>{icon}</DSButton.IconSlot>
+
+  return iconPosition === 'start' ? { start: slot, end: null } : { start: null, end: slot }
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProperties>(function Button(
