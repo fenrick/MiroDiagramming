@@ -42,17 +42,28 @@ const DEFAULT_SUB_TAB: SubTabId = 'structured'
 const isVisibleSubTabId = (value: string | null, tabs: readonly TabItem[]): value is SubTabId =>
   value !== null && tabs.some((tab) => tab.id === value)
 
-const getStoredSubTab = (tabs: readonly TabItem[]): SubTabId => {
-  if (typeof globalThis === 'undefined') {
-    return tabs[0]?.id ?? DEFAULT_SUB_TAB
+const getStorage = (): Storage | null => {
+  if (typeof globalThis === 'undefined' || !('localStorage' in globalThis)) {
+    return null
   }
   try {
-    const stored = globalThis.localStorage?.getItem(LAST_USED_SUB_TAB_KEY) ?? null
-    if (isVisibleSubTabId(stored, tabs)) {
-      return stored
-    }
+    return globalThis.localStorage
   } catch {
-    // Ignore storage errors (e.g. private mode or security restrictions)
+    return null
+  }
+}
+
+const getStoredSubTab = (tabs: readonly TabItem[]): SubTabId => {
+  const storage = getStorage()
+  if (storage) {
+    try {
+      const stored = storage.getItem(LAST_USED_SUB_TAB_KEY)
+      if (isVisibleSubTabId(stored, tabs)) {
+        return stored
+      }
+    } catch {
+      // Ignore storage errors (e.g. private mode or security restrictions)
+    }
   }
   return tabs[0]?.id ?? DEFAULT_SUB_TAB
 }
@@ -76,20 +87,26 @@ export const DiagramsTab: React.FC = () => {
     (id: string) => {
       const next = isVisibleSubTabId(id, subTabs) ? id : getStoredSubTab(subTabs)
       setSub(next)
-      try {
-        globalThis.localStorage?.setItem(LAST_USED_SUB_TAB_KEY, next)
-      } catch {
-        // Ignore storage errors; UX already updated locally
+      const storage = getStorage()
+      if (storage) {
+        try {
+          storage.setItem(LAST_USED_SUB_TAB_KEY, next)
+        } catch {
+          // Ignore storage errors; UX already updated locally
+        }
       }
     },
     [subTabs],
   )
 
   React.useEffect(() => {
-    try {
-      globalThis.localStorage?.setItem(LAST_USED_SUB_TAB_KEY, sub)
-    } catch {
-      // Ignore storage errors; UX already updated locally
+    const storage = getStorage()
+    if (storage) {
+      try {
+        storage.setItem(LAST_USED_SUB_TAB_KEY, sub)
+      } catch {
+        // Ignore storage errors; UX already updated locally
+      }
     }
   }, [sub])
 

@@ -6,9 +6,16 @@ import { render } from '@testing-library/react'
 // Mock design system primitives to avoid CSS shorthands not supported by jsdom
 vi.mock('@mirohq/design-system', () => {
   const P = ({ children, ...rest }: any) => React.createElement('div', rest, children)
-  const Btn = ({ children, ...rest }: any) => React.createElement('button', rest, children)
+  const Btn = ({ children, iconPosition: _iconPosition, ...rest }: any) =>
+    React.createElement('button', rest, children)
   const Text = ({ children, ...rest }: any) => React.createElement('span', rest, children)
-  const styled = (tag: any, _styles?: any) => (props: any) => React.createElement(tag, props)
+  const styled =
+    (tag: any, _styles?: any) =>
+    ({ iconPosition: _iconPosition, ...props }: any) =>
+      React.createElement(tag, props)
+  const PrimitiveDiv = React.forwardRef<HTMLDivElement, any>(({ children, ...props }, ref) =>
+    React.createElement('div', { ...props, ref }, children),
+  )
   return {
     Box: P,
     Grid: Object.assign(P, { Item: P }),
@@ -35,7 +42,7 @@ vi.mock('@mirohq/design-system', () => {
       Arrow: () => null,
     }),
     styled,
-    Primitive: { div: (props: any) => React.createElement('div', props) },
+    Primitive: { div: PrimitiveDiv },
     Tabs: Object.assign((p: any) => React.createElement('div', null, p.children), {
       List: (p: any) => React.createElement('div', null, p.children),
       Trigger: (p: any) => React.createElement('button', { type: 'button' }, p.children),

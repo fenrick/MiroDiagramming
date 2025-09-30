@@ -33,7 +33,7 @@ function parseCardStyle(
 
 /** Load and parse card data from an uploaded file. */
 export class CardLoader {
-  private static instance: CardLoader
+  private static instance: CardLoader | null = null
   private static instances = 0
 
   private constructor() {
@@ -43,10 +43,13 @@ export class CardLoader {
 
   /** Access the shared loader instance. */
   public static getInstance(): CardLoader {
-    if (!CardLoader.instance) {
-      CardLoader.instance = new CardLoader()
+    const existing = CardLoader.instance
+    if (existing) {
+      return existing
     }
-    return CardLoader.instance
+    const created = new CardLoader()
+    CardLoader.instance = created
+    return created
   }
 
   /** Load and parse card data from an uploaded file. */

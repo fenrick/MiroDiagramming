@@ -30,8 +30,9 @@ export function InfoCallout({
     if (typeof children === 'string') {
       return children.trim().length > 0
     }
-    const array = React.Children.toArray(children)
-    return array.some((node) => (typeof node === 'string' ? node.trim().length > 0 : node !== null))
+    return React.Children.toArray(children).some((node) =>
+      typeof node === 'string' ? node.trim().length > 0 : true,
+    )
   }, [markdown, children])
   if (!hasContent) {
     return null

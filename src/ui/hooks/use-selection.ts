@@ -13,14 +13,15 @@ import * as log from '../../logger'
 export function useSelection(board?: BoardLike): Record<string, unknown>[] {
   const [sel, setSel] = React.useState<Record<string, unknown>[]>([])
   React.useEffect(() => {
-    let b: BoardLike
+    let resolvedBoard: BoardLike
     try {
-      b = getBoard(board)
+      resolvedBoard = getBoard(board)
     } catch {
       return
     }
     let active = true
-    const update = (event?: { items: unknown[] }): void => {
+
+    const update = async (event?: { items: unknown[] }): Promise<void> => {
       if (event && Array.isArray(event.items)) {
         const items = event.items as Record<string, unknown>[]
         log.trace({ count: items.length }, 'Selection event received')
@@ -30,26 +31,32 @@ export function useSelection(board?: BoardLike): Record<string, unknown>[] {
         }
         return
       }
+
       log.trace('Fetching selection due to missing event payload')
       boardCache.clearSelection()
-      return boardCache
-        .getSelection(b)
-        .then((selection) => {
-          if (active) {
-            setSel(selection)
-          }
-          return selection
-        })
-        .catch((error) => {
-          log.warn({ error }, 'Failed to fetch selection')
-          return [] as Record<string, unknown>[]
-        })
+      try {
+        const selection = await boardCache.getSelection(resolvedBoard)
+        if (active) {
+          setSel(selection)
+        }
+      } catch (error: unknown) {
+        log.warning({ error }, 'Failed to fetch selection')
+      }
     }
-    update()
-    b.ui?.on('selection:update', update)
+
+    const listener = (payload?: { items: unknown[] }): void => {
+      update(payload).catch((error: unknown) => {
+        log.warning({ error }, 'Selection listener failed')
+      })
+    }
+
+    update().catch((error: unknown) => {
+      log.warning({ error }, 'Initial selection fetch failed')
+    })
+    resolvedBoard.ui?.on('selection:update', listener)
     return () => {
       active = false
-      b.ui?.off?.('selection:update', update)
+      resolvedBoard.ui?.off?.('selection:update', listener)
     }
   }, [board])
   return sel

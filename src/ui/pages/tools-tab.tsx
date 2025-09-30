@@ -38,17 +38,28 @@ const DEFAULT_SUB_TAB: SubTabId = 'size'
 const isSubTabId = (value: string | null): value is SubTabId =>
   value !== null && SUB_TABS.some((tab) => tab.id === value)
 
-const getStoredSubTab = (): SubTabId => {
-  if (typeof globalThis === 'undefined') {
-    return DEFAULT_SUB_TAB
+const getStorage = (): Storage | null => {
+  if (typeof globalThis === 'undefined' || !('localStorage' in globalThis)) {
+    return null
   }
   try {
-    const stored = globalThis.localStorage?.getItem(LAST_USED_SUB_TAB_KEY) ?? null
-    if (isSubTabId(stored)) {
-      return stored
-    }
+    return globalThis.localStorage
   } catch {
-    // Ignore storage errors (e.g. private mode or security restrictions)
+    return null
+  }
+}
+
+const getStoredSubTab = (): SubTabId => {
+  const storage = getStorage()
+  if (storage) {
+    try {
+      const stored = storage.getItem(LAST_USED_SUB_TAB_KEY)
+      if (isSubTabId(stored)) {
+        return stored
+      }
+    } catch {
+      // Ignore storage errors (e.g. private mode or security restrictions)
+    }
   }
   return DEFAULT_SUB_TAB
 }
@@ -59,10 +70,13 @@ export const ToolsTab: React.FC = () => {
   const handleChange = React.useCallback((id: string) => {
     const next = isSubTabId(id) ? id : DEFAULT_SUB_TAB
     setSub(next)
-    try {
-      globalThis.localStorage?.setItem(LAST_USED_SUB_TAB_KEY, next)
-    } catch {
-      // Ignore storage errors; UX already updated locally
+    const storage = getStorage()
+    if (storage) {
+      try {
+        storage.setItem(LAST_USED_SUB_TAB_KEY, next)
+      } catch {
+        // Ignore storage errors; UX already updated locally
+      }
     }
   }, [])
 

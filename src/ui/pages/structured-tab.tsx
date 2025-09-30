@@ -115,9 +115,7 @@ export const StructuredTab: React.FC = () => {
   const [existingMode, setExistingMode] = React.useState<ExistingNodeMode>('move')
   const [progress, setProgress] = React.useState<number>(0)
   const [error, setError] = React.useState<string | null>(null)
-  const [lastProc, setLastProc] = React.useState<GraphProcessor | HierarchyProcessor | undefined>(
-    null as unknown as GraphProcessor | HierarchyProcessor | undefined,
-  )
+  const [lastProc, setLastProc] = React.useState<GraphProcessor | HierarchyProcessor | undefined>()
   const optionVisibility = OPTION_VISIBILITY.get(layoutOptions.algorithm)
 
   // No custom keyboard toggles; advanced options are controlled via details/summary only.
@@ -158,7 +156,7 @@ export const StructuredTab: React.FC = () => {
         <SidebarSection title="Diagram import">
           <DroppedFileList>
             {importQueue.map((file) => (
-              <li key={`${file.name}-${file.lastModified}`}>{file.name}</li>
+              <li key={`${file.name}-${String(file.lastModified)}`}>{file.name}</li>
             ))}
           </DroppedFileList>
           <div style={{ marginTop: space[200] }}>
@@ -367,7 +365,9 @@ export const StructuredTab: React.FC = () => {
             <StickyActions>
               <ButtonToolbar>
                 <Button
-                  onClick={handleCreate}
+                  onClick={() => {
+                    void handleCreate()
+                  }}
                   variant="primary"
                   iconPosition="start"
                   icon={<IconPlus />}
@@ -376,11 +376,11 @@ export const StructuredTab: React.FC = () => {
                 </Button>
                 {lastProc && (
                   <Button
-                    onClick={() =>
-                      undoLastImport(lastProc, () => {
-                        setLastProc((_previous) => undefined as typeof _previous)
+                    onClick={() => {
+                      void undoLastImport(lastProc, () => {
+                        setLastProc(undefined)
                       })
-                    }
+                    }}
                     variant="secondary"
                     iconPosition="start"
                     icon={<IconArrowArcLeft />}

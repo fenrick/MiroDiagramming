@@ -175,7 +175,10 @@ export class BoardBuilder {
   }
 
   /** Create or update a node widget from a template. */
-  public async createNode(node: unknown, pos: PositionedNode): Promise<BoardItem> {
+  public async createNode(node: unknown, pos: unknown): Promise<BoardItem> {
+    if (!BoardBuilder.isPositionedNode(pos)) {
+      throw new TypeError(`Invalid position: ${JSON.stringify(pos)}`)
+    }
     const nd = node as NodeData
     const meta = nd.metadata ?? {}
     log.info(
@@ -189,9 +192,6 @@ export class BoardBuilder {
       },
       'Creating node',
     )
-    if (!pos || typeof pos.x !== 'number' || typeof pos.y !== 'number') {
-      throw new TypeError(`Invalid position: ${JSON.stringify(pos)}`)
-    }
     if (!BoardBuilder.isNodeData(node)) {
       throw new TypeError(`Invalid node: ${JSON.stringify(node)}`)
     }
@@ -244,8 +244,8 @@ export class BoardBuilder {
       throw new TypeError(`Invalid edges: ${JSON.stringify(edges)}`)
     }
     log.info({ count: edges.length }, 'Creating edges')
-    if (!nodeMap || typeof nodeMap !== 'object') {
-      throw new TypeError(`Invalid node map: ${JSON.stringify(nodeMap)}`)
+    if (edges.length > 0 && !BoardBuilder.hasNodeEntries(nodeMap)) {
+      throw new TypeError('Invalid node map: empty or malformed')
     }
     const created: Connector[] = []
     const nodeLookup = new Map<string, BoardItem>(Object.entries(nodeMap))
@@ -295,7 +295,7 @@ export class BoardBuilder {
       return
     }
     const style: ConnectorStyle = {
-      ...(connector.style ?? ({} as ConnectorStyle)),
+      ...(connector.style as ConnectorStyle | undefined),
     }
     if (overrides.strokeColor) {
       style.strokeColor = overrides.strokeColor
@@ -370,7 +370,11 @@ export class BoardBuilder {
   }
 
   private ensureBoard(): void {
-    if (typeof miro === 'undefined' || !miro?.board) {
+    const globalWithMiro = globalThis as Partial<typeof globalThis> & {
+      miro?: { board?: unknown }
+    }
+    const board = globalWithMiro.miro?.board
+    if (!board) {
       throw new TypeError('Miro board not initialized')
     }
   }
@@ -408,6 +412,23 @@ export class BoardBuilder {
       'Create node at size',
     )
     return widget
+  }
+
+  private static isPositionedNode(value: unknown): value is PositionedNode {
+    if (!value || typeof value !== 'object') {
+      return false
+    }
+    const pos = value as Partial<PositionedNode>
+    return (
+      typeof pos.x === 'number' &&
+      typeof pos.y === 'number' &&
+      typeof pos.width === 'number' &&
+      typeof pos.height === 'number'
+    )
+  }
+
+  private static hasNodeEntries(nodeMap: Record<string, BoardItem>): boolean {
+    return Object.entries(nodeMap).length > 0
   }
 
   private static computeDiff(current: NodeData[], desired: NodeData[]): BoardDiffOperation[] {

@@ -32,6 +32,67 @@ const CONTENT_STYLE: React.CSSProperties = {
   gap: space[200],
 }
 
+const parseTagList = (ids: string): string[] =>
+  ids
+    .split(',')
+    .map((value) => value.trim())
+    .filter((value) => value.length > 0)
+
+const applyWidgetTypesOption = (options: SearchOptions, widgetTypes: string[]): void => {
+  if (widgetTypes.length > 0) {
+    options.widgetTypes = [...widgetTypes]
+  }
+}
+
+const applyTagIdsOption = (options: SearchOptions, ids: string): void => {
+  const tags = parseTagList(ids)
+  if (tags.length > 0) {
+    options.tagIds = tags
+  }
+}
+
+const applyBackgroundColorOption = (options: SearchOptions, colour: string): void => {
+  if (colour) {
+    options.backgroundColor = colour
+  }
+}
+
+const applyAssigneeOption = (options: SearchOptions, assignee: string): void => {
+  if (assignee) {
+    options.assignee = assignee
+  }
+}
+
+const applyCreatorOption = (options: SearchOptions, creator: string): void => {
+  if (creator) {
+    options.creator = creator
+  }
+}
+
+const applyLastModifiedByOption = (options: SearchOptions, modifier: string): void => {
+  if (modifier) {
+    options.lastModifiedBy = modifier
+  }
+}
+
+const applyCaseSensitiveOption = (options: SearchOptions, enabled: boolean): void => {
+  if (enabled) {
+    options.caseSensitive = true
+  }
+}
+
+const applyWholeWordOption = (options: SearchOptions, enabled: boolean): void => {
+  if (enabled) {
+    options.wholeWord = true
+  }
+}
+
+const applyRegexOption = (options: SearchOptions, enabled: boolean): void => {
+  if (enabled) {
+    options.regex = true
+  }
+}
+
 /**
  * Sidebar tab providing board wide search and replace.
  */
@@ -53,11 +114,31 @@ export const SearchTab: React.FC = () => {
       zoomTo: (items: unknown[]) => Promise<void>
       zoomToObject?: (item: unknown) => Promise<void>
     }
-    const vp = globalThis.miro?.board?.viewport as ViewportAPI | undefined
-    if (!vp) {
+    const maybeMiro = (globalThis as Record<string, unknown>).miro as
+      | { board?: { viewport?: ViewportAPI } }
+      | undefined
+    if (!maybeMiro || typeof maybeMiro !== 'object') {
       return
     }
-    await (typeof vp.zoomToObject === 'function' ? vp.zoomToObject(item) : vp.zoomTo([item]))
+    if (!('board' in maybeMiro)) {
+      return
+    }
+    const boardCandidate = (maybeMiro as { board?: unknown }).board
+    if (!boardCandidate || typeof boardCandidate !== 'object') {
+      return
+    }
+    if (!('viewport' in boardCandidate)) {
+      return
+    }
+    const viewport = (boardCandidate as { viewport?: ViewportAPI }).viewport
+    if (!viewport) {
+      return
+    }
+    const operation =
+      typeof viewport.zoomToObject === 'function'
+        ? viewport.zoomToObject(item)
+        : viewport.zoomTo([item])
+    await operation
   }, [])
 
   const toggleType = (type: string): void => {
@@ -67,50 +148,28 @@ export const SearchTab: React.FC = () => {
   }
 
   const buildOptions = React.useCallback((): SearchOptions => {
-    const tags = tagIds
-      .split(',')
-      .map((t) => t.trim())
-      .filter(Boolean)
     const options: SearchOptions = { query }
-    if (widgetTypes.length > 0) {
-      options.widgetTypes = [...widgetTypes]
-    }
-    if (tags.length > 0) {
-      options.tagIds = tags
-    }
-    if (backgroundColor) {
-      options.backgroundColor = backgroundColor
-    }
-    if (assignee) {
-      options.assignee = assignee
-    }
-    if (creator) {
-      options.creator = creator
-    }
-    if (lastModifiedBy) {
-      options.lastModifiedBy = lastModifiedBy
-    }
-    if (caseSensitive) {
-      options.caseSensitive = true
-    }
-    if (wholeWord) {
-      options.wholeWord = true
-    }
-    if (regex) {
-      options.regex = true
-    }
+    applyWidgetTypesOption(options, widgetTypes)
+    applyTagIdsOption(options, tagIds)
+    applyBackgroundColorOption(options, backgroundColor)
+    applyAssigneeOption(options, assignee)
+    applyCreatorOption(options, creator)
+    applyLastModifiedByOption(options, lastModifiedBy)
+    applyCaseSensitiveOption(options, caseSensitive)
+    applyWholeWordOption(options, wholeWord)
+    applyRegexOption(options, regex)
     return options
   }, [
-    query,
-    widgetTypes,
-    tagIds,
-    backgroundColor,
     assignee,
+    backgroundColor,
+    caseSensitive,
     creator,
     lastModifiedBy,
-    caseSensitive,
-    wholeWord,
+    query,
     regex,
+    tagIds,
+    wholeWord,
+    widgetTypes,
   ])
   const { results, currentIndex, setResults, setCurrentIndex } = useDebouncedSearch(
     query,
@@ -205,7 +264,9 @@ export const SearchTab: React.FC = () => {
           <StickyActions>
             <ButtonToolbar>
               <Button
-                onClick={nextMatch}
+                onClick={() => {
+                  void nextMatch()
+                }}
                 disabled={results.length === 0}
                 variant="secondary"
                 icon={<IconChevronRight />}
@@ -214,7 +275,9 @@ export const SearchTab: React.FC = () => {
                 <Text>Next</Text>
               </Button>
               <Button
-                onClick={replaceCurrent}
+                onClick={() => {
+                  void replaceCurrent()
+                }}
                 disabled={results.length === 0}
                 variant="secondary"
                 icon={<IconPen />}
@@ -223,7 +286,9 @@ export const SearchTab: React.FC = () => {
                 <Text>Replace</Text>
               </Button>
               <Button
-                onClick={replaceAll}
+                onClick={() => {
+                  void replaceAll()
+                }}
                 disabled={results.length === 0}
                 variant="primary"
                 icon={<IconArrowRight />}

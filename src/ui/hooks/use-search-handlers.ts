@@ -26,21 +26,25 @@ export function useDebouncedSearch(
   const [results, setResults] = React.useState<SearchResult[]>([])
   const [currentIndex, setCurrentIndex] = React.useState(-1)
 
+  const refreshResults = React.useCallback(async (): Promise<void> => {
+    if (!query) {
+      setResults([])
+      setCurrentIndex(-1)
+      return
+    }
+    const refreshedResults = await searchBoardContent(buildOptions())
+    setResults(refreshedResults)
+    setCurrentIndex(refreshedResults.length > 0 ? 0 : -1)
+  }, [buildOptions, query])
+
   React.useEffect(() => {
-    const handle = setTimeout(async () => {
-      if (!query) {
-        setResults([])
-        setCurrentIndex(-1)
-        return
-      }
-      const refreshedResults = await searchBoardContent(buildOptions())
-      setResults(refreshedResults)
-      setCurrentIndex(refreshedResults.length > 0 ? 0 : -1)
+    const handle = setTimeout(() => {
+      void refreshResults()
     }, 300)
     return () => {
       clearTimeout(handle)
     }
-  }, [buildOptions, query])
+  }, [refreshResults])
 
   return { results, currentIndex, setResults, setCurrentIndex }
 }
@@ -138,8 +142,8 @@ export function useReplaceCurrent(
       return
     }
     const board = {
-      getSelection: async () => [current.item],
-      get: async () => [],
+      getSelection: () => Promise.resolve([current.item]),
+      get: () => Promise.resolve([] as Record<string, unknown>[]),
     }
     await replaceBoardContent(
       { ...buildOptions(), replacement, inSelection: true },

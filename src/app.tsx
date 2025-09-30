@@ -8,7 +8,7 @@ import { App as QuickToolsApp } from './app/app'
 
 const container = document.querySelector<HTMLElement>('#root')
 if (container) {
-  const themeClass = createTheme(themes.light)
+  const themeClass = String(createTheme(themes.light))
   container.classList.add(themeClass)
   const root = createRoot(container)
   root.render(React.createElement(QuickToolsApp))

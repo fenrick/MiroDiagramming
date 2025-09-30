@@ -42,16 +42,19 @@ const SWATCH_BASE_STYLE = {
   border: `var(--border-widths-sm) solid ${colors['gray-200']}`,
 } as const
 
+const formatSelectionLabel = (count: number): string => {
+  if (count <= 0) {
+    return 'No selection'
+  }
+  const noun = count === 1 ? 'item' : 'items'
+  return `${count.toLocaleString()} selected ${noun}`
+}
+
 export const StyleTab: React.FC = () => {
   const [adjust, setAdjust] = React.useState(0)
   const selection = useSelection()
   const hasSelection = selection.length > 0
-  let selectionLabel = 'No selection'
-  if (hasSelection) {
-    const count = selection.length
-    const noun = count === 1 ? 'item' : 'items'
-    selectionLabel = `${count} selected ${noun}`
-  }
+  const selectionLabel = formatSelectionLabel(selection.length)
   const [baseColor, setBaseColor] = React.useState('#808080')
   const [opacityDelta, setOpacityDelta] = React.useState(0)
   const [borderDelta, setBorderDelta] = React.useState(0)
@@ -191,7 +194,9 @@ export const StyleTab: React.FC = () => {
               <StickyActions>
                 <ButtonToolbar>
                   <Button
-                    onClick={apply}
+                    onClick={() => {
+                      void apply()
+                    }}
                     type="button"
                     variant="primary"
                     icon={<IconSlidersX />}
@@ -201,7 +206,9 @@ export const StyleTab: React.FC = () => {
                     <Text>Apply</Text>
                   </Button>
                   <Button
-                    onClick={applyOpacity}
+                    onClick={() => {
+                      void applyOpacity()
+                    }}
                     type="button"
                     variant="secondary"
                     disabled={!hasSelection}
@@ -209,14 +216,23 @@ export const StyleTab: React.FC = () => {
                     <Text>Opacity</Text>
                   </Button>
                   <Button
-                    onClick={applyBorder}
+                    onClick={() => {
+                      void applyBorder()
+                    }}
                     type="button"
                     variant="secondary"
                     disabled={!hasSelection}
                   >
                     <Text>Border</Text>
                   </Button>
-                  <Button onClick={copyFill} type="button" variant="ghost" disabled={!hasSelection}>
+                  <Button
+                    onClick={() => {
+                      void copyFill()
+                    }}
+                    type="button"
+                    variant="ghost"
+                    disabled={!hasSelection}
+                  >
                     <Text>Copy Fill</Text>
                   </Button>
                 </ButtonToolbar>
@@ -241,7 +257,9 @@ export const StyleTab: React.FC = () => {
                 return (
                   <Button
                     key={name}
-                    onClick={() => applyStylePreset(preset)}
+                    onClick={() => {
+                      void applyStylePreset(preset)
+                    }}
                     type="button"
                     variant="secondary"
                     css={{

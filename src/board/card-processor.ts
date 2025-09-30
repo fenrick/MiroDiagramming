@@ -380,8 +380,8 @@ export class CardProcessor extends UndoableProcessor<Card | Frame> {
         ),
       ),
     )
-    for (const card of cards) {
-      frame?.add(card)
+    if (frame) {
+      await Promise.all(cards.map((card) => frame.add(card)))
     }
     return cards
   }
