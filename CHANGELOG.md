@@ -1,3 +1,15 @@
+## [2.6.8](https://github.com/fenrick/MiroDiagramming/compare/v2.6.7...v2.6.8) (2025-09-30)
+
+
+### Bug Fixes
+
+* **board:** resolve lint findings in layout utilities ([063e09d](https://github.com/fenrick/MiroDiagramming/commit/063e09d09685fda66796f48c6b88eae2a8bf9f05))
+* **core:** harden mermaid feature flags ([e6eb839](https://github.com/fenrick/MiroDiagramming/commit/e6eb8399d185eebb02536bfb20504115912a34c7))
+* **core:** harden shape client operations ([a50919d](https://github.com/fenrick/MiroDiagramming/commit/a50919d387b31ca5582eeac4be202a93bcafd968))
+* **graph:** harden conversions and hierarchy flow ([a04cdbb](https://github.com/fenrick/MiroDiagramming/commit/a04cdbb3fba4e1e85d89840b0daafb58a11ce492))
+* resolve lint issues in selection utilities ([7cedfd6](https://github.com/fenrick/MiroDiagramming/commit/7cedfd6226fa9190ffb846398e471b5c01a1caf2))
+* **ui:** harden shared controls for lint compliance ([bac8cd2](https://github.com/fenrick/MiroDiagramming/commit/bac8cd2edeadd84ce8579cd118e3f1d26f9a9504))
+
 ## [2.6.7](https://github.com/fenrick/MiroDiagramming/compare/v2.6.6...v2.6.7) (2025-09-30)
 
 
