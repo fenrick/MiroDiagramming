@@ -22,6 +22,7 @@ export default defineConfig(
     languageOptions: {
       parserOptions: {
         projectService: true,
+        project: './tsconfig.eslint.json',
         tsconfigRootDir: import.meta.dirname,
       },
     },
@@ -43,7 +44,16 @@ export default defineConfig(
   // Project-specific tweaks
   {
     name: 'project-overrides',
-    ignores: ['dist/**', 'coverage/**', '**/*.min.js'],
+    // Keep global ignores aligned with tsconfig.eslint.json `exclude`
+    // so type-aware linting scans the same set of files.
+    ignores: [
+      'node_modules/**',
+      'dist/**',
+      'coverage/**',
+      'src/stories/**',
+      'tests/**/fixtures/**',
+      '**/*.min.js',
+    ],
     rules: {
       // Sonar-like maintainability signal
       'sonarjs/cognitive-complexity': ['error', 8],
@@ -63,11 +73,11 @@ export default defineConfig(
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
-        project: false, // set your tsconfig path & turn on type-aware rules if desired
+        project: './tsconfig.eslint.json',
+        tsconfigRootDir: import.meta.dirname,
       },
     },
     rules: {
-      // Turn on a few type-aware-ish constraints even without full type-checker
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/consistent-type-imports': 'error',
     },
