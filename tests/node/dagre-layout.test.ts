@@ -6,7 +6,10 @@ import { layoutGraphDagre } from '../../src/core/layout/dagre-layout'
 
 function requireNode(candidate: PositionedNode | undefined, label: string): PositionedNode {
   expect(candidate, `${label} should be defined`).toBeDefined()
-  return candidate as PositionedNode
+  if (!candidate) {
+    throw new Error(`${label} should be defined`)
+  }
+  return candidate
 }
 
 describe('dagre layout', () => {
@@ -58,5 +61,55 @@ describe('dagre layout', () => {
 
     const loose = requireNode(result.nodes.loose, 'loose node')
     expect(loose.y).toBeGreaterThan(proxy.y)
+  })
+
+  it('provides hint sides and nested proxies for multi-level clusters', async () => {
+    const data: GraphData = {
+      nodes: [
+        { id: 'outer', label: 'Outer', type: 'Composite', metadata: { isSubgraph: true } },
+        {
+          id: 'inner',
+          label: 'Inner',
+          type: 'Composite',
+          metadata: { isSubgraph: true, parent: 'outer' },
+        },
+        { id: 'leaf-a', label: 'Leaf A', type: 'MermaidNode', metadata: { parent: 'inner' } },
+        { id: 'leaf-b', label: 'Leaf B', type: 'MermaidNode', metadata: { parent: 'inner' } },
+        {
+          id: 'outer-leaf',
+          label: 'Outer Leaf',
+          type: 'MermaidNode',
+          metadata: { parent: 'outer' },
+        },
+        { id: 'lonely', label: 'Lonely', type: 'MermaidNode' },
+      ],
+      edges: [
+        { from: 'leaf-a', to: 'leaf-b' },
+        { from: 'leaf-b', to: 'outer-leaf' },
+        { from: 'outer-leaf', to: 'lonely' },
+      ],
+    }
+
+    const result = await layoutGraphDagre(data, { direction: 'RIGHT', spacing: 60 })
+
+    const outerProxy = requireNode(result.nodes.outer, 'outer cluster proxy')
+    const innerProxy = requireNode(result.nodes.inner, 'inner cluster proxy')
+
+    // Inner cluster should reside within the outer cluster padded bounds.
+    expect(innerProxy.x).toBeGreaterThanOrEqual(outerProxy.x)
+    expect(innerProxy.y).toBeGreaterThanOrEqual(outerProxy.y)
+    expect(innerProxy.x + innerProxy.width).toBeLessThanOrEqual(outerProxy.x + outerProxy.width)
+    expect(innerProxy.y + innerProxy.height).toBeLessThanOrEqual(outerProxy.y + outerProxy.height)
+
+    // Outgoing edge from cluster should carry hint sides for routing.
+    const hintedEdge = result.edges.find((edge) => {
+      const hints = edge.hintSides
+      return (hints?.start ?? hints?.end) !== undefined
+    })
+    expect(hintedEdge).toBeDefined()
+
+    const outerLeaf = requireNode(result.nodes['outer-leaf'], 'outer leaf')
+    expect(outerLeaf.x).toBeGreaterThanOrEqual(outerProxy.x)
+    expect(outerLeaf.x + outerLeaf.width).toBeLessThanOrEqual(outerProxy.x + outerProxy.width)
   })
 })
