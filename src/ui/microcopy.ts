@@ -7,17 +7,17 @@ export const syncBarText = {
   /** Idle state when all updates are persisted. */
   idle: 'All changes saved',
   /** Active state showing the number of queued changes. */
-  syncing: (count: number): string => `Syncing ${count} changes…`,
+  syncing: (count: number): string => `Syncing ${String(count)} changes…`,
   /** Throttled state approaching API limits. */
   nearLimit: 'Slowing to avoid API limits',
   /** Rate-limited state with automatic resume countdown. */
-  rateLimited: (seconds: number): string => `Paused for ${seconds}s (auto-resume)`,
+  rateLimited: (seconds: number): string => `Paused for ${String(seconds)}s (auto-resume)`,
 } as const
 
 /** Labels for the apply button. */
 export const applyButtonText = {
   /** Primary action showing pending change count. */
-  primary: (count: number): string => `Apply ${count} change(s)`,
+  primary: (count: number): string => `Apply ${String(count)} change(s)`,
   /** Disabled state when no changes are pending. */
   disabled: 'No changes to apply',
 } as const

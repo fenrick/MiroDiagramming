@@ -26,14 +26,15 @@ export function Checkbox({
 }: CheckboxProperties): React.JSX.Element {
   const handleChange = (checked: boolean): void => onChange?.(checked)
   const generatedId = React.useId()
-  const inputId = id ?? generatedId
+  const inputId = String(id ?? generatedId)
   const labelId = `${inputId}-label`
+  const isChecked = value ?? false
 
   return (
     <StyledGroup gap={200}>
       <DSSwitch
         id={inputId}
-        checked={value}
+        checked={isChecked}
         onChecked={() => {
           handleChange(true)
         }}

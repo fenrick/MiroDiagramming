@@ -65,14 +65,20 @@ export function Modal({
       if (nodes.length === 0) {
         return false
       }
-      const first = nodes[0]!
-      const last = nodes.at(-1)!
-      const active = document.activeElement as HTMLElement
-      if (event.shiftKey && active === first) {
+      const first = nodes[0]
+      const last = nodes.at(-1)
+      if (!first || !last) {
+        return false
+      }
+      const activeElement = document.activeElement
+      if (!(activeElement instanceof HTMLElement)) {
+        return false
+      }
+      if (event.shiftKey && activeElement === first) {
         last.focus()
         return true
       }
-      if (!event.shiftKey && active === last) {
+      if (!event.shiftKey && activeElement === last) {
         first.focus()
         return true
       }
