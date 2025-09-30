@@ -1,6 +1,7 @@
 import dagre from 'dagre'
 
 import type { GraphData } from '../graph'
+import type { EdgeData } from '../graph/graph-service'
 import type { LayoutResult, PositionedEdge, PositionedNode } from './layout-core'
 import type { UserLayoutOptions } from './elk-options'
 import { getNodeDimensions } from './layout-core'
@@ -26,8 +27,50 @@ type DagreOptions = Partial<UserLayoutOptions> & {
 
 type RankDirection = 'TB' | 'BT' | 'LR' | 'RL'
 
+type EdgeHintSide = 'N' | 'E' | 'S' | 'W'
+
+type ClusterTree = Map<string, Cluster>
+
+type ClusterLayouts = Map<string, ClusterLayoutInfo>
+
+type ClusterEdgeMap = Map<string, EdgeData[]>
+
+interface Cluster {
+  id: string
+  parent?: string
+  childrenNodes: string[]
+  childrenClusters: string[]
+}
+
+interface ClusterLayoutInfo {
+  size: { width: number; height: number }
+  positions: Map<string, PositionedNode>
+}
+
+interface OuterEdgeInfo {
+  from: string
+  to: string
+  sourceIndex: number
+}
+
+interface ExpansionContext {
+  tree: ClusterTree
+  layouts: ClusterLayouts
+  directEdges: ClusterEdgeMap
+  finalNodes: Map<string, PositionedNode>
+  finalEdges: PositionedEdge[]
+}
+
+const DEFAULT_SPACING = 60
+const MIN_EDGE_SEPARATION = 10
+const MAX_EDGE_SEPARATION = 40
+const CLUSTER_PADDING = 32
+const CLUSTER_LABEL_PADDING = 20
+const CLUSTER_MIN_WIDTH = 120
+const CLUSTER_MIN_HEIGHT = 80
+
 function rankdir(direction: DagreOptions['direction']): RankDirection {
-  const map: Record<string, 'TB' | 'BT' | 'LR' | 'RL'> = {
+  const map: Record<string, RankDirection> = {
     DOWN: 'TB',
     UP: 'BT',
     LEFT: 'RL',
@@ -59,271 +102,322 @@ function createDagreGraph(settings: {
 }
 
 function populateGraph(
-  g: dagre.graphlib.Graph<DagreNodeAttributes, DagreEdgeAttributes>,
+  graph: dagre.graphlib.Graph<DagreNodeAttributes, DagreEdgeAttributes>,
   data: GraphData,
 ): void {
   for (const node of data.nodes) {
-    const dims = getNodeDimensions(node)
-    g.setNode(node.id, { width: dims.width, height: dims.height })
+    const dimensions = getNodeDimensions(node)
+    graph.setNode(node.id, { width: dimensions.width, height: dimensions.height })
   }
   let index = 0
   for (const edge of data.edges) {
     const weight = typeof edge.label === 'string' && /\byes\b/i.test(edge.label) ? 3 : 1
-    g.setEdge(edge.from, edge.to, { weight }, `e${String(index)}`)
+    graph.setEdge(edge.from, edge.to, { weight }, `e${String(index)}`)
     index += 1
   }
 }
 
-function extractLayout(
-  g: dagre.graphlib.Graph<DagreNodeAttributes, DagreEdgeAttributes>,
-): LayoutResult {
-  const nodeEntries: [string, PositionedNode][] = []
-  for (const id of g.nodes()) {
-    const nodeBox = g.node(id)
-    if (
-      !nodeBox ||
-      typeof nodeBox.width !== 'number' ||
-      typeof nodeBox.height !== 'number' ||
-      typeof nodeBox.x !== 'number' ||
-      typeof nodeBox.y !== 'number'
-    ) {
-      continue
-    }
-    nodeEntries.push([
-      id,
-      {
-        id,
-        x: nodeBox.x - nodeBox.width / 2,
-        y: nodeBox.y - nodeBox.height / 2,
-        width: nodeBox.width,
-        height: nodeBox.height,
-      },
-    ])
+function toPositionedNode(id: string, nodeBox: DagreNodeAttributes): PositionedNode | undefined {
+  if (
+    typeof nodeBox.width !== 'number' ||
+    typeof nodeBox.height !== 'number' ||
+    typeof nodeBox.x !== 'number' ||
+    typeof nodeBox.y !== 'number'
+  ) {
+    return undefined
   }
-  const edges: PositionedEdge[] = []
-  for (const edgeReference of g.edges()) {
-    const info = g.edge(edgeReference)
-    const pts = info?.points ?? []
-    if (pts.length < 2) {
+  return {
+    id,
+    x: nodeBox.x - nodeBox.width / 2,
+    y: nodeBox.y - nodeBox.height / 2,
+    width: nodeBox.width,
+    height: nodeBox.height,
+  }
+}
+
+function extractLayoutNodes(
+  graph: dagre.graphlib.Graph<DagreNodeAttributes, DagreEdgeAttributes>,
+): [string, PositionedNode][] {
+  const entries: [string, PositionedNode][] = []
+  for (const id of graph.nodes()) {
+    const nodeBox = graph.node(id)
+    if (!nodeBox) {
       continue
     }
-    const [start, ...rest] = pts
+    const positioned = toPositionedNode(id, nodeBox)
+    if (positioned) {
+      entries.push([id, positioned])
+    }
+  }
+  return entries
+}
+
+function extractLayoutEdges(
+  graph: dagre.graphlib.Graph<DagreNodeAttributes, DagreEdgeAttributes>,
+): PositionedEdge[] {
+  const edges: PositionedEdge[] = []
+  for (const edgeReference of graph.edges()) {
+    const info = graph.edge(edgeReference)
+    const points = info?.points ?? []
+    if (points.length < 2) {
+      continue
+    }
+    const [start, ...rest] = points
     const end = rest.at(-1) ?? start
-    const bends = rest.slice(0, Math.max(0, rest.length - 1))
+    const bendPoints = rest.slice(0, Math.max(0, rest.length - 1))
     edges.push({
       startPoint: start,
       endPoint: end,
-      bendPoints: bends.length > 0 ? bends : undefined,
+      bendPoints: bendPoints.length > 0 ? bendPoints : undefined,
     })
   }
-  return { nodes: Object.fromEntries(nodeEntries), edges }
+  return edges
+}
+
+function extractLayout(
+  graph: dagre.graphlib.Graph<DagreNodeAttributes, DagreEdgeAttributes>,
+): LayoutResult {
+  const nodes = Object.fromEntries(extractLayoutNodes(graph))
+  const edges = extractLayoutEdges(graph)
+  return { nodes, edges }
 }
 
 function baseLayoutGraphDagre(data: GraphData, options: DagreOptions = {}): LayoutResult {
-  const defaultSpacing = typeof options.spacing === 'number' ? options.spacing : 60
-  const nodesep = typeof options.nodeSpacing === 'number' ? options.nodeSpacing : defaultSpacing
-  const ranksep = typeof options.rankSpacing === 'number' ? options.rankSpacing : defaultSpacing
-  const g = createDagreGraph({
+  const spacing = typeof options.spacing === 'number' ? options.spacing : DEFAULT_SPACING
+  const nodesep = typeof options.nodeSpacing === 'number' ? options.nodeSpacing : spacing
+  const ranksep = typeof options.rankSpacing === 'number' ? options.rankSpacing : spacing
+  const graph = createDagreGraph({
     direction: options.direction ?? 'RIGHT',
     nodesep,
     ranksep,
-    edgesep: Math.max(10, Math.min(40, defaultSpacing / 3)),
+    edgesep: Math.max(MIN_EDGE_SEPARATION, Math.min(MAX_EDGE_SEPARATION, spacing / 3)),
   })
-  populateGraph(g, data)
-  dagre.layout(g)
-  return extractLayout(g)
+  populateGraph(graph, data)
+  dagre.layout(graph)
+  return extractLayout(graph)
 }
 
 function hasSubgraphs(data: GraphData): boolean {
   return data.nodes.some((node) => {
-    const meta = node.metadata as { parent?: string; isSubgraph?: boolean } | undefined
-    if (typeof meta?.parent === 'string' && meta.parent.length > 0) {
+    const metadata = node.metadata as { parent?: string; isSubgraph?: boolean } | undefined
+    if (typeof metadata?.parent === 'string' && metadata.parent.length > 0) {
       return true
     }
-    return meta?.isSubgraph === true
+    return metadata?.isSubgraph === true
   })
 }
 
 function getParentId(nodeId: string, data: GraphData): string | undefined {
-  const n = data.nodes.find((x) => x.id === nodeId)
-  const meta = n?.metadata as { parent?: string } | undefined
-  return meta?.parent
+  const node = data.nodes.find((candidate) => candidate.id === nodeId)
+  const metadata = node?.metadata as { parent?: string } | undefined
+  return metadata?.parent
 }
 
 function isSubgraphNode(id: string, data: GraphData): boolean {
-  const n = data.nodes.find((x) => x.id === id)
+  const node = data.nodes.find((candidate) => candidate.id === id)
   return (
-    (n?.metadata as { isSubgraph?: boolean } | undefined)?.isSubgraph === true ||
-    n?.type === 'Composite'
+    (node?.metadata as { isSubgraph?: boolean } | undefined)?.isSubgraph === true ||
+    node?.type === 'Composite'
   )
 }
 
-function boundingBox(nodes: Record<string, PositionedNode>): {
+function boundingBox(nodes: Iterable<PositionedNode>): {
   minX: number
   minY: number
   maxX: number
   maxY: number
 } {
+  let hasValues = false
   let minX = Number.POSITIVE_INFINITY
   let minY = Number.POSITIVE_INFINITY
   let maxX = Number.NEGATIVE_INFINITY
   let maxY = Number.NEGATIVE_INFINITY
-  for (const v of Object.values(nodes)) {
-    minX = Math.min(minX, v.x)
-    minY = Math.min(minY, v.y)
-    maxX = Math.max(maxX, v.x + v.width)
-    maxY = Math.max(maxY, v.y + v.height)
+  for (const node of nodes) {
+    hasValues = true
+    minX = Math.min(minX, node.x)
+    minY = Math.min(minY, node.y)
+    maxX = Math.max(maxX, node.x + node.width)
+    maxY = Math.max(maxY, node.y + node.height)
+  }
+  if (!hasValues) {
+    return { minX: 0, minY: 0, maxX: 0, maxY: 0 }
   }
   return { minX, minY, maxX, maxY }
 }
 
-// Cluster structures for nested subgraphs
-interface Cluster {
-  id: string
-  parent?: string
-  childrenNodes: string[]
-  childrenClusters: string[]
-}
-
-type ClusterTree = Map<string, Cluster>
-
 function buildClusterTree(data: GraphData): ClusterTree {
   const clusters = new Map<string, Cluster>()
-  const ensure = (id: string) => {
-    let c = clusters.get(id)
-    if (!c) {
-      c = { id, childrenNodes: [], childrenClusters: [] }
-      clusters.set(id, c)
+  const ensureCluster = (id: string): Cluster => {
+    const existing = clusters.get(id)
+    if (existing) {
+      return existing
     }
-    return c
+    const created: Cluster = { id, childrenNodes: [], childrenClusters: [] }
+    clusters.set(id, created)
+    return created
   }
-  // Gather all subgraph containers
-  for (const n of data.nodes) {
-    const meta = n.metadata as { isSubgraph?: boolean; parent?: string } | undefined
-    if (meta?.isSubgraph) {
-      const c = ensure(n.id)
-      if (meta.parent) {
-        c.parent = meta.parent
-        ensure(meta.parent).childrenClusters.push(n.id)
-      }
+  const registerSubgraph = (node: GraphData['nodes'][number]): void => {
+    const metadata = node.metadata as { isSubgraph?: boolean; parent?: string } | undefined
+    if (!metadata?.isSubgraph) {
+      return
+    }
+    const cluster = ensureCluster(node.id)
+    if (metadata.parent) {
+      cluster.parent = metadata.parent
+      ensureCluster(metadata.parent).childrenClusters.push(node.id)
     }
   }
-  // Map leaf nodes to their immediate parent cluster
-  for (const n of data.nodes) {
-    const meta = n.metadata as { isSubgraph?: boolean; parent?: string } | undefined
-    if (meta?.isSubgraph) continue
-    if (meta?.parent) ensure(meta.parent).childrenNodes.push(n.id)
+  const mapLeafNode = (node: GraphData['nodes'][number]): void => {
+    const metadata = node.metadata as { isSubgraph?: boolean; parent?: string } | undefined
+    if (metadata?.isSubgraph || !metadata?.parent) {
+      return
+    }
+    ensureCluster(metadata.parent).childrenNodes.push(node.id)
+  }
+  for (const node of data.nodes) {
+    registerSubgraph(node)
+  }
+  for (const node of data.nodes) {
+    mapLeafNode(node)
   }
   return clusters
 }
 
 function descendantLeaves(clusterId: string, tree: ClusterTree): Set<string> {
-  const node = tree.get(clusterId)
-  const out = new Set<string>()
-  if (!node) return out
-  for (const id of node.childrenNodes) out.add(id)
-  for (const child of node.childrenClusters) {
-    for (const v of descendantLeaves(child, tree)) out.add(v)
+  const cluster = tree.get(clusterId)
+  const result = new Set<string>()
+  if (!cluster) {
+    return result
   }
-  return out
+  for (const id of cluster.childrenNodes) {
+    result.add(id)
+  }
+  for (const child of cluster.childrenClusters) {
+    for (const leaf of descendantLeaves(child, tree)) {
+      result.add(leaf)
+    }
+  }
+  return result
 }
 
-function mapNodeToImmediateAt(
+function mapNodeToImmediateAncestor(
   nodeId: string,
   clusterId: string,
   tree: ClusterTree,
   data: GraphData,
 ): string | undefined {
-  const c = tree.get(clusterId)
-  if (!c) return undefined
-  if (c.childrenNodes.includes(nodeId)) return nodeId
+  const cluster = tree.get(clusterId)
+  if (!cluster) {
+    return undefined
+  }
+  if (cluster.childrenNodes.includes(nodeId)) {
+    return nodeId
+  }
   let currentParent = getParentId(nodeId, data)
   while (currentParent) {
     const parentCluster = tree.get(currentParent)
-    if (!parentCluster) break
-    if (parentCluster.parent === clusterId) return currentParent
+    if (!parentCluster) {
+      break
+    }
+    if (parentCluster.parent === clusterId) {
+      return currentParent
+    }
     currentParent = parentCluster.parent
   }
   return undefined
 }
 
-async function layoutClusterRecursive(
-  clusterId: string,
+function ensureChildClusterLayouts(
+  cluster: Cluster,
   inheritedDirection: DagreOptions['direction'],
   data: GraphData,
   options: DagreOptions,
   tree: ClusterTree,
-  sizes: Map<string, { width: number; height: number }>,
-  innerLayouts: Map<string, LayoutResult>,
-  constants: { padding: number; labelTopPadding: number; minProxyW: number; minProxyH: number },
-): Promise<void> {
-  const c = tree.get(clusterId)
-  if (!c) return
-  for (const sub of c.childrenClusters) {
-    if (!sizes.has(sub)) {
-      await layoutClusterRecursive(
-        sub,
-        inheritedDirection,
-        data,
-        options,
-        tree,
-        sizes,
-        innerLayouts,
-        constants,
-      )
+  layouts: ClusterLayouts,
+): void {
+  for (const child of cluster.childrenClusters) {
+    if (!layouts.has(child)) {
+      layoutClusterRecursive(child, inheritedDirection, data, options, tree, layouts)
     }
   }
-  const g = new dagre.graphlib.Graph<DagreNodeAttributes, DagreEdgeAttributes>({
+}
+
+function createConfiguredClusterGraph(
+  direction: DagreOptions['direction'],
+  options: DagreOptions,
+): dagre.graphlib.Graph<DagreNodeAttributes, DagreEdgeAttributes> {
+  const spacing = typeof options.spacing === 'number' ? options.spacing : DEFAULT_SPACING
+  const nodesep = typeof options.nodeSpacing === 'number' ? options.nodeSpacing : spacing
+  const ranksep = typeof options.rankSpacing === 'number' ? options.rankSpacing : spacing
+  const graph = new dagre.graphlib.Graph<DagreNodeAttributes, DagreEdgeAttributes>({
     multigraph: true,
     compound: false,
   })
-  const defaultSpacing = typeof options.spacing === 'number' ? options.spacing : 60
-  const nodesep = typeof options.nodeSpacing === 'number' ? options.nodeSpacing : defaultSpacing
-  const ranksep = typeof options.rankSpacing === 'number' ? options.rankSpacing : defaultSpacing
-  const leaves = descendantLeaves(clusterId, tree)
-  const hasExternal = data.edges.some(
-    (edge) =>
-      (leaves.has(edge.from) && !leaves.has(edge.to)) ||
-      (!leaves.has(edge.from) && leaves.has(edge.to)),
-  )
-  const directionLocal = hasExternal
-    ? inheritedDirection
-    : clusterDirection(clusterId, data, inheritedDirection)
-  g.setGraph({
-    rankdir: rankdirFor(directionLocal),
+  graph.setGraph({
+    rankdir: rankdirFor(direction),
     align: 'UL',
     nodesep,
     ranksep,
-    edgesep: Math.max(10, Math.min(40, defaultSpacing / 3)),
+    edgesep: Math.max(MIN_EDGE_SEPARATION, Math.min(MAX_EDGE_SEPARATION, spacing / 3)),
     ranker: 'tight-tree',
   })
-  g.setDefaultEdgeLabel(() => ({}))
-  for (const id of c.childrenNodes) {
-    const node = data.nodes.find((n) => n.id === id)
-    if (!node) continue
-    const dims = getNodeDimensions(node)
-    g.setNode(id, { width: dims.width, height: dims.height })
+  graph.setDefaultEdgeLabel(() => ({}))
+  return graph
+}
+
+function addClusterMembersToGraph(
+  graph: dagre.graphlib.Graph<DagreNodeAttributes, DagreEdgeAttributes>,
+  cluster: Cluster,
+  data: GraphData,
+  layouts: ClusterLayouts,
+): void {
+  for (const nodeId of cluster.childrenNodes) {
+    const node = data.nodes.find((candidate) => candidate.id === nodeId)
+    if (!node) {
+      continue
+    }
+    const dimensions = getNodeDimensions(node)
+    graph.setNode(nodeId, { width: dimensions.width, height: dimensions.height })
   }
-  for (const id of c.childrenClusters) {
-    const size = sizes.get(id) ?? { width: constants.minProxyW, height: constants.minProxyH }
-    g.setNode(id, { width: size.width, height: size.height })
+  for (const childClusterId of cluster.childrenClusters) {
+    const layout = layouts.get(childClusterId)
+    const size = layout?.size ?? { width: CLUSTER_MIN_WIDTH, height: CLUSTER_MIN_HEIGHT }
+    graph.setNode(childClusterId, { width: size.width, height: size.height })
   }
+}
+
+function connectClusterEdges(
+  graph: dagre.graphlib.Graph<DagreNodeAttributes, DagreEdgeAttributes>,
+  clusterId: string,
+  data: GraphData,
+  tree: ClusterTree,
+  leaves: Set<string>,
+): void {
   for (const [index, edge] of data.edges.entries()) {
-    if (!leaves.has(edge.from) || !leaves.has(edge.to)) continue
-    const from = mapNodeToImmediateAt(edge.from, clusterId, tree, data)
-    const to = mapNodeToImmediateAt(edge.to, clusterId, tree, data)
-    if (!from || !to) continue
+    if (!leaves.has(edge.from) || !leaves.has(edge.to)) {
+      continue
+    }
+    const mappedFrom = mapNodeToImmediateAncestor(edge.from, clusterId, tree, data)
+    const mappedTo = mapNodeToImmediateAncestor(edge.to, clusterId, tree, data)
+    if (!mappedFrom || !mappedTo) {
+      continue
+    }
     const weight = typeof edge.label === 'string' && /\byes\b/i.test(edge.label) ? 3 : 1
-    g.setEdge(from, to, { weight }, `c${clusterId}:${String(index)}`)
+    graph.setEdge(mappedFrom, mappedTo, { weight }, `c${clusterId}:${String(index)}`)
   }
-  dagre.layout(g)
-  const nodes = new Map<string, PositionedNode>()
+}
+
+function buildClusterLayoutFromGraph(
+  graph: dagre.graphlib.Graph<DagreNodeAttributes, DagreEdgeAttributes>,
+): ClusterLayoutInfo {
+  dagre.layout(graph)
+  const positions = new Map<string, PositionedNode>()
   let minX = Number.POSITIVE_INFINITY
   let minY = Number.POSITIVE_INFINITY
   let maxX = Number.NEGATIVE_INFINITY
   let maxY = Number.NEGATIVE_INFINITY
-  for (const id of g.nodes()) {
-    const nodeBox = g.node(id)
+  for (const id of graph.nodes()) {
+    const nodeBox = graph.node(id)
     if (
       !nodeBox ||
       typeof nodeBox.width !== 'number' ||
@@ -335,44 +429,97 @@ async function layoutClusterRecursive(
     }
     const x = nodeBox.x - nodeBox.width / 2
     const y = nodeBox.y - nodeBox.height / 2
-    nodes.set(id, { id, x, y, width: nodeBox.width, height: nodeBox.height })
+    positions.set(id, { id, x, y, width: nodeBox.width, height: nodeBox.height })
     minX = Math.min(minX, x)
     minY = Math.min(minY, y)
     maxX = Math.max(maxX, x + nodeBox.width)
     maxY = Math.max(maxY, y + nodeBox.height)
   }
-  const width = Math.max(constants.minProxyW, maxX - minX + constants.padding * 2)
-  const height = Math.max(
-    constants.minProxyH,
-    maxY - minY + constants.padding * 2 + constants.labelTopPadding,
-  )
-  sizes.set(clusterId, { width, height })
-  innerLayouts.set(clusterId, { nodes: Object.fromEntries(nodes), edges: [] })
+  const hasNodes = positions.size > 0 && Number.isFinite(minX) && Number.isFinite(minY)
+  const width = hasNodes ? maxX - minX + CLUSTER_PADDING * 2 : CLUSTER_MIN_WIDTH
+  const height = hasNodes
+    ? maxY - minY + CLUSTER_PADDING * 2 + CLUSTER_LABEL_PADDING
+    : CLUSTER_MIN_HEIGHT
+  return {
+    size: {
+      width: Math.max(CLUSTER_MIN_WIDTH, width),
+      height: Math.max(CLUSTER_MIN_HEIGHT, height),
+    },
+    positions,
+  }
+}
+
+function determineClusterDirection(
+  clusterId: string,
+  inheritedDirection: DagreOptions['direction'],
+  data: GraphData,
+  tree: ClusterTree,
+): { direction: DagreOptions['direction']; leaves: Set<string> } {
+  const leaves = descendantLeaves(clusterId, tree)
+  const hasExternalEdge = data.edges.some((edge) => {
+    const fromInside = leaves.has(edge.from)
+    const toInside = leaves.has(edge.to)
+    return (fromInside && !toInside) || (!fromInside && toInside)
+  })
+  const direction = hasExternalEdge
+    ? inheritedDirection
+    : clusterDirection(clusterId, data, inheritedDirection)
+  return { direction, leaves }
+}
+
+function layoutClusterRecursive(
+  clusterId: string,
+  inheritedDirection: DagreOptions['direction'],
+  data: GraphData,
+  options: DagreOptions,
+  tree: ClusterTree,
+  layouts: ClusterLayouts,
+): void {
+  if (layouts.has(clusterId)) {
+    return
+  }
+  const cluster = tree.get(clusterId)
+  if (!cluster) {
+    return
+  }
+  ensureChildClusterLayouts(cluster, inheritedDirection, data, options, tree, layouts)
+  const { direction, leaves } = determineClusterDirection(clusterId, inheritedDirection, data, tree)
+  const graph = createConfiguredClusterGraph(direction, options)
+  addClusterMembersToGraph(graph, cluster, data, layouts)
+  connectClusterEdges(graph, clusterId, data, tree, leaves)
+  const layoutInfo = buildClusterLayoutFromGraph(graph)
+  layouts.set(clusterId, layoutInfo)
 }
 
 function computeSide(
-  parent: string,
+  parentId: string,
   childId: string,
-  innerLayouts: Map<string, LayoutResult>,
-  sizes: Map<string, { width: number; height: number }>,
-): 'N' | 'E' | 'S' | 'W' | undefined {
-  const laid = innerLayouts.get(parent)
-  if (!laid) return undefined
-  const p = laid.nodes[childId]
-  const proxy = sizes.get(parent)
-  if (!p || !proxy) return undefined
-  const box = boundingBox(laid.nodes)
-  const cx = p.x + p.width / 2
-  const cy = p.y + p.height / 2
-  const distributionL = cx - box.minX
-  const distributionR = box.maxX - cx
-  const distributionT = cy - box.minY
-  const distributionB = box.maxY - cy
-  const min = Math.min(distributionL, distributionR, distributionT, distributionB)
-  if (min === distributionL) return 'W'
-  if (min === distributionR) return 'E'
-  if (min === distributionT) return 'N'
-  return 'S'
+  layouts: ClusterLayouts,
+): EdgeHintSide | undefined {
+  const layout = layouts.get(parentId)
+  if (!layout) {
+    return undefined
+  }
+  const positioned = layout.positions.get(childId)
+  if (!positioned) {
+    return undefined
+  }
+  const box = boundingBox(layout.positions.values())
+  const centerX = positioned.x + positioned.width / 2
+  const centerY = positioned.y + positioned.height / 2
+  const distances: [EdgeHintSide, number][] = [
+    ['W', centerX - box.minX],
+    ['E', box.maxX - centerX],
+    ['N', centerY - box.minY],
+    ['S', box.maxY - centerY],
+  ]
+  let closest: [EdgeHintSide, number] | undefined
+  for (const entry of distances) {
+    if (!closest || entry[1] < closest[1]) {
+      closest = entry
+    }
+  }
+  return closest?.[0]
 }
 
 function clusterDirection(
@@ -380,258 +527,308 @@ function clusterDirection(
   data: GraphData,
   inherit: DagreOptions['direction'],
 ): DagreOptions['direction'] {
-  const container = data.nodes.find((n) => n.id === clusterId)
+  const container = data.nodes.find((node) => node.id === clusterId)
   const declared = (
     container?.metadata as { subgraphDirection?: DagreOptions['direction'] } | undefined
   )?.subgraphDirection
   return declared ?? inherit
 }
 
-function rankdirFor(direction: DagreOptions['direction'] | undefined): 'TB' | 'BT' | 'LR' | 'RL' {
+function rankdirFor(direction: DagreOptions['direction'] | undefined): RankDirection {
   return rankdir(direction ?? 'RIGHT')
 }
 
-export async function layoutGraphDagre(
+function buildImmediateParentMap(data: GraphData): Map<string, string | undefined> {
+  const map = new Map<string, string | undefined>()
+  for (const node of data.nodes) {
+    const metadata = node.metadata as { parent?: string } | undefined
+    map.set(node.id, typeof metadata?.parent === 'string' ? metadata.parent : undefined)
+  }
+  return map
+}
+
+function groupDirectClusterEdges(
+  data: GraphData,
+  parentByNode: Map<string, string | undefined>,
+): ClusterEdgeMap {
+  const grouped = new Map<string, EdgeData[]>()
+  for (const edge of data.edges) {
+    const fromParent = parentByNode.get(edge.from)
+    const toParent = parentByNode.get(edge.to)
+    if (!fromParent || fromParent !== toParent) {
+      continue
+    }
+    const bucket = grouped.get(fromParent)
+    if (bucket) {
+      bucket.push(edge)
+    } else {
+      grouped.set(fromParent, [edge])
+    }
+  }
+  return grouped
+}
+
+function toRecord<T>(entries: Iterable<[string, T]>): Record<string, T> {
+  return Object.fromEntries(entries)
+}
+
+function collectTopLevelLooseNodes(data: GraphData): GraphData['nodes'] {
+  return data.nodes.filter((node) => {
+    const metadata = node.metadata as { parent?: string; isSubgraph?: boolean } | undefined
+    return !metadata?.parent && !metadata?.isSubgraph
+  })
+}
+
+function buildOuterNodes(
+  roots: string[],
+  clusterLayouts: ClusterLayouts,
+  looseNodes: GraphData['nodes'],
+): { id: string; width: number; height: number }[] {
+  const clusterNodes = roots.map((id) => {
+    const layout = clusterLayouts.get(id)
+    const size = layout?.size ?? { width: CLUSTER_MIN_WIDTH, height: CLUSTER_MIN_HEIGHT }
+    return { id, width: size.width, height: size.height }
+  })
+  const loose = looseNodes.map((node) => {
+    const dimensions = getNodeDimensions(node)
+    return { id: node.id, width: dimensions.width, height: dimensions.height }
+  })
+  return [...clusterNodes, ...loose]
+}
+
+function rootOfNode(nodeId: string, data: GraphData, tree: ClusterTree): string | undefined {
+  let parent = getParentId(nodeId, data)
+  let topParent: string | undefined
+  while (parent) {
+    topParent = parent
+    parent = tree.get(parent)?.parent
+  }
+  return topParent
+}
+
+function buildOuterEdges(
+  data: GraphData,
+  tree: ClusterTree,
+  layouts: ClusterLayouts,
+): { edges: OuterEdgeInfo[]; hints: Map<number, { from?: EdgeHintSide; to?: EdgeHintSide }> } {
+  const edges: OuterEdgeInfo[] = []
+  const hints = new Map<number, { from?: EdgeHintSide; to?: EdgeHintSide }>()
+  for (const [index, edge] of data.edges.entries()) {
+    const fromRoot = rootOfNode(edge.from, data, tree)
+    const toRoot = rootOfNode(edge.to, data, tree)
+    if (fromRoot && toRoot && fromRoot === toRoot) {
+      continue
+    }
+    const outerFrom = fromRoot ?? edge.from
+    const outerTo = toRoot ?? edge.to
+    edges.push({ from: outerFrom, to: outerTo, sourceIndex: index })
+    const hint: { from?: EdgeHintSide; to?: EdgeHintSide } = {}
+    if (fromRoot) {
+      hint.from = computeSide(fromRoot, edge.from, layouts)
+    }
+    if (toRoot) {
+      hint.to = computeSide(toRoot, edge.to, layouts)
+    }
+    hints.set(index, hint)
+  }
+  return { edges, hints }
+}
+
+function buildOuterGraph(
+  data: GraphData,
+  outerNodes: { id: string; width: number; height: number }[],
+  outerEdges: OuterEdgeInfo[],
+): GraphData {
+  return {
+    nodes: outerNodes.map((node) => ({
+      id: node.id,
+      label: node.id,
+      type: isSubgraphNode(node.id, data)
+        ? 'Composite'
+        : (data.nodes.find((candidate) => candidate.id === node.id)?.type ?? 'MermaidNode'),
+      metadata: { width: node.width, height: node.height },
+    })),
+    edges: outerEdges.map((edge) => ({ from: edge.from, to: edge.to })),
+  }
+}
+
+function placeLooseNodes(
+  looseNodes: GraphData['nodes'],
+  outerPositions: Map<string, PositionedNode>,
+  finalNodes: Map<string, PositionedNode>,
+): void {
+  for (const node of looseNodes) {
+    const position = outerPositions.get(node.id)
+    if (!position) {
+      continue
+    }
+    finalNodes.set(node.id, { ...position, id: node.id })
+  }
+}
+
+function placeImmediateChildNodes(
+  cluster: Cluster,
+  layout: ClusterLayoutInfo,
+  offsetX: number,
+  offsetY: number,
+  finalNodes: Map<string, PositionedNode>,
+): void {
+  for (const nodeId of cluster.childrenNodes) {
+    const local = layout.positions.get(nodeId)
+    if (!local) {
+      continue
+    }
+    finalNodes.set(nodeId, {
+      id: nodeId,
+      x: local.x + offsetX,
+      y: local.y + offsetY,
+      width: local.width,
+      height: local.height,
+    })
+  }
+}
+
+function emitDirectEdges(
+  clusterId: string,
+  layout: ClusterLayoutInfo,
+  offsetX: number,
+  offsetY: number,
+  directEdges: ClusterEdgeMap,
+  finalEdges: PositionedEdge[],
+): void {
+  const edges = directEdges.get(clusterId) ?? []
+  for (const edge of edges) {
+    const sourceLocal = layout.positions.get(edge.from)
+    const targetLocal = layout.positions.get(edge.to)
+    if (!sourceLocal || !targetLocal) {
+      continue
+    }
+    finalEdges.push({
+      startPoint: {
+        x: sourceLocal.x + offsetX + sourceLocal.width / 2,
+        y: sourceLocal.y + offsetY + sourceLocal.height / 2,
+      },
+      endPoint: {
+        x: targetLocal.x + offsetX + targetLocal.width / 2,
+        y: targetLocal.y + offsetY + targetLocal.height / 2,
+      },
+    })
+  }
+}
+
+function placeChildClusters(
+  cluster: Cluster,
+  layout: ClusterLayoutInfo,
+  offsetX: number,
+  offsetY: number,
+  context: ExpansionContext,
+): void {
+  for (const childClusterId of cluster.childrenClusters) {
+    const localProxy = layout.positions.get(childClusterId)
+    if (!localProxy) {
+      continue
+    }
+    const absoluteProxy: PositionedNode = {
+      id: childClusterId,
+      x: localProxy.x + offsetX,
+      y: localProxy.y + offsetY,
+      width: localProxy.width,
+      height: localProxy.height,
+    }
+    context.finalNodes.set(absoluteProxy.id, absoluteProxy)
+    expandClusterTree(childClusterId, absoluteProxy, context)
+  }
+}
+
+function expandClusterTree(
+  clusterId: string,
+  proxy: PositionedNode,
+  context: ExpansionContext,
+): void {
+  context.finalNodes.set(clusterId, { ...proxy, id: clusterId })
+  const cluster = context.tree.get(clusterId)
+  const layout = context.layouts.get(clusterId)
+  if (!cluster || !layout) {
+    return
+  }
+  const offsetX = proxy.x + CLUSTER_PADDING
+  const offsetY = proxy.y + CLUSTER_PADDING
+  placeImmediateChildNodes(cluster, layout, offsetX, offsetY, context.finalNodes)
+  emitDirectEdges(clusterId, layout, offsetX, offsetY, context.directEdges, context.finalEdges)
+  placeChildClusters(cluster, layout, offsetX, offsetY, context)
+}
+
+function applyOuterEdges(
+  outerLayout: LayoutResult,
+  outerEdges: OuterEdgeInfo[],
+  edgeHints: Map<number, { from?: EdgeHintSide; to?: EdgeHintSide }>,
+  finalEdges: PositionedEdge[],
+): void {
+  const positionedIterator = outerLayout.edges[Symbol.iterator]()
+  for (const meta of outerEdges) {
+    const nextPosition = positionedIterator.next()
+    if (nextPosition.done) {
+      break
+    }
+    const positioned = nextPosition.value
+    const hint = edgeHints.get(meta.sourceIndex)
+    const hintSides = hint ? { start: hint.from, end: hint.to } : undefined
+    finalEdges.push({
+      startPoint: positioned.startPoint,
+      endPoint: positioned.endPoint,
+      bendPoints: positioned.bendPoints,
+      hintSides,
+    })
+  }
+}
+
+export function layoutGraphDagre(
   data: GraphData,
   options: DagreOptions = {},
 ): Promise<LayoutResult> {
   if (!hasSubgraphs(data)) {
-    return baseLayoutGraphDagre(data, options)
+    return Promise.resolve(baseLayoutGraphDagre(data, options))
   }
-  const padding = 32
-  const labelTopPadding = 20
-  const minProxyW = 120
-  const minProxyH = 80
 
-  // Build cluster tree for nested subgraphs
   const tree = buildClusterTree(data)
-  const sizes = new Map<string, { width: number; height: number }>()
-  const innerLayouts = new Map<string, LayoutResult>()
+  const layouts: ClusterLayouts = new Map()
+  const parentByNode = buildImmediateParentMap(data)
+  const directEdges = groupDirectClusterEdges(data, parentByNode)
 
-  const constants = { padding, labelTopPadding, minProxyW, minProxyH }
-
-  // Kick off recursive layout from all roots (clusters without parents)
-  const roots = [...tree.values()].filter((c) => !c.parent).map((c) => c.id)
+  const roots = [...tree.values()].filter((cluster) => !cluster.parent).map((cluster) => cluster.id)
   const inheritedDirection = options.direction ?? 'RIGHT'
-  for (const r of roots) {
-    await layoutClusterRecursive(
-      r,
-      inheritedDirection,
-      data,
-      options,
-      tree,
-      sizes,
-      innerLayouts,
-      constants,
-    )
+  for (const root of roots) {
+    layoutClusterRecursive(root, inheritedDirection, data, options, tree, layouts)
   }
 
-  // Build outer graph: top-level cluster proxies + top-level loose nodes
-  const outerNodes: { id: string; width: number; height: number }[] = []
-  const topLevelLoose = data.nodes.filter(
-    (n) =>
-      !(n.metadata as { parent?: string } | undefined)?.parent &&
-      !(n.metadata as { isSubgraph?: boolean } | undefined)?.isSubgraph,
-  )
-  for (const id of roots) {
-    const size = sizes.get(id) ?? { width: minProxyW, height: minProxyH }
-    outerNodes.push({ id, width: size.width, height: size.height })
-  }
-  for (const n of topLevelLoose) {
-    const d = getNodeDimensions(n)
-    outerNodes.push({ id: n.id, width: d.width, height: d.height })
-  }
+  const looseNodes = collectTopLevelLooseNodes(data)
+  const outerNodes = buildOuterNodes(roots, layouts, looseNodes)
+  const { edges: outerEdges, hints } = buildOuterEdges(data, tree, layouts)
+  const outerGraph = buildOuterGraph(data, outerNodes, outerEdges)
+  const outerLayout = baseLayoutGraphDagre(outerGraph, options)
+  const outerPositions = new Map(Object.entries(outerLayout.nodes))
 
-  // Collapse edges for outer level: endpoints map to root cluster ids or loose node ids
-  interface OuterEdge {
-    from: string
-    to: string
-    sourceIdx: number
-  }
-  const outerEdges: OuterEdge[] = []
-  type EdgeHintSide = 'N' | 'E' | 'S' | 'W'
-  const edgeSideHints = new Map<number, { from?: EdgeHintSide; to?: EdgeHintSide }>()
+  const finalNodes = new Map<string, PositionedNode>()
+  const finalEdges: PositionedEdge[] = []
+  placeLooseNodes(looseNodes, outerPositions, finalNodes)
 
-  // Helper to find root container for a node
-  const rootOf = (nodeId: string): string | undefined => {
-    let p = getParentId(nodeId, data)
-    let last: string | undefined
-    while (p) {
-      last = p
-      p = tree.get(p)?.parent
-    }
-    return last
+  const context: ExpansionContext = {
+    tree,
+    layouts,
+    directEdges,
+    finalNodes,
+    finalEdges,
   }
 
-  // Side hints: compute based on immediate cluster inner layout where endpoint resides
-  const computeSideLocal = (parent: string, childId: string): EdgeHintSide | undefined =>
-    computeSide(parent, childId, innerLayouts, sizes)
-
-  for (const [index, edgeItem] of data.edges.entries()) {
-    const rf = rootOf(edgeItem.from)
-    const rt = rootOf(edgeItem.to)
-    // Internal edges fully within a single root cluster are handled inside during expansion; skip here
-    if (rf && rt && rf === rt) {
+  for (const root of roots) {
+    const proxy = outerPositions.get(root)
+    if (!proxy) {
       continue
     }
-    const ofrom = rf ?? edgeItem.from
-    const oto = rt ?? edgeItem.to
-    outerEdges.push({ from: ofrom, to: oto, sourceIdx: index })
-    const hint: { from?: EdgeHintSide; to?: EdgeHintSide } = {}
-    if (rf) hint.from = computeSideLocal(rf, edgeItem.from)
-    if (rt) hint.to = computeSideLocal(rt, edgeItem.to)
-    edgeSideHints.set(index, hint)
+    expandClusterTree(root, proxy, context)
   }
 
-  const outerGraph: GraphData = {
-    nodes: outerNodes.map((n) => ({
-      id: n.id,
-      label: n.id,
-      type: isSubgraphNode(n.id, data)
-        ? 'Composite'
-        : (data.nodes.find((x) => x.id === n.id)?.type ?? 'MermaidNode'),
-      metadata: { width: n.width, height: n.height },
-    })),
-    edges: outerEdges.map((e) => ({ from: e.from, to: e.to })),
-  }
-  const outerLayout = baseLayoutGraphDagre(outerGraph, options)
+  applyOuterEdges(outerLayout, outerEdges, hints, finalEdges)
 
-  // Compose final nodes and edges by expanding clusters recursively
-  const finalNodes: Record<string, PositionedNode> = {}
-  const finalEdges: PositionedEdge[] = []
-
-  // Place top-level loose nodes
-  for (const n of topLevelLoose) {
-    const pos = outerLayout.nodes[n.id]
-    if (!pos) continue
-    finalNodes[n.id] = { id: n.id, x: pos.x, y: pos.y, width: pos.width, height: pos.height }
-  }
-
-  // Expand clusters depth-first
-  const expandCluster = (clusterId: string): void => {
-    const proxy = outerLayout.nodes[clusterId]
-    if (!proxy) return
-    // Record proxy itself so GraphProcessor can size frames directly
-    finalNodes[clusterId] = {
-      id: clusterId,
-      x: proxy.x,
-      y: proxy.y,
-      width: proxy.width,
-      height: proxy.height,
-    }
-    const offX = proxy.x + padding
-    const offY = proxy.y + padding
-    const layout = innerLayouts.get(clusterId)
-    const cluster = tree.get(clusterId)
-    if (layout && cluster) {
-      // place immediate leaves
-      for (const id of cluster.childrenNodes) {
-        const p = layout.nodes[id]
-        if (!p) continue
-        finalNodes[id] = { id, x: p.x + offX, y: p.y + offY, width: p.width, height: p.height }
-      }
-      // place child cluster proxies and recurse
-      for (const sub of cluster.childrenClusters) {
-        const p = layout.nodes[sub]
-        if (!p) continue
-        // Create a synthetic node for child proxy relative to parent to support deeper expansion
-        // Store absolute proxy position into outerLayout-like map for recursion: hack by adding to finalNodes
-        finalNodes[sub] = {
-          id: sub,
-          x: p.x + offX,
-          y: p.y + offY,
-          width: p.width,
-          height: p.height,
-        }
-      }
-      // Recurse after proxies recorded; use stored absolute position via finalNodes
-      for (const sub of cluster.childrenClusters) {
-        // For recursion, emulate that this proxy is available in outerLayout by creating a tiny view
-        // We will call a local expansion that uses finalNodes for proxy lookups
-        const pos = finalNodes[sub]
-        if (!pos) continue
-        // Temporarily inject into outerLayout-like structure for this recursion step
-        // Simpler: directly place leaves of sub with offset pos.x+padding, pos.y+padding in a nested expand
-        const subLayout = innerLayouts.get(sub)
-        if (!subLayout) continue
-        const subCluster = tree.get(sub)
-        if (!subCluster) continue
-        const subOffX = pos.x + padding
-        const subOffY = pos.y + padding
-        for (const id of subCluster.childrenNodes) {
-          const p2 = subLayout.nodes[id]
-          if (!p2) continue
-          finalNodes[id] = {
-            id,
-            x: p2.x + subOffX,
-            y: p2.y + subOffY,
-            width: p2.width,
-            height: p2.height,
-          }
-        }
-        // Place grand-child proxies and keep drilling one level more by recursion
-        for (const subsub of subCluster.childrenClusters) {
-          const p3 = subLayout.nodes[subsub]
-          if (p3) {
-            finalNodes[subsub] = {
-              id: subsub,
-              x: p3.x + subOffX,
-              y: p3.y + subOffY,
-              width: p3.width,
-              height: p3.height,
-            }
-          }
-        }
-        // Recurse deeper
-        if (subCluster.childrenClusters.length > 0) {
-          // Call expandCluster recursively; rely on finalNodes[sub] acting as proxy
-
-          expandCluster(sub, subOffX - padding, subOffY - padding)
-        }
-      }
-    }
-  }
-
-  for (const r of roots) expandCluster(r)
-
-  // Internal edge paths: we will only include those between immediate leaves within each cluster
-  // Offset them to absolute using recorded proxy positions in finalNodes
-  for (const [cid, layout] of innerLayouts) {
-    const cluster = tree.get(cid)
-    if (!cluster) continue
-    const proxy = finalNodes[cid]
-    if (!proxy) continue
-    const off = { x: proxy.x + padding, y: proxy.y + padding }
-    // Build local dagre again to harvest edges in the same order as layout.edges (empty in our innerLayouts)
-    // Simpler: recompute edges between immediate leaves only
-    for (const edge of data.edges) {
-      if (!cluster.childrenNodes.includes(edge.from) || !cluster.childrenNodes.includes(edge.to))
-        continue
-      // There is no stored edge path array; approximate with straight segment between centres within cluster
-      const s = layout.nodes[edge.from]
-      const t = layout.nodes[edge.to]
-      if (s && t) {
-        finalEdges.push({
-          startPoint: { x: s.x + off.x + s.width / 2, y: s.y + off.y + s.height / 2 },
-          endPoint: { x: t.x + off.x + t.width / 2, y: t.y + off.y + t.height / 2 },
-        })
-      }
-    }
-  }
-
-  // Add outer edge paths per outerLayout (with hintSides calculated earlier)
-  for (const [index, outerEdge] of outerEdges.entries()) {
-    const orig = outerEdge.sourceIdx
-    const epos = outerLayout.edges[index]
-    if (epos) {
-      finalEdges.push({
-        startPoint: epos.startPoint,
-        endPoint: epos.endPoint,
-        bendPoints: epos.bendPoints,
-        hintSides: { start: edgeSideHints.get(orig)?.from, end: edgeSideHints.get(orig)?.to },
-      })
-    }
-  }
-
-  return { nodes: finalNodes, edges: finalEdges }
+  return Promise.resolve({ nodes: toRecord(finalNodes), edges: finalEdges })
 }
