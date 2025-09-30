@@ -1,3 +1,10 @@
+## [2.6.3](https://github.com/fenrick/MiroDiagramming/compare/v2.6.2...v2.6.3) (2025-09-30)
+
+
+### Bug Fixes
+
+* **lint:** sync resizeItem; optional-chain cleanup ([a2e358b](https://github.com/fenrick/MiroDiagramming/commit/a2e358bda3bcb80fffffa092d81bcd2e451836f3))
+
 ## [2.6.2](https://github.com/fenrick/MiroDiagramming/compare/v2.6.1...v2.6.2) (2025-09-29)
 
 
