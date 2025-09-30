@@ -13,6 +13,31 @@ const DEFAULT_CONFIG: MermaidConfig = {
 
 let isInitialized = false
 
+interface MermaidRuntimeApi {
+  reset: () => void
+}
+
+/**
+ * Retrieve the runtime API surfaced by Mermaid's bundled export.
+ *
+ * Newer versions of Mermaid are expected to expose a dedicated entry point;
+ * until then we defensively validate the legacy attachment to fail fast when
+ * the API surface changes.
+ */
+function getMermaidRuntimeApi(): MermaidRuntimeApi {
+  const runtime = (mermaid as unknown as { mermaidAPI?: MermaidRuntimeApi }).mermaidAPI
+
+  if (!runtime) {
+    throw new TypeError('Mermaid runtime API is unavailable')
+  }
+
+  if (typeof runtime.reset !== 'function') {
+    throw new TypeError('Mermaid runtime API does not expose reset()')
+  }
+
+  return runtime
+}
+
 /**
  * Ensure Mermaid's runtime is configured exactly once per session.
  *
@@ -31,6 +56,6 @@ export function ensureMermaidInitialized(config: MermaidConfig = {}): void {
  * Reset Mermaid state for test environments.
  */
 export function resetMermaid(): void {
-  mermaid.mermaidAPI.reset()
+  getMermaidRuntimeApi().reset()
   isInitialized = false
 }

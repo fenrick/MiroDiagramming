@@ -131,11 +131,32 @@ function buildConnectorEntries(
   return entries
 }
 
+const isStringRecord = (value: unknown): value is Record<string, string> => {
+  if (value === null || typeof value !== 'object') {
+    return false
+  }
+  return Object.values(value).every((entry) => typeof entry === 'string')
+}
+
+const readExperimentalShapesFlag = (): string | undefined => {
+  const meta: unknown = import.meta
+  if (typeof meta !== 'object' || meta === null) {
+    return undefined
+  }
+
+  const environment = (meta as { readonly env?: unknown }).env
+  if (typeof environment !== 'object' || environment === null) {
+    return undefined
+  }
+
+  const flag = (environment as Record<string, unknown>).VITE_MIRO_EXPERIMENTAL_SHAPES
+  return typeof flag === 'string' ? flag : undefined
+}
+
 export class TemplateManager {
-  private static instance: TemplateManager
+  private static instance: TemplateManager | null = null
   private static readonly rawTemplates = templatesJson as Record<string, unknown>
-  private static readonly rawConnectorTemplates =
-    (connectorJson as Record<string, ConnectorTemplate>) ?? {}
+  private static readonly rawConnectorTemplates = connectorJson as Record<string, ConnectorTemplate>
   private static readonly templateEntries = buildTemplateEntries(TemplateManager.rawTemplates)
   private static readonly connectorEntries = buildConnectorEntries(
     TemplateManager.rawConnectorTemplates,
@@ -186,19 +207,17 @@ export class TemplateManager {
   }
 
   private applyExperimentalOverrides(): void {
-    const flag = import.meta.env?.VITE_MIRO_EXPERIMENTAL_SHAPES
+    const flag = readExperimentalShapesFlag()
     const expEnabled = typeof flag === 'string' ? flag.toLowerCase() !== 'false' : true
     if (!expEnabled) {
       return
     }
-    const overrideMap = experimentalShapeMap as Record<string, string>
-    if (!overrideMap || typeof overrideMap !== 'object') {
+    const overrideMapCandidate: unknown = experimentalShapeMap
+    if (!isStringRecord(overrideMapCandidate)) {
       return
     }
+    const overrideMap = overrideMapCandidate
     for (const [name, shape] of Object.entries(overrideMap)) {
-      if (!shape || typeof shape !== 'string') {
-        continue
-      }
       const safeName = sanitizeObjectKey(name, isSafeAliasKey)
       if (!safeName) {
         continue
@@ -222,9 +241,7 @@ export class TemplateManager {
 
   /** Access the singleton instance. */
   public static getInstance(): TemplateManager {
-    if (!TemplateManager.instance) {
-      TemplateManager.instance = new TemplateManager()
-    }
+    TemplateManager.instance ??= new TemplateManager()
     return TemplateManager.instance
   }
 
@@ -330,7 +347,9 @@ export class TemplateManager {
   ): Promise<GroupableItem[]> {
     const items: GroupableItem[] = []
     for (const item of results) {
-      frame?.add(item)
+      if (frame) {
+        await frame.add(item)
+      }
       items.push(item)
     }
     return items
@@ -354,7 +373,11 @@ export class TemplateManager {
     if (!match) {
       return undefined
     }
-    const [, name, shade] = match
+    const name = match[1]
+    const shade = match[2]
+    if (!name || !shade) {
+      return undefined
+    }
     const key = `${name}-${shade}`
     const safeKey = sanitizeObjectKey(key, isSafeLookupKey)
     if (!safeKey) {
