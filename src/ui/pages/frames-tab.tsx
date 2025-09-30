@@ -60,6 +60,14 @@ export const FramesTab: React.FC = () => {
     await lockSelectedFrames()
   }, [hasFrames])
 
+  const handleRename = React.useCallback((): void => {
+    void rename()
+  }, [rename])
+
+  const handleLock = React.useCallback((): void => {
+    void lock()
+  }, [lock])
+
   return (
     <TabPanel tabId="frames">
       <div style={CONTENT_STYLE}>
@@ -86,7 +94,7 @@ export const FramesTab: React.FC = () => {
               <StickyActions>
                 <ButtonToolbar>
                   <Button
-                    onClick={rename}
+                    onClick={handleRename}
                     variant="primary"
                     iconPosition="start"
                     icon={<IconPen />}
@@ -106,7 +114,7 @@ export const FramesTab: React.FC = () => {
           <StickyActions>
             <ButtonToolbar>
               <Button
-                onClick={lock}
+                onClick={handleLock}
                 variant="secondary"
                 iconPosition="start"
                 icon={<IconLockClosed />}
