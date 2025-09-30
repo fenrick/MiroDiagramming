@@ -22,15 +22,21 @@ export function edgesToHierarchy(graph: GraphData): HierNode[] {
     childSet.add(edge.to)
   }
   const build = (id: string): HierNode => {
-    const n = nodeMap.get(id)!
+    const node = nodeMap.get(id)
+    if (!node) {
+      throw new Error(`Missing node for id ${id}`)
+    }
     const kids = (children.get(id) ?? []).map((childId) => build(childId))
-    return {
-      id: n.id,
-      label: n.label,
-      type: n.type,
-      metadata: n.metadata,
-      ...(kids?.length ? { children: kids } : {}),
-    } as HierNode
+    const result: HierNode = {
+      id: node.id,
+      label: node.label,
+      type: node.type,
+      metadata: node.metadata,
+    }
+    if (kids.length > 0) {
+      result.children = kids
+    }
+    return result
   }
   const roots = graph.nodes.filter((n) => !childSet.has(n.id)).map((n) => build(n.id))
   return roots
