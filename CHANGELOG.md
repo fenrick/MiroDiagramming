@@ -1,3 +1,10 @@
+## [2.6.5](https://github.com/fenrick/MiroDiagramming/compare/v2.6.4...v2.6.5) (2025-09-30)
+
+
+### Bug Fixes
+
+* **core:** address lint in utility modules ([210c543](https://github.com/fenrick/MiroDiagramming/commit/210c543583593bd0041b3e68fe085f1784302d56))
+
 ## [2.6.4](https://github.com/fenrick/MiroDiagramming/compare/v2.6.3...v2.6.4) (2025-09-30)
 
 
