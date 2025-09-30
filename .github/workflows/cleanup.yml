@@ -23,7 +23,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Delete old workflow runs (keep last 10 per branch; max 30 days)
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const keepPerBranch = 10
@@ -67,7 +67,7 @@ jobs:
             }
 
       - name: Delete old artifacts (older than 14 days)
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const owner = context.repo.owner
