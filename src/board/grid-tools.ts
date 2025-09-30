@@ -62,7 +62,10 @@ export async function applyGridLayout(options: GridOptions, board?: BoardLike): 
   const positions = calculateGridPositions(options, items.length, first.width, first.height)
   await Promise.all(
     items.map(async (item: Record<string, unknown>, index: number) => {
-      const pos = positions[index]
+      const pos = positions.at(index)
+      if (!pos) {
+        return
+      }
       item.x = first.x + pos.x
       item.y = first.y + pos.y
       await maybeSync(item as Syncable)
@@ -99,8 +102,10 @@ export async function applyGridLayout(options: GridOptions, board?: BoardLike): 
       await Promise.all(
         items.map(async (index) => {
           try {
-            // @ts-expect-error runtime API
-            await frame.add?.(index)
+            const runtimeFrame = frame as { add?: (item: unknown) => Promise<void> }
+            if (typeof runtimeFrame.add === 'function') {
+              await runtimeFrame.add(index)
+            }
           } catch {
             // ignore best-effort add failures
           }

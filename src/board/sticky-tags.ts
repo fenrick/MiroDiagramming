@@ -78,7 +78,7 @@ export async function applyBracketTagsToSelectedStickies(): Promise<void> {
   let message = 'No [tags] found in selected stickies.'
   if (tagged > 0) {
     const plural = tagged === 1 ? '' : 's'
-    message = `Applied tags to ${tagged} sticky note${plural}.`
+    message = `Applied tags to ${String(tagged)} sticky note${plural}.`
   }
   pushToast({ message })
 }
@@ -150,7 +150,7 @@ async function applyTagsAndMaybeStrip(
       .filter((id): id is string => typeof id === 'string')
 
     const existing = (item as { tagIds?: string[] }).tagIds ?? []
-    const merged = [...new Set([...(existing ?? []), ...resolvedIds])]
+    const merged = [...new Set([...existing, ...resolvedIds])]
     ;(item as { tagIds?: string[] }).tagIds = merged
     await maybeSync(item as { sync?: () => Promise<void> })
 

@@ -46,7 +46,7 @@ export async function renameSelectedFrames(
   })
   await Promise.all(
     frames.map(async (frame, index) => {
-      frame.title = `${options.prefix}${index}`
+      frame.title = `${options.prefix}${String(index)}`
       await maybeSync(frame as Syncable)
     }),
   )
