@@ -56,7 +56,7 @@ export const MermaidTab: React.FC = () => {
       return SAMPLE_DEFINITION
     }
     try {
-      return globalThis.localStorage?.getItem(STORAGE_KEY) ?? SAMPLE_DEFINITION
+      return globalThis.localStorage.getItem(STORAGE_KEY) ?? SAMPLE_DEFINITION
     } catch {
       return SAMPLE_DEFINITION
     }
@@ -64,7 +64,7 @@ export const MermaidTab: React.FC = () => {
   const [withFrame, setWithFrame] = React.useState<boolean>(() => {
     if (typeof globalThis === 'undefined') return false
     try {
-      const raw = globalThis.localStorage?.getItem('miro.mermaid.withFrame')
+      const raw = globalThis.localStorage.getItem('miro.mermaid.withFrame')
       return raw ? raw === 'true' : false
     } catch {
       return false
@@ -84,7 +84,7 @@ export const MermaidTab: React.FC = () => {
       return
     }
     try {
-      globalThis.localStorage?.setItem(STORAGE_KEY, definition)
+      globalThis.localStorage.setItem(STORAGE_KEY, definition)
     } catch {
       // Ignore storage failures (private browsing, quota exceeded, etc.).
     }
@@ -93,7 +93,7 @@ export const MermaidTab: React.FC = () => {
   React.useEffect(() => {
     if (typeof globalThis === 'undefined') return
     try {
-      globalThis.localStorage?.setItem('miro.mermaid.withFrame', String(withFrame))
+      globalThis.localStorage.setItem('miro.mermaid.withFrame', String(withFrame))
     } catch {
       // ignore
     }
@@ -130,9 +130,9 @@ export const MermaidTab: React.FC = () => {
       const edgeCount = graph.edges.length
       setStatus({
         variant: 'success',
-        message: `Rendered ${nodeCount} node${nodeCount === 1 ? '' : 's'} and ${edgeCount} edge${
-          edgeCount === 1 ? '' : 's'
-        } on the board.`,
+        message: `Rendered ${String(nodeCount)} node${nodeCount === 1 ? '' : 's'} and ${String(
+          edgeCount,
+        )} edge${edgeCount === 1 ? '' : 's'} on the board.`,
       })
     } catch (error) {
       if (error instanceof MermaidConversionError) {
@@ -218,7 +218,9 @@ export const MermaidTab: React.FC = () => {
         <StickyActions>
           <ButtonToolbar>
             <Button
-              onClick={handleRender}
+              onClick={() => {
+                void handleRender()
+              }}
               variant="primary"
               iconPosition="start"
               icon={<IconChevronRightDouble />}

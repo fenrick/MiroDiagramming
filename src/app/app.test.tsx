@@ -15,7 +15,7 @@ describe('App', () => {
     fireEvent.click(screen.getByTestId('start-button'))
     const tabs = await screen.findAllByRole('tab')
     const firstTab = tabs[0]
-    const label = firstTab.textContent?.trim()
+    const label = (firstTab.textContent || '').trim()
     expect(firstTab).toHaveAttribute('aria-label', label)
   })
 

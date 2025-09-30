@@ -177,11 +177,11 @@ export class BoardBuilder {
   /** Create or update a node widget from a template. */
   public async createNode(node: unknown, pos: PositionedNode): Promise<BoardItem> {
     const nd = node as NodeData
-    const meta = nd?.metadata ?? {}
+    const meta = (nd.metadata ?? {}) as Record<string, unknown>
     log.info(
       {
-        type: nd?.type,
-        label: nd?.label,
+        type: nd.type,
+        label: nd.label,
         mermaidType: meta.mermaidType,
         mermaidShape: meta.mermaidShape,
         mappedShape: meta.shape,
@@ -201,7 +201,7 @@ export class BoardBuilder {
       throw new TypeError(`Template '${nodeData.type}' not found`)
     }
     const widget = await this.createNewNode(nodeData, pos)
-    await this.resizeItem(widget, pos.width, pos.height)
+    this.resizeItem(widget, pos.width, pos.height)
     log.debug('Node widget created')
     return widget
   }
@@ -350,7 +350,7 @@ export class BoardBuilder {
    * updated before calling {@link syncAll}. This reduces the number of API
    * calls when creating complex structures.
    */
-  public async resizeItem(item: BoardItem, width: number, height: number): Promise<void> {
+  public resizeItem(item: BoardItem, width: number, height: number): void {
     // Use Reflect.set to handle SDK proxies and non-enumerable props reliably
     try {
       const before = {
@@ -370,7 +370,7 @@ export class BoardBuilder {
   }
 
   private ensureBoard(): void {
-    if (typeof miro === 'undefined' || !miro?.board) {
+    if (typeof miro === 'undefined' || !miro || !miro.board) {
       throw new TypeError('Miro board not initialized')
     }
   }

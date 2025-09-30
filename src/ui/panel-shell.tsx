@@ -6,7 +6,11 @@ import { Box } from '@mirohq/design-system'
  * Applies a 320&nbsp;dp max width with 24&nbsp;dp side padding.
  * Use at the top level of any screen rendered in a panel.
  */
-export function PanelShell({ children }: { children: React.ReactNode }): React.JSX.Element {
+export function PanelShell({
+  children,
+}: {
+  readonly children: React.ReactNode
+}): React.JSX.Element {
   return (
     <Box
       css={{

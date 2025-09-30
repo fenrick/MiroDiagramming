@@ -11,7 +11,11 @@ import { Box } from '@mirohq/design-system'
  * @param children React nodes to render inside the sticky container.
  * @returns A container that keeps its children fixed to the panel bottom.
  */
-export function StickyActions({ children }: { children: React.ReactNode }): React.JSX.Element {
+export function StickyActions({
+  children,
+}: {
+  readonly children: React.ReactNode
+}): React.JSX.Element {
   return (
     <Box
       css={{
