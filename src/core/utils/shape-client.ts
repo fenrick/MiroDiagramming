@@ -16,35 +16,123 @@ export type ShapeOperation =
   | { op: 'update'; id: string; data: Record<string, unknown> }
   | { op: 'delete'; id: string }
 
-function ensureBoard(): {
+interface BoardShapeApi {
   createShape: (properties?: Record<string, unknown>) => Promise<Shape>
   get: (query: { id?: string; type?: string }) => Promise<unknown[]>
-} {
-  const board = globalThis.miro?.board
-  if (!board || typeof board.createShape !== 'function' || typeof board.get !== 'function') {
-    throw new Error('Miro board API not available')
+}
+
+type SanitizedStyle = Partial<ShapeStyle> & { opacity?: number }
+
+const HEX_COLOR = /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i
+
+function clamp01(value: number): number {
+  return Math.min(1, Math.max(0, value))
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null
+}
+
+function coerceNumber(value: unknown, fallback: number): number {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return value
+  }
+  if (typeof value === 'string' && value.trim().length > 0) {
+    const parsed = Number(value)
+    if (Number.isFinite(parsed)) {
+      return parsed
+    }
+  }
+  return fallback
+}
+
+function withColor(value: unknown, apply: (color: string) => void): void {
+  if (typeof value === 'string' && HEX_COLOR.test(value)) {
+    apply(value)
+  }
+}
+
+function withFiniteNumber(value: unknown, apply: (numberValue: number) => void): void {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    apply(value)
+  }
+}
+
+function withNonNegativeNumber(value: unknown, apply: (numberValue: number) => void): void {
+  if (typeof value === 'number' && Number.isFinite(value) && value >= 0) {
+    apply(value)
+  }
+}
+
+function ensureBoard(): BoardShapeApi {
+  const miroCandidate = (globalThis as typeof globalThis & { miro?: unknown }).miro
+  if (!isRecord(miroCandidate)) {
+    throw new TypeError('Miro board API not available')
+  }
+  const boardCandidate = (miroCandidate as { board?: unknown }).board
+  if (!isRecord(boardCandidate)) {
+    throw new TypeError('Miro board API not available')
+  }
+  const { createShape, get } = boardCandidate as Partial<BoardShapeApi>
+  if (typeof createShape !== 'function' || typeof get !== 'function') {
+    throw new TypeError('Miro board API not available')
   }
   return {
-    createShape: board.createShape.bind(board),
-    get: board.get.bind(board),
+    createShape(properties) {
+      return createShape.call(boardCandidate, properties)
+    },
+    get(query) {
+      return get.call(boardCandidate, query)
+    },
   }
 }
 
 function toShapeData(raw: Record<string, unknown>): ShapeData {
-  const style =
-    typeof raw.style === 'object' && raw.style !== null
-      ? (raw.style as Record<string, unknown>)
-      : undefined
+  const source = raw as Partial<ShapeData>
   return {
-    shape: typeof raw.shape === 'string' ? raw.shape : 'rectangle',
-    x: typeof raw.x === 'number' ? raw.x : Number(raw.x ?? 0),
-    y: typeof raw.y === 'number' ? raw.y : Number(raw.y ?? 0),
-    width: typeof raw.width === 'number' ? raw.width : Number(raw.width ?? 100),
-    height: typeof raw.height === 'number' ? raw.height : Number(raw.height ?? 100),
-    rotation: typeof raw.rotation === 'number' ? raw.rotation : undefined,
-    text: typeof raw.text === 'string' ? raw.text : undefined,
-    style,
+    shape: typeof source.shape === 'string' ? source.shape : 'rectangle',
+    x: coerceNumber(source.x, 0),
+    y: coerceNumber(source.y, 0),
+    width: coerceNumber(source.width, 100),
+    height: coerceNumber(source.height, 100),
+    rotation:
+      typeof source.rotation === 'number' && Number.isFinite(source.rotation)
+        ? source.rotation
+        : undefined,
+    text: typeof source.text === 'string' ? source.text : undefined,
+    style: isRecord(source.style) ? source.style : undefined,
   }
+}
+
+function sanitizeStyle(style: Record<string, unknown>): SanitizedStyle {
+  const typed = style as Partial<ShapeStyle> & { opacity?: unknown }
+  const sanitized: SanitizedStyle = {}
+
+  withColor(typed.fillColor, (color) => {
+    sanitized.fillColor = color
+  })
+
+  withColor(typed.borderColor, (color) => {
+    sanitized.borderColor = color
+  })
+
+  withColor(typed.color, (color) => {
+    sanitized.color = color
+  })
+
+  withNonNegativeNumber(typed.borderWidth, (width) => {
+    sanitized.borderWidth = width
+  })
+
+  withFiniteNumber(typed.fillOpacity, (opacity) => {
+    sanitized.fillOpacity = clamp01(opacity)
+  })
+
+  withFiniteNumber(typed.opacity, (opacity) => {
+    sanitized.opacity = clamp01(opacity)
+  })
+
+  return sanitized
 }
 
 function applyShapeData(target: Shape, data: ShapeData): void {
@@ -52,12 +140,19 @@ function applyShapeData(target: Shape, data: ShapeData): void {
   target.y = data.y
   Reflect.set(target, 'width', data.width)
   Reflect.set(target, 'height', data.height)
-  target.rotation = data.rotation ?? target.rotation
+  if (typeof data.rotation === 'number') {
+    target.rotation = data.rotation
+  }
   if (data.style) {
+    const sanitized = sanitizeStyle(data.style)
+    const { opacity, ...style } = sanitized
     target.style = {
-      ...(target.style ?? ({} as Partial<ShapeStyle>)),
-      ...sanitizeStyle(data.style),
+      ...target.style,
+      ...style,
     } as ShapeStyle
+    if (typeof opacity === 'number') {
+      Reflect.set(target, 'opacity', opacity)
+    }
   }
   if (typeof data.text === 'string') {
     Reflect.set(target, 'content', data.text)
@@ -68,45 +163,18 @@ function applyShapeData(target: Shape, data: ShapeData): void {
   }
 }
 
-function sanitizeStyle(style: Record<string, unknown>): Partial<ShapeStyle> {
-  const out: Partial<ShapeStyle> = {}
-  const hex = /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i
-  // fill color
-  const fill = (style as { fillColor?: unknown }).fillColor
-  if (typeof fill === 'string' && hex.test(fill)) {
-    out.fillColor = fill
-  }
-  // border color
-  const border = (style as { borderColor?: unknown }).borderColor
-  if (typeof border === 'string' && hex.test(border)) {
-    ;(out as Record<string, unknown>).borderColor = border
-  }
-  // border width
-  const bw = (style as { borderWidth?: unknown }).borderWidth
-  if (typeof bw === 'number' && Number.isFinite(bw) && bw >= 0) {
-    ;(out as Record<string, unknown>).borderWidth = bw
-  }
-  // text color
-  const color = (style as { color?: unknown }).color
-  if (typeof color === 'string' && hex.test(color)) {
-    ;(out as Record<string, unknown>).color = color
-  }
-  // pass through known numeric opacities
-  const fillOpacity = (style as { fillOpacity?: unknown }).fillOpacity
-  if (typeof fillOpacity === 'number') {
-    ;(out as Record<string, unknown>).fillOpacity = Math.max(0, Math.min(1, fillOpacity))
-  }
-  const opacity = (style as { opacity?: unknown }).opacity
-  if (typeof opacity === 'number') {
-    ;(out as Record<string, unknown>).opacity = Math.max(0, Math.min(1, opacity))
-  }
-  return out
+function isShape(candidate: unknown): candidate is Shape {
+  return (
+    isRecord(candidate) &&
+    (candidate as { type?: unknown }).type === 'shape' &&
+    'style' in candidate
+  )
 }
 
 async function fetchShape(id: string): Promise<Shape | undefined> {
   const board = ensureBoard()
-  const [item] = (await board.get({ id })) as Shape[]
-  if (!item || item.type !== 'shape') {
+  const [item] = await board.get({ id })
+  if (!isShape(item)) {
     return undefined
   }
   return item
@@ -156,13 +224,21 @@ export class ShapeClient {
       return
     }
     applyShapeData(target, shape)
-    await target.sync?.()
+    if (typeof target.sync === 'function') {
+      await target.sync()
+    }
   }
 
   /** Delete a shape widget from the board. */
   public async deleteShape(id: string): Promise<void> {
     const target = await fetchShape(id)
-    await (target as { delete?: () => Promise<void> }).delete?.()
+    if (!target) {
+      return
+    }
+    const deleteFunction = (target as { delete?: () => Promise<void> }).delete
+    if (typeof deleteFunction === 'function') {
+      await deleteFunction.call(target)
+    }
   }
 
   /** Retrieve a shape widget by identifier. */
@@ -180,9 +256,6 @@ export class ShapeClient {
           break
         }
         case 'update': {
-          if (!op.id) {
-            continue
-          }
           await this.updateShape(op.id, toShapeData(op.data))
 
           break
