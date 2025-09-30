@@ -1,3 +1,10 @@
+## [2.6.4](https://github.com/fenrick/MiroDiagramming/compare/v2.6.3...v2.6.4) (2025-09-30)
+
+
+### Bug Fixes
+
+* **eslint:** set globalIgnores and project settings ([35b1528](https://github.com/fenrick/MiroDiagramming/commit/35b152840a3273e7851b25eca3d1658846dbc577))
+
 ## [2.6.3](https://github.com/fenrick/MiroDiagramming/compare/v2.6.2...v2.6.3) (2025-09-30)
 
 
