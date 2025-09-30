@@ -1,8 +1,13 @@
 import { GraphProcessor, type ProcessOptions } from '../graph/graph-processor'
 import type { GraphData } from '../graph/graph-service'
 import type { LayoutResult } from '../layout/elk-layout'
+import type { PositionedNode } from '../layout/layout-core'
 
-import { convertMermaidToGraph, type MermaidConversionOptions } from './mermaid-converter'
+import {
+  convertMermaidToGraph,
+  MermaidConversionError,
+  type MermaidConversionOptions,
+} from './mermaid-converter'
 import { computeMermaidLayout } from './mermaid-layout'
 import { layoutGraphDagre } from '../layout/dagre-layout'
 
@@ -24,9 +29,13 @@ export class MermaidRenderer {
 
   public async render(source: string, options: MermaidRenderOptions = {}): Promise<GraphData> {
     const { config, expectedType, ...processOptions } = options
-    const graph = await convertMermaidToGraph(source, { config, expectedType })
+    const rawGraph: unknown = await convertMermaidToGraph(source, { config, expectedType })
+    const graph = MermaidRenderer.ensureGraphData(rawGraph)
     const fmEngine = MermaidRenderer.frontmatterLayout(source)
-    const engine = fmEngine ?? import.meta.env?.VITE_MERMAID_LAYOUT_ENGINE ?? 'dagre'
+    const environment = import.meta.env as Record<string, string | undefined>
+    const configuredEngine = environment.VITE_MERMAID_LAYOUT_ENGINE
+    const engine =
+      fmEngine ?? (typeof configuredEngine === 'string' ? configuredEngine : undefined) ?? 'dagre'
 
     let layout: LayoutResult
     if (engine === 'mermaid') {
@@ -46,10 +55,9 @@ export class MermaidRenderer {
     }
 
     // Optional last-resort fallback to Mermaid DOM layout when enabled
+    const fallbackFlag = environment.VITE_MERMAID_LAYOUT_FALLBACK
     const fallbackEnabled =
-      typeof import.meta.env?.VITE_MERMAID_LAYOUT_FALLBACK === 'string'
-        ? import.meta.env.VITE_MERMAID_LAYOUT_FALLBACK.toLowerCase() === 'true'
-        : false
+      typeof fallbackFlag === 'string' ? fallbackFlag.toLowerCase() === 'true' : false
     if (engine !== 'mermaid' && fallbackEnabled && MermaidRenderer.isPoorlySpaced(layout)) {
       const mermaidLayout = await computeMermaidLayout(source, graph, { config })
       await this.processor.processGraphWithLayout(graph, mermaidLayout, processOptions)
@@ -64,43 +72,53 @@ export class MermaidRenderer {
    * Falls back to ELK when overlap is detected.
    */
   private static isPoorlySpaced(layout: LayoutResult): boolean {
-    const nodes = Object.values(layout.nodes)
-    for (let index = 0; index < nodes.length; index += 1) {
-      const a = nodes[index]
-      if (!a) continue
-      const ax1 = a.x
-      const ay1 = a.y
-      const ax2 = a.x + a.width
-      const ay2 = a.y + a.height
-      for (let index_ = index + 1; index_ < nodes.length; index_ += 1) {
-        const b = nodes[index_]
-        if (!b) continue
-        const bx1 = b.x
-        const by1 = b.y
-        const bx2 = b.x + b.width
-        const by2 = b.y + b.height
-        const noOverlap = ax2 <= bx1 || bx2 <= ax1 || ay2 <= by1 || by2 <= ay1
-        if (!noOverlap) {
-          return true
-        }
+    const nodes = Object.values(layout.nodes).filter((node): node is PositionedNode =>
+      MermaidRenderer.isPositionedNode(node),
+    )
+    for (const [index, node] of nodes.entries()) {
+      if (nodes.slice(index + 1).some((other) => MermaidRenderer.nodesOverlap(node, other))) {
+        return true
       }
     }
     return false
   }
 
+  private static isPositionedNode(node: PositionedNode | undefined): node is PositionedNode {
+    return node !== undefined
+  }
+
+  private static nodesOverlap(a: PositionedNode, b: PositionedNode): boolean {
+    const ax2 = a.x + a.width
+    const ay2 = a.y + a.height
+    const bx2 = b.x + b.width
+    const by2 = b.y + b.height
+    const horizontalGap = ax2 <= b.x || bx2 <= a.x
+    const verticalGap = ay2 <= b.y || by2 <= a.y
+    return !(horizontalGap || verticalGap)
+  }
+
   private static directionFromSource(source: string): 'UP' | 'DOWN' | 'LEFT' | 'RIGHT' | undefined {
     // Support both classic and v2 flowchart headers, and graph.
     // Examples: "flowchart TD", "flowchart LR", "flowchart-v2 BT", "graph RL"
-    const m = /\b(?:flowchart|flowchart-v2|graph)\s+([A-Z]{2})\b/i.exec(source)
-    if (!m) return undefined
-    const code = (m[1] ?? '').toUpperCase()
-    const map: Record<string, 'UP' | 'DOWN' | 'LEFT' | 'RIGHT'> = {
-      TD: 'DOWN',
-      BT: 'UP',
-      LR: 'RIGHT',
-      RL: 'LEFT',
+    const matches = /\b(?:flowchart|flowchart-v2|graph)\s+([A-Z]{2})\b/i.exec(source)
+    if (!matches) return undefined
+    switch ((matches[1] ?? '').toUpperCase()) {
+      case 'TD': {
+        return 'DOWN'
+      }
+      case 'BT': {
+        return 'UP'
+      }
+      case 'LR': {
+        return 'RIGHT'
+      }
+      case 'RL': {
+        return 'LEFT'
+      }
+      default: {
+        return undefined
+      }
     }
-    return map[code]
   }
 
   private static frontmatterLayout(source: string): 'dagre' | 'elk' | 'mermaid' | null {
@@ -133,11 +151,30 @@ export class MermaidRenderer {
   private static parseSpacingFromFrontMatter(
     body: string,
   ): { nodeSpacing: number | undefined; rankSpacing: number | undefined } | null {
-    const nodeM = /\bnodeSpacing\s*:\s*(\d+(?:\.\d+)?)\b/i.exec(body)
-    const rankM = /\brankSpacing\s*:\s*(\d+(?:\.\d+)?)\b/i.exec(body)
-    const nodeSpacing = nodeM ? Number(nodeM[1]) : undefined
-    const rankSpacing = rankM ? Number(rankM[1]) : undefined
-    return Number.isFinite(nodeSpacing) || Number.isFinite(rankSpacing)
+    let nodeSpacing: number | undefined
+    let rankSpacing: number | undefined
+    const lines = body.split(/\r?\n/)
+    for (const line of lines) {
+      const [key, rawValue] = line.split(':')
+      if (!rawValue) continue
+      const value = Number.parseFloat(rawValue.trim())
+      if (!Number.isFinite(value)) continue
+      const trimmedKey = key.trim().toLowerCase()
+      switch (trimmedKey) {
+        case 'nodespacing': {
+          nodeSpacing = value
+          break
+        }
+        case 'rankspacing': {
+          rankSpacing = value
+          break
+        }
+        default: {
+          break
+        }
+      }
+    }
+    return nodeSpacing !== undefined || rankSpacing !== undefined
       ? { nodeSpacing, rankSpacing }
       : null
   }
@@ -173,24 +210,39 @@ export class MermaidRenderer {
     if (start === -1) return null
     const end = source.indexOf('}%%', start)
     if (end === -1) return null
-    const inside = source.slice(start + 3, end + 1) // include closing '}'
-    const marker = 'init:'
-    const index = inside.toLowerCase().indexOf(marker)
-    if (index === -1) return null
-    const jsonStart = inside.indexOf('{', index)
+    const inside = source.slice(start + 3, end + 1)
+    const markerIndex = inside.toLowerCase().indexOf('init:')
+    if (markerIndex === -1) return null
+    const jsonStart = inside.indexOf('{', markerIndex)
     if (jsonStart === -1) return null
-    // naive brace matching for the JSON object
+    return MermaidRenderer.extractBalancedJson(inside, jsonStart)
+  }
+
+  private static extractBalancedJson(text: string, startIndex: number): string | null {
     let depth = 0
-    for (let index = jsonStart; index < inside.length; index += 1) {
-      const ch = inside[index]
-      if (ch === '{') depth += 1
-      else if (ch === '}') {
+    for (let cursor = startIndex; cursor < text.length; cursor += 1) {
+      const character = text.charAt(cursor)
+      if (character === '{') {
+        depth += 1
+      } else if (character === '}') {
         depth -= 1
         if (depth === 0) {
-          return inside.slice(jsonStart, index + 1)
+          return text.slice(startIndex, cursor + 1)
         }
       }
     }
     return null
+  }
+
+  private static ensureGraphData(input: unknown): GraphData {
+    if (!input || typeof input !== 'object') {
+      throw new MermaidConversionError('Mermaid conversion did not return graph data')
+    }
+    const maybeNodes = (input as { nodes?: unknown }).nodes
+    const maybeEdges = (input as { edges?: unknown }).edges
+    if (!Array.isArray(maybeNodes) || !Array.isArray(maybeEdges)) {
+      throw new MermaidConversionError('Mermaid conversion produced malformed graph data')
+    }
+    return { nodes: maybeNodes as GraphData['nodes'], edges: maybeEdges as GraphData['edges'] }
   }
 }
