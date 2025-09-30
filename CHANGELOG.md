@@ -1,3 +1,10 @@
+## [2.6.9](https://github.com/fenrick/MiroDiagramming/compare/v2.6.8...v2.6.9) (2025-09-30)
+
+
+### Bug Fixes
+
+* **board:** await frame grouping ([5a8cef5](https://github.com/fenrick/MiroDiagramming/commit/5a8cef5035c3ec53881bdab7a8cca412a75f5414))
+
 ## [2.6.8](https://github.com/fenrick/MiroDiagramming/compare/v2.6.7...v2.6.8) (2025-09-30)
 
 
