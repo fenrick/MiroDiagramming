@@ -92,7 +92,7 @@ export function useDiagramCreate(
       } catch (error) {
         const message = String(error)
         setError(message)
-        await showError(message)
+        showError(message)
       }
     }
     setImportQueue([])

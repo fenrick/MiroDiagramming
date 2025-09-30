@@ -27,6 +27,14 @@ const CONTENT_STYLE: React.CSSProperties = {
 const isFrame = (item: Record<string, unknown>): boolean =>
   (item as { type?: string }).type === 'frame'
 
+const formatFrameSummary = (count: number): string => {
+  if (count <= 0) {
+    return 'No frames selected'
+  }
+  const suffix = count === 1 ? '' : 's'
+  return `${count.toLocaleString()} frame${suffix} selected`
+}
+
 export const FramesTab: React.FC = () => {
   const [prefix, setPrefix] = React.useState('Frame-')
   const selection = useSelection()
@@ -36,12 +44,7 @@ export const FramesTab: React.FC = () => {
   const emptyStateDescription = hasSelection
     ? 'Current selection has no frames. Select one or more frames to proceed.'
     : 'Select one or more frames to proceed.'
-  let frameSummary = 'No frames selected'
-  if (hasFrames) {
-    const count = frames.length
-    const suffix = count === 1 ? '' : 's'
-    frameSummary = `${count} frame${suffix} selected`
-  }
+  const frameSummary = formatFrameSummary(frames.length)
 
   const rename = React.useCallback(async (): Promise<void> => {
     if (!hasFrames) {

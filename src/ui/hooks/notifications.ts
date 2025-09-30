@@ -13,7 +13,7 @@ import * as log from '../../logger'
 import { getErrorToastMessage } from '../microcopy'
 import { pushToast } from '../components/toast'
 
-export async function showError(message: string): Promise<void> {
+export function showError(message: string): void {
   const trimmed = message.length > 80 ? `${message.slice(0, 77)}...` : message
   // Log the original message for troubleshooting and pass the trimmed version
   // to the Miro notification API.
@@ -30,7 +30,7 @@ export async function showError(message: string): Promise<void> {
  *
  * @param status - HTTP status returned from an API request.
  */
-export async function showApiError(status: number): Promise<void> {
+export function showApiError(status: number): void {
   const message = getErrorToastMessage(status)
-  await showError(message)
+  showError(message)
 }

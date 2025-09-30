@@ -92,12 +92,9 @@ export function applyTextElement(item: BaseItem, element: TemplateElement, label
   const text = item as Text
   text.content = (element.text ?? '{{label}}').replace('{{label}}', label)
   if (element.style) {
-    const next: Record<string, unknown> = {}
-    if (text.style) {
-      Object.assign(next, text.style as Partial<TextStyle>)
-    }
-    Object.assign(next, templateManager.resolveStyle(element.style) as Partial<TextStyle>)
-    text.style = next as TextStyle
+    const currentStyle = text.style as Partial<TextStyle>
+    const resolved = templateManager.resolveStyle(element.style) as Partial<TextStyle>
+    text.style = { ...currentStyle, ...resolved } as TextStyle
   }
 }
 

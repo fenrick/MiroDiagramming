@@ -75,7 +75,7 @@ class SessionStoragePersistence implements BoardCachePersistence {
     const toRemove: string[] = []
     for (let index = 0; index < this.storage.length; index += 1) {
       const key = this.storage.key(index)
-      if (key && key.startsWith(prefix)) {
+      if (key?.startsWith(prefix)) {
         toRemove.push(key)
       }
     }
@@ -348,8 +348,15 @@ export class BoardCache {
   }
 
   private static createDefaultPersistence(): BoardCachePersistence {
-    if (typeof globalThis !== 'undefined' && globalThis.window?.sessionStorage) {
-      return new SessionStoragePersistence(globalThis.window.sessionStorage)
+    const globalWithSession = globalThis as { sessionStorage?: Storage | null }
+    if (globalWithSession.sessionStorage) {
+      return new SessionStoragePersistence(globalWithSession.sessionStorage)
+    }
+
+    const globalWithWindow = globalThis as { window?: { sessionStorage?: Storage | null } }
+    const storage = globalWithWindow.window?.sessionStorage ?? undefined
+    if (storage) {
+      return new SessionStoragePersistence(storage)
     }
     return new InMemoryPersistence()
   }
@@ -362,7 +369,7 @@ export class BoardCache {
       return globalCrypto.randomUUID()
     }
     BoardCache.fallbackCounter += 1
-    return `cache-${Date.now()}-${BoardCache.fallbackCounter}`
+    return `cache-${String(Date.now())}-${String(BoardCache.fallbackCounter)}`
   }
 
   private static objectValue(value: unknown): Record<string, unknown> {

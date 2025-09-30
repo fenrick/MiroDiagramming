@@ -67,12 +67,15 @@ function buildCaptions(edge: EdgeData, template?: ConnectorTemplate): Connector[
     | { caption?: unknown; captions?: unknown; label?: unknown }
     | undefined
 
+  const metaCaption = meta?.caption
+  const metaLabel = meta?.label
+  const metaCaptions = meta?.captions
+
   const fromMetaSingle =
-    (typeof meta?.caption === 'string' && meta?.caption) ||
-    (typeof meta?.label === 'string' && meta?.label)
+    (typeof metaCaption === 'string' && metaCaption) || (typeof metaLabel === 'string' && metaLabel)
 
   // Prefer explicit captions array if provided in metadata
-  const fromMetaArray = Array.isArray(meta?.captions) ? (meta?.captions as unknown[]) : undefined
+  const fromMetaArray = Array.isArray(metaCaptions) ? (metaCaptions as unknown[]) : undefined
 
   if (fromMetaArray) {
     return captionsFromArray(fromMetaArray)

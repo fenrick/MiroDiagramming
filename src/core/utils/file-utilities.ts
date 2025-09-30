@@ -7,7 +7,7 @@ import * as log from '../../logger'
  * for broader compatibility.
  */
 export class FileUtilities {
-  private static instance: FileUtilities
+  private static instance: FileUtilities | null = null
   private static instances = 0
 
   private constructor() {
@@ -17,10 +17,13 @@ export class FileUtilities {
 
   /** Retrieve the shared instance. */
   public static getInstance(): FileUtilities {
-    if (!FileUtilities.instance) {
-      FileUtilities.instance = new FileUtilities()
+    const existing = FileUtilities.instance
+    if (existing) {
+      return existing
     }
-    return FileUtilities.instance
+    const created = new FileUtilities()
+    FileUtilities.instance = created
+    return created
   }
 
   /**

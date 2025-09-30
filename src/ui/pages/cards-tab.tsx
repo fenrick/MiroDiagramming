@@ -34,7 +34,7 @@ export const CardsTab: React.FC = () => {
     const handler = (event: KeyboardEvent): void => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'z') {
         event.preventDefault()
-        undoLastImport(lastProc, () => {
+        void undoLastImport(lastProc, () => {
           setLastProc(undefined)
         })
       }
@@ -76,7 +76,7 @@ export const CardsTab: React.FC = () => {
       } catch (error_) {
         const message = String(error_)
         setError(message)
-        await showError(message)
+        showError(message)
       }
     }
     setFiles([])
@@ -100,7 +100,7 @@ export const CardsTab: React.FC = () => {
               <Grid.Item>
                 <DroppedFileList>
                   {files.map((file) => (
-                    <li key={`${file.name}-${file.lastModified}`}>{file.name}</li>
+                    <li key={`${file.name}-${String(file.lastModified)}`}>{file.name}</li>
                   ))}
                 </DroppedFileList>
               </Grid.Item>
@@ -137,11 +137,11 @@ export const CardsTab: React.FC = () => {
                 </Button>
                 {showUndo && (
                   <Button
-                    onClick={() =>
-                      undoLastImport(lastProc, () => {
+                    onClick={() => {
+                      void undoLastImport(lastProc, () => {
                         setLastProc(undefined)
                       })
-                    }
+                    }}
                     variant="secondary"
                   >
                     Undo import (⌘Z)
@@ -149,11 +149,11 @@ export const CardsTab: React.FC = () => {
                 )}
                 {lastProc && (
                   <Button
-                    onClick={() =>
-                      undoLastImport(lastProc, () => {
+                    onClick={() => {
+                      void undoLastImport(lastProc, () => {
                         setLastProc(undefined)
                       })
-                    }
+                    }}
                     variant="secondary"
                     iconPosition="start"
                     icon={<IconArrowArcLeft />}

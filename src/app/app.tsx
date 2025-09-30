@@ -6,19 +6,22 @@ import { Paragraph } from '../ui/components/paragraph'
 import { ToastContainer } from '../ui/components/toast'
 import { PanelShell } from '../ui/panel-shell'
 import { ScrollArea } from '../ui/scroll-area'
-import { type Tab, TAB_DATA } from '../ui/pages/tabs'
+import { type Tab, TAB_DATA, type TabTuple } from '../ui/pages/tabs'
 
 /**
  * React entry component that renders the file selection and mode
  * toggling user interface. Extraction as an exported constant allows
  * the component to be reused in tests without side effects.
  */
+const NullComponent: React.FC = () => null
+
 function AppShell(): React.JSX.Element {
   const initialTab = TAB_DATA[0]?.[1] ?? 'diagrams'
   const [tab, setTab] = React.useState<Tab>(initialTab)
-  // Tab ids available for data-driven rendering only
-  const selected = TAB_DATA.find((t) => t[1] === tab) ?? TAB_DATA[0]
-  const CurrentComp: React.FC = selected?.[4]! ?? (() => null)
+  const fallbackTab: TabTuple = TAB_DATA[0] ?? [0, 'diagrams', '', '', NullComponent]
+  const resolved = TAB_DATA.find((t) => t[1] === tab) ?? fallbackTab
+  const instructions = resolved[3]
+  const CurrentComp = resolved[4]
   // No global keyboard shortcuts or command palette in Miro add-ins.
 
   return (
@@ -42,7 +45,7 @@ function AppShell(): React.JSX.Element {
         </Tabs.List>
       </Tabs>
       <div aria-label="Panel content">
-        <Paragraph>{selected?.[3] ?? ''}</Paragraph>
+        <Paragraph>{instructions}</Paragraph>
         <CurrentComp />
       </div>
       <ToastContainer />

@@ -1,3 +1,5 @@
+import type { Miro } from '@mirohq/websdk-types'
+
 import * as log from '../logger'
 import { showError } from '../ui/hooks/notifications'
 
@@ -15,14 +17,24 @@ export type { BoardUILike, BoardLike, BoardQueryLike } from './types'
  * @param board - Optional board object used primarily for testing.
  * @returns The board API instance.
  */
+function resolveGlobalBoard(): BoardLike | undefined {
+  const candidate = (globalThis as Record<string, unknown>).miro as Partial<Miro> | undefined
+  if (!candidate || typeof candidate !== 'object') {
+    return undefined
+  }
+
+  const board = (candidate as Partial<Miro> & { board?: BoardLike }).board
+  return typeof board === 'object' ? board : undefined
+}
+
 export function getBoard(board?: BoardLike): BoardLike {
   log.trace('Resolving board instance')
-  const b = board ?? globalThis.miro?.board
-  if (!b) {
+  const resolved = board ?? resolveGlobalBoard()
+  if (!resolved) {
     throw new TypeError('Miro board not available')
   }
   log.debug('Board resolved')
-  return b
+  return resolved
 }
 
 /**
@@ -52,7 +64,7 @@ export function ensureBoard(board?: BoardLike): BoardLike | undefined {
   try {
     return getBoard(board)
   } catch {
-    void showError('Open this app in a Miro board to use this feature.')
+    showError('Open this app in a Miro board to use this feature.')
     return undefined
   }
 }

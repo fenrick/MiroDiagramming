@@ -30,15 +30,19 @@ const CONTENT_STYLE: React.CSSProperties = {
   gap: space[200],
 }
 
+const formatSelectionLabel = (count: number): string => {
+  if (count <= 0) {
+    return 'No selection'
+  }
+  const noun = count === 1 ? 'item' : 'items'
+  const countLabel = count.toLocaleString()
+  return `${countLabel} selected ${noun}`
+}
+
 export const ArrangeTab: React.FC = () => {
   const selection = useSelection()
   const hasSelection = selection.length > 0
-  let selectionLabel = 'No selection'
-  if (hasSelection) {
-    const count = selection.length
-    const noun = count === 1 ? 'item' : 'items'
-    selectionLabel = `${count} selected ${noun}`
-  }
+  const selectionLabel = formatSelectionLabel(selection.length)
   const [grid, setGrid] = React.useState<GridOptions>({
     cols: 2,
     padding: 20,

@@ -58,10 +58,20 @@ const CONTENT_STYLE: React.CSSProperties = {
   gap: space[200],
 }
 
+const formatSelectionSummary = (count: number): string => {
+  if (count <= 0) {
+    return 'No selection'
+  }
+  const suffix = count === 1 ? 'item' : 'items'
+  return `${count.toLocaleString()} ${suffix} selected`
+}
+
+const formatDimension = (value: number): string => value.toLocaleString()
+
 export const ResizeTab: React.FC = () => {
   const selection = useSelection()
   const hasSelection = selection.length > 0
-  const selectionLabel = `${selection.length} item${selection.length === 1 ? '' : 's'}`
+  const selectionSummary = formatSelectionSummary(selection.length)
   const [size, setSize] = React.useState<Size>({ width: 100, height: 100 })
   const [copiedSize, setCopiedSize] = React.useState<Size | null>(null)
   const [warning, setWarning] = React.useState('')
@@ -149,10 +159,10 @@ export const ResizeTab: React.FC = () => {
     const handler = (event: KeyboardEvent): void => {
       if (event.altKey && event.key.toLowerCase() === 'c') {
         event.preventDefault()
-        copy()
+        void copy()
       } else if (event.altKey && event.key.toLowerCase() === 'v') {
         event.preventDefault()
-        apply()
+        void apply()
       }
     }
     globalThis.addEventListener('keydown', handler)
@@ -168,8 +178,8 @@ export const ResizeTab: React.FC = () => {
         {copiedSize ? (
           <SidebarSection title="Copy mode">
             <Paragraph>
-              Using copied size {copiedSize.width}×{copiedSize.height}. Clear to resume syncing with
-              selection.
+              Using copied size {formatDimension(copiedSize.width)}×
+              {formatDimension(copiedSize.height)}. Clear to resume syncing with selection.
             </Paragraph>
           </SidebarSection>
         ) : null}
@@ -177,15 +187,21 @@ export const ResizeTab: React.FC = () => {
           <EmptyState title="No selection" description="Select one or more items to resize." />
         )}
         <Paragraph data-testid="size-display">
-          {copiedSize
-            ? `Copied: ${copiedSize.width}×${copiedSize.height}`
-            : `Selection: ${size.width}×${size.height}`}
+          {copiedSize ? (
+            <>
+              Copied: {formatDimension(copiedSize.width)}×{formatDimension(copiedSize.height)}
+            </>
+          ) : (
+            <>
+              Selection: {formatDimension(size.width)}×{formatDimension(size.height)}
+            </>
+          )}
           <br />
           {boardUnitsToMm(size.width).toFixed(1)} mm × {boardUnitsToMm(size.height).toFixed(1)} mm (
           {boardUnitsToInches(size.width).toFixed(2)} × {boardUnitsToInches(size.height).toFixed(2)}{' '}
           in)
           <br />
-          {hasSelection ? `${selectionLabel} selected` : 'No selection'}
+          {hasSelection ? selectionSummary : 'No selection'}
         </Paragraph>
         {warning && <p className="error">{warning}</p>}
         <SidebarSection title="Manual size">
@@ -261,7 +277,9 @@ export const ResizeTab: React.FC = () => {
                 {SCALE_OPTIONS.map((s) => (
                   <Button
                     key={s.label}
-                    onClick={() => scale(s.factor)}
+                    onClick={() => {
+                      void scale(s.factor)
+                    }}
                     variant="secondary"
                     disabled={!hasSelection}
                   >
@@ -275,7 +293,9 @@ export const ResizeTab: React.FC = () => {
         <StickyActions>
           <ButtonToolbar>
             <Button
-              onClick={apply}
+              onClick={() => {
+                void apply()
+              }}
               variant="primary"
               iconPosition="start"
               icon={<IconChevronRightDouble />}
@@ -284,7 +304,13 @@ export const ResizeTab: React.FC = () => {
               <Text>Apply Size</Text>
             </Button>
             <Button
-              onClick={copiedSize ? resetCopy : copy}
+              onClick={() => {
+                if (copiedSize) {
+                  resetCopy()
+                  return
+                }
+                void copy()
+              }}
               variant={copiedSize ? 'danger' : 'secondary'}
               iconPosition="start"
               icon={copiedSize ? <IconArrowArcLeft /> : <IconSquaresTwoOverlap />}
