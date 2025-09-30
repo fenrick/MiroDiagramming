@@ -100,8 +100,8 @@ export class GraphProcessor extends UndoableProcessor {
 
   private async createContainerFromChildren(
     name: string,
-    children: string[],
-    layout: LayoutResult,
+    children: readonly string[],
+    layoutNodes: ReadonlyMap<string, PositionedNode>,
     offsetX: number,
     offsetY: number,
   ): Promise<GroupableItem> {
@@ -110,7 +110,7 @@ export class GraphProcessor extends UndoableProcessor {
     let maxX = Number.NEGATIVE_INFINITY
     let maxY = Number.NEGATIVE_INFINITY
     for (const id of children) {
-      const pos = layout.nodes[id]
+      const pos = layoutNodes.get(id)
       if (!pos) continue
       const x = pos.x + offsetX
       const y = pos.y + offsetY
@@ -150,7 +150,7 @@ export class GraphProcessor extends UndoableProcessor {
       hash = (hash * 31 + code) >>> 0
     }
     const colorIndex = hash % palette.length
-    const color = palette[colorIndex] ?? palette[0]
+    const color = palette.at(colorIndex) ?? palette[0]
     const interaction = this.builder.beginShapeInteraction(container)
     interaction.applyTemplate({ style: { fillColor: color } }, name)
     await interaction.commit()
@@ -308,7 +308,7 @@ export class GraphProcessor extends UndoableProcessor {
 
   private async convergeAndApply(
     graph: GraphData,
-    initial: LayoutResult,
+    _initial: LayoutResult,
     initialPositions: Record<string, PositionedNode>,
     map: Record<string, BaseItem | Group>,
     context: {
@@ -326,76 +326,169 @@ export class GraphProcessor extends UndoableProcessor {
       >
     },
   ): Promise<void> {
-    const epsilon = 3
+    const measurements = this.measureWidgetSizes(map)
+    const updatedGraph = this.mergeMeasuredSizes(graph, measurements, initialPositions)
+    const converged = await this.computeConvergedLayout(updatedGraph, context)
+    const snap = this.createSnapper(context.layoutOptions?.gridSnap ?? 8)
+    await this.applyConvergedNodePositions(
+      graph.nodes,
+      converged.layout.nodes,
+      map,
+      {
+        offsetX: context.offsetX + converged.deltaX,
+        offsetY: context.offsetY + converged.deltaY,
+      },
+      snap,
+    )
+    const finalLayout = this.shiftLayout(converged.layout, {
+      offsetX: context.offsetX + converged.deltaX,
+      offsetY: context.offsetY + converged.deltaY,
+    })
+    await this.createConnectorsAndZoom(graph, finalLayout, map, context.frame)
+  }
+
+  private measureWidgetSizes(
+    widgets: Record<string, BaseItem | Group>,
+  ): Map<string, { width: number; height: number }> {
     const measured = new Map<string, { width: number; height: number }>()
-    for (const [id, item] of Object.entries(map)) {
-      const w = (item as { width?: number }).width
-      const h = (item as { height?: number }).height
-      if (typeof w === 'number' && typeof h === 'number') {
-        measured.set(id, { width: w, height: h })
+    for (const [id, item] of Object.entries(widgets)) {
+      const width = (item as { width?: number }).width
+      const height = (item as { height?: number }).height
+      if (typeof width === 'number' && typeof height === 'number') {
+        measured.set(id, { width, height })
       }
     }
-    const updated: GraphData = {
-      nodes: graph.nodes.map((n) => {
-        const m = measured.get(n.id)
-        if (!m) return n
-        const previous = initialPositions[n.id]
-        const width =
-          previous && Math.abs(m.width - previous.width) <= epsilon ? previous.width : m.width
-        const height =
-          previous && Math.abs(m.height - previous.height) <= epsilon ? previous.height : m.height
-        return { ...n, metadata: { ...n.metadata, width, height } }
+    return measured
+  }
+
+  private mergeMeasuredSizes(
+    graph: GraphData,
+    measurements: ReadonlyMap<string, { width: number; height: number }>,
+    initialPositions: Record<string, PositionedNode>,
+  ): GraphData {
+    const epsilon = 3
+    const keepWithinTolerance = (previous: number | undefined, measuredValue: number): number => {
+      if (previous === undefined) {
+        return measuredValue
+      }
+      return Math.abs(measuredValue - previous) <= epsilon ? previous : measuredValue
+    }
+
+    return {
+      nodes: graph.nodes.map((node) => {
+        const measurement = measurements.get(node.id)
+        if (!measurement) {
+          return node
+        }
+        const previous = initialPositions[node.id]
+        const width = keepWithinTolerance(previous?.width, measurement.width)
+        const height = keepWithinTolerance(previous?.height, measurement.height)
+        return {
+          ...node,
+          metadata: {
+            ...node.metadata,
+            width,
+            height,
+          },
+        }
       }),
       edges: graph.edges,
     }
+  }
+
+  private async computeConvergedLayout(
+    graph: GraphData,
+    context: {
+      originalBounds: { minX: number; minY: number; maxX: number; maxY: number }
+      layoutOptions?: Partial<
+        UserLayoutOptions & {
+          nodeSpacing?: number
+          rankSpacing?: number
+          converge?: boolean
+          gridSnap?: number
+        }
+      >
+    },
+  ): Promise<{ layout: LayoutResult; deltaX: number; deltaY: number }> {
     const spacing = context.layoutOptions?.spacing ?? 50
     const direction = context.layoutOptions?.direction ?? 'RIGHT'
-    const second = await layoutGraphDagre(updated, {
+    const layout = await layoutGraphDagre(graph, {
       direction,
       nodeSpacing: context.layoutOptions?.nodeSpacing ?? spacing,
       rankSpacing: context.layoutOptions?.rankSpacing ?? spacing,
     })
-    const newBounds = this.layoutBounds(second)
-    const dx = context.originalBounds.minX - newBounds.minX
-    const dy = context.originalBounds.minY - newBounds.minY
-    const grid = context.layoutOptions?.gridSnap ?? 8
-    const snap = (v: number) => (grid > 0 ? Math.round(v / grid) * grid : v)
-    for (const n of graph.nodes) {
-      const pos = second.nodes[n.id]
-      if (!pos) continue
-      const item = map[n.id] as { x?: number; y?: number; sync?: () => Promise<void> } | undefined
-      if (!item) continue
-      const nx = snap(pos.x + context.offsetX + dx + pos.width / 2)
-      const ny = snap(pos.y + context.offsetY + dy + pos.height / 2)
-      item.x = nx
-      item.y = ny
+    const bounds = this.layoutBounds(layout)
+    return {
+      layout,
+      deltaX: context.originalBounds.minX - bounds.minX,
+      deltaY: context.originalBounds.minY - bounds.minY,
+    }
+  }
+
+  private createSnapper(gridSize: number): (value: number) => number {
+    if (gridSize <= 0) {
+      return (value) => value
+    }
+    return (value) => Math.round(value / gridSize) * gridSize
+  }
+
+  private async applyConvergedNodePositions(
+    nodes: GraphData['nodes'],
+    layoutNodes: Record<string, PositionedNode>,
+    map: Record<string, BaseItem | Group>,
+    offsets: { offsetX: number; offsetY: number },
+    snap: (value: number) => number,
+  ): Promise<void> {
+    for (const node of nodes) {
+      const pos = layoutNodes[node.id]
+      if (!pos) {
+        continue
+      }
+      const item = map[node.id] as
+        | { x?: number; y?: number; sync?: () => Promise<void> }
+        | undefined
+      if (!item) {
+        continue
+      }
+      item.x = snap(pos.x + offsets.offsetX + pos.width / 2)
+      item.y = snap(pos.y + offsets.offsetY + pos.height / 2)
       await maybeSync(item)
     }
-    const shiftedEdges2 = second.edges.map((edge) => ({
+  }
+
+  private shiftLayout(
+    layout: LayoutResult,
+    offsets: { offsetX: number; offsetY: number },
+  ): LayoutResult {
+    const nodes = Object.fromEntries(
+      Object.entries(layout.nodes).map(([id, position]) => [
+        id,
+        {
+          ...position,
+          id,
+          x: position.x + offsets.offsetX,
+          y: position.y + offsets.offsetY,
+        },
+      ]),
+    ) as Record<string, PositionedNode>
+
+    const edges = layout.edges.map((edge) => ({
       startPoint: {
-        x: edge.startPoint.x + context.offsetX + dx,
-        y: edge.startPoint.y + context.offsetY + dy,
+        x: edge.startPoint.x + offsets.offsetX,
+        y: edge.startPoint.y + offsets.offsetY,
       },
       endPoint: {
-        x: edge.endPoint.x + context.offsetX + dx,
-        y: edge.endPoint.y + context.offsetY + dy,
+        x: edge.endPoint.x + offsets.offsetX,
+        y: edge.endPoint.y + offsets.offsetY,
       },
-      bendPoints: edge.bendPoints?.map((pt) => ({
-        x: pt.x + context.offsetX + dx,
-        y: pt.y + context.offsetY + dy,
+      bendPoints: edge.bendPoints?.map((point) => ({
+        x: point.x + offsets.offsetX,
+        y: point.y + offsets.offsetY,
       })),
       hintSides: edge.hintSides,
     }))
-    const finalLayout: LayoutResult = {
-      nodes: Object.fromEntries(
-        Object.entries(second.nodes).map(([id, p]) => [
-          id,
-          { ...p, x: p.x + context.offsetX + dx, y: p.y + context.offsetY + dy, id },
-        ]),
-      ) as Record<string, PositionedNode>,
-      edges: shiftedEdges2,
-    }
-    await this.createConnectorsAndZoom(graph, finalLayout, map, context.frame)
+
+    return { nodes, edges }
   }
 
   // undoLast inherited from UndoableProcessor
@@ -436,9 +529,10 @@ export class GraphProcessor extends UndoableProcessor {
     if (mode !== 'layout') {
       return data
     }
+    const existingNodes = new Map<string, BoardItem | undefined>(Object.entries(existing))
     return {
       nodes: data.nodes.map((n) => {
-        const w = existing[n.id] as { x?: number; y?: number } | undefined
+        const w = existingNodes.get(n.id) as { x?: number; y?: number } | undefined
         return w && typeof w.x === 'number' && typeof w.y === 'number'
           ? { ...n, metadata: { ...n.metadata, x: w.x, y: w.y } }
           : n
@@ -470,11 +564,12 @@ export class GraphProcessor extends UndoableProcessor {
   private async collectExistingNodes(
     graph: GraphData,
   ): Promise<Record<string, BoardItem | undefined>> {
-    const map: Record<string, BoardItem | undefined> = {}
+    const map = new Map<string, BoardItem | undefined>()
     for (const node of graph.nodes) {
-      map[node.id] = await this.builder.findNodeInSelection(node.type, node.label)
+      const widget = await this.builder.findNodeInSelection(node.type, node.label)
+      map.set(node.id, widget)
     }
-    return map
+    return Object.fromEntries(map)
   }
 
   /**
@@ -491,116 +586,216 @@ export class GraphProcessor extends UndoableProcessor {
     map: Record<string, BoardItem>
     positions: Record<string, PositionedNode>
   }> {
-    const map: Record<string, BoardItem> = {}
-    const positions: Record<string, PositionedNode> = {}
-    // Build nested subgraph relationships for both leaves and subgraph containers
+    const map = new Map<string, BoardItem>()
+    const positions = new Map<string, PositionedNode>()
+    const layoutNodes = new Map<string, PositionedNode>(Object.entries(layout.nodes))
+    const existingNodes = new Map<string, BoardItem | undefined>(Object.entries(existing))
     const { subgraphChildren, containerParent } = this.computeSubgraphMaps(graph)
-    // Create subgraph containers first, deepest-first, to render behind descendants
-    const depth = (id: string): number => {
-      let depthCount = 0
-      let current = id
-      while (containerParent.has(current)) {
-        depthCount += 1
-        const next = containerParent.get(current)
-        if (!next) break
-        current = next
-      }
-      return depthCount
-    }
-    const subgraphNames = [...new Set([...subgraphChildren.keys(), ...containerParent.keys()])]
-    subgraphNames.sort((a, b) => depth(b) - depth(a))
-    for (const name of subgraphNames) {
-      const children = subgraphChildren.get(name) ?? []
-      if (children.length === 0) continue
-      const proxy = layout.nodes[name]
-      const container = proxy
-        ? await this.createContainerFromProxy(name, proxy, offsetX, offsetY)
-        : await this.createContainerFromChildren(name, children, layout, offsetX, offsetY)
-      await this.tintContainer(container as BaseItem, name)
-      this.registerCreated(container)
-      map[name] = container
-    }
+
+    const orderedSubgraphs = this.orderSubgraphs(subgraphChildren, containerParent)
+    await this.instantiateSubgraphContainers(
+      orderedSubgraphs,
+      subgraphChildren,
+      layoutNodes,
+      offsetX,
+      offsetY,
+      map,
+    )
+
     for (const node of graph.nodes) {
-      const isSubgraph =
-        (node.metadata as { isSubgraph?: boolean } | undefined)?.isSubgraph === true
-      if (isSubgraph) {
-        // Skip creating a widget for subgraph container; a frame will be created later.
+      if (this.isSubgraphNode(node)) {
         continue
       }
-      const pos = layout.nodes[node.id]
-      if (!pos) {
-        throw new Error(`Missing layout for node ${node.id}`)
-      }
-      // Positions from layout are top-left; Miro expects centre coordinates.
-      const centerX = pos.x + offsetX + pos.width / 2
-      const centerY = pos.y + offsetY + pos.height / 2
-      const target: PositionedNode = { ...pos, x: pos.x + offsetX, y: pos.y + offsetY }
-      const found = existing[node.id]
-      let widget: BoardItem
-      if (found) {
-        widget = found
-        if (mode === 'ignore') {
-          const w = widget as {
-            x?: number
-            y?: number
-            width?: number
-            height?: number
-          }
-          positions[node.id] = {
-            id: node.id,
-            x: w.x ?? target.x,
-            y: w.y ?? target.y,
-            width: w.width ?? target.width,
-            height: w.height ?? target.height,
-          }
-        } else {
-          const movable = widget as {
-            x?: number
-            y?: number
-            sync?: () => Promise<void>
-          }
-          movable.x = centerX
-          movable.y = centerY
-          await maybeSync(movable)
-          positions[node.id] = { ...target, id: node.id }
-        }
-      } else {
-        widget = await this.builder.createNode(node, {
-          x: centerX,
-          y: centerY,
-          width: target.width,
-          height: target.height,
-        })
-        this.registerCreated(widget)
-        positions[node.id] = { ...target, id: node.id }
-      }
-      await this.applyNodeOverrides(node, widget)
-      map[node.id] = widget
-      this.nodeIdMap[node.id] = widget.id
+
+      const layoutPosition = this.requireLayoutPosition(layoutNodes, node.id)
+      const shifted = this.shiftLayoutPosition(layoutPosition, offsetX, offsetY)
+      const center = this.computeNodeCenter(shifted)
+      const placement = await this.resolveWidgetPlacement(
+        node,
+        shifted,
+        center,
+        mode,
+        existingNodes,
+      )
+
+      await this.applyNodeOverrides(node, placement.widget)
+      map.set(node.id, placement.widget)
+      positions.set(node.id, placement.position)
+      this.nodeIdMap[node.id] = placement.widget.id
     }
-    // Group subgraph containers with their children
+
     await this.groupSubgraphs(subgraphChildren, map)
-    return { map, positions }
+    return { map: Object.fromEntries(map), positions: Object.fromEntries(positions) }
+  }
+
+  private orderSubgraphs(
+    subgraphChildren: Map<string, string[]>,
+    containerParent: Map<string, string>,
+  ): string[] {
+    const names = new Set<string>([...subgraphChildren.keys(), ...containerParent.keys()])
+    const depthCache = new Map<string, number>()
+
+    const depth = (id: string): number => {
+      const cached = depthCache.get(id)
+      if (cached !== undefined) {
+        return cached
+      }
+      const parent = containerParent.get(id)
+      if (!parent) {
+        depthCache.set(id, 0)
+        return 0
+      }
+      const computed = depth(parent) + 1
+      depthCache.set(id, computed)
+      return computed
+    }
+
+    return [...names].toSorted((a, b) => depth(b) - depth(a))
+  }
+
+  private async instantiateSubgraphContainers(
+    orderedSubgraphs: readonly string[],
+    subgraphChildren: Map<string, string[]>,
+    layoutNodes: ReadonlyMap<string, PositionedNode>,
+    offsetX: number,
+    offsetY: number,
+    map: Map<string, BoardItem>,
+  ): Promise<void> {
+    for (const name of orderedSubgraphs) {
+      const container = await this.buildSubgraphContainer(
+        name,
+        subgraphChildren,
+        layoutNodes,
+        offsetX,
+        offsetY,
+      )
+      if (!container) {
+        continue
+      }
+      await this.tintContainer(container as BaseItem, name)
+      this.registerCreated(container)
+      map.set(name, container)
+    }
+  }
+
+  private async buildSubgraphContainer(
+    name: string,
+    subgraphChildren: Map<string, string[]>,
+    layoutNodes: ReadonlyMap<string, PositionedNode>,
+    offsetX: number,
+    offsetY: number,
+  ): Promise<GroupableItem | undefined> {
+    const children = subgraphChildren.get(name)
+    if (!children || children.length === 0) {
+      return undefined
+    }
+    const proxy = layoutNodes.get(name)
+    if (proxy) {
+      return this.createContainerFromProxy(name, proxy, offsetX, offsetY)
+    }
+    return this.createContainerFromChildren(name, children, layoutNodes, offsetX, offsetY)
+  }
+
+  private isSubgraphNode(node: NodeData): boolean {
+    const metadata = node.metadata as { isSubgraph?: boolean } | undefined
+    return metadata?.isSubgraph ?? false
+  }
+
+  private requireLayoutPosition(
+    layoutNodes: ReadonlyMap<string, PositionedNode>,
+    id: string,
+  ): PositionedNode {
+    const position = layoutNodes.get(id)
+    if (!position) {
+      throw new Error(`Missing layout for node ${id}`)
+    }
+    return position
+  }
+
+  private shiftLayoutPosition(
+    position: PositionedNode,
+    offsetX: number,
+    offsetY: number,
+  ): PositionedNode {
+    return { ...position, x: position.x + offsetX, y: position.y + offsetY }
+  }
+
+  private computeNodeCenter(position: PositionedNode): { x: number; y: number } {
+    return {
+      x: position.x + position.width / 2,
+      y: position.y + position.height / 2,
+    }
+  }
+
+  private async resolveWidgetPlacement(
+    node: NodeData,
+    target: PositionedNode,
+    center: { x: number; y: number },
+    mode: ExistingNodeMode,
+    existingNodes: ReadonlyMap<string, BoardItem | undefined>,
+  ): Promise<{ widget: BoardItem; position: PositionedNode }> {
+    const found = existingNodes.get(node.id)
+    if (!found) {
+      const widget = await this.builder.createNode(node, {
+        x: center.x,
+        y: center.y,
+        width: target.width,
+        height: target.height,
+      })
+      this.registerCreated(widget)
+      return { widget, position: { ...target, id: node.id } }
+    }
+
+    if (mode === 'ignore') {
+      return { widget: found, position: this.extractExistingPosition(found, target, node.id) }
+    }
+
+    const movable = found as { x?: number; y?: number; sync?: () => Promise<void> }
+    movable.x = center.x
+    movable.y = center.y
+    await maybeSync(movable)
+    return { widget: found, position: { ...target, id: node.id } }
+  }
+
+  private extractExistingPosition(
+    widget: BoardItem,
+    fallback: PositionedNode,
+    id: string,
+  ): PositionedNode {
+    const w = widget as { x?: number; y?: number; width?: number; height?: number }
+    return {
+      id,
+      x: w.x ?? fallback.x,
+      y: w.y ?? fallback.y,
+      width: w.width ?? fallback.width,
+      height: w.height ?? fallback.height,
+    }
   }
 
   private async groupSubgraphs(
     subgraphChildren: Map<string, string[]>,
-    nodeMap: Record<string, BoardItem>,
+    nodeMap: ReadonlyMap<string, BoardItem>,
   ): Promise<void> {
     for (const [name, children] of subgraphChildren) {
-      const container = nodeMap[name] as unknown as GroupableItem | undefined
-      if (!container) continue
-      const members: GroupableItem[] = []
-      for (const id of children) {
-        const w = nodeMap[id] as unknown as GroupableItem | undefined
-        if (w) members.push(w)
+      const container = nodeMap.get(name) as unknown as GroupableItem | undefined
+      if (!container) {
+        continue
       }
-      if (members.length === 0) continue
-      try {
-        await this.builder.groupItems([container, ...members])
-      } catch {
-        // ignore grouping failures
+      const members = children
+        .map((id) => nodeMap.get(id) as unknown as GroupableItem | undefined)
+        .filter((item): item is GroupableItem => item !== undefined)
+      if (members.length === 0) {
+        continue
       }
+      await this.groupItems(container, members)
+    }
+  }
+
+  private async groupItems(container: GroupableItem, members: GroupableItem[]): Promise<void> {
+    try {
+      await this.builder.groupItems([container, ...members])
+    } catch {
+      // ignore grouping failures
     }
   }
 
@@ -612,42 +807,57 @@ export class GraphProcessor extends UndoableProcessor {
     if (!metadata) {
       return
     }
-    const { styleOverrides, shape } = metadata
-    if (!styleOverrides && !shape) {
+    if (!metadata.styleOverrides && !metadata.shape) {
       return
     }
     if ((widget as { type?: string }).type !== 'shape') {
       return
     }
-    const beforeShape = (widget as { shape?: string }).shape
-    const style: Record<string, unknown> = {}
-    if (styleOverrides?.fillColor) {
-      style.fillColor = styleOverrides.fillColor
-    }
-    if (styleOverrides?.borderColor) {
-      style.borderColor = styleOverrides.borderColor
-    }
-    if (styleOverrides?.borderWidth !== undefined) {
-      style.borderWidth = styleOverrides.borderWidth
-    }
-    if (styleOverrides?.textColor) {
-      style.color = styleOverrides.textColor
-    }
-    const template: TemplateElement = {}
-    if (Object.keys(style).length > 0) {
-      template.style = style
-    }
-    if (typeof shape === 'string') {
-      template.shape = shape
-    }
-    if (!template.style && !template.shape) {
+    const template = this.buildShapeTemplate(metadata)
+    if (!template) {
       return
     }
+    const beforeShape = (widget as { shape?: string }).shape
     const interaction = this.builder.beginShapeInteraction(widget as BaseItem)
     interaction.applyTemplate(template, node.label)
     await interaction.commit()
     const afterShape = (widget as { shape?: string }).shape
     log.info({ id: node.id, beforeShape, afterShape }, 'Applied Mermaid shape override')
+  }
+
+  private buildShapeTemplate(metadata: MermaidNodeMetadata): TemplateElement | undefined {
+    const style = this.buildStyleOverrides(metadata.styleOverrides)
+    const template: TemplateElement = {}
+    if (style) {
+      template.style = style
+    }
+    if (typeof metadata.shape === 'string') {
+      template.shape = metadata.shape
+    }
+    return template.style || template.shape ? template : undefined
+  }
+
+  private buildStyleOverrides(
+    styleOverrides: MermaidNodeMetadata['styleOverrides'],
+  ): Record<string, unknown> | undefined {
+    if (!styleOverrides) {
+      return undefined
+    }
+    const style: Record<string, unknown> = {}
+    const { fillColor, borderColor, textColor, borderWidth } = styleOverrides
+    if (fillColor) {
+      style.fillColor = fillColor
+    }
+    if (borderColor) {
+      style.borderColor = borderColor
+    }
+    if (textColor) {
+      style.color = textColor
+    }
+    if (borderWidth !== undefined) {
+      style.borderWidth = borderWidth
+    }
+    return Object.keys(style).length > 0 ? style : undefined
   }
 
   /**
@@ -673,13 +883,21 @@ export class GraphProcessor extends UndoableProcessor {
    *   if any edge references a non-existent node. The thrown error message
    *   provides details about the specific problem.
    */
-  private validateGraph(graph: GraphData): void {
-    if (!graph || !Array.isArray(graph.nodes) || !Array.isArray(graph.edges)) {
+  private validateGraph(
+    graph: GraphData | { nodes?: unknown; edges?: unknown } | null | undefined,
+  ): asserts graph is GraphData {
+    if (
+      graph === null ||
+      graph === undefined ||
+      !Array.isArray((graph as { nodes?: unknown }).nodes) ||
+      !Array.isArray((graph as { edges?: unknown }).edges)
+    ) {
       throw new Error('Invalid graph format')
     }
 
-    const nodeIds = new Set(graph.nodes.map((n) => n.id))
-    for (const edge of graph.edges) {
+    const typedGraph = graph as GraphData
+    const nodeIds = new Set(typedGraph.nodes.map((n) => n.id))
+    for (const edge of typedGraph.edges) {
       if (!nodeIds.has(edge.from)) {
         throw new Error(`Edge references missing node: ${edge.from}`)
       }

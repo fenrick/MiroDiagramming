@@ -19,6 +19,29 @@ export class MermaidConversionError extends Error {
   }
 }
 
+interface MermaidLegacyParseOptions {
+  suppressErrors?: boolean
+  [key: string]: unknown
+}
+
+interface MermaidLegacyApi {
+  parse: (text: string, options?: MermaidLegacyParseOptions) => Promise<{ diagramType: string }>
+  getDiagramFromText: (text: string) => Promise<unknown>
+}
+
+let cachedLegacyApi: MermaidLegacyApi | undefined
+
+function getLegacyMermaidApi(): MermaidLegacyApi {
+  if (!cachedLegacyApi) {
+    const api = (mermaid as unknown as { mermaidAPI?: MermaidLegacyApi }).mermaidAPI
+    if (!api) {
+      throw new MermaidConversionError('Mermaid legacy API unavailable')
+    }
+    cachedLegacyApi = api
+  }
+  return cachedLegacyApi
+}
+
 export interface MermaidConversionOptions {
   /** Optional override for mermaid configuration. */
   config?: Parameters<typeof mermaid.initialize>[0]
@@ -246,9 +269,23 @@ function parseClassDefs(source: string): Map<string, ClassStyle> {
       if (!k || v === undefined) continue
       const key = k.trim()
       const value = v.trim()
-      if (key && value) {
-        // @ts-expect-error dynamic
-        object[key] = value
+      if (!key || !value) {
+        continue
+      }
+      if (key === 'fill') {
+        object.fill = value
+        continue
+      }
+      if (key === 'stroke') {
+        object.stroke = value
+        continue
+      }
+      if (key === 'color') {
+        object.color = value
+        continue
+      }
+      if (key === 'stroke-dasharray') {
+        object['stroke-dasharray'] = value
       }
     }
     map.set(name, object)
@@ -281,8 +318,9 @@ function parseSubgraphs(source: string): {
         name = name.slice(0, bracketIndex).trim()
       }
       names.add(name)
-      if (stack.length > 0) {
-        parents.set(name, stack.at(-1)!)
+      const parent = stack.at(-1)
+      if (parent) {
+        parents.set(name, parent)
       }
       stack.push(name)
       continue
@@ -293,23 +331,27 @@ function parseSubgraphs(source: string): {
     }
     // Per-mermaid, a subgraph can contain a local `direction LR|RL|TB|BT`.
     if (stack.length > 0) {
-      const current = stack.at(-1)!
+      const current = stack.at(-1)
+      if (!current) {
+        continue
+      }
       const dm = /^direction\s+([A-Z]{2})\b/i.exec(line)
-      if (dm) {
-        const code = dm[1]!.toUpperCase()
-        if (code === 'LR' || code === 'RL' || code === 'TB' || code === 'BT') {
-          directions.set(current, code)
-        }
+      const code = dm?.[1]?.toUpperCase()
+      if (code === 'LR' || code === 'RL' || code === 'TB' || code === 'BT') {
+        directions.set(current, code)
         continue
       }
       // capture simple identifiers on this line (A, a1, etc.)
-      const re = /\b(\w[\w-]*)\b/g
-      let m: RegExpExecArray | null
-      while ((m = re.exec(line))) {
-        const id = sanitizeIdentifier(m[1]!)
+      const tokenPattern = /\b[\w-]+\b/g
+      for (const match of line.matchAll(tokenPattern)) {
+        const rawToken = match[0]
+        if (!rawToken) {
+          continue
+        }
+        const id = sanitizeIdentifier(rawToken)
         // skip Mermaid keywords like subgraph/end/flowchart/graph
         if (
-          /^(subgraph|end|flowchart|graph|classDiagram|stateDiagram|sequenceDiagram|erDiagram)$/i.test(
+          /^(?:subgraph|end|flowchart|graph|classDiagram|stateDiagram|sequenceDiagram|erDiagram)$/i.test(
             id,
           )
         ) {
@@ -610,7 +652,7 @@ function convertStateDiagram(source: string): GraphData {
     const asIndex = lower.indexOf(' as ')
     const rawName = asIndex === -1 ? cleaned : cleaned.slice(0, asIndex)
     const alias = asIndex === -1 ? rawName : cleaned.slice(asIndex + 4)
-    const id = sanitizeIdentifier((alias ?? rawName).split(/[\s{]/)[0] ?? '')
+    const id = sanitizeIdentifier(alias.split(/[\s{]/)[0] ?? '')
     if (id) {
       ensureState(id, sanitizeIdentifier(rawName))
     }
@@ -646,10 +688,14 @@ function parseErRelation(
   if (!match) {
     return undefined
   }
+  const [, leftRaw, symbol, rightRaw] = match
+  if (!leftRaw || !symbol || !rightRaw) {
+    return undefined
+  }
   return {
-    left: sanitizeIdentifier(match[1]!),
-    symbol: match[2]!,
-    right: sanitizeIdentifier(match[3]!),
+    left: sanitizeIdentifier(leftRaw),
+    symbol,
+    right: sanitizeIdentifier(rightRaw),
     label,
   }
 }
@@ -703,10 +749,14 @@ function parseClassRelation(
   if (parts.length < 3) {
     return undefined
   }
+  const [left, symbol, right] = parts
+  if (!left || !symbol || !right) {
+    return undefined
+  }
   return {
-    left: sanitizeIdentifier(parts[0]!),
-    symbol: parts[1]!,
-    right: sanitizeIdentifier(parts[2]!),
+    left: sanitizeIdentifier(left),
+    symbol,
+    right: sanitizeIdentifier(right),
     label,
   }
 }
@@ -779,8 +829,9 @@ function convertClassDiagram(source: string): GraphData {
       return
     }
     const propertyMatch = /^([^\s:]+)\s*:/.exec(line)
-    if (propertyMatch) {
-      ensureClassNode(sanitizeIdentifier(propertyMatch[1]!))
+    const className = propertyMatch?.[1]
+    if (className) {
+      ensureClassNode(sanitizeIdentifier(className))
     }
   }
 
@@ -942,7 +993,8 @@ export async function convertMermaidToGraph(
   }
   try {
     ensureMermaidInitialized(options.config)
-    const parseResult = await mermaid.mermaidAPI.parse(trimmed, { suppressErrors: false })
+    const legacyApi = getLegacyMermaidApi()
+    const parseResult = await legacyApi.parse(trimmed, { suppressErrors: false })
     const type = parseResult.diagramType
     if (!SUPPORTED_TYPES.has(type)) {
       throw new MermaidConversionError(
@@ -954,7 +1006,7 @@ export async function convertMermaidToGraph(
         `Expected Mermaid diagram type ${options.expectedType} but received ${type}.`,
       )
     }
-    const diagram = await mermaid.mermaidAPI.getDiagramFromText(trimmed)
+    const diagram = await legacyApi.getDiagramFromText(trimmed)
     const database = getFlowchartDatabase(diagram)
     const vertices = database.getVertices?.()
     const edges = database.getEdges?.()
@@ -968,23 +1020,25 @@ export async function convertMermaidToGraph(
         const cls = (node.metadata as { classes?: string[] } | undefined)?.classes
         if (!cls || cls.length === 0) continue
         const merged: NodeStyleOverrides = {}
-        for (const c of cls) {
-          const def = classDefs.get(c)
-          if (!def) continue
-          if (def.fill) {
-            const resolved = resolveColor(def.fill.toLowerCase(), colors.white)
+        for (const className of cls) {
+          const definition = classDefs.get(className)
+          if (!definition) {
+            continue
+          }
+          if (definition.fill) {
+            const resolved = resolveColor(definition.fill.toLowerCase(), colors.white)
             if (/^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(resolved)) {
               merged.fillColor = resolved
             }
           }
-          if (def.stroke) {
-            const resolved = resolveColor(def.stroke.toLowerCase(), colors.black)
+          if (definition.stroke) {
+            const resolved = resolveColor(definition.stroke.toLowerCase(), colors.black)
             if (/^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(resolved)) {
               merged.borderColor = resolved
             }
           }
-          if (def.color) {
-            merged.textColor = def.color
+          if (definition.color) {
+            merged.textColor = definition.color
           }
         }
         if (Object.keys(merged).length > 0) {
@@ -1034,7 +1088,10 @@ export async function convertMermaidToGraph(
       const exists = nodeList.some((n) => n.id === name)
       if (exists) {
         // If a node with the same id exists, at least annotate subgraph metadata/parent
-        const existing = nodeList.find((n) => n.id === name)!
+        const existing = nodeList.find((n) => n.id === name)
+        if (!existing) {
+          continue
+        }
         const subgraphDirection = mapDirection(subgraphMap.directions.get(name))
         const parentSubgraph = subgraphMap.parents.get(name)
         existing.metadata = {
