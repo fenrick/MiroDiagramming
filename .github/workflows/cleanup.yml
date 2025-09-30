@@ -131,7 +131,7 @@ jobs:
           REPO="${{ github.repository }}"
           NOW=$(date +%s)
           THRESHOLD=$(( 14*24*60*60 ))
-          gh actions-cache list -R "$REPO" --limit 200 | while read -r line; do
+          gh actions-cache list -R "$REPO" --limit 100 | while read -r line; do
             key=$(echo "$line" | awk '{print $1}')
             created=$(echo "$line" | awk '{print $(NF-2)" "$(NF-1)" "$NF}')
             ts=$(date -d "$created" +%s || date -j -f "%Y-%m-%d %H:%M:%S %Z" "$created" +%s)
