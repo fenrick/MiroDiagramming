@@ -5,6 +5,18 @@ import type { LayoutResult, PositionedEdge, PositionedNode } from './layout-core
 import type { UserLayoutOptions } from './elk-options'
 import { getNodeDimensions } from './layout-core'
 
+interface DagreNodeAttributes {
+  width: number
+  height: number
+  x?: number
+  y?: number
+}
+
+interface DagreEdgeAttributes {
+  weight?: number
+  points?: { x: number; y: number }[]
+}
+
 type DagreOptions = Partial<UserLayoutOptions> & {
   /** Mermaid-style spacing between nodes within a rank (Dagre `nodesep`). */
   nodeSpacing?: number
@@ -29,8 +41,11 @@ function createDagreGraph(settings: {
   nodesep: number
   ranksep: number
   edgesep: number
-}): dagre.graphlib.Graph {
-  const graph = new dagre.graphlib.Graph({ multigraph: true, compound: false })
+}): dagre.graphlib.Graph<DagreNodeAttributes, DagreEdgeAttributes> {
+  const graph = new dagre.graphlib.Graph<DagreNodeAttributes, DagreEdgeAttributes>({
+    multigraph: true,
+    compound: false,
+  })
   graph.setGraph({
     rankdir: rankdir(settings.direction ?? 'RIGHT'),
     align: 'UL',
@@ -43,7 +58,10 @@ function createDagreGraph(settings: {
   return graph
 }
 
-function populateGraph(g: dagre.graphlib.Graph, data: GraphData): void {
+function populateGraph(
+  g: dagre.graphlib.Graph<DagreNodeAttributes, DagreEdgeAttributes>,
+  data: GraphData,
+): void {
   for (const node of data.nodes) {
     const dims = getNodeDimensions(node)
     g.setNode(node.id, { width: dims.width, height: dims.height })
@@ -51,45 +69,57 @@ function populateGraph(g: dagre.graphlib.Graph, data: GraphData): void {
   let index = 0
   for (const edge of data.edges) {
     const weight = typeof edge.label === 'string' && /\byes\b/i.test(edge.label) ? 3 : 1
-    g.setEdge(edge.from, edge.to, { weight }, `e${index}`)
+    g.setEdge(edge.from, edge.to, { weight }, `e${String(index)}`)
     index += 1
   }
 }
 
-function extractLayout(g: dagre.graphlib.Graph): LayoutResult {
-  const nodes: Record<string, PositionedNode> = {}
+function extractLayout(
+  g: dagre.graphlib.Graph<DagreNodeAttributes, DagreEdgeAttributes>,
+): LayoutResult {
+  const nodeEntries: [string, PositionedNode][] = []
   for (const id of g.nodes()) {
-    const n = g.node(id) as { x: number; y: number; width: number; height: number }
-    nodes[id] = {
-      id,
-      x: n.x - n.width / 2,
-      y: n.y - n.height / 2,
-      width: n.width,
-      height: n.height,
+    const nodeBox = g.node(id)
+    if (
+      !nodeBox ||
+      typeof nodeBox.width !== 'number' ||
+      typeof nodeBox.height !== 'number' ||
+      typeof nodeBox.x !== 'number' ||
+      typeof nodeBox.y !== 'number'
+    ) {
+      continue
     }
+    nodeEntries.push([
+      id,
+      {
+        id,
+        x: nodeBox.x - nodeBox.width / 2,
+        y: nodeBox.y - nodeBox.height / 2,
+        width: nodeBox.width,
+        height: nodeBox.height,
+      },
+    ])
   }
   const edges: PositionedEdge[] = []
   for (const edgeReference of g.edges()) {
-    const info = g.edge(edgeReference) as { points?: { x: number; y: number }[] }
-    const pts = info.points ?? []
-    if (pts.length >= 2) {
-      const start = pts[0] as { x: number; y: number }
-      const end = pts.at(-1) as { x: number; y: number }
-      const bends = pts.slice(1, -1)
-      edges.push({
-        startPoint: start,
-        endPoint: end,
-        bendPoints: bends.length > 0 ? bends : undefined,
-      })
+    const info = g.edge(edgeReference)
+    const pts = info?.points ?? []
+    if (pts.length < 2) {
+      continue
     }
+    const [start, ...rest] = pts
+    const end = rest.at(-1) ?? start
+    const bends = rest.slice(0, Math.max(0, rest.length - 1))
+    edges.push({
+      startPoint: start,
+      endPoint: end,
+      bendPoints: bends.length > 0 ? bends : undefined,
+    })
   }
-  return { nodes, edges }
+  return { nodes: Object.fromEntries(nodeEntries), edges }
 }
 
-async function baseLayoutGraphDagre(
-  data: GraphData,
-  options: DagreOptions = {},
-): Promise<LayoutResult> {
+function baseLayoutGraphDagre(data: GraphData, options: DagreOptions = {}): LayoutResult {
   const defaultSpacing = typeof options.spacing === 'number' ? options.spacing : 60
   const nodesep = typeof options.nodeSpacing === 'number' ? options.nodeSpacing : defaultSpacing
   const ranksep = typeof options.rankSpacing === 'number' ? options.rankSpacing : defaultSpacing
@@ -105,11 +135,13 @@ async function baseLayoutGraphDagre(
 }
 
 function hasSubgraphs(data: GraphData): boolean {
-  return data.nodes.some(
-    (n) =>
-      (n.metadata as { parent?: string; isSubgraph?: boolean } | undefined)?.parent ||
-      (n.metadata as { parent?: string; isSubgraph?: boolean } | undefined)?.isSubgraph,
-  )
+  return data.nodes.some((node) => {
+    const meta = node.metadata as { parent?: string; isSubgraph?: boolean } | undefined
+    if (typeof meta?.parent === 'string' && meta.parent.length > 0) {
+      return true
+    }
+    return meta?.isSubgraph === true
+  })
 }
 
 function getParentId(nodeId: string, data: GraphData): string | undefined {
@@ -241,7 +273,10 @@ async function layoutClusterRecursive(
       )
     }
   }
-  const g = new dagre.graphlib.Graph({ multigraph: true, compound: false })
+  const g = new dagre.graphlib.Graph<DagreNodeAttributes, DagreEdgeAttributes>({
+    multigraph: true,
+    compound: false,
+  })
   const defaultSpacing = typeof options.spacing === 'number' ? options.spacing : 60
   const nodesep = typeof options.nodeSpacing === 'number' ? options.nodeSpacing : defaultSpacing
   const ranksep = typeof options.rankSpacing === 'number' ? options.rankSpacing : defaultSpacing
@@ -279,20 +314,28 @@ async function layoutClusterRecursive(
     const to = mapNodeToImmediateAt(edge.to, clusterId, tree, data)
     if (!from || !to) continue
     const weight = typeof edge.label === 'string' && /\byes\b/i.test(edge.label) ? 3 : 1
-    g.setEdge(from, to, { weight }, `c${clusterId}:${index}`)
+    g.setEdge(from, to, { weight }, `c${clusterId}:${String(index)}`)
   }
   dagre.layout(g)
-  const nodes: Record<string, PositionedNode> = {}
+  const nodes = new Map<string, PositionedNode>()
   let minX = Number.POSITIVE_INFINITY
   let minY = Number.POSITIVE_INFINITY
   let maxX = Number.NEGATIVE_INFINITY
   let maxY = Number.NEGATIVE_INFINITY
   for (const id of g.nodes()) {
-    const nodeBox = g.node(id) as { x: number; y: number; width: number; height: number }
-    if (!nodeBox) continue
+    const nodeBox = g.node(id)
+    if (
+      !nodeBox ||
+      typeof nodeBox.width !== 'number' ||
+      typeof nodeBox.height !== 'number' ||
+      typeof nodeBox.x !== 'number' ||
+      typeof nodeBox.y !== 'number'
+    ) {
+      continue
+    }
     const x = nodeBox.x - nodeBox.width / 2
     const y = nodeBox.y - nodeBox.height / 2
-    nodes[id] = { id, x, y, width: nodeBox.width, height: nodeBox.height }
+    nodes.set(id, { id, x, y, width: nodeBox.width, height: nodeBox.height })
     minX = Math.min(minX, x)
     minY = Math.min(minY, y)
     maxX = Math.max(maxX, x + nodeBox.width)
@@ -304,7 +347,7 @@ async function layoutClusterRecursive(
     maxY - minY + constants.padding * 2 + constants.labelTopPadding,
   )
   sizes.set(clusterId, { width, height })
-  innerLayouts.set(clusterId, { nodes, edges: [] })
+  innerLayouts.set(clusterId, { nodes: Object.fromEntries(nodes), edges: [] })
 }
 
 function computeSide(
@@ -451,7 +494,7 @@ export async function layoutGraphDagre(
     })),
     edges: outerEdges.map((e) => ({ from: e.from, to: e.to })),
   }
-  const outerLayout = await baseLayoutGraphDagre(outerGraph, options)
+  const outerLayout = baseLayoutGraphDagre(outerGraph, options)
 
   // Compose final nodes and edges by expanding clusters recursively
   const finalNodes: Record<string, PositionedNode> = {}
