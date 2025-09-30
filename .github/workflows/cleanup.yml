@@ -16,6 +16,9 @@ permissions:
 
 jobs:
   cleanup-runs-and-artifacts:
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -94,16 +97,17 @@ jobs:
             core.info(`Deleted ${deleted} artifacts`)
 
   cleanup-caches:
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
       actions: write
       contents: read
     steps:
-      - name: Install gh and cache extension
-        uses: cli/cli@v2
-        with:
-          version: latest
+      - name: Setup GitHub CLI
+        uses: actions/setup-gh@v4
       - name: Setup GH auth
         env:
           GH_TOKEN: ${{ github.token }}
@@ -128,4 +132,3 @@ jobs:
               gh actions-cache delete "$key" -R "$REPO" --confirm || true
             fi
           done
-
