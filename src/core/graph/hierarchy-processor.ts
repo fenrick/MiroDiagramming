@@ -54,12 +54,59 @@ export class HierarchyProcessor extends UndoableProcessor<BaseItem | Group | Fra
     roots: HierNode[] | GraphData,
     options: HierarchyProcessOptions = {},
   ): Promise<void> {
-    const data = Array.isArray(roots) ? roots : edgesToHierarchy(roots)
-    if (!Array.isArray(data)) {
+    const data = this.resolveHierarchy(roots)
+    this.lastCreated = []
+    const placement = await this.layoutNodes(data, options)
+    const frame = await this.prepareFrame(
+      options.createFrame !== false,
+      placement.width,
+      placement.height,
+      placement.spot,
+      options.frameTitle,
+    )
+    await this.createWidgets(data, placement.result.nodes, placement.offsetX, placement.offsetY)
+    log.debug(
+      {
+        offsetX: placement.offsetX,
+        offsetY: placement.offsetY,
+        frameWidth: placement.width,
+        frameHeight: placement.height,
+      },
+      'Nested offsets applied',
+    )
+    const syncItems = frame
+      ? this.lastCreated.filter((item) => item !== frame)
+      : [...this.lastCreated]
+    if (syncItems.length > 0) {
+      await this.syncOrUndo(syncItems as (BaseItem | Group | Connector)[])
+    }
+    if (frame) {
+      await this.builder.zoomTo(frame)
+    } else if (this.lastCreated.length > 0) {
+      await this.builder.zoomTo(this.lastCreated as (BaseItem | Group)[])
+    }
+  }
+
+  private resolveHierarchy(roots: HierNode[] | GraphData): HierNode[] {
+    const hierarchy = Array.isArray(roots) ? roots : edgesToHierarchy(roots)
+    if (!Array.isArray(hierarchy)) {
       throw new TypeError('Invalid hierarchy')
     }
-    this.lastCreated = []
-    const result = await layoutHierarchy(data, {
+    return hierarchy
+  }
+
+  private async layoutNodes(
+    nodes: HierNode[],
+    options: HierarchyProcessOptions,
+  ): Promise<{
+    result: NestedLayoutResult
+    offsetX: number
+    offsetY: number
+    width: number
+    height: number
+    spot: { x: number; y: number }
+  }> {
+    const result = await layoutHierarchy(nodes, {
       sortKey: options.sortKey,
       padding: options.padding,
       topSpacing: options.topSpacing,
@@ -77,28 +124,21 @@ export class HierarchyProcessor extends UndoableProcessor<BaseItem | Group | Fra
       { minX: bounds.minX, minY: bounds.minY },
       margin,
     )
-    let frame: Frame | undefined
-    if (options.createFrame === false) {
-      clearActiveFrame(this.builder)
-    } else {
-      frame = await registerFrame(
-        this.builder,
-        this.lastCreated,
-        width,
-        height,
-        spot,
-        options.frameTitle,
-      )
+    return { result, offsetX, offsetY, width, height, spot }
+  }
+
+  private async prepareFrame(
+    shouldCreateFrame: boolean,
+    width: number,
+    height: number,
+    spot: { x: number; y: number },
+    frameTitle?: string,
+  ): Promise<Frame | undefined> {
+    if (shouldCreateFrame) {
+      return registerFrame(this.builder, this.lastCreated, width, height, spot, frameTitle)
     }
-    await this.createWidgets(data, result.nodes, offsetX, offsetY)
-    log.debug(
-      { offsetX, offsetY, frameWidth: width, frameHeight: height },
-      'Nested offsets applied',
-    )
-    const syncItems = this.lastCreated.filter((index) => index !== frame)
-    await this.syncOrUndo(syncItems as (BaseItem | Group | Connector)[])
-    const target = frame ?? (this.lastCreated as (BaseItem | Group)[])
-    await this.builder.zoomTo(target)
+    clearActiveFrame(this.builder)
+    return undefined
   }
 
   /**
@@ -133,7 +173,7 @@ export class HierarchyProcessor extends UndoableProcessor<BaseItem | Group | Fra
       width: pos.width,
       height: pos.height,
     })
-    await this.builder.resizeItem(widget, pos.width, pos.height)
+    this.builder.resizeItem(widget, pos.width, pos.height)
 
     if (!node.children?.length) {
       this.registerCreated(widget)

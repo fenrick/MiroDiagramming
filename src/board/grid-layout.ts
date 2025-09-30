@@ -65,13 +65,10 @@ function computeColumnMajorPositions(
   const positions: GridPosition[] = []
   const base = Math.floor(count / cols)
   const extra = count % cols
-  let cursor = 0
-  for (let col = 0; col < cols; col += 1) {
+  for (let col = 0; col < cols && positions.length < count; col += 1) {
     const size = base + (col < extra ? 1 : 0)
-    for (let row = 0; row < size; row += 1) {
-      if (cursor >= count) break
-      positions[cursor] = { x: col * (width + padding), y: row * (height + padding) }
-      cursor += 1
+    for (let row = 0; row < size && positions.length < count; row += 1) {
+      positions.push({ x: col * (width + padding), y: row * (height + padding) })
     }
   }
   return positions

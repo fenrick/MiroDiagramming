@@ -37,7 +37,7 @@ export interface EdgeHint {
 }
 
 export class GraphService {
-  private static instance: GraphService
+  private static instance: GraphService | undefined
   private readonly builder = new BoardBuilder()
   private static instances = 0
 
@@ -48,9 +48,7 @@ export class GraphService {
 
   /** Access the shared service instance. */
   public static getInstance(): GraphService {
-    if (!GraphService.instance) {
-      GraphService.instance = new GraphService()
-    }
+    GraphService.instance ??= new GraphService()
     return GraphService.instance
   }
 
