@@ -153,7 +153,9 @@ interface Cluster {
   childrenClusters: string[]
 }
 
-function buildClusterTree(data: GraphData): Map<string, Cluster> {
+type ClusterTree = Map<string, Cluster>
+
+function buildClusterTree(data: GraphData): ClusterTree {
   const clusters = new Map<string, Cluster>()
   const ensure = (id: string) => {
     let c = clusters.get(id)
@@ -181,6 +183,153 @@ function buildClusterTree(data: GraphData): Map<string, Cluster> {
     if (meta?.parent) ensure(meta.parent).childrenNodes.push(n.id)
   }
   return clusters
+}
+
+function descendantLeaves(clusterId: string, tree: ClusterTree): Set<string> {
+  const node = tree.get(clusterId)
+  const out = new Set<string>()
+  if (!node) return out
+  for (const id of node.childrenNodes) out.add(id)
+  for (const child of node.childrenClusters) {
+    for (const v of descendantLeaves(child, tree)) out.add(v)
+  }
+  return out
+}
+
+function mapNodeToImmediateAt(
+  nodeId: string,
+  clusterId: string,
+  tree: ClusterTree,
+  data: GraphData,
+): string | undefined {
+  const c = tree.get(clusterId)
+  if (!c) return undefined
+  if (c.childrenNodes.includes(nodeId)) return nodeId
+  let currentParent = getParentId(nodeId, data)
+  while (currentParent) {
+    const parentCluster = tree.get(currentParent)
+    if (!parentCluster) break
+    if (parentCluster.parent === clusterId) return currentParent
+    currentParent = parentCluster.parent
+  }
+  return undefined
+}
+
+async function layoutClusterRecursive(
+  clusterId: string,
+  inheritedDirection: DagreOptions['direction'],
+  data: GraphData,
+  options: DagreOptions,
+  tree: ClusterTree,
+  sizes: Map<string, { width: number; height: number }>,
+  innerLayouts: Map<string, LayoutResult>,
+  constants: { padding: number; labelTopPadding: number; minProxyW: number; minProxyH: number },
+): Promise<void> {
+  const c = tree.get(clusterId)
+  if (!c) return
+  for (const sub of c.childrenClusters) {
+    if (!sizes.has(sub)) {
+      await layoutClusterRecursive(
+        sub,
+        inheritedDirection,
+        data,
+        options,
+        tree,
+        sizes,
+        innerLayouts,
+        constants,
+      )
+    }
+  }
+  const g = new dagre.graphlib.Graph({ multigraph: true, compound: false })
+  const defaultSpacing = typeof options.spacing === 'number' ? options.spacing : 60
+  const nodesep = typeof options.nodeSpacing === 'number' ? options.nodeSpacing : defaultSpacing
+  const ranksep = typeof options.rankSpacing === 'number' ? options.rankSpacing : defaultSpacing
+  const leaves = descendantLeaves(clusterId, tree)
+  const hasExternal = data.edges.some(
+    (edge) =>
+      (leaves.has(edge.from) && !leaves.has(edge.to)) ||
+      (!leaves.has(edge.from) && leaves.has(edge.to)),
+  )
+  const directionLocal = hasExternal
+    ? inheritedDirection
+    : clusterDirection(clusterId, data, inheritedDirection)
+  g.setGraph({
+    rankdir: rankdirFor(directionLocal),
+    align: 'UL',
+    nodesep,
+    ranksep,
+    edgesep: Math.max(10, Math.min(40, defaultSpacing / 3)),
+    ranker: 'tight-tree',
+  })
+  g.setDefaultEdgeLabel(() => ({}))
+  for (const id of c.childrenNodes) {
+    const node = data.nodes.find((n) => n.id === id)
+    if (!node) continue
+    const dims = getNodeDimensions(node)
+    g.setNode(id, { width: dims.width, height: dims.height })
+  }
+  for (const id of c.childrenClusters) {
+    const size = sizes.get(id) ?? { width: constants.minProxyW, height: constants.minProxyH }
+    g.setNode(id, { width: size.width, height: size.height })
+  }
+  for (const [index, edge] of data.edges.entries()) {
+    if (!leaves.has(edge.from) || !leaves.has(edge.to)) continue
+    const from = mapNodeToImmediateAt(edge.from, clusterId, tree, data)
+    const to = mapNodeToImmediateAt(edge.to, clusterId, tree, data)
+    if (!from || !to) continue
+    const weight = typeof edge.label === 'string' && /\byes\b/i.test(edge.label) ? 3 : 1
+    g.setEdge(from, to, { weight }, `c${clusterId}:${index}`)
+  }
+  dagre.layout(g)
+  const nodes: Record<string, PositionedNode> = {}
+  let minX = Number.POSITIVE_INFINITY
+  let minY = Number.POSITIVE_INFINITY
+  let maxX = Number.NEGATIVE_INFINITY
+  let maxY = Number.NEGATIVE_INFINITY
+  for (const id of g.nodes()) {
+    const nodeBox = g.node(id) as { x: number; y: number; width: number; height: number }
+    if (!nodeBox) continue
+    const x = nodeBox.x - nodeBox.width / 2
+    const y = nodeBox.y - nodeBox.height / 2
+    nodes[id] = { id, x, y, width: nodeBox.width, height: nodeBox.height }
+    minX = Math.min(minX, x)
+    minY = Math.min(minY, y)
+    maxX = Math.max(maxX, x + nodeBox.width)
+    maxY = Math.max(maxY, y + nodeBox.height)
+  }
+  const width = Math.max(constants.minProxyW, maxX - minX + constants.padding * 2)
+  const height = Math.max(
+    constants.minProxyH,
+    maxY - minY + constants.padding * 2 + constants.labelTopPadding,
+  )
+  sizes.set(clusterId, { width, height })
+  innerLayouts.set(clusterId, { nodes, edges: [] })
+}
+
+function computeSide(
+  parent: string,
+  childId: string,
+  innerLayouts: Map<string, LayoutResult>,
+  sizes: Map<string, { width: number; height: number }>,
+): 'N' | 'E' | 'S' | 'W' | undefined {
+  const laid = innerLayouts.get(parent)
+  if (!laid) return undefined
+  const p = laid.nodes[childId]
+  const proxy = sizes.get(parent)
+  if (!p || !proxy) return undefined
+  const box = boundingBox(laid.nodes)
+  const cx = p.x + p.width / 2
+  const cy = p.y + p.height / 2
+  const distributionL = cx - box.minX
+  const distributionR = box.maxX - cx
+  const distributionT = cy - box.minY
+  const distributionB = box.maxY - cy
+  const min = Math.min(distributionL, distributionR, distributionT, distributionB)
+  if (min === distributionL) return 'W'
+  if (min === distributionR) return 'E'
+  if (min === distributionT) return 'N'
+  return 'S'
 }
 
 function clusterDirection(
@@ -216,124 +365,22 @@ export async function layoutGraphDagre(
   const sizes = new Map<string, { width: number; height: number }>()
   const innerLayouts = new Map<string, LayoutResult>()
 
-  // Helper: compute descendant leaf set for a cluster
-  const descendantLeaves = (clusterId: string): Set<string> => {
-    const c = tree.get(clusterId)
-    const set = new Set<string>()
-    if (!c) return set
-    for (const n of c.childrenNodes) set.add(n)
-    for (const sub of c.childrenClusters) {
-      for (const v of descendantLeaves(sub)) set.add(v)
-    }
-    return set
-  }
-
-  // Map a node to the immediate item id in a given cluster: either the node itself (if direct child)
-  // or the id of the immediate child cluster that contains it.
-  const mapNodeToImmediateAt = (nodeId: string, clusterId: string): string | undefined => {
-    const c = tree.get(clusterId)
-    if (!c) return undefined
-    if (c.childrenNodes.includes(nodeId)) return nodeId
-    // climb up via parent pointers
-    let currentParent = getParentId(nodeId, data)
-    while (currentParent) {
-      const parentCluster = tree.get(currentParent)
-      if (!parentCluster) break
-      if (parentCluster.parent === clusterId) return currentParent
-      currentParent = parentCluster.parent
-    }
-    return undefined
-  }
-
-  // Recursively layout clusters bottom-up to compute proxy sizes and inner child positions
-  const layoutClusterRecursive = async (
-    clusterId: string,
-    inheritedDirection: DagreOptions['direction'],
-  ): Promise<void> => {
-    const c = tree.get(clusterId)
-    if (!c) return
-    // Layout child clusters first to obtain their sizes
-    for (const sub of c.childrenClusters) {
-      if (!sizes.has(sub)) await layoutClusterRecursive(sub, inheritedDirection)
-    }
-    // Build local graph of immediate items (leaf nodes + child cluster proxies)
-    const g = new dagre.graphlib.Graph({ multigraph: true, compound: false })
-    const defaultSpacing = typeof options.spacing === 'number' ? options.spacing : 60
-    const nodesep = typeof options.nodeSpacing === 'number' ? options.nodeSpacing : defaultSpacing
-    const ranksep = typeof options.rankSpacing === 'number' ? options.rankSpacing : defaultSpacing
-    // Mermaid rule: ignore local direction if any descendant node links outside the cluster
-    const leaves = descendantLeaves(clusterId)
-    const hasExternal = data.edges.some(
-      (edge) =>
-        (leaves.has(edge.from) && !leaves.has(edge.to)) ||
-        (!leaves.has(edge.from) && leaves.has(edge.to)),
-    )
-    const directionLocal = hasExternal
-      ? inheritedDirection
-      : clusterDirection(clusterId, data, inheritedDirection)
-    g.setGraph({
-      rankdir: rankdirFor(directionLocal),
-      align: 'UL',
-      nodesep,
-      ranksep,
-      edgesep: Math.max(10, Math.min(40, defaultSpacing / 3)),
-      ranker: 'tight-tree',
-    })
-    g.setDefaultEdgeLabel(() => ({}))
-
-    // Add immediate leaf nodes with real dimensions
-    for (const id of c.childrenNodes) {
-      const node = data.nodes.find((n) => n.id === id)
-      if (!node) continue
-      const dims = getNodeDimensions(node)
-      g.setNode(id, { width: dims.width, height: dims.height })
-    }
-    // Add child cluster proxies with their computed sizes
-    for (const id of c.childrenClusters) {
-      const size = sizes.get(id) ?? { width: minProxyW, height: minProxyH }
-      g.setNode(id, { width: size.width, height: size.height })
-    }
-    // Add edges mapped to immediate items within this cluster (leaf/cluster)
-    for (const [index, edge] of data.edges.entries()) {
-      // only consider edges whose endpoints are within this cluster's descendants
-      if (!leaves.has(edge.from) || !leaves.has(edge.to)) continue
-      const from = mapNodeToImmediateAt(edge.from, clusterId)
-      const to = mapNodeToImmediateAt(edge.to, clusterId)
-      if (!from || !to) continue
-      const weight = typeof edge.label === 'string' && /\byes\b/i.test(edge.label) ? 3 : 1
-      g.setEdge(from, to, { weight }, `c${clusterId}:${index}`)
-    }
-
-    dagre.layout(g)
-
-    // Capture local positions relative to this cluster
-    const nodes: Record<string, PositionedNode> = {}
-    let minX = Number.POSITIVE_INFINITY
-    let minY = Number.POSITIVE_INFINITY
-    let maxX = Number.NEGATIVE_INFINITY
-    let maxY = Number.NEGATIVE_INFINITY
-    for (const id of g.nodes()) {
-      const nodeBox = g.node(id) as { x: number; y: number; width: number; height: number }
-      if (!nodeBox) continue
-      const x = nodeBox.x - nodeBox.width / 2
-      const y = nodeBox.y - nodeBox.height / 2
-      nodes[id] = { id, x, y, width: nodeBox.width, height: nodeBox.height }
-      minX = Math.min(minX, x)
-      minY = Math.min(minY, y)
-      maxX = Math.max(maxX, x + nodeBox.width)
-      maxY = Math.max(maxY, y + nodeBox.height)
-    }
-    const width = Math.max(minProxyW, maxX - minX + padding * 2)
-    const height = Math.max(minProxyH, maxY - minY + padding * 2 + labelTopPadding)
-    sizes.set(clusterId, { width, height })
-    innerLayouts.set(clusterId, { nodes, edges: [] })
-  }
+  const constants = { padding, labelTopPadding, minProxyW, minProxyH }
 
   // Kick off recursive layout from all roots (clusters without parents)
   const roots = [...tree.values()].filter((c) => !c.parent).map((c) => c.id)
   const inheritedDirection = options.direction ?? 'RIGHT'
   for (const r of roots) {
-    await layoutClusterRecursive(r, inheritedDirection)
+    await layoutClusterRecursive(
+      r,
+      inheritedDirection,
+      data,
+      options,
+      tree,
+      sizes,
+      innerLayouts,
+      constants,
+    )
   }
 
   // Build outer graph: top-level cluster proxies + top-level loose nodes
@@ -374,25 +421,8 @@ export async function layoutGraphDagre(
   }
 
   // Side hints: compute based on immediate cluster inner layout where endpoint resides
-  const computeSide = (parent: string, childId: string): EdgeHintSide | undefined => {
-    const laid = innerLayouts.get(parent)
-    if (!laid) return undefined
-    const p = laid.nodes[childId]
-    const proxy = sizes.get(parent)
-    if (!p || !proxy) return undefined
-    const box = boundingBox(laid.nodes)
-    const cx = p.x + p.width / 2
-    const cy = p.y + p.height / 2
-    const distributionL = cx - box.minX
-    const distributionR = box.maxX - cx
-    const distributionT = cy - box.minY
-    const distributionB = box.maxY - cy
-    const min = Math.min(distributionL, distributionR, distributionT, distributionB)
-    if (min === distributionL) return 'W'
-    if (min === distributionR) return 'E'
-    if (min === distributionT) return 'N'
-    return 'S'
-  }
+  const computeSideLocal = (parent: string, childId: string): EdgeHintSide | undefined =>
+    computeSide(parent, childId, innerLayouts, sizes)
 
   for (const [index, edgeItem] of data.edges.entries()) {
     const rf = rootOf(edgeItem.from)
@@ -405,8 +435,8 @@ export async function layoutGraphDagre(
     const oto = rt ?? edgeItem.to
     outerEdges.push({ from: ofrom, to: oto, sourceIdx: index })
     const hint: { from?: EdgeHintSide; to?: EdgeHintSide } = {}
-    if (rf) hint.from = computeSide(rf, edgeItem.from)
-    if (rt) hint.to = computeSide(rt, edgeItem.to)
+    if (rf) hint.from = computeSideLocal(rf, edgeItem.from)
+    if (rt) hint.to = computeSideLocal(rt, edgeItem.to)
     edgeSideHints.set(index, hint)
   }
 

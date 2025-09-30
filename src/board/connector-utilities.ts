@@ -41,7 +41,7 @@ function captionsFromArray(values: unknown[]): Connector['captions'] | undefined
         content: c.content,
       }
       if (typeof c.position === 'number') out.position = c.position
-      if (c.textAlignVertical) out.textAlignVertical = c.textAlignVertical as TextAlignVertical
+      if (c.textAlignVertical) out.textAlignVertical = c.textAlignVertical
       return [out]
     }
     return []

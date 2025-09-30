@@ -177,7 +177,7 @@ export class BoardBuilder {
   /** Create or update a node widget from a template. */
   public async createNode(node: unknown, pos: PositionedNode): Promise<BoardItem> {
     const nd = node as NodeData
-    const meta = (nd.metadata ?? {}) as Record<string, unknown>
+    const meta = nd.metadata ?? {}
     log.info(
       {
         type: nd.type,
@@ -370,7 +370,7 @@ export class BoardBuilder {
   }
 
   private ensureBoard(): void {
-    if (typeof miro === 'undefined' || !miro || !miro.board) {
+    if (typeof miro === 'undefined' || !miro?.board) {
       throw new TypeError('Miro board not initialized')
     }
   }
