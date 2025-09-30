@@ -7,21 +7,21 @@ import promise from 'eslint-plugin-promise'
 import regexp from 'eslint-plugin-regexp'
 import unicorn from 'eslint-plugin-unicorn'
 import security from 'eslint-plugin-security'
-import { defineConfig } from 'eslint/config';
-
+import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig(
   // Global ignores first so they short‑circuit for all subsequent configs
-  {
-    ignores: [
+  [
+    globalIgnores([
       'node_modules/**',
       'dist/**',
       'coverage/**',
       'src/stories/**',
       'tests/**/fixtures/**',
       '**/*.min.js',
-    ],
-  },
+    ]),
+  ],
+
   // Base JS rules roughly equivalent to the “core” checks Sonar also relies on
   js.configs.recommended,
 
@@ -41,7 +41,6 @@ export default defineConfig(
       },
     },
   },
-
 
   // Sonar’s own ESLint rules (subset of SonarQube’s JS/TS rules)
   sonarjs.configs.recommended,
