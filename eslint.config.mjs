@@ -11,6 +11,17 @@ import { defineConfig } from 'eslint/config';
 
 
 export default defineConfig(
+  // Global ignores first so they short‑circuit for all subsequent configs
+  {
+    ignores: [
+      'node_modules/**',
+      'dist/**',
+      'coverage/**',
+      'src/stories/**',
+      'tests/**/fixtures/**',
+      '**/*.min.js',
+    ],
+  },
   // Base JS rules roughly equivalent to the “core” checks Sonar also relies on
   js.configs.recommended,
 
@@ -24,6 +35,9 @@ export default defineConfig(
         projectService: true,
         project: './tsconfig.eslint.json',
         tsconfigRootDir: import.meta.dirname,
+        // Let files outside the TS project (like stories we ignore) fall back
+        // to a default program if they slip through via CLI globs.
+        allowDefaultProject: ['src/stories/**/*'],
       },
     },
   },
@@ -75,6 +89,7 @@ export default defineConfig(
       parserOptions: {
         project: './tsconfig.eslint.json',
         tsconfigRootDir: import.meta.dirname,
+        allowDefaultProject: ['src/stories/**/*'],
       },
     },
     rules: {
