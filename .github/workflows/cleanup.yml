@@ -5,10 +5,6 @@ on:
     # Run nightly to prune old runs/artifacts
     - cron: '17 3 * * *'
   workflow_dispatch:
-  # Also run after each workflow completes to opportunistically prune
-  workflow_run:
-    workflows: [ci, repo-sonar, repo-codeql, repo-release, repo-commitlint]
-    types: [completed]
 
 permissions:
   actions: write
