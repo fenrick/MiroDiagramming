@@ -47,7 +47,7 @@ function log(level: Level, message: string, attributes?: Attributes) {
   const payload = attributes && Object.keys(attributes).length > 0 ? attributes : undefined
   const prefix = `[${SERVICE}] ${message}`
   const emit = getConsoleMethod(level)
-  return payload ? emit(prefix, payload) : emit(prefix)
+  payload ? emit(prefix, payload) : emit(prefix)
 }
 
 function wrap(level: Level) {

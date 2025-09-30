@@ -43,9 +43,11 @@ export class FileUtilities {
           return
         }
         log.info('File loaded via FileReader')
-        resolve((event.target as FileReader).result as string)
+        resolve(event.target.result as string)
       })
-      reader.addEventListener('error', () => reject(new Error('Failed to load file')))
+      reader.addEventListener('error', () => {
+        reject(new Error('Failed to load file'))
+      })
       reader.readAsText(file, 'utf8')
     })
   }

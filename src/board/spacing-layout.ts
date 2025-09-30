@@ -20,8 +20,8 @@ export function calculateGrowthPlan(
     return { size: 0, positions: [] }
   }
   const sizeKey: 'width' | 'height' = axis === 'x' ? 'width' : 'height'
-  const first = items[0] as Record<string, number>
-  const last = items.at(-1) as Record<string, number>
+  const first = items[0]!
+  const last = items.at(-1)!
   /* c8 ignore next */
   const firstPos =
     axis === 'x' ? ((first as { x?: number }).x ?? 0) : ((first as { y?: number }).y ?? 0)

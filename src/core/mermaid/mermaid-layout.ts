@@ -247,9 +247,7 @@ function mapEdgesFromSvg(
 ): PositionedEdge[] {
   return graph.edges.map((edge) => {
     const domId = (edge.metadata as { domId?: string } | undefined)?.domId
-    const path = domId
-      ? (svgElement.querySelector(`path[data-id="${domId}"]`) as SVGPathElement | null)
-      : null
+    const path = domId ? svgElement.querySelector(`path[data-id="${domId}"]`) : null
     const points = path ? decodePoints(path.dataset.points ?? null) : undefined
     if (points && points.length >= 2) {
       const start = points[0] as { x: number; y: number }
@@ -289,7 +287,7 @@ export async function computeMermaidLayout(
   const container = createHiddenContainer()
   try {
     container.innerHTML = svg
-    const svgElement = container.querySelector('svg') as SVGSVGElement | null
+    const svgElement = container.querySelector('svg')
     if (!svgElement) {
       throw new Error('Failed to render Mermaid diagram: SVG element missing')
     }

@@ -642,7 +642,7 @@ function parseErRelation(
   const label = colonIndex === -1 ? undefined : line.slice(colonIndex + 1).trim()
   const relationPart = colonIndex >= 0 ? line.slice(0, colonIndex).trim() : line.trim()
   // Support plain identifiers (\w+) or quoted names with spaces.
-  const match = relationPart.match(/^("[^"]+"|\w+)\s+([|}{o]{1,2}--[|}{o]{1,2})\s+("[^"]+"|\w+)/)
+  const match = /^("[^"]+"|\w+)\s+([|}{o]{1,2}--[|}{o]{1,2})\s+("[^"]+"|\w+)/.exec(relationPart)
   if (!match) {
     return undefined
   }
@@ -666,7 +666,9 @@ function convertErDiagram(source: string): GraphData {
   const nodes: NodeData[] = []
   const edges: EdgeData[] = []
 
-  const ensureEntity = (name: string) => ensureUniqueNode(nodes, name, name, 'MermaidEntity')
+  const ensureEntity = (name: string) => {
+    ensureUniqueNode(nodes, name, name, 'MermaidEntity')
+  }
 
   for (const line of source
     .split(/\r?\n/)
@@ -744,7 +746,9 @@ function convertClassDiagram(source: string): GraphData {
   const nodes: NodeData[] = []
   const edges: EdgeData[] = []
 
-  const ensureClassNode = (name: string) => ensureUniqueNode(nodes, name, name, 'MermaidClass')
+  const ensureClassNode = (name: string) => {
+    ensureUniqueNode(nodes, name, name, 'MermaidClass')
+  }
 
   const lines = source
     .split(/\r?\n/)
@@ -774,7 +778,7 @@ function convertClassDiagram(source: string): GraphData {
       if (name) ensureClassNode(name)
       return
     }
-    const propertyMatch = line.match(/^([^\s:]+)\s*:/)
+    const propertyMatch = /^([^\s:]+)\s*:/.exec(line)
     if (propertyMatch) {
       ensureClassNode(sanitizeIdentifier(propertyMatch[1]!))
     }

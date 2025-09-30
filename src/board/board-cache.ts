@@ -244,7 +244,7 @@ export class BoardCache {
 
   /** Replace cached widgets for a specific type. */
   public setWidgets(type: string, widgets: Record<string, unknown>[], board?: BoardLike): void {
-    const normalised = widgets.map((item) => item as Record<string, unknown>)
+    const normalised = widgets.map((item) => item)
     const boardId = BoardCache.resolveBoardId(board)
     this.widgetCache.set(BoardCache.widgetKey(boardId, type), normalised)
     log.debug({ type, count: normalised.length }, 'Widget cache manually updated')

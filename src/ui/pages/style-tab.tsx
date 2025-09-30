@@ -55,7 +55,9 @@ export const StyleTab: React.FC = () => {
   const [baseColor, setBaseColor] = React.useState('#808080')
   const [opacityDelta, setOpacityDelta] = React.useState(0)
   const [borderDelta, setBorderDelta] = React.useState(0)
-  React.useEffect(() => setBaseColor(extractFillColor(selection[0]) ?? '#808080'), [selection])
+  React.useEffect(() => {
+    setBaseColor(extractFillColor(selection[0]) ?? '#808080')
+  }, [selection])
   const preview = React.useMemo(() => adjustColor(baseColor, adjust / 100), [baseColor, adjust])
 
   const apply = React.useCallback(async (): Promise<void> => {
@@ -151,7 +153,9 @@ export const StyleTab: React.FC = () => {
                 min={-100}
                 max={100}
                 value={String(adjust)}
-                onValueChange={(v) => setAdjust(Number(v))}
+                onValueChange={(v) => {
+                  setAdjust(Number(v))
+                }}
                 placeholder="Adjust (-100–100)"
                 data-testid="adjust-input"
               />
@@ -164,7 +168,9 @@ export const StyleTab: React.FC = () => {
                 min={-1}
                 max={1}
                 value={String(opacityDelta)}
-                onValueChange={(v) => setOpacityDelta(Number(v))}
+                onValueChange={(v) => {
+                  setOpacityDelta(Number(v))
+                }}
                 placeholder="Δ opacity (-1–1)"
                 data-testid="opacity-input"
               />
@@ -174,7 +180,9 @@ export const StyleTab: React.FC = () => {
                 label="Border Δ"
                 type="number"
                 value={String(borderDelta)}
-                onValueChange={(v) => setBorderDelta(Number(v))}
+                onValueChange={(v) => {
+                  setBorderDelta(Number(v))
+                }}
                 placeholder="Δ width"
                 data-testid="border-input"
               />

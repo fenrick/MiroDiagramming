@@ -72,14 +72,17 @@ export const ArrangeTab: React.FC = () => {
       return { ...current, sortByName: !current.sortByName }
     })
   }
-  const setOrientation = (value: string): void =>
+  const setOrientation = (value: string): void => {
     setGrid({ ...grid, sortOrientation: value as 'horizontal' | 'vertical' })
+  }
   const updateAxis = (axis: string): void => {
     if (axis === 'x' || axis === 'y') {
       setSpacing({ ...spacing, axis })
     }
   }
-  const updateSpacing = (value: string): void => setSpacing({ ...spacing, spacing: Number(value) })
+  const updateSpacing = (value: string): void => {
+    setSpacing({ ...spacing, spacing: Number(value) })
+  }
   const updateMode = (mode: string): void => {
     if (mode === 'move' || mode === 'grow') {
       setSpacing({ ...spacing, mode })
@@ -122,7 +125,9 @@ export const ArrangeTab: React.FC = () => {
                 label="Columns"
                 type="number"
                 value={String(grid.cols)}
-                onValueChange={(v) => updateNumber('cols')(v)}
+                onValueChange={(v) => {
+                  updateNumber('cols')(v)
+                }}
                 placeholder="Columns"
               />
             </Grid.Item>
@@ -131,7 +136,9 @@ export const ArrangeTab: React.FC = () => {
                 label="Gap"
                 type="number"
                 value={String(grid.padding)}
-                onValueChange={(v) => updateNumber('padding')(v)}
+                onValueChange={(v) => {
+                  updateNumber('padding')(v)
+                }}
                 placeholder="Gap"
               />
             </Grid.Item>
@@ -166,7 +173,9 @@ export const ArrangeTab: React.FC = () => {
                 <InputField
                   label="Frame Title"
                   value={frameTitle}
-                  onValueChange={(v) => setFrameTitle(v)}
+                  onValueChange={(v) => {
+                    setFrameTitle(v)
+                  }}
                   placeholder="Optional"
                 />
               </Grid.Item>
@@ -216,7 +225,9 @@ export const ArrangeTab: React.FC = () => {
                   label="Spacing"
                   type="number"
                   value={String(spacing.spacing)}
-                  onValueChange={(v) => updateSpacing(v)}
+                  onValueChange={(v) => {
+                    updateSpacing(v)
+                  }}
                   placeholder="Distance"
                 />
                 <StickyActions>

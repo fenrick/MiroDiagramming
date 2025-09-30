@@ -91,7 +91,9 @@ export const ResizeTab: React.FC = () => {
     }
   }, [hasSelection])
 
-  const resetCopy = (): void => setCopiedSize(null)
+  const resetCopy = (): void => {
+    setCopiedSize(null)
+  }
 
   const apply = React.useCallback(async (): Promise<void> => {
     if (!hasSelection) {
@@ -154,7 +156,9 @@ export const ResizeTab: React.FC = () => {
       }
     }
     globalThis.addEventListener('keydown', handler)
-    return () => globalThis.removeEventListener('keydown', handler)
+    return () => {
+      globalThis.removeEventListener('keydown', handler)
+    }
   }, [copy, apply])
 
   return (
@@ -191,7 +195,9 @@ export const ResizeTab: React.FC = () => {
                 label="Width:"
                 type="number"
                 value={String(size.width)}
-                onValueChange={(v) => update('width')(v)}
+                onValueChange={(v) => {
+                  update('width')(v)
+                }}
                 placeholder="Width (board units)"
               />
             </Grid.Item>
@@ -200,7 +206,9 @@ export const ResizeTab: React.FC = () => {
                 label="Height:"
                 type="number"
                 value={String(size.height)}
-                onValueChange={(v) => update('height')(v)}
+                onValueChange={(v) => {
+                  update('height')(v)
+                }}
                 placeholder="Height (board units)"
               />
             </Grid.Item>
@@ -208,7 +216,9 @@ export const ResizeTab: React.FC = () => {
               <SelectField
                 label="Aspect Ratio"
                 value={ratio}
-                onChange={(v) => setRatio(v as AspectRatioId | 'none')}
+                onChange={(v) => {
+                  setRatio(v as AspectRatioId | 'none')
+                }}
                 data-testid="ratio-select"
               >
                 <SelectOption value="none">Free</SelectOption>

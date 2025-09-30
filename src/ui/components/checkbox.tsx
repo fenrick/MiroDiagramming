@@ -34,8 +34,12 @@ export function Checkbox({
       <DSSwitch
         id={inputId}
         checked={value}
-        onChecked={() => handleChange(true)}
-        onUnchecked={() => handleChange(false)}
+        onChecked={() => {
+          handleChange(true)
+        }}
+        onUnchecked={() => {
+          handleChange(false)
+        }}
         aria-labelledby={labelId}
         {...properties}
       />

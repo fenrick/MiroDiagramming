@@ -186,7 +186,7 @@ export class TemplateManager {
   }
 
   private applyExperimentalOverrides(): void {
-    const flag = (import.meta as ImportMeta).env?.VITE_MIRO_EXPERIMENTAL_SHAPES
+    const flag = import.meta.env?.VITE_MIRO_EXPERIMENTAL_SHAPES
     const expEnabled = typeof flag === 'string' ? flag.toLowerCase() !== 'false' : true
     if (!expEnabled) {
       return
@@ -294,7 +294,7 @@ export class TemplateManager {
     const createdShapes = await this.api.createShapes(shapes)
     const items = await this.fetchCreatedItems(createdShapes as GroupableItem[], frame)
     if (items.length > 1) {
-      return (await miro.board.group({ items })) as Group
+      return await miro.board.group({ items })
     }
 
     return items[0]
@@ -396,7 +396,7 @@ export class TemplateManager {
   private parseSimpleNumber(input: string): number | null {
     if (input.length === 0) return null
     let index = 0
-    if (input[0] === '-') {
+    if (input.startsWith('-')) {
       index = 1
       if (index >= input.length) return null
     }

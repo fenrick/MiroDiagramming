@@ -65,8 +65,8 @@ export function Modal({
       if (nodes.length === 0) {
         return false
       }
-      const first = nodes[0] as HTMLElement
-      const last = nodes.at(-1) as HTMLElement
+      const first = nodes[0]!
+      const last = nodes.at(-1)!
       const active = document.activeElement as HTMLElement
       if (event.shiftKey && active === first) {
         last.focus()
@@ -94,7 +94,9 @@ export function Modal({
       }
     }
     globalThis.addEventListener('keydown', handleKey)
-    return () => globalThis.removeEventListener('keydown', handleKey)
+    return () => {
+      globalThis.removeEventListener('keydown', handleKey)
+    }
   }, [isOpen, onClose, trapTab])
 
   if (!isOpen) {

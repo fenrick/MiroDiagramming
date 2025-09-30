@@ -7,14 +7,26 @@ import promise from 'eslint-plugin-promise'
 import regexp from 'eslint-plugin-regexp'
 import unicorn from 'eslint-plugin-unicorn'
 import security from 'eslint-plugin-security'
+import { defineConfig } from 'eslint/config';
 
-export default [
+
+export default defineConfig(
   // Base JS rules roughly equivalent to the “core” checks Sonar also relies on
   js.configs.recommended,
 
   // TypeScript: parser + recommended rules (mirrors many Clean Code correctness/readability checks)
-  ...tseslint.configs.strict,
-  ...tseslint.configs.stylistic,
+  ...tseslint.configs.strictTypeChecked,
+  ...tseslint.configs.stylisticTypeChecked,
+  ...tseslint.configs.recommendedTypeChecked,
+  {
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+  },
+
 
   // Sonar’s own ESLint rules (subset of SonarQube’s JS/TS rules)
   sonarjs.configs.recommended,
@@ -23,7 +35,7 @@ export default [
   importPlugin.flatConfigs.recommended,
   promise.configs['flat/recommended'],
   regexp.configs['flat/recommended'],
-  unicorn.configs['flat/recommended'],
+  unicorn.configs['recommended'],
 
   // Security hygiene rules (note: NOT equivalent to Sonar’s taint analysis)
   security.configs.recommended,
@@ -60,4 +72,4 @@ export default [
       '@typescript-eslint/consistent-type-imports': 'error',
     },
   },
-]
+)

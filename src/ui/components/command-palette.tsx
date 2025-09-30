@@ -40,7 +40,9 @@ export function CommandPalette({
     const timer = setTimeout(() => {
       inputReference.current?.focus({ preventScroll: true })
     }, 0)
-    return () => clearTimeout(timer)
+    return () => {
+      clearTimeout(timer)
+    }
   }, [isOpen])
 
   const handleKey = React.useCallback(
@@ -78,7 +80,9 @@ export function CommandPalette({
         id="command-input"
         ref={inputReference}
         value={query}
-        onChange={(event) => setQuery(event.target.value)}
+        onChange={(event) => {
+          setQuery(event.target.value)
+        }}
         onKeyDown={handleKey}
       />
       <List>
@@ -87,7 +91,9 @@ export function CommandPalette({
             <ItemButton
               type="button"
               aria-current={index_ === index ? 'true' : undefined}
-              onMouseEnter={() => setIndex(index_)}
+              onMouseEnter={() => {
+                setIndex(index_)
+              }}
               onClick={() => {
                 cmd.action()
                 onClose()

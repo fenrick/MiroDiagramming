@@ -163,9 +163,9 @@ export class BoardBuilder {
     this.ensureBoard()
     const selection = await boardCache.getSelection(getBoard())
     const board: BoardQueryLike = {
-      get: async ({ type: t }): Promise<Record<string, unknown>[]> =>
-        selection.filter((item) => (item as { type?: string }).type === t),
-      getSelection: async (): Promise<Record<string, unknown>[]> => selection,
+      get: ({ type: t }): Promise<Record<string, unknown>[]> =>
+        Promise.resolve(selection.filter((item) => (item as { type?: string }).type === t)),
+      getSelection: (): Promise<Record<string, unknown>[]> => Promise.resolve(selection),
     }
     const shape = await searchShapes(board, this.shapeCache, label)
     if (shape) {
@@ -177,7 +177,7 @@ export class BoardBuilder {
   /** Create or update a node widget from a template. */
   public async createNode(node: unknown, pos: PositionedNode): Promise<BoardItem> {
     const nd = node as NodeData
-    const meta = (nd?.metadata ?? {}) as Record<string, unknown>
+    const meta = nd?.metadata ?? {}
     log.info(
       {
         type: nd?.type,

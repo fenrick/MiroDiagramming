@@ -122,10 +122,9 @@ export const StructuredTab: React.FC = () => {
 
   // No custom keyboard toggles; advanced options are controlled via details/summary only.
 
-  const handleFiles = React.useCallback(
-    (droppedFiles: File[]): void => handleFileDrop(droppedFiles, setImportQueue, setError),
-    [],
-  )
+  const handleFiles = React.useCallback((droppedFiles: File[]): void => {
+    handleFileDrop(droppedFiles, setImportQueue, setError)
+  }, [])
 
   const handleCreate = useDiagramCreate(
     importQueue,
@@ -170,7 +169,9 @@ export const StructuredTab: React.FC = () => {
               <SelectField
                 label="Layout type"
                 value={layoutChoice}
-                onChange={(v) => setLayoutChoice(v as LayoutChoice)}
+                onChange={(v) => {
+                  setLayoutChoice(v as LayoutChoice)
+                }}
               >
                 {LAYOUTS.map((l) => (
                   <SelectOption key={l} value={l}>
@@ -192,7 +193,9 @@ export const StructuredTab: React.FC = () => {
                 <InputField
                   label="Frame title"
                   value={frameTitle}
-                  onValueChange={(v) => setFrameTitle(v)}
+                  onValueChange={(v) => {
+                    setFrameTitle(v)
+                  }}
                   placeholder="Frame title"
                 />
               )}
@@ -200,7 +203,9 @@ export const StructuredTab: React.FC = () => {
               <details
                 open={showAdvanced}
                 aria-label={ADVANCED_LABEL}
-                onToggle={(event) => setShowAdvanced((event.target as HTMLDetailsElement).open)}
+                onToggle={(event) => {
+                  setShowAdvanced((event.target as HTMLDetailsElement).open)
+                }}
               >
                 <summary aria-expanded={showAdvanced}>{ADVANCED_LABEL}</summary>
                 <div style={{ marginBottom: SP200 }}>
@@ -215,20 +220,20 @@ export const StructuredTab: React.FC = () => {
                     label="Spacing"
                     type="number"
                     value={String(layoutOptions.spacing)}
-                    onValueChange={(v) =>
+                    onValueChange={(v) => {
                       setLayoutOptions({ ...layoutOptions, spacing: Number(v) })
-                    }
+                    }}
                   />
                   {optionVisibility?.aspectRatio && (
                     <SelectField
                       label="Aspect ratio"
                       value={layoutOptions.aspectRatio}
-                      onChange={(v) =>
+                      onChange={(v) => {
                         setLayoutOptions({
                           ...layoutOptions,
                           aspectRatio: v as AspectRatioId,
                         })
-                      }
+                      }}
                     >
                       {ASPECT_RATIOS.map((r) => (
                         <SelectOption key={r.id} value={r.id}>
@@ -241,7 +246,9 @@ export const StructuredTab: React.FC = () => {
                 <SelectField
                   label="Existing nodes"
                   value={existingMode}
-                  onChange={(v) => setExistingMode(v as ExistingNodeMode)}
+                  onChange={(v) => {
+                    setExistingMode(v as ExistingNodeMode)
+                  }}
                 >
                   <SelectOption value="move">Move into place</SelectOption>
                   <SelectOption value="layout">Use for layout</SelectOption>
@@ -250,12 +257,12 @@ export const StructuredTab: React.FC = () => {
                 <SelectField
                   label="Algorithm"
                   value={layoutOptions.algorithm}
-                  onChange={(v) =>
+                  onChange={(v) => {
                     setLayoutOptions({
                       ...layoutOptions,
                       algorithm: v as ElkAlgorithm,
                     })
-                  }
+                  }}
                 >
                   {ALGORITHMS.map((a) => (
                     <SelectOption key={a} value={a}>
@@ -266,12 +273,12 @@ export const StructuredTab: React.FC = () => {
                 <SelectField
                   label="Direction"
                   value={layoutOptions.direction}
-                  onChange={(v) =>
+                  onChange={(v) => {
                     setLayoutOptions({
                       ...layoutOptions,
                       direction: v as ElkDirection,
                     })
-                  }
+                  }}
                 >
                   {DIRECTIONS.map((d) => (
                     <SelectOption key={d} value={d}>
@@ -283,12 +290,12 @@ export const StructuredTab: React.FC = () => {
                   <SelectField
                     label="Edge routing"
                     value={(layoutOptions.edgeRouting ?? 'default') as ElkEdgeRouting}
-                    onChange={(v) =>
+                    onChange={(v) => {
                       setLayoutOptions({
                         ...layoutOptions,
                         edgeRouting: v as ElkEdgeRouting,
                       })
-                    }
+                    }}
                   >
                     {EDGE_ROUTINGS.map((routing) => (
                       <SelectOption key={routing} value={routing}>
@@ -301,12 +308,12 @@ export const StructuredTab: React.FC = () => {
                   <SelectField
                     label="Routing mode"
                     value={(layoutOptions.edgeRoutingMode ?? 'default') as ElkEdgeRoutingMode}
-                    onChange={(v) =>
+                    onChange={(v) => {
                       setLayoutOptions({
                         ...layoutOptions,
                         edgeRoutingMode: v as ElkEdgeRoutingMode,
                       })
-                    }
+                    }}
                   >
                     {EDGE_ROUTING_MODES.map((m) => (
                       <SelectOption key={m} value={m}>
@@ -319,12 +326,12 @@ export const StructuredTab: React.FC = () => {
                   <SelectField
                     label="Optimisation goal"
                     value={(layoutOptions.optimizationGoal ?? 'balanced') as ElkOptimizationGoal}
-                    onChange={(v) =>
+                    onChange={(v) => {
                       setLayoutOptions({
                         ...layoutOptions,
                         optimizationGoal: v as ElkOptimizationGoal,
                       })
-                    }
+                    }}
                   >
                     {OPTIMIZATION_GOALS.map((o) => (
                       <SelectOption key={o} value={o}>
@@ -338,7 +345,9 @@ export const StructuredTab: React.FC = () => {
                     label="Padding"
                     type="number"
                     value={String(nestedPadding)}
-                    onValueChange={(v) => setNestedPadding(Number(v))}
+                    onValueChange={(v) => {
+                      setNestedPadding(Number(v))
+                    }}
                   />
                 )}
                 {layoutChoice === 'Nested' && (
@@ -346,7 +355,9 @@ export const StructuredTab: React.FC = () => {
                     label="Top spacing"
                     type="number"
                     value={String(nestedTopSpacing)}
-                    onValueChange={(v) => setNestedTopSpacing(Number(v))}
+                    onValueChange={(v) => {
+                      setNestedTopSpacing(Number(v))
+                    }}
                   />
                 )}
               </details>
@@ -366,9 +377,9 @@ export const StructuredTab: React.FC = () => {
                 {lastProc && (
                   <Button
                     onClick={() =>
-                      undoLastImport(lastProc, () =>
-                        setLastProc((_previous) => undefined as typeof _previous),
-                      )
+                      undoLastImport(lastProc, () => {
+                        setLastProc((_previous) => undefined as typeof _previous)
+                      })
                     }
                     variant="secondary"
                     iconPosition="start"

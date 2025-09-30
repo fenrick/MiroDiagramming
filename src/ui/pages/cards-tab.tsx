@@ -34,11 +34,15 @@ export const CardsTab: React.FC = () => {
     const handler = (event: KeyboardEvent): void => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'z') {
         event.preventDefault()
-        undoLastImport(lastProc, () => setLastProc(undefined))
+        undoLastImport(lastProc, () => {
+          setLastProc(undefined)
+        })
       }
     }
     globalThis.addEventListener('keydown', handler)
-    return () => globalThis.removeEventListener('keydown', handler)
+    return () => {
+      globalThis.removeEventListener('keydown', handler)
+    }
   }, [lastProc])
 
   const handleFiles = (droppedFiles: File[]): void => {
@@ -66,7 +70,9 @@ export const CardsTab: React.FC = () => {
         })
         setProgress(100)
         setShowUndo(true)
-        globalThis.setTimeout(() => setShowUndo(false), 3000)
+        globalThis.setTimeout(() => {
+          setShowUndo(false)
+        }, 3000)
       } catch (error_) {
         const message = String(error_)
         setError(message)
@@ -108,7 +114,9 @@ export const CardsTab: React.FC = () => {
                     <InputField
                       label="Frame title"
                       value={frameTitle}
-                      onValueChange={(v) => setFrameTitle(v)}
+                      onValueChange={(v) => {
+                        setFrameTitle(v)
+                      }}
                       placeholder="Frame title"
                     />
                   )}
@@ -129,7 +137,11 @@ export const CardsTab: React.FC = () => {
                 </Button>
                 {showUndo && (
                   <Button
-                    onClick={() => undoLastImport(lastProc, () => setLastProc(undefined))}
+                    onClick={() =>
+                      undoLastImport(lastProc, () => {
+                        setLastProc(undefined)
+                      })
+                    }
                     variant="secondary"
                   >
                     Undo import (⌘Z)
@@ -137,7 +149,11 @@ export const CardsTab: React.FC = () => {
                 )}
                 {lastProc && (
                   <Button
-                    onClick={() => undoLastImport(lastProc, () => setLastProc(undefined))}
+                    onClick={() =>
+                      undoLastImport(lastProc, () => {
+                        setLastProc(undefined)
+                      })
+                    }
                     variant="secondary"
                     iconPosition="start"
                     icon={<IconArrowArcLeft />}

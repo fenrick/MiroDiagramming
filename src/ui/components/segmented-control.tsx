@@ -31,7 +31,9 @@ export function SegmentedControl({
       {options.map((opt) => (
         <Button
           key={opt.value}
-          onClick={() => onChange(opt.value)}
+          onClick={() => {
+            onChange(opt.value)
+          }}
           variant={value === opt.value ? 'primary' : 'secondary'}
         >
           {opt.label}

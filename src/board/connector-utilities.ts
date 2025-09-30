@@ -37,13 +37,12 @@ function captionsFromArray(values: unknown[]): Connector['captions'] | undefined
         position?: number
         textAlignVertical?: TextAlignVertical
       }
-      return [
-        {
-          content: c.content,
-          position: c.position,
-          textAlignVertical: c.textAlignVertical as TextAlignVertical,
-        },
-      ]
+      const out: { content: string; position?: number; textAlignVertical?: TextAlignVertical } = {
+        content: c.content,
+      }
+      if (typeof c.position === 'number') out.position = c.position
+      if (c.textAlignVertical) out.textAlignVertical = c.textAlignVertical as TextAlignVertical
+      return [out]
     }
     return []
   }) as NonNullable<Connector['captions']>
@@ -159,6 +158,6 @@ export async function createConnector(
   if (captions) {
     payload.captions = captions
   }
-  const connector = (await miro.board.createConnector(payload)) as Connector
+  const connector = await miro.board.createConnector(payload)
   return connector
 }

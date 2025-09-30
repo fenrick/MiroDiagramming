@@ -188,7 +188,9 @@ export const MermaidTab: React.FC = () => {
           <SelectField
             label="Existing selection"
             value={existingMode}
-            onChange={(value) => setExistingMode(value as ExistingNodeMode)}
+            onChange={(value) => {
+              setExistingMode(value as ExistingNodeMode)
+            }}
           >
             {EXISTING_MODE_OPTIONS.map((option) => (
               <SelectOption key={option.id} value={option.id}>

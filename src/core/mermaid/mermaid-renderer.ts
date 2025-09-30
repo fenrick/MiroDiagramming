@@ -26,8 +26,7 @@ export class MermaidRenderer {
     const { config, expectedType, ...processOptions } = options
     const graph = await convertMermaidToGraph(source, { config, expectedType })
     const fmEngine = MermaidRenderer.frontmatterLayout(source)
-    const engine =
-      fmEngine ?? (import.meta as ImportMeta).env?.VITE_MERMAID_LAYOUT_ENGINE ?? 'dagre'
+    const engine = fmEngine ?? import.meta.env?.VITE_MERMAID_LAYOUT_ENGINE ?? 'dagre'
 
     let layout: LayoutResult
     if (engine === 'mermaid') {
@@ -48,8 +47,8 @@ export class MermaidRenderer {
 
     // Optional last-resort fallback to Mermaid DOM layout when enabled
     const fallbackEnabled =
-      typeof (import.meta as ImportMeta).env?.VITE_MERMAID_LAYOUT_FALLBACK === 'string'
-        ? (import.meta as ImportMeta).env.VITE_MERMAID_LAYOUT_FALLBACK.toLowerCase() === 'true'
+      typeof import.meta.env?.VITE_MERMAID_LAYOUT_FALLBACK === 'string'
+        ? import.meta.env.VITE_MERMAID_LAYOUT_FALLBACK.toLowerCase() === 'true'
         : false
     if (engine !== 'mermaid' && fallbackEnabled && MermaidRenderer.isPoorlySpaced(layout)) {
       const mermaidLayout = await computeMermaidLayout(source, graph, { config })

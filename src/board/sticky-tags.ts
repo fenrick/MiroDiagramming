@@ -149,7 +149,7 @@ async function applyTagsAndMaybeStrip(
       .map((n) => tagMap.get(n)?.id)
       .filter((id): id is string => typeof id === 'string')
 
-    const existing = ((item as { tagIds?: string[] }).tagIds ?? []) as string[]
+    const existing = (item as { tagIds?: string[] }).tagIds ?? []
     const merged = [...new Set([...(existing ?? []), ...resolvedIds])]
     ;(item as { tagIds?: string[] }).tagIds = merged
     await maybeSync(item as { sync?: () => Promise<void> })

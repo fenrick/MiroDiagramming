@@ -60,10 +60,11 @@ export const SearchTab: React.FC = () => {
     await (typeof vp.zoomToObject === 'function' ? vp.zoomToObject(item) : vp.zoomTo([item]))
   }, [])
 
-  const toggleType = (type: string): void =>
+  const toggleType = (type: string): void => {
     setWidgetTypes((previous) =>
       previous.includes(type) ? previous.filter((t) => t !== type) : [...previous, type],
     )
+  }
 
   const buildOptions = React.useCallback((): SearchOptions => {
     const tags = tagIds
@@ -147,7 +148,9 @@ export const SearchTab: React.FC = () => {
               <RegexSearchField
                 label="Find"
                 value={query}
-                onChange={(v: string) => setQuery(v)}
+                onChange={(v: string) => {
+                  setQuery(v)
+                }}
                 regex={regex}
                 onRegexToggle={setRegex}
                 placeholder="Search board text"
@@ -157,7 +160,9 @@ export const SearchTab: React.FC = () => {
               <InputField
                 label="Replace"
                 value={replacement}
-                onValueChange={(v: string) => setReplacement(v)}
+                onValueChange={(v: string) => {
+                  setReplacement(v)
+                }}
                 placeholder="Replacement text"
               />
             </Grid.Item>

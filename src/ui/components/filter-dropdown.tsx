@@ -70,7 +70,9 @@ export function FilterDropdown({
               <DropdownMenu.CheckboxItem
                 key={t}
                 checked={widgetTypes.includes(t)}
-                onChange={() => toggleType(t)}
+                onChange={() => {
+                  toggleType(t)
+                }}
               >
                 {t}
               </DropdownMenu.CheckboxItem>

@@ -42,8 +42,12 @@ export const RegexSearchField = React.forwardRef<HTMLInputElement, RegexSearchFi
           <Switch
             aria-label="Regex"
             checked={regex}
-            onChecked={() => toggle(true)}
-            onUnchecked={() => toggle(false)}
+            onChecked={() => {
+              toggle(true)
+            }}
+            onUnchecked={() => {
+              toggle(false)
+            }}
           />
         </div>
       </Form.Field>

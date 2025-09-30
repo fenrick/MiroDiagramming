@@ -37,7 +37,9 @@ export function useDebouncedSearch(
       setResults(refreshedResults)
       setCurrentIndex(refreshedResults.length > 0 ? 0 : -1)
     }, 300)
-    return () => clearTimeout(handle)
+    return () => {
+      clearTimeout(handle)
+    }
   }, [buildOptions, query])
 
   return { results, currentIndex, setResults, setCurrentIndex }
