@@ -1,3 +1,10 @@
+## [2.6.6](https://github.com/fenrick/MiroDiagramming/compare/v2.6.5...v2.6.6) (2025-09-30)
+
+
+### Bug Fixes
+
+* Update cleanup.yml ([e5bccd9](https://github.com/fenrick/MiroDiagramming/commit/e5bccd954835761c9cafa62ae55605ad1e774076))
+
 ## [2.6.5](https://github.com/fenrick/MiroDiagramming/compare/v2.6.4...v2.6.5) (2025-09-30)
 
 
