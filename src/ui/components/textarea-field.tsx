@@ -2,8 +2,9 @@ import { Form, Textarea, styled } from '@mirohq/design-system'
 import React from 'react'
 
 export type TextareaFieldProperties = Readonly<
-  Omit<React.ComponentProps<typeof Textarea>, 'onChange' | 'className' | 'style'> & {
+  Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'onChange' | 'className' | 'style'> & {
     label: React.ReactNode
+    onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void
     onValueChange?: (value: string) => void
   }
 >
@@ -28,16 +29,13 @@ const StyledTextarea = styled(Textarea, {
 
 export const TextareaField = React.forwardRef<HTMLTextAreaElement, TextareaFieldProperties>(
   function TextareaField(
-    { label, onValueChange, id, value, defaultValue, ...properties },
+    { label, onValueChange, onChange, id, value, defaultValue, ...properties },
     reference,
   ) {
     const generatedId = React.useId()
     const textareaId = id ?? generatedId
-    const { onChange: externalOnChange, ...restProperties } = properties as React.ComponentProps<
-      typeof Textarea
-    >
     const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>): void => {
-      externalOnChange?.(event)
+      onChange?.(event)
       onValueChange?.(event.target.value)
     }
 
@@ -50,7 +48,7 @@ export const TextareaField = React.forwardRef<HTMLTextAreaElement, TextareaField
           value={value}
           defaultValue={defaultValue}
           onChange={handleChange}
-          {...restProperties}
+          {...properties}
         />
       </StyledFormField>
     )

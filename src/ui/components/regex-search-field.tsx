@@ -2,7 +2,7 @@ import { Form, Input, Switch } from '@mirohq/design-system'
 import React from 'react'
 
 export interface RegexSearchFieldProperties
-  extends Omit<React.ComponentProps<typeof Input>, 'onChange'> {
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'className' | 'style'> {
   /** Visible label text. */
   label: React.ReactNode
   /** Current search text. */
@@ -25,9 +25,12 @@ export const RegexSearchField = React.forwardRef<HTMLInputElement, RegexSearchFi
   ) {
     const generatedId = React.useId()
     const inputId = id ?? generatedId
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void =>
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
       onChange?.(event.target.value)
-    const toggle = (checked: boolean): void => onRegexToggle(checked)
+    }
+    const toggle = (checked: boolean): void => {
+      onRegexToggle(checked)
+    }
     return (
       <Form.Field>
         <Form.Label htmlFor={inputId}>{label}</Form.Label>
@@ -37,7 +40,7 @@ export const RegexSearchField = React.forwardRef<HTMLInputElement, RegexSearchFi
             ref={reference}
             value={value}
             onChange={handleChange}
-            {...(properties as React.ComponentProps<typeof Input>)}
+            {...properties}
           />
           <Switch
             aria-label="Regex"

@@ -6,6 +6,10 @@ export type InputFieldProperties = Readonly<
     /** Visible label text. */
     label: React.ReactNode
     /**
+     * Optional native change handler invoked before {@link onValueChange}.
+     */
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
+    /**
      * Callback fired when the input value changes. This receives the raw
      * string value extracted from the event.
      */
@@ -22,21 +26,18 @@ const StyledFormField = styled(Form.Field, {
 })
 
 export const InputField = React.forwardRef<HTMLInputElement, InputFieldProperties>(
-  function InputField({ label, onValueChange, id, ...properties }, reference) {
+  function InputField({ label, onValueChange, onChange, id, ...properties }, reference) {
     const generatedId = React.useId()
     const inputId = id ?? generatedId
-    const { onChange: externalOnChange, ...restProperties } = properties as React.ComponentProps<
-      typeof Input
-    >
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-      externalOnChange?.(event)
+      onChange?.(event)
       onValueChange?.(event.target.value)
     }
 
     return (
       <StyledFormField>
         <Form.Label htmlFor={inputId}>{label}</Form.Label>
-        <Input id={inputId} ref={reference} onChange={handleChange} {...restProperties} />
+        <Input id={inputId} ref={reference} onChange={handleChange} {...properties} />
       </StyledFormField>
     )
   },
