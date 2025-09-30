@@ -99,8 +99,8 @@ export class NestedLayouter {
   }
 
   private collectDebugSizes(node: ElkNode, out: { id: string; w: number; h: number }[]): void {
-    if (node.id && typeof node.width === 'number' && typeof node.height === 'number') {
-      out.push({ id: String(node.id), w: node.width, h: node.height })
+    if (typeof node.width === 'number' && typeof node.height === 'number') {
+      out.push({ id: node.id, w: node.width, h: node.height })
     }
     for (const child of node.children ?? []) {
       this.collectDebugSizes(child, out)
@@ -108,14 +108,11 @@ export class NestedLayouter {
   }
 
   private sortValue(node: HierNode, key?: string): string {
-    if (key && node.metadata && typeof node.metadata === 'object') {
-      const metaMap = new Map<string, unknown>(Object.entries(node.metadata))
-      const metaValue = metaMap.get(key)
-      if (metaValue !== undefined) {
-        return String(metaValue)
-      }
+    const meta = metadataValueAsString(node.metadata, key)
+    if (meta !== null) {
+      return meta
     }
-    return node.label ?? node.id
+    return node.label
   }
 
   private buildElkNode(
@@ -127,8 +124,10 @@ export class NestedLayouter {
     const children = node.children
     if (!children?.length) {
       const dims = getNodeDimensions({ type: node.type, metadata: node.metadata })
-      elk.width = dims.width || LEAF_WIDTH
-      elk.height = dims.height || LEAF_HEIGHT
+      const width = Number.isFinite(dims.width) ? dims.width : LEAF_WIDTH
+      const height = Number.isFinite(dims.height) ? dims.height : LEAF_HEIGHT
+      elk.width = width
+      elk.height = height
       return elk
     }
     const sorted = children.toSorted((a, b) =>
@@ -164,10 +163,11 @@ export class NestedLayouter {
   ): void {
     const pos = this.computePosition(node, offsetX, offsetY)
     // Skip spacer nodes that only influence layout sizing
+    const nodeId = node.id
     const isInvisible =
-      (node as LayoutNode).properties?.invisible === true || String(node.id).startsWith('spacer_')
+      (node as LayoutNode).properties?.invisible === true || nodeId.startsWith('spacer_')
     if (pos && !isInvisible) {
-      map.set(String(node.id), pos)
+      map.set(nodeId, pos)
     }
     this.collectChildPositions(node, map, offsetX, offsetY)
   }
@@ -184,4 +184,25 @@ export function layoutHierarchy(
   options: NestedLayoutOptions = {},
 ): Promise<NestedLayoutResult> {
   return nestedLayouter.layoutHierarchy(roots, options)
+}
+
+const metadataValueAsString = (
+  metadata: Record<string, unknown> | undefined,
+  key?: string,
+): string | null => {
+  if (!key || !metadata || typeof metadata !== 'object') {
+    return null
+  }
+  const entry = Object.entries(metadata).find(([entryKey]) => entryKey === key)
+  if (!entry) {
+    return null
+  }
+  const [, value] = entry
+  if (typeof value === 'string') {
+    return value
+  }
+  if (typeof value === 'number' || typeof value === 'boolean') {
+    return String(value)
+  }
+  return null
 }

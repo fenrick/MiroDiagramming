@@ -64,7 +64,7 @@ export function getNodeDimensions(node: {
  * @returns ELK configuration for {@link performLayout}.
  */
 export function buildElkGraphOptions(options: UserLayoutOptions): Record<string, string> {
-  return {
+  const graphOptions: Record<string, string> = {
     'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
     'elk.algorithm': options.algorithm,
     'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF',
@@ -74,17 +74,20 @@ export function buildElkGraphOptions(options: UserLayoutOptions): Record<string,
     'elk.spacing.nodeNode': String(options.spacing),
     'elk.layered.unnecessaryBendpoints': 'true',
     'elk.layered.cycleBreaking.strategy': 'GREEDY',
-    ...(options.aspectRatio && {
-      'elk.aspectRatio': String(aspectRatioValue(options.aspectRatio)),
-    }),
-    ...(options.edgeRouting && { 'elk.edgeRouting': options.edgeRouting }),
-    ...(options.edgeRoutingMode && {
-      'elk.mrtree.edgeRoutingMode': options.edgeRoutingMode,
-    }),
-    ...(options.optimizationGoal && {
-      'elk.rectpacking.widthApproximation.optimizationGoal': options.optimizationGoal,
-    }),
+    'elk.aspectRatio': String(aspectRatioValue(options.aspectRatio)),
   }
+
+  if (options.edgeRouting) {
+    graphOptions['elk.edgeRouting'] = options.edgeRouting
+  }
+  if (options.edgeRoutingMode) {
+    graphOptions['elk.mrtree.edgeRoutingMode'] = options.edgeRoutingMode
+  }
+  if (options.optimizationGoal) {
+    graphOptions['elk.rectpacking.widthApproximation.optimizationGoal'] = options.optimizationGoal
+  }
+
+  return graphOptions
 }
 
 export interface LayoutResult {
@@ -125,7 +128,7 @@ function buildElkGraph(data: GraphData, options: UserLayoutOptions): ElkNode {
     layoutOptions: buildElkGraphOptions(options),
     children: data.nodes.map((n) => ({ id: n.id, ...getNodeDimensions(n) })),
     edges: data.edges.map((edge, index) => ({
-      id: `e${index}`,
+      id: 'e' + String(index),
       sources: [edge.from],
       targets: [edge.to],
     })),
