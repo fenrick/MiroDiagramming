@@ -106,8 +106,17 @@ jobs:
       actions: write
       contents: read
     steps:
-      - name: Setup GitHub CLI
-        uses: actions/setup-gh@v4
+      - name: Ensure GitHub CLI + cache extension
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          if ! command -v gh >/dev/null 2>&1; then
+            sudo apt-get update -y
+            sudo apt-get install -y gh
+          fi
+          gh --version
+          gh extension install actions/gh-actions-cache || true
       - name: Setup GH auth
         env:
           GH_TOKEN: ${{ github.token }}
