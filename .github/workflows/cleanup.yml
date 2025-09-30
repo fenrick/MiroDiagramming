@@ -1,0 +1,131 @@
+name: repo-cleanup
+
+on:
+  schedule:
+    # Run nightly to prune old runs/artifacts
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+  # Also run after each workflow completes to opportunistically prune
+  workflow_run:
+    workflows: [ci, repo-sonar, repo-codeql, repo-release, repo-commitlint]
+    types: [completed]
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  cleanup-runs-and-artifacts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Delete old workflow runs (keep last 10 per branch; max 30 days)
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const keepPerBranch = 10
+            const maxAgeDays = 30
+            const cutoff = Date.now() - maxAgeDays*24*60*60*1000
+            const owner = context.repo.owner
+            const repo = context.repo.repo
+
+            const branches = new Map()
+            let page = 1
+            const per_page = 100
+            const toDelete = []
+            while (true) {
+              const { data } = await github.rest.actions.listWorkflowRunsForRepo({ owner, repo, per_page, page, status: 'completed' })
+              if (!data.workflow_runs || data.workflow_runs.length === 0) break
+              for (const run of data.workflow_runs) {
+                const b = run.head_branch || 'unknown'
+                const list = branches.get(b) || []
+                list.push(run)
+                branches.set(b, list)
+              }
+              page += 1
+              if (page > 20) break // safety cap
+            }
+            for (const [branch, runs] of branches) {
+              runs.sort((a,b)=> new Date(b.created_at) - new Date(a.created_at))
+              const survivors = runs.slice(0, keepPerBranch)
+              const old = runs.slice(keepPerBranch)
+              for (const run of old) {
+                const ageOk = new Date(run.created_at).getTime() < cutoff
+                if (ageOk) toDelete.push(run.id)
+              }
+            }
+            core.info(`Deleting ${toDelete.length} old workflow runs…`)
+            for (const id of toDelete) {
+              try {
+                await github.rest.actions.deleteWorkflowRun({ owner, repo, run_id: id })
+              } catch (e) {
+                core.warning(`Failed to delete run ${id}: ${e}`)
+              }
+            }
+
+      - name: Delete old artifacts (older than 14 days)
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner
+            const repo = context.repo.repo
+            const cutoff = Date.now() - 14*24*60*60*1000
+            let page = 1
+            const per_page = 100
+            let deleted = 0
+            while (true) {
+              const { data } = await github.rest.actions.listArtifactsForRepo({ owner, repo, per_page, page })
+              const arts = data.artifacts || []
+              if (arts.length === 0) break
+              for (const a of arts) {
+                const created = new Date(a.created_at).getTime()
+                if (created < cutoff || a.expired) {
+                  try {
+                    await github.rest.actions.deleteArtifact({ owner, repo, artifact_id: a.id })
+                    deleted += 1
+                  } catch (e) {
+                    core.warning(`Artifact ${a.id} delete failed: ${e}`)
+                  }
+                }
+              }
+              page += 1
+              if (page > 20) break
+            }
+            core.info(`Deleted ${deleted} artifacts`)
+
+  cleanup-caches:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - name: Install gh and cache extension
+        uses: cli/cli@v2
+        with:
+          version: latest
+      - name: Setup GH auth
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh --version
+          gh extension install actions/gh-actions-cache || true
+      - name: Delete caches older than 14 days
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          REPO="${{ github.repository }}"
+          NOW=$(date +%s)
+          THRESHOLD=$(( 14*24*60*60 ))
+          gh actions-cache list -R "$REPO" --limit 200 | while read -r line; do
+            key=$(echo "$line" | awk '{print $1}')
+            created=$(echo "$line" | awk '{print $(NF-2)" "$(NF-1)" "$NF}')
+            ts=$(date -d "$created" +%s || date -j -f "%Y-%m-%d %H:%M:%S %Z" "$created" +%s)
+            age=$(( NOW - ts ))
+            if [ "$age" -gt "$THRESHOLD" ]; then
+              echo "Deleting cache key: $key"
+              gh actions-cache delete "$key" -R "$REPO" --confirm || true
+            fi
+          done
+

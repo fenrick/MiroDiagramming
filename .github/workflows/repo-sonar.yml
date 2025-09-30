@@ -12,6 +12,9 @@ env:
 
 jobs:
   repo-sonar:
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
     runs-on: ubuntu-latest
     steps:
       - name: Set up JDK 17
