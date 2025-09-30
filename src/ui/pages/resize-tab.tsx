@@ -131,6 +131,23 @@ export const ResizeTab: React.FC = () => {
     [hasSelection],
   )
 
+  const applyPreset = React.useCallback(
+    (key: PresetKey): void => {
+      if (!hasSelection) {
+        return
+      }
+      const preset = PRESET_SIZES.get(key)
+      if (!preset) {
+        return
+      }
+      const target = { ...preset }
+      setCopiedSize(null)
+      setSize(target)
+      void applySizeToSelection(target)
+    },
+    [hasSelection],
+  )
+
   React.useEffect(() => {
     if (copiedSize) {
       return
@@ -254,18 +271,8 @@ export const ResizeTab: React.FC = () => {
                 {(['S', 'M', 'L'] as const).map((p) => (
                   <Button
                     key={p}
-                    onClick={async () => {
-                      if (!hasSelection) {
-                        return
-                      }
-                      const preset = PRESET_SIZES.get(p)
-                      if (!preset) {
-                        return
-                      }
-                      const target = { ...preset }
-                      setCopiedSize(null)
-                      setSize(target)
-                      await applySizeToSelection(target)
+                    onClick={() => {
+                      applyPreset(p)
                     }}
                     variant="secondary"
                     disabled={!hasSelection}

@@ -31,7 +31,7 @@ export function getTextFields(item: Record<string, unknown>): [string, string][]
   pushIfString(fields, 'description', item.description)
   if (typeof item.text === 'string') {
     pushIfString(fields, 'text', item.text)
-  } else if (item.text && typeof item.text === 'object') {
+  } else if (typeof item.text === 'object' && item.text !== null) {
     pushNestedText(fields, item.text as Record<string, unknown>)
   }
   return fields
@@ -62,20 +62,27 @@ const TEXT_GETTERS = {
       ? (item as { text?: string }).text
       : undefined,
   'text.plainText': (item: Record<string, unknown>) => {
-    const nested = (item as { text?: { plainText?: unknown } }).text
-    return nested && typeof nested.plainText === 'string' ? nested.plainText : undefined
+    const nested = (item as { text?: { plainText?: unknown } | null }).text
+    if (nested !== undefined && nested !== null && typeof nested.plainText === 'string') {
+      return nested.plainText
+    }
   },
   'text.content': (item: Record<string, unknown>) => {
-    const nested = (item as { text?: { content?: unknown } }).text
-    return nested && typeof nested.content === 'string' ? nested.content : undefined
+    const nested = (item as { text?: { content?: unknown } | null }).text
+    if (nested !== undefined && nested !== null && typeof nested.content === 'string') {
+      return nested.content
+    }
   },
 } as const
 
 type TextPath = keyof typeof TEXT_GETTERS
 
 export function getStringAtPath(item: Record<string, unknown>, path: string): string | undefined {
-  const getter = TEXT_GETTERS[path as TextPath]
-  return getter ? getter(item) : undefined
+  if (Object.hasOwn(TEXT_GETTERS, path)) {
+    const getter = TEXT_GETTERS[path as TextPath]
+    return getter(item)
+  }
+  return undefined
 }
 
 /**
@@ -111,22 +118,22 @@ const TEXT_SETTERS: Record<TextPath, (item: Record<string, unknown>, value: stri
     }
   },
   'text.plainText': (item, value) => {
-    const nested = (item as { text?: { plainText?: unknown } }).text
-    if (nested && typeof nested.plainText === 'string') {
+    const nested = (item as { text?: { plainText?: unknown } | null }).text
+    if (nested !== undefined && nested !== null && typeof nested.plainText === 'string') {
       ;(nested as { plainText?: string }).plainText = value
     }
   },
   'text.content': (item, value) => {
-    const nested = (item as { text?: { content?: unknown } }).text
-    if (nested && typeof nested.content === 'string') {
+    const nested = (item as { text?: { content?: unknown } | null }).text
+    if (nested !== undefined && nested !== null && typeof nested.content === 'string') {
       ;(nested as { content?: string }).content = value
     }
   },
 }
 
 export function setStringAtPath(item: Record<string, unknown>, path: string, value: string): void {
-  const setter = TEXT_SETTERS[path as TextPath]
-  if (setter) {
+  if (Object.hasOwn(TEXT_SETTERS, path)) {
+    const setter = TEXT_SETTERS[path as TextPath]
     setter(item, value)
   }
 }
@@ -143,14 +150,18 @@ export function readItemText(item: Record<string, unknown>): string | undefined 
   if (typeof content === 'string') {
     return content
   }
-  const nested = (item as { text?: { plainText?: string; content?: string } }).text
-  if (nested && typeof nested.plainText === 'string' && nested.plainText.length > 0) {
+  const nested = (item as { text?: { plainText?: string; content?: string } | null }).text
+  if (
+    nested !== undefined &&
+    nested !== null &&
+    typeof nested.plainText === 'string' &&
+    nested.plainText.length > 0
+  ) {
     return nested.plainText
   }
-  if (nested && typeof nested.content === 'string') {
+  if (nested !== undefined && nested !== null && typeof nested.content === 'string') {
     return nested.content
   }
-  return undefined
 }
 
 /**
@@ -164,8 +175,8 @@ export function writeItemText(item: Record<string, unknown>, text: string): void
   if (typeof textItem.content === 'string') {
     textItem.content = text
   }
-  const nested = (item as { text?: { plainText?: string; content?: string } }).text
-  if (nested) {
+  const nested = (item as { text?: { plainText?: string; content?: string } | null }).text
+  if (nested !== undefined && nested !== null) {
     if (typeof nested.plainText === 'string') {
       nested.plainText = text
     }

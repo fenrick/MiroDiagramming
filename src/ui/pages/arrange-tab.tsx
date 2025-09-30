@@ -92,25 +92,25 @@ export const ArrangeTab: React.FC = () => {
       setSpacing({ ...spacing, mode })
     }
   }
-  const applyGrid = async (): Promise<void> => {
+  const applyGrid = React.useCallback((): void => {
     if (!hasSelection) {
       return
     }
     boardCache.clearSelection()
-    await applyGridLayout({ ...grid, frameTitle })
-  }
-  const applySpacing = async (): Promise<void> => {
+    void applyGridLayout({ ...grid, frameTitle })
+  }, [frameTitle, grid, hasSelection])
+  const applySpacing = React.useCallback((): void => {
     if (!hasSelection) {
       return
     }
-    await applySpacingLayout(spacing)
-  }
-  const applyStickyTags = async (): Promise<void> => {
+    void applySpacingLayout(spacing)
+  }, [hasSelection, spacing])
+  const applyStickyTags = React.useCallback((): void => {
     if (!hasSelection) {
       return
     }
-    await applyBracketTagsToSelectedStickies()
-  }
+    void applyBracketTagsToSelectedStickies()
+  }, [hasSelection])
 
   return (
     <TabPanel tabId="arrange">

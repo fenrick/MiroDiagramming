@@ -58,28 +58,30 @@ export const CardsTab: React.FC = () => {
 
   const cardProcessor = React.useMemo(() => new CardProcessor(), [])
 
-  const handleCreate = async (): Promise<void> => {
-    setProgress(0)
-    setError(null)
-    for (const file of files) {
-      try {
-        setLastProc(cardProcessor)
-        await cardProcessor.processFile(file, {
-          createFrame: withFrame,
-          frameTitle: frameTitle || undefined,
-        })
-        setProgress(100)
-        setShowUndo(true)
-        globalThis.setTimeout(() => {
-          setShowUndo(false)
-        }, 3000)
-      } catch (error_) {
-        const message = String(error_)
-        setError(message)
-        showError(message)
+  const handleCreate = (): void => {
+    void (async () => {
+      setProgress(0)
+      setError(null)
+      for (const file of files) {
+        try {
+          setLastProc(cardProcessor)
+          await cardProcessor.processFile(file, {
+            createFrame: withFrame,
+            frameTitle: frameTitle || undefined,
+          })
+          setProgress(100)
+          setShowUndo(true)
+          globalThis.setTimeout(() => {
+            setShowUndo(false)
+          }, 3000)
+        } catch (error_) {
+          const message = String(error_)
+          setError(message)
+          showError(message)
+        }
       }
-    }
-    setFiles([])
+      setFiles([])
+    })()
   }
 
   return (
