@@ -27,7 +27,7 @@ function insertSpacer(node: LayoutNode, options: Required<SpacerOptions>): void 
   }
 
   const first = children[0]
-  const hasSpacer = Boolean(first?.id?.startsWith('spacer_'))
+  const hasSpacer = typeof first.id === 'string' && first.id.startsWith('spacer_')
   if (hasSpacer) {
     return
   }
@@ -48,7 +48,7 @@ function applyAlgorithm(node: LayoutNode): void {
   if (!node.children?.length) {
     return
   }
-  node.layoutOptions = node.layoutOptions || {}
+  node.layoutOptions ??= {}
   node.layoutOptions['elk.algorithm'] = 'org.eclipse.elk.rectpacking'
 }
 

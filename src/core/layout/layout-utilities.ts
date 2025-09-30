@@ -6,22 +6,26 @@
  * @param pt - The absolute point to convert.
  * @returns The fractional position of the point within the node.
  */
+const clampFraction = (value: number): number => Math.min(Math.max(value, 0), 1)
+
 export function relativePosition(
   node: { x: number; y: number; width: number; height: number },
   pt: { x: number; y: number },
 ): { x: number; y: number } {
   const fx = (pt.x - node.x) / node.width
   const fy = (pt.y - node.y) / node.height
-  const clamp = (v: number) => (v < 0 ? 0 : Math.min(v, 1))
-  return { x: clamp(fx), y: clamp(fy) }
+  return { x: clampFraction(fx), y: clampFraction(fy) }
 }
 
 export interface EdgeHint {
   startPosition?: { x: number; y: number }
   endPosition?: { x: number; y: number }
   /** Optional suggestion for connector shape based on path geometry. */
-  shape?: 'straight' | 'elbowed' | 'curved'
+  shape?: ConnectorShape
 }
+
+type ConnectorShape = 'straight' | 'elbowed' | 'curved'
+type CardinalDirection = 'N' | 'E' | 'S' | 'W'
 
 /**
  * Calculate edge hints describing where each edge connects to its source and
@@ -39,7 +43,7 @@ export function computeEdgeHints(
       startPoint: { x: number; y: number }
       endPoint: { x: number; y: number }
       bendPoints?: { x: number; y: number }[]
-      hintSides?: { start?: 'N' | 'E' | 'S' | 'W'; end?: 'N' | 'E' | 'S' | 'W' }
+      hintSides?: { start?: CardinalDirection; end?: CardinalDirection }
     }[]
   },
 ): EdgeHint[] {
@@ -48,22 +52,21 @@ export function computeEdgeHints(
     if (!info) {
       return {}
     }
-    const source = layout.nodes[info.from]
-    const tgt = layout.nodes[info.to]
-    const fractionalFrom = edge.hintSides?.start
-      ? sideToFraction(edge.hintSides.start)
-      : source
-        ? relativePosition(source, edge.startPoint)
-        : undefined
-    const fractionalTo = edge.hintSides?.end
-      ? sideToFraction(edge.hintSides.end)
-      : tgt
-        ? relativePosition(tgt, edge.endPoint)
-        : undefined
+
+    const source = getNode(layout.nodes, info.from)
+    const target = getNode(layout.nodes, info.to)
+
+    const startHint = edge.hintSides?.start
+    const endHint = edge.hintSides?.end
+
+    const fractionalFrom = deriveFractionalPosition(startHint, source, edge.startPoint)
+    const fractionalTo = deriveFractionalPosition(endHint, target, edge.endPoint)
+
     const shape =
-      edge.hintSides?.start && edge.hintSides.end
-        ? preferredShapeForSides(edge.hintSides.start, edge.hintSides.end)
+      startHint && endHint
+        ? preferredShapeForSides(startHint, endHint)
         : suggestConnectorShape(edge)
+
     return {
       startPosition: fractionalFrom,
       endPosition: fractionalTo,
@@ -77,33 +80,20 @@ function suggestConnectorShape(edge: {
   startPoint: { x: number; y: number }
   endPoint: { x: number; y: number }
   bendPoints?: { x: number; y: number }[]
-}): 'elbowed' | 'curved' | 'straight' {
-  const points = [edge.startPoint, ...(edge.bendPoints ?? []), edge.endPoint]
+}): ConnectorShape {
+  const points: { x: number; y: number }[] = [
+    edge.startPoint,
+    ...(edge.bendPoints ?? []),
+    edge.endPoint,
+  ]
   if (points.length <= 2) {
-    // With no bends, prefer straight if the delta strongly favors one axis.
-    const dx = Math.abs(points[1]!.x - points[0]!.x)
-    const dy = Math.abs(points[1]!.y - points[0]!.y)
-    if (dx < 1 || dy < 1) return 'straight'
-    return dx === 0 || dy === 0 ? 'straight' : 'curved'
+    return classifyStraightSegment(points)
   }
-  // Tolerance for near-axis alignment
-  const tol = 0.01
-  let manhattanSegments = 0
-  for (let index = 0; index < points.length - 1; index += 1) {
-    const a = points[index]!
-    const b = points[index + 1]!
-    const dx = Math.abs(b.x - a.x)
-    const dy = Math.abs(b.y - a.y)
-    const length = Math.max(dx, dy)
-    if (length === 0) continue
-    const isAxisAligned = dx / length < tol || dy / length < tol
-    if (isAxisAligned) manhattanSegments += 1
-  }
-  const ratio = manhattanSegments / (points.length - 1)
+  const ratio = computeManhattanRatio(points)
   return ratio > 0.8 ? 'elbowed' : 'curved'
 }
 
-function sideToFraction(side: 'N' | 'E' | 'S' | 'W'): { x: number; y: number } {
+function sideToFraction(side: CardinalDirection): { x: number; y: number } {
   switch (side) {
     case 'N': {
       return { x: 0.5, y: 0 }
@@ -114,24 +104,21 @@ function sideToFraction(side: 'N' | 'E' | 'S' | 'W'): { x: number; y: number } {
     case 'E': {
       return { x: 1, y: 0.5 }
     }
-    case 'W':
-    default: {
+    case 'W': {
       return { x: 0, y: 0.5 }
     }
   }
 }
 
-function preferredShapeForSides(
-  from: 'N' | 'E' | 'S' | 'W',
-  to: 'N' | 'E' | 'S' | 'W',
-): 'elbowed' | 'curved' | 'straight' {
-  const opposite = (a: string, b: string) =>
-    (a === 'E' && b === 'W') ||
-    (a === 'W' && b === 'E') ||
-    (a === 'N' && b === 'S') ||
-    (a === 'S' && b === 'N')
-  return opposite(from, to) ? 'elbowed' : 'curved'
+function preferredShapeForSides(from: CardinalDirection, to: CardinalDirection): ConnectorShape {
+  return isOppositeSide(from, to) ? 'elbowed' : 'curved'
 }
+
+const isOppositeSide = (a: CardinalDirection, b: CardinalDirection): boolean =>
+  (a === 'E' && b === 'W') ||
+  (a === 'W' && b === 'E') ||
+  (a === 'N' && b === 'S') ||
+  (a === 'S' && b === 'N')
 
 export interface NodePosition {
   x: number
@@ -210,4 +197,73 @@ export function frameOffset(
     offsetX: spot.x - frameWidth / 2 + margin - bounds.minX,
     offsetY: spot.y - frameHeight / 2 + margin - bounds.minY,
   }
+}
+
+const getNode = <T>(nodes: Record<string, T>, id: string): T | undefined => {
+  for (const [key, value] of Object.entries(nodes)) {
+    if (key === id) {
+      return value
+    }
+  }
+  return undefined
+}
+
+const deriveFractionalPosition = (
+  hint: CardinalDirection | undefined,
+  node: { x: number; y: number; width: number; height: number } | undefined,
+  point: { x: number; y: number },
+): { x: number; y: number } | undefined => {
+  if (hint) {
+    return sideToFraction(hint)
+  }
+  if (node) {
+    return relativePosition(node, point)
+  }
+  return undefined
+}
+
+const classifyStraightSegment = (points: { x: number; y: number }[]): ConnectorShape => {
+  const [start, end] = points
+  if (!end) {
+    return 'straight'
+  }
+  const dx = Math.abs(end.x - start.x)
+  const dy = Math.abs(end.y - start.y)
+  if (dx < 1 || dy < 1) {
+    return 'straight'
+  }
+  return dx === 0 || dy === 0 ? 'straight' : 'curved'
+}
+
+const computeManhattanRatio = (points: { x: number; y: number }[]): number => {
+  const tol = 0.01
+  let manhattanSegments = 0
+  let segments = 0
+  let previous: { x: number; y: number } | undefined
+  for (const current of points) {
+    if (!previous) {
+      previous = current
+      continue
+    }
+    segments += 1
+    if (isAxisAlignedSegment(previous, current, tol)) {
+      manhattanSegments += 1
+    }
+    previous = current
+  }
+  return segments === 0 ? 0 : manhattanSegments / segments
+}
+
+const isAxisAlignedSegment = (
+  start: { x: number; y: number },
+  end: { x: number; y: number },
+  tolerance: number,
+): boolean => {
+  const dx = Math.abs(end.x - start.x)
+  const dy = Math.abs(end.y - start.y)
+  const length = Math.max(dx, dy)
+  if (length === 0) {
+    return false
+  }
+  return dx / length < tolerance || dy / length < tolerance
 }

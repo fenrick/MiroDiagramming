@@ -9,7 +9,16 @@ import type ELK from 'elkjs/lib/elk.bundled.js'
  */
 let elkPromise: Promise<typeof ELK> | null = null
 
-const dynamicImport = (path: string) => import(/* @vite-ignore */ path)
+interface ElkModule {
+  default?: unknown
+  ELK?: unknown
+}
+
+const dynamicImport = async (path: string): Promise<ElkModule> =>
+  import(/* @vite-ignore */ path) as Promise<ElkModule>
+
+const isElkConstructor = (candidate: unknown): candidate is typeof ELK =>
+  typeof candidate === 'function'
 
 /**
  * Retrieve the ELK constructor. Subsequent calls return the cached value.
@@ -19,19 +28,26 @@ export async function loadElk(): Promise<typeof ELK> {
     return elkPromise
   }
 
-  const isNode = typeof process !== 'undefined' && process.release?.name === 'node'
+  const hasProcess = typeof process !== 'undefined'
+  let isNodeRuntime = false
+  if (hasProcess && typeof process.release === 'object') {
+    isNodeRuntime = process.release.name === 'node'
+  }
 
-  elkPromise = isNode
-    ? dynamicImport('elkjs/lib/elk.bundled.js').then((m) => m.default)
+  elkPromise = isNodeRuntime
+    ? dynamicImport('elkjs/lib/elk.bundled.js').then((module_) => {
+        const candidate = module_.default
+        if (isElkConstructor(candidate)) {
+          return candidate
+        }
+        throw new Error('Failed to load ELK from node module')
+      })
     : (async () => {
         const url = 'https://cdn.jsdelivr.net/npm/elkjs@0.10.0/lib/elk.bundled.js'
-        const module_ = (await dynamicImport(url)) as { default?: typeof ELK }
-        if (module_.default) {
-          return module_.default
-        }
-        const gt = globalThis as { ELK?: typeof ELK }
-        if (gt.ELK) {
-          return gt.ELK
+        const module_ = await dynamicImport(url)
+        const candidate = module_.default ?? module_.ELK ?? (globalThis as ElkModule).ELK
+        if (isElkConstructor(candidate)) {
+          return candidate
         }
         throw new Error('ELK was not loaded')
       })()

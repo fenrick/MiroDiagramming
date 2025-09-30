@@ -6,16 +6,20 @@ import { type LayoutResult, performLayout } from './layout-core'
 /**
  * LayoutEngine executes ELK layout directly within the main thread.
  */
-export class LayoutEngine {
-  private static instance: LayoutEngine
+type LayoutPerformer = typeof performLayout
 
-  private constructor() {}
+export class LayoutEngine {
+  private static instance: LayoutEngine | null = null
+
+  private readonly runLayout: LayoutPerformer
+
+  private constructor(runLayout: LayoutPerformer = performLayout) {
+    this.runLayout = runLayout
+  }
 
   /** Access the shared layout engine instance. */
   public static getInstance(): LayoutEngine {
-    if (!LayoutEngine.instance) {
-      LayoutEngine.instance = new LayoutEngine()
-    }
+    LayoutEngine.instance ??= new LayoutEngine()
     return LayoutEngine.instance
   }
 
@@ -26,7 +30,7 @@ export class LayoutEngine {
     data: GraphData,
     options: Partial<UserLayoutOptions> = {},
   ): Promise<LayoutResult> {
-    return performLayout(data, options)
+    return this.runLayout(data, options)
   }
 }
 
