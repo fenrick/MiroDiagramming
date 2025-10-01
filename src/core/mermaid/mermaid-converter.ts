@@ -1152,3 +1152,31 @@ export async function convertMermaidToGraph(
     throw new MermaidConversionError('Failed to convert Mermaid diagram', error)
   }
 }
+
+/**
+ * Internal helpers exposed for unit testing so complex parsing branches can be
+ * validated directly without relying on Mermaid's runtime behaviour. The
+ * object shape is deliberately simple to avoid accidental production usage.
+ */
+export const __testables = {
+  parseCssDeclarations,
+  parseClassDefs,
+  parseSubgraphs,
+  parseNodeStyles,
+  parseEdgeStyles,
+  splitSequenceMessage,
+  parseMessageLine,
+  mapSequenceArrow,
+  convertSequenceDiagram,
+  parseStateTransition,
+  convertStateDiagram,
+  parseErRelation,
+  formatErCardinality,
+  convertErDiagram,
+  parseClassRelation,
+  mapClassRelationSymbol,
+  convertClassDiagram,
+  extractLinkStyles,
+  toNode,
+  toEdge,
+} as const
