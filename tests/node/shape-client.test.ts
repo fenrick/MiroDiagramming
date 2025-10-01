@@ -1,4 +1,4 @@
-import type { Shape, ShapeStyle } from '@mirohq/websdk-types'
+import type { Miro, Shape, ShapeStyle, StableClient } from '@mirohq/websdk-types'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import type { ShapeData } from '../../src/core/utils/shape-client'
@@ -37,12 +37,11 @@ describe('ShapeClient', () => {
     createShape: vi.fn<(properties?: Record<string, unknown>) => Promise<Shape>>(),
     get: vi.fn<(query: { id?: string; type?: string }) => Promise<unknown[]>>(),
   }
-  type BoardStub = typeof board
-
   beforeEach(() => {
     board.createShape.mockReset()
     board.get.mockReset()
-    ;(globalThis as typeof globalThis & { miro?: { board: BoardStub } }).miro = { board }
+    const miroStub: Miro = { board: board as unknown as StableClient, clientVersion: 'test' }
+    ;(globalThis as typeof globalThis & { miro?: Miro }).miro = miroStub
   })
 
   afterEach(() => {

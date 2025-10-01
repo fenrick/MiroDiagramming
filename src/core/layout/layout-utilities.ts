@@ -224,7 +224,7 @@ const deriveFractionalPosition = (
 
 const classifyStraightSegment = (points: { x: number; y: number }[]): ConnectorShape => {
   const [start, end] = points
-  if (!end) {
+  if (!start || !end) {
     return 'straight'
   }
   const dx = Math.abs(end.x - start.x)

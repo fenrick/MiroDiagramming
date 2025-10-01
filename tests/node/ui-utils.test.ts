@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { colors } from '@mirohq/design-tokens'
 
 import { getDropzoneStyle, undoLastImport } from '../../src/ui/hooks/ui-utilities'
+import type { GraphProcessor } from '../../src/core/graph/graph-processor'
 
 describe('ui-utilities', () => {
   it('computes dropzone border color by state', () => {
@@ -13,7 +14,8 @@ describe('ui-utilities', () => {
   it('undoLastImport calls processor and clear when present', async () => {
     const undo = vi.fn().mockResolvedValue(undefined)
     const clear = vi.fn()
-    await undoLastImport({ undoLast: undo } as unknown as { undoLast: () => Promise<void> }, clear)
+    const processor = { undoLast: undo } as Pick<GraphProcessor, 'undoLast'> as GraphProcessor
+    await undoLastImport(processor, clear)
     expect(undo).toHaveBeenCalled()
     expect(clear).toHaveBeenCalled()
   })

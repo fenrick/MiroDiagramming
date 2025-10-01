@@ -5,7 +5,7 @@ describe('debug-flags', () => {
   beforeEach(() => {
     vi.resetModules()
     // Ensure we are in DEV to enable flags
-    vi.stubEnv('DEV', 'true')
+    vi.stubEnv('DEV', true)
   })
 
   afterEach(() => {
@@ -27,7 +27,7 @@ describe('debug-flags', () => {
 
   it('is empty in production mode', async () => {
     vi.resetModules()
-    vi.stubEnv('DEV', 'false')
+    vi.stubEnv('DEV', false)
     const mod = await import('../../src/core/utils/debug-flags')
     expect(mod.debugFlags).toEqual({})
   })

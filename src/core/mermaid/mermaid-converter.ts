@@ -147,6 +147,9 @@ const EDGE_PATTERN = new Map<string, 'dashed' | 'dotted'>([
   ['edge-pattern-dotted', 'dotted'],
 ])
 
+type SubgraphDirectionCode = 'LR' | 'RL' | 'TB' | 'BT'
+type CardinalDirection = 'UP' | 'DOWN' | 'LEFT' | 'RIGHT'
+
 interface NodeStyleOverrides {
   fillColor?: string
   borderColor?: string
@@ -196,34 +199,41 @@ function normaliseLabel(candidate: string | undefined, fallback: string): string
   return stripMarkdown(decoded)
 }
 
+function splitCssRules(entry?: string): string[] {
+  if (!entry) {
+    return []
+  }
+  return entry
+    .split(';')
+    .map((segment) => segment.trim())
+    .filter(Boolean)
+}
+
+function normaliseCssRule(rule: string): [string, string] | undefined {
+  const [rawProperty, rawValue] = rule.split(':')
+  if (!rawProperty || rawValue === undefined) {
+    return undefined
+  }
+  const property = sanitizeObjectKey(rawProperty.trim().toLowerCase(), isSafeCssProperty)
+  const value = rawValue.trim()
+  if (!property || !value) {
+    return undefined
+  }
+  return [property, value]
+}
+
 function parseCssDeclarations(entries?: string[]): Record<string, string> {
-  const declarations = new Map<string, string>()
-  if (!entries) {
+  if (!entries?.length) {
     return {}
   }
+  const declarations = new Map<string, string>()
   for (const entry of entries) {
-    if (!entry) {
-      continue
-    }
-    const rules = entry
-      .split(';')
-      .map((segment) => segment.trim())
-      .filter(Boolean)
-    for (const rule of rules) {
-      const [rawProperty, rawValue] = rule.split(':')
-      if (!rawProperty || rawValue === undefined) {
+    for (const rule of splitCssRules(entry)) {
+      const parsed = normaliseCssRule(rule)
+      if (!parsed) {
         continue
       }
-      const property = rawProperty.trim().toLowerCase()
-      const value = rawValue.trim()
-      if (!value) {
-        continue
-      }
-      const safeProperty = sanitizeObjectKey(property, isSafeCssProperty)
-      if (!safeProperty) {
-        continue
-      }
-      declarations.set(safeProperty, value)
+      declarations.set(parsed[0], parsed[1])
     }
   }
   return Object.fromEntries(declarations)
@@ -247,50 +257,169 @@ interface ClassStyle {
   ['stroke-dasharray']?: string
 }
 
+function extractClassDefinition(raw: string): { name: string; entries: string[] } | undefined {
+  const line = raw.trim()
+  if (!/^classDef\s+/i.test(line)) {
+    return undefined
+  }
+  const rest = line.replace(/^classDef\s+/i, '')
+  const [namePart, stylePart] = rest.split(/\s+/, 2)
+  const name = namePart?.trim()
+  const style = stylePart?.trim()
+  if (!name || !style) {
+    return undefined
+  }
+  const entries = style
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean)
+  return entries.length > 0 ? { name, entries } : undefined
+}
+
+function applyClassStyleEntry(target: ClassStyle, entry: string): void {
+  const [keyPart, valuePart] = entry.split(':')
+  if (!keyPart || valuePart === undefined) {
+    return
+  }
+  const key = keyPart.trim()
+  const value = valuePart.trim()
+  if (!key || !value) {
+    return
+  }
+  switch (key) {
+    case 'fill': {
+      target.fill = value
+      break
+    }
+    case 'stroke': {
+      target.stroke = value
+      break
+    }
+    case 'color': {
+      target.color = value
+      break
+    }
+    case 'stroke-dasharray': {
+      target['stroke-dasharray'] = value
+      break
+    }
+    default: {
+      break
+    }
+  }
+}
+
 function parseClassDefs(source: string): Map<string, ClassStyle> {
   const map = new Map<string, ClassStyle>()
-  const lines = source.split(/\r?\n/)
-  for (const raw of lines) {
-    const line = raw.trim()
-    if (!/^classDef\s+/i.test(line)) continue
-    const rest = line.replace(/^classDef\s+/i, '')
-    const [namePart, stylePart] = rest.split(/\s+/, 2)
-    const name = namePart?.trim()
-    const style = stylePart?.trim()
-    if (!name || !style) continue
-    // style is comma-separated CSS-like list: fill:#fff,stroke:#000,color:#111
-    const entries = style
-      .split(',')
-      .map((s) => s.trim())
-      .filter(Boolean)
-    const object: ClassStyle = {}
-    for (const entry of entries) {
-      const [k, v] = entry.split(':')
-      if (!k || v === undefined) continue
-      const key = k.trim()
-      const value = v.trim()
-      if (!key || !value) {
-        continue
-      }
-      if (key === 'fill') {
-        object.fill = value
-        continue
-      }
-      if (key === 'stroke') {
-        object.stroke = value
-        continue
-      }
-      if (key === 'color') {
-        object.color = value
-        continue
-      }
-      if (key === 'stroke-dasharray') {
-        object['stroke-dasharray'] = value
-      }
+  for (const raw of source.split(/\r?\n/)) {
+    const parsed = extractClassDefinition(raw)
+    if (!parsed) {
+      continue
     }
-    map.set(name, object)
+    const object: ClassStyle = {}
+    for (const entry of parsed.entries) {
+      applyClassStyleEntry(object, entry)
+    }
+    map.set(parsed.name, object)
   }
   return map
+}
+
+interface SubgraphContext {
+  names: Set<string>
+  membership: Map<string, string>
+  directions: Map<string, SubgraphDirectionCode>
+  parents: Map<string, string>
+  stack: string[]
+}
+
+function createSubgraphContext(): SubgraphContext {
+  return {
+    names: new Set<string>(),
+    membership: new Map<string, string>(),
+    directions: new Map<string, SubgraphDirectionCode>(),
+    parents: new Map<string, string>(),
+    stack: [],
+  }
+}
+
+function tryEnterSubgraph(context: SubgraphContext, line: string): boolean {
+  const lineLower = line.toLowerCase()
+  if (!lineLower.startsWith('subgraph ')) {
+    return false
+  }
+  let name = line.slice('subgraph '.length).trim()
+  const bracketIndex = name.indexOf('[')
+  if (bracketIndex !== -1) {
+    name = name.slice(0, bracketIndex).trim()
+  }
+  context.names.add(name)
+  const parent = context.stack.at(-1)
+  if (parent) {
+    context.parents.set(name, parent)
+  }
+  context.stack.push(name)
+  return true
+}
+
+function tryExitSubgraph(context: SubgraphContext, line: string): boolean {
+  if (!/^end\b/i.test(line)) {
+    return false
+  }
+  context.stack.pop()
+  return true
+}
+
+function tryCaptureDirection(context: SubgraphContext, current: string, line: string): boolean {
+  const directionMatch = /^direction\s+([A-Z]{2})\b/i.exec(line)
+  const code = directionMatch?.[1]?.toUpperCase() as SubgraphDirectionCode | undefined
+  if (code === 'LR' || code === 'RL' || code === 'TB' || code === 'BT') {
+    context.directions.set(current, code)
+    return true
+  }
+  return false
+}
+
+function registerSubgraphMembers(context: SubgraphContext, current: string, line: string): void {
+  const tokenPattern = /\b[\w-]+\b/g
+  for (const match of line.matchAll(tokenPattern)) {
+    const rawToken = match[0]
+    if (!rawToken) {
+      continue
+    }
+    const id = sanitizeIdentifier(rawToken)
+    if (
+      /^(?:subgraph|end|flowchart|graph|classDiagram|stateDiagram|sequenceDiagram|erDiagram)$/i.test(
+        id,
+      )
+    ) {
+      continue
+    }
+    if (!context.membership.has(id)) {
+      context.membership.set(id, current)
+    }
+  }
+}
+
+function processSubgraphLine(context: SubgraphContext, raw: string): void {
+  const line = raw.trim()
+  if (!line) {
+    return
+  }
+  if (tryEnterSubgraph(context, line) || tryExitSubgraph(context, line)) {
+    return
+  }
+  if (context.stack.length === 0) {
+    return
+  }
+  const current = context.stack.at(-1)
+  if (!current) {
+    return
+  }
+  if (tryCaptureDirection(context, current, line)) {
+    return
+  }
+  registerSubgraphMembers(context, current, line)
 }
 
 function parseSubgraphs(source: string): {
@@ -299,94 +428,42 @@ function parseSubgraphs(source: string): {
   directions: Map<string, 'LR' | 'RL' | 'TB' | 'BT'>
   parents: Map<string, string>
 } {
-  const names = new Set<string>()
-  const membership = new Map<string, string>()
-  const directions = new Map<string, 'LR' | 'RL' | 'TB' | 'BT'>()
-  const parents = new Map<string, string>()
-  const lines = source.split(/\r?\n/)
-  const stack: string[] = []
-  for (const raw of lines) {
-    const line = raw.trim()
-    if (!line) continue
-    // Detect "subgraph <name>" without regex to avoid backtracking concerns
-    const lineLower = line.toLowerCase()
-    if (lineLower.startsWith('subgraph ')) {
-      let name = line.slice('subgraph '.length).trim()
-      // Strip trailing title in brackets: e.g. "subgraph one [Title]"
-      const bracketIndex = name.indexOf('[')
-      if (bracketIndex !== -1) {
-        name = name.slice(0, bracketIndex).trim()
-      }
-      names.add(name)
-      const parent = stack.at(-1)
-      if (parent) {
-        parents.set(name, parent)
-      }
-      stack.push(name)
-      continue
-    }
-    if (/^end\b/i.test(line)) {
-      stack.pop()
-      continue
-    }
-    // Per-mermaid, a subgraph can contain a local `direction LR|RL|TB|BT`.
-    if (stack.length > 0) {
-      const current = stack.at(-1)
-      if (!current) {
-        continue
-      }
-      const dm = /^direction\s+([A-Z]{2})\b/i.exec(line)
-      const code = dm?.[1]?.toUpperCase()
-      if (code === 'LR' || code === 'RL' || code === 'TB' || code === 'BT') {
-        directions.set(current, code)
-        continue
-      }
-      // capture simple identifiers on this line (A, a1, etc.)
-      const tokenPattern = /\b[\w-]+\b/g
-      for (const match of line.matchAll(tokenPattern)) {
-        const rawToken = match[0]
-        if (!rawToken) {
-          continue
-        }
-        const id = sanitizeIdentifier(rawToken)
-        // skip Mermaid keywords like subgraph/end/flowchart/graph
-        if (
-          /^(?:subgraph|end|flowchart|graph|classDiagram|stateDiagram|sequenceDiagram|erDiagram)$/i.test(
-            id,
-          )
-        ) {
-          continue
-        }
-        if (!membership.has(id)) {
-          membership.set(id, current)
-        }
-      }
-    }
+  const context = createSubgraphContext()
+  for (const raw of source.split(/\r?\n/)) {
+    processSubgraphLine(context, raw)
   }
-  return { names, membership, directions, parents }
+  return {
+    names: context.names,
+    membership: context.membership,
+    directions: context.directions,
+    parents: context.parents,
+  }
+}
+
+const HEX_COLOR_PATTERN = /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i
+
+function normaliseResolvedColor(value: string | undefined, fallback: string): string | undefined {
+  if (!value) {
+    return undefined
+  }
+  const lower = value.toLowerCase()
+  if (lower === 'none' || lower === 'transparent') {
+    return undefined
+  }
+  const resolved = resolveColor(lower, fallback)
+  return HEX_COLOR_PATTERN.test(resolved) ? resolved : undefined
 }
 
 function parseNodeStyles(vertex: RawVertex): NodeStyleOverrides | undefined {
   const css = parseCssDeclarations(vertex.styles)
   const overrides: NodeStyleOverrides = {}
-  const hexRegex = /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i
-  if (css.fill) {
-    const value = css.fill.toLowerCase()
-    if (value !== 'none' && value !== 'transparent') {
-      const resolved = resolveColor(value, colors.white)
-      if (hexRegex.test(resolved)) {
-        overrides.fillColor = resolved
-      }
-    }
+  const fill = normaliseResolvedColor(css.fill, colors.white)
+  if (fill) {
+    overrides.fillColor = fill
   }
-  if (css.stroke) {
-    const value = css.stroke.toLowerCase()
-    if (value !== 'none' && value !== 'transparent') {
-      const resolved = resolveColor(value, colors.black)
-      if (hexRegex.test(resolved)) {
-        overrides.borderColor = resolved
-      }
-    }
+  const stroke = normaliseResolvedColor(css.stroke, colors.black)
+  if (stroke) {
+    overrides.borderColor = stroke
   }
   const borderWidth = parseLength(css['stroke-width'])
   if (borderWidth !== undefined) {
@@ -398,32 +475,39 @@ function parseNodeStyles(vertex: RawVertex): NodeStyleOverrides | undefined {
   return Object.keys(overrides).length > 0 ? overrides : undefined
 }
 
+function resolveStrokePattern(edge: RawEdge): 'dashed' | 'dotted' | undefined {
+  if (edge.stroke === 'dashed' || edge.stroke === 'dotted') {
+    return edge.stroke
+  }
+  return edge.classes?.map((cls) => safeLookup(EDGE_PATTERN, cls, isSafeClassName)).find(Boolean)
+}
+
+function resolveStrokeWidth(edge: RawEdge, css: Record<string, string>): number | undefined {
+  const explicitWidth = parseLength(css['stroke-width'])
+  if (explicitWidth !== undefined) {
+    return explicitWidth
+  }
+  return edge.classes
+    ?.map((cls) => safeLookup(EDGE_THICKNESS, cls, isSafeClassName))
+    .find((value) => value !== undefined)
+}
+
 function parseEdgeStyles(edge: RawEdge): EdgeStyleOverrides | undefined {
   const css = parseCssDeclarations(edge.styles)
   const overrides: EdgeStyleOverrides = {}
   if (css.stroke) {
     overrides.strokeColor = css.stroke
   }
-  const strokeWidth = parseLength(css['stroke-width'])
+  const strokeWidth = resolveStrokeWidth(edge, css)
   if (strokeWidth !== undefined) {
     overrides.strokeWidth = strokeWidth
   }
   if (css.color) {
     overrides.color = css.color
   }
-  const patternFromClasses = edge.classes
-    ?.map((cls) => safeLookup(EDGE_PATTERN, cls, isSafeClassName))
-    .find(Boolean)
-  const patternFromStroke =
-    edge.stroke === 'dashed' || edge.stroke === 'dotted' ? edge.stroke : undefined
-  overrides.strokeStyle = patternFromStroke ?? patternFromClasses
-  if (!overrides.strokeWidth) {
-    const widthFromClass = edge.classes
-      ?.map((cls) => safeLookup(EDGE_THICKNESS, cls, isSafeClassName))
-      .find((value) => value !== undefined)
-    if (widthFromClass !== undefined) {
-      overrides.strokeWidth = widthFromClass
-    }
+  const strokePattern = resolveStrokePattern(edge)
+  if (strokePattern) {
+    overrides.strokeStyle = strokePattern
   }
   return Object.keys(overrides).length > 0 ? overrides : undefined
 }
@@ -493,31 +577,35 @@ function parseParticipantLine(line: string): SequenceParticipant | undefined {
 
 const SEQUENCE_ARROWS = ['-->>', '->>', '..>>', '-->', '..>', '->', '--', '..', '-x', 'x-']
 
+function stripSequenceSuffix(value: string): string {
+  return value.endsWith('+') || value.endsWith('-') ? value.slice(0, -1) : value
+}
+
+function stripSequencePrefix(value: string): string {
+  return value.startsWith('+') || value.startsWith('-') ? value.slice(1) : value
+}
+
+function normaliseSequenceEndpoint(segment: string, direction: 'from' | 'to'): string | undefined {
+  const trimmedSegment =
+    direction === 'from' ? stripSequenceSuffix(segment) : stripSequencePrefix(segment)
+  const trimmed = trimmedSegment.trim()
+  return trimmed.length > 0 ? trimmed : undefined
+}
+
 function splitSequenceMessage(
   messagePart: string,
 ): { from: string; to: string; arrow: string } | undefined {
   for (const arrow of SEQUENCE_ARROWS) {
     const index = messagePart.indexOf(arrow)
-    if (index > 0) {
-      let from = messagePart.slice(0, index).trim()
-      let to = messagePart.slice(index + arrow.length).trim()
-      if (!from || !to) {
-        continue
-      }
-
-      if (from.endsWith('+') || from.endsWith('-')) {
-        from = from.slice(0, -1)
-      }
-      if (to.startsWith('+') || to.startsWith('-')) {
-        to = to.slice(1)
-      }
-      from = from.trim()
-      to = to.trim()
-      if (!from || !to) {
-        continue
-      }
-      return { from, to, arrow }
+    if (index <= 0) {
+      continue
     }
+    const from = normaliseSequenceEndpoint(messagePart.slice(0, index), 'from')
+    const to = normaliseSequenceEndpoint(messagePart.slice(index + arrow.length), 'to')
+    if (!from || !to) {
+      continue
+    }
+    return { from, to, arrow }
   }
   return undefined
 }
@@ -549,131 +637,194 @@ function mapSequenceArrow(arrow: string): {
   }
 }
 
-function convertSequenceDiagram(source: string): GraphData {
-  const participants = new Map<string, SequenceParticipant>()
-  const nodes: NodeData[] = []
-  const edges: EdgeData[] = []
+interface SequenceContext {
+  participants: Map<string, SequenceParticipant>
+  nodes: NodeData[]
+  edges: EdgeData[]
+}
 
-  const processParticipant = (line: string) => {
-    const participant = parseParticipantLine(line)
-    if (participant && !participants.has(participant.id)) {
-      participants.set(participant.id, participant)
-      ensureUniqueNode(nodes, participant.id, participant.label, 'MermaidActor')
-    }
+function createSequenceContext(): SequenceContext {
+  return {
+    participants: new Map<string, SequenceParticipant>(),
+    nodes: [],
+    edges: [],
   }
+}
 
-  const processMessage = (line: string) => {
-    const message = parseMessageLine(line)
-    if (!message) {
-      return
-    }
-    if (!participants.has(message.from)) {
-      participants.set(message.from, { id: message.from, label: message.from })
-      ensureUniqueNode(nodes, message.from, message.from, 'MermaidActor')
-    }
-    if (!participants.has(message.to)) {
-      participants.set(message.to, { id: message.to, label: message.to })
-      ensureUniqueNode(nodes, message.to, message.to, 'MermaidActor')
-    }
-    const arrowMeta = mapSequenceArrow(message.arrow)
-    edges.push({
-      from: message.from,
-      to: message.to,
-      label: message.label,
-      metadata: {
-        template: arrowMeta.template,
-        styleOverrides: arrowMeta.styleOverrides,
-      },
-    })
-  }
-
-  for (const line of source
+function iterateSequenceLines(source: string): string[] {
+  return source
     .split(/\r?\n/)
     .map((line) => line.trim())
-    .filter(
-      (line) => line.length > 0 && !line.startsWith('%%') && !/^sequenceDiagram/i.test(line),
-    )) {
-    if (/^(?:participant|actor)\s+/i.test(line)) {
-      processParticipant(line)
-    } else if (!/^(?:activate|deactivate|loop|end|note\s+)/i.test(line)) {
-      processMessage(line)
-    }
-  }
+    .filter((line) => line.length > 0 && !line.startsWith('%%') && !/^sequenceDiagram/i.test(line))
+}
 
-  return { nodes, edges }
+function ensureSequenceParticipant(context: SequenceContext, id: string, label: string): void {
+  if (context.participants.has(id)) {
+    return
+  }
+  context.participants.set(id, { id, label })
+  ensureUniqueNode(context.nodes, id, label, 'MermaidActor')
+}
+
+function handleSequenceParticipant(context: SequenceContext, line: string): boolean {
+  if (!/^(?:participant|actor)\s+/i.test(line)) {
+    return false
+  }
+  const participant = parseParticipantLine(line)
+  if (participant) {
+    ensureSequenceParticipant(context, participant.id, participant.label)
+  }
+  return true
+}
+
+function handleSequenceMessage(context: SequenceContext, line: string): void {
+  if (/^(?:activate|deactivate|loop|end|note\s+)/i.test(line)) {
+    return
+  }
+  const message = parseMessageLine(line)
+  if (!message) {
+    return
+  }
+  ensureSequenceParticipant(context, message.from, message.from)
+  ensureSequenceParticipant(context, message.to, message.to)
+  const arrowMeta = mapSequenceArrow(message.arrow)
+  context.edges.push({
+    from: message.from,
+    to: message.to,
+    label: message.label,
+    metadata: {
+      template: arrowMeta.template,
+      styleOverrides: arrowMeta.styleOverrides,
+    },
+  })
+}
+
+function convertSequenceDiagram(source: string): GraphData {
+  const context = createSequenceContext()
+  for (const line of iterateSequenceLines(source)) {
+    if (handleSequenceParticipant(context, line)) {
+      continue
+    }
+    handleSequenceMessage(context, line)
+  }
+  return { nodes: context.nodes, edges: context.edges }
 }
 
 const STATE_TRANSITION_PATTERNS = ['-->', '->']
 
+function splitStateLine(line: string): { relation: string; label?: string } {
+  const colonIndex = line.indexOf(':')
+  if (colonIndex === -1) {
+    return { relation: line.trim() }
+  }
+  const relation = line.slice(0, colonIndex).trim()
+  const label = line.slice(colonIndex + 1).trim()
+  return { relation, label: label.length > 0 ? label : undefined }
+}
+
+function mapStateTransition(
+  relation: string,
+  pattern: string,
+  label?: string,
+): { from: string; to: string; label?: string } | undefined {
+  const index = relation.indexOf(pattern)
+  if (index <= 0) {
+    return undefined
+  }
+  const from = sanitizeIdentifier(relation.slice(0, index).trim())
+  const to = sanitizeIdentifier(relation.slice(index + pattern.length).trim())
+  if (!from || !to) {
+    return undefined
+  }
+  return { from, to, label }
+}
+
 function parseStateTransition(
   line: string,
 ): { from: string; to: string; label?: string } | undefined {
-  const colonIndex = line.indexOf(':')
-  const label = colonIndex === -1 ? undefined : line.slice(colonIndex + 1).trim()
-  const relationPart = colonIndex >= 0 ? line.slice(0, colonIndex).trim() : line.trim()
-  for (const pattern of STATE_TRANSITION_PATTERNS) {
-    const index = relationPart.indexOf(pattern)
-    if (index > 0) {
-      const from = sanitizeIdentifier(relationPart.slice(0, index).trim())
-      const to = sanitizeIdentifier(relationPart.slice(index + pattern.length).trim())
-      if (from && to) {
-        return { from, to, label: label?.length ? label : undefined }
-      }
+  const { relation, label } = splitStateLine(line)
+  return STATE_TRANSITION_PATTERNS.map((pattern) =>
+    mapStateTransition(relation, pattern, label),
+  ).find(Boolean)
+}
+
+function collectStateDiagramLines(source: string): string[] {
+  return source
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0 && !line.startsWith('%%') && !/^stateDiagram/i.test(line))
+}
+
+function createStateEnsurer(nodes: NodeData[], states: Set<string>) {
+  return (id: string, label: string) => {
+    if (id === '[*]' || states.has(id)) {
+      return
+    }
+    states.add(id)
+    ensureUniqueNode(nodes, id, label, 'MermaidState')
+  }
+}
+
+function extractStateDeclaration(line: string): { id: string; label: string } | undefined {
+  if (!/^state\s+/i.test(line)) {
+    return undefined
+  }
+  const cleaned = line.replace(/^state\s+/i, '')
+  const lower = cleaned.toLowerCase()
+  const asIndex = lower.indexOf(' as ')
+  const rawName = asIndex === -1 ? cleaned : cleaned.slice(0, asIndex)
+  const alias = asIndex === -1 ? rawName : cleaned.slice(asIndex + 4)
+  const id = sanitizeIdentifier(alias.split(/[\s{]/)[0] ?? '')
+  if (!id) {
+    return undefined
+  }
+  return { id, label: sanitizeIdentifier(rawName) }
+}
+
+function registerStateDeclarations(
+  lines: string[],
+  ensureState: (id: string, label: string) => void,
+) {
+  for (const line of lines) {
+    const declaration = extractStateDeclaration(line)
+    if (declaration) {
+      ensureState(declaration.id, declaration.label)
     }
   }
-  return undefined
+}
+
+function appendStateTransitions(
+  lines: string[],
+  ensureState: (id: string, label: string) => void,
+  edges: EdgeData[],
+) {
+  for (const line of lines) {
+    const transition = parseStateTransition(line)
+    if (!transition) {
+      continue
+    }
+    ensureState(transition.from, transition.from)
+    ensureState(transition.to, transition.to)
+    if (transition.from === '[*]' || transition.to === '[*]') {
+      continue
+    }
+    edges.push({
+      from: transition.from,
+      to: transition.to,
+      label: transition.label,
+      metadata: { template: 'flow' },
+    })
+  }
 }
 
 function convertStateDiagram(source: string): GraphData {
   const nodes: NodeData[] = []
   const edges: EdgeData[] = []
   const states = new Set<string>()
-
-  const ensureState = (id: string, label: string) => {
-    if (id === '[*]') {
-      return
-    }
-    if (!states.has(id)) {
-      states.add(id)
-      ensureUniqueNode(nodes, id, label, 'MermaidState')
-    }
-  }
-
-  const lines = source
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter((line) => line.length > 0 && !line.startsWith('%%') && !/^stateDiagram/i.test(line))
-
-  // Pass 1: register states via declarations
-  for (const line of lines) {
-    if (!/^state\s+/i.test(line)) continue
-    const cleaned = line.replace(/^state\s+/i, '')
-    const lower = cleaned.toLowerCase()
-    const asIndex = lower.indexOf(' as ')
-    const rawName = asIndex === -1 ? cleaned : cleaned.slice(0, asIndex)
-    const alias = asIndex === -1 ? rawName : cleaned.slice(asIndex + 4)
-    const id = sanitizeIdentifier(alias.split(/[\s{]/)[0] ?? '')
-    if (id) {
-      ensureState(id, sanitizeIdentifier(rawName))
-    }
-  }
-
-  // Pass 2: transitions
-  for (const line of lines) {
-    const transition = parseStateTransition(line)
-    if (!transition) continue
-    ensureState(transition.from, transition.from)
-    ensureState(transition.to, transition.to)
-    if (transition.from !== '[*]' && transition.to !== '[*]') {
-      edges.push({
-        from: transition.from,
-        to: transition.to,
-        label: transition.label,
-        metadata: { template: 'flow' },
-      })
-    }
-  }
-
+  const lines = collectStateDiagramLines(source)
+  const ensureState = createStateEnsurer(nodes, states)
+  registerStateDeclarations(lines, ensureState)
+  appendStateTransitions(lines, ensureState, edges)
   return { nodes, edges }
 }
 
@@ -844,38 +995,49 @@ function convertClassDiagram(source: string): GraphData {
   return { nodes, edges }
 }
 
+function normaliseLinkStyleMatch(match: RegExpMatchArray):
+  | {
+      target: number | 'default'
+      style?: EdgeStyleOverrides
+    }
+  | undefined {
+  const target = match[1]
+  const rawDeclaration = match[2]
+  if (!target || !rawDeclaration) {
+    return undefined
+  }
+  const normalized = rawDeclaration.trim().replaceAll(',', ';')
+  const edge = {
+    id: '',
+    start: '',
+    end: '',
+    styles: [normalized],
+    classes: [] as string[],
+  } as RawEdge
+  const style = parseEdgeStyles(edge)
+  if (!style) {
+    return undefined
+  }
+  if (target === 'default') {
+    return { target: 'default', style }
+  }
+  const index = Number.parseInt(target, 10)
+  return Number.isFinite(index) ? { target: index, style } : undefined
+}
+
 function extractLinkStyles(source: string): Map<number, EdgeStyleOverrides> {
   const overrides = new Map<number, EdgeStyleOverrides>()
   let defaultStyle: EdgeStyleOverrides | undefined
   const pattern = /linkStyle\s+(default|\d+)\s+([^\n]+)/gi
   for (const match of source.matchAll(pattern)) {
-    const target = match[1]
-    if (!target) {
+    const parsed = normaliseLinkStyleMatch(match)
+    if (!parsed?.style) {
       continue
     }
-    const rawDeclaration = match[2]
-    if (!rawDeclaration) {
-      continue
-    }
-    const normalized = rawDeclaration.trim().replaceAll(',', ';')
-    const edge = {
-      id: '',
-      start: '',
-      end: '',
-      styles: [normalized],
-      classes: [] as string[],
-    } as RawEdge
-    const style = parseEdgeStyles(edge)
-    if (!style) {
-      continue
-    }
-    if (target === 'default') {
-      defaultStyle = style
+    if (parsed.target === 'default') {
+      defaultStyle = parsed.style
     } else {
-      const index = Number.parseInt(target, 10)
-      if (Number.isFinite(index)) {
-        overrides.set(index, style)
-      }
+      overrides.set(parsed.target, parsed.style)
     }
   }
   if (defaultStyle) {
@@ -884,42 +1046,95 @@ function extractLinkStyles(source: string): Map<number, EdgeStyleOverrides> {
   return overrides
 }
 
-function toNode(vertex: RawVertex): NodeData {
+function cloneIfNonEmptyArray<T>(value?: T[]): T[] | undefined {
+  return value && value.length > 0 ? [...value] : undefined
+}
+
+function cloneIfNonEmptyObject(
+  value?: Record<string, unknown>,
+): Record<string, unknown> | undefined {
+  if (!value) {
+    return undefined
+  }
+  return Object.keys(value).length > 0 ? { ...value } : undefined
+}
+
+function assignArrayMetadata(
+  metadata: Record<string, unknown>,
+  key: 'classes' | 'styles',
+  value?: string[],
+): void {
+  const clone = cloneIfNonEmptyArray(value)
+  if (!clone) {
+    return
+  }
+  if (key === 'classes') {
+    metadata.classes = clone
+    return
+  }
+  metadata.styles = clone
+}
+
+function assignPropertiesMetadata(
+  metadata: Record<string, unknown>,
+  value?: Record<string, unknown>,
+): void {
+  const clone = cloneIfNonEmptyObject(value)
+  if (clone) {
+    metadata.props = clone
+  }
+}
+
+function assignStringMetadata(
+  metadata: Record<string, unknown>,
+  key: 'mermaidType' | 'mermaidShape' | 'domId',
+  value: string | undefined,
+): void {
+  if (!value) {
+    return
+  }
+  switch (key) {
+    case 'mermaidType': {
+      metadata.mermaidType = value
+      break
+    }
+    case 'mermaidShape': {
+      metadata.mermaidShape = value
+      break
+    }
+    case 'domId': {
+      metadata.domId = value
+      break
+    }
+  }
+}
+
+function buildNodeMetadata(vertex: RawVertex): Record<string, unknown> | undefined {
   const metadata: Record<string, unknown> = {}
-  if (vertex.classes?.length) {
-    metadata.classes = [...vertex.classes]
-  }
-  if (vertex.styles?.length) {
-    metadata.styles = [...vertex.styles]
-  }
-  if (vertex.type) {
-    metadata.mermaidType = vertex.type
-  }
-  if (vertex.shape) {
-    metadata.mermaidShape = vertex.shape
-  }
-  if (vertex.domId) {
-    metadata.domId = vertex.domId
-  }
-  if (vertex.props && Object.keys(vertex.props).length > 0) {
-    metadata.props = { ...vertex.props }
-  }
+  assignArrayMetadata(metadata, 'classes', vertex.classes)
+  assignArrayMetadata(metadata, 'styles', vertex.styles)
+  assignPropertiesMetadata(metadata, vertex.props)
+  assignStringMetadata(metadata, 'mermaidType', vertex.type)
+  assignStringMetadata(metadata, 'mermaidShape', vertex.shape)
+  assignStringMetadata(metadata, 'domId', vertex.domId)
   const styleOverrides = parseNodeStyles(vertex)
   if (styleOverrides) {
     metadata.styleOverrides = styleOverrides
   }
-  // Mermaid's flowchart db sometimes exposes shape on `type` instead of `shape`.
-  // Prefer `shape`, fall back to `type` when it looks like a known shape keyword.
   const shape = mapShape(vertex.shape ?? vertex.type)
   if (shape) {
     metadata.shape = shape
   }
+  return Object.keys(metadata).length > 0 ? metadata : undefined
+}
+
+function toNode(vertex: RawVertex): NodeData {
   const template = mapNodeClassesToTemplate(vertex.classes)
   return {
     id: vertex.id,
     label: normaliseLabel(vertex.text, vertex.id),
     type: template ?? 'MermaidNode',
-    metadata: Object.keys(metadata).length > 0 ? metadata : undefined,
+    metadata: buildNodeMetadata(vertex),
   }
 }
 
@@ -961,6 +1176,248 @@ function getFlowchartDatabase(diagram: unknown): FlowchartDatabase {
   return database && typeof database === 'object' ? (database as FlowchartDatabase) : {}
 }
 
+type DiagramKeyword = 'sequence' | 'class' | 'state' | 'er'
+
+function detectDiagramKeyword(trimmed: string): DiagramKeyword | undefined {
+  if (/^sequenceDiagram/i.test(trimmed)) {
+    return 'sequence'
+  }
+  if (/^classDiagram/i.test(trimmed)) {
+    return 'class'
+  }
+  if (/^stateDiagram/i.test(trimmed)) {
+    return 'state'
+  }
+  if (/^erDiagram/i.test(trimmed)) {
+    return 'er'
+  }
+  return undefined
+}
+
+function convertKeywordDiagram(keyword: DiagramKeyword, trimmed: string): GraphData {
+  switch (keyword) {
+    case 'sequence': {
+      return convertSequenceDiagram(trimmed)
+    }
+    case 'class': {
+      return convertClassDiagram(trimmed)
+    }
+    case 'state': {
+      return convertStateDiagram(trimmed)
+    }
+    case 'er': {
+      return convertErDiagram(trimmed)
+    }
+    default: {
+      return { nodes: [], edges: [] }
+    }
+  }
+}
+
+function assertFlowchartType(type: string, expected?: 'flowchart' | 'flowchart-v2'): void {
+  if (!SUPPORTED_TYPES.has(type)) {
+    throw new MermaidConversionError(
+      `Unsupported Mermaid diagram type: ${type}. Only flowchart diagrams are supported at this time.`,
+    )
+  }
+  if (expected && expected !== type) {
+    throw new MermaidConversionError(
+      `Expected Mermaid diagram type ${expected} but received ${type}.`,
+    )
+  }
+}
+
+async function prepareFlowchartDatabase(
+  trimmed: string,
+  options: MermaidConversionOptions,
+): Promise<FlowchartDatabase> {
+  ensureMermaidInitialized(options.config)
+  const legacyApi = getLegacyMermaidApi()
+  const parseResult = await legacyApi.parse(trimmed, { suppressErrors: false })
+  assertFlowchartType(parseResult.diagramType, options.expectedType)
+  const diagram = await legacyApi.getDiagramFromText(trimmed)
+  return getFlowchartDatabase(diagram)
+}
+
+function extractFlowchartElements(database: FlowchartDatabase): {
+  vertices: Map<string, RawVertex>
+  edges: RawEdge[] | undefined
+} {
+  const vertices = database.getVertices?.()
+  if (!vertices || !(vertices instanceof Map)) {
+    throw new MermaidConversionError('Mermaid diagram did not expose vertex data')
+  }
+  return { vertices, edges: database.getEdges?.() }
+}
+
+function buildNodesFromVertices(vertices: Map<string, RawVertex>): NodeData[] {
+  return [...vertices.values()].map((vertex) => toNode(vertex))
+}
+
+function applyClassDefinition(target: NodeStyleOverrides, definition: ClassStyle): void {
+  const fill = normaliseResolvedColor(definition.fill, colors.white)
+  if (fill) {
+    target.fillColor = fill
+  }
+  const stroke = normaliseResolvedColor(definition.stroke, colors.black)
+  if (stroke) {
+    target.borderColor = stroke
+  }
+  if (definition.color) {
+    target.textColor = definition.color
+  }
+}
+
+function mergeClassDefinitions(
+  classNames: string[],
+  classDefs: Map<string, ClassStyle>,
+): NodeStyleOverrides | undefined {
+  if (classNames.length === 0) {
+    return undefined
+  }
+  const merged: NodeStyleOverrides = {}
+  for (const className of classNames) {
+    const definition = classDefs.get(className)
+    if (definition) {
+      applyClassDefinition(merged, definition)
+    }
+  }
+  return Object.keys(merged).length > 0 ? merged : undefined
+}
+
+function applyClassDefinitionsToNodes(nodes: NodeData[], classDefs: Map<string, ClassStyle>): void {
+  if (classDefs.size === 0) {
+    return
+  }
+  for (const node of nodes) {
+    const classes = (node.metadata as { classes?: string[] } | undefined)?.classes ?? []
+    const overrides = mergeClassDefinitions(classes, classDefs)
+    if (!overrides) {
+      continue
+    }
+    const existing = (node.metadata as { styleOverrides?: NodeStyleOverrides } | undefined)
+      ?.styleOverrides
+    node.metadata = {
+      ...node.metadata,
+      styleOverrides: { ...existing, ...overrides },
+    }
+  }
+}
+
+function annotateSubgraphMembership(
+  nodes: NodeData[],
+  subgraphMap: ReturnType<typeof parseSubgraphs>,
+): void {
+  for (const node of nodes) {
+    const parent = subgraphMap.membership.get(node.id)
+    if (!parent) {
+      continue
+    }
+    node.metadata = { ...node.metadata, parent }
+  }
+}
+
+function mapSubgraphDirection(
+  code: 'LR' | 'RL' | 'TB' | 'BT' | undefined,
+): CardinalDirection | undefined {
+  switch (code) {
+    case 'LR': {
+      return 'RIGHT'
+    }
+    case 'RL': {
+      return 'LEFT'
+    }
+    case 'TB': {
+      return 'DOWN'
+    }
+    case 'BT': {
+      return 'UP'
+    }
+    default: {
+      return undefined
+    }
+  }
+}
+
+function buildSubgraphMetadata(
+  name: string,
+  subgraphMap: ReturnType<typeof parseSubgraphs>,
+): Record<string, unknown> {
+  const direction = mapSubgraphDirection(subgraphMap.directions.get(name))
+  const metadata: Record<string, unknown> = { isSubgraph: true }
+  if (direction) {
+    metadata.subgraphDirection = direction
+  }
+  const parent = subgraphMap.parents.get(name)
+  if (parent) {
+    metadata.parent = parent
+  }
+  return metadata
+}
+
+function addSubgraphContainers(
+  nodes: NodeData[],
+  subgraphMap: ReturnType<typeof parseSubgraphs>,
+): void {
+  const index = new Map(nodes.map((node) => [node.id, node]))
+  for (const name of subgraphMap.names) {
+    const metadata = buildSubgraphMetadata(name, subgraphMap)
+    const existing = index.get(name)
+    if (existing) {
+      existing.metadata = { ...existing.metadata, ...metadata }
+      continue
+    }
+    const newNode: NodeData = { id: name, label: name, type: 'Composite', metadata }
+    nodes.push(newNode)
+    index.set(name, newNode)
+  }
+}
+
+function applyEdgeStyleOverride(edge: EdgeData, style: EdgeStyleOverrides | undefined): EdgeData {
+  if (!style) {
+    return edge
+  }
+  const existing = (edge.metadata as { styleOverrides?: EdgeStyleOverrides } | undefined)
+    ?.styleOverrides
+  edge.metadata = {
+    ...edge.metadata,
+    styleOverrides: { ...existing, ...style },
+  }
+  return edge
+}
+
+function buildEdgeList(edges: RawEdge[] | undefined, source: string): EdgeData[] {
+  if (!Array.isArray(edges)) {
+    return []
+  }
+  const linkStyles = extractLinkStyles(source)
+  const defaultStyle = linkStyles.get(-1)
+  return edges.map((edge, index) => {
+    const converted = toEdge(edge)
+    const style = linkStyles.get(index) ?? defaultStyle
+    return applyEdgeStyleOverride(converted, style)
+  })
+}
+
+async function convertFlowchartDiagram(
+  trimmed: string,
+  classDefs: Map<string, ClassStyle>,
+  subgraphMap: ReturnType<typeof parseSubgraphs>,
+  options: MermaidConversionOptions,
+): Promise<GraphData> {
+  const database = await prepareFlowchartDatabase(trimmed, options)
+  const { vertices, edges } = extractFlowchartElements(database)
+  const nodes = buildNodesFromVertices(vertices)
+  applyClassDefinitionsToNodes(nodes, classDefs)
+  annotateSubgraphMembership(nodes, subgraphMap)
+  addSubgraphContainers(nodes, subgraphMap)
+  if (nodes.length === 0) {
+    throw new MermaidConversionError('Mermaid diagram has no nodes to render')
+  }
+  const edgeList = buildEdgeList(edges, trimmed)
+  return { nodes, edges: edgeList }
+}
+
 /**
  * Convert a Mermaid diagram string into the internal GraphData structure.
  *
@@ -972,179 +1429,18 @@ export async function convertMermaidToGraph(
   source: string,
   options: MermaidConversionOptions = {},
 ): Promise<GraphData> {
-  // Parse subgraph blocks ahead of conversion to capture membership.
-  const subgraphMap = parseSubgraphs(source)
-  const classDefs = parseClassDefs(source)
   const trimmed = source.trim()
   if (!trimmed) {
     throw new MermaidConversionError('Mermaid definition is empty')
   }
-  if (/^sequenceDiagram/i.test(trimmed)) {
-    return convertSequenceDiagram(trimmed)
+  const keyword = detectDiagramKeyword(trimmed)
+  if (keyword) {
+    return convertKeywordDiagram(keyword, trimmed)
   }
-  if (/^classDiagram/i.test(trimmed)) {
-    return convertClassDiagram(trimmed)
-  }
-  if (/^stateDiagram/i.test(trimmed)) {
-    return convertStateDiagram(trimmed)
-  }
-  if (/^erDiagram/i.test(trimmed)) {
-    return convertErDiagram(trimmed)
-  }
+  const subgraphMap = parseSubgraphs(source)
+  const classDefs = parseClassDefs(source)
   try {
-    ensureMermaidInitialized(options.config)
-    const legacyApi = getLegacyMermaidApi()
-    const parseResult = await legacyApi.parse(trimmed, { suppressErrors: false })
-    const type = parseResult.diagramType
-    if (!SUPPORTED_TYPES.has(type)) {
-      throw new MermaidConversionError(
-        `Unsupported Mermaid diagram type: ${type}. Only flowchart diagrams are supported at this time.`,
-      )
-    }
-    if (options.expectedType && options.expectedType !== type) {
-      throw new MermaidConversionError(
-        `Expected Mermaid diagram type ${options.expectedType} but received ${type}.`,
-      )
-    }
-    const diagram = await legacyApi.getDiagramFromText(trimmed)
-    const database = getFlowchartDatabase(diagram)
-    const vertices = database.getVertices?.()
-    const edges = database.getEdges?.()
-    if (!vertices || !(vertices instanceof Map)) {
-      throw new MermaidConversionError('Mermaid diagram did not expose vertex data')
-    }
-    const nodeList = [...vertices.values()].map((vertex) => toNode(vertex))
-    // Apply classDef styles if present
-    if (classDefs.size > 0) {
-      for (const node of nodeList) {
-        const cls = (node.metadata as { classes?: string[] } | undefined)?.classes
-        if (!cls || cls.length === 0) continue
-        const merged: NodeStyleOverrides = {}
-        for (const className of cls) {
-          const definition = classDefs.get(className)
-          if (!definition) {
-            continue
-          }
-          if (definition.fill) {
-            const resolved = resolveColor(definition.fill.toLowerCase(), colors.white)
-            if (/^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(resolved)) {
-              merged.fillColor = resolved
-            }
-          }
-          if (definition.stroke) {
-            const resolved = resolveColor(definition.stroke.toLowerCase(), colors.black)
-            if (/^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(resolved)) {
-              merged.borderColor = resolved
-            }
-          }
-          if (definition.color) {
-            merged.textColor = definition.color
-          }
-        }
-        if (Object.keys(merged).length > 0) {
-          node.metadata = {
-            ...node.metadata,
-            styleOverrides: {
-              ...(node.metadata as { styleOverrides?: NodeStyleOverrides } | undefined)
-                ?.styleOverrides,
-              ...merged,
-            },
-          }
-        }
-      }
-    }
-    // Mark parent membership on nodes present inside subgraph blocks
-    for (const node of nodeList) {
-      const parent = subgraphMap.membership.get(node.id)
-      if (parent) {
-        node.metadata = { ...node.metadata, parent }
-      }
-    }
-    // Add container nodes for each subgraph so layout can compute bounds
-    const mapDirection = (
-      code: 'LR' | 'RL' | 'TB' | 'BT' | undefined,
-    ): 'UP' | 'DOWN' | 'LEFT' | 'RIGHT' | undefined => {
-      switch (code) {
-        case 'LR': {
-          return 'RIGHT'
-        }
-        case 'RL': {
-          return 'LEFT'
-        }
-        case 'TB': {
-          return 'DOWN'
-        }
-        case 'BT': {
-          return 'UP'
-        }
-        default: {
-          return undefined
-        }
-      }
-    }
-
-    for (const name of subgraphMap.names) {
-      // Avoid collisions when a node shares the same id
-      const exists = nodeList.some((n) => n.id === name)
-      if (exists) {
-        // If a node with the same id exists, at least annotate subgraph metadata/parent
-        const existing = nodeList.find((n) => n.id === name)
-        if (!existing) {
-          continue
-        }
-        const subgraphDirection = mapDirection(subgraphMap.directions.get(name))
-        const parentSubgraph = subgraphMap.parents.get(name)
-        existing.metadata = {
-          ...existing.metadata,
-          isSubgraph: true,
-          ...(subgraphDirection ? { subgraphDirection } : {}),
-          ...(parentSubgraph ? { parent: parentSubgraph } : {}),
-        }
-      } else {
-        const subgraphDirection = mapDirection(subgraphMap.directions.get(name))
-        const meta: Record<string, unknown> = subgraphDirection
-          ? { isSubgraph: true, subgraphDirection }
-          : { isSubgraph: true }
-        const parentSubgraph = subgraphMap.parents.get(name)
-        if (parentSubgraph) {
-          meta.parent = parentSubgraph
-        }
-        nodeList.push({
-          id: name,
-          label: name,
-          type: 'Composite',
-          metadata: meta,
-        })
-      }
-    }
-    if (nodeList.length === 0) {
-      throw new MermaidConversionError('Mermaid diagram has no nodes to render')
-    }
-    const linkStyles = extractLinkStyles(trimmed)
-    const defaultLinkStyle = linkStyles.get(-1)
-    const edgeList = Array.isArray(edges)
-      ? edges.map((edge, index) => {
-          const converted = toEdge(edge)
-          // Preserve edges that reference subgraph names (e.g., one --> two)
-          // These will connect frames if created for subgraphs.
-          const style = linkStyles.get(index) ?? defaultLinkStyle
-          if (style) {
-            const meta = (converted.metadata ?? {}) as { styleOverrides?: EdgeStyleOverrides }
-            converted.metadata = {
-              ...converted.metadata,
-              styleOverrides: {
-                ...meta.styleOverrides,
-                ...style,
-              },
-            }
-          }
-          return converted
-        })
-      : []
-    return {
-      nodes: nodeList,
-      edges: edgeList,
-    }
+    return await convertFlowchartDiagram(trimmed, classDefs, subgraphMap, options)
   } catch (error) {
     if (error instanceof MermaidConversionError) {
       throw error

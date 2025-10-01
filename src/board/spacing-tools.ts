@@ -73,12 +73,15 @@ export async function applySpacingLayout(
     )
     return
   }
-  const first = items[0]
+  const [first, ...remaining] = items
+  if (!first) {
+    return
+  }
   let position = axis === 'x' ? (first.x ?? 0) : (first.y ?? 0)
   await moveWidget(first, axis, position)
 
   let previous: Record<string, number> & Syncable = first
-  for (const current of items.slice(1)) {
+  for (const current of remaining) {
     const previousSize = getDimension(previous, sizeKey)
     const currentSize = getDimension(current, sizeKey)
     position += previousSize / 2 + options.spacing + currentSize / 2

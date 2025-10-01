@@ -155,11 +155,11 @@ export class MermaidRenderer {
     let rankSpacing: number | undefined
     const lines = body.split(/\r?\n/)
     for (const line of lines) {
-      const [key, rawValue] = line.split(':')
-      if (!rawValue) continue
+      const [rawKey, rawValue] = line.split(':')
+      if (!rawValue || !rawKey) continue
       const value = Number.parseFloat(rawValue.trim())
       if (!Number.isFinite(value)) continue
-      const trimmedKey = key.trim().toLowerCase()
+      const trimmedKey = rawKey.trim().toLowerCase()
       switch (trimmedKey) {
         case 'nodespacing': {
           nodeSpacing = value

@@ -28,6 +28,9 @@ describe('layout utilities', () => {
     }
 
     const [hint] = computeEdgeHints(graph, layout)
+    if (!hint) {
+      throw new Error('Expected edge hint to be generated')
+    }
     expect(hint).toEqual({
       startPosition: { x: 1, y: 0.5 },
       endPosition: { x: 0, y: 0.5 },
@@ -46,12 +49,15 @@ describe('layout utilities', () => {
         {
           startPoint: { x: 100, y: 0 },
           endPoint: { x: 200, y: 100 },
-          hintSides: { start: 'E', end: 'W' },
+          hintSides: { start: 'E' as const, end: 'W' as const },
         },
       ],
     }
 
     const [hint] = computeEdgeHints(graph, layout)
+    if (!hint) {
+      throw new Error('Expected edge hint to be generated')
+    }
     expect(hint).toEqual({
       startPosition: { x: 1, y: 0.5 },
       endPosition: { x: 0, y: 0.5 },

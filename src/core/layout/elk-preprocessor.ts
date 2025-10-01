@@ -26,7 +26,10 @@ function insertSpacer(node: LayoutNode, options: Required<SpacerOptions>): void 
     return
   }
 
-  const first = children[0]
+  const [first] = children
+  if (!first) {
+    return
+  }
   const hasSpacer = typeof first.id === 'string' && first.id.startsWith('spacer_')
   if (hasSpacer) {
     return

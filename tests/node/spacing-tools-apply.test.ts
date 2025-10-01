@@ -10,12 +10,11 @@ describe('spacing-tools applySpacingLayout', () => {
     { id: 'c', x: 40, y: 0, width: 10, height: 10 },
   ] as Array<Record<string, any>>
 
-  let spy: ReturnType<typeof vi.spyOn>
   beforeEach(() => {
-    spy = vi.spyOn(boardCache, 'getSelection').mockResolvedValue(selection)
+    vi.spyOn(boardCache, 'getSelection').mockResolvedValue(selection)
   })
   afterEach(() => {
-    spy.mockRestore()
+    vi.restoreAllMocks()
     boardCache.reset()
   })
 

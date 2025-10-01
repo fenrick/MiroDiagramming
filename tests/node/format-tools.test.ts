@@ -42,7 +42,11 @@ describe('format-tools', () => {
     }))
     const { applyStylePreset } = await import('../../src/board/format-tools')
     await applyStylePreset(preset, {} as any)
-    expect(selection[0].style).toMatchObject({
+    const first = selection[0]
+    if (!first) {
+      throw new Error('Expected selection to contain at least one item')
+    }
+    expect(first.style).toMatchObject({
       color: '#000000',
       borderColor: '#222222',
       borderWidth: 2,

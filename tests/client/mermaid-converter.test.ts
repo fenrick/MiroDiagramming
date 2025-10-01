@@ -92,6 +92,9 @@ describe('convertMermaidToGraph', () => {
     expect(graph.nodes.map((n) => n.id).sort()).toEqual(['ClassA', 'ClassB'])
     expect(graph.edges).toHaveLength(1)
     const edge = graph.edges[0]
+    if (!edge) {
+      throw new Error('Expected inheritance edge to be present')
+    }
     expect([edge.from, edge.to].sort()).toEqual(['ClassA', 'ClassB'])
     expect(edge.metadata).toMatchObject({ template: 'inheritance' })
   })
