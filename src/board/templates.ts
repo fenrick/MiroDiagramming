@@ -113,6 +113,67 @@ const SHAPE_WHITELIST: ReadonlySet<TemplateShape> = new Set<TemplateShape>([
 
 const COLOR_LOOKUP = new Map<string, string>(Object.entries(colors as Record<string, string>))
 
+const NEGATIVE_SIGN = '-'
+const DOT = '.'
+
+interface AliasDefinition {
+  alias?: readonly string[]
+}
+interface ExperimentalOverride {
+  templateKey: string
+  shape: string
+}
+
+function stripNegativeSign(value: string): string {
+  return value.startsWith(NEGATIVE_SIGN) ? value.slice(1) : value
+}
+
+function isDigitChar(char: string): boolean {
+  return char >= '0' && char <= '9'
+}
+
+function hasOnlyDigitsAndDots(value: string): boolean {
+  for (const char of value) {
+    if (char !== DOT && !isDigitChar(char)) {
+      return false
+    }
+  }
+  return true
+}
+
+function containsDigit(value: string): boolean {
+  for (const char of value) {
+    if (isDigitChar(char)) {
+      return true
+    }
+  }
+  return false
+}
+
+function countDots(value: string): number {
+  let count = 0
+  for (const char of value) {
+    if (char === DOT) {
+      count += 1
+    }
+  }
+  return count
+}
+
+function isSimpleNumber(value: string): boolean {
+  const body = stripNegativeSign(value)
+  if (body.length === 0) {
+    return false
+  }
+  if (!hasOnlyDigitsAndDots(body)) {
+    return false
+  }
+  if (!containsDigit(body)) {
+    return false
+  }
+  return countDots(body) <= 1
+}
+
 export function normalizeTemplateShape(shape: string | undefined): TemplateShape {
   if (!shape) {
     return SHAPE_TYPE.Rectangle
@@ -204,58 +265,81 @@ export class TemplateManager {
   private readonly api = new ShapeClient()
 
   private constructor() {
-    for (const [key, definition] of this.templateMap.entries()) {
-      if (!definition.alias) {
-        continue
-      }
-      for (const alias of definition.alias) {
-        const safeAlias = sanitizeObjectKey(alias, isSafeAliasKey)
-        if (safeAlias) {
-          this.aliasMap.set(safeAlias, key)
-        }
-      }
-    }
-
-    for (const [key, definition] of this.connectorTemplateMap.entries()) {
-      if (!definition.alias) {
-        continue
-      }
-      for (const alias of definition.alias) {
-        const safeAlias = sanitizeObjectKey(alias, isSafeAliasKey)
-        if (safeAlias) {
-          this.connectorAliasMap.set(safeAlias, key)
-        }
-      }
-    }
+    this.registerAliases(this.templateMap.entries(), this.aliasMap)
+    this.registerAliases(this.connectorTemplateMap.entries(), this.connectorAliasMap)
 
     // Apply experimental shape overrides when enabled via env flag.
     this.applyExperimentalOverrides()
   }
 
-  private applyExperimentalOverrides(): void {
-    const flag = readExperimentalShapesFlag()
-    const expEnabled = typeof flag === 'string' ? flag.toLowerCase() !== 'false' : true
-    if (!expEnabled) {
+  private registerAliases(
+    entries: Iterable<[string, AliasDefinition]>,
+    target: Map<string, string>,
+  ): void {
+    for (const [key, definition] of entries) {
+      this.registerDefinitionAliases(definition.alias, key, target)
+    }
+  }
+
+  private registerDefinitionAliases(
+    aliases: readonly string[] | undefined,
+    key: string,
+    target: Map<string, string>,
+  ): void {
+    if (!aliases) {
       return
+    }
+    for (const alias of aliases) {
+      this.addAlias(target, alias, key)
+    }
+  }
+
+  private addAlias(target: Map<string, string>, alias: string, key: string): void {
+    const safeAlias = sanitizeObjectKey(alias, isSafeAliasKey)
+    if (safeAlias) {
+      target.set(safeAlias, key)
+    }
+  }
+
+  private applyExperimentalOverrides(): void {
+    const overrides = this.collectExperimentalOverrides()
+    for (const override of overrides) {
+      this.applyExperimentalOverride(override)
+    }
+  }
+
+  private collectExperimentalOverrides(): ExperimentalOverride[] {
+    if (!this.isExperimentalOverrideEnabled()) {
+      return []
     }
     const overrideMapCandidate: unknown = experimentalShapeMap
     if (!isStringRecord(overrideMapCandidate)) {
-      return
+      return []
     }
-    const overrideMap = overrideMapCandidate
-    for (const [name, shape] of Object.entries(overrideMap)) {
+    const overrides: ExperimentalOverride[] = []
+    for (const [name, shape] of Object.entries(overrideMapCandidate)) {
       const safeName = sanitizeObjectKey(name, isSafeAliasKey)
       if (!safeName) {
         continue
       }
-      const key = this.aliasMap.get(safeName) ?? safeName
-      const tpl = this.templateMap.get(key)
-      if (tpl && Array.isArray(tpl.elements) && tpl.elements.length > 0) {
-        // Experimental overrides are applied verbatim to allow aliases like 'diamond'.
-        // Downstream shape clients can translate to SDK-specific names if needed.
-        tpl.elements[0] = { ...tpl.elements[0], shape }
-      }
+      overrides.push({ templateKey: this.aliasMap.get(safeName) ?? safeName, shape })
     }
+    return overrides
+  }
+
+  private isExperimentalOverrideEnabled(): boolean {
+    const flag = readExperimentalShapesFlag()
+    return typeof flag === 'string' ? flag.toLowerCase() !== 'false' : true
+  }
+
+  private applyExperimentalOverride(override: ExperimentalOverride): void {
+    const template = this.templateMap.get(override.templateKey)
+    if (!template || template.elements.length === 0) {
+      return
+    }
+    // Experimental overrides are applied verbatim to allow aliases like 'diamond'.
+    // Downstream shape clients can translate to SDK-specific names if needed.
+    template.elements[0] = { ...template.elements[0], shape: override.shape }
   }
 
   /**
@@ -443,28 +527,9 @@ export class TemplateManager {
   }
 
   private parseSimpleNumber(input: string): number | null {
-    if (input.length === 0) return null
-    let index = 0
-    if (input.startsWith('-')) {
-      index = 1
-      if (index >= input.length) return null
-    }
-    let digitCount = 0
-    let dotCount = 0
-    for (; index < input.length; index += 1) {
-      const ch = input.charAt(index)
-      if (ch >= '0' && ch <= '9') {
-        digitCount += 1
-        continue
-      }
-      if (ch === '.') {
-        dotCount += 1
-        if (dotCount > 1) return null
-        continue
-      }
+    if (!isSimpleNumber(input)) {
       return null
     }
-    if (digitCount === 0) return null
     return Number.parseFloat(input)
   }
 
