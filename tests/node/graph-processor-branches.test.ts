@@ -42,13 +42,12 @@ describe('GraphProcessor existingMode + frame', () => {
     edges: [],
   }
 
-  let layoutSpy: ReturnType<typeof vi.spyOn>
   beforeEach(async () => {
     const { layoutEngine } = await import('../../src/core/layout/elk-layout')
-    layoutSpy = vi.spyOn(layoutEngine, 'layoutGraph').mockResolvedValue(baseLayout as any)
+    vi.spyOn(layoutEngine, 'layoutGraph').mockResolvedValue(baseLayout as any)
   })
   afterEach(() => {
-    layoutSpy.mockRestore()
+    vi.restoreAllMocks()
   })
 
   it('existingMode=ignore uses existing coords without syncing', async () => {

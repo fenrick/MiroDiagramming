@@ -22,6 +22,10 @@ import { UndoableProcessor } from './undoable-processor'
 /** Board widget or group item. */
 type BoardItem = BaseItem | Group
 
+const isBaseItem = (item: BoardItem): item is BaseItem => {
+  return 'type' in item && item.type !== 'group'
+}
+
 interface MermaidNodeMetadata {
   styleOverrides?: {
     fillColor?: string
@@ -89,7 +93,7 @@ export class GraphProcessor extends UndoableProcessor {
     proxy: PositionedNode,
     offsetX: number,
     offsetY: number,
-  ): Promise<GroupableItem> {
+  ): Promise<BoardItem> {
     const centerX = proxy.x + offsetX + proxy.width / 2
     const centerY = proxy.y + offsetY + proxy.height / 2
     return this.builder.createNode(
@@ -104,7 +108,7 @@ export class GraphProcessor extends UndoableProcessor {
     layoutNodes: ReadonlyMap<string, PositionedNode>,
     offsetX: number,
     offsetY: number,
-  ): Promise<GroupableItem> {
+  ): Promise<BoardItem> {
     let minX = Number.POSITIVE_INFINITY
     let minY = Number.POSITIVE_INFINITY
     let maxX = Number.NEGATIVE_INFINITY
@@ -672,7 +676,9 @@ export class GraphProcessor extends UndoableProcessor {
       if (!container) {
         continue
       }
-      await this.tintContainer(container as BaseItem, name)
+      if (isBaseItem(container)) {
+        await this.tintContainer(container, name)
+      }
       this.registerCreated(container)
       map.set(name, container)
     }
@@ -684,7 +690,7 @@ export class GraphProcessor extends UndoableProcessor {
     layoutNodes: ReadonlyMap<string, PositionedNode>,
     offsetX: number,
     offsetY: number,
-  ): Promise<GroupableItem | undefined> {
+  ): Promise<BoardItem | undefined> {
     const children = subgraphChildren.get(name)
     if (!children || children.length === 0) {
       return undefined

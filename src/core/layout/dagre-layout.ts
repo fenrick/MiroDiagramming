@@ -15,7 +15,12 @@ interface DagreNodeAttributes {
 
 interface DagreEdgeAttributes {
   weight?: number
-  points?: { x: number; y: number }[]
+  points?: DagrePoint[]
+}
+
+interface DagrePoint {
+  x: number
+  y: number
 }
 
 type DagreOptions = Partial<UserLayoutOptions> & {
@@ -152,24 +157,33 @@ function extractLayoutNodes(
   return entries
 }
 
+const toPositionedEdge = (points: readonly DagrePoint[] | undefined): PositionedEdge | null => {
+  if (!points || points.length < 2) {
+    return null
+  }
+  const start = points[0]
+  const end = points.at(-1)
+  if (!start || !end) {
+    return null
+  }
+  const bendPoints = points.length > 2 ? points.slice(1, -1) : []
+  return {
+    startPoint: start,
+    endPoint: end,
+    bendPoints: bendPoints.length > 0 ? bendPoints : undefined,
+  }
+}
+
 function extractLayoutEdges(
   graph: dagre.graphlib.Graph<DagreNodeAttributes, DagreEdgeAttributes>,
 ): PositionedEdge[] {
   const edges: PositionedEdge[] = []
   for (const edgeReference of graph.edges()) {
-    const info = graph.edge(edgeReference)
-    const points = info?.points ?? []
-    if (points.length < 2) {
-      continue
+    const edgeValue = graph.edge(edgeReference)
+    const positioned = toPositionedEdge(edgeValue?.points)
+    if (positioned) {
+      edges.push(positioned)
     }
-    const [start, ...rest] = points
-    const end = rest.at(-1) ?? start
-    const bendPoints = rest.slice(0, Math.max(0, rest.length - 1))
-    edges.push({
-      startPoint: start,
-      endPoint: end,
-      bendPoints: bendPoints.length > 0 ? bendPoints : undefined,
-    })
   }
   return edges
 }

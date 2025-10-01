@@ -4,11 +4,8 @@ import { searchBoardContent, replaceBoardContent } from '../../src/board/search-
 import { boardCache } from '../../src/board/board-cache'
 
 describe('search-tools', () => {
-  let selSpy: ReturnType<typeof vi.spyOn>
-  let widSpy: ReturnType<typeof vi.spyOn>
   afterEach(() => {
-    selSpy?.mockRestore()
-    widSpy?.mockRestore()
+    vi.restoreAllMocks()
     boardCache.reset()
   })
 
@@ -26,7 +23,7 @@ describe('search-tools', () => {
 
   it('searches selection by text and filters', async () => {
     const items = [mk(), mk({ content: 'Gamma', style: { fillColor: '#000000' } })]
-    selSpy = vi.spyOn(boardCache, 'getSelection').mockResolvedValue(items as any)
+    vi.spyOn(boardCache, 'getSelection').mockResolvedValue(items as any)
     const results = await searchBoardContent(
       {
         query: 'alpha',
@@ -50,7 +47,7 @@ describe('search-tools', () => {
 
   it('supports regex + whole word and getWidgets when not inSelection', async () => {
     const items = [mk({ content: 'foo bar baz' }), mk({ content: 'foobarbaz' })]
-    widSpy = vi.spyOn(boardCache, 'getWidgets').mockResolvedValue(items as any)
+    vi.spyOn(boardCache, 'getWidgets').mockResolvedValue(items as any)
     const results = await searchBoardContent(
       {
         query: 'bar',
@@ -69,7 +66,7 @@ describe('search-tools', () => {
   it('replaces content and counts replacements', async () => {
     const i1 = mk({ content: 'one two two' })
     const i2 = mk({ content: 'nothing' })
-    selSpy = vi.spyOn(boardCache, 'getSelection').mockResolvedValue([i1, i2] as any)
+    vi.spyOn(boardCache, 'getSelection').mockResolvedValue([i1, i2] as any)
     const count = await replaceBoardContent(
       {
         query: 'two',

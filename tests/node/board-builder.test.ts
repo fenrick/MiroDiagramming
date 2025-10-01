@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from 'vitest'
 
 vi.mock('../../src/board/node-search', () => ({
   searchShapes: vi.fn(),
@@ -23,6 +23,10 @@ import { createConnector } from '../../src/board/connector-utilities'
 import { BoardBuilder } from '../../src/board/board-builder'
 import { boardCache } from '../../src/board/board-cache'
 
+const mockedSearchShapes = vi.mocked(searchShapes)
+const mockedSearchGroups = vi.mocked(searchGroups)
+const mockedCreateConnector = vi.mocked(createConnector)
+
 describe('BoardBuilder', () => {
   beforeAll(() => {
     ;(globalThis as any).miro = { board: { ui: {}, viewport: {}, group: vi.fn() } }
@@ -31,6 +35,7 @@ describe('BoardBuilder', () => {
     vi.clearAllMocks()
   })
   afterEach(() => {
+    vi.restoreAllMocks()
     boardCache.reset()
   })
 
@@ -39,10 +44,10 @@ describe('BoardBuilder', () => {
     await expect(
       builder.findNode(123 as any, 'X' as any, { get: vi.fn() } as any),
     ).rejects.toThrow()
-    ;(searchShapes as unknown as jest.Mock).mockResolvedValue(undefined)
+    mockedSearchShapes.mockResolvedValue(undefined)
     vi.spyOn(boardCache, 'getWidgets').mockResolvedValue([] as any)
     const group = { id: 'g' }
-    ;(searchGroups as unknown as jest.Mock).mockResolvedValue(group)
+    mockedSearchGroups.mockResolvedValue(group as any)
     const res = await builder.findNode('type', 'label', { get: vi.fn() } as any)
     expect(res).toBe(group)
   })
@@ -52,16 +57,15 @@ describe('BoardBuilder', () => {
     vi.spyOn(boardCache, 'getSelection').mockResolvedValue([
       { id: 's', type: 'shape', content: 'L' },
     ] as any)
-    ;(searchShapes as unknown as jest.Mock).mockResolvedValue({ id: 's' })
+    mockedSearchShapes.mockResolvedValue({ id: 's' } as any)
     const found = await builder.findNodeInSelection('type', 'L')
     expect(found).toEqual({ id: 's' })
   })
 
   it('createEdges creates connectors and logs failures', async () => {
     const builder = new BoardBuilder()
-    ;(createConnector as unknown as jest.Mock)
-      .mockResolvedValueOnce({ id: 'c1' })
-      .mockRejectedValueOnce(new Error('bad'))
+    mockedCreateConnector.mockResolvedValueOnce({ id: 'c1' } as any)
+    mockedCreateConnector.mockRejectedValueOnce(new Error('bad'))
     const edges = [
       { id: 'e1', from: 'a', to: 'b', metadata: { template: 'flow' } },
       { id: 'e2', from: 'a', to: 'b' },

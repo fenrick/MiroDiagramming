@@ -1,7 +1,7 @@
 import type { BaseItem, Shape, ShapeStyle, Text, TextStyle } from '@mirohq/websdk-types'
 
 import type { TemplateElement } from './templates'
-import { templateManager } from './templates'
+import { normalizeTemplateShape, templateManager } from './templates'
 
 /**
  * Combine an item's current style with values from a template element.
@@ -56,18 +56,19 @@ export function applyShapeElement(item: BaseItem, element: TemplateElement, labe
     return
   }
   const shape = item as Shape
+  type MutableShape = Shape & { shape: Shape['shape']; width: number; height: number }
+  const mutable = shape as MutableShape
   if (typeof element.shape === 'string') {
-    // Shape type is a string alias; cast to the SDK union for assignment.
-    ;(shape as Shape & { shape: unknown }).shape = element.shape as unknown
+    mutable.shape = normalizeTemplateShape(element.shape)
   }
   if (typeof element.rotation === 'number') {
-    shape.rotation = element.rotation
+    mutable.rotation = element.rotation
   }
   if (typeof element.width === 'number') {
-    shape.width = element.width
+    mutable.width = element.width
   }
   if (typeof element.height === 'number') {
-    shape.height = element.height
+    mutable.height = element.height
   }
   shape.content = (element.text ?? '{{label}}').replace('{{label}}', label)
   shape.style = buildShapeStyle(shape.style as Partial<ShapeStyle>, element)

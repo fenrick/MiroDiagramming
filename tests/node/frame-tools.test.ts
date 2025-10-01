@@ -4,9 +4,8 @@ import { renameSelectedFrames, lockSelectedFrames } from '../../src/board/frame-
 import { boardCache } from '../../src/board/board-cache'
 
 describe('frame-tools', () => {
-  let spy: ReturnType<typeof vi.spyOn>
   afterEach(() => {
-    if (spy) spy.mockRestore()
+    vi.restoreAllMocks()
     boardCache.reset()
   })
 
@@ -16,7 +15,7 @@ describe('frame-tools', () => {
       { type: 'frame', x: 0, y: 10, title: '' },
       { type: 'frame', x: 0, y: 0, title: '' },
     ]
-    spy = vi.spyOn(boardCache, 'getSelection').mockResolvedValue(frames as any)
+    vi.spyOn(boardCache, 'getSelection').mockResolvedValue(frames as any)
     await renameSelectedFrames({ prefix: 'F-' }, {} as any)
     const titlesInOrder = [...frames].sort((a, b) => a.x! - b.x! || a.y! - b.y!).map((f) => f.title)
     expect(titlesInOrder).toEqual(['F-0', 'F-1', 'F-2'])
@@ -33,7 +32,7 @@ describe('frame-tools', () => {
         getChildren: vi.fn().mockResolvedValue([childA, childB]),
       },
     ]
-    spy = vi.spyOn(boardCache, 'getSelection').mockResolvedValue(frames as any)
+    vi.spyOn(boardCache, 'getSelection').mockResolvedValue(frames as any)
     await lockSelectedFrames({} as any)
     expect(frames[0]!.locked).toBe(true)
     expect(childA.locked).toBe(true)

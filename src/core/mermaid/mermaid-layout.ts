@@ -94,6 +94,185 @@ function decodePoints(attribute: string | null): { x: number; y: number }[] | un
   }
 }
 
+interface BoundsAccumulator {
+  minX: number
+  minY: number
+  maxX: number
+  maxY: number
+}
+
+function createBoundsAccumulator(): BoundsAccumulator {
+  return {
+    minX: Number.POSITIVE_INFINITY,
+    minY: Number.POSITIVE_INFINITY,
+    maxX: Number.NEGATIVE_INFINITY,
+    maxY: Number.NEGATIVE_INFINITY,
+  }
+}
+
+function accumulatePoint(
+  bounds: BoundsAccumulator,
+  offset: { x: number; y: number },
+  point: { x: number; y: number },
+): void {
+  if (!Number.isFinite(point.x) || !Number.isFinite(point.y)) {
+    return
+  }
+  const absoluteX = offset.x + point.x
+  const absoluteY = offset.y + point.y
+  bounds.minX = Math.min(bounds.minX, absoluteX)
+  bounds.minY = Math.min(bounds.minY, absoluteY)
+  bounds.maxX = Math.max(bounds.maxX, absoluteX)
+  bounds.maxY = Math.max(bounds.maxY, absoluteY)
+}
+
+function accumulatePoints(
+  bounds: BoundsAccumulator,
+  offset: { x: number; y: number },
+  points: Iterable<{ x: number; y: number }>,
+): void {
+  for (const point of points) {
+    accumulatePoint(bounds, offset, point)
+  }
+}
+
+function accumulateRectBounds(
+  bounds: BoundsAccumulator,
+  element: Element,
+  offset: { x: number; y: number },
+): void {
+  const x = Number.parseFloat(element.getAttribute('x') ?? '0')
+  const y = Number.parseFloat(element.getAttribute('y') ?? '0')
+  const width = Number.parseFloat(element.getAttribute('width') ?? '0')
+  const height = Number.parseFloat(element.getAttribute('height') ?? '0')
+  accumulatePoints(bounds, offset, [
+    { x, y },
+    { x: x + width, y },
+    { x: x + width, y: y + height },
+    { x, y: y + height },
+  ])
+}
+
+function accumulateCircleBounds(
+  bounds: BoundsAccumulator,
+  element: Element,
+  offset: { x: number; y: number },
+): void {
+  const cx = Number.parseFloat(element.getAttribute('cx') ?? '0')
+  const cy = Number.parseFloat(element.getAttribute('cy') ?? '0')
+  const radius = Number.parseFloat(element.getAttribute('r') ?? '0')
+  accumulatePoints(bounds, offset, [
+    { x: cx - radius, y: cy - radius },
+    { x: cx + radius, y: cy + radius },
+  ])
+}
+
+function accumulateEllipseBounds(
+  bounds: BoundsAccumulator,
+  element: Element,
+  offset: { x: number; y: number },
+): void {
+  const cx = Number.parseFloat(element.getAttribute('cx') ?? '0')
+  const cy = Number.parseFloat(element.getAttribute('cy') ?? '0')
+  const rx = Number.parseFloat(element.getAttribute('rx') ?? '0')
+  const ry = Number.parseFloat(element.getAttribute('ry') ?? '0')
+  accumulatePoints(bounds, offset, [
+    { x: cx - rx, y: cy - ry },
+    { x: cx + rx, y: cy + ry },
+  ])
+}
+
+function accumulatePolygonBounds(
+  bounds: BoundsAccumulator,
+  element: Element,
+  offset: { x: number; y: number },
+): void {
+  const polygonOffset = parseTranslate(element.getAttribute('transform'))
+  const pointsAttribute = element.getAttribute('points') ?? ''
+  const points = pointsAttribute
+    .trim()
+    .split(/\s+/)
+    .map((pair) => pair.split(',').map((value) => Number.parseFloat(value)))
+    .filter(
+      (pair): pair is [number, number] =>
+        pair.length === 2 && pair.every((value) => Number.isFinite(value)),
+    )
+    .map(([x, y]) => ({ x: x + polygonOffset.x, y: y + polygonOffset.y }))
+  accumulatePoints(bounds, offset, points)
+}
+
+function accumulatePathBounds(
+  bounds: BoundsAccumulator,
+  element: Element,
+  offset: { x: number; y: number },
+): void {
+  const dataBounds = (element as HTMLElement | SVGElement).dataset.bounds ?? null
+  if (!dataBounds) {
+    return
+  }
+  try {
+    const parsed = JSON.parse(dataBounds) as { x: number; y: number; width: number; height: number }
+    accumulatePoints(bounds, offset, [
+      { x: parsed.x, y: parsed.y },
+      { x: parsed.x + parsed.width, y: parsed.y + parsed.height },
+    ])
+  } catch {
+    // Ignore malformed metadata
+  }
+}
+
+function computeManualBounds(nodeElement: SVGGElement): {
+  x: number
+  y: number
+  width: number
+  height: number
+} {
+  const bounds = createBoundsAccumulator()
+  const groupOffset = parseTranslate(nodeElement.getAttribute('transform'))
+  for (const element of nodeElement.querySelectorAll('rect, circle, ellipse, polygon, path')) {
+    const tag = element.tagName.toLowerCase()
+    switch (tag) {
+      case 'rect': {
+        accumulateRectBounds(bounds, element, groupOffset)
+        break
+      }
+      case 'circle': {
+        accumulateCircleBounds(bounds, element, groupOffset)
+        break
+      }
+      case 'ellipse': {
+        accumulateEllipseBounds(bounds, element, groupOffset)
+        break
+      }
+      case 'polygon': {
+        accumulatePolygonBounds(bounds, element, groupOffset)
+        break
+      }
+      case 'path': {
+        accumulatePathBounds(bounds, element, groupOffset)
+        break
+      }
+      default: {
+        break
+      }
+    }
+  }
+  if (
+    bounds.minX === Number.POSITIVE_INFINITY ||
+    bounds.minY === Number.POSITIVE_INFINITY ||
+    bounds.maxX === Number.NEGATIVE_INFINITY ||
+    bounds.maxY === Number.NEGATIVE_INFINITY
+  ) {
+    return { x: groupOffset.x, y: groupOffset.y, width: 0, height: 0 }
+  }
+  return {
+    x: bounds.minX,
+    y: bounds.minY,
+    width: bounds.maxX - bounds.minX,
+    height: bounds.maxY - bounds.minY,
+  }
+}
+
 function computeNodeBounds(nodeElement: SVGGElement): {
   x: number
   y: number
@@ -111,110 +290,7 @@ function computeNodeBounds(nodeElement: SVGGElement): {
     }
   }
 
-  // Manual bounding-box calculation when getBBox is unavailable (e.g., tests)
-  let minX = Number.POSITIVE_INFINITY
-  let minY = Number.POSITIVE_INFINITY
-  let maxX = Number.NEGATIVE_INFINITY
-  let maxY = Number.NEGATIVE_INFINITY
-
-  const groupOffset = parseTranslate(nodeElement.getAttribute('transform'))
-
-  const updateBounds = (points: { x: number; y: number }[]) => {
-    for (const { x, y } of points) {
-      if (!Number.isFinite(x) || !Number.isFinite(y)) {
-        continue
-      }
-      minX = Math.min(minX, groupOffset.x + x)
-      minY = Math.min(minY, groupOffset.y + y)
-      maxX = Math.max(maxX, groupOffset.x + x)
-      maxY = Math.max(maxY, groupOffset.y + y)
-    }
-  }
-
-  for (const element of nodeElement.querySelectorAll('rect, circle, ellipse, polygon, path')) {
-    const tag = element.tagName.toLowerCase()
-    if (tag === 'rect') {
-      const x = Number.parseFloat(element.getAttribute('x') ?? '0')
-      const y = Number.parseFloat(element.getAttribute('y') ?? '0')
-      const width = Number.parseFloat(element.getAttribute('width') ?? '0')
-      const height = Number.parseFloat(element.getAttribute('height') ?? '0')
-      updateBounds([
-        { x, y },
-        { x: x + width, y },
-        { x: x + width, y: y + height },
-        { x, y: y + height },
-      ])
-      continue
-    }
-    if (tag === 'circle') {
-      const cx = Number.parseFloat(element.getAttribute('cx') ?? '0')
-      const cy = Number.parseFloat(element.getAttribute('cy') ?? '0')
-      const r = Number.parseFloat(element.getAttribute('r') ?? '0')
-      updateBounds([
-        { x: cx - r, y: cy - r },
-        { x: cx + r, y: cy + r },
-      ])
-      continue
-    }
-    if (tag === 'ellipse') {
-      const cx = Number.parseFloat(element.getAttribute('cx') ?? '0')
-      const cy = Number.parseFloat(element.getAttribute('cy') ?? '0')
-      const rx = Number.parseFloat(element.getAttribute('rx') ?? '0')
-      const ry = Number.parseFloat(element.getAttribute('ry') ?? '0')
-      updateBounds([
-        { x: cx - rx, y: cy - ry },
-        { x: cx + rx, y: cy + ry },
-      ])
-      continue
-    }
-    if (tag === 'polygon') {
-      const subTransform = parseTranslate(element.getAttribute('transform'))
-      const pointsAttribute = element.getAttribute('points') ?? ''
-      const pointPairs = pointsAttribute
-        .trim()
-        .split(/\s+/)
-        .map((pair) => pair.split(',').map((value) => Number.parseFloat(value)))
-        .filter(
-          (pair): pair is [number, number] =>
-            pair.length === 2 && pair.every((n) => Number.isFinite(n)),
-        )
-        .map(([x, y]) => ({ x: x + subTransform.x, y: y + subTransform.y }))
-      updateBounds(pointPairs)
-      continue
-    }
-    if (tag === 'path') {
-      // Path shapes are complex; rely on stroke bounding approximated via data attribute when available.
-      const dataBounds = (element as HTMLElement | SVGElement).dataset.bounds ?? null
-      if (dataBounds) {
-        try {
-          const parsed = JSON.parse(dataBounds) as {
-            x: number
-            y: number
-            width: number
-            height: number
-          }
-          updateBounds([
-            { x: parsed.x, y: parsed.y },
-            { x: parsed.x + parsed.width, y: parsed.y + parsed.height },
-          ])
-          continue
-        } catch {
-          // ignore decode errors for path data-bounds
-        }
-      }
-    }
-  }
-
-  if (
-    !Number.isFinite(minX) ||
-    !Number.isFinite(minY) ||
-    !Number.isFinite(maxX) ||
-    !Number.isFinite(maxY)
-  ) {
-    return { x: groupOffset.x, y: groupOffset.y, width: 0, height: 0 }
-  }
-
-  return { x: minX, y: minY, width: maxX - minX, height: maxY - minY }
+  return computeManualBounds(nodeElement)
 }
 
 function mapNodesFromSvg(

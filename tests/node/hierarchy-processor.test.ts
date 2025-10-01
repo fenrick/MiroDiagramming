@@ -23,7 +23,7 @@ const createNodeImpl: BoardBuilder['createNode'] = (node) => {
 }
 
 const groupItemsImpl: BoardBuilder['groupItems'] = (items) =>
-  Promise.resolve({ id: 'g', items } as Group)
+  Promise.resolve({ id: 'g', items } as unknown as Group)
 
 const createFrameImpl: BoardBuilder['createFrame'] = (width, height, x, y, title) =>
   Promise.resolve({
@@ -39,7 +39,7 @@ const createFrameImpl: BoardBuilder['createFrame'] = (width, height, x, y, title
     metadata: {},
     childIds: [],
     parentId: null,
-  } as Frame)
+  } as unknown as Frame)
 
 function createBuilder(): {
   builder: BoardBuilder
@@ -76,10 +76,10 @@ describe('HierarchyProcessor', () => {
     const { builder, groupItemsMock, zoomToMock } = createBuilder()
     layoutHierarchySpy.mockResolvedValue({
       nodes: {
-        a: { x: 0, y: 0, width: 10, height: 10 },
-        b: { x: 10, y: 10, width: 10, height: 10 },
+        a: { id: 'a', x: 0, y: 0, width: 10, height: 10 },
+        b: { id: 'b', x: 10, y: 10, width: 10, height: 10 },
       },
-    } as nested.NestedLayoutResult)
+    } as unknown as nested.NestedLayoutResult)
 
     const processor = new HierarchyProcessor(builder)
     await processor.processHierarchy(
@@ -104,9 +104,9 @@ describe('HierarchyProcessor', () => {
     const { builder, zoomToMock } = createBuilder()
     layoutHierarchySpy.mockResolvedValue({
       nodes: {
-        a: { x: 0, y: 0, width: 10, height: 10 },
+        a: { id: 'a', x: 0, y: 0, width: 10, height: 10 },
       },
-    } as nested.NestedLayoutResult)
+    } as unknown as nested.NestedLayoutResult)
 
     const processor = new HierarchyProcessor(builder)
     await processor.processHierarchy([{ id: 'a', type: 't', label: 'A' }], { createFrame: false })

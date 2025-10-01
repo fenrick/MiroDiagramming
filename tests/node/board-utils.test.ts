@@ -16,12 +16,11 @@ vi.mock('../../src/ui/hooks/notifications', () => ({
 
 describe('board utils', () => {
   const selection = [{ id: 'a' }, { id: 'b' }]
-  let spySel: ReturnType<typeof vi.spyOn>
   beforeEach(() => {
-    spySel = vi.spyOn(boardCache, 'getSelection').mockResolvedValue(selection as any)
+    vi.spyOn(boardCache, 'getSelection').mockResolvedValue(selection as any)
   })
   afterEach(() => {
-    spySel.mockRestore()
+    vi.restoreAllMocks()
     boardCache.reset()
   })
 

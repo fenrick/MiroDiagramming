@@ -11,7 +11,7 @@ const SVG_NS = 'http://www.w3.org/2000/svg'
 describe('computeNodeBounds', () => {
   it('uses native getBBox results when available', () => {
     const group = document.createElementNS(SVG_NS, 'g') as SVGGElement
-    group.getBBox = () => ({ x: 10, y: 20, width: 30, height: 40 })
+    group.getBBox = (() => new DOMRect(10, 20, 30, 40)) as SVGGElement['getBBox']
 
     expect(computeNodeBounds(group)).toEqual({ x: 10, y: 20, width: 30, height: 40 })
   })
@@ -19,9 +19,9 @@ describe('computeNodeBounds', () => {
   it('falls back to manual geometry when getBBox throws', () => {
     const group = document.createElementNS(SVG_NS, 'g') as SVGGElement
     group.setAttribute('transform', 'translate(5,10)')
-    group.getBBox = () => {
+    group.getBBox = ((..._args: unknown[]) => {
       throw new Error('unsupported')
-    }
+    }) as SVGGElement['getBBox']
 
     const rect = document.createElementNS(SVG_NS, 'rect')
     rect.setAttribute('x', '0')

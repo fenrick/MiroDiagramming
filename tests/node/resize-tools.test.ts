@@ -8,15 +8,14 @@ import {
 import { boardCache } from '../../src/board/board-cache'
 
 describe('resize-tools', () => {
-  let spy: ReturnType<typeof vi.spyOn>
   afterEach(() => {
-    if (spy) spy.mockRestore()
+    vi.restoreAllMocks()
     boardCache.reset()
   })
 
   it('copies size from first selection', async () => {
     const items = [{ width: 11, height: 22 }]
-    spy = vi.spyOn(boardCache, 'getSelection').mockResolvedValue(items as any)
+    vi.spyOn(boardCache, 'getSelection').mockResolvedValue(items as any)
     const size = await copySizeFromSelection({} as any)
     expect(size).toEqual({ width: 11, height: 22 })
   })
@@ -26,7 +25,7 @@ describe('resize-tools', () => {
       { width: 10, height: 10, sync: vi.fn() },
       { width: 2, height: 3, sync: vi.fn() },
     ]
-    spy = vi.spyOn(boardCache, 'getSelection').mockResolvedValue(items as any)
+    vi.spyOn(boardCache, 'getSelection').mockResolvedValue(items as any)
     await applySizeToSelection({ width: 5, height: 6 }, {} as any)
     expect(items[0]).toMatchObject({ width: 5, height: 6 })
     expect(items[1]).toMatchObject({ width: 5, height: 6 })
@@ -34,7 +33,7 @@ describe('resize-tools', () => {
 
   it('scales selection by factor', async () => {
     const items = [{ width: 10, height: 10, sync: vi.fn() }]
-    spy = vi.spyOn(boardCache, 'getSelection').mockResolvedValue(items as any)
+    vi.spyOn(boardCache, 'getSelection').mockResolvedValue(items as any)
     await scaleSelection(2, {} as any)
     expect(items[0]).toMatchObject({ width: 20, height: 20 })
   })
