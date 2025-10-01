@@ -311,3 +311,8 @@ export async function computeMermaidLayout(
     removeHiddenContainer(container)
   }
 }
+
+/** Internal helpers exposed solely for unit testing high-complexity logic. */
+export const __testables = {
+  computeNodeBounds,
+} as const
