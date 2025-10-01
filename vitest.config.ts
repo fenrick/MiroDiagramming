@@ -1,12 +1,45 @@
 import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vitest/config'
 
+const webSdkTypesVirtualPrefix = '\u0000websdk-types:'
+const webSdkTypesStubPath = fileURLToPath(
+  new URL('./tests/__mocks__/websdk-types.ts', import.meta.url),
+)
+
 export default defineConfig({
   resolve: {
-    alias: {
-      '../src': fileURLToPath(new URL('./src', import.meta.url)),
-    },
+    alias: [
+      {
+        find: '../src',
+        replacement: fileURLToPath(new URL('./src', import.meta.url)),
+      },
+      {
+        find: /^@mirohq\/websdk-types$/,
+        replacement: webSdkTypesStubPath,
+      },
+    ],
   },
+  plugins: [
+    {
+      name: 'stub-websdk-types',
+      enforce: 'pre',
+      resolveId(id) {
+        if (id === '@mirohq/websdk-types') {
+          return webSdkTypesStubPath
+        }
+        if (id.startsWith('@mirohq/websdk-types/')) {
+          return `${webSdkTypesVirtualPrefix}${id.slice('@mirohq/websdk-types/'.length)}`
+        }
+        return null
+      },
+      load(id) {
+        if (id.startsWith(webSdkTypesVirtualPrefix)) {
+          return 'export {}'
+        }
+        return null
+      },
+    },
+  ],
   test: {
     // Single project: default Node environment. Use per-file directive for jsdom
     // e.g. add `// @vitest-environment jsdom` at the top of client test files.

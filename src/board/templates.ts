@@ -1,12 +1,11 @@
 import { colors } from '@mirohq/design-tokens'
-import type {
-  ConnectorStyle,
-  Frame,
-  Group,
-  GroupableItem,
-  ShapeStyle,
-  ShapeType,
-  TextStyle,
+import {
+  type ConnectorStyle,
+  type Frame,
+  type Group,
+  type GroupableItem,
+  type ShapeStyle,
+  type TextStyle,
 } from '@mirohq/websdk-types'
 
 import { ShapeClient, type ShapeData } from '../core/utils/shape-client'
@@ -62,44 +61,71 @@ export type ConnectorTemplateCollection = Record<string, ConnectorTemplate>
 
 const TEMPLATE_KEY_PATTERN = (value: string): boolean => isSafeAliasKey(value)
 
-const SHAPE_WHITELIST = new Set<ShapeType>([
-  'rectangle',
-  'circle',
-  'triangle',
-  'wedge_round_rectangle_callout',
-  'round_rectangle',
-  'rhombus',
-  'parallelogram',
-  'star',
-  'right_arrow',
-  'left_arrow',
-  'pentagon',
-  'hexagon',
-  'octagon',
-  'trapezoid',
-  'flow_chart_predefined_process',
-  'left_right_arrow',
-  'cloud',
-  'left_brace',
-  'right_brace',
-  'cross',
-  'can',
-  'text',
+export const SHAPE_TYPE = {
+  Rectangle: 'rectangle',
+  Circle: 'circle',
+  Triangle: 'triangle',
+  WedgeRoundRectangleCallout: 'wedge_round_rectangle_callout',
+  RoundRectangle: 'round_rectangle',
+  Rhombus: 'rhombus',
+  Parallelogram: 'parallelogram',
+  Star: 'star',
+  RightArrow: 'right_arrow',
+  LeftArrow: 'left_arrow',
+  Pentagon: 'pentagon',
+  Hexagon: 'hexagon',
+  Octagon: 'octagon',
+  Trapezoid: 'trapezoid',
+  FlowChartPredefinedProcess: 'flow_chart_predefined_process',
+  LeftRightArrow: 'left_right_arrow',
+  Cloud: 'cloud',
+  LeftBrace: 'left_brace',
+  RightBrace: 'right_brace',
+  Cross: 'cross',
+  Can: 'can',
+} as const
+
+type TemplateShape = (typeof SHAPE_TYPE)[keyof typeof SHAPE_TYPE]
+
+const SHAPE_WHITELIST: ReadonlySet<TemplateShape> = new Set<TemplateShape>([
+  SHAPE_TYPE.Rectangle,
+  SHAPE_TYPE.Circle,
+  SHAPE_TYPE.Triangle,
+  SHAPE_TYPE.WedgeRoundRectangleCallout,
+  SHAPE_TYPE.RoundRectangle,
+  SHAPE_TYPE.Rhombus,
+  SHAPE_TYPE.Parallelogram,
+  SHAPE_TYPE.Star,
+  SHAPE_TYPE.RightArrow,
+  SHAPE_TYPE.LeftArrow,
+  SHAPE_TYPE.Pentagon,
+  SHAPE_TYPE.Hexagon,
+  SHAPE_TYPE.Octagon,
+  SHAPE_TYPE.Trapezoid,
+  SHAPE_TYPE.FlowChartPredefinedProcess,
+  SHAPE_TYPE.LeftRightArrow,
+  SHAPE_TYPE.Cloud,
+  SHAPE_TYPE.LeftBrace,
+  SHAPE_TYPE.RightBrace,
+  SHAPE_TYPE.Cross,
+  SHAPE_TYPE.Can,
 ])
 
 const COLOR_LOOKUP = new Map<string, string>(Object.entries(colors as Record<string, string>))
 
-function sanitizeShapeType(shape: string | undefined): ShapeType {
+export function normalizeTemplateShape(shape: string | undefined): TemplateShape {
   if (!shape) {
-    return 'rectangle'
+    return SHAPE_TYPE.Rectangle
   }
   if (shape === 'diamond') {
-    return 'rhombus'
+    return SHAPE_TYPE.Rhombus
   }
-  if (shape.startsWith('flow_chart_') && shape !== 'flow_chart_predefined_process') {
-    return 'rectangle'
+  if (shape.startsWith('flow_chart_') && shape !== SHAPE_TYPE.FlowChartPredefinedProcess) {
+    return SHAPE_TYPE.Rectangle
   }
-  return (SHAPE_WHITELIST.has(shape as ShapeType) ? shape : 'rectangle') as ShapeType
+  return SHAPE_WHITELIST.has(shape as TemplateShape)
+    ? (shape as TemplateShape)
+    : SHAPE_TYPE.Rectangle
 }
 
 function buildTemplateEntries(raw: Record<string, unknown>): [string, TemplateDefinition][] {
@@ -456,7 +482,7 @@ export class TemplateManager {
       style.fillColor = this.resolveToken(element.fill) as string
     }
     return {
-      shape: sanitizeShapeType(element.shape),
+      shape: normalizeTemplateShape(element.shape),
       x,
       y,
       width: element.width ?? 0,
