@@ -72,7 +72,7 @@ export const MermaidTab: React.FC = () => {
   })
   const [frameTitle, setFrameTitle] = React.useState('')
   const [existingMode, setExistingMode] = React.useState<ExistingNodeMode>('move')
-  const [isRendering, setRendering] = React.useState(false)
+  const [isRendering, setIsRendering] = React.useState(false)
   const [status, setStatus] = React.useState<
     { variant: 'success'; message: string } | { variant: 'error'; message: string } | null
   >(null)
@@ -118,7 +118,7 @@ export const MermaidTab: React.FC = () => {
       return
     }
     const renderer = rendererReference.current
-    setRendering(true)
+    setIsRendering(true)
     setStatus(null)
     try {
       const graph = await renderer.render(trimmedDefinition, {
@@ -145,7 +145,7 @@ export const MermaidTab: React.FC = () => {
       }
       log.error({ error }, 'Mermaid rendering failed')
     } finally {
-      setRendering(false)
+      setIsRendering(false)
     }
   }, [existingMode, frameTitle, isDefinitionEmpty, trimmedDefinition, withFrame])
 
@@ -205,13 +205,14 @@ export const MermaidTab: React.FC = () => {
         </SidebarSection>
         {status ? (
           <Callout
-            role="status"
             variant={status.variant === 'success' ? 'success' : 'danger'}
             dismissible={false}
             style={STATUS_STYLE}
           >
             <Callout.Content>
-              <Callout.Description>{status.message}</Callout.Description>
+              <Callout.Description>
+                <output aria-live="polite">{status.message}</output>
+              </Callout.Description>
             </Callout.Content>
           </Callout>
         ) : null}

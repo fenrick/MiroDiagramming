@@ -22,7 +22,7 @@ import {
  */
 export function findStyleKey(style: Record<string, unknown>, keys: string[]): string | null {
   for (const key of keys) {
-    if (Object.prototype.hasOwnProperty.call(style, key)) {
+    if (Object.hasOwn(style, key)) {
       return key
     }
   }
