@@ -1,3 +1,10 @@
+## [2.6.12](https://github.com/fenrick/MiroDiagramming/compare/v2.6.11...v2.6.12) (2025-10-02)
+
+
+### Bug Fixes
+
+* **ui:** replace inline styles on nested tabs ([199a07b](https://github.com/fenrick/MiroDiagramming/commit/199a07b7babae79995cc625f56b7d5059703d57a))
+
 ## [2.6.11](https://github.com/fenrick/MiroDiagramming/compare/v2.6.10...v2.6.11) (2025-10-02)
 
 
