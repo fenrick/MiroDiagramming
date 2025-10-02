@@ -193,34 +193,7 @@ export class GraphProcessor extends UndoableProcessor {
     const existing = await this.collectExistingNodes(data)
     const layoutInput = this.buildLayoutInput(data, existing, existingMode)
     const layout = await layoutEngine.layoutGraph(layoutInput, options.layout)
-
-    const bounds = this.layoutBounds(layout)
-    const margin = 100
-    const frameWidth = bounds.maxX - bounds.minX + margin * 2
-    const frameHeight = bounds.maxY - bounds.minY + margin * 2
-    const spot = await this.builder.findSpace(frameWidth, frameHeight)
-
-    let frame: Frame | undefined
-    if (options.createFrame === false) {
-      clearActiveFrame(this.builder)
-    } else {
-      frame = await registerFrame(
-        this.builder,
-        this.lastCreated,
-        frameWidth,
-        frameHeight,
-        spot,
-        options.frameTitle,
-      )
-    }
-
-    const { offsetX, offsetY } = this.calculateOffset(
-      spot,
-      frameWidth,
-      frameHeight,
-      { minX: bounds.minX, minY: bounds.minY },
-      margin,
-    )
+    const { frame, offsetX, offsetY } = await this.prepareLayoutPlacement(layout, options)
 
     const { map, positions } = await this.createNodes(
       data,
@@ -244,33 +217,7 @@ export class GraphProcessor extends UndoableProcessor {
     this.validateGraph(graph)
     const existingMode: ExistingNodeMode = options.existingMode ?? 'move'
     const existing = await this.collectExistingNodes(graph)
-    const bounds = this.layoutBounds(layout)
-    const margin = 100
-    const frameWidth = bounds.maxX - bounds.minX + margin * 2
-    const frameHeight = bounds.maxY - bounds.minY + margin * 2
-    const spot = await this.builder.findSpace(frameWidth, frameHeight)
-
-    let frame: Frame | undefined
-    if (options.createFrame === false) {
-      clearActiveFrame(this.builder)
-    } else {
-      frame = await registerFrame(
-        this.builder,
-        this.lastCreated,
-        frameWidth,
-        frameHeight,
-        spot,
-        options.frameTitle,
-      )
-    }
-
-    const { offsetX, offsetY } = this.calculateOffset(
-      spot,
-      frameWidth,
-      frameHeight,
-      { minX: bounds.minX, minY: bounds.minY },
-      margin,
-    )
+    const { frame, offsetX, offsetY, bounds } = await this.prepareLayoutPlacement(layout, options)
 
     const { map, positions } = await this.createNodes(
       graph,
@@ -515,6 +462,46 @@ export class GraphProcessor extends UndoableProcessor {
     margin: number,
   ) {
     return frameOffset(spot, frameWidth, frameHeight, bounds, margin)
+  }
+
+  private async prepareLayoutPlacement(
+    layout: LayoutResult,
+    options: ProcessOptions,
+  ): Promise<{
+    frame?: Frame
+    offsetX: number
+    offsetY: number
+    bounds: { minX: number; minY: number; maxX: number; maxY: number }
+  }> {
+    const bounds = this.layoutBounds(layout)
+    const margin = 100
+    const frameWidth = bounds.maxX - bounds.minX + margin * 2
+    const frameHeight = bounds.maxY - bounds.minY + margin * 2
+    const spot = await this.builder.findSpace(frameWidth, frameHeight)
+
+    let frame: Frame | undefined
+    if (options.createFrame === false) {
+      clearActiveFrame(this.builder)
+    } else {
+      frame = await registerFrame(
+        this.builder,
+        this.lastCreated,
+        frameWidth,
+        frameHeight,
+        spot,
+        options.frameTitle,
+      )
+    }
+
+    const { offsetX, offsetY } = this.calculateOffset(
+      spot,
+      frameWidth,
+      frameHeight,
+      { minX: bounds.minX, minY: bounds.minY },
+      margin,
+    )
+
+    return { frame, offsetX, offsetY, bounds }
   }
 
   /**
