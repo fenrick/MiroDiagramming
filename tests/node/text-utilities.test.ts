@@ -7,9 +7,19 @@ import {
   setStringAtPath,
 } from '../../src/core/utils/text-utilities'
 
-describe('text-utils', () => {
+interface TextWidget extends Record<string, unknown> {
+  content?: string
+  text?: {
+    plainText?: string
+    content?: string
+  }
+  plainText?: string
+  data?: Record<string, unknown>
+}
+
+describe('text utilities', () => {
   it('reads and writes item text via common and nested paths', () => {
-    const item: Record<string, unknown> = {
+    const item: TextWidget = {
       content: 'A',
       text: { plainText: '', content: '' },
     }
@@ -17,12 +27,12 @@ describe('text-utils', () => {
     writeItemText(item, 'B')
     expect(readItemText(item)).toBe('B')
     // Ensure nested fields also receive updates
-    expect((item as any).text.plainText).toBe('B')
-    expect((item as any).text.content).toBe('B')
+    expect(item.text?.plainText).toBe('B')
+    expect(item.text?.content).toBe('B')
   })
 
   it('gets and sets values on nested text objects', () => {
-    const item: Record<string, unknown> = { text: { plainText: 'x', content: 'x' } }
+    const item: TextWidget = { text: { plainText: 'x', content: 'x' } }
     expect(getStringAtPath(item, 'text.plainText')).toBe('x')
     setStringAtPath(item, 'text.plainText', 'y')
     expect(getStringAtPath(item, 'text.plainText')).toBe('y')
@@ -38,8 +48,8 @@ describe('text-utils', () => {
   })
 
   it('writes to top-level plainText when present', () => {
-    const item: Record<string, unknown> = { plainText: '' }
+    const item: TextWidget = { plainText: '' }
     writeItemText(item, 'Z')
-    expect((item as any).plainText).toBe('Z')
+    expect(item.plainText).toBe('Z')
   })
 })

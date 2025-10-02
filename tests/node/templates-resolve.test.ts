@@ -18,14 +18,20 @@ describe('TemplateManager resolution', () => {
 
   it('maps template aliases to their canonical name', () => {
     const mgr = TemplateManager.getInstance()
-    const tpl = mgr.getTemplate('Driver') // alias of Motivation in fixtures
-    expect(tpl?.elements?.[0]).toBeTruthy()
+    const template = mgr.getTemplate('Driver') // alias of Motivation in fixtures
+    if (!template) {
+      throw new Error('Expected Driver alias to resolve')
+    }
+    expect(template.elements[0]).toBeTruthy()
   })
 
   it('resolves aliases containing ampersands', () => {
     const mgr = TemplateManager.getInstance()
-    const tpl = mgr.getTemplate('Vision & Mission') // alias present in fixtures
-    expect(tpl?.elements?.[0]).toBeTruthy()
+    const template = mgr.getTemplate('Vision & Mission') // alias present in fixtures
+    if (!template) {
+      throw new Error('Expected Vision & Mission alias to resolve')
+    }
+    expect(template.elements[0]).toBeTruthy()
   })
 
   it('resolves connector templates including aliases', () => {
