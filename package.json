@@ -38,7 +38,7 @@
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^20.0.0",
-    "@mirohq/websdk-types": "^2.9.0",
+    "@mirohq/websdk-types": "^2.17.2",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
     "@stylistic/eslint-plugin": "^5.4.0",
