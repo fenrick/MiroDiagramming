@@ -15,7 +15,7 @@ const search = (() => {
     location?: { search?: string }
   }
 
-  if (!Object.prototype.hasOwnProperty.call(globalContext, 'location')) {
+  if (!Object.hasOwn(globalContext, 'location')) {
     return ''
   }
 
