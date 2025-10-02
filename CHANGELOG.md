@@ -1,3 +1,14 @@
+## [2.6.10](https://github.com/fenrick/MiroDiagramming/compare/v2.6.9...v2.6.10) (2025-10-02)
+
+
+### Bug Fixes
+
+* **graph:** refactor graph processor node placement ([9f9ca4e](https://github.com/fenrick/MiroDiagramming/commit/9f9ca4e52a3dcaf2aade611ff9e4ca75612567b5))
+* **layout:** add typed dagre wrapper and tests ([a15a17f](https://github.com/fenrick/MiroDiagramming/commit/a15a17f0a73fc7e891371d1627dd5a20dc956235))
+* **mermaid:** harden renderer helpers and coverage ([77e97f7](https://github.com/fenrick/MiroDiagramming/commit/77e97f7b7ad4f21281307c401b9780e93c58aa27))
+* **tests:** stub websdk types for vitest ([6d1ea1c](https://github.com/fenrick/MiroDiagramming/commit/6d1ea1c2c8b8a8bb68796b2e772db9db4a90a70e))
+* **types:** resolve typecheck regressions ([de682ec](https://github.com/fenrick/MiroDiagramming/commit/de682ec996915edacf64905d9acdf022c50ced0a))
+
 ## [2.6.9](https://github.com/fenrick/MiroDiagramming/compare/v2.6.8...v2.6.9) (2025-09-30)
 
 
