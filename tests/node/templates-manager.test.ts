@@ -1,5 +1,48 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+function setupWithMocks(): void {
+  vi.mock('../../templates/shapeTemplates.json', () => ({
+    default: {
+      Primary: {
+        alias: ['Alias One', 'Unsafe/Alias'],
+        elements: [
+          {
+            shape: 'rectangle',
+            text: '{{label}}',
+            style: {
+              borderWidth: '2',
+              padding: '12px',
+              empty: '   ',
+              negative: '-3',
+              negativeDecimal: '-1.5',
+              badNumber: '1.2.3',
+            },
+          },
+        ],
+      },
+      Secondary: {
+        elements: [
+          {
+            shape: 'circle',
+            text: 'Static',
+          },
+        ],
+      },
+    },
+  }))
+  vi.mock('../../templates/connectorTemplates.json', () => ({
+    default: {
+      flow: {
+        alias: ['Flows'],
+        style: {
+          strokeWidth: '4px',
+          caption: 'ignore',
+        },
+      },
+    },
+  }))
+}
+
 describe('TemplateManager construction and parsing', () => {
   beforeEach(() => {
     vi.resetModules()
@@ -7,51 +50,8 @@ describe('TemplateManager construction and parsing', () => {
     vi.unstubAllEnvs()
   })
 
-  const setupWithMocks = async () => {
-    vi.mock('../../templates/shapeTemplates.json', () => ({
-      default: {
-        Primary: {
-          alias: ['Alias One', 'Unsafe/Alias'],
-          elements: [
-            {
-              shape: 'rectangle',
-              text: '{{label}}',
-              style: {
-                borderWidth: '2',
-                padding: '12px',
-                empty: '   ',
-                negative: '-3',
-                negativeDecimal: '-1.5',
-                badNumber: '1.2.3',
-              },
-            },
-          ],
-        },
-        Secondary: {
-          elements: [
-            {
-              shape: 'circle',
-              text: 'Static',
-            },
-          ],
-        },
-      },
-    }))
-    vi.mock('../../templates/connectorTemplates.json', () => ({
-      default: {
-        flow: {
-          alias: ['Flows'],
-          style: {
-            strokeWidth: '4px',
-            caption: 'ignore',
-          },
-        },
-      },
-    }))
-  }
-
   it('sanitises aliases and builds lookup tables in the constructor', async () => {
-    await setupWithMocks()
+    setupWithMocks()
     vi.mock('../../templates/experimentalShapeMap.json', () => ({
       default: { 'Alias One': 'diamond', 'Unsafe/Alias': 'circle' },
     }))
@@ -73,7 +73,7 @@ describe('TemplateManager construction and parsing', () => {
 
   it('skips experimental overrides when the feature flag is disabled', async () => {
     vi.stubEnv('VITE_MIRO_EXPERIMENTAL_SHAPES', 'false')
-    await setupWithMocks()
+    setupWithMocks()
     vi.mock('../../templates/experimentalShapeMap.json', () => ({
       default: { 'Alias One': 'diamond' },
     }))
@@ -82,11 +82,15 @@ describe('TemplateManager construction and parsing', () => {
     const manager = TemplateManager.getInstance()
 
     const template = manager.getTemplate('Alias One')
-    expect(template?.elements?.[0]?.shape).toBe('rectangle')
+    if (!template) {
+      throw new Error('Expected template to resolve')
+    }
+    const firstElement = template.elements[0]
+    expect(firstElement?.shape).toBe('rectangle')
   })
 
   it('parses numeric style values while leaving invalid entries intact', async () => {
-    await setupWithMocks()
+    setupWithMocks()
     vi.mock('../../templates/experimentalShapeMap.json', () => ({
       default: {},
     }))

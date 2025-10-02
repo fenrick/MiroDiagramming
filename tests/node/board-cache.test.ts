@@ -1,34 +1,51 @@
-import { describe, it, expect, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { boardCache } from '../../src/board/board-cache'
+import type { BoardLike, BoardQueryLike } from '../../src/board/types'
 
 describe('board-cache', () => {
-  it('caches selection and clears on reset', async () => {
-    const board = {
-      getSelection: vi.fn().mockResolvedValue([{ id: '1' }, { id: '2' }]),
-    } as any
-    const first = await boardCache.getSelection(board)
-    expect(first.length).toBe(2)
-    // Second call uses cache
-    board.getSelection.mockResolvedValue([{ id: 'x' }])
-    const second = await boardCache.getSelection(board)
-    expect(second.length).toBe(2)
+  afterEach(() => {
     boardCache.reset()
-    const third = await boardCache.getSelection(board)
-    expect(third.length).toBe(1)
+  })
+
+  it('caches selection and clears on reset', async () => {
+    const getSelection = vi
+      .fn<BoardLike['getSelection']>()
+      .mockResolvedValue([{ id: '1' }, { id: '2' }])
+    const board: BoardLike = {
+      getSelection,
+    }
+
+    const initialSelection = await boardCache.getSelection(board)
+    expect(initialSelection).toHaveLength(2)
+
+    // Second call should use the cached selection
+    getSelection.mockResolvedValue([{ id: 'x' }])
+    const cachedSelection = await boardCache.getSelection(board)
+    expect(cachedSelection).toHaveLength(2)
+
+    boardCache.reset()
+
+    const refreshedSelection = await boardCache.getSelection(board)
+    expect(refreshedSelection).toHaveLength(1)
   })
 
   it('fetches missing widget types and caches them', async () => {
-    const board = {
-      get: vi.fn(async ({ type }: { type: string }) => [{ id: `${type}-1` }]),
-      getSelection: vi.fn(),
-    } as any
-    const res1 = await boardCache.getWidgets(['shape', 'card'], board)
-    expect(res1.map((i) => i.id)).toEqual(['shape-1', 'card-1'])
-    // Subsequent call should hit cache and not call get again
-    board.get.mockRejectedValue(new Error('should not be called'))
-    const res2 = await boardCache.getWidgets(['shape'], board)
-    expect(res2.map((i) => i.id)).toEqual(['shape-1'])
-    boardCache.reset()
+    const getSelection = vi.fn<BoardLike['getSelection']>()
+    const get = vi
+      .fn<BoardQueryLike['get']>()
+      .mockImplementation(({ type }) => Promise.resolve([{ id: `${type}-1` }]))
+    const board: BoardQueryLike = {
+      get,
+      getSelection,
+    }
+
+    const firstResult = await boardCache.getWidgets(['shape', 'card'], board)
+    expect(firstResult.map((item) => item.id)).toEqual(['shape-1', 'card-1'])
+
+    // Subsequent call should hit cache and avoid new queries
+    get.mockRejectedValue(new Error('should not be called'))
+    const cachedResult = await boardCache.getWidgets(['shape'], board)
+    expect(cachedResult.map((item) => item.id)).toEqual(['shape-1'])
   })
 })
