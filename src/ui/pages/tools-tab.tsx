@@ -86,10 +86,10 @@ export const ToolsTab: React.FC = () => {
       <Tabs value={sub} variant="tabs" onChange={handleChange} size="medium">
         <Tabs.List
           aria-label="Tool categories"
-          style={{ display: 'flex', flexWrap: 'wrap', gap: space[100] }}
+          css={{ display: 'flex', flexWrap: 'wrap', gap: space[100] }}
         >
           {SUB_TABS.map((t) => (
-            <Tabs.Trigger key={t.id} value={t.id} style={{ flex: '1 1 auto' }}>
+            <Tabs.Trigger key={t.id} value={t.id} css={{ flex: '1 1 auto' }}>
               {t.label}
             </Tabs.Trigger>
           ))}
