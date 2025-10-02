@@ -1,3 +1,10 @@
+## [2.6.11](https://github.com/fenrick/MiroDiagramming/compare/v2.6.10...v2.6.11) (2025-10-02)
+
+
+### Bug Fixes
+
+* **ui:** replace inline styles on tabs with css prop ([3d8dc04](https://github.com/fenrick/MiroDiagramming/commit/3d8dc043bb89825e42f395f9b13bf262c2ec3ac4))
+
 ## [2.6.10](https://github.com/fenrick/MiroDiagramming/compare/v2.6.9...v2.6.10) (2025-10-02)
 
 
