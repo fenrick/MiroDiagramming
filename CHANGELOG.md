@@ -1,3 +1,10 @@
+## [2.6.13](https://github.com/fenrick/MiroDiagramming/compare/v2.6.12...v2.6.13) (2025-10-02)
+
+
+### Bug Fixes
+
+* modernize ownership checks and mermaid feedback ([2d32b8b](https://github.com/fenrick/MiroDiagramming/commit/2d32b8b8f26c66df4291f34c8440e43626731035))
+
 ## [2.6.12](https://github.com/fenrick/MiroDiagramming/compare/v2.6.11...v2.6.12) (2025-10-02)
 
 
