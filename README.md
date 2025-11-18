@@ -30,15 +30,15 @@ VITE_LOGFIRE_SEND_TO_LOGFIRE=false
 Run the Vite dev server:
 
 ```bash
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
 Production build and local preview:
 
 ```bash
-npm run build
-npm run preview
+pnpm run build
+pnpm run preview
 ```
 
 ## Uploading JSON Content
@@ -149,8 +149,8 @@ The sidebar exposes extra tabs to manipulate existing widgets:
 ## Testing & Coverage
 
 - Unit tests use Vitest.
-- Run tests: `npm run test`
-- Coverage report (HTML + lcov): `npm run coverage` then open `coverage/index.html`.
+- Run tests: `pnpm run test`
+- Coverage report (HTML + lcov): `pnpm run coverage` then open `coverage/index.html`.
 - Client tests that touch the DOM use jsdom; add `// @vitest-environment jsdom` at the top of those files.
 - Focus initial coverage on utilities and hooks that don’t require the live Miro SDK (e.g., color/ratio helpers, template resolution, notifications, logger, UI utils).
 
@@ -223,9 +223,9 @@ the rest of the UI. These guidelines help keep layouts consistent:
 
 ## 🏃🏽‍♂️ Run the app locally <a name="run"></a>
 
-1. Run `npm install` to install dependencies. The `package-lock.json` file
+1. Run `pnpm install` to install dependencies. The `pnpm-lock.yaml` file
    ensures everyone installs the same versions.
-2. Run `npm run dev` to start the development server. Your URL should be
+2. Run `pnpm run dev` to start the development server. Your URL should be
    similar to this example:
 
 ```
@@ -270,31 +270,31 @@ scopes:
 Run the test suite:
 
 ```bash
-npm test
+pnpm test
 ```
 
 The root `AGENTS.md` lists the commands to run before committing. Be sure to
 install dependencies first:
 
 ```bash
-npm install
+pnpm install
 ```
 
 Then validate the codebase with:
 
 ```bash
-npm run typecheck --silent
-npm test --silent
-npm run lint --silent
-npm run format --silent
+pnpm run typecheck --silent
+pnpm test --silent
+pnpm run lint --silent
+pnpm run format --silent
 ```
 
-The Husky hooks live under the repository's `.husky/` folder. Hooks are installed automatically on `npm install` via the `prepare` script so each commit is validated. The pre-commit hook runs type checking, tests, ESLint and Prettier. Execute the Vitest suite yourself before committing. Aim for at least 90 % line and branch coverage and keep cyclomatic complexity under eight (see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)). Sonar rules such as using `readonly` class fields, optional chaining, semantic HTML tags and stable React keys. Run these checks before committing so code conforms to the repository guidelines.
+The Husky hooks live under the repository's `.husky/` folder. Hooks are installed automatically on `pnpm install` via the `prepare` script so each commit is validated. The pre-commit hook runs type checking, tests, ESLint and Prettier. Execute the Vitest suite yourself before committing. Aim for at least 90 % line and branch coverage and keep cyclomatic complexity under eight (see [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)). Sonar rules such as using `readonly` class fields, optional chaining, semantic HTML tags and stable React keys. Run these checks before committing so code conforms to the repository guidelines.
 
 CI merges coverage from all test shards. The build doesn't fail based on coverage
 numbers, so developers must keep both codebases above 90 % coverage
 
-With `package-lock.json` checked in you can run `npm audit` after each install
+With `pnpm-lock.yaml` checked in you can run `pnpm audit` after each install
 to scan dependencies for vulnerabilities. Include the lock file in commits so
 everyone uses the exact dependency versions when installing.
 
@@ -308,17 +308,17 @@ All runtime messages are emitted through a shared logger defined in
 Example:
 
 ```bash
-LOG_LEVEL=debug npm run dev
+LOG_LEVEL=debug pnpm run dev
 ```
 
 ## Commit message checks
 
 Commit messages must follow the Conventional Commits specification. A
-`commit-msg` hook runs commitlint automatically (installed via `npm install`). Verify the latest commit
+`commit-msg` hook runs commitlint automatically (installed via `pnpm install`). Verify the latest commit
 manually by running:
 
 ```bash
-npm run commitlint -- --edit $(git rev-parse --verify HEAD)
+pnpm run commitlint -- --edit $(git rev-parse --verify HEAD)
 ```
 
 The CI pipeline also enforces commitlint via
@@ -365,13 +365,13 @@ design-system light and dark themes. Add stories for any new UI element so
 reviewers can verify visuals.
 
 ```bash
-npm run storybook
+pnpm run storybook
 ```
 
 Generate a static Storybook site for publishing with:
 
 ```bash
-npm run build-storybook
+pnpm run build-storybook
 ```
 
 ## Local CI Build
@@ -386,7 +386,7 @@ additionally invoke `repo-sonar.yml`, `repo-codeql.yml` and `repo-release.yml`
 for coverage, static analysis and release tasks.
 
 ```bash
-npm run ci:local
+pnpm run ci:local
 ```
 
 ## Changelog

@@ -54,5 +54,5 @@ These guidelines keep the client codebase consistent now that everything runs in
 
 ## Formatting & Linting
 
-- Run `npm run lint` and `npm run format` before committing.
+- Run `pnpm run lint` and `pnpm run format` before committing.
 - Prettier handles formatting; ESLint enforces import order, hook rules, and other conventions.

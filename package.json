@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@10.13.1",
   "engines": {
     "node": ">=20"
   },
@@ -22,14 +23,18 @@
   },
   "dependencies": {
     "@mirohq/design-system": "^1.0.23",
+    "@mirohq/design-system-scroll-area": "^1.1.1",
+    "@mirohq/design-system-themes": "^1.1.1",
+    "@mirohq/design-tokens": "^7.0.1",
     "@mirohq/websdk-react-hooks": "^0.0.3",
+    "@radix-ui/react-visually-hidden": "^1.2.4",
     "@stitches/react": "^1.2.8",
+    "dagre": "^0.8.5",
     "d3-dsv": "^3.0.1",
     "elkjs": "^0.11.0",
     "lru-cache": "^11.2.2",
     "marked": ">=1 <17",
     "mermaid": "^11.12.0",
-    "dagre": "^0.8.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-dropzone": "^14.3.8",

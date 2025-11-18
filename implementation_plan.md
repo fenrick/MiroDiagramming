@@ -52,7 +52,7 @@ Static hosting only. Use host‑level health checks for `index.html` as needed.
     - Where: `src/**`.
     - DoD: Frontend compiles with stronger typing; no implicit anys in these areas.
 
--- Enable `noImplicitAny` - What’s needed: Turn on `noImplicitAny` and resolve resulting errors across the frontend. - Where: `tsconfig.json` (and any client tsconfigs), and code in `src/**`. - DoD: `npm run typecheck` passes with `noImplicitAny` enabled.
+-- Enable `noImplicitAny` - What’s needed: Turn on `noImplicitAny` and resolve resulting errors across the frontend. - Where: `tsconfig.json` (and any client tsconfigs), and code in `src/**`. - DoD: `pnpm run typecheck` passes with `noImplicitAny` enabled.
 
 -- Define shared types - What’s needed: Centralize commonly used data shapes for UI and board helpers. - Where: `src/types/` (new or expanded module); refactor imports to use shared types. - DoD: Duplication removed; typecheck and tests pass.
 
@@ -71,12 +71,12 @@ Static hosting only. Use host‑level health checks for `index.html` as needed.
 - Expand lint script scope
     - What’s needed: Lint `src/`, `tests/`, and `scripts/`; fail on warnings to keep signal strong.
     - Where: `package.json` (`scripts.lint`).
-    - DoD: `npm run lint` covers all paths and exits non‑zero on warnings.
+    - DoD: `pnpm run lint` covers all paths and exits non‑zero on warnings.
 
 - Fix ESLint warnings and parsing issues
     - What’s needed: Resolve lints across tests and client code, especially JSX/ESM parsing in style‑presets tests.
     - Where: Codebase‑wide; specifically `tests/client/style-presets.test.ts[x]`.
-    - DoD: `npm run lint` clean with zero warnings.
+    - DoD: `pnpm run lint` clean with zero warnings.
 
 ## Mermaid → Miro Rendering (Dagre‑first)
 
@@ -119,7 +119,7 @@ Steps
 
 - Maintain formatting
     - What’s needed: Ensure Prettier config is applied consistently; run formatter in CI/local.
-    - Where: Project root via `npm run format:write` (or equivalent).
+    - Where: Project root via `pnpm run format:write` (or equivalent).
     - DoD: Formatting stable and enforced where configured.
 
 - Type-only imports enforcement
@@ -142,7 +142,7 @@ Steps
 - Enforce ESLint rules per style guide
     - What’s needed: Configure rules `consistent-type-imports`, `import/order`, `import/no-default-export` (allow exceptions for Vite/CLI), `@typescript-eslint/no-floating-promises`, `@typescript-eslint/explicit-module-boundary-types`, `no-console` (allow in scripts), `curly`, `eqeqeq`.
     - Where: `eslint.config.mjs` (or `.eslintrc.*`).
-    - DoD: `npm run lint` passes and catches violations; CI enforces the rules.
+    - DoD: `pnpm run lint` passes and catches violations; CI enforces the rules.
 
 - Add React linting plugins
     - What’s needed: Add `eslint-plugin-react` and `eslint-plugin-react-hooks` with recommended configs for files under `src/**`.
@@ -162,7 +162,7 @@ Steps
 - TypeScript strictness flags
     - What’s needed: Ensure `tsconfig.json` and `tsconfig.client.json` enable `noImplicitAny`, `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`, `noImplicitOverride`, `useUnknownInCatchVariables`, `noPropertyAccessFromIndexSignature`.
     - Where: `tsconfig.json`, `tsconfig.client.json`.
-    - DoD: `npm run typecheck` passes with flags enabled.
+    - DoD: `pnpm run typecheck` passes with flags enabled.
 
 - Absolute import paths
     - What’s needed: Configure `baseUrl` and `paths` for absolute imports; add lint guard to discourage deep relative paths; migrate imports gradually.
@@ -170,7 +170,7 @@ Steps
     - DoD: New code uses absolute imports; lint warns on long relative paths; initial migration completed.
 
 - Husky pre‑commit runs lint
-    - What’s needed: Extend the pre‑commit hook to run `npm run lint` in addition to Prettier check.
+    - What’s needed: Extend the pre‑commit hook to run `pnpm run lint` in addition to Prettier check.
     - Where: `.husky/pre-commit`.
     - DoD: Commits are blocked on lint errors locally.
 
@@ -373,7 +373,7 @@ Steps
 - Client tests stability
     - What’s needed: Fix timeouts in `search-tab` tests for debounced search and clear‑query; fix parsing issues in `style-presets` tests (ensure JSDOM env, correct ESM/JSX handling, proper `.tsx`).
     - Where: `tests/client/search-tab.test.tsx`, `tests/client/style-presets.test.ts[x]`.
-    - DoD: `npm test` runs without Vitest parse failures and with flake‑free timeouts.
+    - DoD: `pnpm test` runs without Vitest parse failures and with flake‑free timeouts.
 
 - Coverage thresholds in Vitest
     - What’s needed: Set `test.coverage.thresholds` for statements/branches/functions/lines ≥ 80; add CI coverage run that fails below thresholds.

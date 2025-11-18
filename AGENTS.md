@@ -28,18 +28,18 @@ src/
 ## Quality Gates
 
 - TypeScript strict mode; ESLint clean
-- `npm run test` currently reports success even without suites; reintroduce Vitest specs as desired.
+- `pnpm run test` currently reports success even without suites; reintroduce Vitest specs as desired.
 - Prettier formatting
 
 ## Local Development
 
 ```
 nvm use
-npm install
-npm run dev        # vite dev (serves the React panel)
-npm run typecheck  # tsc --noEmit
-npm run lint       # eslint
-npm run test       # vitest
+pnpm install
+pnpm run dev        # vite dev (serves the React panel)
+pnpm run typecheck  # tsc --noEmit
+pnpm run lint       # eslint
+pnpm run test       # vitest
 ```
 
 Environment

@@ -34,8 +34,8 @@ Miro Board
 
 ## Build & Run
 
-- Development: `npm run dev` → `vite dev` (hot module reload).
-- Production: `npm run build` produces static assets under `dist/`. Serve that directory with nginx, Vercel, Netlify, etc. `npm run preview` provides a local sanity check.
+- Development: `pnpm run dev` → `vite dev` (hot module reload).
+- Production: `pnpm run build` produces static assets under `dist/`. Serve that directory with nginx, Vercel, Netlify, etc. `pnpm run preview` provides a local sanity check.
 
 ## Error Handling & Logging
 

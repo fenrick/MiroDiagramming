@@ -61,9 +61,9 @@ There is no standalone authentication flow. The panel depends on being launched 
 
 ## Build & Deployment
 
-- `npm run dev` → `vite dev`
-- `npm run build` → `vite build`
-- `npm run preview` → `vite preview`
+- `pnpm run dev` → `vite dev`
+- `pnpm run build` → `vite build`
+- `pnpm run preview` → `vite preview`
 
 Output is a static bundle that can be served via `config/default.conf.template` (no API proxying required). Environment variables now use the `VITE_*` prefix and are consumed client-side.
 
@@ -77,7 +77,7 @@ Output is a static bundle that can be served via `config/default.conf.template` 
 - Vitest covers utilities (`tests/node/**`) and client hooks/components (`tests/client/**`).
 - No HTTP/integration tests (no backend).
 - Use jsdom for any test that renders React or touches the DOM. Add `// @vitest-environment jsdom` to those files.
-- Coverage: run `npm run coverage` for HTML + lcov. Prioritise pure helpers and hooks that don’t require a live Miro board. Recent additions include tests for the logger, notifications, template resolution, UI utils, and style formatting.
+- Coverage: run `pnpm run coverage` for HTML + lcov. Prioritise pure helpers and hooks that don’t require a live Miro board. Recent additions include tests for the logger, notifications, template resolution, UI utils, and style formatting.
 
 ### Portability Notes
 

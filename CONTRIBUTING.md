@@ -9,11 +9,11 @@ We welcome pull requests and issues. Please read [Miro's contributing guide](htt
 Run the type checks, linters and tests:
 
 ```bash
-npm install
-npm run typecheck
-npm run lint
-npm run format
-npm test
+pnpm install
+pnpm run typecheck
+pnpm run lint
+pnpm run format
+pnpm test
 ```
 
 ## Commit messages
@@ -21,7 +21,7 @@ npm test
 Verify that your commit message follows the Conventional Commits format. A `commit-msg` hook runs commitlint automatically, but you can also check the latest commit manually by running:
 
 ```bash
-npm run commitlint -- --edit $(git rev-parse --verify HEAD)
+pnpm run commitlint -- --edit $(git rev-parse --verify HEAD)
 ```
 
 ## Pre-commit checks

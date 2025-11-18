@@ -5,8 +5,8 @@ This project now ships as a static React application that runs inside Miro and t
 ## 1. Build
 
 ```bash
-npm install
-npm run build
+pnpm install
+pnpm run build
 ```
 
 The output lives under `dist/`.

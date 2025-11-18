@@ -19,9 +19,9 @@ Explains how to:
 
 ## 1 Installing the design system layers
 
-| Layer               | Package                   | Install command               | Notes                                                                    |
-| ------------------- | ------------------------- | ----------------------------- | ------------------------------------------------------------------------ |
-| Tokens & components | **@mirohq/design-system** | `npm i @mirohq/design-system` | Provides React components and design tokens to match the native Miro UI. |
+| Layer               | Package                   | Install command                  | Notes                                                                    |
+| ------------------- | ------------------------- | -------------------------------- | ------------------------------------------------------------------------ |
+| Tokens & components | **@mirohq/design-system** | `pnpm add @mirohq/design-system` | Provides React components and design tokens to match the native Miro UI. |
 
 ### 1.1 Bootstrap CSS once
 
@@ -188,14 +188,14 @@ import { IconActivity } from '@mirohq/design-system-icons/react'
 
 ## 5 Accessibility quick-check
 
-| Check                    | How to verify                                                             |
-| ------------------------ | ------------------------------------------------------------------------- |
-| Colour contrast ≥ 4.5:1  | Token palette already passes; confirm via **npm run a11y** headless test. |
-| Tab order = visual order | Keyboard-walk the UI; make sure focus rings are visible.                  |
-| Icon-only buttons        | Provide `aria-label` or `title`.                                          |
-| Dialog semantics         | `role="dialog"` and `aria-modal="true"` on Modal root.                    |
-| Headings                 | Ensure each heading has visible text content.                             |
-| Labels                   | Never rely on placeholders alone – always render a `<label>` element.     |
+| Check                    | How to verify                                                              |
+| ------------------------ | -------------------------------------------------------------------------- |
+| Colour contrast ≥ 4.5:1  | Token palette already passes; confirm via **pnpm run a11y** headless test. |
+| Tab order = visual order | Keyboard-walk the UI; make sure focus rings are visible.                   |
+| Icon-only buttons        | Provide `aria-label` or `title`.                                           |
+| Dialog semantics         | `role="dialog"` and `aria-modal="true"` on Modal root.                     |
+| Headings                 | Ensure each heading has visible text content.                              |
+| Labels                   | Never rely on placeholders alone – always render a `<label>` element.      |
 
 Failing any item blocks the CI gate.
 
@@ -225,7 +225,7 @@ Failing any item blocks the CI gate.
 | Stage             | Tool                     | Pass threshold          |
 | ----------------- | ------------------------ | ----------------------- |
 | Lint              | ESLint + Stylelint       | 0 errors                |
-| Unit tests        | `npm test`               | ≥ 90 % lines & branches |
+| Unit tests        | `pnpm test`              | ≥ 90 % lines & branches |
 | Visual regression | manual screenshot review | no visual diffs         |
 | Accessibility     | manual a11y review       | 0 critical              |
 
@@ -237,7 +237,7 @@ Failing any item blocks the CI gate.
 - Design tokens and minimal-CSS policy – **FOUNDATION.md**
 - Deployment guidance – **DEPLOYMENT.md**
 - Sidebar behaviour and validation flows – **TABS.md**
-- Storybook playground – run `npm run storybook`, open `http://localhost:6006`
+- Storybook playground – run `pnpm run storybook`, open `http://localhost:6006`
 
 ---
 

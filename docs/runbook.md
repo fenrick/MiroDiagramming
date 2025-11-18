@@ -5,8 +5,8 @@ Quick Tools is a static React application. Operational tasks focus on building a
 ## Build
 
 ```
-npm install
-npm run build
+pnpm install
+pnpm run build
 ```
 
 Artifacts land in `dist/`.
@@ -14,7 +14,7 @@ Artifacts land in `dist/`.
 ## Local Smoke Test
 
 ```
-npm run preview
+pnpm run preview
 ```
 
 Visit the printed URL (defaults to `http://localhost:4173`). Launch the app inside a Miro board to verify Web SDK calls succeed.
@@ -33,7 +33,7 @@ Visit the printed URL (defaults to `http://localhost:4173`). Launch the app insi
 
 1. Confirm the static host is serving the latest `dist/` contents.
 2. Validate the Miro app redirect URL matches the deployed site.
-3. Rebuild locally (`npm run build`) if corruption is suspected and redeploy.
+3. Rebuild locally (`pnpm run build`) if corruption is suspected and redeploy.
 4. For SDK errors, reproduce inside Miro with devtools open; verify required app scopes.
 
 ## Rollback

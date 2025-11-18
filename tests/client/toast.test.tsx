@@ -2,6 +2,27 @@ import { describe, it, expect, vi } from 'vitest'
 import { render, screen, act } from '@testing-library/react'
 import React from 'react'
 
+vi.mock('@mirohq/design-system', () => {
+  const Callout = ({ children }: { children: React.ReactNode }) => <div>{children}</div>
+
+  Callout.Content = ({ children }: { children: React.ReactNode }) => <div>{children}</div>
+  Callout.Description = ({ children }: { children: React.ReactNode }) => <div>{children}</div>
+  Callout.Actions = ({ children }: { children: React.ReactNode }) => <div>{children}</div>
+
+  const Button = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(
+    ({ children, ...properties }, reference) => (
+      <button ref={reference} type="button" {...properties}>
+        {children}
+      </button>
+    ),
+  )
+
+  Button.IconSlot = ({ children }: { children: React.ReactNode }) => <span>{children}</span>
+  Button.Label = ({ children }: { children: React.ReactNode }) => <span>{children}</span>
+
+  return { Callout, Button }
+})
+
 import { ToastContainer, pushToast } from '../../src/ui/components/toast'
 
 describe('ToastContainer', () => {
