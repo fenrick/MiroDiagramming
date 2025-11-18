@@ -17,9 +17,9 @@ For component usage see **COMPONENTS.md**. For linting, testing and CI gates see
 
 ## 1 Token sources & install
 
-| Asset                               | Package                                                   | Notes                                                  |
-| ----------------------------------- | --------------------------------------------------------- | ------------------------------------------------------ |
-| Raw CSS variables & utility classes | **@mirohq/design-system** (`npm i @mirohq/design-system`) | Adds `dist/styles.css` with all variables and helpers. |
+| Asset                               | Package                                                      | Notes                                                  |
+| ----------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------ |
+| Raw CSS variables & utility classes | **@mirohq/design-system** (`pnpm add @mirohq/design-system`) | Adds `dist/styles.css` with all variables and helpers. |
 
 ````ts
 
@@ -166,7 +166,7 @@ canvases where it may distract.
 | Step                                                    | Actor                        | Tool                             |
 | ------------------------------------------------------- | ---------------------------- | -------------------------------- |
 | 1. Propose token (Figma style link + rationale)         | Designer / Engineer          | Pull request in `design-tokens/` |
-| 2. Auto-check (naming, duplicates, contrast, dark-mode) | CI bot                       | `npm run tokens:verify`          |
+| 2. Auto-check (naming, duplicates, contrast, dark-mode) | CI bot                       | `pnpm run tokens:verify`         |
 | 3. Dual approval                                        | Design lead + Eng maintainer | GitHub review                    |
 | 4. Merge & release                                      | semantic-release             | GitHub Actions                   |
 | 5. Consume in components                                | Component owners             | Follow-up PR                     |
@@ -179,13 +179,13 @@ Schema is validated by **AJV**; breaking changes require a major version bump.
 
 ```bash
 # List tokens
-npm run tokens:list
+pnpm run tokens:list
 
 # Verify contrast / naming
-npm run tokens:verify
+pnpm run tokens:verify
 
 # Regenerate d.ts typings for local tokens
-npm run tokens:gen-types
+pnpm run tokens:gen-types
 ````
 
 ---

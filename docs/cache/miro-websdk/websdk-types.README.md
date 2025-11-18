@@ -6,10 +6,10 @@ Provides typing for the Miro WebSDK v2.
 
 ### Install the package
 
-Using `npm`
+Using `pnpm`
 
 ```
-npm install @mirohq/websdk-types
+pnpm add @mirohq/websdk-types
 ```
 
 Using `yarn`
@@ -18,10 +18,10 @@ Using `yarn`
 yarn add @mirohq/websdk-types
 ```
 
-Using `pnpm`
+Using `npm`
 
 ```
-pnpm add @mirohq/websdk-types
+npm install @mirohq/websdk-types
 ```
 
 ### If you are working on a `TypeScript` project

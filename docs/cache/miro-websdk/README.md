@@ -10,7 +10,7 @@ Contents
 
 Regenerate
 
-- `npm run docs:cache:websdk`
+- `pnpm run docs:cache:websdk`
 
 Notes
 
