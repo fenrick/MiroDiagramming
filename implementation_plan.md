@@ -108,7 +108,7 @@ Steps
 
 5. Docs & UX [Pending]
 
-- Update `docs/node-architecture.md` to describe the pipeline and engine flag.
+- Remove the stale `docs/NODE_ARCHITECTURE.md` content since the backend is gone; keep a short pointer in the doc to delete remaining references when found.
 - Optional toggle in Mermaid tab under “Advanced”.
 
 6. Edge cases & polish [Pending]
@@ -337,7 +337,7 @@ Steps
 
 [Done] Establish testing strategy and Vitest setup
 
-- Added `docs/testing-strategy.md` describing high‑leverage seams (core utils, hooks, board helpers) and environments.
+- Added `docs/TESTING_STRATEGY.md` describing high‑leverage seams (core utils, hooks, board helpers) and environments.
 - Kept Vitest `environmentMatchGlobs` to run jsdom tests under `tests/client/**` and node elsewhere.
 
 [Done] Core utility tests
@@ -421,23 +421,23 @@ Steps
 
 - Document server lifecycle [Done]
     - What’s needed: Describe server start/stop and graceful close behavior.
-    - Where: `docs/node-architecture.md` (Server Lifecycle section).
+    - Where: `docs/architecture/ARCHITECTURE.md` (Server Lifecycle notes now live there).
     - DoD: Docs include lifecycle notes; aligns with `buildApp()`/`startServer()`.
 
 <!-- Removed: queue persistence strategy -->
 
     - What’s needed: Capture persistence design, trade‑offs, and operational notes.
-    - Where: `docs/node-architecture.md`.
+    - Where: `docs/architecture/ARCHITECTURE.md`.
     - DoD: Clear section explaining persistence choices and recovery.
 
 - Operational runbook [Done]
-    - What’s needed: `docs/runbook.md` focuses on build, preview, deploy, and static host checks.
-    - Where: `docs/runbook.md`.
+    - What’s needed: `docs/operations/OPERATIONS.md` focuses on build, preview, deploy, and static host checks.
+    - Where: `docs/operations/OPERATIONS.md`.
     - DoD: Runbook exists and is referenced by deployment docs.
 
 - Update retry semantics in docs
     - What’s needed: N/A (no HTTP client/backoff layer in the frontend-only app).
-    - Where: `docs/node-architecture.md`.
+    - Where: `docs/architecture/ARCHITECTURE.md`.
     - DoD: Documentation reflects current retry and telemetry patterns.
 
 ## Improvement Backlog

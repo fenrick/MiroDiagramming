@@ -7,8 +7,9 @@ Context
 
 Authoritative docs
 
-- docs/node-architecture.md – current frontend/Web SDK architecture
-- docs/migration-node-plan.md – notes on retiring the server and remaining clean-up
+- docs/architecture/ARCHITECTURE.md – current frontend/Web SDK architecture
+- docs/NODE_ARCHITECTURE.md – backend retirement context (kept for reference only)
+- docs/MIGRATION_NODE_PLAN.md – notes on retiring the server and remaining clean-up
 - implementation_plan.md – backlog of improvements and refactors (keep updated)
 
 ## Project Structure

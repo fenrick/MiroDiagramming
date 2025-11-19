@@ -1,58 +1,70 @@
-# Coding Standards (TypeScript + React)
+# Coding Standards (frontend focus)
 
-These guidelines keep the client codebase consistent now that everything runs in the browser.
+## Purpose
 
-## General Principles
+- Keep the React/Vite panel consistent, type-safe, and aligned with the broader documentation hierarchy (`docs/CHARHD.md` families and `docs/architecture/ARCHITECTURE.md`).
+- Emphasise readability, predictable module boundaries, and minimal runtime surface (no backend logic inside the renderer).
 
-- Prefer immutable data structures and pure functions where practical.
-- Use TypeScript's strict mode; avoid `any` and `!` assertions. Narrow types with guards/helpers.
-- Keep modules focused: UI components in `ui/`, board logic in `board/`, shared utilities in `core/`.
-- Co-locate tests with feature areas in `tests/client/`.
+## Architecture & boundaries
 
-## TypeScript
+- The frontend listens only to typed SDK helpers (`src/board`, `src/core/utils`) and never reaches directly into backend/IPC layers. Treat each helper folder as a boundary with a clean public surface.
+- Naming conventions: keep folders and files kebab-case, exports camelCase/PascalCase, and restrict suffixes to meaningful roles (e.g., `*.service.ts`, `*.adapter.ts`). Avoid generic names like `util`/`common` and deep imports; reshape structure via `index.ts` barrels.
+- Stateful modules should expose factories, not globals. Side effects belong in dedicated hooks/helpers, avoiding module-level mutations.
 
-- Use `import type` for type-only imports.
-- Enable exhaustive `switch` statements; handle unexpected cases with `assertNever` helpers.
-- Define explicit return types for exported functions/hooks.
-- Prefer readonly arrays/records when exposing collections (`readonly T[]`, `Readonly<Record<...>>`).
+## Tooling & gates
 
-## React
+- Strict TypeScript (`tsconfig.json`, `tsconfig.eslint.json`) plus ESLint/Prettier (see `eslint.config.mjs`). No inline rule suppressions without an issue reference. Coverage + lint gates run in CI and locally via `pnpm lint`/`pnpm test`.
+- Run tests/package checks incrementally; prefer package-scoped Vitest runs and avoid heavy suites unless touching the affected area. Report flaky tests via issues and quarantine them.
 
-- Components live under `src/ui/` or `src/components/` and use PascalCase filenames.
-- Hooks live under `src/core/hooks/` (shared logic) or alongside pages when highly specific.
-- Use function components with React hooks (`useState`, `useEffect`, `useMemo`, etc.).
-- Derive UI from props/state; avoid mutating external module state in render paths.
-- When accessing the Miro SDK, centralise calls in helpers (`board/board.ts`, `core/utils/shape-client.ts`) to simplify testing.
+## Quality criteria
 
-## Styling
+- New/changed code must maintain ≥80% coverage (lines, branches, functions) for frontend files. Use focused tests or exported `__test__` helpers to raise coverage, but keep runtime exports clean.
+- Keep cognitive complexity low (Sonar rule at 8); split functions/components when they gain multiple responsibilities.
+- Document any exception (lint, coverage, dependency) with a TODO referencing an issue and re-evaluate frequently.
 
-- Prefer `@mirohq/design-system` primitives and tokens.
-- When custom styles are required, use Stitches via `@stitches/react` with themed tokens.
+## TypeScript / React rules
 
-## Tests
+- Use `import type` for type-only imports and prefer readonly collections in public APIs (`readonly string[]`, `Readonly<Record<string, ...>>`). Exported functions/hooks should list return types explicitly.
+- Components live under `src/ui`/`src/components`, hooks under `src/core/hooks` (shared) or alongside tightly coupled pages. Keep files under ~300-500 LOC.
+- React renders must stay pure: derive output from props/state and guard any external mutation.
+- Serialise/deserialise data crossing the board/Web SDK boundary and prefer typed adapters (e.g., `ShapeClient`, `TagClient`). Avoid leaky data from privileged channels.
 
-- Write jsdom tests with Vitest + Testing Library.
-- Mock the Miro SDK by stubbing the minimal methods required for each test.
-- Keep tests deterministic; avoid reliance on real timers/network.
+## Module/package layout
 
-## File Naming
+- One concept per module; if a folder gains children, surface it via an `index.ts` facade. Barrel files expose only the public API.
+- Top-level folders should map to feature areas; keep nesting ≤3 levels.
+- Adhere to one purpose per file and add tests (`*.test.ts`, `*.test.tsx`) adjacent to the source.
+- Limit dependencies; runtime code should not pull in Node-only modules.
 
-- Components: `ComponentName.tsx`
-- Hooks: `useThing.ts`
-- Utilities: `thing-utils.ts`
-- Test files mirror source names: `ComponentName.test.tsx`
+## Naming & visibility
 
-## Logging
+- Export names: prefer named exports; default exports only when a tool/framework demands them (e.g., Vite entry points). Types/interfaces/classes use PascalCase; functions/variables use camelCase.
+- Adopt approved suffixes (`-service`, `-adapter`, `-schema`, `-handler`, `-repo`). Keep API surfaces stable, reshaping with facades rather than changing consumer paths.
+- Avoid abbreviations; choose expressive domain language (e.g., `cardProcessor`, not `cp`).
 
-- Use the helpers from `src/logger.ts` (`info`, `debug`, `warning`, `error`).
+## Async & state
 
-## Miro SDK Usage
+- Use pure helper functions; keep async flows cancellable (`AbortSignal`) and clean up in `finally` blocks.
+- Avoid shared mutable state; if unavoidable, wrap inside factories and document lifecycle.
 
-- Always guard access to `window.miro` / `miro.board` to avoid runtime errors when running outside Miro (e.g., tests).
-- When mutating widgets, call `maybeSync` or the widget’s `sync` method after setting properties.
-- Cache board queries (`board-cache.ts`) when repeated reads are expected.
+## Errors & sanitisation
 
-## Formatting & Linting
+- Throw `Error` subclasses with stable `code` values, optionally documenting `cause`. Sanitize and validate all data crossing the Web SDK/preload boundary.
+- Map library errors at the boundary; never expose raw ML or third-party error objects to consumers.
 
-- Run `pnpm run lint` and `pnpm run format` before committing.
-- Prettier handles formatting; ESLint enforces import order, hook rules, and other conventions.
+## Configuration & flags
+
+- Read env/config once (composition layer) and pass inward as typed objects; validate schemas with tools like Zod and fail fast on invalid config.
+- Keep feature flags centralized; avoid scattering `if (import.meta.env…)` across the codebase.
+
+## Testing & documentation
+
+- Test behaviours through public exports and use lightweight fakes for adapters/ports. Avoid heavy mocks.
+- Document every module with a brief header explaining its responsibility and any invariants.
+- Use snapshots sparingly for stable rendered fragments or schema outputs.
+
+## Formatting & CI
+
+- Run `pnpm lint` and `pnpm format` before commits. CI enforces lint, type, coverage, and ESLint rules (no inline disables without issue refs).
+- No deep imports across workspaces; import via published entrypoints.
+- Keep `CODE_STYLE.md` updated with new conventions; mention significant changes in PRs tagged `docs(standards)`.
