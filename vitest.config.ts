@@ -45,13 +45,13 @@ export default defineConfig({
     // e.g. add `// @vitest-environment jsdom` at the top of client test files.
     environment: 'node',
     globals: true,
-    passWithNoTests: true,
+    passWithNoTests: false,
     threads: false,
     include: ['tests/**/*.test.{ts,tsx}'],
     exclude: ['tests/client/preview-config.test.tsx'],
     setupFiles: ['tests/client/setupTests.ts'],
     coverage: {
-      enabled: false,
+      enabled: true,
       provider: 'v8',
       reporter: ['text', 'text-summary', 'lcov', 'html'],
       reportsDirectory: 'coverage',

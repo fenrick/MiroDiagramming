@@ -9,6 +9,7 @@ import { space } from '@mirohq/design-tokens'
 import React from 'react'
 
 import { type ExistingNodeMode } from '../../core/graph/graph-processor'
+import { usePersistentState } from '../../core/hooks/use-persistent-state'
 import { MermaidConversionError, MermaidRenderer } from '../../core/mermaid'
 import * as log from '../../logger'
 import {
@@ -27,6 +28,7 @@ import {
 import { StickyActions } from '../sticky-actions'
 
 const STORAGE_KEY = 'miro.mermaid.definition'
+const WITH_FRAME_STORAGE_KEY = 'miro.mermaid.withFrame'
 const SAMPLE_DEFINITION = `graph TD
   Start[Start] --> Decision{Review proposal}
   Decision -->|Approve| Launch[Launch project]
@@ -51,25 +53,8 @@ const EXISTING_MODE_OPTIONS: readonly { id: ExistingNodeMode; label: string }[] 
 ]
 
 export const MermaidTab: React.FC = () => {
-  const [definition, setDefinition] = React.useState(() => {
-    if (typeof globalThis === 'undefined') {
-      return SAMPLE_DEFINITION
-    }
-    try {
-      return globalThis.localStorage.getItem(STORAGE_KEY) ?? SAMPLE_DEFINITION
-    } catch {
-      return SAMPLE_DEFINITION
-    }
-  })
-  const [withFrame, setWithFrame] = React.useState<boolean>(() => {
-    if (typeof globalThis === 'undefined') return false
-    try {
-      const raw = globalThis.localStorage.getItem('miro.mermaid.withFrame')
-      return raw ? raw === 'true' : false
-    } catch {
-      return false
-    }
-  })
+  const [definition, setDefinition] = usePersistentState<string>(STORAGE_KEY, SAMPLE_DEFINITION)
+  const [withFrame, setWithFrame] = usePersistentState<boolean>(WITH_FRAME_STORAGE_KEY, false)
   const [frameTitle, setFrameTitle] = React.useState('')
   const [existingMode, setExistingMode] = React.useState<ExistingNodeMode>('move')
   const [isRendering, setIsRendering] = React.useState(false)
@@ -78,26 +63,6 @@ export const MermaidTab: React.FC = () => {
   >(null)
 
   const rendererReference = React.useRef<MermaidRenderer>(new MermaidRenderer())
-
-  React.useEffect(() => {
-    if (typeof globalThis === 'undefined') {
-      return
-    }
-    try {
-      globalThis.localStorage.setItem(STORAGE_KEY, definition)
-    } catch {
-      // Ignore storage failures (private browsing, quota exceeded, etc.).
-    }
-  }, [definition])
-
-  React.useEffect(() => {
-    if (typeof globalThis === 'undefined') return
-    try {
-      globalThis.localStorage.setItem('miro.mermaid.withFrame', String(withFrame))
-    } catch {
-      // ignore
-    }
-  }, [withFrame])
 
   const trimmedDefinition = definition.trim()
   const isDefinitionEmpty = trimmedDefinition.length === 0

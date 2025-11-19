@@ -7,6 +7,9 @@ import type ELK from 'elkjs/lib/elk.bundled.js'
  * `node_modules`. Browsers fetch the library from the jsDelivr CDN to
  * avoid bundling it with the application.
  */
+export const ELK_CDN_VERSION = '0.11.0'
+export const ELK_CDN_URL = `https://cdn.jsdelivr.net/npm/elkjs@${ELK_CDN_VERSION}/lib/elk.bundled.js`
+
 let elkPromise: Promise<typeof ELK> | null = null
 
 interface ElkModule {
@@ -43,8 +46,7 @@ export async function loadElk(): Promise<typeof ELK> {
         throw new Error('Failed to load ELK from node module')
       })
     : (async () => {
-        const url = 'https://cdn.jsdelivr.net/npm/elkjs@0.10.0/lib/elk.bundled.js'
-        const module_ = await dynamicImport(url)
+        const module_ = await dynamicImport(ELK_CDN_URL)
         const candidate = module_.default ?? module_.ELK ?? (globalThis as ElkModule).ELK
         if (isElkConstructor(candidate)) {
           return candidate

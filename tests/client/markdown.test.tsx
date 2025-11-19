@@ -43,4 +43,12 @@ describe('Markdown', () => {
 
     parse.mockRestore()
   })
+
+  it('sanitizes unsafe HTML before injecting it', () => {
+    const definition = "<img src='x' onerror='alert(1)' /><p>Safe</p>'"
+    const { container } = render(<Markdown source={definition} />)
+    const root = container.firstElementChild
+    expect(root?.querySelector('img')?.getAttribute('onerror')).toBeNull()
+    expect(root).toContainHTML('<p>Safe</p>')
+  })
 })
