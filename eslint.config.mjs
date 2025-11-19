@@ -1,99 +1,109 @@
-// eslint.config.js (ESLint v9 flat config)
+// ESLint v9 flat config
 import js from '@eslint/js'
-import tseslint from 'typescript-eslint'
-import sonarjs from 'eslint-plugin-sonarjs'
 import importPlugin from 'eslint-plugin-import'
+import prettier from 'eslint-plugin-prettier/recommended'
 import promise from 'eslint-plugin-promise'
 import regexp from 'eslint-plugin-regexp'
-import unicorn from 'eslint-plugin-unicorn'
 import security from 'eslint-plugin-security'
+import sonarjs from 'eslint-plugin-sonarjs'
+import unicorn from 'eslint-plugin-unicorn'
 import { defineConfig, globalIgnores } from 'eslint/config'
+import tseslint from 'typescript-eslint'
+
+const typedTsConfigs = [
+  ...tseslint.configs.strictTypeChecked,
+  ...tseslint.configs.stylisticTypeChecked,
+  ...tseslint.configs.recommendedTypeChecked,
+].map((config) => ({ ...config, files: ['**/*.{ts,tsx}'] }))
 
 export default defineConfig(
-  // Global ignores first so they short‑circuit for all subsequent configs
   [
     globalIgnores([
       'node_modules/**',
       'dist/**',
+      'build/**',
       'coverage/**',
       'src/stories/**',
       'tests/**/fixtures/**',
-      '**/*.min.js',
+      '**/.pnpm/**',
+      '**/out/**',
     ]),
   ],
-
-  // Base JS rules roughly equivalent to the “core” checks Sonar also relies on
   js.configs.recommended,
-
-  // TypeScript: parser + recommended rules (mirrors many Clean Code correctness/readability checks)
-  ...tseslint.configs.strictTypeChecked,
-  ...tseslint.configs.stylisticTypeChecked,
-  ...tseslint.configs.recommendedTypeChecked,
   {
     languageOptions: {
-      parserOptions: {
-        projectService: true,
-        project: './tsconfig.eslint.json',
-        tsconfigRootDir: import.meta.dirname,
-        // Let files outside the TS project (like stories we ignore) fall back
-        // to a default program if they slip through via CLI globs.
-        allowDefaultProject: ['src/stories/**/*'],
-      },
+      ecmaVersion: 'latest',
+      sourceType: 'module',
     },
   },
-
-  // Sonar’s own ESLint rules (subset of SonarQube’s JS/TS rules)
-  sonarjs.configs.recommended,
-
-  // High-value community rule packs that cover areas Sonar also cares about
   importPlugin.flatConfigs.recommended,
+  importPlugin.flatConfigs.typescript,
   promise.configs['flat/recommended'],
   regexp.configs['flat/recommended'],
-  unicorn.configs['recommended'],
-
-  // Security hygiene rules (note: NOT equivalent to Sonar’s taint analysis)
+  unicorn.configs.recommended,
+  sonarjs.configs.recommended,
+  prettier,
   security.configs.recommended,
-
-  // Project-specific tweaks
+  ...typedTsConfigs,
   {
     name: 'project-overrides',
-    // Keep global ignores aligned with tsconfig.eslint.json `exclude`
-    // so type-aware linting scans the same set of files.
-    ignores: [
-      'node_modules/**',
-      'dist/**',
-      'coverage/**',
-      'src/stories/**',
-      'tests/**/fixtures/**',
-      '**/*.min.js',
-    ],
+    plugins: {
+      '@typescript-eslint': tseslint.plugin,
+    },
     rules: {
-      // Sonar-like maintainability signal
       'sonarjs/cognitive-complexity': ['error', 8],
-
-      // Keep noise down where packs overlap
-      'unicorn/no-null': 'off', // often too strict
-      'unicorn/prefer-module': 'off', // off if you still use CommonJS
-      'import/no-unresolved': 'off', // leave to TS when using path aliases
+      'unicorn/no-null': 'off',
+      'unicorn/prefer-module': 'off',
+      'unicorn/no-typeof-undefined': 'off',
+      'import/no-unresolved': 'off',
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
     },
   },
-
-  // Stronger TS settings for .ts/.tsx only
   {
-    files: ['**/*.ts', '**/*.tsx'],
+    files: ['**/*.{ts,tsx}'],
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
-        project: './tsconfig.eslint.json',
+        projectService: false,
+        project: ['./tsconfig.eslint.json'],
         tsconfigRootDir: import.meta.dirname,
-        allowDefaultProject: ['src/stories/**/*'],
       },
     },
     rules: {
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/consistent-type-imports': 'error',
     },
+  },
+  {
+    files: ['**/*.test.{ts,tsx}', '**/tests/**/*.{ts,tsx}'],
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        projectService: false,
+        project: ['./tsconfig.eslint.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+    //    rules: {
+    //      '@typescript-eslint/require-await': 'off',
+    //      '@typescript-eslint/await-thenable': 'off',
+    //      '@typescript-eslint/no-floating-promises': 'off',
+    //      '@typescript-eslint/no-misused-promises': 'off',
+    //      '@typescript-eslint/no-unnecessary-type-assertion': 'off',
+    //      '@typescript-eslint/restrict-plus-operands': 'off',
+    //      '@typescript-eslint/restrict-template-expressions': 'off',
+    //      '@typescript-eslint/unbound-method': 'off',
+    //      '@typescript-eslint/prefer-readonly': 'off',
+    //      '@typescript-eslint/no-unsafe-assignment': 'off',
+    //      '@typescript-eslint/no-unsafe-member-access': 'off',
+    //      '@typescript-eslint/no-unsafe-call': 'off',
+    //      '@typescript-eslint/no-unsafe-return': 'off',
+    //      '@typescript-eslint/no-explicit-any': 'off',
+    //      'unicorn/consistent-function-scoping': 'off',
+    //      'promise/param-names': 'off',
+    //      '@typescript-eslint/prefer-nullish-coalescing': 'off',
+    //      'security/detect-non-literal-fs-filename': 'off',
+    //    },
   },
 )

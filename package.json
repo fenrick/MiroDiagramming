@@ -31,6 +31,7 @@
     "@stitches/react": "^1.2.8",
     "d3-dsv": "^3.0.1",
     "dagre": "^0.8.5",
+    "dompurify": "^3.3.0",
     "elkjs": "^0.11.0",
     "lru-cache": "^11.2.2",
     "marked": "^16.4.2",
@@ -43,6 +44,7 @@
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^20.0.0",
+    "@eslint/js": "^9.39.1",
     "@mirohq/websdk-types": "^2.17.2",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/git": "^10.0.1",
@@ -64,6 +66,7 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-promise": "^7.2.1",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
