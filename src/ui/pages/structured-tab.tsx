@@ -1,5 +1,8 @@
 import { IconArrowArcLeft, IconPlus, Text } from '@mirohq/design-system'
 import { space } from '@mirohq/design-tokens'
+import { LegacyCheckbox as BaseLegacyCheckbox } from '@base-ui-components/react/checkbox'
+import { Input as BaseInput } from '@base-ui-components/react/input'
+import { Select } from '@base-ui-components/react/select'
 import React from 'react'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 
@@ -23,13 +26,8 @@ import { ASPECT_RATIOS, type AspectRatioId } from '../../core/utils/aspect-ratio
 import {
   Button,
   ButtonToolbar,
-  Checkbox,
   DroppedFileList,
   EmptyState,
-  InputField,
-  SelectField,
-  SelectOption,
-  SidebarSection,
   Skeleton,
   InfoCallout,
 } from '../components'
@@ -164,19 +162,34 @@ export const StructuredTab: React.FC = () => {
               <VisuallyHidden asChild>
                 <legend>Diagram options</legend>
               </VisuallyHidden>
-              <SelectField
-                label="Layout type"
-                value={layoutChoice}
-                onChange={(v) => {
-                  setLayoutChoice(v as LayoutChoice)
-                }}
-              >
-                {LAYOUTS.map((l) => (
-                  <SelectOption key={l} value={l}>
-                    {l}
-                  </SelectOption>
-                ))}
-              </SelectField>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-50)' }}>
+                <label id="layout-type-label" style={{ fontWeight: 600 }}>
+                  Layout type
+                </label>
+                <Select.Root
+                  value={layoutChoice}
+                  onValueChange={(value) => setLayoutChoice(value as LayoutChoice)}
+                >
+                  <Select.Trigger aria-labelledby="layout-type-label" style={{ width: '100%' }}>
+                    <Select.Value />
+                    <Select.Icon />
+                  </Select.Trigger>
+                  <Select.Portal>
+                    <Select.Positioner>
+                      <Select.Popup>
+                        <Select.List>
+                          {LAYOUTS.map((l) => (
+                            <Select.Item key={l} value={l}>
+                              <Select.ItemText>{l}</Select.ItemText>
+                              <Select.ItemIndicator>✓</Select.ItemIndicator>
+                            </Select.Item>
+                          ))}
+                        </Select.List>
+                      </Select.Popup>
+                    </Select.Positioner>
+                  </Select.Portal>
+                </Select.Root>
+              </div>
               <InfoCallout title="Layout options">
                 <ul style={{ margin: 0, paddingLeft: SP200 }}>
                   {LAYOUTS.map((l) => (
@@ -184,19 +197,40 @@ export const StructuredTab: React.FC = () => {
                   ))}
                 </ul>
               </InfoCallout>
-              <div style={{ marginTop: space[200] }}>
-                <Checkbox label="Wrap items in frame" value={withFrame} onChange={setWithFrame} />
+              <div
+                style={{
+                  marginTop: space[200],
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 'var(--space-100)',
+                }}
+              >
+                <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-75)' }}>
+                  <BaseLegacyCheckbox.Root
+                    checked={withFrame}
+                    onCheckedChange={(checked) => setWithFrame(Boolean(checked))}
+                    id="with-frame"
+                  >
+                    <BaseLegacyCheckbox.Indicator>✓</BaseLegacyCheckbox.Indicator>
+                  </BaseLegacyCheckbox.Root>
+                  Wrap items in frame
+                </label>
+                {withFrame && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-50)' }}>
+                    <label htmlFor="frame-title" style={{ fontWeight: 600 }}>
+                      Frame title
+                    </label>
+                    <BaseInput
+                      id="frame-title"
+                      value={frameTitle}
+                      onValueChange={(v) => {
+                        setFrameTitle(String(v))
+                      }}
+                      placeholder="Frame title"
+                    />
+                  </div>
+                )}
               </div>
-              {withFrame && (
-                <InputField
-                  label="Frame title"
-                  value={frameTitle}
-                  onValueChange={(v) => {
-                    setFrameTitle(v)
-                  }}
-                  placeholder="Frame title"
-                />
-              )}
               {/** Advanced options details */}
               <details
                 open={showAdvanced}
@@ -214,7 +248,7 @@ export const StructuredTab: React.FC = () => {
                   </InfoCallout>
                 </div>
                 <div style={{ display: 'grid', rowGap: SP200 }}>
-                  <InputField
+                  <LegacyInputField
                     label="Spacing"
                     type="number"
                     value={String(layoutOptions.spacing)}
@@ -223,7 +257,7 @@ export const StructuredTab: React.FC = () => {
                     }}
                   />
                   {optionVisibility?.aspectRatio && (
-                    <SelectField
+                    <SelectTrigger
                       label="Aspect ratio"
                       value={layoutOptions.aspectRatio}
                       onChange={(v) => {
@@ -234,25 +268,25 @@ export const StructuredTab: React.FC = () => {
                       }}
                     >
                       {ASPECT_RATIOS.map((r) => (
-                        <SelectOption key={r.id} value={r.id}>
+                        <SelectItem key={r.id} value={r.id}>
                           {r.label}
-                        </SelectOption>
+                        </SelectItem>
                       ))}
-                    </SelectField>
+                    </SelectTrigger>
                   )}
                 </div>
-                <SelectField
+                <SelectTrigger
                   label="Existing nodes"
                   value={existingMode}
                   onChange={(v) => {
                     setExistingMode(v as ExistingNodeMode)
                   }}
                 >
-                  <SelectOption value="move">Move into place</SelectOption>
-                  <SelectOption value="layout">Use for layout</SelectOption>
-                  <SelectOption value="ignore">Keep position</SelectOption>
-                </SelectField>
-                <SelectField
+                  <SelectItem value="move">Move into place</SelectItem>
+                  <SelectItem value="layout">Use for layout</SelectItem>
+                  <SelectItem value="ignore">Keep position</SelectItem>
+                </SelectTrigger>
+                <SelectTrigger
                   label="Algorithm"
                   value={layoutOptions.algorithm}
                   onChange={(v) => {
@@ -263,12 +297,12 @@ export const StructuredTab: React.FC = () => {
                   }}
                 >
                   {ALGORITHMS.map((a) => (
-                    <SelectOption key={a} value={a}>
+                    <SelectItem key={a} value={a}>
                       {a}
-                    </SelectOption>
+                    </SelectItem>
                   ))}
-                </SelectField>
-                <SelectField
+                </SelectTrigger>
+                <SelectTrigger
                   label="Direction"
                   value={layoutOptions.direction}
                   onChange={(v) => {
@@ -279,13 +313,13 @@ export const StructuredTab: React.FC = () => {
                   }}
                 >
                   {DIRECTIONS.map((d) => (
-                    <SelectOption key={d} value={d}>
+                    <SelectItem key={d} value={d}>
                       {d}
-                    </SelectOption>
+                    </SelectItem>
                   ))}
-                </SelectField>
+                </SelectTrigger>
                 {optionVisibility?.edgeRouting && (
-                  <SelectField
+                  <SelectTrigger
                     label="Edge routing"
                     value={(layoutOptions.edgeRouting ?? 'default') as ElkEdgeRouting}
                     onChange={(v) => {
@@ -296,14 +330,14 @@ export const StructuredTab: React.FC = () => {
                     }}
                   >
                     {EDGE_ROUTINGS.map((routing) => (
-                      <SelectOption key={routing} value={routing}>
+                      <SelectItem key={routing} value={routing}>
                         {routing}
-                      </SelectOption>
+                      </SelectItem>
                     ))}
-                  </SelectField>
+                  </SelectTrigger>
                 )}
                 {optionVisibility?.edgeRoutingMode && (
-                  <SelectField
+                  <SelectTrigger
                     label="Routing mode"
                     value={(layoutOptions.edgeRoutingMode ?? 'default') as ElkEdgeRoutingMode}
                     onChange={(v) => {
@@ -314,14 +348,14 @@ export const StructuredTab: React.FC = () => {
                     }}
                   >
                     {EDGE_ROUTING_MODES.map((m) => (
-                      <SelectOption key={m} value={m}>
+                      <SelectItem key={m} value={m}>
                         {m}
-                      </SelectOption>
+                      </SelectItem>
                     ))}
-                  </SelectField>
+                  </SelectTrigger>
                 )}
                 {optionVisibility?.optimizationGoal && (
-                  <SelectField
+                  <SelectTrigger
                     label="Optimisation goal"
                     value={(layoutOptions.optimizationGoal ?? 'balanced') as ElkOptimizationGoal}
                     onChange={(v) => {
@@ -332,14 +366,14 @@ export const StructuredTab: React.FC = () => {
                     }}
                   >
                     {OPTIMIZATION_GOALS.map((o) => (
-                      <SelectOption key={o} value={o}>
+                      <SelectItem key={o} value={o}>
                         {o}
-                      </SelectOption>
+                      </SelectItem>
                     ))}
-                  </SelectField>
+                  </SelectTrigger>
                 )}
                 {layoutChoice === 'Nested' && (
-                  <InputField
+                  <LegacyInputField
                     label="Padding"
                     type="number"
                     value={String(nestedPadding)}
@@ -349,7 +383,7 @@ export const StructuredTab: React.FC = () => {
                   />
                 )}
                 {layoutChoice === 'Nested' && (
-                  <InputField
+                  <LegacyInputField
                     label="Top spacing"
                     type="number"
                     value={String(nestedTopSpacing)}

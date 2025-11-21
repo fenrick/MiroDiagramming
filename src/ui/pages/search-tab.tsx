@@ -1,7 +1,7 @@
-import { Grid, IconArrowRight, IconChevronRight, IconPen, Text } from '@mirohq/design-system'
 import { space } from '@mirohq/design-tokens'
 import React from 'react'
 
+import { Grid, IconArrowRight, IconChevronRight, IconPen, Text } from '../primitives'
 import type { SearchOptions } from '../../board/search-tools'
 import {
   Button,
@@ -10,9 +10,7 @@ import {
   EmptyState,
   FilterDropdown,
   InputField,
-  Paragraph,
   RegexSearchField,
-  SidebarSection,
 } from '../components'
 import { PageHelp } from '../components/page-help'
 import { TabPanel } from '../components/tab-panel'
@@ -201,7 +199,7 @@ export const SearchTab: React.FC = () => {
     <TabPanel tabId="search">
       <div style={CONTENT_STYLE}>
         <PageHelp content="Find and replace text on the board" />
-        <SidebarSection title="Find & Replace">
+        <section title="Find & Replace">
           <Grid columns={2}>
             <Grid.Item>
               <RegexSearchField
@@ -226,8 +224,9 @@ export const SearchTab: React.FC = () => {
               />
             </Grid.Item>
           </Grid>
-        </SidebarSection>
-        <SidebarSection title="Filters">
+        </section>
+
+        <section title="Filters">
           <div style={{ marginBottom: space[200] }}>
             <InfoCallout title="Tips">
               Combine type, tags, and colour to narrow matches. Toggle Regex for advanced patterns.
@@ -252,9 +251,10 @@ export const SearchTab: React.FC = () => {
             wholeWord={wholeWord}
             onWholeWordChange={setWholeWord}
           />
-        </SidebarSection>
-        <SidebarSection title="Results">
-          <Paragraph data-testid="match-count">Matches: {results.length}</Paragraph>
+        </section>
+
+        <section title="Results">
+          <p data-testid="match-count">Matches: {results.length}</p>
           {query && results.length === 0 ? (
             <EmptyState
               title="No matches found"
@@ -298,7 +298,7 @@ export const SearchTab: React.FC = () => {
               </Button>
             </ButtonToolbar>
           </StickyActions>
-        </SidebarSection>
+        </section>
       </div>
     </TabPanel>
   )

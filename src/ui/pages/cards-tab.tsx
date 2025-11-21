@@ -1,4 +1,4 @@
-import { Grid, IconArrowArcLeft, IconPlus, Text } from '@mirohq/design-system'
+import { Grid, IconArrowArcLeft, IconPlus, Text } from '../primitives'
 import React from 'react'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 
@@ -10,7 +10,6 @@ import {
   DroppedFileList,
   InputField,
   EmptyState,
-  SidebarSection,
   Skeleton,
   JsonDropZone,
   PageHelp,
@@ -96,8 +95,8 @@ export const CardsTab: React.FC = () => {
       )}
 
       {files.length > 0 && (
-        <>
-          <SidebarSection title="Selected file">
+        <section>
+          <section title="Selected file">
             <Grid columns={2}>
               <Grid.Item>
                 <DroppedFileList>
@@ -125,8 +124,9 @@ export const CardsTab: React.FC = () => {
                 </fieldset>
               </Grid.Item>
             </Grid>
-          </SidebarSection>
-          <SidebarSection title="Create">
+          </section>
+
+          <section title="Create">
             <StickyActions>
               <ButtonToolbar>
                 <Button
@@ -176,8 +176,8 @@ export const CardsTab: React.FC = () => {
               </output>
             )}
             {error && <p className="error">{error}</p>}
-          </SidebarSection>
-        </>
+          </section>
+        </section>
       )}
     </TabPanel>
   )

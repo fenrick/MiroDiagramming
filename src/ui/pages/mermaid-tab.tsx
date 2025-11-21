@@ -1,12 +1,8 @@
-import {
-  Button,
-  Callout,
-  IconArrowArcLeft,
-  IconChevronRightDouble,
-  Text,
-} from '@mirohq/design-system'
-import { space } from '@mirohq/design-tokens'
 import React from 'react'
+import { space } from '@mirohq/design-tokens'
+
+import { IconArrowArcLeft, IconChevronRightDouble, Text } from '../primitives'
+import { Button } from '../components'
 
 import { type ExistingNodeMode } from '../../core/graph/graph-processor'
 import { usePersistentState } from '../../core/hooks/use-persistent-state'
@@ -18,10 +14,8 @@ import {
   InfoCallout,
   InputField,
   PageHelp,
-  Paragraph,
   SelectField,
   SelectOption,
-  SidebarSection,
   TabPanel,
   TextareaField,
 } from '../components'
@@ -118,7 +112,7 @@ export const MermaidTab: React.FC = () => {
     <TabPanel tabId="mermaid">
       <div style={CONTENT_STYLE}>
         <PageHelp content="Transform Mermaid flowcharts into board widgets" />
-        <SidebarSection title="Definition">
+        <section title="Definition">
           <InfoCallout title="Supported diagrams">
             Mermaid flowcharts (`graph TD`/`graph LR`) are supported today. Sequence diagrams and
             other formats are on the roadmap.
@@ -139,8 +133,9 @@ export const MermaidTab: React.FC = () => {
               Clear
             </Button>
           </ButtonToolbar>
-        </SidebarSection>
-        <SidebarSection title="Options">
+        </section>
+
+        <section title="Options">
           <Checkbox label="Wrap result in a frame" value={withFrame} onChange={setWithFrame} />
           {withFrame ? (
             <InputField
@@ -163,23 +158,29 @@ export const MermaidTab: React.FC = () => {
               </SelectOption>
             ))}
           </SelectField>
-          <Paragraph>
+          <p>
             Move into new layout repositions selected widgets to match the rendered graph. Use
             selection positions to keep coordinates for matched nodes while laying out new ones.
-          </Paragraph>
-        </SidebarSection>
+          </p>
+        </section>
+
         {status ? (
-          <Callout
-            variant={status.variant === 'success' ? 'success' : 'danger'}
-            dismissible={false}
-            style={STATUS_STYLE}
+          <div
+            style={{
+              ...STATUS_STYLE,
+              padding: 'var(--space-150)',
+              borderRadius: 'var(--border-radius-medium)',
+              border: `1px solid ${
+                status.variant === 'success' ? 'var(--colors-green-400)' : 'var(--colors-red-400)'
+              }`,
+              background:
+                status.variant === 'success' ? 'var(--colors-green-100)' : 'var(--colors-red-100)',
+              color:
+                status.variant === 'success' ? 'var(--colors-green-700)' : 'var(--colors-red-700)',
+            }}
           >
-            <Callout.Content>
-              <Callout.Description>
-                <output aria-live="polite">{status.message}</output>
-              </Callout.Description>
-            </Callout.Content>
-          </Callout>
+            <output aria-live="polite">{status.message}</output>
+          </div>
         ) : null}
         <StickyActions>
           <ButtonToolbar>

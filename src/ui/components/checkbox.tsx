@@ -1,22 +1,16 @@
-import { Flex, styled, Switch as DSSwitch } from '@mirohq/design-system'
 import React from 'react'
 
 export type CheckboxProperties = Readonly<
   Omit<
-    React.ComponentProps<typeof DSSwitch>,
-    'checked' | 'onChecked' | 'onUnchecked' | 'style' | 'className' | 'onChange' | 'value' | 'type'
+    React.InputHTMLAttributes<HTMLInputElement>,
+    'checked' | 'onChange' | 'className' | 'style' | 'type' | 'value'
   > & { label?: string; value?: boolean; onChange?: (value: boolean) => void }
 >
 
 /**
- * Checkbox wrapper implemented using the design-system `Switch` component.
+ * Checkbox wrapper implemented using Mirotone checkbox styles.
  * It exposes a boolean `value` prop and triggers `onChange` when toggled.
  */
-const StyledGroup = styled(Flex, {
-  marginBottom: 'var(--space-200)',
-  position: 'relative',
-})
-
 export function Checkbox({
   label,
   value,
@@ -24,29 +18,25 @@ export function Checkbox({
   id,
   ...properties
 }: CheckboxProperties): React.JSX.Element {
-  const handleChange = (checked: boolean): void => onChange?.(checked)
   const generatedId = React.useId()
   const inputId = String(id ?? generatedId)
-  const labelId = `${inputId}-label`
   const isChecked = value ?? false
 
   return (
-    <StyledGroup gap={200}>
-      <DSSwitch
+    <label
+      className={`checkbox${properties.disabled ? ' miro-checkbox--disabled' : ''}`}
+      style={{ marginBottom: 'var(--space-200)', position: 'relative' }}
+    >
+      <input
         id={inputId}
+        type="checkbox"
         checked={isChecked}
-        onChecked={() => {
-          handleChange(true)
+        onChange={(event) => {
+          onChange?.(event.target.checked)
         }}
-        onUnchecked={() => {
-          handleChange(false)
-        }}
-        aria-labelledby={labelId}
         {...properties}
       />
-      <label id={labelId} htmlFor={inputId}>
-        {label}
-      </label>
-    </StyledGroup>
+      <span>{label}</span>
+    </label>
   )
 }

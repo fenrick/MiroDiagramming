@@ -1,15 +1,11 @@
 import React from 'react'
-import { Callout } from '@mirohq/design-system'
 
 import { Button } from './button'
 
 /** A single toast notification. */
 export interface ToastOptions {
-  /** Message to display. */
   message: string
-  /** Optional thumbnail image URL. */
   thumbnailUrl?: string
-  /** Optional action button. */
   action?: { label: string; callback: () => void }
 }
 
@@ -19,15 +15,11 @@ interface Toast extends ToastOptions {
 
 const listeners = new Set<(t: Toast) => void>()
 
-/** Emit a toast to all listeners. */
 export function pushToast(options: ToastOptions): void {
   const toast: Toast = { id: crypto.randomUUID(), ...options }
   for (const l of listeners) l(toast)
 }
 
-/**
- * Container rendering toast notifications in the bottom-right corner.
- */
 export const ToastContainer: React.FC = () => {
   const [toasts, setToasts] = React.useState<Toast[]>([])
 
@@ -41,9 +33,7 @@ export const ToastContainer: React.FC = () => {
 
   const scheduleDismiss = React.useCallback(
     (id: string) => {
-      globalThis.setTimeout(() => {
-        remove(id)
-      }, 5000)
+      globalThis.setTimeout(() => remove(id), 5000)
     },
     [remove],
   )
@@ -62,25 +52,34 @@ export const ToastContainer: React.FC = () => {
   return (
     <div className="toast-container">
       {toasts.map((t) => (
-        <Callout key={t.id} role="alert" variant="neutral" dismissible={false}>
-          <Callout.Content>
-            {t.thumbnailUrl && <img className="toast-thumb" src={t.thumbnailUrl} alt="" />}
-            <Callout.Description>{t.message}</Callout.Description>
-          </Callout.Content>
+        <div
+          key={t.id}
+          role="alert"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 'var(--space-100)',
+            padding: 'var(--space-150)',
+            borderRadius: 'var(--border-radius-medium)',
+            border: '1px solid var(--indigo200)',
+            background: 'var(--white)',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+          }}
+        >
+          {t.thumbnailUrl && <img className="toast-thumb" src={t.thumbnailUrl} alt="" />}
+          <div style={{ flex: 1 }}>{t.message}</div>
           {t.action && (
-            <Callout.Actions>
-              <Button
-                variant="tertiary"
-                onClick={() => {
-                  t.action?.callback()
-                  remove(t.id)
-                }}
-              >
-                {t.action.label}
-              </Button>
-            </Callout.Actions>
+            <Button
+              variant="tertiary"
+              onClick={() => {
+                t.action?.callback()
+                remove(t.id)
+              }}
+            >
+              {t.action.label}
+            </Button>
           )}
-        </Callout>
+        </div>
       ))}
     </div>
   )

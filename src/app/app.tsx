@@ -1,11 +1,8 @@
-import { Tabs } from '@mirohq/design-system'
 import * as React from 'react'
+import { Tabs } from '@base-ui-components/react/tabs'
 
 import { Tooltip } from '../ui/components'
-import { Paragraph } from '../ui/components/paragraph'
 import { ToastContainer } from '../ui/components/toast'
-import { PanelShell } from '../ui/panel-shell'
-import { ScrollArea } from '../ui/scroll-area'
 import { type Tab, TAB_DATA, type TabTuple } from '../ui/pages/tabs'
 
 /**
@@ -25,38 +22,55 @@ function AppShell(): React.JSX.Element {
   // No global keyboard shortcuts or command palette in Miro add-ins.
 
   return (
-    <ScrollArea>
-      <Tabs
+    <div role="main" className="panel-shell">
+      <Tabs.Root
         value={tab}
-        onChange={(id: string) => {
-          setTab(id as Tab)
+        onValueChange={(value) => {
+          setTab(value as Tab)
         }}
-        variant={'tabs'}
-        size="medium"
+        className="tabs"
       >
-        <Tabs.List>
-          {TAB_DATA.map((t) => (
-            <Tabs.Trigger key={t[1]} value={t[1]} aria-label={t[2]}>
-              <Tooltip content={t[2]}>
-                <span className="truncate">{t[2]}</span>
-              </Tooltip>
-            </Tabs.Trigger>
-          ))}
+        <Tabs.List className="tabs-header-list">
+          {TAB_DATA.map((t) => {
+            const active = t[1] === tab
+            return (
+              <Tabs.Tab
+                key={t[1]}
+                value={t[1]}
+                aria-label={t[3] ?? t[2]}
+                className={['tab', active ? 'tab-active' : ''].filter(Boolean).join(' ')}
+                style={{ width: '100%' }}
+              >
+                <Tooltip content={t[2]}>
+                  <span className="truncate">{t[2]}</span>
+                </Tooltip>
+              </Tabs.Tab>
+            )
+          })}
         </Tabs.List>
-      </Tabs>
-      <div aria-label="Panel content">
-        <Paragraph>{instructions}</Paragraph>
-        <CurrentComp />
+      </Tabs.Root>
+      <div
+        style={{
+          flex: 1,
+          minHeight: 0,
+          overflowY: 'auto',
+          paddingTop: 'var(--space-100)',
+          paddingBottom: 'var(--space-150)',
+          scrollbarGutter: 'stable both-edges',
+          overscrollBehavior: 'contain',
+        }}
+        aria-label="Panel content"
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-200)' }}>
+          <p style={{ margin: 0 }}>{instructions}</p>
+          <CurrentComp />
+        </div>
       </div>
       <ToastContainer />
-    </ScrollArea>
+    </div>
   )
 }
 
 export const App: React.FC = () => {
-  return (
-    <PanelShell>
-      <AppShell />
-    </PanelShell>
-  )
+  return <AppShell />
 }

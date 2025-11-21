@@ -1,6 +1,5 @@
-import { Tabs } from '@mirohq/design-system'
-import { space } from '@mirohq/design-tokens'
 import React from 'react'
+import { Tabs } from '@base-ui-components/react/tabs'
 
 import { usePersistentState } from '../../core/hooks/use-persistent-state'
 import { isMermaidEnabled } from '../../core/mermaid'
@@ -72,31 +71,36 @@ export const DiagramsTab: React.FC = () => {
   return (
     <TabPanel tabId="diagrams">
       <PageHelp content="Import data or experiment with the layout engine" />
-      <Tabs value={sub} variant="tabs" onChange={handleChange} size="medium">
-        <Tabs.List
-          aria-label="Diagram tools"
-          css={{ display: 'flex', flexWrap: 'wrap', gap: space[100] }}
+      <div className="stack-md">
+        <Tabs.Root
+          value={sub}
+          onValueChange={(value) => handleChange(String(value))}
+          className="tabs"
         >
-          {subTabs.map((t) => (
-            <Tabs.Trigger key={t.id} value={t.id} css={{ flex: '1 1 auto' }}>
-              {t.label}
-            </Tabs.Trigger>
-          ))}
-        </Tabs.List>
-        <div style={{ marginTop: space[200] }}>
+          <Tabs.List className="tabs-header-list" aria-label="Diagram tools">
+            {subTabs.map((t) => (
+              <Tabs.Tab
+                key={t.id}
+                value={t.id}
+                className={['tab', sub === t.id ? 'tab-active' : ''].filter(Boolean).join(' ')}
+              >
+                <div className="tab-text">{t.label}</div>
+              </Tabs.Tab>
+            ))}
+          </Tabs.List>
           {subTabs.map(({ id }) => {
             const Component = SUB_TAB_COMPONENTS.get(id)
             if (!Component) {
               return null
             }
             return (
-              <Tabs.Content key={id} value={id} asChild>
-                <Component />
-              </Tabs.Content>
+              <Tabs.Panel key={id} value={id} style={{ paddingTop: 'var(--space-150)' }}>
+                {id === sub ? <Component /> : null}
+              </Tabs.Panel>
             )
           })}
-        </div>
-      </Tabs>
+        </Tabs.Root>
+      </div>
     </TabPanel>
   )
 }

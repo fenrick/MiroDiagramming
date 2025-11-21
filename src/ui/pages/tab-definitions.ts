@@ -5,6 +5,7 @@ export type TabId =
   | 'tools'
   | 'size'
   | 'style'
+  | 'text'
   | 'arrange'
   | 'frames'
   | 'search'

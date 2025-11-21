@@ -3,11 +3,11 @@ import '@testing-library/jest-dom/vitest'
 class StableCSSStyleSheet {
   public cssRules: CSSRuleList | CSSRule[] = []
 
-  public insertRule(): number {
+  public insertRule(_rule: string, _index?: number): number {
     return 0
   }
 
-  public replaceSync(): void {}
+  public replaceSync(_text: string): void {}
 }
 
 ;(globalThis as typeof globalThis & { CSSStyleSheet: typeof StableCSSStyleSheet }).CSSStyleSheet =

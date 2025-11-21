@@ -1,7 +1,7 @@
-import { DropdownMenu, Flex, IconButton, IconFunnel } from '@mirohq/design-system'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 import React from 'react'
 
+import { Checkbox } from './checkbox'
 import { InputField } from './input-field'
 
 export interface FilterDropdownProperties {
@@ -24,61 +24,55 @@ export interface FilterDropdownProperties {
 }
 
 /**
- * Dropdown listing advanced search filters.
- *
- * @param props - FilterDropdown props controlling which search filters are active.
+ * Simple collapsible panel listing advanced search filters.
  */
-export function FilterDropdown({
-  widgetTypes,
-  toggleType,
-  tagIds,
-  onTagIdsChange,
-  backgroundColor,
-  onBackgroundColorChange,
-  assignee,
-  onAssigneeChange,
-  creator,
-  onCreatorChange,
-  lastModifiedBy,
-  onLastModifiedByChange,
-  caseSensitive,
-  onCaseSensitiveChange,
-  wholeWord,
-  onWholeWordChange,
-}: Readonly<FilterDropdownProperties>): React.JSX.Element {
+export function FilterDropdown(props: Readonly<FilterDropdownProperties>): React.JSX.Element {
+  const {
+    widgetTypes,
+    toggleType,
+    tagIds,
+    onTagIdsChange,
+    backgroundColor,
+    onBackgroundColorChange,
+    assignee,
+    onAssigneeChange,
+    creator,
+    onCreatorChange,
+    lastModifiedBy,
+    onLastModifiedByChange,
+    caseSensitive,
+    onCaseSensitiveChange,
+    wholeWord,
+    onWholeWordChange,
+  } = props
+
   return (
-    <DropdownMenu>
-      <DropdownMenu.Trigger asChild>
-        <IconButton aria-label="Filters">
-          <IconFunnel />
-        </IconButton>
-      </DropdownMenu.Trigger>
-      <DropdownMenu.Content>
-        <DropdownMenu.SwitchItem checked={caseSensitive} onChange={onCaseSensitiveChange}>
-          Case sensitive
-        </DropdownMenu.SwitchItem>
-        <DropdownMenu.SwitchItem checked={wholeWord} onChange={onWholeWordChange}>
-          Whole word
-        </DropdownMenu.SwitchItem>
-        <DropdownMenu.Separator />
-        <Flex direction="column" gap={100} css={{ marginBottom: 'var(--space-200)' }}>
-          <VisuallyHidden asChild>
-            <legend>Widget Types</legend>
-          </VisuallyHidden>
-          <div>
-            {['shape', 'card', 'sticky_note', 'text'].map((t) => (
-              <DropdownMenu.CheckboxItem
-                key={t}
-                checked={widgetTypes.includes(t)}
-                onChange={() => {
-                  toggleType(t)
-                }}
-              >
-                {t}
-              </DropdownMenu.CheckboxItem>
-            ))}
-          </div>
-        </Flex>
+    <details>
+      <summary style={{ cursor: 'pointer' }}>Filters</summary>
+      <div
+        style={{
+          padding: 'var(--space-150) var(--space-50)',
+          display: 'grid',
+          gap: 'var(--space-100)',
+        }}
+      >
+        <Checkbox label="Case sensitive" value={caseSensitive} onChange={onCaseSensitiveChange} />
+        <Checkbox label="Whole word" value={wholeWord} onChange={onWholeWordChange} />
+        <VisuallyHidden asChild>
+          <legend>Widget Types</legend>
+        </VisuallyHidden>
+        <div style={{ display: 'grid', gap: 'var(--space-50)' }}>
+          {['shape', 'card', 'sticky_note', 'text'].map((t) => (
+            <Checkbox
+              key={t}
+              label={t}
+              value={widgetTypes.includes(t)}
+              onChange={() => {
+                toggleType(t)
+              }}
+            />
+          ))}
+        </div>
         <InputField
           label="Tag IDs"
           value={tagIds}
@@ -109,7 +103,7 @@ export function FilterDropdown({
           onValueChange={onLastModifiedByChange}
           placeholder="User ID"
         />
-      </DropdownMenu.Content>
-    </DropdownMenu>
+      </div>
+    </details>
   )
 }

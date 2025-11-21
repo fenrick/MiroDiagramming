@@ -1,4 +1,3 @@
-import { styled } from '@mirohq/design-system'
 import React from 'react'
 
 import { Modal } from './modal'
@@ -29,44 +28,30 @@ export function CommandPalette({
     [commands, query],
   )
 
-  React.useEffect(() => {
-    setIndex(0)
-  }, [query, isOpen])
+  React.useEffect(() => setIndex(0), [query, isOpen])
 
   React.useEffect(() => {
-    if (!isOpen) {
-      return
-    }
-    const timer = setTimeout(() => {
-      inputReference.current?.focus({ preventScroll: true })
-    }, 0)
-    return () => {
-      clearTimeout(timer)
-    }
+    if (!isOpen) return
+    const timer = setTimeout(() => inputReference.current?.focus({ preventScroll: true }), 0)
+    return () => clearTimeout(timer)
   }, [isOpen])
 
   const handleKey = React.useCallback(
     (event: React.KeyboardEvent<HTMLInputElement>) => {
       switch (event.key) {
-        case 'ArrowDown': {
+        case 'ArrowDown':
           event.preventDefault()
-          setIndex((index_) => Math.min(index_ + 1, filtered.length - 1))
-
+          setIndex((idx) => Math.min(idx + 1, filtered.length - 1))
           break
-        }
-        case 'ArrowUp': {
+        case 'ArrowUp':
           event.preventDefault()
-          setIndex((index_) => Math.max(index_ - 1, 0))
-
+          setIndex((idx) => Math.max(idx - 1, 0))
           break
-        }
-        case 'Enter': {
+        case 'Enter':
           event.preventDefault()
           filtered.at(index)?.action()
           onClose()
-
           break
-        }
         // No default
       }
     },
@@ -80,57 +65,51 @@ export function CommandPalette({
         id="command-input"
         ref={inputReference}
         value={query}
-        onChange={(event) => {
-          setQuery(event.target.value)
-        }}
+        onChange={(event) => setQuery(event.target.value)}
         onKeyDown={handleKey}
+        style={{
+          width: '100%',
+          height: 'var(--input-height)',
+          padding: '0 var(--space-small)',
+          borderRadius: 'var(--border-radius-medium)',
+          border: '1px solid var(--indigo400)',
+          marginBottom: 'var(--space-100)',
+        }}
       />
-      <List>
+      <ul
+        style={{ listStyle: 'none', padding: 0, margin: 0, maxHeight: '200px', overflowY: 'auto' }}
+      >
         {filtered.map((cmd, index_) => (
           <li key={cmd.id} data-selected={index_ === index}>
-            <ItemButton
+            <button
               type="button"
               aria-current={index_ === index ? 'true' : undefined}
-              onMouseEnter={() => {
-                setIndex(index_)
-              }}
+              onMouseEnter={() => setIndex(index_)}
               onClick={() => {
                 cmd.action()
                 onClose()
               }}
+              style={{
+                width: '100%',
+                textAlign: 'left',
+                padding: 'var(--space-100)',
+                cursor: 'pointer',
+                background: index_ === index ? 'var(--indigo100)' : 'transparent',
+                border: 'none',
+              }}
             >
               {cmd.label}
-            </ItemButton>
+            </button>
           </li>
         ))}
         {filtered.length === 0 && (
           <li>
-            <ItemButton type="button" disabled>
+            <button type="button" disabled style={{ width: '100%', padding: 'var(--space-100)' }}>
               No commands
-            </ItemButton>
+            </button>
           </li>
         )}
-      </List>
+      </ul>
     </Modal>
   )
 }
-
-const List = styled('ul', {
-  listStyle: 'none',
-  padding: 0,
-  margin: 0,
-  maxHeight: '200px',
-  overflowY: 'auto',
-})
-
-const ItemButton = styled('button', {
-  width: '100%',
-  textAlign: 'left',
-  padding: 'var(--space-100)',
-  cursor: 'pointer',
-  background: 'transparent',
-  border: 'none',
-  '&[aria-current=true]': {
-    background: 'var(--colors-background-tertiary)',
-  },
-})

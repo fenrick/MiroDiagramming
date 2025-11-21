@@ -1,23 +1,15 @@
-import { Form, Input, Switch } from '@mirohq/design-system'
 import React from 'react'
 
 export interface RegexSearchFieldProperties
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'className' | 'style'> {
-  /** Visible label text. */
   label: React.ReactNode
-  /** Current search text. */
   value?: string
-  /** Change handler returning the input value. */
   onChange?: (value: string) => void
-  /** Whether the query should be treated as a regular expression. */
   regex: boolean
-  /** Handler toggling regex mode. */
   onRegexToggle: (v: boolean) => void
 }
 
-/**
- * Input field with an inline toggle to enable regular expression search.
- */
+/** Input field with an inline toggle to enable regular expression search. */
 export const RegexSearchField = React.forwardRef<HTMLInputElement, RegexSearchFieldProperties>(
   function RegexSearchField(
     { label, onChange, regex, onRegexToggle, id, value, ...properties },
@@ -32,28 +24,38 @@ export const RegexSearchField = React.forwardRef<HTMLInputElement, RegexSearchFi
       onRegexToggle(checked)
     }
     return (
-      <Form.Field>
-        <Form.Label htmlFor={inputId}>{label}</Form.Label>
+      <div style={{ marginBottom: 'var(--space-200)' }}>
+        <label htmlFor={inputId} style={{ display: 'block', marginBottom: 'var(--space-50)' }}>
+          {label}
+        </label>
         <div className="search-input">
-          <Input
+          <input
             id={inputId}
             ref={reference}
             value={value}
             onChange={handleChange}
+            className="input"
+            style={{
+              flex: 1,
+              height: 'var(--input-height)',
+              padding: '0 var(--space-small)',
+              borderRadius: 'var(--border-radius-medium)',
+              border: '1px solid var(--indigo400)',
+            }}
             {...properties}
           />
-          <Switch
-            aria-label="Regex"
-            checked={regex}
-            onChecked={() => {
-              toggle(true)
-            }}
-            onUnchecked={() => {
-              toggle(false)
-            }}
-          />
+          <label style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-50)' }}>
+            <input
+              type="checkbox"
+              checked={regex}
+              onChange={(e) => {
+                toggle(e.target.checked)
+              }}
+            />
+            <span>Regex</span>
+          </label>
         </div>
-      </Form.Field>
+      </div>
     )
   },
 )

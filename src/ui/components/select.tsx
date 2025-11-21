@@ -1,54 +1,50 @@
-import { Select as DSSelect } from '@mirohq/design-system'
 import React from 'react'
 
 export type SelectProperties = Readonly<{
-  /** Currently selected value. */
   value?: string
-  /** Called when the selection changes. */
   onChange?: (value: string) => void
-  /** Optional placeholder shown when no value selected. */
   placeholder?: React.ReactNode
-  /** Whether the control is disabled. */
   disabled?: boolean
-  /** Select size token. Defaults to medium. */
-  size?: 'medium' | 'large' | 'x-large'
-  /** Additional children, typically `<SelectOption>` elements. */
   children?: React.ReactNode
 }>
 
-/**
- * Wrapper around the design-system `Select` component.
- *
- * It exposes a simplified API compatible with earlier implementations
- * so existing callers require no changes.
- */
 export function Select({
   value,
   onChange,
   placeholder,
-  size = 'medium',
   disabled,
   children,
-  // className intentionally omitted
 }: SelectProperties): React.JSX.Element {
   return (
-    <DSSelect value={value} onValueChange={onChange} disabled={disabled}>
-      <DSSelect.Trigger size={size} aria-label="Select option">
-        <DSSelect.Value placeholder={placeholder} />
-      </DSSelect.Trigger>
-      <DSSelect.Portal>
-        <DSSelect.Content>{children}</DSSelect.Content>
-      </DSSelect.Portal>
-    </DSSelect>
+    <select
+      value={value}
+      onChange={(e) => onChange?.(e.target.value)}
+      disabled={disabled}
+      className="select"
+      style={{
+        width: '100%',
+        height: 'var(--input-height)',
+        padding: '0 var(--space-small)',
+        borderRadius: 'var(--border-radius-medium)',
+        border: '1px solid var(--indigo400)',
+        backgroundColor: 'var(--white)',
+      }}
+    >
+      {placeholder ? (
+        <option value="" disabled>
+          {placeholder}
+        </option>
+      ) : null}
+      {children}
+    </select>
   )
 }
 
-export type SelectOptionProperties = Readonly<React.ComponentProps<typeof DSSelect.Item>>
+export type SelectOptionProperties = Readonly<React.OptionHTMLAttributes<HTMLOptionElement>>
 
-/** Option element for `Select`. */
 export function SelectOption({
   children,
   ...properties
 }: SelectOptionProperties): React.JSX.Element {
-  return <DSSelect.Item {...properties}>{children}</DSSelect.Item>
+  return <option {...properties}>{children}</option>
 }

@@ -1,16 +1,9 @@
-import { Grid, IconLockClosed, IconPen, Text } from '@mirohq/design-system'
 import { space } from '@mirohq/design-tokens'
 import React from 'react'
 
 import { lockSelectedFrames, renameSelectedFrames } from '../../board/frame-tools'
-import {
-  Button,
-  ButtonToolbar,
-  InputField,
-  SidebarSection,
-  EmptyState,
-  InfoCallout,
-} from '../components'
+import { Grid, IconLockClosed, IconPen, Text } from '../primitives'
+import { Button, ButtonToolbar, InputField, EmptyState, InfoCallout } from '../components'
 import { StickyActions } from '../sticky-actions'
 import { PageHelp } from '../components/page-help'
 import { TabPanel } from '../components/tab-panel'
@@ -73,7 +66,7 @@ export const FramesTab: React.FC = () => {
       <div style={CONTENT_STYLE}>
         <PageHelp content="Rename or lock selected frames" />
         {hasFrames ? null : <EmptyState title="No frames" description={emptyStateDescription} />}
-        <SidebarSection title="Rename Frames">
+        <section title="Rename Frames">
           <div style={{ marginBottom: space[200] }}>
             <InfoCallout title="Selection">
               {frameSummary}. Prefix updates from left to right.
@@ -106,8 +99,9 @@ export const FramesTab: React.FC = () => {
               </StickyActions>
             </Grid.Item>
           </Grid>
-        </SidebarSection>
-        <SidebarSection title="Lock Frames">
+        </section>
+
+        <section title="Lock Frames">
           <div style={{ marginBottom: space[200] }}>
             <InfoCallout title="Note">Locking a frame also locks its content.</InfoCallout>
           </div>
@@ -124,7 +118,7 @@ export const FramesTab: React.FC = () => {
               </Button>
             </ButtonToolbar>
           </StickyActions>
-        </SidebarSection>
+        </section>
       </div>
     </TabPanel>
   )

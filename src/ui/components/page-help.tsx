@@ -1,35 +1,33 @@
-import { IconButton, IconQuestionMarkCircle, styled } from '@mirohq/design-system'
 import React from 'react'
 
 import { Tooltip } from './tooltip'
 
 export interface PageHelpProperties {
-  /** Descriptive text explaining the current page. */
   readonly content: React.ReactNode
-  /** Accessible label for the help icon. @default 'Help' */
   readonly ariaLabel?: string
 }
 
 /**
  * Displays a question mark icon with a tooltip describing the page.
- *
- * Position this component inside a relatively positioned container so the icon
- * overlays the top-right corner.
  */
 export function PageHelp({ content, ariaLabel = 'Help' }: PageHelpProperties): React.JSX.Element {
   return (
-    <Container>
-      <Tooltip content={content} side="left" align="start">
-        <IconButton aria-label={ariaLabel} size="small" variant="ghost">
-          <IconQuestionMarkCircle />
-        </IconButton>
+    <div style={{ position: 'absolute', top: 'var(--space-100)', right: 'var(--space-100)' }}>
+      <Tooltip content={content}>
+        <button
+          aria-label={ariaLabel}
+          style={{
+            border: '1px solid var(--indigo400)',
+            borderRadius: '50%',
+            width: '32px',
+            height: '32px',
+            background: 'var(--white)',
+            cursor: 'pointer',
+          }}
+        >
+          ?
+        </button>
       </Tooltip>
-    </Container>
+    </div>
   )
 }
-
-const Container = styled('div', {
-  position: 'absolute',
-  top: 'var(--space-100)',
-  right: 'var(--space-100)',
-})

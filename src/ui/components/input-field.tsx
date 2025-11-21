@@ -1,4 +1,3 @@
-import { Form, Input, styled } from '@mirohq/design-system'
 import React from 'react'
 
 export type InputFieldProperties = Readonly<
@@ -20,11 +19,6 @@ export type InputFieldProperties = Readonly<
 // Custom class names and inline styles are intentionally excluded so spacing
 // and typography remain consistent across the app.
 
-const StyledFormField = styled(Form.Field, {
-  marginBottom: 'var(--space-200)',
-  position: 'relative',
-})
-
 export const InputField = React.forwardRef<HTMLInputElement, InputFieldProperties>(
   function InputField({ label, onValueChange, onChange, id, ...properties }, reference) {
     const generatedId = React.useId()
@@ -35,10 +29,25 @@ export const InputField = React.forwardRef<HTMLInputElement, InputFieldPropertie
     }
 
     return (
-      <StyledFormField>
-        <Form.Label htmlFor={inputId}>{label}</Form.Label>
-        <Input id={inputId} ref={reference} onChange={handleChange} {...properties} />
-      </StyledFormField>
+      <div style={{ marginBottom: 'var(--space-200)', position: 'relative' }}>
+        <label htmlFor={inputId} style={{ display: 'block', marginBottom: 'var(--space-50)' }}>
+          {label}
+        </label>
+        <input
+          id={inputId}
+          ref={reference}
+          onChange={handleChange}
+          className="input"
+          style={{
+            width: '100%',
+            height: 'var(--input-height)',
+            padding: '0 var(--space-small)',
+            borderRadius: 'var(--border-radius-medium)',
+            border: '1px solid var(--indigo400)',
+          }}
+          {...properties}
+        />
+      </div>
     )
   },
 )

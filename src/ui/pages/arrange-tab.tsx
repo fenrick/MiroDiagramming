@@ -1,10 +1,10 @@
-import { Grid, IconChevronRightDouble, IconGrid, Text, Flex } from '@mirohq/design-system'
 import { space } from '@mirohq/design-tokens'
 import React from 'react'
 
 import { applyGridLayout, type GridOptions } from '../../board/grid-tools'
 import { boardCache } from '../../board/board-cache'
 import { applySpacingLayout, type SpacingOptions } from '../../board/spacing-tools'
+import { Grid, IconChevronRightDouble, IconGrid, Text, Flex } from '../primitives'
 import {
   Button,
   ButtonToolbar,
@@ -13,7 +13,6 @@ import {
   InputField,
   SelectField,
   SelectOption,
-  SidebarSection,
   InfoCallout,
 } from '../components'
 import { PageHelp } from '../components/page-help'
@@ -122,7 +121,7 @@ export const ArrangeTab: React.FC = () => {
             description="Select the widgets you want to arrange before running these tools."
           />
         )}
-        <SidebarSection title="Grid">
+        <section title="Grid">
           <Grid columns={2}>
             <Grid.Item>
               <InputField
@@ -206,8 +205,9 @@ export const ArrangeTab: React.FC = () => {
               fill lays out 2 + 2.
             </InfoCallout>
           </div>
-        </SidebarSection>
-        <SidebarSection title="Spacing">
+        </section>
+
+        <section title="Spacing">
           <div style={{ marginBottom: space[200] }}>
             <InfoCallout title="Mode">
               Move keeps sizes and shifts items; Expand increases gaps by growing groups along the
@@ -216,7 +216,7 @@ export const ArrangeTab: React.FC = () => {
           </div>
           <Grid columns={2}>
             <Grid.Item>
-              <Flex direction="column" gap={100} css={{ marginBottom: space[200] }}>
+              <Flex direction="column" gap={100} style={{ marginBottom: space[200] }}>
                 <SelectField label="Axis" value={spacing.axis} onChange={updateAxis}>
                   <SelectOption value="x">Horizontal</SelectOption>
                   <SelectOption value="y">Vertical</SelectOption>
@@ -259,7 +259,7 @@ export const ArrangeTab: React.FC = () => {
               </StickyActions>
             </Grid.Item>
           </Grid>
-        </SidebarSection>
+        </section>
       </div>
     </TabPanel>
   )

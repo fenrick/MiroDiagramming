@@ -1,31 +1,22 @@
-import { Button as DSButton } from '@mirohq/design-system'
-import { type CSS } from '@stitches/react'
 import React from 'react'
 import type { ButtonHTMLAttributes } from 'react'
 
 type ButtonVariant = 'primary' | 'secondary' | 'tertiary' | 'ghost' | 'danger'
 type ButtonSize = 'small' | 'medium' | 'large' | 'x-large'
 
-type NativeButtonProperties = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'className' | 'style'>
+type NativeButtonProperties = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'className'> & {
+  style?: React.CSSProperties
+}
 
 export type ButtonProperties = Readonly<
   NativeButtonProperties & {
-    /** Optional design-system fluid layout toggle. */
     fluid?: boolean
-    /** Optional loading indicator toggle. */
     loading?: boolean
-    /** Optional CSS override for the button. */
-    css?: CSS
     variant?: ButtonVariant
-    /** Optional size override. */
     size?: ButtonSize
-    /** Optional icon shown inside the button. */
     icon?: React.ReactNode
-    /**
-     * Placement of the icon relative to the label.
-     * @default 'start'
-     */
     iconPosition?: 'start' | 'end'
+    css?: React.CSSProperties
   }
 >
 
@@ -36,26 +27,57 @@ function getIconSlots(
   if (!icon) {
     return { start: null, end: null }
   }
-
-  const slot = <DSButton.IconSlot key={`icon-${iconPosition}`}>{icon}</DSButton.IconSlot>
-
+  const slot = <span aria-hidden="true">{icon}</span>
   return iconPosition === 'start' ? { start: slot, end: null } : { start: null, end: slot }
 }
 
-export const Button = React.forwardRef<HTMLButtonElement, ButtonProperties>(function Button(
-  { variant = 'primary', size, icon, iconPosition = 'start', css, children, ...properties },
+const BaseButton = React.forwardRef<HTMLButtonElement, ButtonProperties>(function Button(
+  {
+    variant = 'primary',
+    size,
+    icon,
+    iconPosition = 'start',
+    children,
+    fluid,
+    loading,
+    style,
+    css,
+    ...props
+  },
   reference,
 ) {
   const largeByDefault = variant === 'primary' || variant === 'secondary' || variant === 'danger'
   const finalSize = size ?? (largeByDefault ? 'large' : 'medium')
 
   const { start, end } = getIconSlots(icon, iconPosition)
+  const classes = ['button']
+  const variantClass: Record<ButtonVariant, string> = {
+    primary: 'button-primary',
+    secondary: 'button-secondary',
+    tertiary: 'button-tertiary',
+    ghost: 'button-secondary-border',
+    danger: 'button-danger',
+  }
+  classes.push(variantClass[variant])
+  if (finalSize === 'small') classes.push('button-small')
+  if (finalSize === 'medium') classes.push('button-medium')
+  if (loading) classes.push('button-loading')
 
   return (
-    <DSButton ref={reference} variant={variant} size={finalSize} css={css} {...properties}>
+    <button
+      ref={reference}
+      className={classes.join(' ')}
+      style={fluid ? { width: '100%', ...style, ...css } : { ...style, ...css }}
+      {...props}
+    >
       {start}
-      <DSButton.Label>{children}</DSButton.Label>
+      <span>{children}</span>
       {end}
-    </DSButton>
+    </button>
   )
+})
+
+export const Button = Object.assign(BaseButton, {
+  IconSlot: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  Label: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 })

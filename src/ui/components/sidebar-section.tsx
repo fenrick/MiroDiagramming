@@ -1,24 +1,10 @@
-import { Heading, Paragraph, styled } from '@mirohq/design-system'
-import { space } from '@mirohq/design-tokens'
 import React from 'react'
 
 type SidebarSectionProperties = Readonly<{
   title: string
   description?: string
   children?: React.ReactNode
-  /** Adds top margin; use false for the first section on a page. */
-  spaced?: boolean
 }>
-
-const Wrapper = styled('section', {
-  paddingTop: space[200],
-  paddingBottom: space[200],
-  display: 'grid',
-  rowGap: 'var(--space-200)',
-  '& + &': {
-    borderTop: `1px solid var(--colors-gray-200)`,
-  },
-})
 
 export function SidebarSection({
   title,
@@ -26,10 +12,21 @@ export function SidebarSection({
   children,
 }: SidebarSectionProperties): React.JSX.Element {
   return (
-    <Wrapper>
-      <Heading level={2}>{title}</Heading>
-      {description ? <Paragraph size="small">{description}</Paragraph> : null}
-      {children}
-    </Wrapper>
+    <section>
+      <h2 style={{ margin: 0 }}>{title}</h2>
+      {description ? (
+        <p style={{ margin: 0, color: 'var(--secondary-text-color)' }}>{description}</p>
+      ) : null}
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 'var(--space-200)',
+          marginTop: 'var(--space-100)',
+        }}
+      >
+        {children}
+      </div>
+    </section>
   )
 }

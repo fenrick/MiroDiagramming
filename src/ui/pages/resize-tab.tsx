@@ -1,12 +1,13 @@
+import { space } from '@mirohq/design-tokens'
+import React from 'react'
+
 import {
   Grid,
   IconArrowArcLeft,
   IconChevronRightDouble,
   IconSquaresTwoOverlap,
   Text,
-} from '@mirohq/design-system'
-import { space } from '@mirohq/design-tokens'
-import React from 'react'
+} from '../primitives'
 
 import {
   applySizeToSelection,
@@ -26,10 +27,8 @@ import {
   ButtonToolbar,
   EmptyState,
   InputField,
-  Paragraph,
   SelectField,
   SelectOption,
-  SidebarSection,
 } from '../components'
 import { PageHelp } from '../components/page-help'
 import { TabPanel } from '../components/tab-panel'
@@ -193,35 +192,29 @@ export const ResizeTab: React.FC = () => {
       <div style={CONTENT_STYLE}>
         <PageHelp content="Adjust size manually or copy from selection" />
         {copiedSize ? (
-          <SidebarSection title="Copy mode">
-            <Paragraph>
+          <section title="Copy mode">
+            <p>
               Using copied size {formatDimension(copiedSize.width)}×
               {formatDimension(copiedSize.height)}. Clear to resume syncing with selection.
-            </Paragraph>
-          </SidebarSection>
+            </p>
+          </section>
         ) : null}
         {hasSelection ? null : (
           <EmptyState title="No selection" description="Select one or more items to resize." />
         )}
-        <Paragraph data-testid="size-display">
-          {copiedSize ? (
-            <>
-              Copied: {formatDimension(copiedSize.width)}×{formatDimension(copiedSize.height)}
-            </>
-          ) : (
-            <>
-              Selection: {formatDimension(size.width)}×{formatDimension(size.height)}
-            </>
-          )}
+        <p data-testid="size-display">
+          {copiedSize
+            ? `Copied: ${formatDimension(copiedSize.width)}×${formatDimension(copiedSize.height)}`
+            : `Selection: ${formatDimension(size.width)}×${formatDimension(size.height)}`}
           <br />
           {boardUnitsToMm(size.width).toFixed(1)} mm × {boardUnitsToMm(size.height).toFixed(1)} mm (
           {boardUnitsToInches(size.width).toFixed(2)} × {boardUnitsToInches(size.height).toFixed(2)}{' '}
           in)
           <br />
           {hasSelection ? selectionSummary : 'No selection'}
-        </Paragraph>
+        </p>
         {warning && <p className="error">{warning}</p>}
-        <SidebarSection title="Manual size">
+        <section title="Manual size">
           <Grid columns={2} gap={200}>
             <Grid.Item columnStart={1} columnEnd={2}>
               <InputField
@@ -263,8 +256,9 @@ export const ResizeTab: React.FC = () => {
               </SelectField>
             </Grid.Item>
           </Grid>
-        </SidebarSection>
-        <SidebarSection title="Presets">
+        </section>
+
+        <section title="Presets">
           <Grid columns={1}>
             <Grid.Item>
               <div>
@@ -296,7 +290,8 @@ export const ResizeTab: React.FC = () => {
               </div>
             </Grid.Item>
           </Grid>
-        </SidebarSection>
+        </section>
+
         <StickyActions>
           <ButtonToolbar>
             <Button

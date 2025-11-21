@@ -2,7 +2,6 @@ import React from 'react'
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 
 import introText from '../intro.md?raw'
-import { ScrollArea } from '../scroll-area'
 
 import { Button } from './button'
 import { Markdown } from './markdown'
@@ -20,7 +19,17 @@ export interface IntroScreenProperties {
  */
 export function IntroScreen({ onStart }: IntroScreenProperties): React.JSX.Element {
   return (
-    <ScrollArea>
+    <div
+      style={{
+        flex: 1,
+        minHeight: 0,
+        overflowY: 'auto',
+        paddingTop: 'var(--space-100)',
+        paddingBottom: 'var(--space-150)',
+        scrollbarGutter: 'stable both-edges',
+        overscrollBehavior: 'contain',
+      }}
+    >
       <div className="intro-screen" data-testid="intro-screen">
         <Markdown source={introText} />
         <VisuallyHidden>Welcome to Quick Tools</VisuallyHidden>
@@ -28,6 +37,6 @@ export function IntroScreen({ onStart }: IntroScreenProperties): React.JSX.Eleme
           Start
         </Button>
       </div>
-    </ScrollArea>
+    </div>
   )
 }

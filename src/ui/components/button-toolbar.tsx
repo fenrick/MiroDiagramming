@@ -1,4 +1,3 @@
-import { Flex } from '@mirohq/design-system'
 import React from 'react'
 
 import { Button as OurButton } from './button'
@@ -11,14 +10,14 @@ export type ButtonToolbarProperties = Readonly<{
 }>
 
 /**
- * Wraps design-system Toolbar to arrange buttons consistently.
+ * Arranges buttons consistently with vertical stacking on narrow panels.
  */
 export function ButtonToolbar({ className, children }: ButtonToolbarProperties): React.JSX.Element {
   const childArray = React.Children.toArray(children)
 
   return (
     <div className={className}>
-      <Flex direction="column" gap={100}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-100)' }}>
         {childArray.map((node, index) => {
           if (!React.isValidElement(node)) {
             return <React.Fragment key={`primitive-${String(index)}`}>{node}</React.Fragment>
@@ -36,7 +35,7 @@ export function ButtonToolbar({ className, children }: ButtonToolbarProperties):
             </div>
           )
         })}
-      </Flex>
+      </div>
     </div>
   )
 }

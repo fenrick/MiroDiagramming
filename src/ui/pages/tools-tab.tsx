@@ -1,17 +1,16 @@
-import { Tabs } from '@mirohq/design-system'
-import { space } from '@mirohq/design-tokens'
 import React from 'react'
+import { Tabs } from '@base-ui-components/react/tabs'
 
 import { PageHelp } from '../components/page-help'
 import { TabPanel } from '../components/tab-panel'
-
 import { ArrangeTab } from './arrange-tab'
 import { FramesTab } from './frames-tab'
 import { ResizeTab } from './resize-tab'
 import { StyleTab } from './style-tab'
+import { TextTab } from './text-tab'
 import type { TabTuple } from './tab-definitions'
 
-type SubTabId = 'size' | 'style' | 'arrange' | 'frames'
+type SubTabId = 'size' | 'style' | 'text' | 'arrange' | 'frames'
 
 interface TabItem {
   id: SubTabId
@@ -21,6 +20,7 @@ interface TabItem {
 const SUB_TABS: TabItem[] = [
   { id: 'size', label: 'Size' },
   { id: 'style', label: 'Colours' },
+  { id: 'text', label: 'Text Tools' },
   { id: 'arrange', label: 'Arrange' },
   { id: 'frames', label: 'Frames' },
 ]
@@ -28,6 +28,7 @@ const SUB_TABS: TabItem[] = [
 const SUB_TAB_COMPONENTS = new Map<SubTabId, React.FC>([
   ['size', ResizeTab],
   ['style', StyleTab],
+  ['text', TextTab],
   ['arrange', ArrangeTab],
   ['frames', FramesTab],
 ])
@@ -82,32 +83,37 @@ export const ToolsTab: React.FC = () => {
 
   return (
     <TabPanel tabId="tools">
-      <PageHelp content="Adjust size, style, arrange and frame utilities" />
-      <Tabs value={sub} variant="tabs" onChange={handleChange} size="medium">
-        <Tabs.List
-          aria-label="Tool categories"
-          css={{ display: 'flex', flexWrap: 'wrap', gap: space[100] }}
+      <PageHelp content="Adjust size, style, text, arrange and frame utilities" />
+      <div className="stack-md">
+        <Tabs.Root
+          value={sub}
+          onValueChange={(value) => handleChange(String(value))}
+          className="tabs"
         >
-          {SUB_TABS.map((t) => (
-            <Tabs.Trigger key={t.id} value={t.id} css={{ flex: '1 1 auto' }}>
-              {t.label}
-            </Tabs.Trigger>
-          ))}
-        </Tabs.List>
-        <div style={{ marginTop: space[200] }}>
+          <Tabs.List className="tabs-header-list" aria-label="Tool categories">
+            {SUB_TABS.map((t) => (
+              <Tabs.Tab
+                key={t.id}
+                value={t.id}
+                className={['tab', sub === t.id ? 'tab-active' : ''].filter(Boolean).join(' ')}
+              >
+                <div className="tab-text">{t.label}</div>
+              </Tabs.Tab>
+            ))}
+          </Tabs.List>
           {SUB_TABS.map(({ id }) => {
             const Component = SUB_TAB_COMPONENTS.get(id)
             if (!Component) {
               return null
             }
             return (
-              <Tabs.Content key={id} value={id} asChild>
-                <Component />
-              </Tabs.Content>
+              <Tabs.Panel key={id} value={id} style={{ paddingTop: 'var(--space-150)' }}>
+                {id === sub ? <Component /> : null}
+              </Tabs.Panel>
             )
           })}
-        </div>
-      </Tabs>
+        </Tabs.Root>
+      </div>
     </TabPanel>
   )
 }
@@ -116,6 +122,6 @@ export const tabDefinition: TabTuple = [
   5,
   'tools',
   'Tools',
-  'Adjust size, style, arrange and frame utilities',
+  'Adjust size, style, text, arrange and frame utilities',
   ToolsTab,
 ]

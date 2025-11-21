@@ -1,4 +1,3 @@
-import { Callout } from '@mirohq/design-system'
 import React from 'react'
 
 import { Markdown } from './markdown'
@@ -11,44 +10,40 @@ type InfoCalloutProperties = Readonly<{
   children?: React.ReactNode
 }>
 
-/**
- * Lightweight wrapper around design-system Callout for inline guidance.
- * Hides itself when there is no content to display.
- */
+/** Lightweight callout styled with Mirotone tokens. */
 export function InfoCallout({
   title,
   markdown,
   children,
 }: InfoCalloutProperties): React.JSX.Element | null {
   const hasContent = React.useMemo(() => {
-    if (typeof markdown === 'string' && markdown.trim().length > 0) {
-      return true
-    }
-    if (children === undefined || children === null) {
-      return false
-    }
-    if (typeof children === 'string') {
-      return children.trim().length > 0
-    }
+    if (typeof markdown === 'string' && markdown.trim().length > 0) return true
+    if (children === undefined || children === null) return false
+    if (typeof children === 'string') return children.trim().length > 0
     return React.Children.toArray(children).some((node) =>
       typeof node === 'string' ? node.trim().length > 0 : true,
     )
   }, [markdown, children])
-  if (!hasContent) {
-    return null
-  }
+  if (!hasContent) return null
+
   return (
-    <Callout
-      variant="primary"
-      tone="neutral"
-      title={title}
-      description={
-        typeof markdown === 'string' && markdown.trim().length > 0 ? (
-          <Markdown source={markdown} />
-        ) : (
-          <div>{children}</div>
-        )
-      }
-    />
+    <div
+      style={{
+        borderLeft: '4px solid var(--blue700)',
+        background: 'var(--blue100)',
+        padding: 'var(--space-150)',
+        borderRadius: 'var(--border-radius-medium)',
+      }}
+      role="note"
+    >
+      {title ? (
+        <strong style={{ display: 'block', marginBottom: 'var(--space-50)' }}>{title}</strong>
+      ) : null}
+      {typeof markdown === 'string' && markdown.trim().length > 0 ? (
+        <Markdown source={markdown} />
+      ) : (
+        <div>{children}</div>
+      )}
+    </div>
   )
 }

@@ -1,7 +1,7 @@
-import { Flex, Form, Grid, IconSlidersX, Slider, Text } from '@mirohq/design-system'
 import { colors, space } from '@mirohq/design-tokens'
 import React from 'react'
 
+import { Flex, Grid, IconSlidersX, Slider, Text, Heading, Form } from '../primitives'
 import { applyStylePreset, presetStyle } from '../../board/format-tools'
 import {
   copyFillFromSelection,
@@ -11,15 +11,7 @@ import {
   tweakOpacity,
 } from '../../board/style-tools'
 import { adjustColor } from '../../core/utils/color-utilities'
-import {
-  Button,
-  ButtonToolbar,
-  EmptyState,
-  InfoCallout,
-  InputField,
-  Paragraph,
-  SidebarSection,
-} from '../components'
+import { Button, ButtonToolbar, EmptyState, InfoCallout, InputField } from '../components'
 import { StickyActions } from '../sticky-actions'
 import { PageHelp } from '../components/page-help'
 import { TabPanel } from '../components/tab-panel'
@@ -104,19 +96,19 @@ export const StyleTab: React.FC = () => {
             description="Select one or more items to apply styling."
           />
         )}
-        <SidebarSection title="Adjust Colors">
+        <section title="Adjust Colors">
           <Flex direction="column" gap={200}>
-            <Paragraph>
+            <p>
               {selectionLabel}. Negative values darken, positive values lighten. Copy Fill samples
               from the current selection.
-            </Paragraph>
+            </p>
             <Flex align="center" gap={150} wrap="wrap">
               <Flex direction="column" align="center" gap={50}>
                 <span
                   aria-hidden="true"
                   style={{ ...SWATCH_BASE_STYLE, backgroundColor: baseColor }}
                 />
-                <Text size="xs">Base</Text>
+                <Text size="small">Base</Text>
                 <code>{baseColor}</code>
               </Flex>
               <Flex direction="column" align="center" gap={50}>
@@ -125,7 +117,7 @@ export const StyleTab: React.FC = () => {
                   data-testid="adjust-preview"
                   style={{ ...SWATCH_BASE_STYLE, backgroundColor: preview }}
                 />
-                <Text size="xs">Adjusted</Text>
+                <Text size="small">Adjusted</Text>
                 <code data-testid="color-hex">{preview}</code>
               </Flex>
             </Flex>
@@ -141,12 +133,7 @@ export const StyleTab: React.FC = () => {
                   step={1}
                   value={adjust}
                   onValueChange={setAdjust}
-                >
-                  <Slider.Track>
-                    <Slider.Range />
-                    <Slider.Thumb />
-                  </Slider.Track>
-                </Slider>
+                />
               </Form.Field>
             </Grid.Item>
             <Grid.Item>
@@ -239,8 +226,9 @@ export const StyleTab: React.FC = () => {
               </StickyActions>
             </Grid.Item>
           </Grid>
-        </SidebarSection>
-        <SidebarSection title="Style presets">
+        </section>
+
+        <section title="Style presets">
           <div style={{ marginBottom: space[200] }}>
             <InfoCallout title="Presets">
               Apply curated combinations of fill, text, and border styling in one click.
@@ -279,7 +267,7 @@ export const StyleTab: React.FC = () => {
               })}
             </ButtonToolbar>
           </StickyActions>
-        </SidebarSection>
+        </section>
       </div>
     </TabPanel>
   )

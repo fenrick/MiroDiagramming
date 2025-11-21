@@ -1,4 +1,3 @@
-import { Form, Textarea, styled } from '@mirohq/design-system'
 import React from 'react'
 
 export type TextareaFieldProperties = Readonly<
@@ -8,24 +7,6 @@ export type TextareaFieldProperties = Readonly<
     onValueChange?: (value: string) => void
   }
 >
-
-const StyledFormField = styled(Form.Field, {
-  marginBottom: 'var(--space-200)',
-  position: 'relative',
-})
-
-const StyledTextarea = styled(Textarea, {
-  // DS Textarea renders an outer div and the actual textarea inside with
-  // data-form-element="textarea". Target the inner element for size/resize.
-  '& [data-form-element="textarea"]': {
-    minHeight: '12rem',
-    resize: 'vertical',
-    padding: 'var(--space-xsmall) 12px var(--space-xsmall)',
-    display: 'inline-block',
-    scrollbarWidth: 'thin',
-    boxSizing: 'border-box',
-  },
-})
 
 export const TextareaField = React.forwardRef<HTMLTextAreaElement, TextareaFieldProperties>(
   function TextareaField(
@@ -40,17 +21,29 @@ export const TextareaField = React.forwardRef<HTMLTextAreaElement, TextareaField
     }
 
     return (
-      <StyledFormField>
-        <Form.Label htmlFor={textareaId}>{label}</Form.Label>
-        <StyledTextarea
+      <div style={{ marginBottom: 'var(--space-200)', position: 'relative' }}>
+        <label htmlFor={textareaId} style={{ display: 'block', marginBottom: 'var(--space-50)' }}>
+          {label}
+        </label>
+        <textarea
           id={textareaId}
           ref={reference}
           value={value}
           defaultValue={defaultValue}
           onChange={handleChange}
+          className="textarea"
+          style={{
+            width: '100%',
+            minHeight: '12rem',
+            resize: 'vertical',
+            padding: 'var(--space-xsmall) 12px var(--space-xsmall)',
+            borderRadius: 'var(--border-radius-medium)',
+            border: '1px solid var(--indigo400)',
+            boxSizing: 'border-box',
+          }}
           {...properties}
         />
-      </StyledFormField>
+      </div>
     )
   },
 )

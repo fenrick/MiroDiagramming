@@ -1,5 +1,3 @@
-import { Callout, styled } from '@mirohq/design-system'
-import { space } from '@mirohq/design-tokens'
 import React from 'react'
 
 type EmptyStateProperties = Readonly<{
@@ -9,11 +7,6 @@ type EmptyStateProperties = Readonly<{
   icon?: React.ReactNode
 }>
 
-const Container = styled('output', {
-  textAlign: 'center',
-  padding: space[300],
-})
-
 export function EmptyState({
   title,
   description,
@@ -21,15 +14,31 @@ export function EmptyState({
   icon,
 }: EmptyStateProperties): React.JSX.Element {
   return (
-    <Container aria-live="polite">
-      <Callout
-        title={title}
-        description={description}
-        variant="primary"
-        tone="neutral"
-        icon={icon}
-      />
-      {action ? <div style={{ marginTop: space[200] }}>{action}</div> : null}
-    </Container>
+    <output
+      aria-live="polite"
+      style={{
+        textAlign: 'center',
+        padding: 'var(--space-300)',
+        display: 'block',
+      }}
+    >
+      <div
+        style={{
+          border: '1px solid var(--indigo200)',
+          borderRadius: 'var(--border-radius-medium)',
+          padding: 'var(--space-200)',
+          background: 'var(--indigo50)',
+        }}
+      >
+        {icon ? <div style={{ marginBottom: 'var(--space-150)' }}>{icon}</div> : null}
+        <div style={{ fontWeight: 600, marginBottom: description ? 'var(--space-50)' : 0 }}>
+          {title}
+        </div>
+        {description ? (
+          <div style={{ color: 'var(--secondary-text-color)' }}>{description}</div>
+        ) : null}
+      </div>
+      {action ? <div style={{ marginTop: 'var(--space-200)' }}>{action}</div> : null}
+    </output>
   )
 }
