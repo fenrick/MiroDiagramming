@@ -6,7 +6,7 @@ import { isMermaidEnabled } from '../../core/mermaid'
 import { PageHelp } from '../components/page-help'
 import { TabPanel } from '../components/tab-panel'
 
-import { CardsTab } from './cards-tab'
+import { CardsTabV2 } from './cards-tab.v2'
 import { LayoutEngineTab } from './layout-engine-tab'
 import { MermaidTab } from './mermaid-tab'
 import { StructuredTabV2 } from './structured-tab.v2'
@@ -31,7 +31,7 @@ const ALL_SUB_TABS: TabItem[] = [
 
 const SUB_TAB_COMPONENTS = new Map<SubTabId, React.FC>([
   ['structured', StructuredTabV2],
-  ['cards', CardsTab],
+  ['cards', CardsTabV2],
   ['layout', LayoutEngineTab],
   ['mermaid', MermaidTab],
 ])

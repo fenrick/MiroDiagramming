@@ -6,7 +6,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 
 import { ArrangeTab } from '../ui/pages/arrange-tab'
-import { CardsTab } from '../ui/pages/cards-tab'
+import { CardsTabV2 } from '../ui/pages/cards-tab.v2'
 import { DiagramsTab } from '../ui/pages/diagrams-tab'
 import { FramesTab } from '../ui/pages/frames-tab'
 import { HelpTab } from '../ui/pages/help-tab'
@@ -26,7 +26,7 @@ export default meta
 type Story = StoryObj
 
 export const Arrange: Story = { render: () => <ArrangeTab /> }
-export const Cards: Story = { render: () => <CardsTab /> }
+export const Cards: Story = { render: () => <CardsTabV2 /> }
 export const Search: Story = { render: () => <SearchTab /> }
 export const Diagrams: Story = { render: () => <DiagramsTab /> }
 export const Tools: Story = { render: () => <ToolsTab /> }

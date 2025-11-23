@@ -22,6 +22,39 @@ body {
   overflow: hidden;
 }
 
+/* lightweight layout helpers (mirotone-friendly) */
+.stack-2xs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-50);
+}
+.stack-sm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-100);
+}
+.stack-md {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-150);
+}
+.panel-section {
+  padding: var(--space-100);
+}
+.inline-field {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-75);
+}
+.label {
+  font-weight: 600;
+}
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-75);
+}
+
 .panel-shell {
   height: 100%;
   min-height: 0;

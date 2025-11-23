@@ -4,7 +4,6 @@ import React from 'react'
 import { render } from '@testing-library/react'
 
 import { ArrangeTab } from '../../src/ui/pages/arrange-tab'
-import { CardsTab } from '../../src/ui/pages/cards-tab'
 import { DiagramsTab } from '../../src/ui/pages/diagrams-tab'
 import { FramesTab } from '../../src/ui/pages/frames-tab'
 import { HelpTab } from '../../src/ui/pages/help-tab'
