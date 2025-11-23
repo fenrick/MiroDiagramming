@@ -13,7 +13,7 @@ import { HelpTab } from '../ui/pages/help-tab'
 import { LayoutEngineTab } from '../ui/pages/layout-engine-tab'
 import { ResizeTab } from '../ui/pages/resize-tab'
 import { SearchTab } from '../ui/pages/search-tab'
-import { StructuredTab } from '../ui/pages/structured-tab'
+import { StructuredTabV2 } from '../ui/pages/structured-tab.v2'
 import { StyleTab } from '../ui/pages/style-tab'
 import { ToolsTab } from '../ui/pages/tools-tab'
 
@@ -34,5 +34,5 @@ export const Frames: Story = { render: () => <FramesTab /> }
 export const Help: Story = { render: () => <HelpTab /> }
 export const LayoutEngine: Story = { render: () => <LayoutEngineTab /> }
 export const Resize: Story = { render: () => <ResizeTab /> }
-export const Structured: Story = { render: () => <StructuredTab /> }
+export const Structured: Story = { render: () => <StructuredTabV2 /> }
 export const Style: Story = { render: () => <StyleTab /> }

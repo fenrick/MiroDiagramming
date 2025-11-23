@@ -132,7 +132,7 @@ describe('Heavy pages smoke render with mocks', () => {
   it('renders Cards/Diagrams/Structured tabs', async () => {
     const { CardsTab } = await import('../../src/ui/pages/cards-tab')
     const { DiagramsTab } = await import('../../src/ui/pages/diagrams-tab')
-    const { StructuredTab } = await import('../../src/ui/pages/structured-tab')
+    const { StructuredTabV2: StructuredTab } = await import('../../src/ui/pages/structured-tab.v2')
 
     const r1 = render(React.createElement(CardsTab))
     expect(r1.container).toBeTruthy()

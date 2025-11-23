@@ -9,7 +9,7 @@ import { TabPanel } from '../components/tab-panel'
 import { CardsTab } from './cards-tab'
 import { LayoutEngineTab } from './layout-engine-tab'
 import { MermaidTab } from './mermaid-tab'
-import { StructuredTab } from './structured-tab'
+import { StructuredTabV2 } from './structured-tab.v2'
 import type { TabTuple } from './tab-definitions'
 
 /**
@@ -30,7 +30,7 @@ const ALL_SUB_TABS: TabItem[] = [
 ]
 
 const SUB_TAB_COMPONENTS = new Map<SubTabId, React.FC>([
-  ['structured', StructuredTab],
+  ['structured', StructuredTabV2],
   ['cards', CardsTab],
   ['layout', LayoutEngineTab],
   ['mermaid', MermaidTab],

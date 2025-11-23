@@ -11,7 +11,6 @@ import { HelpTab } from '../../src/ui/pages/help-tab'
 import { LayoutEngineTab } from '../../src/ui/pages/layout-engine-tab'
 import { ResizeTab } from '../../src/ui/pages/resize-tab'
 import { SearchTab } from '../../src/ui/pages/search-tab'
-import { StructuredTab } from '../../src/ui/pages/structured-tab'
 import { StyleTab } from '../../src/ui/pages/style-tab'
 import { ToolsTab } from '../../src/ui/pages/tools-tab'
 
