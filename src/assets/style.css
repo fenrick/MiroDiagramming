@@ -55,6 +55,60 @@ body {
   gap: var(--space-75);
 }
 
+/* basic mirotone-friendly controls */
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-75);
+  padding: var(--space-75) var(--space-125);
+  border-radius: var(--radius-200);
+  border: 1px solid var(--colors-gray-300);
+  background: var(--colors-white);
+  color: var(--colors-gray-900);
+  cursor: pointer;
+  font:
+    600 var(--font-200) / 1.2 system-ui,
+    sans-serif;
+  text-decoration: none;
+}
+.button-primary {
+  background: var(--colors-blue-600);
+  color: var(--colors-white);
+  border-color: var(--colors-blue-600);
+}
+.button-secondary {
+  background: var(--colors-gray-50);
+  color: var(--colors-gray-900);
+}
+.button-ghost {
+  background: transparent;
+  border-color: transparent;
+}
+.input,
+.textarea {
+  width: 100%;
+  padding: var(--space-75);
+  border-radius: var(--radius-200);
+  border: 1px solid var(--colors-gray-300);
+  font:
+    400 var(--font-200) / 1.4 system-ui,
+    sans-serif;
+}
+.textarea {
+  min-height: 200px;
+  resize: vertical;
+}
+.checkbox {
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--colors-gray-400);
+  border-radius: var(--radii-50);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--colors-white);
+}
+
 .panel-shell {
   height: 100%;
   min-height: 0;

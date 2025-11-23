@@ -8,7 +8,7 @@ import { TabPanel } from '../components/tab-panel'
 
 import { CardsTabV2 } from './cards-tab.v2'
 import { LayoutEngineTab } from './layout-engine-tab'
-import { MermaidTab } from './mermaid-tab'
+import { MermaidTabV2 } from './mermaid-tab.v2'
 import { StructuredTabV2 } from './structured-tab.v2'
 import type { TabTuple } from './tab-definitions'
 
@@ -33,7 +33,7 @@ const SUB_TAB_COMPONENTS = new Map<SubTabId, React.FC>([
   ['structured', StructuredTabV2],
   ['cards', CardsTabV2],
   ['layout', LayoutEngineTab],
-  ['mermaid', MermaidTab],
+  ['mermaid', MermaidTabV2],
 ])
 
 const LAST_USED_SUB_TAB_KEY = 'miro.diagrams.last-sub-tab'

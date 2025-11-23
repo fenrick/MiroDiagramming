@@ -1,24 +1,16 @@
 import React from 'react'
-import { space } from '@mirohq/design-tokens'
+import { Button as BaseButton } from '@base-ui-components/react/button'
+import { Checkbox } from '@base-ui-components/react/checkbox'
+import { Input } from '@base-ui-components/react/input'
 
+import { space } from '@mirohq/design-tokens'
 import { IconArrowArcLeft, IconChevronRightDouble, Text } from '../primitives'
-import { Button } from '../components'
 
 import { type ExistingNodeMode } from '../../core/graph/graph-processor'
 import { usePersistentState } from '../../core/hooks/use-persistent-state'
 import { MermaidConversionError, MermaidRenderer } from '../../core/mermaid'
 import * as log from '../../logger'
-import {
-  ButtonToolbar,
-  Checkbox,
-  InfoCallout,
-  InputField,
-  PageHelp,
-  SelectField,
-  SelectOption,
-  TabPanel,
-  TextareaField,
-} from '../components'
+import { InfoCallout, PageHelp, TabPanel } from '../components'
 import { StickyActions } from '../sticky-actions'
 
 const STORAGE_KEY = 'miro.mermaid.definition'
@@ -36,17 +28,13 @@ const CONTENT_STYLE: React.CSSProperties = {
   gap: space[200],
 }
 
-const STATUS_STYLE: React.CSSProperties = {
-  marginTop: space[100],
-}
-
 const EXISTING_MODE_OPTIONS: readonly { id: ExistingNodeMode; label: string }[] = [
   { id: 'move', label: 'Move into new layout' },
   { id: 'layout', label: 'Use selection positions' },
   { id: 'ignore', label: 'Keep existing positions' },
 ]
 
-export const MermaidTab: React.FC = () => {
+export const MermaidTabV2: React.FC = () => {
   const [definition, setDefinition] = usePersistentState<string>(STORAGE_KEY, SAMPLE_DEFINITION)
   const [withFrame, setWithFrame] = usePersistentState<boolean>(WITH_FRAME_STORAGE_KEY, false)
   const [frameTitle, setFrameTitle] = React.useState('')
@@ -112,52 +100,71 @@ export const MermaidTab: React.FC = () => {
     <TabPanel tabId="mermaid">
       <div style={CONTENT_STYLE}>
         <PageHelp content="Transform Mermaid flowcharts into board widgets" />
-        <section title="Definition">
+        <section className="stack-sm" title="Definition">
           <InfoCallout title="Supported diagrams">
             Mermaid flowcharts (`graph TD`/`graph LR`) are supported today. Sequence diagrams and
             other formats are on the roadmap.
           </InfoCallout>
-          <TextareaField
-            label="Mermaid definition"
-            value={definition}
-            onValueChange={setDefinition}
-            placeholder="graph TD\nA[Start] --> B[Finish]"
-            spellCheck={false}
-            autoComplete="off"
-          />
-          <ButtonToolbar>
-            <Button onClick={handleSample} variant="secondary" icon={<IconChevronRightDouble />}>
+          <label className="stack-2xs">
+            <span className="label">Mermaid definition</span>
+            <textarea
+              className="textarea"
+              value={definition}
+              onChange={(e) => setDefinition(e.target.value)}
+              placeholder="graph TD\nA[Start] --> B[Finish]"
+              spellCheck={false}
+              autoComplete="off"
+            />
+          </label>
+          <div className="button-group">
+            <BaseButton className="button button-secondary" onClick={handleSample}>
+              <IconChevronRightDouble />
               Use Sample
-            </Button>
-            <Button onClick={handleClear} variant="ghost" icon={<IconArrowArcLeft />}>
+            </BaseButton>
+            <BaseButton className="button button-ghost" onClick={handleClear}>
+              <IconArrowArcLeft />
               Clear
-            </Button>
-          </ButtonToolbar>
+            </BaseButton>
+          </div>
         </section>
 
-        <section title="Options">
-          <Checkbox label="Wrap result in a frame" value={withFrame} onChange={setWithFrame} />
+        <section className="stack-sm" title="Options">
+          <label className="inline-field">
+            <Checkbox.Root
+              checked={withFrame}
+              onCheckedChange={(checked) => setWithFrame(Boolean(checked))}
+              className="checkbox"
+            >
+              <Checkbox.Indicator>✓</Checkbox.Indicator>
+            </Checkbox.Root>
+            <span>Wrap result in a frame</span>
+          </label>
           {withFrame ? (
-            <InputField
-              label="Frame title"
-              value={frameTitle}
-              onValueChange={setFrameTitle}
-              placeholder="Optional frame title"
-            />
+            <label className="stack-2xs" style={{ maxWidth: 320 }}>
+              <span className="label">Frame title</span>
+              <Input
+                className="input"
+                value={frameTitle}
+                onValueChange={(v) => setFrameTitle(String(v))}
+                placeholder="Optional frame title"
+              />
+            </label>
           ) : null}
-          <SelectField
-            label="Existing selection"
-            value={existingMode}
-            onChange={(value) => {
-              setExistingMode(value as ExistingNodeMode)
-            }}
-          >
-            {EXISTING_MODE_OPTIONS.map((option) => (
-              <SelectOption key={option.id} value={option.id}>
-                {option.label}
-              </SelectOption>
-            ))}
-          </SelectField>
+
+          <label className="stack-2xs" style={{ maxWidth: 320 }}>
+            <span className="label">Existing selection</span>
+            <select
+              className="input"
+              value={existingMode}
+              onChange={(event) => setExistingMode(event.target.value as ExistingNodeMode)}
+            >
+              {EXISTING_MODE_OPTIONS.map((option) => (
+                <option key={option.id} value={option.id}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
           <p>
             Move into new layout repositions selected widgets to match the rendered graph. Use
             selection positions to keep coordinates for matched nodes while laying out new ones.
@@ -167,7 +174,6 @@ export const MermaidTab: React.FC = () => {
         {status ? (
           <div
             style={{
-              ...STATUS_STYLE,
               padding: 'var(--space-150)',
               borderRadius: 'var(--border-radius-medium)',
               border: `1px solid ${
@@ -183,21 +189,20 @@ export const MermaidTab: React.FC = () => {
           </div>
         ) : null}
         <StickyActions>
-          <ButtonToolbar>
-            <Button
-              onClick={() => {
-                void handleRender()
-              }}
-              variant="primary"
-              iconPosition="start"
-              icon={<IconChevronRightDouble />}
+          <div className="button-group">
+            <BaseButton
+              className="button button-primary"
+              onClick={() => void handleRender()}
               disabled={isRendering || isDefinitionEmpty}
             >
+              <IconChevronRightDouble />
               <Text>{isRendering ? 'Rendering…' : 'Render to Board'}</Text>
-            </Button>
-          </ButtonToolbar>
+            </BaseButton>
+          </div>
         </StickyActions>
       </div>
     </TabPanel>
   )
 }
+
+export default MermaidTabV2
