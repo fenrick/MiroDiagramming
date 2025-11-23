@@ -3,7 +3,7 @@ import { Tabs } from '@base-ui-components/react/tabs'
 
 import { PageHelp } from '../components/page-help'
 import { TabPanel } from '../components/tab-panel'
-import { ArrangeTab } from './arrange-tab'
+import { ArrangeTabV2 } from './arrange-tab.v2'
 import { FramesTab } from './frames-tab'
 import { ResizeTab } from './resize-tab'
 import { StyleTab } from './style-tab'
@@ -29,7 +29,7 @@ const SUB_TAB_COMPONENTS = new Map<SubTabId, React.FC>([
   ['size', ResizeTab],
   ['style', StyleTab],
   ['text', TextTab],
-  ['arrange', ArrangeTab],
+  ['arrange', ArrangeTabV2],
   ['frames', FramesTab],
 ])
 

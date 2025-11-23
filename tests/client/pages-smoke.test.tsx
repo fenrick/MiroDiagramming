@@ -3,7 +3,7 @@ import { describe, it, expect } from 'vitest'
 import React from 'react'
 import { render } from '@testing-library/react'
 
-import { ArrangeTab } from '../../src/ui/pages/arrange-tab'
+import { ArrangeTabV2 as ArrangeTab } from '../../src/ui/pages/arrange-tab.v2'
 import { DiagramsTab } from '../../src/ui/pages/diagrams-tab'
 import { FramesTab } from '../../src/ui/pages/frames-tab'
 import { HelpTab } from '../../src/ui/pages/help-tab'
