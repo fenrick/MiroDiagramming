@@ -1,74 +1,70 @@
 import React from 'react'
-import { Button } from '@base-ui-components/react/button'
+import { Toast } from '@base-ui-components/react/toast'
 
-/** A single toast notification. */
 export interface ToastOptions {
   message: string
   thumbnailUrl?: string
   action?: { label: string; callback: () => void }
+  timeoutMs?: number
 }
 
-interface Toast extends ToastOptions {
-  id: string
-}
+type ToastData = Pick<ToastOptions, 'thumbnailUrl' | 'action'>
 
-const listeners = new Set<(t: Toast) => void>()
+const toastManager = Toast.createToastManager()
 
 export function pushToast(options: ToastOptions): void {
-  const toast: Toast = { id: crypto.randomUUID(), ...options }
-  for (const l of listeners) l(toast)
+  toastManager.add({
+    description: options.message,
+    timeout: options.timeoutMs ?? 5000,
+    data: { thumbnailUrl: options.thumbnailUrl, action: options.action },
+  })
+}
+
+const ToastList: React.FC = () => {
+  const { toasts } = Toast.useToastManager()
+
+  return (
+    <Toast.Portal>
+      <Toast.Viewport className="toast-container" aria-label="Notifications">
+        {toasts.map((toast) => {
+          const action = toast.data?.action
+          return (
+            <Toast.Root key={toast.id} toast={toast} className="toast">
+              <Toast.Content className="toast-content">
+                {toast.data?.thumbnailUrl && (
+                  <img className="toast-thumb" src={toast.data.thumbnailUrl} alt="" />
+                )}
+                <div>{toast.description ?? toast.title}</div>
+                {action && (
+                  <Toast.Action
+                    className="button button-secondary button-small"
+                    onClick={() => {
+                      action.callback()
+                      toastManager.close(toast.id)
+                    }}
+                  >
+                    {action.label}
+                  </Toast.Action>
+                )}
+                <Toast.Close
+                  className="button button-ghost button-small"
+                  aria-label="Dismiss notification"
+                >
+                  ×
+                </Toast.Close>
+              </Toast.Content>
+            </Toast.Root>
+          )
+        })}
+      </Toast.Viewport>
+    </Toast.Portal>
+  )
 }
 
 export const ToastContainer: React.FC = () => {
-  const [toasts, setToasts] = React.useState<Toast[]>([])
-
-  const enqueueToast = React.useCallback((t: Toast) => {
-    setToasts((previous) => [...previous, t].slice(-3))
-  }, [])
-
-  const remove = React.useCallback((id: string) => {
-    setToasts((previous) => previous.filter((t) => t.id !== id))
-  }, [])
-
-  const scheduleDismiss = React.useCallback(
-    (id: string) => {
-      globalThis.setTimeout(() => {
-        remove(id)
-      }, 5000)
-    },
-    [remove],
-  )
-
-  React.useEffect(() => {
-    const listener = (t: Toast) => {
-      enqueueToast(t)
-      scheduleDismiss(t.id)
-    }
-    listeners.add(listener)
-    return () => {
-      listeners.delete(listener)
-    }
-  }, [enqueueToast, scheduleDismiss])
-
   return (
-    <div className="toast-container">
-      {toasts.map((t) => (
-        <div key={t.id} role="alert">
-          {t.thumbnailUrl && <img className="toast-thumb" src={t.thumbnailUrl} alt="" />}
-          <div>{t.message}</div>
-          {t.action && (
-            <Button
-              className="button button-secondary button-small"
-              onClick={() => {
-                t.action?.callback()
-                remove(t.id)
-              }}
-            >
-              {t.action.label}
-            </Button>
-          )}
-        </div>
-      ))}
-    </div>
+    <Toast.Provider toastManager={toastManager} timeout={5000} limit={3}>
+      <ToastList />
+    </Toast.Provider>
   )
 }

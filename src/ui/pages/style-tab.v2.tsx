@@ -57,13 +57,15 @@ export const StyleTabV2: React.FC = () => {
 
   return (
     <TabPanel tabId="style">
-      <div>
-        <PageHelp content="Lighten or darken fills, tweak opacity and borders" />
-        {!hasSelection && (
-          <InfoCallout title="No selection">Select items to apply styling.</InfoCallout>
-        )}
+      <div className="grid form">
+        <div className="cs1 ce12 form-example--main-content">
+          <PageHelp content="Lighten or darken fills, tweak opacity and borders" />
+          {!hasSelection && (
+            <InfoCallout title="No selection">Select items to apply styling.</InfoCallout>
+          )}
+        </div>
 
-        <section title="Adjust colors">
+        <section title="Adjust colors" className="cs1 ce12">
           <div className="inline-field">
             <div>
               <span aria-hidden="true" />
@@ -194,15 +196,17 @@ export const StyleTabV2: React.FC = () => {
           </InfoCallout>
         </section>
 
-        <StickyActions>
-          <Button
-            className="button button-primary button-medium"
-            onClick={() => void apply()}
-            disabled={!hasSelection}
-          >
-            Apply changes
-          </Button>
-        </StickyActions>
+        <div className="cs1 ce12 form-example--main-content">
+          <StickyActions>
+            <Button
+              className="button button-primary button-medium"
+              onClick={() => void apply()}
+              disabled={!hasSelection}
+            >
+              Apply changes
+            </Button>
+          </StickyActions>
+        </div>
       </div>
     </TabPanel>
   )

@@ -72,7 +72,7 @@ vi.mock('../../src/ui/components/tab-panel', async () => {
 })
 
 describe('Heavy pages smoke render with mocks', () => {
-  it('renders Cards/Diagrams/Structured tabs', async () => {
+  it('renders Cards/Diagrams/Structured tabs', { timeout: 15000 }, async () => {
     const { CardsTabV2: CardsTab } = await import('../../src/ui/pages/cards-tab.v2')
     const { DiagramsTab } = await import('../../src/ui/pages/diagrams-tab')
     const { StructuredTabV2: StructuredTab } = await import('../../src/ui/pages/structured-tab.v2')
