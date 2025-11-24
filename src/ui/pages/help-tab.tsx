@@ -1,74 +1,60 @@
-import React, { useState } from 'react'
-
+import React from 'react'
 import changelog from '../../../CHANGELOG.md?raw'
-import { Heading } from '../primitives'
-import { Button, Markdown } from '../components'
+
+import { Button as BaseButton } from '@base-ui-components/react/button'
+import { Markdown } from '../components'
 import { PageHelp } from '../components/page-help'
 import { TabPanel } from '../components/tab-panel'
-
 import type { TabTuple } from './tab-definitions'
 
-/** Static help page summarising diagram options and tools. */
 export const HelpTab: React.FC = () => {
-  const [showLog, setShowLog] = useState(false)
+  const [showLog, setShowLog] = React.useState(false)
 
   return (
     <TabPanel tabId="help">
-      <PageHelp content="Overview of diagram options and tools" />
+      <div className="stack-md">
+        <PageHelp content="Overview of diagram options and tools" />
 
-      <section title="Getting Started">
-        <p>
-          Use the Create tab to import diagrams or cards from a JSON file. Nodes may define
-          templates, labels and ELK options to influence placement.
-        </p>
-      </section>
+        <section className="stack-2xs" title="Getting Started">
+          <p>
+            Use the Diagrams tab to import structured JSON/CSV, Cards to build board-linked cards,
+            or Mermaid to render definitions. Configure layout options in Structured as needed.
+          </p>
+        </section>
 
-      <section title="Diagram Layout Options">
-        <ul className="list">
-          <li>
-            <strong>Layered</strong> – Flow diagrams with layers
-          </li>
-          <li>
-            <strong>Tree</strong> – Compact hierarchical tree
-          </li>
-          <li>
-            <strong>Grid</strong> – Organic force-directed grid
-          </li>
-          <li>
-            <strong>Nested</strong> – Containers sized to fit children
-          </li>
-          <li>
-            <strong>Radial</strong> – Circular layout around a hub
-          </li>
-          <li>
-            <strong>Box</strong> – Uniform box grid
-          </li>
-          <li>
-            <strong>Rect Packing</strong> – Fits rectangles within parents
-          </li>
-        </ul>
-      </section>
+        <section className="stack-2xs" title="Diagram Layout Options">
+          <ul className="list">
+            <li>Layered – Flow diagrams with layers</li>
+            <li>Tree – Compact hierarchical tree</li>
+            <li>Grid – Organic force-directed grid</li>
+            <li>Nested – Containers sized to fit children</li>
+            <li>Radial – Circular layout around a hub</li>
+            <li>Box – Uniform box grid</li>
+            <li>Rect Packing – Fits rectangles within parents</li>
+          </ul>
+        </section>
 
-      <section title="Other Tools">
-        <ul className="list">
-          <li>Resize – adjust widget size or copy from selection.</li>
-          <li>Frames – rename selected frames.</li>
-          <li>Colours – modify fill colours.</li>
-          <li>Arrange – grid and spacing tools.</li>
-        </ul>
-      </section>
+        <section className="stack-2xs" title="Other Tools">
+          <ul className="list">
+            <li>Resize – adjust widget size or copy from selection.</li>
+            <li>Frames – rename or lock selected frames.</li>
+            <li>Colours – tweak fill, opacity, and borders.</li>
+            <li>Arrange – grid and spacing tools.</li>
+            <li>Text – trim whitespace from selected items.</li>
+          </ul>
+        </section>
 
-      <Heading level={2}>Changelog</Heading>
-      <Button
-        variant="secondary"
-        onClick={() => {
-          setShowLog((v) => !v)
-        }}
-        data-testid="toggle-changelog"
-      >
-        {showLog ? 'Hide' : 'Show'} Changelog
-      </Button>
-      {showLog && <Markdown source={changelog} />}
+        <section className="stack-2xs" title="Changelog">
+          <BaseButton
+            className="button button-secondary"
+            onClick={() => setShowLog((v) => !v)}
+            data-testid="toggle-changelog"
+          >
+            {showLog ? 'Hide' : 'Show'} Changelog
+          </BaseButton>
+          {showLog && <Markdown source={changelog} />}
+        </section>
+      </div>
     </TabPanel>
   )
 }
@@ -80,3 +66,5 @@ export const tabDefinition: TabTuple = [
   'Overview of diagram options and tools',
   HelpTab,
 ]
+
+export default HelpTab
