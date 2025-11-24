@@ -4,52 +4,6 @@ import React from 'react'
 import { render } from '@testing-library/react'
 
 // Mock design system primitives to avoid CSS shorthands not supported by jsdom
-vi.mock('@mirohq/design-system', () => {
-  const P = ({ children, ...rest }: any) => React.createElement('div', rest, children)
-  const Btn = ({ children, iconPosition: _iconPosition, ...rest }: any) =>
-    React.createElement('button', rest, children)
-  const Text = ({ children, ...rest }: any) => React.createElement('span', rest, children)
-  const styled =
-    (tag: any, _styles?: any) =>
-    ({ iconPosition: _iconPosition, ...props }: any) =>
-      React.createElement(tag, props)
-  const PrimitiveDiv = React.forwardRef<HTMLDivElement, any>(({ children, ...props }, ref) =>
-    React.createElement('div', { ...props, ref }, children),
-  )
-  return {
-    Box: P,
-    Grid: Object.assign(P, { Item: P }),
-    Button: Btn,
-    ButtonToolbar: P,
-    Checkbox: P,
-    Text,
-    IconButton: Btn,
-    Form: { Field: 'div', Label: 'label', Control: 'div' } as any,
-    createTheme: () => 'theme',
-    themes: { light: 'light' },
-    IconPlus: () => null,
-    IconArrowArcLeft: () => null,
-    IconLockClosed: () => null,
-    IconChevronRightDouble: () => null,
-    IconPen: () => null,
-    IconQuestionMarkCircle: () => null,
-    IconSquareArrowIn: () => null,
-    Tooltip: Object.assign((p: any) => React.createElement('div', null, p.children), {
-      Provider: (p: any) => React.createElement('div', null, p.children),
-      Trigger: (p: any) => React.createElement('span', null, p.children),
-      Content: (p: any) => React.createElement('div', null, p.children),
-      Portal: (p: any) => React.createElement('div', null, p.children),
-      Arrow: () => null,
-    }),
-    styled,
-    Primitive: { div: PrimitiveDiv },
-    Tabs: Object.assign((p: any) => React.createElement('div', null, p.children), {
-      List: (p: any) => React.createElement('div', null, p.children),
-      Trigger: (p: any) => React.createElement('button', { type: 'button' }, p.children),
-      Content: (p: any) => React.createElement('div', null, p.children),
-    }),
-  }
-})
 
 // Mock UI components that style heavily
 vi.mock('../../src/ui/components', async () => {
@@ -72,17 +26,6 @@ vi.mock('../../src/ui/components', async () => {
     DroppedFileList: P,
     EmptyState: ({ title, description }: any) =>
       React.createElement('div', null, title, description),
-    InputField: ({ label, value, onValueChange, ...rest }: any) =>
-      React.createElement(
-        'label',
-        null,
-        label,
-        React.createElement('input', {
-          value,
-          onChange: (e: any) => onValueChange?.(e.target.value),
-          ...rest,
-        }),
-      ),
     TextareaField: ({ label, value, onValueChange, ...rest }: any) =>
       React.createElement(
         'label',
