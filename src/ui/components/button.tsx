@@ -33,18 +33,24 @@ function getIconSlots(
 
 function getVariantClass(variant: ButtonVariant): string {
   switch (variant) {
-    case 'primary':
+    case 'primary': {
       return 'button-primary'
-    case 'secondary':
+    }
+    case 'secondary': {
       return 'button-secondary'
-    case 'tertiary':
+    }
+    case 'tertiary': {
       return 'button-tertiary'
-    case 'ghost':
+    }
+    case 'ghost': {
       return 'button-secondary-border'
-    case 'danger':
+    }
+    case 'danger': {
       return 'button-danger'
-    default:
+    }
+    default: {
       return 'button-primary'
+    }
   }
 }
 

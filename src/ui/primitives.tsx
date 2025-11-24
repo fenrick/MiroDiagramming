@@ -15,16 +15,14 @@ type HeadingProperties = Readonly<{
   children: React.ReactNode
 }>
 
+const getHeadingTag = (level: HeadingProperties['level']): keyof JSX.IntrinsicElements => {
+  const tags: readonly (keyof JSX.IntrinsicElements[]) = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']
+  const safeIndex = Math.min(Math.max((level ?? 2) - 1, 0), tags.length - 1)
+  return tags[safeIndex]
+}
+
 export function Heading({ level = 2, children }: HeadingProperties): React.JSX.Element {
-  const tagMap = {
-    1: 'h1',
-    2: 'h2',
-    3: 'h3',
-    4: 'h4',
-    5: 'h5',
-    6: 'h6',
-  } as const
-  const Tag = tagMap[level] ?? 'h2'
+  const Tag = getHeadingTag(level)
   return React.createElement(Tag, { style: { margin: 0 } }, children)
 }
 

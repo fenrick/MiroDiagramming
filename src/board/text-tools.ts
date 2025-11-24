@@ -14,7 +14,8 @@ const isTrimmableTag = (tagName: string): boolean =>
 
 const isIgnorableNode = (node: Node): boolean => {
   if (node.nodeType === Node.TEXT_NODE) {
-    return (node.textContent ?? '').trim().length === 0
+    const text = (node as CharacterData).data
+    return text.trim().length === 0
   }
   if (!(node instanceof HTMLElement)) {
     return false
@@ -22,8 +23,58 @@ const isIgnorableNode = (node: Node): boolean => {
   if (!isTrimmableTag(node.tagName.toLowerCase())) {
     return false
   }
-  const text = node.textContent ?? ''
-  return text.trim().length === 0
+  const textContent = node.textContent
+  return textContent.trim().length === 0
+}
+
+const removeEdgeWhitespaceNodes = (container: Element): void => {
+  while (container.firstChild && isIgnorableNode(container.firstChild)) {
+    container.firstChild.remove()
+  }
+  while (container.lastChild && isIgnorableNode(container.lastChild)) {
+    container.lastChild.remove()
+  }
+}
+
+const collectTextNodes = (root: Element): Text[] => {
+  const nodes: Text[] = []
+  const walker = root.ownerDocument.createTreeWalker(root, NodeFilter.SHOW_TEXT)
+  let current = walker.nextNode()
+  while (current) {
+    nodes.push(current as Text)
+    current = walker.nextNode()
+  }
+  return nodes
+}
+
+const trimEdgeNodes = (textNodes: Text[]): void => {
+  const first = textNodes[0]
+  const last = textNodes.at(-1)
+  if (!first || !last) {
+    return
+  }
+  if (first === last) {
+    first.data = first.data.trim()
+    return
+  }
+  first.data = first.data.trimStart()
+  last.data = last.data.trimEnd()
+}
+
+const trimPlainOrRichText = (value: string): string => {
+  return value.includes('<') ? trimRichText(value) : value.trim()
+}
+
+const applyTrimsToWidget = (widget: unknown): number => {
+  const fields = getTextFields(widget)
+  let trimmedFields = 0
+  for (const [path, value] of fields) {
+    const trimmed = trimPlainOrRichText(value)
+    if (trimmed === value) continue
+    setStringAtPath(widget, path, trimmed)
+    trimmedFields += 1
+  }
+  return trimmedFields
 }
 
 /**
@@ -39,51 +90,21 @@ function trimRichText(value: string): string {
 
   try {
     const parser = new DOMParser()
-    const document = parser.parseFromString(`<div>${value}</div>`, 'text/html')
-    const container = document.body.firstElementChild
+    const parsedDocument = parser.parseFromString(`<div>${value}</div>`, 'text/html')
+    const container = parsedDocument.body.firstElementChild
     if (!container) {
       return value.trim()
     }
 
     // Drop empty leading/trailing nodes like <p><br/></p>
-    while (container.firstChild && isIgnorableNode(container.firstChild)) {
-      container.firstChild.remove()
-    }
-    while (container.lastChild && isIgnorableNode(container.lastChild)) {
-      container.lastChild.remove()
-    }
+    removeEdgeWhitespaceNodes(container)
 
-    const textNodes: Text[] = []
-    const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT)
-    let current = walker.nextNode()
-    while (current) {
-      textNodes.push(current as Text)
-      current = walker.nextNode()
-    }
-
+    const textNodes = collectTextNodes(container)
     if (textNodes.length === 0) {
       return container.innerHTML.trim()
     }
 
-    const first = textNodes[0]
-    const last = textNodes.at(-1)
-    if (!first || !last) {
-      return container.innerHTML.trim()
-    }
-
-    const trimStart = (text: Text): void => {
-      text.textContent = (text.textContent ?? '').replace(/^\s+/, '')
-    }
-    const trimEnd = (text: Text): void => {
-      text.textContent = (text.textContent ?? '').replace(/\s+$/, '')
-    }
-
-    if (first === last) {
-      first.textContent = (first.textContent ?? '').trim()
-    } else {
-      trimStart(first)
-      trimEnd(last)
-    }
+    trimEdgeNodes(textNodes)
 
     return container.innerHTML
   } catch {
@@ -109,19 +130,10 @@ export async function trimSelectedShapeText(board?: BoardLike): Promise<TrimResu
   let fieldsTrimmed = 0
 
   for (const widget of selection) {
-    const fields = getTextFields(widget)
-    let changed = false
-    for (const [path, value] of fields) {
-      const trimmed = value.includes('<') ? trimRichText(value) : value.trim()
-      if (trimmed !== value) {
-        setStringAtPath(widget, path, trimmed)
-        fieldsTrimmed += 1
-        changed = true
-      }
-    }
-
-    if (changed) {
+    const trimmed = applyTrimsToWidget(widget)
+    if (trimmed > 0) {
       widgetsTouched += 1
+      fieldsTrimmed += trimmed
       await maybeSync(widget as Syncable)
     }
   }
