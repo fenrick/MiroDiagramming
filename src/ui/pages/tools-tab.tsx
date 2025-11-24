@@ -4,7 +4,7 @@ import { Tabs } from '@base-ui-components/react/tabs'
 import { PageHelp } from '../components/page-help'
 import { TabPanel } from '../components/tab-panel'
 import { ArrangeTabV2 } from './arrange-tab.v2'
-import { FramesTab } from './frames-tab'
+import { FramesTabV2 } from './frames-tab.v2'
 import { ResizeTabV2 } from './resize-tab.v2'
 import { StyleTabV2 } from './style-tab.v2'
 import { TextTabV2 } from './text-tab.v2'
@@ -30,7 +30,7 @@ const SUB_TAB_COMPONENTS = new Map<SubTabId, React.FC>([
   ['style', StyleTabV2],
   ['text', TextTabV2],
   ['arrange', ArrangeTabV2],
-  ['frames', FramesTab],
+  ['frames', FramesTabV2],
 ])
 
 const LAST_USED_SUB_TAB_KEY = 'miro.tools.last-sub-tab'

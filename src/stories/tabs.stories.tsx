@@ -8,7 +8,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { ArrangeTabV2 } from '../ui/pages/arrange-tab.v2'
 import { CardsTabV2 } from '../ui/pages/cards-tab.v2'
 import { DiagramsTab } from '../ui/pages/diagrams-tab'
-import { FramesTab } from '../ui/pages/frames-tab'
+import { FramesTabV2 } from '../ui/pages/frames-tab.v2'
 import { HelpTab } from '../ui/pages/help-tab'
 import { TextTabV2 } from '../ui/pages/text-tab.v2'
 import { LayoutEngineTabV2 } from '../ui/pages/layout-engine-tab.v2'
@@ -31,7 +31,7 @@ export const Cards: Story = { render: () => <CardsTabV2 /> }
 export const Search: Story = { render: () => <SearchTab /> }
 export const Diagrams: Story = { render: () => <DiagramsTab /> }
 export const Tools: Story = { render: () => <ToolsTab /> }
-export const Frames: Story = { render: () => <FramesTab /> }
+export const Frames: Story = { render: () => <FramesTabV2 /> }
 export const Help: Story = { render: () => <HelpTab /> }
 export const Text: Story = { render: () => <TextTabV2 /> }
 export const LayoutEngine: Story = { render: () => <LayoutEngineTabV2 /> }

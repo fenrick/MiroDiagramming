@@ -5,7 +5,7 @@ import { render } from '@testing-library/react'
 
 import { ArrangeTabV2 as ArrangeTab } from '../../src/ui/pages/arrange-tab.v2'
 import { DiagramsTab } from '../../src/ui/pages/diagrams-tab'
-import { FramesTab } from '../../src/ui/pages/frames-tab'
+import { FramesTabV2 as FramesTab } from '../../src/ui/pages/frames-tab.v2'
 import { HelpTab } from '../../src/ui/pages/help-tab'
 import { LayoutEngineTab } from '../../src/ui/pages/layout-engine-tab'
 import { ResizeTabV2 as ResizeTab } from '../../src/ui/pages/resize-tab.v2'
