@@ -4,7 +4,7 @@ import { Input } from '@base-ui-components/react/input'
 import { Slider } from '../primitives'
 
 import { adjustColor } from '../../core/utils/color-utilities'
-import { applyStylePreset, presetStyle } from '../../board/format-tools'
+import { applyStylePreset } from '../../board/format-tools'
 import {
   copyFillFromSelection,
   extractFillColor,
@@ -17,7 +17,7 @@ import { TabPanel } from '../components/tab-panel'
 import { InfoCallout } from '../components/info-callout'
 import { StickyActions } from '../sticky-actions'
 import { useSelection } from '../hooks/use-selection'
-import { STYLE_PRESET_NAMES, stylePresets, type StylePreset } from '../style-presets'
+import { stylePresets } from '../style-presets'
 
 const swatch = {
   display: 'inline-block',
@@ -27,7 +27,6 @@ const swatch = {
   border: '1px solid var(--colors-gray-200)',
 }
 
-const presetKeys = STYLE_PRESET_NAMES
 const presetEntries = [...stylePresets.entries()]
 
 export const StyleTabV2: React.FC = () => {

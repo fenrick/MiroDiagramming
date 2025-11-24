@@ -16,14 +16,13 @@ import {
   EDGE_ROUTING_MODES,
   EDGE_ROUTINGS,
   type ElkAlgorithm,
-  type ElkDirection,
   type ElkEdgeRouting,
   type ElkEdgeRoutingMode,
   type ElkOptimizationGoal,
   OPTIMIZATION_GOALS,
   type UserLayoutOptions,
 } from '../../core/layout/elk-options'
-import { ASPECT_RATIOS, type AspectRatioId } from '../../core/utils/aspect-ratio'
+import { ASPECT_RATIOS } from '../../core/utils/aspect-ratio'
 import { DroppedFileList, EmptyState, InfoCallout, Skeleton } from '../components'
 import { JsonDropZone } from '../components/json-drop-zone'
 import { PageHelp } from '../components/page-help'
@@ -202,7 +201,7 @@ export const StructuredTabV2: React.FC = () => {
                 <Checkbox.Root
                   checked={withFrame}
                   onCheckedChange={(checked) => {
-                    setWithFrame(Boolean(checked))
+                    setWithFrame(checked)
                   }}
                 >
                   <Checkbox.Indicator>✓</Checkbox.Indicator>
@@ -217,8 +216,8 @@ export const StructuredTabV2: React.FC = () => {
                   <Input
                     id="frame-title"
                     value={frameTitle}
-                    onValueChange={(v) => {
-                      setFrameTitle(String(v))
+                    onValueChange={(value) => {
+                      setFrameTitle(value)
                     }}
                     placeholder="Frame title"
                   />

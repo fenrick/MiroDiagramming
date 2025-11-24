@@ -102,7 +102,7 @@ export const CardsTabV2: React.FC = () => {
               <Checkbox.Root
                 checked={withFrame}
                 onCheckedChange={(checked) => {
-                  setWithFrame(Boolean(checked))
+                  setWithFrame(checked)
                 }}
                 className="checkbox"
               >
@@ -116,8 +116,8 @@ export const CardsTabV2: React.FC = () => {
                 <span className="label">Frame title</span>
                 <Input
                   value={frameTitle}
-                  onValueChange={(v) => {
-                    setFrameTitle(String(v))
+                  onValueChange={(value) => {
+                    setFrameTitle(value)
                   }}
                   placeholder="Frame title"
                   className="input"

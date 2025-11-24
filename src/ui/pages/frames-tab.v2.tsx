@@ -58,8 +58,8 @@ export const FramesTabV2: React.FC = () => {
             <Input
               className="input"
               value={prefix}
-              onValueChange={(v) => {
-                setPrefix(String(v))
+              onValueChange={(value) => {
+                setPrefix(value)
               }}
               placeholder="Prefix"
             />

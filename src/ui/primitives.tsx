@@ -15,10 +15,16 @@ type HeadingProperties = Readonly<{
   children: React.ReactNode
 }>
 
-const getHeadingTag = (level: HeadingProperties['level']): keyof JSX.IntrinsicElements => {
-  const tags: readonly (keyof JSX.IntrinsicElements[]) = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']
-  const safeIndex = Math.min(Math.max((level ?? 2) - 1, 0), tags.length - 1)
-  return tags[safeIndex]
+type HeadingTag = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
+
+const getHeadingTag = (level: HeadingProperties['level']): HeadingTag => {
+  if (level === 1) return 'h1'
+  if (level === 2) return 'h2'
+  if (level === 3) return 'h3'
+  if (level === 4) return 'h4'
+  if (level === 5) return 'h5'
+  if (level === 6) return 'h6'
+  return 'h2'
 }
 
 export function Heading({ level = 2, children }: HeadingProperties): React.JSX.Element {

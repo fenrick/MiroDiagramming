@@ -1,7 +1,6 @@
 import React from 'react'
 import { Button as BaseButton } from '@base-ui-components/react/button'
 import { Input } from '@base-ui-components/react/input'
-import { Checkbox } from '@base-ui-components/react/checkbox'
 
 import {
   applySizeToSelection,
@@ -43,8 +42,8 @@ export const ResizeTabV2: React.FC = () => {
 
   const update =
     (key: keyof Size) =>
-    (value: string): void => {
-      const numeric = Number(value)
+    (value: string | number): void => {
+      const numeric = typeof value === 'number' ? value : Number(value)
       setSize((current) => ({ ...current, [key]: numeric }))
       setWarning('')
     }
@@ -156,9 +155,9 @@ export const ResizeTabV2: React.FC = () => {
             <Input
               className="input"
               type="number"
-              value={String(size.width)}
-              onValueChange={(v) => {
-                update('width')(String(v))
+              value={size.width}
+              onValueChange={(value) => {
+                update('width')(value)
               }}
             />
           </div>
@@ -167,9 +166,9 @@ export const ResizeTabV2: React.FC = () => {
             <Input
               className="input"
               type="number"
-              value={String(size.height)}
-              onValueChange={(v) => {
-                update('height')(String(v))
+              value={size.height}
+              onValueChange={(value) => {
+                update('height')(value)
               }}
             />
           </div>
@@ -179,8 +178,8 @@ export const ResizeTabV2: React.FC = () => {
             <select
               className="input"
               value={ratio}
-              onChange={(e) => {
-                setRatio(e.target.value as AspectRatioId | 'none')
+              onChange={(event) => {
+                setRatio(event.target.value as AspectRatioId | 'none')
               }}
             >
               <option value="none">Free</option>

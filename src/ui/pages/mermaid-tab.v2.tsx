@@ -34,6 +34,92 @@ const EXISTING_MODE_OPTIONS: readonly { id: ExistingNodeMode; label: string }[] 
   { id: 'ignore', label: 'Keep existing positions' },
 ]
 
+type MermaidOptionsProperties = Readonly<{
+  withFrame: boolean
+  frameTitle: string
+  existingMode: ExistingNodeMode
+  onToggleFrame: (checked: boolean) => void
+  onFrameTitleChange: (value: string) => void
+  onExistingModeChange: (mode: ExistingNodeMode) => void
+}>
+
+const MermaidOptions = ({
+  withFrame,
+  frameTitle,
+  existingMode,
+  onToggleFrame,
+  onFrameTitleChange,
+  onExistingModeChange,
+}: MermaidOptionsProperties): React.JSX.Element => (
+  <section className="stack-sm" title="Options">
+    <label className="inline-field">
+      <Checkbox.Root checked={withFrame} onCheckedChange={onToggleFrame} className="checkbox">
+        <Checkbox.Indicator>✓</Checkbox.Indicator>
+      </Checkbox.Root>
+      <span>Wrap result in a frame</span>
+    </label>
+    {withFrame ? (
+      <label className="stack-2xs" style={{ maxWidth: 320 }}>
+        <span className="label">Frame title</span>
+        <Input
+          className="input"
+          value={frameTitle}
+          onValueChange={onFrameTitleChange}
+          placeholder="Optional frame title"
+        />
+      </label>
+    ) : null}
+
+    <label className="stack-2xs" style={{ maxWidth: 320 }}>
+      <span className="label">Existing selection</span>
+      <select
+        className="input"
+        value={existingMode}
+        onChange={(event) => {
+          onExistingModeChange(event.target.value as ExistingNodeMode)
+        }}
+      >
+        {EXISTING_MODE_OPTIONS.map((option) => (
+          <option key={option.id} value={option.id}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+    </label>
+    <p>
+      Move into new layout repositions selected widgets to match the rendered graph. Use selection
+      positions to keep coordinates for matched nodes while laying out new ones.
+    </p>
+  </section>
+)
+
+const buildSuccessMessage = (nodes: number, edges: number): string => {
+  const nodeSuffix = nodes === 1 ? '' : 's'
+  const edgeSuffix = edges === 1 ? '' : 's'
+  const nodeLabel = nodes.toLocaleString()
+  const edgeLabel = edges.toLocaleString()
+  return `Rendered ${nodeLabel} node${nodeSuffix} and ${edgeLabel} edge${edgeSuffix} on the board.`
+}
+
+const handleRenderError = (
+  error: unknown,
+  setStatus: React.Dispatch<
+    React.SetStateAction<
+      { variant: 'success'; message: string } | { variant: 'error'; message: string } | null
+    >
+  >,
+): void => {
+  if (error instanceof MermaidConversionError) {
+    setStatus({ variant: 'error', message: error.message })
+    return
+  }
+  setStatus({
+    variant: 'error',
+    message: 'Unable to render diagram. Check the console for details.',
+  })
+  log.error({ error }, 'Mermaid rendering failed')
+}
+
 export const MermaidTabV2: React.FC = () => {
   const [definition, setDefinition] = usePersistentState<string>(STORAGE_KEY, SAMPLE_DEFINITION)
   const [withFrame, setWithFrame] = usePersistentState<boolean>(WITH_FRAME_STORAGE_KEY, false)
@@ -59,42 +145,39 @@ export const MermaidTabV2: React.FC = () => {
     setStatus(null)
   }, [])
 
+  const renderOptions = React.useMemo(
+    () => ({
+      createFrame: withFrame,
+      frameTitle: withFrame ? frameTitle.trim() || undefined : undefined,
+      existingMode,
+    }),
+    [existingMode, frameTitle, withFrame],
+  )
+
+  const renderGraph = React.useCallback(async (): Promise<void> => {
+    const renderer = rendererReference.current
+    const graph = await renderer.render(trimmedDefinition, renderOptions)
+    setStatus({
+      variant: 'success',
+      message: buildSuccessMessage(graph.nodes.length, graph.edges.length),
+    })
+  }, [renderOptions, trimmedDefinition])
+
   const handleRender = React.useCallback(async () => {
     if (isDefinitionEmpty) {
       setStatus({ variant: 'error', message: 'Add a Mermaid definition before rendering.' })
       return
     }
-    const renderer = rendererReference.current
     setIsRendering(true)
     setStatus(null)
     try {
-      const graph = await renderer.render(trimmedDefinition, {
-        createFrame: withFrame,
-        frameTitle: withFrame ? frameTitle.trim() || undefined : undefined,
-        existingMode,
-      })
-      const nodeCount = graph.nodes.length
-      const edgeCount = graph.edges.length
-      setStatus({
-        variant: 'success',
-        message: `Rendered ${String(nodeCount)} node${nodeCount === 1 ? '' : 's'} and ${String(
-          edgeCount,
-        )} edge${edgeCount === 1 ? '' : 's'} on the board.`,
-      })
+      await renderGraph()
     } catch (error) {
-      if (error instanceof MermaidConversionError) {
-        setStatus({ variant: 'error', message: error.message })
-      } else {
-        setStatus({
-          variant: 'error',
-          message: 'Unable to render diagram. Check the console for details.',
-        })
-      }
-      log.error({ error }, 'Mermaid rendering failed')
+      handleRenderError(error, setStatus)
     } finally {
       setIsRendering(false)
     }
-  }, [existingMode, frameTitle, isDefinitionEmpty, trimmedDefinition, withFrame])
+  }, [isDefinitionEmpty, renderGraph])
 
   return (
     <TabPanel tabId="mermaid">
@@ -110,8 +193,8 @@ export const MermaidTabV2: React.FC = () => {
             <textarea
               className="textarea"
               value={definition}
-              onChange={(e) => {
-                setDefinition(e.target.value)
+              onChange={(event) => {
+                setDefinition(event.target.value)
               }}
               placeholder="graph TD\nA[Start] --> B[Finish]"
               spellCheck={false}
@@ -130,54 +213,20 @@ export const MermaidTabV2: React.FC = () => {
           </div>
         </section>
 
-        <section className="stack-sm" title="Options">
-          <label className="inline-field">
-            <Checkbox.Root
-              checked={withFrame}
-              onCheckedChange={(checked) => {
-                setWithFrame(Boolean(checked))
-              }}
-              className="checkbox"
-            >
-              <Checkbox.Indicator>✓</Checkbox.Indicator>
-            </Checkbox.Root>
-            <span>Wrap result in a frame</span>
-          </label>
-          {withFrame ? (
-            <label className="stack-2xs" style={{ maxWidth: 320 }}>
-              <span className="label">Frame title</span>
-              <Input
-                className="input"
-                value={frameTitle}
-                onValueChange={(v) => {
-                  setFrameTitle(String(v))
-                }}
-                placeholder="Optional frame title"
-              />
-            </label>
-          ) : null}
-
-          <label className="stack-2xs" style={{ maxWidth: 320 }}>
-            <span className="label">Existing selection</span>
-            <select
-              className="input"
-              value={existingMode}
-              onChange={(event) => {
-                setExistingMode(event.target.value as ExistingNodeMode)
-              }}
-            >
-              {EXISTING_MODE_OPTIONS.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <p>
-            Move into new layout repositions selected widgets to match the rendered graph. Use
-            selection positions to keep coordinates for matched nodes while laying out new ones.
-          </p>
-        </section>
+        <MermaidOptions
+          withFrame={withFrame}
+          frameTitle={frameTitle}
+          existingMode={existingMode}
+          onToggleFrame={(checked) => {
+            setWithFrame(checked)
+          }}
+          onFrameTitleChange={(value) => {
+            setFrameTitle(value)
+          }}
+          onExistingModeChange={(mode) => {
+            setExistingMode(mode)
+          }}
+        />
 
         {status ? (
           <div

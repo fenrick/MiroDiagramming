@@ -17,6 +17,32 @@ import { StickyActions } from '../sticky-actions'
 import { IconArrowRight, IconChevronRight, IconPen, Text } from '../primitives'
 import type { TabTuple } from './tab-definitions'
 
+interface MiroViewport {
+  zoomToObject?: (item: unknown) => Promise<void>
+  zoomTo?: (items: unknown[]) => Promise<void>
+}
+
+interface MiroGlobal {
+  board?: { viewport?: MiroViewport }
+}
+
+const getViewport = (): MiroViewport | null => {
+  const miro = (globalThis as { miro?: MiroGlobal }).miro
+  return miro?.board?.viewport ?? null
+}
+
+const zoomToItem = async (item: unknown): Promise<void> => {
+  const viewport = getViewport()
+  if (!viewport) return
+  if (typeof viewport.zoomToObject === 'function') {
+    await viewport.zoomToObject(item)
+    return
+  }
+  if (typeof viewport.zoomTo === 'function') {
+    await viewport.zoomTo([item])
+  }
+}
+
 const parseList = (value: string): string[] =>
   value
     .split(',')
@@ -37,19 +63,20 @@ export const SearchTab: React.FC = () => {
   const [regex, setRegex] = React.useState(false)
 
   const buildOptions = React.useCallback((): SearchOptions => {
-    const options: SearchOptions = { query }
     const widgetTypes = parseList(widgetTypesText)
-    if (widgetTypes.length > 0) options.widgetTypes = widgetTypes
     const tags = parseList(tagIds)
-    if (tags.length > 0) options.tagIds = tags
-    if (backgroundColor) options.backgroundColor = backgroundColor
-    if (assignee) options.assignee = assignee
-    if (creator) options.creator = creator
-    if (lastModifiedBy) options.lastModifiedBy = lastModifiedBy
-    if (caseSensitive) options.caseSensitive = true
-    if (wholeWord) options.wholeWord = true
-    if (regex) options.regex = true
-    return options
+    return {
+      query,
+      ...(widgetTypes.length > 0 ? { widgetTypes } : {}),
+      ...(tags.length > 0 ? { tagIds: tags } : {}),
+      ...(backgroundColor ? { backgroundColor } : {}),
+      ...(assignee ? { assignee } : {}),
+      ...(creator ? { creator } : {}),
+      ...(lastModifiedBy ? { lastModifiedBy } : {}),
+      caseSensitive,
+      wholeWord,
+      regex,
+    }
   }, [
     assignee,
     backgroundColor,
@@ -74,27 +101,11 @@ export const SearchTab: React.FC = () => {
     buildOptions,
     setResults,
     setCurrentIndex,
-    async (item) => {
-      const maybeMiro = (globalThis as any).miro as { board?: { viewport?: any } } | undefined
-      if (maybeMiro?.board?.viewport) {
-        if (typeof maybeMiro.board.viewport.zoomToObject === 'function') {
-          await maybeMiro.board.viewport.zoomToObject(item)
-        } else if (typeof maybeMiro.board.viewport.zoomTo === 'function') {
-          await maybeMiro.board.viewport.zoomTo([item])
-        }
-      }
-    },
+    async (item) => zoomToItem(item),
   )
 
   const nextMatch = useNextMatch(results, currentIndex, setCurrentIndex, async (item) => {
-    const maybeMiro = (globalThis as any).miro as { board?: { viewport?: any } } | undefined
-    if (maybeMiro?.board?.viewport) {
-      if (typeof maybeMiro.board.viewport.zoomToObject === 'function') {
-        await maybeMiro.board.viewport.zoomToObject(item)
-      } else if (typeof maybeMiro.board.viewport.zoomTo === 'function') {
-        await maybeMiro.board.viewport.zoomTo([item])
-      }
-    }
+    await zoomToItem(item)
   })
 
   const replaceCurrent = useReplaceCurrent(
@@ -104,16 +115,7 @@ export const SearchTab: React.FC = () => {
     replacement,
     setResults,
     setCurrentIndex,
-    async (item) => {
-      const maybeMiro = (globalThis as any).miro as { board?: { viewport?: any } } | undefined
-      if (maybeMiro?.board?.viewport) {
-        if (typeof maybeMiro.board.viewport.zoomToObject === 'function') {
-          await maybeMiro.board.viewport.zoomToObject(item)
-        } else if (typeof maybeMiro.board.viewport.zoomTo === 'function') {
-          await maybeMiro.board.viewport.zoomTo([item])
-        }
-      }
-    },
+    async (item) => zoomToItem(item),
   )
 
   return (
@@ -127,8 +129,8 @@ export const SearchTab: React.FC = () => {
             <Input
               className="input"
               value={query}
-              onValueChange={(v) => {
-                setQuery(String(v))
+              onValueChange={(value) => {
+                setQuery(value)
               }}
               placeholder="Search board text"
             />
@@ -138,8 +140,8 @@ export const SearchTab: React.FC = () => {
             <Input
               className="input"
               value={replacement}
-              onValueChange={(v) => {
-                setReplacement(String(v))
+              onValueChange={(value) => {
+                setReplacement(value)
               }}
               placeholder="Replacement text"
             />
@@ -147,8 +149,8 @@ export const SearchTab: React.FC = () => {
           <label className="inline-field">
             <Checkbox.Root
               checked={regex}
-              onCheckedChange={(c) => {
-                setRegex(Boolean(c))
+              onCheckedChange={(checked) => {
+                setRegex(checked)
               }}
               className="checkbox"
             >
@@ -159,8 +161,8 @@ export const SearchTab: React.FC = () => {
           <label className="inline-field">
             <Checkbox.Root
               checked={caseSensitive}
-              onCheckedChange={(c) => {
-                setCaseSensitive(Boolean(c))
+              onCheckedChange={(checked) => {
+                setCaseSensitive(checked)
               }}
               className="checkbox"
             >
@@ -171,8 +173,8 @@ export const SearchTab: React.FC = () => {
           <label className="inline-field">
             <Checkbox.Root
               checked={wholeWord}
-              onCheckedChange={(c) => {
-                setWholeWord(Boolean(c))
+              onCheckedChange={(checked) => {
+                setWholeWord(checked)
               }}
               className="checkbox"
             >
@@ -192,8 +194,8 @@ export const SearchTab: React.FC = () => {
             <Input
               className="input"
               value={widgetTypesText}
-              onValueChange={(v) => {
-                setWidgetTypesText(String(v))
+              onValueChange={(value) => {
+                setWidgetTypesText(value)
               }}
               placeholder="e.g. sticker,shape,text"
             />
@@ -203,8 +205,8 @@ export const SearchTab: React.FC = () => {
             <Input
               className="input"
               value={tagIds}
-              onValueChange={(v) => {
-                setTagIds(String(v))
+              onValueChange={(value) => {
+                setTagIds(value)
               }}
             />
           </div>
@@ -213,8 +215,8 @@ export const SearchTab: React.FC = () => {
             <Input
               className="input"
               value={backgroundColor}
-              onValueChange={(v) => {
-                setBackgroundColor(String(v))
+              onValueChange={(value) => {
+                setBackgroundColor(value)
               }}
             />
           </div>
@@ -223,8 +225,8 @@ export const SearchTab: React.FC = () => {
             <Input
               className="input"
               value={assignee}
-              onValueChange={(v) => {
-                setAssignee(String(v))
+              onValueChange={(value) => {
+                setAssignee(value)
               }}
             />
           </div>
@@ -233,8 +235,8 @@ export const SearchTab: React.FC = () => {
             <Input
               className="input"
               value={creator}
-              onValueChange={(v) => {
-                setCreator(String(v))
+              onValueChange={(value) => {
+                setCreator(value)
               }}
             />
           </div>
@@ -243,8 +245,8 @@ export const SearchTab: React.FC = () => {
             <Input
               className="input"
               value={lastModifiedBy}
-              onValueChange={(v) => {
-                setLastModifiedBy(String(v))
+              onValueChange={(value) => {
+                setLastModifiedBy(value)
               }}
             />
           </div>

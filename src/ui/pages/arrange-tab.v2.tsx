@@ -38,15 +38,22 @@ export const ArrangeTabV2: React.FC = () => {
   })
   const [frameTitle, setFrameTitle] = React.useState('')
 
-  const updateNumber =
-    (key: 'cols' | 'padding') =>
-    (value: string): void => {
-      const numeric = Number(value)
-      setGrid((current) => ({ ...current, [key]: numeric }))
-    }
+  const updateCols = (value: string | number): void => {
+    const numeric = typeof value === 'number' ? value : Number(value)
+    setGrid((current) => ({ ...current, cols: numeric }))
+  }
 
-  const toggle = (key: 'groupResult' | 'sortByName') => (): void => {
-    setGrid((current) => ({ ...current, [key]: !current[key] }))
+  const updatePadding = (value: string | number): void => {
+    const numeric = typeof value === 'number' ? value : Number(value)
+    setGrid((current) => ({ ...current, padding: numeric }))
+  }
+
+  const toggleSortByName = (): void => {
+    setGrid((current) => ({ ...current, sortByName: !current.sortByName }))
+  }
+
+  const toggleGroupResult = (): void => {
+    setGrid((current) => ({ ...current, groupResult: !current.groupResult }))
   }
 
   const applyGrid = React.useCallback((): void => {
@@ -79,30 +86,21 @@ export const ArrangeTabV2: React.FC = () => {
         <section className="stack-sm" title="Grid">
           <div className="stack-2xs">
             <span className="label">Columns</span>
-            <Input
-              className="input"
-              type="number"
-              value={String(grid.cols)}
-              onValueChange={(v) => {
-                updateNumber('cols')(String(v))
-              }}
-            />
+            <Input className="input" type="number" value={grid.cols} onValueChange={updateCols} />
           </div>
           <div className="stack-2xs">
             <span className="label">Gap</span>
             <Input
               className="input"
               type="number"
-              value={String(grid.padding)}
-              onValueChange={(v) => {
-                updateNumber('padding')(String(v))
-              }}
+              value={grid.padding}
+              onValueChange={updatePadding}
             />
           </div>
           <label className="inline-field">
             <Checkbox.Root
               checked={grid.sortByName}
-              onCheckedChange={toggle('sortByName')}
+              onCheckedChange={toggleSortByName}
               className="checkbox"
             >
               <Checkbox.Indicator>✓</Checkbox.Indicator>
@@ -116,8 +114,9 @@ export const ArrangeTabV2: React.FC = () => {
               <select
                 className="input"
                 value={grid.sortOrientation}
-                onChange={(e) => {
-                  setGrid((current) => ({ ...current, sortOrientation: e.target.value as any }))
+                onChange={(event) => {
+                  const orientation = event.target.value as GridOptions['sortOrientation']
+                  setGrid((current) => ({ ...current, sortOrientation: orientation }))
                 }}
               >
                 <option value="horizontal">Across rows (left → right)</option>
@@ -129,7 +128,7 @@ export const ArrangeTabV2: React.FC = () => {
           <label className="inline-field">
             <Checkbox.Root
               checked={grid.groupResult}
-              onCheckedChange={toggle('groupResult')}
+              onCheckedChange={toggleGroupResult}
               className="checkbox"
             >
               <Checkbox.Indicator>✓</Checkbox.Indicator>
@@ -143,8 +142,8 @@ export const ArrangeTabV2: React.FC = () => {
               <Input
                 className="input"
                 value={frameTitle}
-                onValueChange={(v) => {
-                  setFrameTitle(String(v))
+                onValueChange={(value) => {
+                  setFrameTitle(value)
                 }}
                 placeholder="Optional"
               />
@@ -171,8 +170,9 @@ export const ArrangeTabV2: React.FC = () => {
             <select
               className="input"
               value={spacing.axis}
-              onChange={(e) => {
-                setSpacing({ ...spacing, axis: e.target.value as 'x' | 'y' })
+              onChange={(event) => {
+                const axis = event.target.value as SpacingOptions['axis']
+                setSpacing({ ...spacing, axis })
               }}
             >
               <option value="x">Horizontal</option>
@@ -184,9 +184,9 @@ export const ArrangeTabV2: React.FC = () => {
             <Input
               className="input"
               type="number"
-              value={String(spacing.spacing)}
-              onValueChange={(v) => {
-                setSpacing({ ...spacing, spacing: Number(v) })
+              value={spacing.spacing}
+              onValueChange={(value) => {
+                setSpacing({ ...spacing, spacing: Number(value) })
               }}
             />
           </div>
@@ -195,8 +195,9 @@ export const ArrangeTabV2: React.FC = () => {
             <select
               className="input"
               value={spacing.mode}
-              onChange={(e) => {
-                setSpacing({ ...spacing, mode: e.target.value as 'move' | 'grow' })
+              onChange={(event) => {
+                const mode = event.target.value as SpacingOptions['mode']
+                setSpacing({ ...spacing, mode })
               }}
             >
               <option value="move">Move items</option>

@@ -74,7 +74,7 @@ export const TextTabV2: React.FC = () => {
             <div className="button-group">
               <BaseButton
                 className="button button-primary"
-                onClick={handleTrim}
+                onClick={() => void handleTrim()}
                 disabled={!hasTargets || busy}
               >
                 <IconPen />
