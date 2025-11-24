@@ -5,7 +5,7 @@ import { PageHelp } from '../components/page-help'
 import { TabPanel } from '../components/tab-panel'
 import { ArrangeTabV2 } from './arrange-tab.v2'
 import { FramesTab } from './frames-tab'
-import { ResizeTab } from './resize-tab'
+import { ResizeTabV2 } from './resize-tab.v2'
 import { StyleTab } from './style-tab'
 import { TextTab } from './text-tab'
 import type { TabTuple } from './tab-definitions'
@@ -26,7 +26,7 @@ const SUB_TABS: TabItem[] = [
 ]
 
 const SUB_TAB_COMPONENTS = new Map<SubTabId, React.FC>([
-  ['size', ResizeTab],
+  ['size', ResizeTabV2],
   ['style', StyleTab],
   ['text', TextTab],
   ['arrange', ArrangeTabV2],

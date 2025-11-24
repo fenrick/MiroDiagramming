@@ -11,7 +11,7 @@ import { DiagramsTab } from '../ui/pages/diagrams-tab'
 import { FramesTab } from '../ui/pages/frames-tab'
 import { HelpTab } from '../ui/pages/help-tab'
 import { LayoutEngineTabV2 } from '../ui/pages/layout-engine-tab.v2'
-import { ResizeTab } from '../ui/pages/resize-tab'
+import { ResizeTabV2 } from '../ui/pages/resize-tab.v2'
 import { SearchTab } from '../ui/pages/search-tab'
 import { StructuredTabV2 } from '../ui/pages/structured-tab.v2'
 import { StyleTab } from '../ui/pages/style-tab'
@@ -33,6 +33,6 @@ export const Tools: Story = { render: () => <ToolsTab /> }
 export const Frames: Story = { render: () => <FramesTab /> }
 export const Help: Story = { render: () => <HelpTab /> }
 export const LayoutEngine: Story = { render: () => <LayoutEngineTabV2 /> }
-export const Resize: Story = { render: () => <ResizeTab /> }
+export const Resize: Story = { render: () => <ResizeTabV2 /> }
 export const Structured: Story = { render: () => <StructuredTabV2 /> }
 export const Style: Story = { render: () => <StyleTab /> }
