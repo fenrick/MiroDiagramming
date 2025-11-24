@@ -2,7 +2,6 @@
 
 ## Design System
 
-- Always use `@mirohq/design-system` components and tokens; avoid bespoke CSS unless a token/gap truly does not exist.
 - Import themes via `src/assets/style.css` so the panel matches the host board.
 
 ## Layout & Spacing

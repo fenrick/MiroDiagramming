@@ -1,14 +1,13 @@
 import { describe, it, expect, vi } from 'vitest'
-import { colors } from '@mirohq/design-tokens'
 
 import { getDropzoneStyle, undoLastImport } from '../../src/ui/hooks/ui-utilities'
 import type { GraphProcessor } from '../../src/core/graph/graph-processor'
 
 describe('ui utilities', () => {
   it('computes dropzone border color by state', () => {
-    expect(getDropzoneStyle('base').borderColor).toBe(colors['alpha-black-400'])
-    expect(getDropzoneStyle('accept').borderColor).toBe(colors['green-700'])
-    expect(getDropzoneStyle('reject').borderColor).toBe(colors['red-700'])
+    expect(getDropzoneStyle('base').borderColor).toBe('rgba(0, 0, 0, 0.4)')
+    expect(getDropzoneStyle('accept').borderColor).toBe('#154b08')
+    expect(getDropzoneStyle('reject').borderColor).toBe('#6b1720')
   })
 
   it('undoLastImport calls processor and clear when present', async () => {

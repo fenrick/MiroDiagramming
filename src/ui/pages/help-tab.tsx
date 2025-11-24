@@ -1,7 +1,7 @@
 import React from 'react'
 import changelog from '../../../CHANGELOG.md?raw'
 
-import { Button as BaseButton } from '@base-ui-components/react/button'
+import { Button } from '@base-ui-components/react/button'
 import { Markdown } from '../components'
 import { PageHelp } from '../components/page-help'
 import { TabPanel } from '../components/tab-panel'
@@ -12,17 +12,17 @@ export const HelpTab: React.FC = () => {
 
   return (
     <TabPanel tabId="help">
-      <div className="stack-md">
+      <div>
         <PageHelp content="Overview of diagram options and tools" />
 
-        <section className="stack-2xs" title="Getting Started">
+        <section title="Getting Started">
           <p>
             Use the Diagrams tab to import structured JSON/CSV, Cards to build board-linked cards,
             or Mermaid to render definitions. Configure layout options in Structured as needed.
           </p>
         </section>
 
-        <section className="stack-2xs" title="Diagram Layout Options">
+        <section title="Diagram Layout Options">
           <ul className="list">
             <li>Layered – Flow diagrams with layers</li>
             <li>Tree – Compact hierarchical tree</li>
@@ -34,7 +34,7 @@ export const HelpTab: React.FC = () => {
           </ul>
         </section>
 
-        <section className="stack-2xs" title="Other Tools">
+        <section title="Other Tools">
           <ul className="list">
             <li>Resize – adjust widget size or copy from selection.</li>
             <li>Frames – rename or lock selected frames.</li>
@@ -44,16 +44,16 @@ export const HelpTab: React.FC = () => {
           </ul>
         </section>
 
-        <section className="stack-2xs" title="Changelog">
-          <BaseButton
-            className="button button-secondary"
+        <section title="Changelog">
+          <Button
+            className="button button-secondary button-medium"
             onClick={() => {
               setShowLog((v) => !v)
             }}
             data-testid="toggle-changelog"
           >
             {showLog ? 'Hide' : 'Show'} Changelog
-          </BaseButton>
+          </Button>
           {showLog && <Markdown source={changelog} />}
         </section>
       </div>

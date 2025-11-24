@@ -51,22 +51,24 @@ const readStoredValue = <T>(
   initialValue: InitialState<T>,
   options?: PersistentStateOptions<T>,
 ): T => {
+  const initialResolved = resolveInitial(initialValue)
   const storage = getStorage(options?.storage)
+  if (!storage) return initialResolved
+
   const deserialize = options?.deserialize ?? ((value: string) => defaultDeserialize(value) as T)
-  if (storage) {
-    try {
-      const raw = storage.getItem(key)
-      if (raw !== null) {
-        const parsed = safeDeserialize(raw, deserialize)
-        if (parsed !== null) {
-          return parsed
-        }
-      }
-    } catch {
-      // Ignore storage failures and fall back to the initial value.
-    }
+
+  try {
+    const raw = storage.getItem(key)
+    if (raw === null) return initialResolved
+
+    const parsed = safeDeserialize(raw, deserialize)
+    if (parsed !== null) return parsed
+
+    return typeof initialResolved === 'string' ? (raw as unknown as T) : initialResolved
+  } catch {
+    // Ignore storage failures and fall back to the initial value.
+    return initialResolved
   }
-  return resolveInitial(initialValue)
 }
 
 /**

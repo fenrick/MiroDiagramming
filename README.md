@@ -57,7 +57,6 @@ Quick Tools is a Vite-built React panel that runs entirely inside Miro. It impor
 
 - Conventional Commits (`type(scope): message`) enforced via commitlint
 - ESLint + Prettier run in CI and via Husky pre-commit hook
-- Tabs/pages should use design-system components (`@mirohq/design-system`) and tokens, not custom CSS
 - Names for docs and scripts stay uppercase with underscores (e.g., `CODE_STYLE.md`) for consistency across GitHub
 
 ## Deployment

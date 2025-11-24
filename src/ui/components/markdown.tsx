@@ -49,9 +49,9 @@ const sanitizeHtml = (content: string): string => {
 
 export function Markdown({ source, className }: MarkdownProperties): React.JSX.Element {
   const html = React.useMemo(() => {
-    // marked.parse is sync for our usage; coerce the return type to string for TS.
     const raw = marked.parse(source)
-    return sanitizeHtml(raw)
+    const resolved = typeof raw === 'string' ? raw : ''
+    return sanitizeHtml(resolved)
   }, [source])
   return <div className={className} dangerouslySetInnerHTML={{ __html: html }} />
 }

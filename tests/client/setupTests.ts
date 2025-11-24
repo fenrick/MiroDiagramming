@@ -141,15 +141,3 @@ if (typeof window !== 'undefined') {
     value: memoryStorage,
   })
 }
-
-// Mock design-system (Stitches) to avoid CSSOM access errors under jsdom
-vi.mock('@mirohq/design-system', () => {
-  const Stub = (props: any) => props?.children ?? null
-  const Icon = () => null
-  return {
-    Text: Stub,
-    Box: Stub,
-    IconArrowArcLeft: Icon,
-    IconPlus: Icon,
-  }
-})

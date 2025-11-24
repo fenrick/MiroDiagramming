@@ -13,7 +13,7 @@ import { type Tab, TAB_DATA, type TabTuple } from '../ui/pages/tabs'
 const NullComponent: React.FC = () => null
 
 function AppShell(): React.JSX.Element {
-  const initialTab = TAB_DATA.length > 0 ? TAB_DATA[0][1] : 'diagrams'
+  const initialTab = TAB_DATA[0]?.[1] ?? 'diagrams'
   const [tab, setTab] = React.useState<Tab>(initialTab)
   const fallbackTab: TabTuple = TAB_DATA[0] ?? [0, 'diagrams', '', '', NullComponent]
   const resolved = TAB_DATA.find((t) => t[1] === tab) ?? fallbackTab
@@ -39,7 +39,6 @@ function AppShell(): React.JSX.Element {
                 value={t[1]}
                 aria-label={t[3]}
                 className={['tab', active ? 'tab-active' : ''].filter(Boolean).join(' ')}
-                style={{ width: '100%' }}
               >
                 <Tooltip content={t[2]}>
                   <span className="truncate">{t[2]}</span>
@@ -49,20 +48,9 @@ function AppShell(): React.JSX.Element {
           })}
         </Tabs.List>
       </Tabs.Root>
-      <div
-        style={{
-          flex: 1,
-          minHeight: 0,
-          overflowY: 'auto',
-          paddingTop: 'var(--space-100)',
-          paddingBottom: 'var(--space-150)',
-          scrollbarGutter: 'stable both-edges',
-          overscrollBehavior: 'contain',
-        }}
-        aria-label="Panel content"
-      >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-200)' }}>
-          <p style={{ margin: 0 }}>{instructions}</p>
+      <div aria-label="Panel content">
+        <div>
+          <p>{instructions}</p>
           <CurrentComp />
         </div>
       </div>

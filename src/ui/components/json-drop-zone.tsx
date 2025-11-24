@@ -35,20 +35,12 @@ export function JsonDropZone({ onFiles }: JsonDropZoneProperties): React.JSX.Ele
           inputReference.current?.click()
         }
       }}
-      style={{
-        border: '2px dashed var(--indigo400)',
-        borderRadius: 'var(--border-radius-medium)',
-        padding: 'var(--space-300)',
-        textAlign: 'center',
-        cursor: 'pointer',
-      }}
     >
       <input
         ref={inputReference}
         type="file"
         accept=".json,application/json"
         multiple
-        style={{ display: 'none' }}
         onChange={(event) => {
           handleFiles(event.target.files)
         }}

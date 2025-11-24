@@ -14,19 +14,8 @@ export interface TabPanelProperties extends React.ComponentPropsWithoutRef<'div'
  * Wraps tab content with appropriate ARIA attributes while forwarding
  * remaining props to the underlying container.
  */
-export const TabPanel: React.FC<TabPanelProperties> = ({
-  tabId,
-  children,
-  style,
-  ...properties
-}) => (
-  <div
-    id={`panel-${tabId}`}
-    role="tabpanel"
-    aria-labelledby={`tab-${tabId}`}
-    style={{ position: 'relative', ...style }}
-    {...properties}
-  >
+export const TabPanel: React.FC<TabPanelProperties> = ({ tabId, children, ...properties }) => (
+  <div id={`panel-${tabId}`} role="tabpanel" aria-labelledby={`tab-${tabId}`} {...properties}>
     {children}
   </div>
 )

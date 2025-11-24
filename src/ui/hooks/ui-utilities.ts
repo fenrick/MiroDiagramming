@@ -1,9 +1,12 @@
-import { colors, fontSizes, fontWeights } from '@mirohq/design-tokens'
 import type React from 'react'
 
 import { type CardProcessor } from '../../board/card-processor'
 import { type GraphProcessor } from '../../core/graph/graph-processor'
 import { type HierarchyProcessor } from '../../core/graph/hierarchy-processor'
+import { getColor } from '../../core/theme/colors'
+
+const weightSemibold = 600
+const size200 = '1rem'
 
 const dropzoneStyles = {
   display: 'flex',
@@ -13,10 +16,10 @@ const dropzoneStyles = {
   textAlign: 'center',
   borderWidth: 'var(--border-widths-md)',
   borderStyle: 'dashed',
-  borderColor: colors['alpha-black-400'],
-  color: colors['gray-700'],
-  fontWeight: fontWeights.semibold,
-  fontSize: fontSizes[200],
+  borderColor: getColor('alpha-black-400'),
+  color: getColor('gray-700'),
+  fontWeight: weightSemibold,
+  fontSize: size200,
 } as const
 
 /** Undo last import and reset state helper. */
@@ -38,12 +41,12 @@ export async function undoLastImport(
 export type DropzoneState = 'base' | 'accept' | 'reject'
 
 export function getDropzoneStyle(state: DropzoneState): React.CSSProperties {
-  let borderColor: string = colors['alpha-black-400']
+  let borderColor: string = getColor('alpha-black-400')
   if (state === 'accept') {
-    borderColor = colors['green-700']
+    borderColor = getColor('green-700')
   }
   if (state === 'reject') {
-    borderColor = colors['red-700']
+    borderColor = getColor('red-700')
   }
   return { ...dropzoneStyles, borderColor }
 }

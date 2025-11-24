@@ -5,7 +5,7 @@ import { TabPanel } from '../components/tab-panel'
 export const LayoutEngineTabV2: React.FC = () => (
   <TabPanel tabId="layout">
     <PageHelp content="Layout engine previews and tuning" />
-    <section className="stack-sm" title="Preview">
+    <section title="Preview">
       <p>Layout engine coming soon.</p>
     </section>
   </TabPanel>

@@ -1,5 +1,4 @@
 import { describe, it, expect } from 'vitest'
-import { colors } from '@mirohq/design-tokens'
 
 import { TemplateManager } from '../../src/board/templates'
 
@@ -13,7 +12,7 @@ describe('TemplateManager resolution', () => {
     })
     expect(style.borderWidth).toBe(2)
     expect(style.padding).toBe(12)
-    expect(style.fillColor).toBe(colors.black)
+    expect(style.fillColor).toBe('#000000')
   })
 
   it('maps template aliases to their canonical name', () => {

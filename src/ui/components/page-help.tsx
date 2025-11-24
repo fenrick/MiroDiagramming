@@ -12,19 +12,9 @@ export interface PageHelpProperties {
  */
 export function PageHelp({ content, ariaLabel = 'Help' }: PageHelpProperties): React.JSX.Element {
   return (
-    <div style={{ position: 'absolute', top: 'var(--space-100)', right: 'var(--space-100)' }}>
+    <div>
       <Tooltip content={content}>
-        <button
-          aria-label={ariaLabel}
-          style={{
-            border: '1px solid var(--indigo400)',
-            borderRadius: '50%',
-            width: '32px',
-            height: '32px',
-            background: 'var(--white)',
-            cursor: 'pointer',
-          }}
-        >
+        <button aria-label={ariaLabel} className="button button-ghost button-medium">
           ?
         </button>
       </Tooltip>

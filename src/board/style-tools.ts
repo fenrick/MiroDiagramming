@@ -1,9 +1,8 @@
 /**
  * Colour manipulation utilities for the currently selected widgets.
  */
-import { colors } from '@mirohq/design-tokens'
-
 import { adjustColor, ensureContrast, resolveColor } from '../core/utils/color-utilities'
+import { getColor } from '../core/theme/colors'
 
 import {
   type BoardLike,
@@ -32,11 +31,13 @@ export function findStyleKey(style: Record<string, unknown>, keys: string[]): st
 function readFill(style: Record<string, unknown>, key: 'fillColor' | 'backgroundColor'): string {
   const s = style as { fillColor?: unknown; backgroundColor?: unknown }
   if (key === 'fillColor') {
-    return typeof s.fillColor === 'string' ? s.fillColor : resolveColor(colors.white, colors.white)
+    return typeof s.fillColor === 'string'
+      ? s.fillColor
+      : resolveColor(getColor('white'), getColor('white'))
   }
   return typeof s.backgroundColor === 'string'
     ? s.backgroundColor
-    : resolveColor(colors.white, colors.white)
+    : resolveColor(getColor('white'), getColor('white'))
 }
 
 function readFont(style: Record<string, unknown>, key: 'color' | 'textColor' | null): string {
@@ -44,14 +45,14 @@ function readFont(style: Record<string, unknown>, key: 'color' | 'textColor' | n
   if (key === 'color') {
     return typeof s.color === 'string'
       ? s.color
-      : resolveColor(colors['gray-700'], colors['gray-700'])
+      : resolveColor(getColor('gray-700'), getColor('gray-700'))
   }
   if (key === 'textColor') {
     return typeof s.textColor === 'string'
       ? s.textColor
-      : resolveColor(colors['gray-700'], colors['gray-700'])
+      : resolveColor(getColor('gray-700'), getColor('gray-700'))
   }
-  return resolveColor(colors['gray-700'], colors['gray-700'])
+  return resolveColor(getColor('gray-700'), getColor('gray-700'))
 }
 
 /** Retrieve the property name used for widget fill colour. */
@@ -171,10 +172,10 @@ export function extractFillColor(item: Record<string, unknown> | undefined): str
   }
   if (key === 'fillColor') {
     const fill = (style as { fillColor?: unknown }).fillColor
-    return typeof fill === 'string' ? resolveColor(fill, colors.white) : null
+    return typeof fill === 'string' ? resolveColor(fill, getColor('white')) : null
   }
   const bg = (style as { backgroundColor?: unknown }).backgroundColor
-  return typeof bg === 'string' ? resolveColor(bg, colors.white) : null
+  return typeof bg === 'string' ? resolveColor(bg, getColor('white')) : null
 }
 
 /**

@@ -84,7 +84,7 @@ export const ToolsTab: React.FC = () => {
   return (
     <TabPanel tabId="tools">
       <PageHelp content="Adjust size, style, text, arrange and frame utilities" />
-      <div className="stack-md">
+      <div>
         <Tabs.Root
           value={sub}
           onValueChange={(value) => {
@@ -104,7 +104,7 @@ export const ToolsTab: React.FC = () => {
             ))}
           </Tabs.List>
         </Tabs.Root>
-        <div style={{ paddingTop: 'var(--space-150)' }}>
+        <div>
           {(() => {
             const Component = SUB_TAB_COMPONENTS.get(sub)
             return Component ? <Component /> : null

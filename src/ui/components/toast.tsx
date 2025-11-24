@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button as BaseButton } from '@base-ui-components/react/button'
+import { Button } from '@base-ui-components/react/button'
 
 /** A single toast notification. */
 export interface ToastOptions {
@@ -53,24 +53,11 @@ export const ToastContainer: React.FC = () => {
   return (
     <div className="toast-container">
       {toasts.map((t) => (
-        <div
-          key={t.id}
-          role="alert"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 'var(--space-100)',
-            padding: 'var(--space-150)',
-            borderRadius: 'var(--border-radius-medium)',
-            border: '1px solid var(--indigo200)',
-            background: 'var(--white)',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
-          }}
-        >
+        <div key={t.id} role="alert">
           {t.thumbnailUrl && <img className="toast-thumb" src={t.thumbnailUrl} alt="" />}
-          <div style={{ flex: 1 }}>{t.message}</div>
+          <div>{t.message}</div>
           {t.action && (
-            <BaseButton
+            <Button
               className="button button-secondary button-small"
               onClick={() => {
                 t.action?.callback()
@@ -78,7 +65,7 @@ export const ToastContainer: React.FC = () => {
               }}
             >
               {t.action.label}
-            </BaseButton>
+            </Button>
           )}
         </div>
       ))}

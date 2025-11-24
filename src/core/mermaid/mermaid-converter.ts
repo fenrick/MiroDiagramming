@@ -11,6 +11,8 @@ import {
   isSafeLookupKey,
   sanitizeObjectKey,
 } from '../utils/object-safety'
+import { getColor } from '../theme/colors'
+import { resolveColor } from '../utils/color-utilities'
 
 export class MermaidConversionError extends Error {
   public constructor(message: string, cause?: unknown) {
@@ -247,9 +249,6 @@ function parseLength(value: string | undefined): number | undefined {
   return Number.isFinite(numeric) ? numeric : undefined
 }
 
-import { resolveColor } from '../utils/color-utilities'
-import { colors } from '@mirohq/design-tokens'
-
 interface ClassStyle {
   fill?: string
   stroke?: string
@@ -457,11 +456,11 @@ function normaliseResolvedColor(value: string | undefined, fallback: string): st
 function parseNodeStyles(vertex: RawVertex): NodeStyleOverrides | undefined {
   const css = parseCssDeclarations(vertex.styles)
   const overrides: NodeStyleOverrides = {}
-  const fill = normaliseResolvedColor(css.fill, colors.white)
+  const fill = normaliseResolvedColor(css.fill, getColor('white'))
   if (fill) {
     overrides.fillColor = fill
   }
-  const stroke = normaliseResolvedColor(css.stroke, colors.black)
+  const stroke = normaliseResolvedColor(css.stroke, getColor('black'))
   if (stroke) {
     overrides.borderColor = stroke
   }
@@ -1255,11 +1254,11 @@ function buildNodesFromVertices(vertices: Map<string, RawVertex>): NodeData[] {
 }
 
 function applyClassDefinition(target: NodeStyleOverrides, definition: ClassStyle): void {
-  const fill = normaliseResolvedColor(definition.fill, colors.white)
+  const fill = normaliseResolvedColor(definition.fill, getColor('white'))
   if (fill) {
     target.fillColor = fill
   }
-  const stroke = normaliseResolvedColor(definition.stroke, colors.black)
+  const stroke = normaliseResolvedColor(definition.stroke, getColor('black'))
   if (stroke) {
     target.borderColor = stroke
   }

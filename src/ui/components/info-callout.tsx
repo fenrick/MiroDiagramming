@@ -27,18 +27,8 @@ export function InfoCallout({
   if (!hasContent) return null
 
   return (
-    <div
-      style={{
-        borderLeft: '4px solid var(--blue700)',
-        background: 'var(--blue100)',
-        padding: 'var(--space-150)',
-        borderRadius: 'var(--border-radius-medium)',
-      }}
-      role="note"
-    >
-      {title ? (
-        <strong style={{ display: 'block', marginBottom: 'var(--space-50)' }}>{title}</strong>
-      ) : null}
+    <div role="note">
+      {title ? <strong>{title}</strong> : null}
       {typeof markdown === 'string' && markdown.trim().length > 0 ? (
         <Markdown source={markdown} />
       ) : (

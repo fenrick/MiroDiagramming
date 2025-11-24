@@ -1,8 +1,7 @@
 import React from 'react'
-import { Button as BaseButton } from '@base-ui-components/react/button'
+import { Button } from '@base-ui-components/react/button'
 
 import { trimSelectedShapeText } from '../../board/text-tools'
-import { IconPen, Text } from '../primitives'
 import { InfoCallout } from '../components/info-callout'
 import { PageHelp } from '../components/page-help'
 import { TabPanel } from '../components/tab-panel'
@@ -54,16 +53,16 @@ export const TextTabV2: React.FC = () => {
 
   return (
     <TabPanel tabId="text">
-      <div className="stack-md">
+      <div>
         <PageHelp content="Clean up text on selected items" />
         {!hasTargets && (
-          <div className="stack-2xs">
-            <h3 style={{ margin: 0 }}>No selection</h3>
+          <div>
+            <h3>No selection</h3>
             <p>{emptyStateDescription}</p>
           </div>
         )}
 
-        <section className="stack-sm" title="Text Cleanup">
+        <section title="Text Cleanup">
           <InfoCallout title="What it does">
             Trims whitespace from the start and end of each recognised text field (plain text or
             simple HTML like &lt;p&gt;, &lt;a&gt;, &lt;strong&gt;, &lt;em&gt;, &lt;span&gt;,
@@ -71,16 +70,14 @@ export const TextTabV2: React.FC = () => {
           </InfoCallout>
 
           <StickyActions>
-            <div className="button-group">
-              <BaseButton
-                className="button button-primary"
-                onClick={() => void handleTrim()}
-                disabled={!hasTargets || busy}
-              >
-                <IconPen />
-                <Text>{busy ? 'Trimming…' : 'Trim Text'}</Text>
-              </BaseButton>
-            </div>
+            <Button
+              className="button button-primary button-medium"
+              onClick={() => void handleTrim()}
+              disabled={!hasTargets || busy}
+            >
+              <span className="icon icon-edit" aria-hidden="true"></span>
+              <p className="p-medium">{busy ? 'Trimming…' : 'Trim Text'}</p>
+            </Button>
           </StickyActions>
         </section>
       </div>

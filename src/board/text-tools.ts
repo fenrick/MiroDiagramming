@@ -65,7 +65,7 @@ const trimPlainOrRichText = (value: string): string => {
   return value.includes('<') ? trimRichText(value) : value.trim()
 }
 
-const applyTrimsToWidget = (widget: unknown): number => {
+const applyTrimsToWidget = (widget: Record<string, unknown>): number => {
   const fields = getTextFields(widget)
   let trimmedFields = 0
   for (const [path, value] of fields) {
@@ -130,6 +130,9 @@ export async function trimSelectedShapeText(board?: BoardLike): Promise<TrimResu
   let fieldsTrimmed = 0
 
   for (const widget of selection) {
+    if (typeof widget !== 'object') {
+      continue
+    }
     const trimmed = applyTrimsToWidget(widget)
     if (trimmed > 0) {
       widgetsTouched += 1

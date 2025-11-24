@@ -1,4 +1,3 @@
-import { colors } from '@mirohq/design-tokens'
 import {
   type ConnectorStyle,
   type Frame,
@@ -15,6 +14,7 @@ import {
   isSafeStyleProperty,
   sanitizeObjectKey,
 } from '../core/utils/object-safety'
+import { getColor } from '../core/theme/colors'
 import connectorJson from '../../templates/connectorTemplates.json'
 import templatesJson from '../../templates/shapeTemplates.json'
 import experimentalShapeMap from '../../templates/experimentalShapeMap.json'
@@ -110,8 +110,6 @@ const SHAPE_WHITELIST: ReadonlySet<TemplateShape> = new Set<TemplateShape>([
   SHAPE_TYPE.Cross,
   SHAPE_TYPE.Can,
 ])
-
-const COLOR_LOOKUP = new Map<string, string>(Object.entries(colors as Record<string, string>))
 
 const NEGATIVE_SIGN = '-'
 const DOT = '.'
@@ -473,12 +471,8 @@ export class TemplateManager {
    *   match the expected pattern.
    */
   private parseColorToken(path: string): string | undefined {
-    if (path === 'color.white') {
-      return colors.white
-    }
-    if (path === 'color.black') {
-      return colors.black
-    }
+    if (path === 'color.white') return getColor('white')
+    if (path === 'color.black') return getColor('black')
     const match = /^color\.([a-zA-Z]+)\[(\d+)\]$/.exec(path)
     if (!match) {
       return undefined
@@ -493,7 +487,7 @@ export class TemplateManager {
     if (!safeKey) {
       return undefined
     }
-    return COLOR_LOOKUP.get(safeKey)
+    return getColor(safeKey)
   }
 
   /**
