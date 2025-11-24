@@ -1,42 +1,52 @@
 import React from 'react'
 
-export function Text({
-  children,
-  size = 'medium',
-}: {
+type TextProperties = Readonly<{
   children: React.ReactNode
   size?: 'small' | 'medium'
-}): React.JSX.Element {
+}>
+
+export function Text({ children, size = 'medium' }: TextProperties): React.JSX.Element {
   const fontSize = size === 'small' ? 'var(--font-size-medium)' : 'var(--font-size-large)'
   return <span style={{ fontSize }}>{children}</span>
 }
 
-export function Heading({
-  level = 2,
-  children,
-}: {
+type HeadingProperties = Readonly<{
   level?: 1 | 2 | 3 | 4 | 5 | 6
   children: React.ReactNode
-}): React.JSX.Element {
-  const Tag = `h${level}` as const
-  return <Tag style={{ margin: 0 }}>{children}</Tag>
+}>
+
+export function Heading({ level = 2, children }: HeadingProperties): React.JSX.Element {
+  const tagMap = {
+    1: 'h1',
+    2: 'h2',
+    3: 'h3',
+    4: 'h4',
+    5: 'h5',
+    6: 'h6',
+  } as const
+  const Tag = tagMap[level] ?? 'h2'
+  return React.createElement(Tag, { style: { margin: 0 } }, children)
 }
+
+type GridProperties = Readonly<{
+  columns?: number
+  gap?: number | string
+  children: React.ReactNode
+}>
 
 export function Grid({
   columns = 1,
   gap = 'var(--space-100)',
   children,
-}: {
-  columns?: number
-  gap?: number | string
-  children: React.ReactNode
-}): React.JSX.Element {
+}: GridProperties): React.JSX.Element {
+  const templateColumns = `repeat(${String(columns)}, minmax(0, 1fr))`
+  const gapValue = typeof gap === 'number' ? `${String(gap)}px` : gap
   return (
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`,
-        gap: typeof gap === 'number' ? `${gap}px` : gap,
+        gridTemplateColumns: templateColumns,
+        gap: gapValue,
         alignItems: 'center',
       }}
     >
@@ -45,15 +55,17 @@ export function Grid({
   )
 }
 
+type GridItemProperties = Readonly<{
+  children: React.ReactNode
+  columnStart?: number
+  columnEnd?: number
+}>
+
 Grid.Item = function GridItem({
   children,
   columnStart,
   columnEnd,
-}: {
-  children: React.ReactNode
-  columnStart?: number
-  columnEnd?: number
-}): React.JSX.Element {
+}: GridItemProperties): React.JSX.Element {
   return (
     <div
       style={{
@@ -66,6 +78,16 @@ Grid.Item = function GridItem({
   )
 }
 
+type FlexProperties = Readonly<{
+  children: React.ReactNode
+  direction?: 'row' | 'column'
+  gap?: number
+  align?: 'stretch' | 'center' | 'flex-start' | 'flex-end'
+  justify?: 'flex-start' | 'center' | 'space-between'
+  wrap?: 'nowrap' | 'wrap'
+  style?: React.CSSProperties
+}>
+
 export function Flex({
   children,
   direction = 'row',
@@ -74,21 +96,14 @@ export function Flex({
   justify = 'flex-start',
   wrap = 'nowrap',
   style,
-}: {
-  children: React.ReactNode
-  direction?: 'row' | 'column'
-  gap?: number
-  align?: 'stretch' | 'center' | 'flex-start' | 'flex-end'
-  justify?: 'flex-start' | 'center' | 'space-between'
-  wrap?: 'nowrap' | 'wrap'
-  style?: React.CSSProperties
-}): React.JSX.Element {
+}: FlexProperties): React.JSX.Element {
+  const gapValue = `${String(gap)}px`
   return (
     <div
       style={{
         display: 'flex',
         flexDirection: direction,
-        gap: `${gap}px`,
+        gap: gapValue,
         alignItems: align,
         justifyContent: justify,
         flexWrap: wrap,
@@ -100,13 +115,13 @@ export function Flex({
   )
 }
 
-export interface SliderProperties {
+export type SliderProperties = Readonly<{
   value: number
   min?: number
   max?: number
   step?: number
-  onValueChange?: (v: number) => void
-}
+  onValueChange?: (value: number) => void
+}>
 
 export function Slider({
   value,
@@ -122,7 +137,7 @@ export function Slider({
       min={min}
       max={max}
       step={step}
-      onChange={(e) => onValueChange?.(Number(e.target.value))}
+      onChange={(event) => onValueChange?.(Number(event.target.value))}
       aria-label="Value"
       style={{ width: '100%' }}
     />

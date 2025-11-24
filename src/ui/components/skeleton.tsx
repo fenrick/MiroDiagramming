@@ -1,6 +1,6 @@
 import React from 'react'
 
-export type SkeletonProps = Readonly<{
+export type SkeletonProperties = Readonly<{
   width?: string | number
   height?: string | number
 }>
@@ -8,7 +8,7 @@ export type SkeletonProps = Readonly<{
 export function Skeleton({
   width = '100%',
   height = 'var(--space-250)',
-}: SkeletonProps): React.JSX.Element {
+}: SkeletonProperties): React.JSX.Element {
   return (
     <div
       style={{

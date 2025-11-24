@@ -18,7 +18,7 @@ export function Select({
   return (
     <select
       value={value}
-      onChange={(e) => onChange?.(e.target.value)}
+      onChange={(event) => onChange?.(event.target.value)}
       disabled={disabled}
       className="select"
       style={{

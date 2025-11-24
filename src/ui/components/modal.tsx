@@ -2,13 +2,13 @@ import React from 'react'
 
 import { Button } from './button'
 
-export interface ModalProperties {
+export type ModalProperties = Readonly<{
   title: string
   isOpen: boolean
   onClose: () => void
   size?: 'small' | 'medium'
   children: React.ReactNode
-}
+}>
 
 /**
  * Accessible modal dialog with focus trap and Escape handling.

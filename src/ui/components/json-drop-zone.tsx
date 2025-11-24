@@ -22,16 +22,16 @@ export function JsonDropZone({ onFiles }: JsonDropZoneProperties): React.JSX.Ele
 
   return (
     <div
-      onDragOver={(e) => {
-        e.preventDefault()
+      onDragOver={(event) => {
+        event.preventDefault()
       }}
       onDrop={handleDrop}
       onClick={() => inputReference.current?.click()}
       role="button"
       tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault()
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault()
           inputReference.current?.click()
         }
       }}
@@ -49,8 +49,8 @@ export function JsonDropZone({ onFiles }: JsonDropZoneProperties): React.JSX.Ele
         accept=".json,application/json"
         multiple
         style={{ display: 'none' }}
-        onChange={(e) => {
-          handleFiles(e.target.files)
+        onChange={(event) => {
+          handleFiles(event.target.files)
         }}
         aria-label="Upload JSON"
       />

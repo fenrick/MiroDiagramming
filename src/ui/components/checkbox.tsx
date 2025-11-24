@@ -19,7 +19,7 @@ export function Checkbox({
   ...properties
 }: CheckboxProperties): React.JSX.Element {
   const generatedId = React.useId()
-  const inputId = String(id ?? generatedId)
+  const inputId = id ?? generatedId
   const isChecked = value ?? false
 
   return (

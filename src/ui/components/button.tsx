@@ -31,6 +31,35 @@ function getIconSlots(
   return iconPosition === 'start' ? { start: slot, end: null } : { start: null, end: slot }
 }
 
+function getVariantClass(variant: ButtonVariant): string {
+  switch (variant) {
+    case 'primary':
+      return 'button-primary'
+    case 'secondary':
+      return 'button-secondary'
+    case 'tertiary':
+      return 'button-tertiary'
+    case 'ghost':
+      return 'button-secondary-border'
+    case 'danger':
+      return 'button-danger'
+    default:
+      return 'button-primary'
+  }
+}
+
+function buildButtonClasses(
+  variant: ButtonVariant,
+  finalSize: ButtonSize,
+  loading?: boolean,
+): string {
+  const classes = ['button', getVariantClass(variant)]
+  if (finalSize === 'small') classes.push('button-small')
+  if (finalSize === 'medium') classes.push('button-medium')
+  if (loading) classes.push('button-loading')
+  return classes.join(' ')
+}
+
 const BaseButton = React.forwardRef<HTMLButtonElement, ButtonProperties>(function Button(
   {
     variant = 'primary',
@@ -50,23 +79,12 @@ const BaseButton = React.forwardRef<HTMLButtonElement, ButtonProperties>(functio
   const finalSize = size ?? (largeByDefault ? 'large' : 'medium')
 
   const { start, end } = getIconSlots(icon, iconPosition)
-  const classes = ['button']
-  const variantClass: Record<ButtonVariant, string> = {
-    primary: 'button-primary',
-    secondary: 'button-secondary',
-    tertiary: 'button-tertiary',
-    ghost: 'button-secondary-border',
-    danger: 'button-danger',
-  }
-  classes.push(variantClass[variant])
-  if (finalSize === 'small') classes.push('button-small')
-  if (finalSize === 'medium') classes.push('button-medium')
-  if (loading) classes.push('button-loading')
+  const className = buildButtonClasses(variant, finalSize, loading)
 
   return (
     <button
       ref={reference}
-      className={classes.join(' ')}
+      className={className}
       style={fluid ? { width: '100%', ...style, ...css } : { ...style, ...css }}
       {...properties}
     >

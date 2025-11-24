@@ -13,7 +13,7 @@ import { type Tab, TAB_DATA, type TabTuple } from '../ui/pages/tabs'
 const NullComponent: React.FC = () => null
 
 function AppShell(): React.JSX.Element {
-  const initialTab = TAB_DATA[0]?.[1] ?? 'diagrams'
+  const initialTab = TAB_DATA.length > 0 ? TAB_DATA[0][1] : 'diagrams'
   const [tab, setTab] = React.useState<Tab>(initialTab)
   const fallbackTab: TabTuple = TAB_DATA[0] ?? [0, 'diagrams', '', '', NullComponent]
   const resolved = TAB_DATA.find((t) => t[1] === tab) ?? fallbackTab
@@ -37,7 +37,7 @@ function AppShell(): React.JSX.Element {
               <Tabs.Tab
                 key={t[1]}
                 value={t[1]}
-                aria-label={t[3] ?? t[2]}
+                aria-label={t[3]}
                 className={['tab', active ? 'tab-active' : ''].filter(Boolean).join(' ')}
                 style={{ width: '100%' }}
               >

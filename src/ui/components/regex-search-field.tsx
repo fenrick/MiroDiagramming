@@ -48,8 +48,8 @@ export const RegexSearchField = React.forwardRef<HTMLInputElement, RegexSearchFi
             <input
               type="checkbox"
               checked={regex}
-              onChange={(e) => {
-                toggle(e.target.checked)
+              onChange={(event) => {
+                toggle(event.target.checked)
               }}
             />
             <span>Regex</span>
