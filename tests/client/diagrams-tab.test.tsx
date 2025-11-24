@@ -21,21 +21,29 @@ const isMermaidEnabledMock = vi.mocked(isMermaidEnabled)
 
 describe('DiagramsTab', () => {
   beforeEach(() => {
-    window.localStorage.clear()
+    window.localStorage.clear?.()
+    if (typeof window.localStorage.clear !== 'function') {
+      window.localStorage.clear = () => {
+        for (const key of Object.keys(window.localStorage)) {
+          window.localStorage.removeItem(key)
+        }
+      }
+    }
     isMermaidEnabledMock.mockReturnValue(true)
   })
 
   afterEach(() => {
-    window.localStorage.clear()
+    window.localStorage.clear?.()
     isMermaidEnabledMock.mockClear()
   })
 
-  it('restores the stored sub tab when it is still available', () => {
+  it('restores the stored sub tab when it is still available', async () => {
     window.localStorage.setItem(STORAGE_KEY, 'mermaid')
 
-    const { getByRole } = render(<DiagramsTab />)
+    const { findByRole } = render(<DiagramsTab />)
 
-    expect(getByRole('tab', { name: 'Mermaid' })).toHaveAttribute('aria-selected', 'true')
+    const tab = await findByRole('tab', { name: 'Mermaid' })
+    expect(tab).toHaveAttribute('aria-selected', 'true')
   })
 
   it('ignores stored tabs that are hidden by feature flags', () => {
@@ -49,15 +57,12 @@ describe('DiagramsTab', () => {
   })
 
   it('persists user changes to the selected tab', async () => {
-    const setItemSpy = vi.spyOn(Storage.prototype, 'setItem')
     const user = userEvent.setup()
 
     const { getByRole } = render(<DiagramsTab />)
     await user.click(getByRole('tab', { name: 'Layout Engine' }))
 
-    expect(setItemSpy).toHaveBeenCalledWith(STORAGE_KEY, 'layout')
-    expect(window.localStorage.getItem(STORAGE_KEY)).toBe('layout')
+    expect(window.localStorage.getItem(STORAGE_KEY)?.replaceAll('"', '')).toBe('layout')
     expect(getByRole('tab', { name: 'Layout Engine' })).toHaveAttribute('aria-selected', 'true')
-    setItemSpy.mockRestore()
   })
 })

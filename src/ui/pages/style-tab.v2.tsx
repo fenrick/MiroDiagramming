@@ -17,7 +17,7 @@ import { TabPanel } from '../components/tab-panel'
 import { InfoCallout } from '../components/info-callout'
 import { StickyActions } from '../sticky-actions'
 import { useSelection } from '../hooks/use-selection'
-import { STYLE_PRESET_NAMES, stylePresets } from '../style-presets'
+import { STYLE_PRESET_NAMES, stylePresets, type StylePreset } from '../style-presets'
 
 const swatch = {
   display: 'inline-block',
@@ -28,6 +28,7 @@ const swatch = {
 }
 
 const presetKeys = STYLE_PRESET_NAMES
+const presetEntries = [...stylePresets.entries()]
 
 export const StyleTabV2: React.FC = () => {
   const [adjust, setAdjust] = React.useState(0)
@@ -185,13 +186,13 @@ export const StyleTabV2: React.FC = () => {
 
         <section className="stack-sm" title="Presets">
           <div className="button-group">
-            {presetKeys.map((name) => (
+            {presetEntries.map(([name, preset]) => (
               <BaseButton
                 key={name}
                 className="button"
-                onClick={() => void applyStylePreset(name)}
+                onClick={() => void applyStylePreset(preset)}
                 disabled={!hasSelection}
-                title={presetStyle(name)?.description ?? name}
+                title={name}
               >
                 {name}
               </BaseButton>

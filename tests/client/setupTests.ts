@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom/vitest'
+import { vi } from 'vitest'
 
 class StableCSSStyleSheet {
   public cssRules: CSSRuleList | CSSRule[] = []
@@ -110,3 +111,45 @@ if (typeof document !== 'undefined') {
     },
   })
 }
+
+// Provide a stable in-memory localStorage for tests (avoids jsdom proxy quirks)
+if (typeof window !== 'undefined') {
+  const store = new Map<string, string>()
+  const memoryStorage: Storage = {
+    get length() {
+      return store.size
+    },
+    clear() {
+      store.clear()
+    },
+    getItem(key: string) {
+      return store.has(key) ? store.get(key)! : null
+    },
+    key(index: number) {
+      return Array.from(store.keys())[index] ?? null
+    },
+    removeItem(key: string) {
+      store.delete(key)
+    },
+    setItem(key: string, value: string) {
+      store.set(key, value)
+    },
+  }
+  Object.defineProperty(window, 'localStorage', {
+    configurable: true,
+    writable: true,
+    value: memoryStorage,
+  })
+}
+
+// Mock design-system (Stitches) to avoid CSSOM access errors under jsdom
+vi.mock('@mirohq/design-system', () => {
+  const Stub = (props: any) => props?.children ?? null
+  const Icon = () => null
+  return {
+    Text: Stub,
+    Box: Stub,
+    IconArrowArcLeft: Icon,
+    IconPlus: Icon,
+  }
+})

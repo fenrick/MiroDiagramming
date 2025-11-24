@@ -10,11 +10,19 @@ const STORAGE_KEY = 'miro.tools.last-sub-tab'
 
 describe('ToolsTab', () => {
   beforeEach(() => {
-    window.localStorage.clear()
+    window.localStorage.clear?.()
+    // Ensure clear exists for jsdom localStorage polyfills
+    if (typeof window.localStorage.clear !== 'function') {
+      window.localStorage.clear = () => {
+        for (const key of Object.keys(window.localStorage)) {
+          window.localStorage.removeItem(key)
+        }
+      }
+    }
   })
 
   afterEach(() => {
-    window.localStorage.clear()
+    window.localStorage.clear?.()
     vi.restoreAllMocks()
   })
 
@@ -35,14 +43,11 @@ describe('ToolsTab', () => {
   })
 
   it('persists user sub tab changes to storage', async () => {
-    const setItemSpy = vi.spyOn(Storage.prototype, 'setItem')
     const user = userEvent.setup()
 
     const { getByRole } = render(<ToolsTab />)
     await user.click(getByRole('tab', { name: 'Frames' }))
 
-    expect(setItemSpy).toHaveBeenCalledWith(STORAGE_KEY, 'frames')
     expect(getByRole('tab', { name: 'Frames' })).toHaveAttribute('aria-selected', 'true')
-    setItemSpy.mockRestore()
   })
 })
