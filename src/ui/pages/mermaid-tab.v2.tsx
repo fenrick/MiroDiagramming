@@ -1,10 +1,7 @@
 import React from 'react'
-import { Button as BaseButton } from '@base-ui-components/react/button'
+import { Button } from '@base-ui-components/react/button'
 import { Checkbox } from '@base-ui-components/react/checkbox'
-import { Input } from '@base-ui-components/react/input'
-
-import { space } from '@mirohq/design-tokens'
-import { IconArrowArcLeft, IconChevronRightDouble, Text } from '../primitives'
+import { Field } from '@base-ui-components/react/field'
 
 import { type ExistingNodeMode } from '../../core/graph/graph-processor'
 import { usePersistentState } from '../../core/hooks/use-persistent-state'
@@ -21,12 +18,6 @@ const SAMPLE_DEFINITION = `graph TD
   Decision -->|Revise| Iterate[Collect feedback]
   Iterate --> Decision
   Launch --> Celebrate[(Celebrate!)]`
-
-const CONTENT_STYLE: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: space[200],
-}
 
 const EXISTING_MODE_OPTIONS: readonly { id: ExistingNodeMode; label: string }[] = [
   { id: 'move', label: 'Move into new layout' },
@@ -51,41 +42,46 @@ const MermaidOptions = ({
   onFrameTitleChange,
   onExistingModeChange,
 }: MermaidOptionsProperties): React.JSX.Element => (
-  <section className="stack-sm" title="Options">
-    <label className="inline-field">
+  <section title="Options">
+    <label className="inline-field form-group form-group-small">
       <Checkbox.Root checked={withFrame} onCheckedChange={onToggleFrame} className="checkbox">
         <Checkbox.Indicator>✓</Checkbox.Indicator>
       </Checkbox.Root>
       <span>Wrap result in a frame</span>
     </label>
     {withFrame ? (
-      <label className="stack-2xs" style={{ maxWidth: 320 }}>
-        <span className="label">Frame title</span>
-        <Input
-          className="input"
+      <Field.Root className="form-group form-group-small">
+        <Field.Label>Frame title</Field.Label>
+        <Field.Control
+          className="input input-small"
           value={frameTitle}
           onValueChange={onFrameTitleChange}
           placeholder="Optional frame title"
         />
-      </label>
+      </Field.Root>
     ) : null}
 
-    <label className="stack-2xs" style={{ maxWidth: 320 }}>
-      <span className="label">Existing selection</span>
-      <select
-        className="input"
-        value={existingMode}
-        onChange={(event) => {
-          onExistingModeChange(event.target.value as ExistingNodeMode)
-        }}
-      >
-        {EXISTING_MODE_OPTIONS.map((option) => (
-          <option key={option.id} value={option.id}>
-            {option.label}
-          </option>
-        ))}
-      </select>
-    </label>
+    <Field.Root className="form-group form-group-small">
+      <Field.Label>Existing selection</Field.Label>
+      <Field.Control
+        render={(properties) => (
+          <select
+            {...properties}
+            className="input input-small"
+            value={existingMode}
+            onChange={(event) => {
+              onExistingModeChange(event.target.value as ExistingNodeMode)
+            }}
+          >
+            {EXISTING_MODE_OPTIONS.map((option) => (
+              <option key={option.id} value={option.id}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        )}
+      />
+    </Field.Root>
     <p>
       Move into new layout repositions selected widgets to match the rendered graph. Use selection
       positions to keep coordinates for matched nodes while laying out new ones.
@@ -181,35 +177,40 @@ export const MermaidTabV2: React.FC = () => {
 
   return (
     <TabPanel tabId="mermaid">
-      <div style={CONTENT_STYLE}>
+      <div>
         <PageHelp content="Transform Mermaid flowcharts into board widgets" />
-        <section className="stack-sm" title="Definition">
+        <section title="Definition">
           <InfoCallout title="Supported diagrams">
             Mermaid flowcharts (`graph TD`/`graph LR`) are supported today. Sequence diagrams and
             other formats are on the roadmap.
           </InfoCallout>
-          <label className="stack-2xs">
-            <span className="label">Mermaid definition</span>
-            <textarea
-              className="textarea"
-              value={definition}
-              onChange={(event) => {
-                setDefinition(event.target.value)
-              }}
-              placeholder="graph TD\nA[Start] --> B[Finish]"
-              spellCheck={false}
-              autoComplete="off"
+          <Field.Root className="form-group form-group-small">
+            <Field.Label>Mermaid definition</Field.Label>
+            <Field.Control
+              render={(properties) => (
+                <textarea
+                  {...properties}
+                  className="textarea"
+                  value={definition}
+                  onChange={(event) => {
+                    setDefinition(event.target.value)
+                  }}
+                  placeholder="graph TD\nA[Start] --> B[Finish]"
+                  spellCheck={false}
+                  autoComplete="off"
+                />
+              )}
             />
-          </label>
-          <div className="button-group">
-            <BaseButton className="button button-secondary" onClick={handleSample}>
-              <IconChevronRightDouble />
-              Use Sample
-            </BaseButton>
-            <BaseButton className="button button-ghost" onClick={handleClear}>
-              <IconArrowArcLeft />
-              Clear
-            </BaseButton>
+          </Field.Root>
+          <div>
+            <Button className="button button-secondary button-medium" onClick={handleSample}>
+              <span className="icon icon-arrow-right" aria-hidden="true"></span>
+              <p className="p-medium">Use Sample</p>
+            </Button>
+            <Button className="button button-ghost button-medium" onClick={handleClear}>
+              <span className="icon icon-undo" aria-hidden="true"></span>
+              <p className="p-medium">Clear</p>
+            </Button>
           </div>
         </section>
 
@@ -229,33 +230,19 @@ export const MermaidTabV2: React.FC = () => {
         />
 
         {status ? (
-          <div
-            style={{
-              padding: 'var(--space-150)',
-              borderRadius: 'var(--border-radius-medium)',
-              border: `1px solid ${
-                status.variant === 'success' ? 'var(--colors-green-400)' : 'var(--colors-red-400)'
-              }`,
-              background:
-                status.variant === 'success' ? 'var(--colors-green-100)' : 'var(--colors-red-100)',
-              color:
-                status.variant === 'success' ? 'var(--colors-green-700)' : 'var(--colors-red-700)',
-            }}
-          >
+          <div>
             <output aria-live="polite">{status.message}</output>
           </div>
         ) : null}
         <StickyActions>
-          <div className="button-group">
-            <BaseButton
-              className="button button-primary"
-              onClick={() => void handleRender()}
-              disabled={isRendering || isDefinitionEmpty}
-            >
-              <IconChevronRightDouble />
-              <Text>{isRendering ? 'Rendering…' : 'Render to Board'}</Text>
-            </BaseButton>
-          </div>
+          <Button
+            className="button button-primary button-medium"
+            onClick={() => void handleRender()}
+            disabled={isRendering || isDefinitionEmpty}
+          >
+            <span className="icon icon-arrows-right" aria-hidden="true"></span>
+            <p className="p-medium">{isRendering ? 'Rendering…' : 'Render to Board'}</p>
+          </Button>
         </StickyActions>
       </div>
     </TabPanel>

@@ -1,25 +1,17 @@
 import React from 'react'
-import { Button as BaseButton } from '@base-ui-components/react/button'
+import { Button } from '@base-ui-components/react/button'
 import { Checkbox } from '@base-ui-components/react/checkbox'
-import { Input } from '@base-ui-components/react/input'
+import { Field } from '@base-ui-components/react/field'
 
-import { space } from '@mirohq/design-tokens'
-import { IconChevronRightDouble, IconGrid, Text } from '../primitives'
 import { applyGridLayout, type GridOptions } from '../../board/grid-tools'
 import { boardCache } from '../../board/board-cache'
 import { applySpacingLayout, type SpacingOptions } from '../../board/spacing-tools'
 import { applyBracketTagsToSelectedStickies } from '../../board/sticky-tags'
 import { PageHelp } from '../components/page-help'
-import { TabPanel } from '../components/tab-panel'
 import { InfoCallout } from '../components/info-callout'
+import { TabPanel } from '../components/tab-panel'
 import { StickyActions } from '../sticky-actions'
 import { useSelection } from '../hooks/use-selection'
-
-const stack = {
-  display: 'flex',
-  flexDirection: 'column' as const,
-  gap: space[150],
-}
 
 export const ArrangeTabV2: React.FC = () => {
   const selection = useSelection()
@@ -74,7 +66,7 @@ export const ArrangeTabV2: React.FC = () => {
 
   return (
     <TabPanel tabId="arrange">
-      <div style={stack}>
+      <div>
         <PageHelp content="Grid and spacing tools" />
 
         {!hasSelection && (
@@ -83,21 +75,26 @@ export const ArrangeTabV2: React.FC = () => {
           </InfoCallout>
         )}
 
-        <section className="stack-sm" title="Grid">
-          <div className="stack-2xs">
-            <span className="label">Columns</span>
-            <Input className="input" type="number" value={grid.cols} onValueChange={updateCols} />
-          </div>
-          <div className="stack-2xs">
-            <span className="label">Gap</span>
-            <Input
-              className="input"
+        <section title="Grid">
+          <Field.Root className="form-group form-group-small">
+            <Field.Label>Columns</Field.Label>
+            <Field.Control
+              className="input input-small"
+              type="number"
+              value={grid.cols}
+              onValueChange={updateCols}
+            />
+          </Field.Root>
+          <Field.Root className="form-group form-group-small">
+            <Field.Label>Gap</Field.Label>
+            <Field.Control
+              className="input input-small"
               type="number"
               value={grid.padding}
               onValueChange={updatePadding}
             />
-          </div>
-          <label className="inline-field">
+          </Field.Root>
+          <label className="inline-field form-group form-group-small">
             <Checkbox.Root
               checked={grid.sortByName}
               onCheckedChange={toggleSortByName}
@@ -109,23 +106,28 @@ export const ArrangeTabV2: React.FC = () => {
           </label>
 
           {grid.sortByName && (
-            <div className="stack-2xs">
-              <span className="label">Fill direction</span>
-              <select
-                className="input"
-                value={grid.sortOrientation}
-                onChange={(event) => {
-                  const orientation = event.target.value as GridOptions['sortOrientation']
-                  setGrid((current) => ({ ...current, sortOrientation: orientation }))
-                }}
-              >
-                <option value="horizontal">Across rows (left → right)</option>
-                <option value="vertical">Down columns (top → bottom)</option>
-              </select>
-            </div>
+            <Field.Root className="form-group form-group-small">
+              <Field.Label>Fill direction</Field.Label>
+              <Field.Control
+                render={(properties) => (
+                  <select
+                    {...properties}
+                    className="input input-small"
+                    value={grid.sortOrientation}
+                    onChange={(event) => {
+                      const orientation = event.target.value as GridOptions['sortOrientation']
+                      setGrid((current) => ({ ...current, sortOrientation: orientation }))
+                    }}
+                  >
+                    <option value="horizontal">Across rows (left → right)</option>
+                    <option value="vertical">Down columns (top → bottom)</option>
+                  </select>
+                )}
+              />
+            </Field.Root>
           )}
 
-          <label className="inline-field">
+          <label className="inline-field form-group form-group-small">
             <Checkbox.Root
               checked={grid.groupResult}
               onCheckedChange={toggleGroupResult}
@@ -137,99 +139,103 @@ export const ArrangeTabV2: React.FC = () => {
           </label>
 
           {grid.groupResult && (
-            <div className="stack-2xs" style={{ maxWidth: 280 }}>
-              <span className="label">Frame title</span>
-              <Input
-                className="input"
+            <Field.Root className="form-group form-group-small">
+              <Field.Label>Frame title</Field.Label>
+              <Field.Control
+                className="input input-small"
                 value={frameTitle}
                 onValueChange={(value) => {
                   setFrameTitle(value)
                 }}
                 placeholder="Optional"
               />
-            </div>
+            </Field.Root>
           )}
 
           <StickyActions>
-            <div className="button-group">
-              <BaseButton
-                className="button button-primary"
-                onClick={applyGrid}
-                disabled={!hasSelection}
-              >
-                <IconGrid />
-                <Text>Arrange Grid</Text>
-              </BaseButton>
-            </div>
+            <Button
+              className="button button-primary button-medium"
+              onClick={applyGrid}
+              disabled={!hasSelection}
+            >
+              <span className="icon icon-tile" aria-hidden="true"></span>
+              <p className="p-medium">Arrange Grid</p>
+            </Button>
           </StickyActions>
         </section>
 
-        <section className="stack-sm" title="Spacing">
-          <div className="stack-2xs">
-            <span className="label">Axis</span>
-            <select
-              className="input"
-              value={spacing.axis}
-              onChange={(event) => {
-                const axis = event.target.value as SpacingOptions['axis']
-                setSpacing({ ...spacing, axis })
-              }}
-            >
-              <option value="x">Horizontal</option>
-              <option value="y">Vertical</option>
-            </select>
-          </div>
-          <div className="stack-2xs">
-            <span className="label">Spacing</span>
-            <Input
-              className="input"
+        <section title="Spacing">
+          <Field.Root className="form-group form-group-small">
+            <Field.Label>Axis</Field.Label>
+            <Field.Control
+              render={(properties) => (
+                <select
+                  {...properties}
+                  className="input input-small"
+                  value={spacing.axis}
+                  onChange={(event) => {
+                    const axis = event.target.value as SpacingOptions['axis']
+                    setSpacing({ ...spacing, axis })
+                  }}
+                >
+                  <option value="x">Horizontal</option>
+                  <option value="y">Vertical</option>
+                </select>
+              )}
+            />
+          </Field.Root>
+          <Field.Root className="form-group form-group-small">
+            <Field.Label>Spacing</Field.Label>
+            <Field.Control
+              className="input input-small"
               type="number"
               value={spacing.spacing}
               onValueChange={(value) => {
                 setSpacing({ ...spacing, spacing: Number(value) })
               }}
             />
-          </div>
-          <div className="stack-2xs">
-            <span className="label">Mode</span>
-            <select
-              className="input"
-              value={spacing.mode}
-              onChange={(event) => {
-                const mode = event.target.value as SpacingOptions['mode']
-                setSpacing({ ...spacing, mode })
-              }}
-            >
-              <option value="move">Move items</option>
-              <option value="grow">Resize gaps</option>
-            </select>
-          </div>
+          </Field.Root>
+          <Field.Root className="form-group form-group-small">
+            <Field.Label>Mode</Field.Label>
+            <Field.Control
+              render={(properties) => (
+                <select
+                  {...properties}
+                  className="input input-small"
+                  value={spacing.mode}
+                  onChange={(event) => {
+                    const mode = event.target.value as SpacingOptions['mode']
+                    setSpacing({ ...spacing, mode })
+                  }}
+                >
+                  <option value="move">Move items</option>
+                  <option value="grow">Resize gaps</option>
+                </select>
+              )}
+            />
+          </Field.Root>
           <StickyActions>
-            <div className="button-group">
-              <BaseButton
-                className="button button-primary"
-                onClick={applySpacing}
-                disabled={!hasSelection}
-              >
-                <IconChevronRightDouble />
-                <Text>Apply Spacing</Text>
-              </BaseButton>
-            </div>
+            <Button
+              className="button button-primary button-medium"
+              onClick={applySpacing}
+              disabled={!hasSelection}
+            >
+              <span className="icon icon-arrows-right" aria-hidden="true"></span>
+              <p className="p-medium">Apply Spacing</p>
+            </Button>
           </StickyActions>
         </section>
 
-        <section className="stack-sm" title="Sticky helpers">
+        <section title="Sticky helpers">
           <p>Add [bracket] tags around selected stickies.</p>
           <StickyActions>
-            <div className="button-group">
-              <BaseButton
-                className="button button-secondary"
-                onClick={applyStickyTags}
-                disabled={!hasSelection}
-              >
-                Add bracket tags
-              </BaseButton>
-            </div>
+            <Button
+              className="button button-secondary button-medium"
+              onClick={applyStickyTags}
+              disabled={!hasSelection}
+            >
+              Add bracket tags
+            </Button>
           </StickyActions>
         </section>
       </div>

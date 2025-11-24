@@ -1,6 +1,6 @@
 import React from 'react'
-import { Button as BaseButton } from '@base-ui-components/react/button'
-import { Input } from '@base-ui-components/react/input'
+import { Button } from '@base-ui-components/react/button'
+import { Field } from '@base-ui-components/react/field'
 
 import {
   applySizeToSelection,
@@ -132,7 +132,7 @@ export const ResizeTabV2: React.FC = () => {
 
   return (
     <TabPanel tabId="size">
-      <div className="stack-md">
+      <div>
         <PageHelp content="Adjust size manually or copy from selection" />
         {copiedSize ? (
           <section title="Copy mode">
@@ -143,126 +143,127 @@ export const ResizeTabV2: React.FC = () => {
           </section>
         ) : null}
 
-        {!hasSelection && (
-          <p style={{ color: 'var(--colors-gray-700)' }}>
-            No selection. Choose widgets to apply sizing tools.
-          </p>
-        )}
+        {!hasSelection && <p>No selection. Choose widgets to apply sizing tools.</p>}
 
-        <section className="stack-sm" title="Manual size">
-          <div className="stack-2xs">
-            <span className="label">Width</span>
-            <Input
-              className="input"
+        <section title="Manual size">
+          <Field.Root className="form-group form-group-small">
+            <Field.Label>Width</Field.Label>
+            <Field.Control
+              className="input input-small"
               type="number"
               value={size.width}
               onValueChange={(value) => {
                 update('width')(value)
               }}
             />
-          </div>
-          <div className="stack-2xs">
-            <span className="label">Height</span>
-            <Input
-              className="input"
+          </Field.Root>
+          <Field.Root className="form-group form-group-small">
+            <Field.Label>Height</Field.Label>
+            <Field.Control
+              className="input input-small"
               type="number"
               value={size.height}
               onValueChange={(value) => {
                 update('height')(value)
               }}
             />
-          </div>
+          </Field.Root>
 
-          <div className="stack-2xs">
-            <span className="label">Aspect ratio</span>
-            <select
-              className="input"
-              value={ratio}
-              onChange={(event) => {
-                setRatio(event.target.value as AspectRatioId | 'none')
-              }}
-            >
-              <option value="none">Free</option>
-              {ASPECT_RATIOS.map((r) => (
-                <option key={r.id} value={r.id}>
-                  {r.label}
-                </option>
-              ))}
-            </select>
-          </div>
+          <Field.Root className="form-group form-group-small">
+            <Field.Label>Aspect ratio</Field.Label>
+            <Field.Control
+              render={(properties) => (
+                <select
+                  {...properties}
+                  className="input input-small"
+                  value={ratio}
+                  onChange={(event) => {
+                    setRatio(event.target.value as AspectRatioId | 'none')
+                  }}
+                >
+                  <option value="none">Free</option>
+                  {ASPECT_RATIOS.map((r) => (
+                    <option key={r.id} value={r.id}>
+                      {r.label}
+                    </option>
+                  ))}
+                </select>
+              )}
+            />
+          </Field.Root>
 
-          <div className="button-group">
-            <BaseButton
-              className="button button-primary"
+          <div>
+            <Button
+              className="button button-primary button-medium"
               onClick={() => void apply()}
               disabled={!hasSelection}
             >
               Apply size
-            </BaseButton>
-            <BaseButton
-              className="button button-secondary"
+            </Button>
+            <Button
+              className="button button-secondary button-medium"
               onClick={() => void copy()}
               disabled={!hasSelection}
             >
               Copy from selection (⌥C)
-            </BaseButton>
+            </Button>
             {copiedSize && (
-              <BaseButton className="button button-ghost" onClick={resetCopy}>
+              <Button className="button button-ghost button-medium" onClick={resetCopy}>
                 Clear copied size
-              </BaseButton>
+              </Button>
             )}
           </div>
           {warning && <p className="error">{warning}</p>}
         </section>
 
-        <section className="stack-sm" title="Presets">
-          <div className="button-group">
+        <section title="Presets">
+          <div>
             {[...PRESET_SIZES.keys()].map((key) => (
-              <BaseButton
+              <Button
                 key={key}
-                className="button"
+                className="button button-medium"
                 onClick={() => {
                   applyPreset(key)
                 }}
                 disabled={!hasSelection}
               >
                 {key}
-              </BaseButton>
+              </Button>
             ))}
           </div>
         </section>
 
-        <section className="stack-sm" title="Scale">
-          <div className="button-group">
+        <section title="Scale">
+          <div>
             {SCALE_OPTIONS.map((option) => (
-              <BaseButton
+              <Button
                 key={option.label}
-                className="button"
+                className="button button-medium"
                 onClick={() => void scale(option.factor)}
                 disabled={!hasSelection}
               >
                 {option.label}
-              </BaseButton>
+              </Button>
             ))}
           </div>
         </section>
 
-        <section className="stack-sm" title="Diagnostics">
-          <div className="stack-2xs">
-            <span className="label">Current size</span>
+        <section title="Diagnostics">
+          <div className="form-group form-group-small">
+            <span>Current size</span>
             <output>
               {size.width} × {size.height}
             </output>
           </div>
-          <div className="stack-2xs">
-            <span className="label">Inches</span>
+          <div className="form-group form-group-small">
+            <span>Inches</span>
             <output>
               {boardUnitsToInches(size.width).toFixed(2)} ×{' '}
               {boardUnitsToInches(size.height).toFixed(2)}
             </output>
           </div>
-          <div className="stack-2xs">
-            <span className="label">Millimeters</span>
+          <div className="form-group form-group-small">
+            <span>Millimeters</span>
             <output>
               {boardUnitsToMm(size.width).toFixed(1)} × {boardUnitsToMm(size.height).toFixed(1)}
             </output>
@@ -270,15 +271,13 @@ export const ResizeTabV2: React.FC = () => {
         </section>
 
         <StickyActions>
-          <div className="button-group">
-            <BaseButton
-              className="button button-primary"
-              onClick={() => void apply()}
-              disabled={!hasSelection}
-            >
-              Apply size
-            </BaseButton>
-          </div>
+          <Button
+            className="button button-primary button-medium"
+            onClick={() => void apply()}
+            disabled={!hasSelection}
+          >
+            Apply size
+          </Button>
         </StickyActions>
       </div>
     </TabPanel>

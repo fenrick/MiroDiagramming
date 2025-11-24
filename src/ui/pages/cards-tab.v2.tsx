@@ -1,12 +1,17 @@
-import { IconArrowArcLeft, IconPlus, Text } from '@mirohq/design-system'
-import { Button as BaseButton } from '@base-ui-components/react/button'
+import { Button } from '@base-ui-components/react/button'
 import { Checkbox } from '@base-ui-components/react/checkbox'
-import { Input } from '@base-ui-components/react/input'
+import { Field } from '@base-ui-components/react/field'
 import React from 'react'
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 
 import { CardProcessor } from '../../board/card-processor'
-import { DroppedFileList, EmptyState, JsonDropZone, PageHelp, Skeleton } from '../components'
+import {
+  DroppedFileList,
+  EmptyState,
+  JsonDropZone,
+  PageHelp,
+  Skeleton,
+  VisuallyHidden,
+} from '../components'
 import { StickyActions } from '../sticky-actions'
 import { showError } from '../hooks/notifications'
 import { undoLastImport } from '../hooks/ui-utilities'
@@ -73,7 +78,7 @@ export const CardsTabV2: React.FC = () => {
   return (
     <div className="panel-section stack-md">
       <PageHelp content="Board-linked items with thumbnail and title" />
-      <div className="stack-sm">
+      <div>
         <JsonDropZone onFiles={handleFiles} />
         {files.length === 0 && (
           <EmptyState
@@ -84,8 +89,8 @@ export const CardsTabV2: React.FC = () => {
       </div>
 
       {files.length > 0 && (
-        <section className="stack-md">
-          <div className="stack-sm" title="Selected file">
+        <section>
+          <div title="Selected file">
             <DroppedFileList>
               {files.map((file) => (
                 <li key={`${file.name}-${String(file.lastModified)}`}>{file.name}</li>
@@ -93,12 +98,12 @@ export const CardsTabV2: React.FC = () => {
             </DroppedFileList>
           </div>
 
-          <fieldset className="stack-sm" style={{ border: 'none', padding: 0, margin: 0 }}>
+          <fieldset>
             <VisuallyHidden asChild>
               <legend>Card options</legend>
             </VisuallyHidden>
 
-            <label className="inline-field">
+            <label className="inline-field form-group form-group-small">
               <Checkbox.Root
                 checked={withFrame}
                 onCheckedChange={(checked) => {
@@ -112,31 +117,31 @@ export const CardsTabV2: React.FC = () => {
             </label>
 
             {withFrame && (
-              <label className="stack-2xs" style={{ maxWidth: 280 }}>
-                <span className="label">Frame title</span>
-                <Input
+              <Field.Root className="form-group form-group-small">
+                <Field.Label>Frame title</Field.Label>
+                <Field.Control
                   value={frameTitle}
                   onValueChange={(value) => {
                     setFrameTitle(value)
                   }}
                   placeholder="Frame title"
-                  className="input"
+                  className="input input-small"
                 />
-              </label>
+              </Field.Root>
             )}
           </fieldset>
 
-          <section className="stack-sm" title="Create">
+          <section title="Create">
             <StickyActions>
-              <div className="button-group">
-                <BaseButton className="button button-primary" onClick={handleCreate}>
-                  <IconPlus />
-                  <Text>Create Cards</Text>
-                </BaseButton>
+              <div>
+                <Button className="button button-primary button-medium" onClick={handleCreate}>
+                  <span className="icon icon-plus" aria-hidden="true"></span>
+                  <p className="p-medium">Create Cards</p>
+                </Button>
 
                 {showUndo && (
-                  <BaseButton
-                    className="button button-secondary"
+                  <Button
+                    className="button button-secondary button-medium"
                     onClick={() =>
                       void undoLastImport(lastProc, () => {
                         setLastProc(undefined)
@@ -144,27 +149,27 @@ export const CardsTabV2: React.FC = () => {
                     }
                   >
                     Undo import (⌘Z)
-                  </BaseButton>
+                  </Button>
                 )}
 
                 {lastProc && (
-                  <BaseButton
-                    className="button button-secondary"
+                  <Button
+                    className="button button-secondary button-medium"
                     onClick={() =>
                       void undoLastImport(lastProc, () => {
                         setLastProc(undefined)
                       })
                     }
                   >
-                    <IconArrowArcLeft />
-                    <Text>Undo Last Import</Text>
-                  </BaseButton>
+                    <span className="icon icon-undo" aria-hidden="true"></span>
+                    <p className="p-medium">Undo Last Import</p>
+                  </Button>
                 )}
               </div>
             </StickyActions>
 
             {progress > 0 && progress < 100 && (
-              <output aria-live="polite" aria-label="Loading" className="stack-2xs">
+              <output aria-live="polite" aria-label="Loading">
                 <Skeleton />
                 <Skeleton />
               </output>

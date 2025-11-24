@@ -1,8 +1,7 @@
 import React from 'react'
-import { Button as BaseButton } from '@base-ui-components/react/button'
-import { Input } from '@base-ui-components/react/input'
-import { Slider } from '../primitives'
-
+import { Button } from '@base-ui-components/react/button'
+import { Field } from '@base-ui-components/react/field'
+import { Slider } from '@base-ui-components/react/slider'
 import { adjustColor } from '../../core/utils/color-utilities'
 import { applyStylePreset } from '../../board/format-tools'
 import {
@@ -18,14 +17,6 @@ import { InfoCallout } from '../components/info-callout'
 import { StickyActions } from '../sticky-actions'
 import { useSelection } from '../hooks/use-selection'
 import { stylePresets } from '../style-presets'
-
-const swatch = {
-  display: 'inline-block',
-  width: 'var(--size-thumb)',
-  height: 'var(--size-thumb)',
-  borderRadius: 'var(--radius-200)',
-  border: '1px solid var(--colors-gray-200)',
-}
 
 const presetEntries = [...stylePresets.entries()]
 
@@ -66,48 +57,49 @@ export const StyleTabV2: React.FC = () => {
 
   return (
     <TabPanel tabId="style">
-      <div className="stack-md">
+      <div>
         <PageHelp content="Lighten or darken fills, tweak opacity and borders" />
         {!hasSelection && (
           <InfoCallout title="No selection">Select items to apply styling.</InfoCallout>
         )}
 
-        <section className="stack-sm" title="Adjust colors">
-          <div
-            className="inline-field"
-            style={{ alignItems: 'flex-start', gap: 'var(--space-150)' }}
-          >
-            <div className="stack-2xs" style={{ alignItems: 'center' }}>
-              <span aria-hidden="true" style={{ ...swatch, backgroundColor: baseColor }} />
+        <section title="Adjust colors">
+          <div className="inline-field">
+            <div>
+              <span aria-hidden="true" />
               <small>Base</small>
               <code>{baseColor}</code>
             </div>
-            <div className="stack-2xs" style={{ alignItems: 'center' }}>
-              <span
-                aria-hidden="true"
-                data-testid="adjust-preview"
-                style={{ ...swatch, backgroundColor: preview }}
-              />
+            <div>
+              <span aria-hidden="true" data-testid="adjust-preview" />
               <small>Adjusted</small>
               <code data-testid="color-hex">{preview}</code>
             </div>
           </div>
 
-          <div className="stack-2xs" style={{ maxWidth: 420 }}>
-            <span className="label">Adjust fill</span>
-            <Slider
-              aria-label="Adjust fill"
+          <Field.Root className="form-group form-group-small">
+            <Field.Label>Adjust fill</Field.Label>
+            <Slider.Root
+              value={adjust}
               min={-100}
               max={100}
               step={1}
-              value={adjust}
-              onValueChange={setAdjust}
-            />
-          </div>
-          <div className="stack-2xs" style={{ maxWidth: 200 }}>
-            <span className="label">Adjust value</span>
-            <Input
-              className="input"
+              onValueChange={(value) => {
+                setAdjust(value)
+              }}
+              className="slider"
+              aria-label="Adjust fill"
+            >
+              <Slider.Control className="slider-control">
+                <Slider.Track className="slider-track">
+                  <Slider.Indicator className="slider-indicator" />
+                  <Slider.Thumb className="slider-thumb" />
+                </Slider.Track>
+              </Slider.Control>
+            </Slider.Root>
+            <Field.Label>Adjust value</Field.Label>
+            <Field.Control
+              className="input input-small"
               type="number"
               min={-100}
               max={100}
@@ -117,31 +109,31 @@ export const StyleTabV2: React.FC = () => {
               }}
               data-testid="adjust-input"
             />
-          </div>
+          </Field.Root>
 
-          <div className="button-group">
-            <BaseButton
+          <div>
+            <Button
               className="button button-primary button-medium"
               onClick={() => void apply()}
               disabled={!hasSelection}
             >
               Apply
-            </BaseButton>
-            <BaseButton
+            </Button>
+            <Button
               className="button button-secondary button-medium"
               onClick={() => void copyFill()}
               disabled={!hasSelection}
             >
               Copy fill
-            </BaseButton>
+            </Button>
           </div>
         </section>
 
-        <section className="stack-sm" title="Opacity & border">
-          <div className="stack-2xs" style={{ maxWidth: 200 }}>
-            <span className="label">Opacity Δ</span>
-            <Input
-              className="input"
+        <section title="Opacity & border">
+          <Field.Root className="form-group form-group-small">
+            <Field.Label>Opacity Δ</Field.Label>
+            <Field.Control
+              className="input input-small"
               type="number"
               step="0.1"
               min={-1}
@@ -152,11 +144,11 @@ export const StyleTabV2: React.FC = () => {
               }}
               data-testid="opacity-input"
             />
-          </div>
-          <div className="stack-2xs" style={{ maxWidth: 200 }}>
-            <span className="label">Border Δ</span>
-            <Input
-              className="input"
+          </Field.Root>
+          <Field.Root className="form-group form-group-small">
+            <Field.Label>Border Δ</Field.Label>
+            <Field.Control
+              className="input input-small"
               type="number"
               value={String(borderDelta)}
               onValueChange={(v) => {
@@ -164,29 +156,29 @@ export const StyleTabV2: React.FC = () => {
               }}
               data-testid="border-input"
             />
-          </div>
-          <div className="button-group">
-            <BaseButton
+          </Field.Root>
+          <div>
+            <Button
               className="button button-secondary button-medium"
               onClick={() => void applyOpacity()}
               disabled={!hasSelection}
             >
               Apply opacity
-            </BaseButton>
-            <BaseButton
+            </Button>
+            <Button
               className="button button-secondary button-medium"
               onClick={() => void applyBorder()}
               disabled={!hasSelection}
             >
               Apply border
-            </BaseButton>
+            </Button>
           </div>
         </section>
 
-        <section className="stack-sm" title="Presets">
-          <div className="button-group">
+        <section title="Presets">
+          <div>
             {presetEntries.map(([name, preset]) => (
-              <BaseButton
+              <Button
                 key={name}
                 className="button button-medium"
                 onClick={() => void applyStylePreset(preset)}
@@ -194,7 +186,7 @@ export const StyleTabV2: React.FC = () => {
                 title={name}
               >
                 {name}
-              </BaseButton>
+              </Button>
             ))}
           </div>
           <InfoCallout title="Presets">
@@ -203,15 +195,13 @@ export const StyleTabV2: React.FC = () => {
         </section>
 
         <StickyActions>
-          <div className="button-group">
-            <BaseButton
-              className="button button-primary button-medium"
-              onClick={() => void apply()}
-              disabled={!hasSelection}
-            >
-              Apply changes
-            </BaseButton>
-          </div>
+          <Button
+            className="button button-primary button-medium"
+            onClick={() => void apply()}
+            disabled={!hasSelection}
+          >
+            Apply changes
+          </Button>
         </StickyActions>
       </div>
     </TabPanel>

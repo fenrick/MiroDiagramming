@@ -1,7 +1,7 @@
 import React from 'react'
-import { Button as BaseButton } from '@base-ui-components/react/button'
+import { Button } from '@base-ui-components/react/button'
 import { Checkbox } from '@base-ui-components/react/checkbox'
-import { Input } from '@base-ui-components/react/input'
+import { Field } from '@base-ui-components/react/field'
 
 import type { SearchOptions } from '../../board/search-tools'
 import { InfoCallout } from '../components/info-callout'
@@ -14,7 +14,6 @@ import {
   useReplaceCurrent,
 } from '../hooks/use-search-handlers'
 import { StickyActions } from '../sticky-actions'
-import { IconArrowRight, IconChevronRight, IconPen, Text } from '../primitives'
 import type { TabTuple } from './tab-definitions'
 
 interface MiroViewport {
@@ -120,33 +119,33 @@ export const SearchTab: React.FC = () => {
 
   return (
     <TabPanel tabId="search">
-      <div className="stack-md">
+      <div>
         <PageHelp content="Find and replace text on the board" />
 
-        <section className="stack-sm" title="Find & Replace">
-          <div className="stack-2xs">
-            <span className="label">Find</span>
-            <Input
-              className="input"
+        <section title="Find & Replace">
+          <Field.Root className="form-group form-group-small">
+            <Field.Label>Find</Field.Label>
+            <Field.Control
+              className="input input-small"
               value={query}
               onValueChange={(value) => {
                 setQuery(value)
               }}
               placeholder="Search board text"
             />
-          </div>
-          <div className="stack-2xs">
-            <span className="label">Replace</span>
-            <Input
-              className="input"
+          </Field.Root>
+          <Field.Root className="form-group form-group-small">
+            <Field.Label>Replace</Field.Label>
+            <Field.Control
+              className="input input-small"
               value={replacement}
               onValueChange={(value) => {
                 setReplacement(value)
               }}
               placeholder="Replacement text"
             />
-          </div>
-          <label className="inline-field">
+          </Field.Root>
+          <label className="inline-field form-group form-group-small">
             <Checkbox.Root
               checked={regex}
               onCheckedChange={(checked) => {
@@ -158,7 +157,7 @@ export const SearchTab: React.FC = () => {
             </Checkbox.Root>
             <span>Regex</span>
           </label>
-          <label className="inline-field">
+          <label className="inline-field form-group form-group-small">
             <Checkbox.Root
               checked={caseSensitive}
               onCheckedChange={(checked) => {
@@ -170,7 +169,7 @@ export const SearchTab: React.FC = () => {
             </Checkbox.Root>
             <span>Case sensitive</span>
           </label>
-          <label className="inline-field">
+          <label className="inline-field form-group form-group-small">
             <Checkbox.Root
               checked={wholeWord}
               onCheckedChange={(checked) => {
@@ -184,107 +183,105 @@ export const SearchTab: React.FC = () => {
           </label>
         </section>
 
-        <section className="stack-sm" title="Filters">
+        <section title="Filters">
           <InfoCallout title="Tips">
             Combine type, tags, and colour to narrow matches. Toggle Regex for advanced patterns.
             Case and whole-word are applied client-side.
           </InfoCallout>
-          <div className="stack-2xs">
-            <span className="label">Widget types (comma separated)</span>
-            <Input
-              className="input"
+          <Field.Root className="form-group form-group-small">
+            <Field.Label>Widget types (comma separated)</Field.Label>
+            <Field.Control
+              className="input input-small"
               value={widgetTypesText}
               onValueChange={(value) => {
                 setWidgetTypesText(value)
               }}
               placeholder="e.g. sticker,shape,text"
             />
-          </div>
-          <div className="stack-2xs">
-            <span className="label">Tag IDs (comma separated)</span>
-            <Input
-              className="input"
+          </Field.Root>
+          <Field.Root className="form-group form-group-small">
+            <Field.Label>Tag IDs (comma separated)</Field.Label>
+            <Field.Control
+              className="input input-small"
               value={tagIds}
               onValueChange={(value) => {
                 setTagIds(value)
               }}
             />
-          </div>
-          <div className="stack-2xs">
-            <span className="label">Background color</span>
-            <Input
-              className="input"
+          </Field.Root>
+          <Field.Root className="form-group form-group-small">
+            <Field.Label>Background color</Field.Label>
+            <Field.Control
+              className="input input-small"
               value={backgroundColor}
               onValueChange={(value) => {
                 setBackgroundColor(value)
               }}
             />
-          </div>
-          <div className="stack-2xs">
-            <span className="label">Assignee</span>
-            <Input
-              className="input"
+          </Field.Root>
+          <Field.Root className="form-group form-group-small">
+            <Field.Label>Assignee</Field.Label>
+            <Field.Control
+              className="input input-small"
               value={assignee}
               onValueChange={(value) => {
                 setAssignee(value)
               }}
             />
-          </div>
-          <div className="stack-2xs">
-            <span className="label">Creator</span>
-            <Input
-              className="input"
+          </Field.Root>
+          <Field.Root className="form-group form-group-small">
+            <Field.Label>Creator</Field.Label>
+            <Field.Control
+              className="input input-small"
               value={creator}
               onValueChange={(value) => {
                 setCreator(value)
               }}
             />
-          </div>
-          <div className="stack-2xs">
-            <span className="label">Last modified by</span>
-            <Input
-              className="input"
+          </Field.Root>
+          <Field.Root className="form-group form-group-small">
+            <Field.Label>Last modified by</Field.Label>
+            <Field.Control
+              className="input input-small"
               value={lastModifiedBy}
               onValueChange={(value) => {
                 setLastModifiedBy(value)
               }}
             />
-          </div>
+          </Field.Root>
         </section>
 
-        <section className="stack-sm" title="Results">
+        <section title="Results">
           <p data-testid="match-count">Matches: {results.length}</p>
           {query && results.length === 0 && (
-            <p style={{ color: 'var(--colors-gray-700)' }}>
-              No matches found. Adjust filters or turn off regex.
-            </p>
+            <p>No matches found. Adjust filters or turn off regex.</p>
           )}
           <StickyActions>
-            <div className="button-group">
-              <BaseButton
-                className="button button-secondary"
+            <div>
+              <Button
+                className="button button-secondary button-medium"
                 onClick={() => void nextMatch()}
                 disabled={results.length === 0}
               >
-                <IconChevronRight />
-                <Text>Next</Text>
-              </BaseButton>
-              <BaseButton
-                className="button button-secondary"
+                <span className="icon icon-arrows-right" aria-hidden="true"></span>
+                <p className="p-medium">Next</p>
+              </Button>
+              <Button
+                className="button button-secondary button-medium"
                 onClick={() => void replaceCurrent()}
                 disabled={results.length === 0}
               >
-                <IconPen />
-                <Text>Replace</Text>
-              </BaseButton>
-              <BaseButton
-                className="button button-primary"
+                <span className="icon icon-edit" aria-hidden="true"></span>
+                <p className="p-medium">Replace</p>
+              </Button>
+              <Button
+                className="button button-primary button-medium"
                 onClick={() => void replaceAll()}
                 disabled={results.length === 0}
               >
-                <IconArrowRight />
-                <Text>Replace All</Text>
-              </BaseButton>
+                <span className="icon icon-arrow-right" aria-hidden="true"></span>
+                <p className="p-medium">Replace All</p>
+              </Button>
             </div>
           </StickyActions>
         </section>

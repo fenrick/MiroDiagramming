@@ -1,9 +1,8 @@
 import React from 'react'
-import { Button as BaseButton } from '@base-ui-components/react/button'
-import { Input } from '@base-ui-components/react/input'
+import { Button } from '@base-ui-components/react/button'
+import { Field } from '@base-ui-components/react/field'
 
 import { lockSelectedFrames, renameSelectedFrames } from '../../board/frame-tools'
-import { IconLockClosed, IconPen, Text } from '../primitives'
 import { InfoCallout } from '../components/info-callout'
 import { PageHelp } from '../components/page-help'
 import { TabPanel } from '../components/tab-panel'
@@ -42,55 +41,51 @@ export const FramesTabV2: React.FC = () => {
 
   return (
     <TabPanel tabId="frames">
-      <div className="stack-md">
+      <div>
         <PageHelp content="Rename or lock selected frames" />
         {!hasFrames && (
-          <div className="stack-2xs">
-            <h3 style={{ margin: 0 }}>No frames</h3>
+          <div>
+            <h3>No frames</h3>
             <p>{emptyStateDescription}</p>
           </div>
         )}
 
-        <section className="stack-sm" title="Rename Frames">
+        <section title="Rename Frames">
           <InfoCallout title="Selection">{frameSummary}. Prefix updates left to right.</InfoCallout>
-          <div className="stack-2xs" style={{ maxWidth: 280 }}>
-            <span className="label">Prefix</span>
-            <Input
-              className="input"
+          <Field.Root className="form-group form-group-small">
+            <Field.Label>Prefix</Field.Label>
+            <Field.Control
+              className="input input-small"
               value={prefix}
               onValueChange={(value) => {
                 setPrefix(value)
               }}
               placeholder="Prefix"
             />
-          </div>
+          </Field.Root>
           <StickyActions>
-            <div className="button-group">
-              <BaseButton
-                className="button button-primary"
-                onClick={() => void rename()}
-                disabled={!hasFrames}
-              >
-                <IconPen />
-                <Text>Rename Frames</Text>
-              </BaseButton>
-            </div>
+            <Button
+              className="button button-primary button-medium"
+              onClick={() => void rename()}
+              disabled={!hasFrames}
+            >
+              <span className="icon icon-edit" aria-hidden="true"></span>
+              <p className="p-medium">Rename Frames</p>
+            </Button>
           </StickyActions>
         </section>
 
-        <section className="stack-sm" title="Lock Frames">
+        <section title="Lock Frames">
           <InfoCallout title="Note">Locking a frame also locks its content.</InfoCallout>
           <StickyActions>
-            <div className="button-group">
-              <BaseButton
-                className="button button-secondary"
-                onClick={() => void lock()}
-                disabled={!hasFrames}
-              >
-                <IconLockClosed />
-                <Text>Lock Selected</Text>
-              </BaseButton>
-            </div>
+            <Button
+              className="button button-secondary button-medium"
+              onClick={() => void lock()}
+              disabled={!hasFrames}
+            >
+              <span className="icon icon-lock" aria-hidden="true"></span>
+              <p className="p-medium">Lock Selected</p>
+            </Button>
           </StickyActions>
         </section>
       </div>

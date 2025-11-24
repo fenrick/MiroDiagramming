@@ -1,11 +1,8 @@
-import { IconArrowArcLeft, IconPlus, Text } from '@mirohq/design-system'
-import { space } from '@mirohq/design-tokens'
-import { Button as BaseButton } from '@base-ui-components/react/button'
+import { Button } from '@base-ui-components/react/button'
 import { Checkbox } from '@base-ui-components/react/checkbox'
-import { Input } from '@base-ui-components/react/input'
 import { Select } from '@base-ui-components/react/select'
+import { Field } from '@base-ui-components/react/field'
 import React from 'react'
-import { VisuallyHidden } from '@radix-ui/react-visually-hidden'
 
 import { type ExistingNodeMode, type GraphProcessor } from '../../core/graph/graph-processor'
 import { type HierarchyProcessor } from '../../core/graph/hierarchy-processor'
@@ -23,15 +20,13 @@ import {
   type UserLayoutOptions,
 } from '../../core/layout/elk-options'
 import { ASPECT_RATIOS } from '../../core/utils/aspect-ratio'
-import { DroppedFileList, EmptyState, InfoCallout, Skeleton } from '../components'
+import { DroppedFileList, EmptyState, InfoCallout, Skeleton, VisuallyHidden } from '../components'
 import { JsonDropZone } from '../components/json-drop-zone'
 import { PageHelp } from '../components/page-help'
 import { TabPanel } from '../components/tab-panel'
 import { StickyActions } from '../sticky-actions'
 import { undoLastImport } from '../hooks/ui-utilities'
 import { type LayoutChoice, useDiagramCreate } from '../hooks/use-diagram-create'
-
-const SP200 = 'var(--space-200)'
 
 /**
  * Queue the first file from a drop event for import.
@@ -121,12 +116,10 @@ export const StructuredTabV2: React.FC = () => {
     setLastProc,
   )
 
-  const selectTriggerStyle: React.CSSProperties = { width: '100%' }
-
   return (
     <TabPanel tabId="structured-v2">
       <PageHelp content="Flow or tree diagrams with advanced options" />
-      <div style={{ display: 'flex', flexDirection: 'column', gap: space[200] }}>
+      <div>
         <JsonDropZone onFiles={handleFiles} />
         {importQueue.length === 0 && (
           <EmptyState
@@ -137,58 +130,55 @@ export const StructuredTabV2: React.FC = () => {
       </div>
 
       {importQueue.length > 0 && (
-        <section style={{ display: 'flex', flexDirection: 'column', gap: space[200] }}>
+        <section>
           <DroppedFileList>
             {importQueue.map((file) => (
               <li key={`${file.name}-${String(file.lastModified)}`}>{file.name}</li>
             ))}
           </DroppedFileList>
 
-          <fieldset
-            style={{
-              border: 'none',
-              padding: 0,
-              margin: 0,
-              display: 'flex',
-              flexDirection: 'column',
-              gap: space[150],
-            }}
-          >
+          <fieldset>
             <VisuallyHidden asChild>
               <legend>Diagram options</legend>
             </VisuallyHidden>
 
             {/* Layout type */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-50)' }}>
-              <label id="layout-type-label" style={{ fontWeight: 600 }}>
-                Layout type
-              </label>
-              <Select.Root
-                value={layoutChoice}
-                onValueChange={(v) => {
-                  setLayoutChoice(v)
-                }}
-              >
-                <Select.Trigger aria-labelledby="layout-type-label" style={selectTriggerStyle} />
-                <Select.Portal>
-                  <Select.Positioner>
-                    <Select.Popup>
-                      <Select.List>
-                        {LAYOUTS.map((l) => (
-                          <Select.Item key={l} value={l}>
-                            <Select.ItemText>{l}</Select.ItemText>
-                            <Select.ItemIndicator>✓</Select.ItemIndicator>
-                          </Select.Item>
-                        ))}
-                      </Select.List>
-                    </Select.Popup>
-                  </Select.Positioner>
-                </Select.Portal>
-              </Select.Root>
-            </div>
+            <Field.Root className="form-group form-group-small">
+              <Field.Label id="layout-type-label">Layout type</Field.Label>
+              <Field.Control
+                render={(properties) => (
+                  <Select.Root
+                    value={layoutChoice}
+                    onValueChange={(v) => {
+                      setLayoutChoice(v)
+                    }}
+                  >
+                    <Select.Trigger
+                      {...properties}
+                      aria-labelledby="layout-type-label"
+                      className="input input-small"
+                    />
+                    <Select.Portal>
+                      <Select.Positioner>
+                        <Select.Popup>
+                          <Select.List>
+                            {LAYOUTS.map((l) => (
+                              <Select.Item key={l} value={l}>
+                                <Select.ItemText>{l}</Select.ItemText>
+                                <Select.ItemIndicator>✓</Select.ItemIndicator>
+                              </Select.Item>
+                            ))}
+                          </Select.List>
+                        </Select.Popup>
+                      </Select.Positioner>
+                    </Select.Portal>
+                  </Select.Root>
+                )}
+              />
+            </Field.Root>
 
             <InfoCallout title="Layout options">
-              <ul style={{ margin: 0, paddingLeft: SP200 }}>
+              <ul>
                 {LAYOUTS.map((l) => (
                   <li key={`desc-${l}`}>{LAYOUT_DESCRIPTION_MAP.get(l)}</li>
                 ))}
@@ -196,8 +186,8 @@ export const StructuredTabV2: React.FC = () => {
             </InfoCallout>
 
             {/* Frame toggle */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-100)' }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-75)' }}>
+            <div className="form-group form-group-small">
+              <label>
                 <Checkbox.Root
                   checked={withFrame}
                   onCheckedChange={(checked) => {
@@ -209,19 +199,18 @@ export const StructuredTabV2: React.FC = () => {
                 Wrap items in frame
               </label>
               {withFrame && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-50)' }}>
-                  <label htmlFor="frame-title" style={{ fontWeight: 600 }}>
-                    Frame title
-                  </label>
-                  <Input
+                <Field.Root className="form-group form-group-small">
+                  <Field.Label htmlFor="frame-title">Frame title</Field.Label>
+                  <Field.Control
                     id="frame-title"
+                    className="input input-small"
                     value={frameTitle}
                     onValueChange={(value) => {
                       setFrameTitle(value)
                     }}
                     placeholder="Frame title"
                   />
-                </div>
+                </Field.Root>
               )}
             </div>
 
@@ -233,14 +222,7 @@ export const StructuredTabV2: React.FC = () => {
               }}
             >
               <summary aria-expanded={showAdvanced}>{ADVANCED_LABEL}</summary>
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 'var(--space-150)',
-                  paddingTop: 'var(--space-100)',
-                }}
-              >
+              <div>
                 <InfoCallout title="Existing nodes">
                   Choose how existing items on the board are treated during layout. “Move into
                   place” repositions items, “Use for layout” anchors them, and “Keep position”
@@ -248,248 +230,283 @@ export const StructuredTabV2: React.FC = () => {
                 </InfoCallout>
 
                 {/* Spacing */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-75)' }}>
-                  <label style={{ fontWeight: 600 }}>Spacing</label>
-                  <Input
+                <Field.Root className="form-group form-group-small">
+                  <Field.Label>Spacing</Field.Label>
+                  <Field.Control
+                    className="input input-small"
                     type="number"
                     value={String(layoutOptions.spacing)}
                     onValueChange={(v) => {
                       setLayoutOptions({ ...layoutOptions, spacing: Number(v) })
                     }}
                   />
-                </div>
+                </Field.Root>
 
                 {/* Aspect ratio */}
                 {optionVisibility?.aspectRatio && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-75)' }}>
-                    <label style={{ fontWeight: 600 }}>Aspect ratio</label>
-                    <Select.Root
-                      value={layoutOptions.aspectRatio}
-                      onValueChange={(v) => {
-                        setLayoutOptions({ ...layoutOptions, aspectRatio: v })
-                      }}
-                    >
-                      <Select.Trigger style={selectTriggerStyle} />
-                      <Select.Portal>
-                        <Select.List>
-                          {ASPECT_RATIOS.map((r) => (
-                            <Select.Item key={r.id} value={r.id}>
-                              <Select.ItemText>{r.label}</Select.ItemText>
-                              <Select.ItemIndicator>✓</Select.ItemIndicator>
-                            </Select.Item>
-                          ))}
-                        </Select.List>
-                      </Select.Portal>
-                    </Select.Root>
-                  </div>
+                  <Field.Root className="form-group form-group-small">
+                    <Field.Label>Aspect ratio</Field.Label>
+                    <Field.Control
+                      render={(properties) => (
+                        <Select.Root
+                          value={layoutOptions.aspectRatio}
+                          onValueChange={(v) => {
+                            setLayoutOptions({ ...layoutOptions, aspectRatio: v })
+                          }}
+                        >
+                          <Select.Trigger {...properties} className="input input-small" />
+                          <Select.Portal>
+                            <Select.List>
+                              {ASPECT_RATIOS.map((r) => (
+                                <Select.Item key={r.id} value={r.id}>
+                                  <Select.ItemText>{r.label}</Select.ItemText>
+                                  <Select.ItemIndicator>✓</Select.ItemIndicator>
+                                </Select.Item>
+                              ))}
+                            </Select.List>
+                          </Select.Portal>
+                        </Select.Root>
+                      )}
+                    />
+                  </Field.Root>
                 )}
 
                 {/* Existing nodes */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-75)' }}>
-                  <label style={{ fontWeight: 600 }}>Existing nodes</label>
-                  <Select.Root
-                    value={existingMode}
-                    onValueChange={(v) => {
-                      setExistingMode(v)
-                    }}
-                  >
-                    <Select.Trigger style={selectTriggerStyle} />
-                    <Select.Portal>
-                      <Select.List>
-                        <Select.Item value="move">
-                          <Select.ItemText>Move into place</Select.ItemText>
-                        </Select.Item>
-                        <Select.Item value="layout">
-                          <Select.ItemText>Use for layout</Select.ItemText>
-                        </Select.Item>
-                        <Select.Item value="ignore">
-                          <Select.ItemText>Keep position</Select.ItemText>
-                        </Select.Item>
-                      </Select.List>
-                    </Select.Portal>
-                  </Select.Root>
-                </div>
+                <Field.Root className="form-group form-group-small">
+                  <Field.Label>Existing nodes</Field.Label>
+                  <Field.Control
+                    render={(properties) => (
+                      <Select.Root
+                        value={existingMode}
+                        onValueChange={(v) => {
+                          setExistingMode(v)
+                        }}
+                      >
+                        <Select.Trigger {...properties} className="input input-small" />
+                        <Select.Portal>
+                          <Select.List>
+                            <Select.Item value="move">
+                              <Select.ItemText>Move into place</Select.ItemText>
+                            </Select.Item>
+                            <Select.Item value="layout">
+                              <Select.ItemText>Use for layout</Select.ItemText>
+                            </Select.Item>
+                            <Select.Item value="ignore">
+                              <Select.ItemText>Keep position</Select.ItemText>
+                            </Select.Item>
+                          </Select.List>
+                        </Select.Portal>
+                      </Select.Root>
+                    )}
+                  />
+                </Field.Root>
 
                 {/* Algorithm */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-75)' }}>
-                  <label style={{ fontWeight: 600 }}>Algorithm</label>
-                  <Select.Root
-                    value={layoutOptions.algorithm}
-                    onValueChange={(v) => {
-                      setLayoutOptions({ ...layoutOptions, algorithm: v })
-                    }}
-                  >
-                    <Select.Trigger style={selectTriggerStyle} />
-                    <Select.Portal>
-                      <Select.List>
-                        {ALGORITHMS.map((a) => (
-                          <Select.Item key={a} value={a}>
-                            <Select.ItemText>{a}</Select.ItemText>
-                            <Select.ItemIndicator>✓</Select.ItemIndicator>
-                          </Select.Item>
-                        ))}
-                      </Select.List>
-                    </Select.Portal>
-                  </Select.Root>
-                </div>
+                <Field.Root className="form-group form-group-small">
+                  <Field.Label>Algorithm</Field.Label>
+                  <Field.Control
+                    render={(properties) => (
+                      <Select.Root
+                        value={layoutOptions.algorithm}
+                        onValueChange={(v) => {
+                          setLayoutOptions({ ...layoutOptions, algorithm: v })
+                        }}
+                      >
+                        <Select.Trigger {...properties} className="input input-small" />
+                        <Select.Portal>
+                          <Select.List>
+                            {ALGORITHMS.map((a) => (
+                              <Select.Item key={a} value={a}>
+                                <Select.ItemText>{a}</Select.ItemText>
+                                <Select.ItemIndicator>✓</Select.ItemIndicator>
+                              </Select.Item>
+                            ))}
+                          </Select.List>
+                        </Select.Portal>
+                      </Select.Root>
+                    )}
+                  />
+                </Field.Root>
 
                 {/* Direction */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-75)' }}>
-                  <label style={{ fontWeight: 600 }}>Direction</label>
-                  <Select.Root
-                    value={layoutOptions.direction}
-                    onValueChange={(v) => {
-                      setLayoutOptions({ ...layoutOptions, direction: v })
-                    }}
-                  >
-                    <Select.Trigger style={selectTriggerStyle} />
-                    <Select.Portal>
-                      <Select.List>
-                        {DIRECTIONS.map((d) => (
-                          <Select.Item key={d} value={d}>
-                            <Select.ItemText>{d}</Select.ItemText>
-                            <Select.ItemIndicator>✓</Select.ItemIndicator>
-                          </Select.Item>
-                        ))}
-                      </Select.List>
-                    </Select.Portal>
-                  </Select.Root>
-                </div>
+                <Field.Root className="form-group form-group-small">
+                  <Field.Label>Direction</Field.Label>
+                  <Field.Control
+                    render={(properties) => (
+                      <Select.Root
+                        value={layoutOptions.direction}
+                        onValueChange={(v) => {
+                          setLayoutOptions({ ...layoutOptions, direction: v })
+                        }}
+                      >
+                        <Select.Trigger {...properties} className="input input-small" />
+                        <Select.Portal>
+                          <Select.List>
+                            {DIRECTIONS.map((d) => (
+                              <Select.Item key={d} value={d}>
+                                <Select.ItemText>{d}</Select.ItemText>
+                                <Select.ItemIndicator>✓</Select.ItemIndicator>
+                              </Select.Item>
+                            ))}
+                          </Select.List>
+                        </Select.Portal>
+                      </Select.Root>
+                    )}
+                  />
+                </Field.Root>
 
                 {/* Edge routing and extras */}
                 {optionVisibility?.edgeRouting && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-75)' }}>
-                    <label style={{ fontWeight: 600 }}>Edge routing</label>
-                    <Select.Root
-                      value={(layoutOptions.edgeRouting ?? 'default') as ElkEdgeRouting}
-                      onValueChange={(v) => {
-                        setLayoutOptions({ ...layoutOptions, edgeRouting: v })
-                      }}
-                    >
-                      <Select.Trigger style={selectTriggerStyle} />
-                      <Select.Portal>
-                        <Select.List>
-                          {EDGE_ROUTINGS.map((routing) => (
-                            <Select.Item key={routing} value={routing}>
-                              <Select.ItemText>{routing}</Select.ItemText>
-                              <Select.ItemIndicator>✓</Select.ItemIndicator>
-                            </Select.Item>
-                          ))}
-                        </Select.List>
-                      </Select.Portal>
-                    </Select.Root>
-                  </div>
+                  <Field.Root className="form-group form-group-small">
+                    <Field.Label>Edge routing</Field.Label>
+                    <Field.Control
+                      render={(properties) => (
+                        <Select.Root
+                          value={(layoutOptions.edgeRouting ?? 'default') as ElkEdgeRouting}
+                          onValueChange={(v) => {
+                            setLayoutOptions({ ...layoutOptions, edgeRouting: v })
+                          }}
+                        >
+                          <Select.Trigger {...properties} className="input input-small" />
+                          <Select.Portal>
+                            <Select.List>
+                              {EDGE_ROUTINGS.map((routing) => (
+                                <Select.Item key={routing} value={routing}>
+                                  <Select.ItemText>{routing}</Select.ItemText>
+                                  <Select.ItemIndicator>✓</Select.ItemIndicator>
+                                </Select.Item>
+                              ))}
+                            </Select.List>
+                          </Select.Portal>
+                        </Select.Root>
+                      )}
+                    />
+                  </Field.Root>
                 )}
 
                 {optionVisibility?.edgeRoutingMode && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-75)' }}>
-                    <label style={{ fontWeight: 600 }}>Routing mode</label>
-                    <Select.Root
-                      value={(layoutOptions.edgeRoutingMode ?? 'default') as ElkEdgeRoutingMode}
-                      onValueChange={(v) => {
-                        setLayoutOptions({
-                          ...layoutOptions,
-                          edgeRoutingMode: v,
-                        })
-                      }}
-                    >
-                      <Select.Trigger style={selectTriggerStyle} />
-                      <Select.Portal>
-                        <Select.List>
-                          {EDGE_ROUTING_MODES.map((m) => (
-                            <Select.Item key={m} value={m}>
-                              <Select.ItemText>{m}</Select.ItemText>
-                              <Select.ItemIndicator>✓</Select.ItemIndicator>
-                            </Select.Item>
-                          ))}
-                        </Select.List>
-                      </Select.Portal>
-                    </Select.Root>
-                  </div>
+                  <Field.Root className="form-group form-group-small">
+                    <Field.Label>Routing mode</Field.Label>
+                    <Field.Control
+                      render={(properties) => (
+                        <Select.Root
+                          value={(layoutOptions.edgeRoutingMode ?? 'default') as ElkEdgeRoutingMode}
+                          onValueChange={(v) => {
+                            setLayoutOptions({
+                              ...layoutOptions,
+                              edgeRoutingMode: v,
+                            })
+                          }}
+                        >
+                          <Select.Trigger {...properties} className="input input-small" />
+                          <Select.Portal>
+                            <Select.List>
+                              {EDGE_ROUTING_MODES.map((m) => (
+                                <Select.Item key={m} value={m}>
+                                  <Select.ItemText>{m}</Select.ItemText>
+                                  <Select.ItemIndicator>✓</Select.ItemIndicator>
+                                </Select.Item>
+                              ))}
+                            </Select.List>
+                          </Select.Portal>
+                        </Select.Root>
+                      )}
+                    />
+                  </Field.Root>
                 )}
 
                 {optionVisibility?.optimizationGoal && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-75)' }}>
-                    <label style={{ fontWeight: 600 }}>Optimisation goal</label>
-                    <Select.Root
-                      value={(layoutOptions.optimizationGoal ?? 'balanced') as ElkOptimizationGoal}
-                      onValueChange={(v) => {
-                        setLayoutOptions({
-                          ...layoutOptions,
-                          optimizationGoal: v,
-                        })
-                      }}
-                    >
-                      <Select.Trigger style={selectTriggerStyle} />
-                      <Select.Portal>
-                        <Select.List>
-                          {OPTIMIZATION_GOALS.map((o) => (
-                            <Select.Item key={o} value={o}>
-                              <Select.ItemText>{o}</Select.ItemText>
-                              <Select.ItemIndicator>✓</Select.ItemIndicator>
-                            </Select.Item>
-                          ))}
-                        </Select.List>
-                      </Select.Portal>
-                    </Select.Root>
-                  </div>
+                  <Field.Root className="form-group form-group-small">
+                    <Field.Label>Optimisation goal</Field.Label>
+                    <Field.Control
+                      render={(properties) => (
+                        <Select.Root
+                          value={
+                            (layoutOptions.optimizationGoal ?? 'balanced') as ElkOptimizationGoal
+                          }
+                          onValueChange={(v) => {
+                            setLayoutOptions({
+                              ...layoutOptions,
+                              optimizationGoal: v,
+                            })
+                          }}
+                        >
+                          <Select.Trigger {...properties} className="input input-small" />
+                          <Select.Portal>
+                            <Select.List>
+                              {OPTIMIZATION_GOALS.map((o) => (
+                                <Select.Item key={o} value={o}>
+                                  <Select.ItemText>{o}</Select.ItemText>
+                                  <Select.ItemIndicator>✓</Select.ItemIndicator>
+                                </Select.Item>
+                              ))}
+                            </Select.List>
+                          </Select.Portal>
+                        </Select.Root>
+                      )}
+                    />
+                  </Field.Root>
                 )}
 
                 {layoutChoice === 'Nested' && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-75)' }}>
-                    <label style={{ fontWeight: 600 }}>Padding</label>
-                    <Input
+                  <Field.Root className="form-group form-group-small">
+                    <Field.Label>Padding</Field.Label>
+                    <Field.Control
+                      className="input input-small"
                       type="number"
                       value={String(nestedPadding)}
                       onValueChange={(v) => {
                         setNestedPadding(Number(v))
                       }}
                     />
-                  </div>
+                  </Field.Root>
                 )}
                 {layoutChoice === 'Nested' && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-75)' }}>
-                    <label style={{ fontWeight: 600 }}>Top spacing</label>
-                    <Input
+                  <Field.Root className="form-group form-group-small">
+                    <Field.Label>Top spacing</Field.Label>
+                    <Field.Control
+                      className="input input-small"
                       type="number"
                       value={String(nestedTopSpacing)}
                       onValueChange={(v) => {
                         setNestedTopSpacing(Number(v))
                       }}
                     />
-                  </div>
+                  </Field.Root>
                 )}
               </div>
             </details>
           </fieldset>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-100)' }}>
+          <div>
             <StickyActions>
-              <div style={{ display: 'flex', gap: 'var(--space-100)' }}>
-                <BaseButton
+              <div>
+                <Button
                   onClick={() => {
                     void handleCreate()
                   }}
-                  className="button button-primary"
+                  className="button button-primary button-medium"
                 >
-                  <IconPlus /> <Text>Create Diagram</Text>
-                </BaseButton>
+                  <span className="icon icon-plus" aria-hidden="true"></span>
+                  <p className="p-medium">Create Diagram</p>
+                </Button>
                 {lastProc && (
-                  <BaseButton
+                  <Button
                     onClick={() => {
                       void undoLastImport(lastProc, () => {
                         setLastProc(undefined)
                       })
                     }}
-                    className="button button-secondary"
+                    className="button button-secondary button-medium"
                   >
-                    <IconArrowArcLeft /> <Text>Undo Last Import</Text>
-                  </BaseButton>
+                    <span className="icon icon-undo" aria-hidden="true"></span>
+                    <p className="p-medium">Undo Last Import</p>
+                  </Button>
                 )}
               </div>
             </StickyActions>
             {progress > 0 && progress < 100 && (
-              <output aria-label="Loading" style={{ display: 'block' }}>
+              <output aria-label="Loading">
                 <Skeleton />
                 <Skeleton />
               </output>
