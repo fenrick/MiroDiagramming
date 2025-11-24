@@ -26,7 +26,9 @@ export const CardsTabV2: React.FC = () => {
     const handler = (event: KeyboardEvent): void => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'z') {
         event.preventDefault()
-        void undoLastImport(lastProc, () => setLastProc(undefined))
+        void undoLastImport(lastProc, () => {
+          setLastProc(undefined)
+        })
       }
     }
     globalThis.addEventListener('keydown', handler)
@@ -55,7 +57,9 @@ export const CardsTabV2: React.FC = () => {
           })
           setProgress(100)
           setShowUndo(true)
-          globalThis.setTimeout(() => setShowUndo(false), 3000)
+          globalThis.setTimeout(() => {
+            setShowUndo(false)
+          }, 3000)
         } catch (error_) {
           const message = String(error_)
           setError(message)
@@ -97,7 +101,9 @@ export const CardsTabV2: React.FC = () => {
             <label className="inline-field">
               <Checkbox.Root
                 checked={withFrame}
-                onCheckedChange={(checked) => setWithFrame(Boolean(checked))}
+                onCheckedChange={(checked) => {
+                  setWithFrame(Boolean(checked))
+                }}
                 className="checkbox"
               >
                 <Checkbox.Indicator>✓</Checkbox.Indicator>
@@ -110,7 +116,9 @@ export const CardsTabV2: React.FC = () => {
                 <span className="label">Frame title</span>
                 <Input
                   value={frameTitle}
-                  onValueChange={(v) => setFrameTitle(String(v))}
+                  onValueChange={(v) => {
+                    setFrameTitle(String(v))
+                  }}
                   placeholder="Frame title"
                   className="input"
                 />
@@ -129,7 +137,11 @@ export const CardsTabV2: React.FC = () => {
                 {showUndo && (
                   <BaseButton
                     className="button button-secondary"
-                    onClick={() => void undoLastImport(lastProc, () => setLastProc(undefined))}
+                    onClick={() =>
+                      void undoLastImport(lastProc, () => {
+                        setLastProc(undefined)
+                      })
+                    }
                   >
                     Undo import (⌘Z)
                   </BaseButton>
@@ -138,7 +150,11 @@ export const CardsTabV2: React.FC = () => {
                 {lastProc && (
                   <BaseButton
                     className="button button-secondary"
-                    onClick={() => void undoLastImport(lastProc, () => setLastProc(undefined))}
+                    onClick={() =>
+                      void undoLastImport(lastProc, () => {
+                        setLastProc(undefined)
+                      })
+                    }
                   >
                     <IconArrowArcLeft />
                     <Text>Undo Last Import</Text>

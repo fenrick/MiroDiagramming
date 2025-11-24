@@ -83,7 +83,9 @@ export const ArrangeTabV2: React.FC = () => {
               className="input"
               type="number"
               value={String(grid.cols)}
-              onValueChange={(v) => updateNumber('cols')(String(v))}
+              onValueChange={(v) => {
+                updateNumber('cols')(String(v))
+              }}
             />
           </div>
           <div className="stack-2xs">
@@ -92,7 +94,9 @@ export const ArrangeTabV2: React.FC = () => {
               className="input"
               type="number"
               value={String(grid.padding)}
-              onValueChange={(v) => updateNumber('padding')(String(v))}
+              onValueChange={(v) => {
+                updateNumber('padding')(String(v))
+              }}
             />
           </div>
           <label className="inline-field">
@@ -112,9 +116,9 @@ export const ArrangeTabV2: React.FC = () => {
               <select
                 className="input"
                 value={grid.sortOrientation}
-                onChange={(e) =>
+                onChange={(e) => {
                   setGrid((current) => ({ ...current, sortOrientation: e.target.value as any }))
-                }
+                }}
               >
                 <option value="horizontal">Across rows (left → right)</option>
                 <option value="vertical">Down columns (top → bottom)</option>
@@ -139,7 +143,9 @@ export const ArrangeTabV2: React.FC = () => {
               <Input
                 className="input"
                 value={frameTitle}
-                onValueChange={(v) => setFrameTitle(String(v))}
+                onValueChange={(v) => {
+                  setFrameTitle(String(v))
+                }}
                 placeholder="Optional"
               />
             </div>
@@ -165,7 +171,9 @@ export const ArrangeTabV2: React.FC = () => {
             <select
               className="input"
               value={spacing.axis}
-              onChange={(e) => setSpacing({ ...spacing, axis: e.target.value as 'x' | 'y' })}
+              onChange={(e) => {
+                setSpacing({ ...spacing, axis: e.target.value as 'x' | 'y' })
+              }}
             >
               <option value="x">Horizontal</option>
               <option value="y">Vertical</option>
@@ -177,7 +185,9 @@ export const ArrangeTabV2: React.FC = () => {
               className="input"
               type="number"
               value={String(spacing.spacing)}
-              onValueChange={(v) => setSpacing({ ...spacing, spacing: Number(v) })}
+              onValueChange={(v) => {
+                setSpacing({ ...spacing, spacing: Number(v) })
+              }}
             />
           </div>
           <div className="stack-2xs">
@@ -185,7 +195,9 @@ export const ArrangeTabV2: React.FC = () => {
             <select
               className="input"
               value={spacing.mode}
-              onChange={(e) => setSpacing({ ...spacing, mode: e.target.value as 'move' | 'grow' })}
+              onChange={(e) => {
+                setSpacing({ ...spacing, mode: e.target.value as 'move' | 'grow' })
+              }}
             >
               <option value="move">Move items</option>
               <option value="grow">Resize gaps</option>

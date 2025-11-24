@@ -112,7 +112,9 @@ export const StyleTabV2: React.FC = () => {
               min={-100}
               max={100}
               value={String(adjust)}
-              onValueChange={(v) => setAdjust(Number(v))}
+              onValueChange={(v) => {
+                setAdjust(Number(v))
+              }}
               data-testid="adjust-input"
             />
           </div>
@@ -145,7 +147,9 @@ export const StyleTabV2: React.FC = () => {
               min={-1}
               max={1}
               value={String(opacityDelta)}
-              onValueChange={(v) => setOpacityDelta(Number(v))}
+              onValueChange={(v) => {
+                setOpacityDelta(Number(v))
+              }}
               data-testid="opacity-input"
             />
           </div>
@@ -155,7 +159,9 @@ export const StyleTabV2: React.FC = () => {
               className="input"
               type="number"
               value={String(borderDelta)}
-              onValueChange={(v) => setBorderDelta(Number(v))}
+              onValueChange={(v) => {
+                setBorderDelta(Number(v))
+              }}
               data-testid="border-input"
             />
           </div>

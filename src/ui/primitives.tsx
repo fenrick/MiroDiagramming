@@ -1,16 +1,4 @@
 import React from 'react'
-import {
-  ArrowLeftIcon,
-  ArrowRightIcon,
-  ChevronRightIcon,
-  DoubleArrowRightIcon,
-  GridIcon,
-  LockClosedIcon,
-  MixerHorizontalIcon,
-  Pencil1Icon,
-  PlusIcon,
-  LayersIcon,
-} from '@radix-ui/react-icons'
 
 export function Text({
   children,
@@ -112,7 +100,7 @@ export function Flex({
   )
 }
 
-export interface SliderProps {
+export interface SliderProperties {
   value: number
   min?: number
   max?: number
@@ -120,7 +108,13 @@ export interface SliderProps {
   onValueChange?: (v: number) => void
 }
 
-export function Slider({ value, min, max, step, onValueChange }: SliderProps): React.JSX.Element {
+export function Slider({
+  value,
+  min,
+  max,
+  step,
+  onValueChange,
+}: SliderProperties): React.JSX.Element {
   return (
     <input
       type="range"
@@ -135,17 +129,6 @@ export function Slider({ value, min, max, step, onValueChange }: SliderProps): R
   )
 }
 
-export const IconPen = Pencil1Icon
-export const IconChevronRight = ChevronRightIcon
-export const IconChevronRightDouble = DoubleArrowRightIcon
-export const IconGrid = GridIcon
-export const IconArrowRight = ArrowRightIcon
-export const IconArrowArcLeft = ArrowLeftIcon
-export const IconPlus = PlusIcon
-export const IconLockClosed = LockClosedIcon
-export const IconSlidersX = MixerHorizontalIcon
-export const IconSquaresTwoOverlap = LayersIcon
-
 export const Form = {
   Field: ({ children }: { children: React.ReactNode }) => (
     <div style={{ marginBottom: 'var(--space-200)' }}>{children}</div>
@@ -156,3 +139,16 @@ export const Form = {
     </label>
   ),
 }
+
+export {
+  ArrowLeftIcon as IconArrowArcLeft,
+  ChevronRightIcon as IconChevronRight,
+  ArrowRightIcon as IconArrowRight,
+  GridIcon as IconGrid,
+  DoubleArrowRightIcon as IconChevronRightDouble,
+  MixerHorizontalIcon as IconSlidersX,
+  LockClosedIcon as IconLockClosed,
+  PlusIcon as IconPlus,
+  Pencil1Icon as IconPen,
+  LayersIcon as IconSquaresTwoOverlap,
+} from '@radix-ui/react-icons'

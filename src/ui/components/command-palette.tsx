@@ -28,30 +28,37 @@ export function CommandPalette({
     [commands, query],
   )
 
-  React.useEffect(() => setIndex(0), [query, isOpen])
+  React.useEffect(() => {
+    setIndex(0)
+  }, [query, isOpen])
 
   React.useEffect(() => {
     if (!isOpen) return
     const timer = setTimeout(() => inputReference.current?.focus({ preventScroll: true }), 0)
-    return () => clearTimeout(timer)
+    return () => {
+      clearTimeout(timer)
+    }
   }, [isOpen])
 
   const handleKey = React.useCallback(
     (event: React.KeyboardEvent<HTMLInputElement>) => {
       switch (event.key) {
-        case 'ArrowDown':
+        case 'ArrowDown': {
           event.preventDefault()
-          setIndex((idx) => Math.min(idx + 1, filtered.length - 1))
+          setIndex((index_) => Math.min(index_ + 1, filtered.length - 1))
           break
-        case 'ArrowUp':
+        }
+        case 'ArrowUp': {
           event.preventDefault()
-          setIndex((idx) => Math.max(idx - 1, 0))
+          setIndex((index_) => Math.max(index_ - 1, 0))
           break
-        case 'Enter':
+        }
+        case 'Enter': {
           event.preventDefault()
           filtered.at(index)?.action()
           onClose()
           break
+        }
         // No default
       }
     },
@@ -65,7 +72,9 @@ export function CommandPalette({
         id="command-input"
         ref={inputReference}
         value={query}
-        onChange={(event) => setQuery(event.target.value)}
+        onChange={(event) => {
+          setQuery(event.target.value)
+        }}
         onKeyDown={handleKey}
         style={{
           width: '100%',
@@ -84,7 +93,9 @@ export function CommandPalette({
             <button
               type="button"
               aria-current={index_ === index ? 'true' : undefined}
-              onMouseEnter={() => setIndex(index_)}
+              onMouseEnter={() => {
+                setIndex(index_)
+              }}
               onClick={() => {
                 cmd.action()
                 onClose()

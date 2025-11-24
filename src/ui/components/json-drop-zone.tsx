@@ -8,11 +8,11 @@ export type JsonDropZoneProperties = Readonly<{
  * Simple JSON drop/upload zone without external dependencies.
  */
 export function JsonDropZone({ onFiles }: JsonDropZoneProperties): React.JSX.Element {
-  const inputRef = React.useRef<HTMLInputElement>(null)
+  const inputReference = React.useRef<HTMLInputElement>(null)
 
   const handleFiles = (files: FileList | null) => {
     if (!files) return
-    onFiles(Array.from(files))
+    onFiles([...files])
   }
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>): void => {
@@ -22,15 +22,17 @@ export function JsonDropZone({ onFiles }: JsonDropZoneProperties): React.JSX.Ele
 
   return (
     <div
-      onDragOver={(e) => e.preventDefault()}
+      onDragOver={(e) => {
+        e.preventDefault()
+      }}
       onDrop={handleDrop}
-      onClick={() => inputRef.current?.click()}
+      onClick={() => inputReference.current?.click()}
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault()
-          inputRef.current?.click()
+          inputReference.current?.click()
         }
       }}
       style={{
@@ -42,12 +44,14 @@ export function JsonDropZone({ onFiles }: JsonDropZoneProperties): React.JSX.Ele
       }}
     >
       <input
-        ref={inputRef}
+        ref={inputReference}
         type="file"
         accept=".json,application/json"
         multiple
         style={{ display: 'none' }}
-        onChange={(e) => handleFiles(e.target.files)}
+        onChange={(e) => {
+          handleFiles(e.target.files)
+        }}
         aria-label="Upload JSON"
       />
       <p>Drop a JSON file here or click to select.</p>

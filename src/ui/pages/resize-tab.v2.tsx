@@ -58,7 +58,9 @@ export const ResizeTabV2: React.FC = () => {
     }
   }, [hasSelection])
 
-  const resetCopy = (): void => setCopiedSize(null)
+  const resetCopy = (): void => {
+    setCopiedSize(null)
+  }
 
   const apply = React.useCallback(async (): Promise<void> => {
     if (!hasSelection) return
@@ -155,7 +157,9 @@ export const ResizeTabV2: React.FC = () => {
               className="input"
               type="number"
               value={String(size.width)}
-              onValueChange={(v) => update('width')(String(v))}
+              onValueChange={(v) => {
+                update('width')(String(v))
+              }}
             />
           </div>
           <div className="stack-2xs">
@@ -164,7 +168,9 @@ export const ResizeTabV2: React.FC = () => {
               className="input"
               type="number"
               value={String(size.height)}
-              onValueChange={(v) => update('height')(String(v))}
+              onValueChange={(v) => {
+                update('height')(String(v))
+              }}
             />
           </div>
 
@@ -173,7 +179,9 @@ export const ResizeTabV2: React.FC = () => {
             <select
               className="input"
               value={ratio}
-              onChange={(e) => setRatio(e.target.value as AspectRatioId | 'none')}
+              onChange={(e) => {
+                setRatio(e.target.value as AspectRatioId | 'none')
+              }}
             >
               <option value="none">Free</option>
               {ASPECT_RATIOS.map((r) => (
@@ -214,7 +222,9 @@ export const ResizeTabV2: React.FC = () => {
               <BaseButton
                 key={key}
                 className="button"
-                onClick={() => applyPreset(key)}
+                onClick={() => {
+                  applyPreset(key)
+                }}
                 disabled={!hasSelection}
               >
                 {key}

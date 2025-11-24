@@ -39,9 +39,9 @@ export const SearchTab: React.FC = () => {
   const buildOptions = React.useCallback((): SearchOptions => {
     const options: SearchOptions = { query }
     const widgetTypes = parseList(widgetTypesText)
-    if (widgetTypes.length) options.widgetTypes = widgetTypes
+    if (widgetTypes.length > 0) options.widgetTypes = widgetTypes
     const tags = parseList(tagIds)
-    if (tags.length) options.tagIds = tags
+    if (tags.length > 0) options.tagIds = tags
     if (backgroundColor) options.backgroundColor = backgroundColor
     if (assignee) options.assignee = assignee
     if (creator) options.creator = creator
@@ -127,7 +127,9 @@ export const SearchTab: React.FC = () => {
             <Input
               className="input"
               value={query}
-              onValueChange={(v) => setQuery(String(v))}
+              onValueChange={(v) => {
+                setQuery(String(v))
+              }}
               placeholder="Search board text"
             />
           </div>
@@ -136,14 +138,18 @@ export const SearchTab: React.FC = () => {
             <Input
               className="input"
               value={replacement}
-              onValueChange={(v) => setReplacement(String(v))}
+              onValueChange={(v) => {
+                setReplacement(String(v))
+              }}
               placeholder="Replacement text"
             />
           </div>
           <label className="inline-field">
             <Checkbox.Root
               checked={regex}
-              onCheckedChange={(c) => setRegex(Boolean(c))}
+              onCheckedChange={(c) => {
+                setRegex(Boolean(c))
+              }}
               className="checkbox"
             >
               <Checkbox.Indicator>✓</Checkbox.Indicator>
@@ -153,7 +159,9 @@ export const SearchTab: React.FC = () => {
           <label className="inline-field">
             <Checkbox.Root
               checked={caseSensitive}
-              onCheckedChange={(c) => setCaseSensitive(Boolean(c))}
+              onCheckedChange={(c) => {
+                setCaseSensitive(Boolean(c))
+              }}
               className="checkbox"
             >
               <Checkbox.Indicator>✓</Checkbox.Indicator>
@@ -163,7 +171,9 @@ export const SearchTab: React.FC = () => {
           <label className="inline-field">
             <Checkbox.Root
               checked={wholeWord}
-              onCheckedChange={(c) => setWholeWord(Boolean(c))}
+              onCheckedChange={(c) => {
+                setWholeWord(Boolean(c))
+              }}
               className="checkbox"
             >
               <Checkbox.Indicator>✓</Checkbox.Indicator>
@@ -182,20 +192,30 @@ export const SearchTab: React.FC = () => {
             <Input
               className="input"
               value={widgetTypesText}
-              onValueChange={(v) => setWidgetTypesText(String(v))}
+              onValueChange={(v) => {
+                setWidgetTypesText(String(v))
+              }}
               placeholder="e.g. sticker,shape,text"
             />
           </div>
           <div className="stack-2xs">
             <span className="label">Tag IDs (comma separated)</span>
-            <Input className="input" value={tagIds} onValueChange={(v) => setTagIds(String(v))} />
+            <Input
+              className="input"
+              value={tagIds}
+              onValueChange={(v) => {
+                setTagIds(String(v))
+              }}
+            />
           </div>
           <div className="stack-2xs">
             <span className="label">Background color</span>
             <Input
               className="input"
               value={backgroundColor}
-              onValueChange={(v) => setBackgroundColor(String(v))}
+              onValueChange={(v) => {
+                setBackgroundColor(String(v))
+              }}
             />
           </div>
           <div className="stack-2xs">
@@ -203,19 +223,29 @@ export const SearchTab: React.FC = () => {
             <Input
               className="input"
               value={assignee}
-              onValueChange={(v) => setAssignee(String(v))}
+              onValueChange={(v) => {
+                setAssignee(String(v))
+              }}
             />
           </div>
           <div className="stack-2xs">
             <span className="label">Creator</span>
-            <Input className="input" value={creator} onValueChange={(v) => setCreator(String(v))} />
+            <Input
+              className="input"
+              value={creator}
+              onValueChange={(v) => {
+                setCreator(String(v))
+              }}
+            />
           </div>
           <div className="stack-2xs">
             <span className="label">Last modified by</span>
             <Input
               className="input"
               value={lastModifiedBy}
-              onValueChange={(v) => setLastModifiedBy(String(v))}
+              onValueChange={(v) => {
+                setLastModifiedBy(String(v))
+              }}
             />
           </div>
         </section>

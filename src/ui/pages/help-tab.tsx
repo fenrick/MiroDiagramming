@@ -47,7 +47,9 @@ export const HelpTab: React.FC = () => {
         <section className="stack-2xs" title="Changelog">
           <BaseButton
             className="button button-secondary"
-            onClick={() => setShowLog((v) => !v)}
+            onClick={() => {
+              setShowLog((v) => !v)
+            }}
             data-testid="toggle-changelog"
           >
             {showLog ? 'Hide' : 'Show'} Changelog

@@ -22,7 +22,7 @@ const resolveWindow = (): (Window & typeof globalThis) | null => {
     return null
   }
   const candidate = (globalThis as typeof globalThis & { window?: Window }).window
-  return typeof candidate === 'object' ? (candidate as Window & typeof globalThis) : null
+  return typeof candidate === 'object' ? candidate : null
 }
 
 const getPurifier = (): DomPurifyInstance | null => {
@@ -50,7 +50,7 @@ const sanitizeHtml = (content: string): string => {
 export function Markdown({ source, className }: MarkdownProperties): React.JSX.Element {
   const html = React.useMemo(() => {
     // marked.parse is sync for our usage; coerce the return type to string for TS.
-    const raw = marked.parse(source, { async: false }) as string
+    const raw = marked.parse(source, { async: false })
     return sanitizeHtml(raw)
   }, [source])
   return <div className={className} dangerouslySetInnerHTML={{ __html: html }} />

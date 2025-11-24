@@ -87,7 +87,9 @@ export const ToolsTab: React.FC = () => {
       <div className="stack-md">
         <Tabs.Root
           value={sub}
-          onValueChange={(value) => handleChange(String(value))}
+          onValueChange={(value) => {
+            handleChange(String(value))
+          }}
           className="tabs"
         >
           <Tabs.List className="tabs-header-list" aria-label="Tool categories">

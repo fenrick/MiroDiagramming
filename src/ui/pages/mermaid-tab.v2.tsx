@@ -110,7 +110,9 @@ export const MermaidTabV2: React.FC = () => {
             <textarea
               className="textarea"
               value={definition}
-              onChange={(e) => setDefinition(e.target.value)}
+              onChange={(e) => {
+                setDefinition(e.target.value)
+              }}
               placeholder="graph TD\nA[Start] --> B[Finish]"
               spellCheck={false}
               autoComplete="off"
@@ -132,7 +134,9 @@ export const MermaidTabV2: React.FC = () => {
           <label className="inline-field">
             <Checkbox.Root
               checked={withFrame}
-              onCheckedChange={(checked) => setWithFrame(Boolean(checked))}
+              onCheckedChange={(checked) => {
+                setWithFrame(Boolean(checked))
+              }}
               className="checkbox"
             >
               <Checkbox.Indicator>✓</Checkbox.Indicator>
@@ -145,7 +149,9 @@ export const MermaidTabV2: React.FC = () => {
               <Input
                 className="input"
                 value={frameTitle}
-                onValueChange={(v) => setFrameTitle(String(v))}
+                onValueChange={(v) => {
+                  setFrameTitle(String(v))
+                }}
                 placeholder="Optional frame title"
               />
             </label>
@@ -156,7 +162,9 @@ export const MermaidTabV2: React.FC = () => {
             <select
               className="input"
               value={existingMode}
-              onChange={(event) => setExistingMode(event.target.value as ExistingNodeMode)}
+              onChange={(event) => {
+                setExistingMode(event.target.value as ExistingNodeMode)
+              }}
             >
               {EXISTING_MODE_OPTIONS.map((option) => (
                 <option key={option.id} value={option.id}>

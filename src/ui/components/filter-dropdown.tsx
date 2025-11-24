@@ -26,7 +26,7 @@ export interface FilterDropdownProperties {
 /**
  * Simple collapsible panel listing advanced search filters.
  */
-export function FilterDropdown(props: Readonly<FilterDropdownProperties>): React.JSX.Element {
+export function FilterDropdown(properties: Readonly<FilterDropdownProperties>): React.JSX.Element {
   const {
     widgetTypes,
     toggleType,
@@ -44,7 +44,7 @@ export function FilterDropdown(props: Readonly<FilterDropdownProperties>): React
     onCaseSensitiveChange,
     wholeWord,
     onWholeWordChange,
-  } = props
+  } = properties
 
   return (
     <details>

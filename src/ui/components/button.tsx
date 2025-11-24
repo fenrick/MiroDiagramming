@@ -42,7 +42,7 @@ const BaseButton = React.forwardRef<HTMLButtonElement, ButtonProperties>(functio
     loading,
     style,
     css,
-    ...props
+    ...properties
   },
   reference,
 ) {
@@ -68,7 +68,7 @@ const BaseButton = React.forwardRef<HTMLButtonElement, ButtonProperties>(functio
       ref={reference}
       className={classes.join(' ')}
       style={fluid ? { width: '100%', ...style, ...css } : { ...style, ...css }}
-      {...props}
+      {...properties}
     >
       {start}
       <span>{children}</span>

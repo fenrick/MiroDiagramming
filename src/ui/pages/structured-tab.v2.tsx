@@ -100,10 +100,9 @@ export const StructuredTabV2: React.FC = () => {
   const [lastProc, setLastProc] = React.useState<GraphProcessor | HierarchyProcessor | undefined>()
   const optionVisibility = OPTION_VISIBILITY.get(layoutOptions.algorithm)
 
-  const handleFiles = React.useCallback(
-    (dropped: File[]) => handleFileDrop(dropped, setImportQueue, setError),
-    [],
-  )
+  const handleFiles = React.useCallback((dropped: File[]) => {
+    handleFileDrop(dropped, setImportQueue, setError)
+  }, [])
 
   const handleCreate = useDiagramCreate(
     importQueue,
@@ -167,7 +166,9 @@ export const StructuredTabV2: React.FC = () => {
               </label>
               <Select.Root
                 value={layoutChoice}
-                onValueChange={(v) => setLayoutChoice(v as LayoutChoice)}
+                onValueChange={(v) => {
+                  setLayoutChoice(v)
+                }}
               >
                 <Select.Trigger aria-labelledby="layout-type-label" style={selectTriggerStyle} />
                 <Select.Portal>
@@ -200,7 +201,9 @@ export const StructuredTabV2: React.FC = () => {
               <label style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-75)' }}>
                 <Checkbox.Root
                   checked={withFrame}
-                  onCheckedChange={(checked) => setWithFrame(Boolean(checked))}
+                  onCheckedChange={(checked) => {
+                    setWithFrame(Boolean(checked))
+                  }}
                 >
                   <Checkbox.Indicator>✓</Checkbox.Indicator>
                 </Checkbox.Root>
@@ -214,7 +217,9 @@ export const StructuredTabV2: React.FC = () => {
                   <Input
                     id="frame-title"
                     value={frameTitle}
-                    onValueChange={(v) => setFrameTitle(String(v))}
+                    onValueChange={(v) => {
+                      setFrameTitle(String(v))
+                    }}
                     placeholder="Frame title"
                   />
                 </div>
@@ -224,7 +229,9 @@ export const StructuredTabV2: React.FC = () => {
             <details
               open={showAdvanced}
               aria-label={ADVANCED_LABEL}
-              onToggle={(event) => setShowAdvanced((event.target as HTMLDetailsElement).open)}
+              onToggle={(event) => {
+                setShowAdvanced((event.target as HTMLDetailsElement).open)
+              }}
             >
               <summary aria-expanded={showAdvanced}>{ADVANCED_LABEL}</summary>
               <div
@@ -247,9 +254,9 @@ export const StructuredTabV2: React.FC = () => {
                   <Input
                     type="number"
                     value={String(layoutOptions.spacing)}
-                    onValueChange={(v) =>
+                    onValueChange={(v) => {
                       setLayoutOptions({ ...layoutOptions, spacing: Number(v) })
-                    }
+                    }}
                   />
                 </div>
 
@@ -259,9 +266,9 @@ export const StructuredTabV2: React.FC = () => {
                     <label style={{ fontWeight: 600 }}>Aspect ratio</label>
                     <Select.Root
                       value={layoutOptions.aspectRatio}
-                      onValueChange={(v) =>
-                        setLayoutOptions({ ...layoutOptions, aspectRatio: v as AspectRatioId })
-                      }
+                      onValueChange={(v) => {
+                        setLayoutOptions({ ...layoutOptions, aspectRatio: v })
+                      }}
                     >
                       <Select.Trigger style={selectTriggerStyle} />
                       <Select.Portal>
@@ -283,7 +290,9 @@ export const StructuredTabV2: React.FC = () => {
                   <label style={{ fontWeight: 600 }}>Existing nodes</label>
                   <Select.Root
                     value={existingMode}
-                    onValueChange={(v) => setExistingMode(v as ExistingNodeMode)}
+                    onValueChange={(v) => {
+                      setExistingMode(v)
+                    }}
                   >
                     <Select.Trigger style={selectTriggerStyle} />
                     <Select.Portal>
@@ -307,9 +316,9 @@ export const StructuredTabV2: React.FC = () => {
                   <label style={{ fontWeight: 600 }}>Algorithm</label>
                   <Select.Root
                     value={layoutOptions.algorithm}
-                    onValueChange={(v) =>
-                      setLayoutOptions({ ...layoutOptions, algorithm: v as ElkAlgorithm })
-                    }
+                    onValueChange={(v) => {
+                      setLayoutOptions({ ...layoutOptions, algorithm: v })
+                    }}
                   >
                     <Select.Trigger style={selectTriggerStyle} />
                     <Select.Portal>
@@ -330,9 +339,9 @@ export const StructuredTabV2: React.FC = () => {
                   <label style={{ fontWeight: 600 }}>Direction</label>
                   <Select.Root
                     value={layoutOptions.direction}
-                    onValueChange={(v) =>
-                      setLayoutOptions({ ...layoutOptions, direction: v as ElkDirection })
-                    }
+                    onValueChange={(v) => {
+                      setLayoutOptions({ ...layoutOptions, direction: v })
+                    }}
                   >
                     <Select.Trigger style={selectTriggerStyle} />
                     <Select.Portal>
@@ -354,9 +363,9 @@ export const StructuredTabV2: React.FC = () => {
                     <label style={{ fontWeight: 600 }}>Edge routing</label>
                     <Select.Root
                       value={(layoutOptions.edgeRouting ?? 'default') as ElkEdgeRouting}
-                      onValueChange={(v) =>
-                        setLayoutOptions({ ...layoutOptions, edgeRouting: v as ElkEdgeRouting })
-                      }
+                      onValueChange={(v) => {
+                        setLayoutOptions({ ...layoutOptions, edgeRouting: v })
+                      }}
                     >
                       <Select.Trigger style={selectTriggerStyle} />
                       <Select.Portal>
@@ -378,12 +387,12 @@ export const StructuredTabV2: React.FC = () => {
                     <label style={{ fontWeight: 600 }}>Routing mode</label>
                     <Select.Root
                       value={(layoutOptions.edgeRoutingMode ?? 'default') as ElkEdgeRoutingMode}
-                      onValueChange={(v) =>
+                      onValueChange={(v) => {
                         setLayoutOptions({
                           ...layoutOptions,
-                          edgeRoutingMode: v as ElkEdgeRoutingMode,
+                          edgeRoutingMode: v,
                         })
-                      }
+                      }}
                     >
                       <Select.Trigger style={selectTriggerStyle} />
                       <Select.Portal>
@@ -405,12 +414,12 @@ export const StructuredTabV2: React.FC = () => {
                     <label style={{ fontWeight: 600 }}>Optimisation goal</label>
                     <Select.Root
                       value={(layoutOptions.optimizationGoal ?? 'balanced') as ElkOptimizationGoal}
-                      onValueChange={(v) =>
+                      onValueChange={(v) => {
                         setLayoutOptions({
                           ...layoutOptions,
-                          optimizationGoal: v as ElkOptimizationGoal,
+                          optimizationGoal: v,
                         })
-                      }
+                      }}
                     >
                       <Select.Trigger style={selectTriggerStyle} />
                       <Select.Portal>
@@ -433,7 +442,9 @@ export const StructuredTabV2: React.FC = () => {
                     <Input
                       type="number"
                       value={String(nestedPadding)}
-                      onValueChange={(v) => setNestedPadding(Number(v))}
+                      onValueChange={(v) => {
+                        setNestedPadding(Number(v))
+                      }}
                     />
                   </div>
                 )}
@@ -443,7 +454,9 @@ export const StructuredTabV2: React.FC = () => {
                     <Input
                       type="number"
                       value={String(nestedTopSpacing)}
-                      onValueChange={(v) => setNestedTopSpacing(Number(v))}
+                      onValueChange={(v) => {
+                        setNestedTopSpacing(Number(v))
+                      }}
                     />
                   </div>
                 )}

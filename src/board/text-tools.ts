@@ -39,22 +39,22 @@ function trimRichText(value: string): string {
 
   try {
     const parser = new DOMParser()
-    const doc = parser.parseFromString(`<div>${value}</div>`, 'text/html')
-    const container = doc.body.firstElementChild
+    const document = parser.parseFromString(`<div>${value}</div>`, 'text/html')
+    const container = document.body.firstElementChild
     if (!container) {
       return value.trim()
     }
 
     // Drop empty leading/trailing nodes like <p><br/></p>
     while (container.firstChild && isIgnorableNode(container.firstChild)) {
-      container.removeChild(container.firstChild)
+      container.firstChild.remove()
     }
     while (container.lastChild && isIgnorableNode(container.lastChild)) {
-      container.removeChild(container.lastChild)
+      container.lastChild.remove()
     }
 
     const textNodes: Text[] = []
-    const walker = doc.createTreeWalker(container, NodeFilter.SHOW_TEXT)
+    const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT)
     let current = walker.nextNode()
     while (current) {
       textNodes.push(current as Text)
@@ -66,7 +66,7 @@ function trimRichText(value: string): string {
     }
 
     const first = textNodes[0]
-    const last = textNodes[textNodes.length - 1]
+    const last = textNodes.at(-1)
     if (!first || !last) {
       return container.innerHTML.trim()
     }

@@ -74,7 +74,9 @@ export function Modal({
       }
     }
     globalThis.addEventListener('keydown', handleKey)
-    return () => globalThis.removeEventListener('keydown', handleKey)
+    return () => {
+      globalThis.removeEventListener('keydown', handleKey)
+    }
   }, [isOpen, onClose, trapTab])
 
   if (!isOpen) return null

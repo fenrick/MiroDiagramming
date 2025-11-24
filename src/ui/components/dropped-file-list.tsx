@@ -6,7 +6,7 @@ import React from 'react'
 export const DroppedFileList: React.FC<React.HTMLAttributes<HTMLUListElement>> = ({
   children,
   style,
-  ...props
+  ...properties
 }) => (
   <ul
     style={{
@@ -19,7 +19,7 @@ export const DroppedFileList: React.FC<React.HTMLAttributes<HTMLUListElement>> =
       margin: 0,
       ...style,
     }}
-    {...props}
+    {...properties}
   >
     {children}
   </ul>
