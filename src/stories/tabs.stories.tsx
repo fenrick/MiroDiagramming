@@ -10,6 +10,7 @@ import { CardsTabV2 } from '../ui/pages/cards-tab.v2'
 import { DiagramsTab } from '../ui/pages/diagrams-tab'
 import { FramesTab } from '../ui/pages/frames-tab'
 import { HelpTab } from '../ui/pages/help-tab'
+import { TextTabV2 } from '../ui/pages/text-tab.v2'
 import { LayoutEngineTabV2 } from '../ui/pages/layout-engine-tab.v2'
 import { ResizeTabV2 } from '../ui/pages/resize-tab.v2'
 import { SearchTab } from '../ui/pages/search-tab'
@@ -32,6 +33,7 @@ export const Diagrams: Story = { render: () => <DiagramsTab /> }
 export const Tools: Story = { render: () => <ToolsTab /> }
 export const Frames: Story = { render: () => <FramesTab /> }
 export const Help: Story = { render: () => <HelpTab /> }
+export const Text: Story = { render: () => <TextTabV2 /> }
 export const LayoutEngine: Story = { render: () => <LayoutEngineTabV2 /> }
 export const Resize: Story = { render: () => <ResizeTabV2 /> }
 export const Structured: Story = { render: () => <StructuredTabV2 /> }
