@@ -103,18 +103,13 @@ export const ToolsTab: React.FC = () => {
               </Tabs.Tab>
             ))}
           </Tabs.List>
-          {SUB_TABS.map(({ id }) => {
-            const Component = SUB_TAB_COMPONENTS.get(id)
-            if (!Component) {
-              return null
-            }
-            return (
-              <Tabs.Panel key={id} value={id} style={{ paddingTop: 'var(--space-150)' }}>
-                {id === sub ? <Component /> : null}
-              </Tabs.Panel>
-            )
-          })}
         </Tabs.Root>
+        <div style={{ paddingTop: 'var(--space-150)' }}>
+          {(() => {
+            const Component = SUB_TAB_COMPONENTS.get(sub)
+            return Component ? <Component /> : null
+          })()}
+        </div>
       </div>
     </TabPanel>
   )
