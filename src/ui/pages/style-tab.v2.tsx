@@ -121,14 +121,14 @@ export const StyleTabV2: React.FC = () => {
 
           <div className="button-group">
             <BaseButton
-              className="button button-primary"
+              className="button button-primary button-medium"
               onClick={() => void apply()}
               disabled={!hasSelection}
             >
               Apply
             </BaseButton>
             <BaseButton
-              className="button button-secondary"
+              className="button button-secondary button-medium"
               onClick={() => void copyFill()}
               disabled={!hasSelection}
             >
@@ -167,14 +167,14 @@ export const StyleTabV2: React.FC = () => {
           </div>
           <div className="button-group">
             <BaseButton
-              className="button button-secondary"
+              className="button button-secondary button-medium"
               onClick={() => void applyOpacity()}
               disabled={!hasSelection}
             >
               Apply opacity
             </BaseButton>
             <BaseButton
-              className="button button-secondary"
+              className="button button-secondary button-medium"
               onClick={() => void applyBorder()}
               disabled={!hasSelection}
             >
@@ -188,7 +188,7 @@ export const StyleTabV2: React.FC = () => {
             {presetEntries.map(([name, preset]) => (
               <BaseButton
                 key={name}
-                className="button"
+                className="button button-medium"
                 onClick={() => void applyStylePreset(preset)}
                 disabled={!hasSelection}
                 title={name}
@@ -205,7 +205,7 @@ export const StyleTabV2: React.FC = () => {
         <StickyActions>
           <div className="button-group">
             <BaseButton
-              className="button button-primary"
+              className="button button-primary button-medium"
               onClick={() => void apply()}
               disabled={!hasSelection}
             >
