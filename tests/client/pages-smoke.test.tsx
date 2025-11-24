@@ -10,7 +10,7 @@ import { HelpTab } from '../../src/ui/pages/help-tab'
 import { LayoutEngineTab } from '../../src/ui/pages/layout-engine-tab'
 import { ResizeTabV2 as ResizeTab } from '../../src/ui/pages/resize-tab.v2'
 import { SearchTab } from '../../src/ui/pages/search-tab'
-import { StyleTab } from '../../src/ui/pages/style-tab'
+import { StyleTabV2 as StyleTab } from '../../src/ui/pages/style-tab.v2'
 import { ToolsTab } from '../../src/ui/pages/tools-tab'
 
 describe('UI pages smoke render', () => {

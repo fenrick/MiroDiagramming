@@ -14,7 +14,7 @@ import { LayoutEngineTabV2 } from '../ui/pages/layout-engine-tab.v2'
 import { ResizeTabV2 } from '../ui/pages/resize-tab.v2'
 import { SearchTab } from '../ui/pages/search-tab'
 import { StructuredTabV2 } from '../ui/pages/structured-tab.v2'
-import { StyleTab } from '../ui/pages/style-tab'
+import { StyleTabV2 } from '../ui/pages/style-tab.v2'
 import { ToolsTab } from '../ui/pages/tools-tab'
 
 const meta: Meta = {
@@ -35,4 +35,4 @@ export const Help: Story = { render: () => <HelpTab /> }
 export const LayoutEngine: Story = { render: () => <LayoutEngineTabV2 /> }
 export const Resize: Story = { render: () => <ResizeTabV2 /> }
 export const Structured: Story = { render: () => <StructuredTabV2 /> }
-export const Style: Story = { render: () => <StyleTab /> }
+export const Style: Story = { render: () => <StyleTabV2 /> }
