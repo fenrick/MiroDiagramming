@@ -1,6 +1,5 @@
 import React from 'react'
-
-import { Button } from './button'
+import { Button as BaseButton } from '@base-ui-components/react/button'
 
 /** A single toast notification. */
 export interface ToastOptions {
@@ -71,15 +70,15 @@ export const ToastContainer: React.FC = () => {
           {t.thumbnailUrl && <img className="toast-thumb" src={t.thumbnailUrl} alt="" />}
           <div style={{ flex: 1 }}>{t.message}</div>
           {t.action && (
-            <Button
-              variant="tertiary"
+            <BaseButton
+              className="button button-secondary button-small"
               onClick={() => {
                 t.action?.callback()
                 remove(t.id)
               }}
             >
               {t.action.label}
-            </Button>
+            </BaseButton>
           )}
         </div>
       ))}
